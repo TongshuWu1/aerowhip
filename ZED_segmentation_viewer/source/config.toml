@@ -1,0 +1,89 @@
+[camera]
+resolution = "HD720"
+fps = 60
+depth_mode = "NEURAL"
+
+# These are the least restrictive ZED runtime thresholds. No application-side
+# depth, confidence, spatial, stride, or point-count filtering is performed.
+confidence = 100
+texture_confidence = 100
+fill = true
+
+[viewer]
+rgb_width = 620
+cloud_width = 1180
+height = 900
+point_size = 1.0
+max_fps = 30
+# Full 921,600-point vertex reconstruction is diagnostic work. Capping it keeps
+# CPU memory bandwidth available to the algorithm while retaining a live view.
+point_cloud_fps = 5
+
+[pidnet]
+checkpoint = "data/models/pidnet_two_cable_best.pt"
+device = "cuda"
+threshold = 0.85000002
+endpoint_thresholds = [0.89999998, 0.75]
+crossing_threshold = 0.94999999
+amp = true
+channels_last = true
+overlay_alpha = 0.62
+
+[observation]
+# Endpoint components smaller than this are treated as NN speckle, not endpoints.
+endpoint_min_area_px = 24
+endpoint_label_search_px = 18
+endpoint_tangent_radius_px = 28
+endpoint_tangent_min_points = 24
+route_depth_radius_px = 2
+route_samples = 128
+graph_node_dilation_px = 3
+route_candidate_limit = 16
+route_search_state_limit = 4096
+route_edge_limit = 24
+route_length_margin_m = 0.18
+
+[particle_filter]
+device = "cuda"
+particle_count = 800
+node_count = 12
+# Both physical cables are identical and measured as 0.515 m tip-to-tip.
+cable_lengths_m = [0.515, 0.515]
+dense_samples_per_segment = 4
+deformation_modes = 5
+initial_noise_m = 0.010
+process_noise_m = 0.0015
+global_noise_m = 0.018
+global_fraction = 0.10
+motion_noise_gain = 0.1
+maximum_process_noise_m = 0.015
+velocity_smoothing = 0.65
+projection_iterations = 8
+endpoint_tolerance_m = 0.003
+trace_sigma_m = 0.008
+huber_delta = 1.5
+route_length_sigma_m = 0.025
+route_length_weight = 1.0
+endpoint_tangent_weight = 0.35
+smoothness_weight = 2.0
+support_distance_m = 0.015
+maximum_unsupported_length_m = 0.080
+unsupported_weight = 1.0
+maximum_kink_degrees = 145.0
+kink_weight = 0.20
+top_particle_count = 40
+random_seed = 7
+
+[features]
+endpoint_direction_proposal = true
+connected_trace = true
+route_length_score = true
+endpoint_tangent_score = true
+smoothness = true
+fixed_length = true
+temporal_prediction = true
+motion_adaptive_noise = true
+global_particles = true
+kink_limit = false
+# The crossing channel is displayed but is deliberately excluded from phase 1.
+crossing = false

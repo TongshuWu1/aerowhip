@@ -1,0 +1,15 @@
+[pidnet]
+checkpoint = "data/models/pidnet_two_cable_best.pt"
+device = "cuda"
+threshold = 0.85000002
+endpoint_thresholds = [0.89999998, 0.75]
+amp = true
+channels_last = true
+
+[crossing]
+threshold = 0.94999999
+
+[detector]
+min_area_px = 80
+open_kernel = 1
+close_kernel = 5

@@ -1,0 +1,49 @@
+{
+  "version": 3,
+  "init_checkpoint": "",
+  "epochs": 120,
+  "batch_size": 8,
+  "imgsz": "1280x720",
+  "base_channels": 24,
+  "cable_count": 2,
+  "device": "cuda",
+  "lr": 0.001,
+  "weight_decay": 0.0001,
+  "num_workers": 2,
+  "prefetch_factor": 1,
+  "endpoint_weight": 2.0,
+  "boundary_weight": 0.2,
+  "crossing_weight": 1.0,
+  "focal_gamma": 2.0,
+  "dice_weight": 1.0,
+  "ema_decay": 0.995,
+  "grad_clip": 5.0,
+  "early_stop": 24,
+  "min_delta": 0.0001,
+  "seed": 17,
+  "amp": true,
+  "channels_last": true,
+  "tf32": true,
+  "compile": false,
+  "gpu_augment": true,
+  "deterministic": false,
+  "verified_only": true,
+  "evaluate_test": false,
+  "resume_last": false,
+  "test_threshold": 0.5,
+  "endpoint_thresholds": [
+    0.5,
+    0.5
+  ],
+  "crossing_threshold": 0.5,
+  "live_mask_cleanup": {
+    "threshold": 0.5,
+    "min_area_px": 80,
+    "open_kernel": 1,
+    "close_kernel": 5
+  },
+  "label_mask_cleanup": {
+    "kernel": 5,
+    "iterations": 1
+  }
+}
