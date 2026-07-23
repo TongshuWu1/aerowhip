@@ -9,6 +9,13 @@ from threading import Lock
 
 import numpy as np
 
+from particle_filter import (
+    VISIBILITY_MISSING,
+    VISIBILITY_OCCLUDED,
+    VISIBILITY_SUPPORTED,
+    VISIBILITY_UNKNOWN,
+)
+
 
 _FREEGLUT_HANDLE = None
 
@@ -55,6 +62,10 @@ ORANGE = (1.00, 0.58, 0.08)
 BLUE = (0.05, 0.35, 1.00)
 GREEN = (0.15, 1.00, 0.30)
 YELLOW = (1.00, 1.00, 0.00)
+SKELETON_MASK = (0.15, 0.17, 0.19)
+SKELETON_LINE = (0.93, 0.96, 0.98)
+SKELETON_NODE = (0.22, 0.80, 1.00)
+SKELETON_BRANCH = (1.00, 0.28, 0.35)
 
 FEATURE_CONTROLS = (
     ("1", "endpoint_direction_proposal", "PROPOSAL"),
@@ -66,18 +77,33 @@ FEATURE_CONTROLS = (
     ("7", "temporal_prediction", "TEMPORAL"),
     ("8", "motion_adaptive_noise", "ADAPTIVE"),
     ("9", "global_particles", "RETRACK 10%"),
+    ("V", "measurement_velocity_update", "MOTION VELOCITY"),
+    ("B", "global_particle_velocity_update", "RETRACK VELOCITY"),
     ("0", "kink_limit", "KINK"),
+    ("A", "partial_observation", "PARTIAL OBS"),
+    ("S", "depth_occlusion", "DEPTH OCC"),
+    ("D", "fragment_score", "FRAGMENTS"),
+    ("F", "single_endpoint_updates", "ONE ENDPOINT"),
+    ("G", "prediction_without_measurement", "PREDICT HIDDEN"),
+    ("H", "posterior_uncertainty", "UNCERTAINTY"),
+    ("K", "fused_constraint_kernels", "FUSED LINKS"),
+    ("J", "cuda_graph_replay", "CUDA GRAPH"),
 )
 
 POINT_VERTEX_SHADER = """
 #version 330 core
 layout(location = 0) in vec3 in_position;
-layout(location = 1) in vec3 in_color;
+layout(location = 1) in float in_packed_color;
 uniform mat4 u_mvp;
 uniform float u_point_size;
 out vec3 v_color;
 void main() {
-    v_color = in_color;
+    uint packed_color = floatBitsToUint(in_packed_color);
+    v_color = vec3(
+        float(packed_color & 255u),
+        float((packed_color >> 8u) & 255u),
+        float((packed_color >> 16u) & 255u)
+    ) / 255.0;
     gl_Position = u_mvp * vec4(in_position, 1.0);
     gl_PointSize = u_point_size;
 }
@@ -110,14 +136,18 @@ class SplitPointCloudViewer:
         self.title = str(title)
         self.window_id = None
         self.available = False
+        self.redraw_requested = True
 
         self.lock = Lock()
         self.pending = None
         self.pending_status = "Waiting for camera"
         self.rgb_image = None
         self.rgb_texture_dirty = False
-        self.vertices = np.empty((0, 6), dtype=np.float32)
+        self.skeleton_image = None
+        self.skeleton_texture_dirty = False
+        self.vertices = np.empty((0, 4), dtype=np.float32)
         self.vertex_count = 0
+        self.cloud_captured_at = None
         self.status = "Waiting for camera"
         self.stats = {
             "total_pixels": 0,
@@ -133,6 +163,7 @@ class SplitPointCloudViewer:
         self.inference_ms = 0.0
         self.processing_ms = 0.0
         self.latency_ms = 0.0
+        self.source_age_ms = 0.0
         self.observation = None
         self.particle_filter = None
         self.show_top_particles = True
@@ -143,6 +174,7 @@ class SplitPointCloudViewer:
         self.vbo = None
         self.vao = None
         self.rgb_texture = None
+        self.skeleton_texture = None
         self.shader_program = None
         self.mvp_location = None
         self.point_size_location = None
@@ -185,12 +217,9 @@ class SplitPointCloudViewer:
         except Exception:
             self.vao = None
         self.rgb_texture = glGenTextures(1)
-        glBindTexture(GL_TEXTURE_2D, self.rgb_texture)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
-        glBindTexture(GL_TEXTURE_2D, 0)
+        self._configure_image_texture(self.rgb_texture, GL_LINEAR)
+        self.skeleton_texture = glGenTextures(1)
+        self._configure_image_texture(self.skeleton_texture, GL_NEAREST)
         self.shader_program = self._create_point_shader()
         if self.shader_program:
             self.mvp_location = glGetUniformLocation(self.shader_program, "u_mvp")
@@ -216,7 +245,9 @@ class SplitPointCloudViewer:
             return False
         try:
             glutSetWindow(self.window_id)
-            glutPostRedisplay()
+            if self.redraw_requested:
+                glutPostRedisplay()
+                self.redraw_requested = False
             glutMainLoopEvent()
         except Exception:
             self.available = False
@@ -238,6 +269,8 @@ class SplitPointCloudViewer:
                 glDeleteBuffers(1, [self.vbo])
             if self.rgb_texture:
                 glDeleteTextures(1, [self.rgb_texture])
+            if self.skeleton_texture:
+                glDeleteTextures(1, [self.skeleton_texture])
             glutDestroyWindow(window_id)
         except Exception:
             pass
@@ -249,6 +282,7 @@ class SplitPointCloudViewer:
     def update_status(self, text):
         with self.lock:
             self.pending_status = str(text)
+            self.redraw_requested = True
 
     def set_feature_controls(self, features, callback):
         self.feature_states = {
@@ -258,15 +292,25 @@ class SplitPointCloudViewer:
 
     def update_frame(self, result, pipeline_stats):
         vertices = np.asarray(result.vertices, dtype=np.float32)
-        if vertices.ndim != 2 or vertices.shape[1] != 6:
-            raise ValueError(f"Viewer vertices must have shape Nx6; got {vertices.shape}.")
+        if vertices.ndim != 2 or vertices.shape[1] != 4:
+            raise ValueError(
+                f"Viewer vertices must have packed-color shape Nx4; got {vertices.shape}."
+            )
         image = np.asarray(result.rgb_image, dtype=np.uint8)
         if image.ndim != 3 or image.shape[2] != 3:
             raise ValueError(f"Viewer RGB image must have shape HxWx3; got {image.shape}.")
+        skeleton_image = np.asarray(result.skeleton_image, dtype=np.uint8)
+        if skeleton_image.ndim != 3 or skeleton_image.shape[2] != 3:
+            raise ValueError(
+                "Viewer skeleton image must have shape HxWx3; "
+                f"got {skeleton_image.shape}."
+            )
         payload = {
             "frame_index": int(result.frame_index),
             "image": np.ascontiguousarray(image),
+            "skeleton_image": np.ascontiguousarray(skeleton_image),
             "vertices": np.ascontiguousarray(vertices),
+            "cloud_captured_at": float(result.cloud_captured_at),
             "stats": dict(result.stats),
             "pipeline": dict(pipeline_stats),
             "center": np.asarray(result.scene_center, dtype=np.float32).reshape(3),
@@ -274,17 +318,20 @@ class SplitPointCloudViewer:
             "inference_ms": float(result.inference_ms),
             "processing_ms": float(result.processing_ms),
             "latency_ms": float(result.latency_ms),
+            "source_age_ms": float(result.source_age_ms),
             "observation": result.observation,
             "particle_filter": result.particle_filter,
         }
         with self.lock:
             self.pending = payload
             self.pending_status = "Live cable tracking"
+            self.redraw_requested = True
 
     def reset_view(self):
         self.yaw_deg = -35.0
         self.pitch_deg = 22.0
         self.zoom = 1.0
+        self.redraw_requested = True
 
     def _consume_pending(self):
         with self.lock:
@@ -296,20 +343,41 @@ class SplitPointCloudViewer:
             return
         self.rgb_image = payload["image"]
         self.rgb_texture_dirty = True
-        self.vertices = payload["vertices"]
-        self.vertex_count = len(self.vertices)
+        self.skeleton_image = payload["skeleton_image"]
+        self.skeleton_texture_dirty = True
+        cloud_captured_at = payload["cloud_captured_at"]
+        cloud_changed = self.cloud_captured_at != cloud_captured_at
+        if cloud_changed:
+            self.vertices = payload["vertices"]
+            if not self.shader_program and self.vertices.shape[1] == 4:
+                packed = np.ascontiguousarray(self.vertices[:, 3]).view(np.uint32)
+                expanded = np.empty((len(self.vertices), 6), dtype=np.float32)
+                expanded[:, :3] = self.vertices[:, :3]
+                expanded[:, 3] = (packed & 255).astype(np.float32) / 255.0
+                expanded[:, 4] = ((packed >> 8) & 255).astype(np.float32) / 255.0
+                expanded[:, 5] = ((packed >> 16) & 255).astype(np.float32) / 255.0
+                self.vertices = expanded
+            self.vertex_count = len(self.vertices)
+            self.cloud_captured_at = cloud_captured_at
         self.stats = payload["stats"]
         self.pipeline_stats = payload["pipeline"]
         self.frame_index = payload["frame_index"]
         self.inference_ms = payload["inference_ms"]
         self.processing_ms = payload["processing_ms"]
         self.latency_ms = payload["latency_ms"]
+        self.source_age_ms = payload["source_age_ms"]
         self.observation = payload["observation"]
         self.particle_filter = payload["particle_filter"]
-        self._smooth_scene(payload["center"], payload["radius"])
-        glBindBuffer(GL_ARRAY_BUFFER, self.vbo)
-        glBufferData(GL_ARRAY_BUFFER, self.vertices.nbytes, self.vertices, GL_STREAM_DRAW)
-        glBindBuffer(GL_ARRAY_BUFFER, 0)
+        if cloud_changed:
+            self._smooth_scene(payload["center"], payload["radius"])
+            glBindBuffer(GL_ARRAY_BUFFER, self.vbo)
+            glBufferData(
+                GL_ARRAY_BUFFER,
+                self.vertices.nbytes,
+                self.vertices,
+                GL_STREAM_DRAW,
+            )
+            glBindBuffer(GL_ARRAY_BUFFER, 0)
 
     def _draw(self):
         if not self.available:
@@ -356,17 +424,93 @@ class SplitPointCloudViewer:
             self._text(margin, height - header - 30, self.status, UI_MUTED)
             return
 
-        image_h, image_w = self.rgb_image.shape[:2]
-        available_w = max(1, width - 2 * margin)
-        available_h = max(1, height - header - 2 * margin)
-        scale = min(available_w / image_w, available_h / image_h)
+        section_header = 52
+        gap = 8
+        content_bottom = margin
+        content_top = height - header - margin
+        image_height = max(
+            2,
+            content_top - content_bottom - section_header - 2 * gap,
+        )
+        skeleton_pane_height = image_height // 2
+        skeleton_y0 = content_bottom
+        skeleton_y1 = skeleton_y0 + skeleton_pane_height
+        skeleton_header_y0 = skeleton_y1 + gap
+        skeleton_header_y1 = skeleton_header_y0 + section_header
+        rgb_y0 = skeleton_header_y1 + gap
+        rgb_y1 = content_top
+
+        self._draw_image(
+            self.rgb_image,
+            self.rgb_texture,
+            "rgb_texture_dirty",
+            margin,
+            rgb_y0,
+            max(1, width - 2 * margin),
+            max(1, rgb_y1 - rgb_y0),
+        )
+
+        self._rect(0, skeleton_header_y0, width, section_header, UI_PANEL)
+        self._rect(0, skeleton_header_y0, 5, section_header, SKELETON_LINE)
+        self._text(
+            margin,
+            skeleton_header_y1 - 18,
+            "Live skeleton graph",
+            UI_TEXT,
+            GLUT_BITMAP_HELVETICA_12,
+        )
+        legend_y = skeleton_header_y0 + 9
+        self._legend(margin, legend_y, SKELETON_MASK, "mask")
+        self._legend(margin + 72, legend_y, SKELETON_LINE, "skeleton")
+        self._legend(margin + 172, legend_y, SKELETON_NODE, "node")
+        self._legend(margin + 242, legend_y, SKELETON_BRANCH, "junction")
+        self._legend(margin + 342, legend_y, YELLOW, "NN cross")
+        self._line(
+            0,
+            skeleton_header_y0,
+            width,
+            skeleton_header_y0,
+            UI_STROKE,
+        )
+        if self.skeleton_image is not None:
+            self._draw_image(
+                self.skeleton_image,
+                self.skeleton_texture,
+                "skeleton_texture_dirty",
+                margin,
+                skeleton_y0,
+                max(1, width - 2 * margin),
+                max(1, skeleton_y1 - skeleton_y0),
+            )
+
+    @staticmethod
+    def _configure_image_texture(texture, filtering):
+        glBindTexture(GL_TEXTURE_2D, texture)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filtering)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filtering)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+        glBindTexture(GL_TEXTURE_2D, 0)
+
+    def _draw_image(
+        self,
+        image,
+        texture,
+        dirty_attribute,
+        pane_x,
+        pane_y,
+        pane_width,
+        pane_height,
+    ):
+        image_h, image_w = image.shape[:2]
+        scale = min(pane_width / image_w, pane_height / image_h)
         draw_w = max(1, int(round(image_w * scale)))
         draw_h = max(1, int(round(image_h * scale)))
-        x0 = (width - draw_w) // 2
-        y0 = (height - header - draw_h) // 2
+        x0 = pane_x + (pane_width - draw_w) // 2
+        y0 = pane_y + (pane_height - draw_h) // 2
         x1, y1 = x0 + draw_w, y0 + draw_h
-        glBindTexture(GL_TEXTURE_2D, self.rgb_texture)
-        if self.rgb_texture_dirty:
+        glBindTexture(GL_TEXTURE_2D, texture)
+        if bool(getattr(self, dirty_attribute)):
             glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
             glTexImage2D(
                 GL_TEXTURE_2D,
@@ -377,9 +521,9 @@ class SplitPointCloudViewer:
                 0,
                 GL_RGB,
                 GL_UNSIGNED_BYTE,
-                self.rgb_image,
+                image,
             )
-            self.rgb_texture_dirty = False
+            setattr(self, dirty_attribute, False)
         glEnable(GL_TEXTURE_2D)
         glColor3f(1.0, 1.0, 1.0)
         glBegin(GL_QUADS)
@@ -431,8 +575,8 @@ class SplitPointCloudViewer:
             glBindBuffer(GL_ARRAY_BUFFER, self.vbo)
             glEnableVertexAttribArray(0)
             glEnableVertexAttribArray(1)
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 24, ctypes.c_void_p(0))
-            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 24, ctypes.c_void_p(12))
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 16, ctypes.c_void_p(0))
+            glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 16, ctypes.c_void_p(12))
             glDrawArrays(GL_POINTS, 0, self.vertex_count)
             glDisableVertexAttribArray(1)
             glDisableVertexAttribArray(0)
@@ -505,16 +649,30 @@ class SplitPointCloudViewer:
                         glVertex3f(*point)
                     glEnd()
             dense = np.asarray(cable.dense_curve)
-            supported = np.asarray(cable.dense_supported, dtype=bool)
+            visibility = np.asarray(cable.dense_visibility, dtype=np.uint8)
             if len(dense) >= 2:
                 glLineWidth(4.0)
                 glBegin(GL_LINES)
                 for index in range(len(dense) - 1):
-                    if index < len(supported) and index + 1 < len(supported):
-                        segment_supported = bool(supported[index] and supported[index + 1])
+                    state = (
+                        int(visibility[index])
+                        if index < len(visibility)
+                        else VISIBILITY_UNKNOWN
+                    )
+                    next_state = (
+                        int(visibility[index + 1])
+                        if index + 1 < len(visibility)
+                        else VISIBILITY_UNKNOWN
+                    )
+                    if state == VISIBILITY_MISSING or next_state == VISIBILITY_MISSING:
+                        segment_color, alpha = (1.0, 0.18, 0.15), 1.0
+                    elif state == VISIBILITY_OCCLUDED or next_state == VISIBILITY_OCCLUDED:
+                        segment_color, alpha = YELLOW, 0.95
+                    elif state == VISIBILITY_SUPPORTED and next_state == VISIBILITY_SUPPORTED:
+                        segment_color, alpha = color, 1.0
                     else:
-                        segment_supported = False
-                    glColor4f(*(color if segment_supported else (1.0, 0.18, 0.15)), 1.0)
+                        segment_color, alpha = color, 0.30
+                    glColor4f(*segment_color, alpha)
                     glVertex3f(*dense[index])
                     glVertex3f(*dense[index + 1])
                 glEnd()
@@ -531,8 +689,57 @@ class SplitPointCloudViewer:
                 glVertex3f(*curve[0])
                 glVertex3f(*curve[-1])
                 glEnd()
+                node_visibility = np.asarray(cable.node_visibility, dtype=np.uint8)
+                covariance = np.asarray(cable.node_covariance, dtype=np.float32)
+                if covariance.shape == (len(curve), 3, 3):
+                    for node_index, point in enumerate(curve):
+                        state = (
+                            int(node_visibility[node_index])
+                            if node_index < len(node_visibility)
+                            else VISIBILITY_UNKNOWN
+                        )
+                        if state == VISIBILITY_SUPPORTED:
+                            continue
+                        if state == VISIBILITY_OCCLUDED:
+                            uncertainty_color = YELLOW
+                        elif state == VISIBILITY_MISSING:
+                            uncertainty_color = (1.0, 0.18, 0.15)
+                        else:
+                            uncertainty_color = color
+                        self._draw_covariance_ellipsoid(
+                            point,
+                            covariance[node_index],
+                            uncertainty_color,
+                        )
         glDisable(GL_BLEND)
         glEnable(GL_DEPTH_TEST)
+
+    @staticmethod
+    def _draw_covariance_ellipsoid(center, covariance, color):
+        if not np.all(np.isfinite(covariance)):
+            return
+        values, vectors = np.linalg.eigh(
+            0.5 * (covariance + covariance.T)
+        )
+        radii = 2.0 * np.sqrt(np.clip(values, 0.0, None))
+        if float(np.max(radii)) < 2e-4:
+            return
+        radii = np.minimum(radii, 0.15)
+        transform = vectors @ np.diag(radii)
+        angles = np.linspace(0.0, 2.0 * np.pi, 25, dtype=np.float32)
+        rings = (
+            np.column_stack((np.cos(angles), np.sin(angles), np.zeros_like(angles))),
+            np.column_stack((np.cos(angles), np.zeros_like(angles), np.sin(angles))),
+            np.column_stack((np.zeros_like(angles), np.cos(angles), np.sin(angles))),
+        )
+        glLineWidth(1.0)
+        glColor4f(*color, 0.32)
+        for ring in rings:
+            points = np.asarray(center)[None, :] + ring @ transform.T
+            glBegin(GL_LINE_STRIP)
+            for point in points:
+                glVertex3f(*point)
+            glEnd()
 
     def _draw_cloud_overlay(self, width, height):
         glDisable(GL_DEPTH_TEST)
@@ -543,16 +750,23 @@ class SplitPointCloudViewer:
         glMatrixMode(GL_MODELVIEW)
         glPushMatrix()
         glLoadIdentity()
-        header = 213
+        header = 296
         self._rect(0, height - header, width, header, (0.018, 0.021, 0.025))
         self._rect(0, height - header, 5, header, UI_ACCENT)
         self._rect(0, height - header, width, 1, UI_STROKE)
-        self._text(18, height - 29, "Full-resolution 3D point cloud", UI_TEXT)
+        stride = int(self.stats.get("point_cloud_stride", 1))
+        self._text(
+            18,
+            height - 29,
+            f"3D point cloud (viewer stride {stride})",
+            UI_TEXT,
+        )
         self._text(
             18,
             height - 53,
             f"Frame {self.frame_index} | NN {self.inference_ms:.1f} ms | "
             f"viewer prep {self.processing_ms:.1f} ms | display latency {self.latency_ms:.1f} ms | "
+            f"cloud age {self.source_age_ms:.1f} ms | "
             f"skipped views {self.pipeline_stats.get('visualization_dropped', 0)}",
             UI_MUTED,
             GLUT_BITMAP_HELVETICA_12,
@@ -605,32 +819,127 @@ class SplitPointCloudViewer:
                 self._text(
                     18,
                     y,
-                    f"PF{cable_index + 1} {diagnostic.status} | "
+                    f"PF{cable_index + 1} {diagnostic.tracking_state} | "
+                    f"ep={diagnostic.endpoint_visible_count}/2 "
+                    f"frag={diagnostic.fragment_count} "
                     f"route={diagnostic.selected_route_index + 1}/"
                     f"{diagnostic.route_candidate_count} "
-                    f"dL={diagnostic.route_length_error_mm:.1f} mm | "
-                    f"trace={diagnostic.trace_mean_mm:.1f}/{diagnostic.trace_p95_mm:.1f} mm | "
-                    f"support={100.0 * diagnostic.support_fraction:.0f}% | "
-                    f"turn={diagnostic.turn_rms_degrees:.1f} deg | "
+                    f"V/O/M/U={100.0 * diagnostic.visible_fraction:.0f}/"
+                    f"{100.0 * diagnostic.occluded_fraction:.0f}/"
+                    f"{100.0 * diagnostic.missing_fraction:.0f}/"
+                    f"{100.0 * diagnostic.unknown_fraction:.0f}% | "
+                    f"sigma={diagnostic.maximum_node_uncertainty_mm:.1f} mm "
+                    f"age={diagnostic.complete_observation_age_s:.2f}s | "
+                    f"trace={diagnostic.trace_mean_mm:.1f} mm "
                     f"ESS={diagnostic.effective_sample_size:.0f}",
                     color,
                     GLUT_BITMAP_HELVETICA_12,
                 )
+            motion_text = []
+            for cable_index, cable in enumerate(self.particle_filter.cables):
+                diagnostic = cable.diagnostics
+                applied = "ON" if diagnostic.velocity_correction_applied else "OFF"
+                motion_text.append(
+                    f"PF{cable_index + 1} "
+                    f"{diagnostic.predicted_node_speed_mps:.2f}/"
+                    f"{diagnostic.measured_displacement_speed_mps:.2f}/"
+                    f"{diagnostic.corrected_node_speed_mps:.2f}/"
+                    f"{diagnostic.maximum_corrected_node_speed_mps:.2f} "
+                    f"[{applied}]"
+                )
             self._text(
                 18,
                 height - 195,
+                "Motion m/s predicted/measured/corrected/max | "
+                + " | ".join(motion_text),
+                UI_TEXT,
+                GLUT_BITMAP_HELVETICA_12,
+            )
+            self._text(
+                18,
+                height - 217,
                 f"Observation {self.pipeline_stats.get('observation_ms', 0.0):.1f} ms | "
                 f"PF {self.pipeline_stats.get('particle_filter_ms', 0.0):.1f} ms "
                 f"(CUDA {self.pipeline_stats.get('particle_filter_gpu_ms', 0.0):.1f} ms) | "
-                f"total tracking {self.pipeline_stats.get('tracking_ms', 0.0):.1f} ms",
+                f"total {self.pipeline_stats.get('tracking_ms', 0.0):.1f} ms | "
+                "PF: color=supported yellow=occluded red=missing dim=unknown",
+                UI_MUTED,
+                GLUT_BITMAP_HELVETICA_12,
+            )
+        if "observation_total_median_ms" in self.pipeline_stats:
+            self._text(
+                18,
+                height - 239,
+                "OBS median/p95 ms | "
+                f"total {self.pipeline_stats.get('observation_total_median_ms', 0.0):.1f}/"
+                f"{self.pipeline_stats.get('observation_total_p95_ms', 0.0):.1f} | "
+                f"geom {self.pipeline_stats.get('observation_geometry_median_ms', 0.0):.1f}/"
+                f"{self.pipeline_stats.get('observation_geometry_p95_ms', 0.0):.1f} | "
+                f"CC {self.pipeline_stats.get('observation_components_median_ms', 0.0):.1f}/"
+                f"{self.pipeline_stats.get('observation_components_p95_ms', 0.0):.1f} | "
+                f"ends {self.pipeline_stats.get('observation_endpoints_median_ms', 0.0):.1f}/"
+                f"{self.pipeline_stats.get('observation_endpoints_p95_ms', 0.0):.1f} | "
+                f"skel {self.pipeline_stats.get('observation_skeleton_median_ms', 0.0):.1f}/"
+                f"{self.pipeline_stats.get('observation_skeleton_p95_ms', 0.0):.1f} | "
+                f"graph {self.pipeline_stats.get('observation_graph_median_ms', 0.0):.1f}/"
+                f"{self.pipeline_stats.get('observation_graph_p95_ms', 0.0):.1f} | "
+                f"routes {self.pipeline_stats.get('observation_routes_median_ms', 0.0):.1f}/"
+                f"{self.pipeline_stats.get('observation_routes_p95_ms', 0.0):.1f}",
+                UI_TEXT,
+                GLUT_BITMAP_HELVETICA_12,
+            )
+            self._text(
+                18,
+                height - 260,
+                "OBS latest GPU ms | "
+                f"maps {self.pipeline_stats.get('observation_maps_cuda_ms', 0.0):.2f} | "
+                f"unproject {self.pipeline_stats.get('observation_unprojection_cuda_ms', 0.0):.2f} | "
+                f"readback block {self.pipeline_stats.get('observation_readback_wall_ms', 0.0):.2f} | "
+                f"pixels cable/relevant/valid3D="
+                f"{self.pipeline_stats.get('observation_cable_pixels', 0):,}/"
+                f"{self.pipeline_stats.get('observation_relevant_pixels', 0):,}/"
+                f"{self.pipeline_stats.get('observation_valid_3d_points', 0):,}",
+                UI_MUTED,
+                GLUT_BITMAP_HELVETICA_12,
+            )
+            self._text(
+                18,
+                height - 281,
+                "OBS topology | "
+                f"components {self.pipeline_stats.get('observation_processed_component_count', 0)}/"
+                f"{self.pipeline_stats.get('observation_component_count', 0)} | "
+                f"endpoints {self.pipeline_stats.get('observation_endpoint_count', 0)}/4 | "
+                f"skeleton px {self.pipeline_stats.get('observation_skeleton_pixels', 0):,} | "
+                f"nodes/edges/branches="
+                f"{self.pipeline_stats.get('observation_graph_nodes', 0)}/"
+                f"{self.pipeline_stats.get('observation_graph_edges', 0)}/"
+                f"{self.pipeline_stats.get('observation_branch_pixels', 0)} | "
+                f"routes {self.pipeline_stats.get('observation_route_candidates', 0)} | "
+                f"fragments {self.pipeline_stats.get('observation_fragments', 0)}",
+                UI_MUTED,
+                GLUT_BITMAP_HELVETICA_12,
+            )
+            self._text(
+                18,
+                height - 302,
+                "OBS latest other ms | "
+                f"masks {self.pipeline_stats.get('observation_masks_latest_ms', 0.0):.2f} | "
+                f"component prep {self.pipeline_stats.get('observation_component_preparation_latest_ms', 0.0):.2f} | "
+                f"fragments {self.pipeline_stats.get('observation_fragments_latest_ms', 0.0):.2f} | "
+                f"tangents {self.pipeline_stats.get('observation_tangents_latest_ms', 0.0):.2f} | "
+                f"route search/build "
+                f"{self.pipeline_stats.get('observation_route_search_latest_ms', 0.0):.2f}/"
+                f"{self.pipeline_stats.get('observation_route_assembly_latest_ms', 0.0):.2f} | "
+                f"final {self.pipeline_stats.get('observation_finalization_latest_ms', 0.0):.2f} | "
+                f"unaccounted {self.pipeline_stats.get('observation_unaccounted_latest_ms', 0.0):.2f}",
                 UI_MUTED,
                 GLUT_BITMAP_HELVETICA_12,
             )
 
-        self._rect(0, 0, width, 82, (0.018, 0.021, 0.025))
+        self._rect(0, 0, width, 107, (0.018, 0.021, 0.025))
         self.feature_hitboxes = []
         x = 18
-        chip_y = 56
+        chip_y = 81
         for key, name, label in FEATURE_CONTROLS:
             enabled = bool(self.feature_states.get(name, False))
             text = f"{key} {label} {'ON' if enabled else 'OFF'}"
@@ -664,7 +973,7 @@ class SplitPointCloudViewer:
             10,
             f"Orbit: left drag    Pan: right drag    Zoom: wheel    Reset: R    "
             f"Top particles: P ({'on' if self.show_top_particles else 'off'})    "
-            f"Point size: +/- ({self.point_size:.1f})    Click a feature or press 0-9    Quit: Q",
+            f"Point size: +/- ({self.point_size:.1f})    Click a feature or use its key    Quit: Q",
             UI_MUTED,
             GLUT_BITMAP_HELVETICA_12,
         )
@@ -747,6 +1056,7 @@ class SplitPointCloudViewer:
     def _reshape(self, width, height):
         self.width = max(1, int(width))
         self.height = max(1, int(height))
+        self.redraw_requested = True
 
     def _keyboard(self, key, _x, _y):
         if key in (b"q", b"Q", b"\x1b"):
@@ -761,13 +1071,14 @@ class SplitPointCloudViewer:
             self.show_top_particles = not self.show_top_particles
         else:
             try:
-                character = key.decode("ascii")
+                character = key.decode("ascii").upper()
             except (AttributeError, UnicodeDecodeError):
                 character = ""
             for control_key, name, _label in FEATURE_CONTROLS:
                 if character == control_key:
                     self._toggle_feature(name)
                     break
+        self.redraw_requested = True
 
     def _special_key(self, key, _x, _y):
         if key == GLUT_KEY_LEFT:
@@ -778,6 +1089,7 @@ class SplitPointCloudViewer:
             self.pitch_deg = min(85.0, self.pitch_deg + 4.0)
         elif key == GLUT_KEY_DOWN:
             self.pitch_deg = max(-85.0, self.pitch_deg - 4.0)
+        self.redraw_requested = True
 
     def _mouse_in_cloud(self, x):
         left, _right = self._panel_sizes()
@@ -801,6 +1113,7 @@ class SplitPointCloudViewer:
             self.zoom = max(0.25, self.zoom * 0.9)
         elif state == GLUT_DOWN and button == 4 and self._mouse_in_cloud(x):
             self.zoom = min(5.0, self.zoom * 1.1)
+        self.redraw_requested = True
 
     def _toggle_feature(self, name):
         if self.feature_callback is None:
@@ -827,6 +1140,7 @@ class SplitPointCloudViewer:
             up = np.asarray((0.0, 1.0, 0.0), dtype=np.float32)
             self.scene_center = self.scene_center - dx * scale * right + dy * scale * up
         self.last_mouse = (x, y)
+        self.redraw_requested = True
 
     def _window_closed(self):
         self.available = False

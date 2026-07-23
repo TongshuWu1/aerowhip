@@ -4,20 +4,33 @@ fps = 60
 depth_mode = "NEURAL"
 
 # These are the least restrictive ZED runtime thresholds. No application-side
-# depth, confidence, spatial, stride, or point-count filtering is performed.
+# depth, confidence, spatial, stride, or point-count filtering is applied to
+# tracking observations. The independent viewer may use its configured stride.
 confidence = 100
 texture_confidence = 100
 fill = true
 
 [viewer]
+enabled = true
+# "zed" retrieves the SDK XYZRGBA cloud; "depth" unprojects the depth frame
+# already used by tracking. Set enabled=false for a headless isolation run.
+point_cloud_source = "zed"
 rgb_width = 620
 cloud_width = 1180
 height = 900
-point_size = 1.0
-max_fps = 30
-# Full 921,600-point vertex reconstruction is diagnostic work. Capping it keeps
-# CPU memory bandwidth available to the algorithm while retaining a live view.
-point_cloud_fps = 5
+# A two-pixel point visually fills the 2x2 block represented by stride 2.
+point_size = 2.0
+# Redraw the window at the camera rate. New diagnostic frames remain
+# best-effort and never block the asynchronous tracking worker.
+max_fps = 60
+# Full-resolution XYZRGBA geometry is an independent diagnostic stream. RGB,
+# skeleton, PF curves, labels, and window redraw still update at tracking rate.
+# Reusing the GPU vertex buffer avoids charging tracking for a million-point
+# cloud conversion and upload on every frame.
+point_cloud_fps = 4
+# Viewer-only spatial sampling. A stride of 2 renders one pixel from each 2x2
+# image block (about 25% of the cloud). Tracking always uses full resolution.
+point_cloud_stride = 2
 
 [pidnet]
 checkpoint = "data/models/pidnet_two_cable_best.pt"
@@ -42,6 +55,13 @@ route_candidate_limit = 16
 route_search_state_limit = 4096
 route_edge_limit = 24
 route_length_margin_m = 0.18
+fragment_samples = 24
+fragment_component_min_area_px = 8
+endpoint_association_gate_m = 0.12
+# Diagnostic-only stage timing. This does not change observation mathematics.
+profile_stages = true
+# Set to 0 to disable periodic OBS_PROFILE console output.
+profile_console_period_s = 1.0
 
 [particle_filter]
 device = "cuda"
@@ -52,13 +72,21 @@ cable_lengths_m = [0.515, 0.515]
 dense_samples_per_segment = 4
 deformation_modes = 5
 initial_noise_m = 0.010
-process_noise_m = 0.0015
 global_noise_m = 0.018
 global_fraction = 0.10
-motion_noise_gain = 0.1
-maximum_process_noise_m = 0.015
-velocity_smoothing = 0.65
+# Constant-velocity state transition with smooth acceleration process noise.
+acceleration_noise_mps2 = 0.45
+motion_acceleration_gain = 1.50
+maximum_acceleration_noise_mps2 = 3.00
+velocity_damping_per_second = 1.25
+endpoint_velocity_smoothing = 0.50
+# Blend position-derived node motion into the velocity state after a complete
+# graph-route measurement. The maximum rejects route/detection jumps without
+# limiting normal hand motion.
+measurement_velocity_gain = 0.65
+maximum_node_velocity_mps = 2.50
 projection_iterations = 8
+velocity_projection_iterations = 2
 endpoint_tolerance_m = 0.003
 trace_sigma_m = 0.008
 huber_delta = 1.5
@@ -71,8 +99,18 @@ maximum_unsupported_length_m = 0.080
 unsupported_weight = 1.0
 maximum_kink_degrees = 145.0
 kink_weight = 0.20
+# A predicted point is occluded only when ZED sees a nearer surface by this margin.
+occlusion_depth_margin_m = 0.012
+visibility_depth_sigma_m = 0.012
+visibility_depth_tolerance_m = 0.020
+visibility_probability_threshold = 0.50
+image_likelihood_weight = 1.00
+depth_likelihood_weight = 0.35
+fragment_likelihood_weight = 1.00
 top_particle_count = 40
 random_seed = 7
+# Reuses CUDA events and the PF's existing synchronization; no extra GPU wait.
+profile_stages = true
 
 [features]
 endpoint_direction_proposal = true
@@ -84,6 +122,20 @@ fixed_length = true
 temporal_prediction = true
 motion_adaptive_noise = true
 global_particles = true
+# Correct ordinary and 10% route-centered particles independently from their
+# actual constrained parent-to-proposal displacement.
+measurement_velocity_update = true
+global_particle_velocity_update = true
 kink_limit = false
+partial_observation = true
+depth_occlusion = true
+fragment_score = true
+single_endpoint_updates = true
+prediction_without_measurement = true
+posterior_uncertainty = true
+# Fuses anchored FABRIK sweeps and every velocity projection into native CUDA.
+# The exact PyTorch CUDA Graph remains active for centroid-preserving unanchored prediction.
+fused_constraint_kernels = true
+cuda_graph_replay = true
 # The crossing channel is displayed but is deliberately excluded from phase 1.
 crossing = false

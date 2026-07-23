@@ -310,12 +310,20 @@ class PidNetSegmenter:
         return [np.ascontiguousarray(mask, dtype=np.uint8) for mask in masks]
 
     @torch_inference_mode()
-    def observation_channels(self, bgr, thresholds):
-        """Evaluate all observation heads once and transfer one compact result."""
-
+    def _thresholded_observation(
+        self,
+        bgr,
+        thresholds,
+        probability_channel,
+        keep_probability_on_device=False,
+    ):
+        """Run PIDNet once; transfer masks and optionally retain probability on-device."""
         thresholds = tuple(float(value) for value in thresholds)
         if len(thresholds) != OUTPUT_CHANNEL_COUNT:
             raise ValueError(f"Expected {OUTPUT_CHANNEL_COUNT} thresholds; got {len(thresholds)}.")
+        probability_channel = int(probability_channel)
+        if not 0 <= probability_channel < self.output_channels:
+            raise ValueError(f"Probability channel is out of range: {probability_channel}")
         logits = self._forward_logits(bgr)[0]
         threshold_logits = torch.tensor(
             [probability_to_logit_threshold(value) for value in thresholds],
@@ -323,11 +331,36 @@ class PidNetSegmenter:
             device=logits.device,
         ).view(-1, 1, 1)
         masks = (logits >= threshold_logits).to(torch.uint8).mul_(255)
-        crossing_probability = torch.sigmoid(logits[CROSSING_CHANNEL]).to(torch.float16)
-        masks_cpu, crossing_cpu = masks.cpu().numpy(), crossing_probability.cpu().numpy()
-        return (
-            tuple(np.ascontiguousarray(mask, dtype=np.uint8) for mask in masks_cpu),
-            np.ascontiguousarray(crossing_cpu, dtype=np.float16),
+        probability = torch.sigmoid(logits[probability_channel]).float().contiguous()
+        masks_cpu = masks.cpu().numpy()
+        mask_arrays = tuple(
+            np.ascontiguousarray(mask, dtype=np.uint8) for mask in masks_cpu
+        )
+        if keep_probability_on_device:
+            return mask_arrays, probability
+        return mask_arrays, np.ascontiguousarray(
+            probability.to(torch.float16).cpu().numpy(),
+            dtype=np.float16,
+        )
+
+    def observation_channels(self, bgr, thresholds):
+        """Compatibility API used by annotation: masks plus crossing probability."""
+
+        return self._thresholded_observation(
+            bgr,
+            thresholds,
+            CROSSING_CHANNEL,
+            keep_probability_on_device=False,
+        )
+
+    def tracking_channels(self, bgr, thresholds):
+        """Tracking API: masks plus cable probability from the same forward pass."""
+
+        return self._thresholded_observation(
+            bgr,
+            thresholds,
+            CABLE_CHANNEL,
+            keep_probability_on_device=True,
         )
 
 

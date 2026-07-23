@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from collections import deque
 from dataclasses import dataclass
 import heapq
 import itertools
@@ -10,6 +9,22 @@ import time
 
 import cv2
 import numpy as np
+import torch
+import torch.nn.functional as torch_functional
+
+
+@dataclass(frozen=True)
+class CameraModel:
+    """Calibrated pinhole projection for the ZED left camera."""
+
+    fx: float
+    fy: float
+    cx: float
+    cy: float
+    width: int
+    height: int
+    forward_sign: float = -1.0
+    image_y_sign: float = -1.0
 
 
 @dataclass(frozen=True)
@@ -33,13 +48,62 @@ class RouteHypothesis:
 
 
 @dataclass(frozen=True)
+class FragmentObservation:
+    """One visible, topologically unambiguous skeleton edge."""
+
+    component_label: int
+    edge_id: int
+    xyz: np.ndarray
+    pixels_xy: np.ndarray
+    length_m: float
+
+
+@dataclass(frozen=True)
+class ObservationProfile:
+    """Stage timings and input complexity for one observation build."""
+
+    total_ms: float
+    masks_ms: float
+    geometry_ms: float
+    maps_cuda_ms: float
+    unprojection_cuda_ms: float
+    readback_wall_ms: float
+    connected_components_ms: float
+    endpoints_ms: float
+    component_preparation_ms: float
+    skeleton_ms: float
+    graph_ms: float
+    global_fragments_ms: float
+    tangents_ms: float
+    cable_fragments_ms: float
+    route_search_ms: float
+    route_assembly_ms: float
+    finalization_ms: float
+    unaccounted_ms: float
+    cable_pixels: int
+    relevant_pixels: int
+    valid_3d_points: int
+    component_count: int
+    processed_component_count: int
+    endpoint_count: int
+    skeleton_pixels: int
+    graph_nodes: int
+    graph_edges: int
+    branch_pixels: int
+    route_candidates: int
+    fragments: int
+
+
+@dataclass(frozen=True)
 class CableObservation:
     valid: bool
     reason: str
     endpoints_xyz: np.ndarray
     endpoint_pixels_xy: np.ndarray
     endpoint_tangents: np.ndarray
+    endpoint_visible: np.ndarray
     routes: tuple[RouteHypothesis, ...]
+    fragments: tuple[FragmentObservation, ...]
     component_points: int
     graph_nodes: int
     graph_edges: int
@@ -48,9 +112,24 @@ class CableObservation:
 
 
 @dataclass(frozen=True)
+class SkeletonDebug:
+    """Viewer-rate image-space topology produced by the observation graph."""
+
+    pixels_xy: np.ndarray
+    node_pixels_xy: np.ndarray
+    branch_pixels_xy: np.ndarray
+
+
+@dataclass(frozen=True)
 class FrameObservation:
     cables: tuple[CableObservation, CableObservation]
     processing_ms: float
+    cable_probability: torch.Tensor | None = None
+    scene_depth: torch.Tensor | None = None
+    cable_pixel_count: int = 0
+    fragments: tuple[FragmentObservation, ...] = ()
+    profile: ObservationProfile | None = None
+    skeleton_debug: SkeletonDebug | None = None
 
 
 @dataclass(frozen=True)
@@ -66,6 +145,11 @@ class ObservationConfig:
     route_search_state_limit: int = 4096
     route_edge_limit: int = 24
     route_length_margin_m: float = 0.18
+    fragment_samples: int = 24
+    fragment_component_min_area_px: int = 8
+    endpoint_association_gate_m: float = 0.12
+    profile_stages: bool = True
+    profile_console_period_s: float = 1.0
 
     @classmethod
     def from_mapping(cls, values: dict | None) -> "ObservationConfig":
@@ -92,7 +176,55 @@ class ObservationConfig:
             route_length_margin_m=max(
                 0.01, float(values.get("route_length_margin_m", 0.18))
             ),
+            fragment_samples=max(4, int(values.get("fragment_samples", 24))),
+            fragment_component_min_area_px=max(
+                2, int(values.get("fragment_component_min_area_px", 8))
+            ),
+            endpoint_association_gate_m=max(
+                0.01, float(values.get("endpoint_association_gate_m", 0.12))
+            ),
+            profile_stages=bool(values.get("profile_stages", True)),
+            profile_console_period_s=max(
+                0.0, float(values.get("profile_console_period_s", 1.0))
+            ),
         )
+
+
+@dataclass(frozen=True)
+class _SegmentedGeometry:
+    """Compact CPU view of XYZ values unprojected together on the GPU."""
+
+    xyz: np.ndarray
+    index_image: np.ndarray
+    valid: np.ndarray
+
+    def points_at(self, pixel_y: np.ndarray, pixel_x: np.ndarray) -> np.ndarray:
+        indices = np.asarray(self.index_image[pixel_y, pixel_x], dtype=np.int32)
+        flat_indices = indices.reshape(-1)
+        points = np.full((flat_indices.size, 3), np.nan, dtype=np.float32)
+        selected = flat_indices >= 0
+        if np.any(selected):
+            points[selected] = self.xyz[flat_indices[selected]]
+        return np.ascontiguousarray(points.reshape(indices.shape + (3,)))
+
+
+@dataclass(frozen=True)
+class _GeometryProfile:
+    wall_ms: float
+    maps_cuda_ms: float
+    unprojection_cuda_ms: float
+    readback_wall_ms: float
+    relevant_pixels: int
+    valid_3d_points: int
+
+
+@dataclass(frozen=True)
+class _CableAssemblyProfile:
+    tangents_ms: float
+    fragments_ms: float
+    route_search_ms: float
+    route_assembly_ms: float
+    finalization_ms: float
 
 
 @dataclass(frozen=True)
@@ -111,16 +243,20 @@ class _SkeletonGraph:
     endpoint_nodes: tuple[int, ...]
     node_count: int
     branch_pixels: int
+    node_pixels_xy: np.ndarray
+    branch_pixels_xy: np.ndarray
 
 
 def _empty_cable(reason: str) -> CableObservation:
     return CableObservation(
         valid=False,
         reason=str(reason),
-        endpoints_xyz=np.empty((0, 3), dtype=np.float32),
-        endpoint_pixels_xy=np.empty((0, 2), dtype=np.float32),
-        endpoint_tangents=np.empty((0, 3), dtype=np.float32),
+        endpoints_xyz=np.full((2, 3), np.nan, dtype=np.float32),
+        endpoint_pixels_xy=np.full((2, 2), np.nan, dtype=np.float32),
+        endpoint_tangents=np.zeros((2, 3), dtype=np.float32),
+        endpoint_visible=np.zeros(2, dtype=bool),
         routes=(),
+        fragments=(),
         component_points=0,
         graph_nodes=0,
         graph_edges=0,
@@ -134,10 +270,6 @@ def _mask_bool(mask: np.ndarray, shape: tuple[int, int]) -> np.ndarray:
     if array.shape != shape:
         array = cv2.resize(array, (shape[1], shape[0]), interpolation=cv2.INTER_NEAREST)
     return np.ascontiguousarray(array > 0)
-
-
-def _finite_xyz(xyz: np.ndarray) -> np.ndarray:
-    return np.all(np.isfinite(xyz), axis=-1)
 
 
 def _normalize(vector: np.ndarray) -> np.ndarray:
@@ -194,9 +326,6 @@ def _thinning_lookup_tables() -> tuple[np.ndarray, np.ndarray]:
 
 
 _THINNING_LUTS = _thinning_lookup_tables()
-_NEIGHBOR_CODE_KERNEL = np.asarray(
-    ((128, 1, 2), (64, 0, 4), (32, 16, 8)), dtype=np.uint16
-)
 _OFFSETS = (
     (-1, 0),
     (0, 1),
@@ -210,26 +339,54 @@ _OFFSETS = (
 
 
 def _morphological_skeleton(mask: np.ndarray) -> np.ndarray:
-    """Zhang-Suen thinning using vectorized OpenCV neighborhood codes."""
+    """Exact Zhang-Suen thinning evaluated only at foreground pixels."""
 
-    image = np.asarray(mask, dtype=np.uint8).copy()
+    source = np.asarray(mask, dtype=np.uint8)
+    if source.ndim != 2:
+        raise ValueError(f"Skeleton mask must be two-dimensional, got {source.shape}")
+    if not np.any(source):
+        return np.zeros_like(source, dtype=bool)
+
+    # Padding provides the same zero boundary condition as the former full-crop
+    # OpenCV convolution. Zhang-Suen only removes pixels, so the active set can
+    # be compacted after every sub-iteration instead of rescanning empty crop
+    # pixels. The LUT and simultaneous deletion rule are unchanged.
+    image = np.pad(source > 0, 1, mode="constant").astype(np.uint8, copy=False)
+    flat = image.reshape(-1)
+    stride = image.shape[1]
+    active = np.flatnonzero(flat)
+    neighbor_offsets = np.asarray(
+        (
+            -stride,
+            -stride + 1,
+            1,
+            stride + 1,
+            stride,
+            stride - 1,
+            -1,
+            -stride - 1,
+        ),
+        dtype=np.int64,
+    )
+    neighbor_weights = np.asarray((1, 2, 4, 8, 16, 32, 64, 128), dtype=np.uint16)
     while True:
         removed = 0
         for table in _THINNING_LUTS:
-            codes = cv2.filter2D(
-                image,
-                cv2.CV_16U,
-                _NEIGHBOR_CODE_KERNEL,
-                borderType=cv2.BORDER_CONSTANT,
+            codes = np.sum(
+                flat[active[:, None] + neighbor_offsets[None, :]]
+                * neighbor_weights[None, :],
+                axis=1,
+                dtype=np.uint16,
             )
-            delete = (image > 0) & (table[codes] > 0)
+            delete = table[codes] > 0
             count = int(np.count_nonzero(delete))
             if count:
-                image[delete] = 0
+                flat[active[delete]] = 0
+                active = active[~delete]
                 removed += count
         if removed == 0:
             break
-    return image > 0
+    return image[1:-1, 1:-1] > 0
 
 
 def _nearest_pixel(mask: np.ndarray, pixel_xy: np.ndarray) -> tuple[int, int] | None:
@@ -264,15 +421,26 @@ def _nearest_component_label(
     return int(window[ys[index], xs[index]])
 
 
-def _lift_route(
+def _lift_route_samples(
     route_yx: np.ndarray,
-    cloud_xyz: np.ndarray,
-    finite_cloud: np.ndarray,
+    geometry: _SegmentedGeometry,
     component: np.ndarray,
     radius: int,
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Use local medians of actual segmented XYZ around skeleton samples."""
+    """Lift pixels with the exact median of valid same-component neighbors."""
 
+    route_yx = np.asarray(route_yx, dtype=np.int32)
+    sample_count = len(route_yx)
+    if sample_count == 0:
+        return (
+            np.empty((0, 3), dtype=np.float32),
+            np.empty(0, dtype=bool),
+        )
+    if len(geometry.xyz) == 0:
+        return (
+            np.full((sample_count, 3), np.nan, dtype=np.float32),
+            np.zeros(sample_count, dtype=bool),
+        )
     height, width = component.shape
     offsets = np.arange(-radius, radius + 1, dtype=np.int32)
     offset_y, offset_x = np.meshgrid(offsets, offsets, indexing="ij")
@@ -283,23 +451,25 @@ def _lift_route(
     )
     safe_y = np.clip(sample_y, 0, height - 1)
     safe_x = np.clip(sample_x, 0, width - 1)
-    local_xyz = cloud_xyz[safe_y, safe_x].astype(np.float32, copy=True)
-    selected = in_bounds & component[safe_y, safe_x] & finite_cloud[safe_y, safe_x]
-    local_xyz[~selected] = np.nan
-    with np.errstate(all="ignore"):
-        points = np.nanmedian(local_xyz, axis=1)
-    valid = np.all(np.isfinite(points), axis=1)
-    points = points[valid]
-    pixels = route_yx[valid][:, ::-1]
-    if len(points) < 2:
-        return (
-            np.empty((0, 3), dtype=np.float32),
-            np.empty((0, 2), dtype=np.float32),
-        )
-    return (
-        np.ascontiguousarray(points, dtype=np.float32),
-        np.ascontiguousarray(pixels, dtype=np.float32),
+    selected = in_bounds & component[safe_y, safe_x] & geometry.valid[safe_y, safe_x]
+    point_indices = geometry.index_image[safe_y, safe_x]
+    local_xyz = geometry.xyz[np.maximum(point_indices, 0)]
+
+    # All three coordinates share one validity mask. Sorting finite values
+    # before +inf reproduces np.nanmedian exactly while avoiding its masked
+    # array construction and per-axis NaN bookkeeping for this small window.
+    ordered = np.sort(
+        np.where(selected[..., None], local_xyz, np.float32(np.inf)),
+        axis=1,
     )
+    valid_counts = np.sum(selected, axis=1)
+    rows = np.arange(sample_count)
+    lower = ordered[rows, np.maximum(0, (valid_counts - 1) // 2)]
+    upper = ordered[rows, valid_counts // 2]
+    points = (lower + upper) * np.float32(0.5)
+    valid = valid_counts > 0
+    points[~valid] = np.nan
+    return np.ascontiguousarray(points, dtype=np.float32), valid
 
 
 def _principal_tangent(points: np.ndarray, endpoint: np.ndarray) -> np.ndarray:
@@ -319,8 +489,7 @@ def _principal_tangent(points: np.ndarray, endpoint: np.ndarray) -> np.ndarray:
 def _measured_endpoint_tangent(
     endpoint: EndpointMeasurement,
     component: np.ndarray,
-    cloud_xyz: np.ndarray,
-    finite_cloud: np.ndarray,
+    geometry: _SegmentedGeometry,
     radius_px: int,
     minimum_points: int,
 ) -> np.ndarray:
@@ -333,10 +502,11 @@ def _measured_endpoint_tangent(
     y0, y1 = max(0, y - radius_px), min(height, y + radius_px + 1)
     yy, xx = np.ogrid[y0:y1, x0:x1]
     circle = (xx - x) ** 2 + (yy - y) ** 2 <= radius_px * radius_px
-    selected = component[y0:y1, x0:x1] & finite_cloud[y0:y1, x0:x1] & circle
-    points = cloud_xyz[y0:y1, x0:x1][selected]
-    if len(points) < minimum_points:
+    selected = component[y0:y1, x0:x1] & geometry.valid[y0:y1, x0:x1] & circle
+    local_y, local_x = np.nonzero(selected)
+    if len(local_x) < minimum_points:
         return np.zeros(3, dtype=np.float32)
+    points = geometry.points_at(local_y + y0, local_x + x0)
     return _principal_tangent(points, endpoint.xyz)
 
 
@@ -363,62 +533,96 @@ def _turn_rms_degrees(route_xyz: np.ndarray) -> float:
     return float(np.degrees(np.sqrt(np.mean(angles * angles))))
 
 
-def _pixel_adjacency(skeleton: np.ndarray) -> tuple[np.ndarray, list[list[int]]]:
-    """Build a corner-pruned eight-neighbor pixel graph."""
+def _pixel_adjacency(
+    skeleton: np.ndarray,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Build the corner-pruned pixel graph in compact array form."""
 
     coordinates = np.column_stack(np.nonzero(skeleton)).astype(np.int32)
-    index_by_key = {
-        int(y) * skeleton.shape[1] + int(x): index
-        for index, (y, x) in enumerate(coordinates)
-    }
-    adjacency: list[list[int]] = [[] for _ in range(len(coordinates))]
     height, width = skeleton.shape
-    for index, (y_value, x_value) in enumerate(coordinates):
-        y, x = int(y_value), int(x_value)
-        for dy, dx in _OFFSETS:
-            neighbor_y, neighbor_x = y + dy, x + dx
-            if not (0 <= neighbor_y < height and 0 <= neighbor_x < width):
-                continue
-            neighbor = index_by_key.get(neighbor_y * width + neighbor_x)
-            if neighbor is None:
-                continue
-            if dy != 0 and dx != 0:
-                if neighbor_y * width + x in index_by_key:
-                    continue
-                if y * width + neighbor_x in index_by_key:
-                    continue
-            adjacency[index].append(neighbor)
-    return coordinates, adjacency
+    index_image = np.full((height, width), -1, dtype=np.int32)
+    if len(coordinates) == 0:
+        return coordinates, np.empty((0, len(_OFFSETS)), dtype=np.int32), index_image
+    index_image[coordinates[:, 0], coordinates[:, 1]] = np.arange(
+        len(coordinates), dtype=np.int32
+    )
+    adjacency = np.full((len(coordinates), len(_OFFSETS)), -1, dtype=np.int32)
+    y = coordinates[:, 0]
+    x = coordinates[:, 1]
+    for slot, (dy, dx) in enumerate(_OFFSETS):
+        neighbor_y = y + dy
+        neighbor_x = x + dx
+        in_bounds = (
+            (neighbor_y >= 0)
+            & (neighbor_y < height)
+            & (neighbor_x >= 0)
+            & (neighbor_x < width)
+        )
+        rows = np.flatnonzero(in_bounds)
+        if len(rows) == 0:
+            continue
+        neighbor = index_image[neighbor_y[rows], neighbor_x[rows]]
+        present = neighbor >= 0
+        if dy != 0 and dx != 0:
+            # Match the original corner-pruning rule: a diagonal edge is
+            # omitted when either intervening axial skeleton pixel exists.
+            blocked = (
+                (index_image[neighbor_y[rows], x[rows]] >= 0)
+                | (index_image[y[rows], neighbor_x[rows]] >= 0)
+            )
+            present &= ~blocked
+        selected = rows[present]
+        adjacency[selected, slot] = neighbor[present]
+    return coordinates, adjacency, index_image
 
 
-def _order_chain(
-    component_indices: set[int],
-    adjacency: list[list[int]],
+def _order_nonbranching_chain(
+    component_indices: np.ndarray,
+    adjacency: np.ndarray,
     start_index: int,
     end_index: int,
 ) -> list[int]:
-    """Order pixels inside one already-compressed, non-branching graph edge."""
+    """Walk one compressed edge, choosing the shortest direction for a loop."""
 
-    queue = deque((start_index,))
-    previous = {start_index: -1}
-    while queue:
-        current = queue.popleft()
-        if current == end_index:
-            break
-        for neighbor in adjacency[current]:
-            if neighbor not in component_indices or neighbor in previous:
-                continue
-            previous[neighbor] = current
-            queue.append(neighbor)
-    if end_index not in previous:
+    if start_index == end_index:
+        return [start_index]
+    membership = np.zeros(len(adjacency), dtype=bool)
+    membership[component_indices] = True
+    if not membership[start_index] or not membership[end_index]:
         return []
-    path = []
-    current = end_index
-    while current >= 0:
-        path.append(current)
-        current = previous[current]
-    path.reverse()
-    return path
+
+    component_adjacency = adjacency[component_indices]
+    neighbor_in_component = (component_adjacency >= 0) & membership[
+        np.maximum(component_adjacency, 0)
+    ]
+    if np.any(np.sum(neighbor_in_component, axis=1) > 2):
+        raise ValueError("compressed graph edge contains an internal branch")
+
+    paths = []
+    for first_value in adjacency[start_index]:
+        first = int(first_value)
+        if first < 0 or not membership[first]:
+            continue
+        path = [start_index, first]
+        previous, current = start_index, first
+        while current != end_index and len(path) <= len(component_indices) + 1:
+            next_index = -1
+            for candidate_value in adjacency[current]:
+                candidate = int(candidate_value)
+                if (
+                    candidate >= 0
+                    and candidate != previous
+                    and membership[candidate]
+                ):
+                    next_index = candidate
+                    break
+            if next_index < 0 or next_index == start_index:
+                break
+            path.append(next_index)
+            previous, current = current, next_index
+        if current == end_index:
+            paths.append(path)
+    return min(paths, key=len) if paths else []
 
 
 def _build_skeleton_graph(
@@ -426,31 +630,36 @@ def _build_skeleton_graph(
     anchors_yx: tuple[tuple[int, int], ...],
     crop_origin_yx: tuple[int, int],
     component: np.ndarray,
-    cloud_xyz: np.ndarray,
-    finite_cloud: np.ndarray,
+    geometry: _SegmentedGeometry,
     depth_radius: int,
     node_dilation: int,
 ) -> tuple[_SkeletonGraph | None, str]:
-    coordinates, adjacency = _pixel_adjacency(skeleton)
+    coordinates, adjacency, index_image = _pixel_adjacency(skeleton)
     if len(coordinates) < 2:
         return None, "skeleton contains fewer than two pixels"
-    coordinate_to_index = {
-        (int(y), int(x)): index for index, (y, x) in enumerate(coordinates)
-    }
     anchor_indices = []
     for anchor in anchors_yx:
-        index = coordinate_to_index.get((int(anchor[0]), int(anchor[1])))
-        if index is None:
+        y, x = int(anchor[0]), int(anchor[1])
+        if not (0 <= y < skeleton.shape[0] and 0 <= x < skeleton.shape[1]):
+            return None, "endpoint anchor is absent from skeleton"
+        index = int(index_image[y, x])
+        if index < 0:
             return None, "endpoint anchor is absent from skeleton"
         anchor_indices.append(index)
 
     node_seed = np.zeros_like(skeleton, dtype=np.uint8)
-    for index, neighbors in enumerate(adjacency):
-        if len(neighbors) != 2:
-            y, x = coordinates[index]
-            node_seed[y, x] = 1
+    degree = np.count_nonzero(adjacency >= 0, axis=1)
+    node_indices = np.flatnonzero(degree != 2)
+    node_seed[
+        coordinates[node_indices, 0], coordinates[node_indices, 1]
+    ] = 1
     for index in anchor_indices:
         y, x = coordinates[index]
+        node_seed[y, x] = 1
+    if not np.any(node_seed):
+        # A closed skeleton loop has degree two everywhere. One explicit graph
+        # node turns it into a self-loop edge without inventing a break or path.
+        y, x = coordinates[0]
         node_seed[y, x] = 1
     if node_dilation:
         node_region = cv2.dilate(
@@ -467,15 +676,18 @@ def _build_skeleton_graph(
     if node_count <= 1:
         return None, "skeleton graph has no nodes"
 
+    node_label_by_index = node_labels[coordinates[:, 0], coordinates[:, 1]]
     node_representatives: dict[int, int] = {}
     for node_label in range(1, node_count):
-        node_pixels = np.column_stack(np.nonzero(node_labels == node_label))
+        member_indices = np.flatnonzero(node_label_by_index == node_label)
+        node_pixels = coordinates[member_indices]
         center = np.mean(node_pixels, axis=0)
         distance = np.sum((node_pixels - center[None, :]) ** 2, axis=1)
-        representative_yx = tuple(node_pixels[int(np.argmin(distance))])
-        node_representatives[node_label] = coordinate_to_index[representative_yx]
+        node_representatives[node_label] = int(
+            member_indices[int(np.argmin(distance))]
+        )
 
-    endpoint_nodes = tuple(int(node_labels[coordinates[index][0], coordinates[index][1]]) for index in anchor_indices)
+    endpoint_nodes = tuple(int(node_label_by_index[index]) for index in anchor_indices)
     if any(node <= 0 for node in endpoint_nodes):
         return None, "endpoint anchor was not assigned to a graph node"
 
@@ -483,22 +695,38 @@ def _build_skeleton_graph(
     chain_count, chain_labels = cv2.connectedComponents(
         chain_mask.astype(np.uint8), connectivity=8
     )
+    chain_label_by_index = chain_labels[coordinates[:, 0], coordinates[:, 1]]
     crop_y, crop_x = crop_origin_yx
+    global_coordinates_yx = coordinates + np.asarray(
+        (crop_y, crop_x), dtype=np.int32
+    )
+    # Every edge is assembled from this same skeleton pixel set. Lifting once
+    # preserves the exact local-median observation while avoiding one full
+    # neighborhood construction and nanmedian call per graph edge.
+    lifted_xyz, lifted_valid = _lift_route_samples(
+        global_coordinates_yx,
+        geometry,
+        component,
+        depth_radius,
+    )
     edges: list[_GraphEdge] = []
     for chain_label in range(1, chain_count):
-        member_yx = np.column_stack(np.nonzero(chain_labels == chain_label))
-        if len(member_yx) == 0:
+        member_indices = np.flatnonzero(chain_label_by_index == chain_label)
+        if len(member_indices) == 0:
             continue
-        member_indices = {
-            coordinate_to_index[(int(y), int(x))] for y, x in member_yx
+        neighbor_indices = adjacency[member_indices].reshape(-1)
+        source_indices = np.repeat(member_indices, adjacency.shape[1])
+        valid_neighbors = neighbor_indices >= 0
+        neighbor_indices = neighbor_indices[valid_neighbors]
+        source_indices = source_indices[valid_neighbors]
+        neighbor_node_labels = node_label_by_index[neighbor_indices]
+        touches_node = neighbor_node_labels > 0
+        neighbor_node_labels = neighbor_node_labels[touches_node]
+        source_indices = source_indices[touches_node]
+        contacts = {
+            int(node_label): np.unique(source_indices[neighbor_node_labels == node_label])
+            for node_label in np.unique(neighbor_node_labels)
         }
-        contacts: dict[int, set[int]] = {}
-        for member_index in member_indices:
-            for neighbor in adjacency[member_index]:
-                y, x = coordinates[neighbor]
-                node_label = int(node_labels[y, x])
-                if node_label > 0:
-                    contacts.setdefault(node_label, set()).add(member_index)
         contact_nodes = sorted(contacts)
         if len(contact_nodes) > 2 or len(contact_nodes) == 0:
             continue
@@ -508,7 +736,7 @@ def _build_skeleton_graph(
             end_candidates = contacts[node_b]
         else:
             node_a = node_b = contact_nodes[0]
-            boundary = list(contacts[node_a])
+            boundary = contacts[node_a]
             if len(boundary) < 2:
                 continue
             boundary_yx = coordinates[boundary].astype(np.float64)
@@ -523,18 +751,18 @@ def _build_skeleton_graph(
         representative_a = coordinates[node_representatives[node_a]]
         representative_b = coordinates[node_representatives[node_b]]
         start_index = min(
-            start_candidates,
+            (int(index) for index in start_candidates),
             key=lambda index: float(
                 np.sum((coordinates[index] - representative_a) ** 2)
             ),
         )
         end_index = min(
-            end_candidates,
+            (int(index) for index in end_candidates),
             key=lambda index: float(
                 np.sum((coordinates[index] - representative_b) ** 2)
             ),
         )
-        ordered_indices = _order_chain(
+        ordered_indices = _order_nonbranching_chain(
             member_indices,
             adjacency,
             start_index,
@@ -542,20 +770,19 @@ def _build_skeleton_graph(
         )
         if not ordered_indices:
             continue
-        route_local_yx = np.vstack(
+        route_indices = np.concatenate(
             (
-                representative_a,
-                coordinates[ordered_indices],
-                representative_b,
+                np.asarray((node_representatives[node_a],), dtype=np.int32),
+                np.asarray(ordered_indices, dtype=np.int32),
+                np.asarray((node_representatives[node_b],), dtype=np.int32),
             )
-        ).astype(np.int32)
-        route_yx = route_local_yx + np.asarray((crop_y, crop_x), dtype=np.int32)
-        edge_xyz, edge_pixels = _lift_route(
-            route_yx,
-            cloud_xyz,
-            finite_cloud,
-            component,
-            depth_radius,
+        )
+        valid_route_indices = route_indices[lifted_valid[route_indices]]
+        edge_xyz = np.ascontiguousarray(
+            lifted_xyz[valid_route_indices], dtype=np.float32
+        )
+        edge_pixels = np.ascontiguousarray(
+            global_coordinates_yx[valid_route_indices, ::-1], dtype=np.float32
         )
         if len(edge_xyz) < 2:
             continue
@@ -579,7 +806,23 @@ def _build_skeleton_graph(
         edges=tuple(edges),
         endpoint_nodes=tuple(node - 1 for node in endpoint_nodes),
         node_count=node_count - 1,
-        branch_pixels=int(sum(len(neighbors) > 2 for neighbors in adjacency)),
+        branch_pixels=int(np.count_nonzero(degree > 2)),
+        node_pixels_xy=np.ascontiguousarray(
+            global_coordinates_yx[
+                np.asarray(
+                    [
+                        node_representatives[node_label]
+                        for node_label in range(1, node_count)
+                    ],
+                    dtype=np.int32,
+                )
+            ][:, ::-1],
+            dtype=np.float32,
+        ),
+        branch_pixels_xy=np.ascontiguousarray(
+            global_coordinates_yx[degree > 2][:, ::-1],
+            dtype=np.float32,
+        ),
     )
     return graph, ""
 
@@ -701,13 +944,70 @@ def _assemble_route(
     )
 
 
+def _fragment_from_edge(
+    component_label: int,
+    edge: _GraphEdge,
+    endpoint_node: int,
+    endpoint: EndpointMeasurement,
+    sample_count: int,
+) -> FragmentObservation | None:
+    if edge.node_a == endpoint_node:
+        xyz, pixels = edge.xyz, edge.pixels_xy
+    elif edge.node_b == endpoint_node:
+        xyz, pixels = edge.xyz[::-1], edge.pixels_xy[::-1]
+    else:
+        return None
+    raw_xyz = np.ascontiguousarray(xyz, dtype=np.float32).copy()
+    raw_pixels = np.ascontiguousarray(pixels, dtype=np.float32)
+    if len(raw_xyz) < 2:
+        return None
+    raw_xyz[0] = endpoint.xyz
+    sampled_xyz = _resample_polyline(raw_xyz, sample_count)
+    sampled_pixels = _resample_polyline(raw_pixels, sample_count)
+    if len(sampled_xyz) != sample_count:
+        return None
+    length_m = float(np.sum(np.linalg.norm(np.diff(sampled_xyz, axis=0), axis=1)))
+    if not np.isfinite(length_m) or length_m <= 1e-6:
+        return None
+    return FragmentObservation(
+        component_label=int(component_label),
+        edge_id=int(edge.edge_id),
+        xyz=np.ascontiguousarray(sampled_xyz, dtype=np.float32),
+        pixels_xy=np.ascontiguousarray(sampled_pixels, dtype=np.float32),
+        length_m=length_m,
+    )
+
+
+def _generic_fragment_from_edge(
+    component_label: int,
+    edge: _GraphEdge,
+    sample_count: int,
+) -> FragmentObservation | None:
+    sampled_xyz = _resample_polyline(edge.xyz, sample_count)
+    sampled_pixels = _resample_polyline(edge.pixels_xy, sample_count)
+    if len(sampled_xyz) != sample_count:
+        return None
+    length_m = float(np.sum(np.linalg.norm(np.diff(sampled_xyz, axis=0), axis=1)))
+    if not np.isfinite(length_m) or length_m <= 1e-6:
+        return None
+    return FragmentObservation(
+        component_label=int(component_label),
+        edge_id=int(edge.edge_id),
+        xyz=np.ascontiguousarray(sampled_xyz, dtype=np.float32),
+        pixels_xy=np.ascontiguousarray(sampled_pixels, dtype=np.float32),
+        length_m=length_m,
+    )
+
+
 class ObservationBuilder:
-    """Preserve all useful graph branches for two endpoint-identified cables."""
+    """Build complete routes and honest endpoint-connected partial fragments."""
 
     def __init__(
         self,
         config: ObservationConfig,
         cable_lengths_m: tuple[float, float] = (0.515, 0.515),
+        camera_model: CameraModel | None = None,
+        device: str | torch.device | None = None,
     ):
         self.config = config
         self.cable_lengths_m = tuple(float(value) for value in cable_lengths_m)
@@ -715,87 +1015,299 @@ class ObservationBuilder:
             not np.isfinite(value) or value <= 0.0 for value in self.cable_lengths_m
         ):
             raise ValueError("ObservationBuilder requires two positive cable lengths")
-        self.previous_endpoints: list[np.ndarray | None] = [None, None]
+        if camera_model is None:
+            raise ValueError("ObservationBuilder requires calibrated camera intrinsics")
+        if (
+            not np.isfinite(camera_model.fx)
+            or not np.isfinite(camera_model.fy)
+            or camera_model.fx <= 0.0
+            or camera_model.fy <= 0.0
+            or camera_model.width <= 0
+            or camera_model.height <= 0
+            or camera_model.forward_sign == 0.0
+            or camera_model.image_y_sign == 0.0
+        ):
+            raise ValueError("ObservationBuilder received invalid camera intrinsics")
+        if device is None:
+            raise ValueError("ObservationBuilder requires an explicit compute device")
+        self.device = torch.device(device)
+        if self.device.type == "cuda" and not torch.cuda.is_available():
+            raise RuntimeError("CUDA observation processing was requested but unavailable")
+        if self.device.type == "cuda" and self.device.index is None:
+            self.device = torch.device("cuda", torch.cuda.current_device())
+        self.camera_model = camera_model
+        self.depth_buffer: torch.Tensor | None = None
+        self.previous_endpoints = np.full((2, 2, 3), np.nan, dtype=np.float32)
 
-    def build(self, masks: tuple[np.ndarray, ...], cloud: np.ndarray) -> FrameObservation:
+    def _prepare_resident_maps_and_geometry(
+        self,
+        depth: np.ndarray,
+        cable_probability: torch.Tensor,
+        relevant_pixels: np.ndarray,
+    ) -> tuple[
+        torch.Tensor,
+        torch.Tensor,
+        _SegmentedGeometry,
+        _GeometryProfile,
+    ]:
+        """Upload depth once and unproject all segmented pixels in one GPU batch."""
+
+        started = time.perf_counter()
+        shape = depth.shape
+        pixel_y, pixel_x = np.nonzero(relevant_pixels)
+        index_image = np.full(shape, -1, dtype=np.int32)
+        valid_image = np.zeros(shape, dtype=bool)
+        cuda_events = None
+        if self.config.profile_stages and self.device.type == "cuda":
+            cuda_events = tuple(
+                torch.cuda.Event(enable_timing=True) for _ in range(3)
+            )
+            cuda_events[0].record()
+        if self.depth_buffer is None or tuple(self.depth_buffer.shape) != shape:
+            self.depth_buffer = torch.empty(
+                shape,
+                device=self.device,
+                dtype=torch.float32,
+            )
+        depth_source = torch.from_numpy(np.ascontiguousarray(depth, dtype=np.float32))
+        self.depth_buffer.copy_(depth_source, non_blocking=False)
+        valid_depth = torch.isfinite(self.depth_buffer) & (self.depth_buffer > 0.0)
+        self.depth_buffer.masked_fill_(~valid_depth, 0.0)
+
+        if not isinstance(cable_probability, torch.Tensor):
+            raise TypeError("Cable probability must remain a torch.Tensor from PIDNet")
+        probability = cable_probability.detach()
+        if probability.device != self.device:
+            raise ValueError(
+                f"Cable probability is on {probability.device}, expected {self.device}"
+            )
+        if probability.ndim != 2:
+            raise ValueError(
+                f"Cable probability must have shape HxW; got {tuple(probability.shape)}"
+            )
+        if tuple(probability.shape) != shape:
+            probability = torch_functional.interpolate(
+                probability[None, None].float(),
+                size=shape,
+                mode="bilinear",
+                align_corners=False,
+            )[0, 0]
+        elif probability.dtype != torch.float32:
+            probability = probability.float()
+        probability = probability.contiguous()
+        if cuda_events is not None:
+            cuda_events[1].record()
+
+        if len(pixel_x) == 0:
+            maps_cuda_ms = unprojection_cuda_ms = 0.0
+            if cuda_events is not None:
+                cuda_events[2].record()
+                cuda_events[2].synchronize()
+                maps_cuda_ms = float(
+                    cuda_events[0].elapsed_time(cuda_events[1])
+                )
+                unprojection_cuda_ms = float(
+                    cuda_events[1].elapsed_time(cuda_events[2])
+                )
+            geometry = _SegmentedGeometry(
+                xyz=np.empty((0, 3), dtype=np.float32),
+                index_image=index_image,
+                valid=valid_image,
+            )
+            return (
+                probability,
+                self.depth_buffer,
+                geometry,
+                _GeometryProfile(
+                    wall_ms=float((time.perf_counter() - started) * 1000.0),
+                    maps_cuda_ms=maps_cuda_ms,
+                    unprojection_cuda_ms=unprojection_cuda_ms,
+                    readback_wall_ms=0.0,
+                    relevant_pixels=0,
+                    valid_3d_points=0,
+                ),
+            )
+
+        y_cuda = torch.as_tensor(pixel_y, device=self.device, dtype=torch.int64)
+        x_cuda = torch.as_tensor(pixel_x, device=self.device, dtype=torch.int64)
+        selected_depth = self.depth_buffer[y_cuda, x_cuda]
+        selected_valid = selected_depth > 0.0
+        point_x = (
+            (x_cuda.to(torch.float32) - self.camera_model.cx)
+            * selected_depth
+            / self.camera_model.fx
+        )
+        point_y = (
+            (y_cuda.to(torch.float32) - self.camera_model.cy)
+            * selected_depth
+            / (self.camera_model.image_y_sign * self.camera_model.fy)
+        )
+        point_z = selected_depth / self.camera_model.forward_sign
+        xyz_cuda = torch.stack((point_x, point_y, point_z), dim=-1)
+        xyz_cuda = xyz_cuda.masked_fill(~selected_valid[:, None], float("nan"))
+        if cuda_events is not None:
+            cuda_events[2].record()
+        readback_started = time.perf_counter()
+        xyz = np.ascontiguousarray(xyz_cuda.cpu().numpy(), dtype=np.float32)
+        readback_wall_ms = float(
+            (time.perf_counter() - readback_started) * 1000.0
+        )
+        maps_cuda_ms = unprojection_cuda_ms = 0.0
+        if cuda_events is not None:
+            maps_cuda_ms = float(
+                cuda_events[0].elapsed_time(cuda_events[1])
+            )
+            unprojection_cuda_ms = float(
+                cuda_events[1].elapsed_time(cuda_events[2])
+            )
+
+        compact_indices = np.arange(len(pixel_x), dtype=np.int32)
+        index_image[pixel_y, pixel_x] = compact_indices
+        compact_valid = np.all(np.isfinite(xyz), axis=1)
+        valid_image[pixel_y[compact_valid], pixel_x[compact_valid]] = True
+        geometry = _SegmentedGeometry(
+            xyz=xyz,
+            index_image=index_image,
+            valid=valid_image,
+        )
+        return (
+            probability,
+            self.depth_buffer,
+            geometry,
+            _GeometryProfile(
+                wall_ms=float((time.perf_counter() - started) * 1000.0),
+                maps_cuda_ms=maps_cuda_ms,
+                unprojection_cuda_ms=unprojection_cuda_ms,
+                readback_wall_ms=readback_wall_ms,
+                relevant_pixels=int(len(pixel_x)),
+                valid_3d_points=int(np.count_nonzero(compact_valid)),
+            ),
+        )
+
+    def build(
+        self,
+        masks: tuple[np.ndarray, ...],
+        depth: np.ndarray,
+        cable_probability: torch.Tensor,
+        *,
+        include_skeleton_debug: bool = False,
+    ) -> FrameObservation:
         started = time.perf_counter()
         if len(masks) < 3:
             empty = _empty_cable("PIDNet did not return cable and two endpoint channels")
             return FrameObservation((empty, empty), (time.perf_counter() - started) * 1000.0)
-        cloud = np.asarray(cloud)
-        if cloud.ndim != 3 or cloud.shape[2] < 3:
-            empty = _empty_cable(f"invalid ZED cloud shape {cloud.shape}")
+        depth = np.asarray(depth, dtype=np.float32)
+        if depth.ndim == 3 and depth.shape[2] == 1:
+            depth = depth[:, :, 0]
+        if depth.ndim != 2:
+            empty = _empty_cable(f"invalid ZED depth shape {depth.shape}")
             return FrameObservation((empty, empty), (time.perf_counter() - started) * 1000.0)
-        shape = cloud.shape[:2]
-        cloud_xyz = np.asarray(cloud[:, :, :3], dtype=np.float32)
+        shape = depth.shape
+        if shape != (self.camera_model.height, self.camera_model.width):
+            empty = _empty_cable(
+                f"ZED depth shape {shape} does not match calibrated camera "
+                f"{self.camera_model.height}x{self.camera_model.width}"
+            )
+            return FrameObservation((empty, empty), (time.perf_counter() - started) * 1000.0)
+        stage_started = time.perf_counter()
         cable_mask = _mask_bool(masks[0], shape)
         endpoint_masks = (_mask_bool(masks[1], shape), _mask_bool(masks[2], shape))
         relevant_pixels = cable_mask | endpoint_masks[0] | endpoint_masks[1]
-        finite_cloud = np.zeros(shape, dtype=bool)
-        finite_cloud[relevant_pixels] = _finite_xyz(cloud_xyz[relevant_pixels])
-        _, cable_labels, _, _ = cv2.connectedComponentsWithStats(
+        masks_ms = float((time.perf_counter() - stage_started) * 1000.0)
+        probability, scene_depth, geometry, geometry_profile = (
+            self._prepare_resident_maps_and_geometry(
+                depth,
+                cable_probability,
+                relevant_pixels,
+            )
+        )
+
+        stage_started = time.perf_counter()
+        cable_count, cable_labels, cable_stats, _ = cv2.connectedComponentsWithStats(
             cable_mask.astype(np.uint8), connectivity=8
         )
-        prepared: list[tuple[list[EndpointMeasurement], int, str]] = []
+        connected_components_ms = float(
+            (time.perf_counter() - stage_started) * 1000.0
+        )
+        stage_started = time.perf_counter()
+        endpoint_slots: list[list[EndpointMeasurement | None]] = []
+        endpoint_component_labels = np.zeros((2, 2), dtype=np.int32)
         for cable_index, endpoint_mask in enumerate(endpoint_masks):
-            endpoints, reason = self._endpoint_measurements(
+            slots = self._endpoint_measurements(
                 cable_index,
                 endpoint_mask,
-                cloud_xyz,
-                finite_cloud,
+                geometry,
             )
-            component_label = 0
-            if not reason:
-                labels = [
-                    _nearest_component_label(
-                        cable_labels,
-                        endpoint.pixel_xy,
-                        self.config.endpoint_label_search_px,
+            endpoint_slots.append(slots)
+            for endpoint_index, endpoint in enumerate(slots):
+                if endpoint is not None:
+                    endpoint_component_labels[cable_index, endpoint_index] = (
+                        _nearest_component_label(
+                            cable_labels,
+                            endpoint.pixel_xy,
+                            self.config.endpoint_label_search_px,
+                        )
                     )
-                    for endpoint in endpoints
-                ]
-                if labels[0] == 0 or labels[1] == 0:
-                    reason = f"cable {cable_index + 1}: endpoint is not on cable mask"
-                elif labels[0] != labels[1]:
-                    reason = (
-                        f"cable {cable_index + 1}: endpoint pair lies in "
-                        "different components"
-                    )
-                else:
-                    component_label = labels[0]
-            prepared.append((endpoints, component_label, reason))
+        endpoints_ms = float((time.perf_counter() - stage_started) * 1000.0)
 
         graph_data: dict[
             int,
             tuple[np.ndarray, _SkeletonGraph | None, dict[tuple[int, int], int], str],
         ] = {}
-        component_labels = sorted(
-            {label for _endpoints, label, reason in prepared if not reason and label > 0}
-        )
-        for component_label in component_labels:
+        component_preparation_ms = 0.0
+        skeleton_ms = 0.0
+        graph_ms = 0.0
+        processed_component_count = 0
+        skeleton_pixels = 0
+        debug_skeleton_pixels: list[np.ndarray] = []
+        debug_node_pixels: list[np.ndarray] = []
+        debug_branch_pixels: list[np.ndarray] = []
+        for component_label in range(1, cable_count):
+            area = int(cable_stats[component_label, cv2.CC_STAT_AREA])
+            if area < self.config.fragment_component_min_area_px:
+                continue
+            component_started = time.perf_counter()
             component = cable_labels == component_label
             component_y, component_x = np.nonzero(component)
-            if len(component_x) == 0:
-                graph_data[component_label] = (
-                    component,
-                    None,
-                    {},
-                    "empty cable component",
+            if len(component_x) < 2:
+                component_preparation_ms += float(
+                    (time.perf_counter() - component_started) * 1000.0
                 )
                 continue
             x0, x1 = max(0, int(component_x.min()) - 2), min(
-                component.shape[1], int(component_x.max()) + 3
+                shape[1], int(component_x.max()) + 3
             )
             y0, y1 = max(0, int(component_y.min()) - 2), min(
-                component.shape[0], int(component_y.max()) + 3
+                shape[0], int(component_y.max()) + 3
             )
+            component_preparation_ms += float(
+                (time.perf_counter() - component_started) * 1000.0
+            )
+            processed_component_count += 1
+            skeleton_started = time.perf_counter()
             skeleton = _morphological_skeleton(component[y0:y1, x0:x1])
+            skeleton_ms += float(
+                (time.perf_counter() - skeleton_started) * 1000.0
+            )
+            skeleton_pixels += int(np.count_nonzero(skeleton))
+            if include_skeleton_debug:
+                skeleton_y, skeleton_x = np.nonzero(skeleton)
+                debug_skeleton_pixels.append(
+                    np.column_stack(
+                        (skeleton_x + x0, skeleton_y + y0)
+                    ).astype(np.float32)
+                )
+            graph_started = time.perf_counter()
             owners: list[tuple[int, int]] = []
             anchors: list[tuple[int, int]] = []
-            for cable_index, (endpoints, label, reason) in enumerate(prepared):
-                if reason or label != component_label:
-                    continue
-                for endpoint_index, endpoint in enumerate(endpoints):
+            for cable_index in range(2):
+                for endpoint_index, endpoint in enumerate(endpoint_slots[cable_index]):
+                    if (
+                        endpoint is None
+                        or endpoint_component_labels[cable_index, endpoint_index]
+                        != component_label
+                    ):
+                        continue
                     anchor = _nearest_pixel(
                         skeleton,
                         endpoint.pixel_xy - np.asarray((x0, y0), dtype=np.float32),
@@ -803,24 +1315,19 @@ class ObservationBuilder:
                     if anchor is not None:
                         owners.append((cable_index, endpoint_index))
                         anchors.append(anchor)
-            if len(anchors) < 2:
-                graph_data[component_label] = (
-                    component,
-                    None,
-                    {},
-                    "skeleton has insufficient endpoint anchors",
-                )
-                continue
             graph, graph_reason = _build_skeleton_graph(
                 skeleton,
                 tuple(anchors),
                 (y0, x0),
                 component,
-                cloud_xyz,
-                finite_cloud,
+                geometry,
                 self.config.route_depth_radius_px,
                 self.config.graph_node_dilation_px,
             )
+            graph_ms += float((time.perf_counter() - graph_started) * 1000.0)
+            if graph is not None and include_skeleton_debug:
+                debug_node_pixels.append(graph.node_pixels_xy)
+                debug_branch_pixels.append(graph.branch_pixels_xy)
             node_by_owner = (
                 {
                     owner: graph.endpoint_nodes[index]
@@ -836,175 +1343,427 @@ class ObservationBuilder:
                 graph_reason,
             )
 
-        observations = []
-        for cable_index, (endpoints, component_label, reason) in enumerate(prepared):
-            if reason:
-                observations.append(_empty_cable(reason))
-                continue
-            component, graph, node_by_owner, graph_reason = graph_data[component_label]
+        stage_started = time.perf_counter()
+        global_fragments = []
+        for component_label, (_component, graph, _owners, _reason) in graph_data.items():
             if graph is None:
-                observations.append(
-                    _empty_cable(f"cable {cable_index + 1}: {graph_reason}")
-                )
                 continue
-            endpoint_nodes = (
-                node_by_owner.get((cable_index, 0), -1),
-                node_by_owner.get((cable_index, 1), -1),
+            for edge in graph.edges:
+                fragment = _generic_fragment_from_edge(
+                    component_label,
+                    edge,
+                    self.config.fragment_samples,
+                )
+                if fragment is not None:
+                    global_fragments.append(fragment)
+        global_fragments_ms = float(
+            (time.perf_counter() - stage_started) * 1000.0
+        )
+
+        observations = []
+        assembly_profiles = []
+        for cable_index in range(2):
+            cable_observation, assembly_profile = self._assemble_cable(
+                cable_index,
+                endpoint_slots[cable_index],
+                endpoint_component_labels[cable_index],
+                graph_data,
+                geometry,
             )
-            if endpoint_nodes[0] < 0 or endpoint_nodes[1] < 0:
-                observations.append(
-                    _empty_cable(
-                        f"cable {cable_index + 1}: graph did not retain both endpoints"
+            observations.append(cable_observation)
+            assembly_profiles.append(assembly_profile)
+
+        finished = time.perf_counter()
+        processing_ms = float((finished - started) * 1000.0)
+        profile = None
+        if self.config.profile_stages:
+            tangents_ms = float(sum(item.tangents_ms for item in assembly_profiles))
+            cable_fragments_ms = float(
+                sum(item.fragments_ms for item in assembly_profiles)
+            )
+            route_search_ms = float(
+                sum(item.route_search_ms for item in assembly_profiles)
+            )
+            route_assembly_ms = float(
+                sum(item.route_assembly_ms for item in assembly_profiles)
+            )
+            finalization_ms = float(
+                sum(item.finalization_ms for item in assembly_profiles)
+            )
+            accounted_ms = float(
+                masks_ms
+                + geometry_profile.wall_ms
+                + connected_components_ms
+                + endpoints_ms
+                + component_preparation_ms
+                + skeleton_ms
+                + graph_ms
+                + global_fragments_ms
+                + tangents_ms
+                + cable_fragments_ms
+                + route_search_ms
+                + route_assembly_ms
+                + finalization_ms
+            )
+            valid_graphs = [
+                item[1] for item in graph_data.values() if item[1] is not None
+            ]
+            profile = ObservationProfile(
+                total_ms=processing_ms,
+                masks_ms=masks_ms,
+                geometry_ms=geometry_profile.wall_ms,
+                maps_cuda_ms=geometry_profile.maps_cuda_ms,
+                unprojection_cuda_ms=geometry_profile.unprojection_cuda_ms,
+                readback_wall_ms=geometry_profile.readback_wall_ms,
+                connected_components_ms=connected_components_ms,
+                endpoints_ms=endpoints_ms,
+                component_preparation_ms=component_preparation_ms,
+                skeleton_ms=skeleton_ms,
+                graph_ms=graph_ms,
+                global_fragments_ms=global_fragments_ms,
+                tangents_ms=tangents_ms,
+                cable_fragments_ms=cable_fragments_ms,
+                route_search_ms=route_search_ms,
+                route_assembly_ms=route_assembly_ms,
+                finalization_ms=finalization_ms,
+                unaccounted_ms=max(0.0, processing_ms - accounted_ms),
+                cable_pixels=int(np.count_nonzero(cable_mask)),
+                relevant_pixels=geometry_profile.relevant_pixels,
+                valid_3d_points=geometry_profile.valid_3d_points,
+                component_count=max(0, int(cable_count) - 1),
+                processed_component_count=processed_component_count,
+                endpoint_count=int(
+                    sum(
+                        endpoint is not None
+                        for slots in endpoint_slots
+                        for endpoint in slots
                     )
-                )
-                continue
-            observations.append(
-                self._finish_cable(
-                    cable_index,
-                    endpoints,
-                    component,
-                    graph,
-                    endpoint_nodes,
-                    cloud_xyz,
-                    finite_cloud,
-                )
+                ),
+                skeleton_pixels=skeleton_pixels,
+                graph_nodes=int(sum(graph.node_count for graph in valid_graphs)),
+                graph_edges=int(sum(len(graph.edges) for graph in valid_graphs)),
+                branch_pixels=int(sum(graph.branch_pixels for graph in valid_graphs)),
+                route_candidates=int(sum(len(item.routes) for item in observations)),
+                fragments=int(len(global_fragments)),
+            )
+        skeleton_debug = None
+        if include_skeleton_debug:
+            skeleton_debug = SkeletonDebug(
+                pixels_xy=np.ascontiguousarray(
+                    np.concatenate(debug_skeleton_pixels, axis=0)
+                    if debug_skeleton_pixels
+                    else np.empty((0, 2), dtype=np.float32),
+                    dtype=np.float32,
+                ),
+                node_pixels_xy=np.ascontiguousarray(
+                    np.concatenate(debug_node_pixels, axis=0)
+                    if debug_node_pixels
+                    else np.empty((0, 2), dtype=np.float32),
+                    dtype=np.float32,
+                ),
+                branch_pixels_xy=np.ascontiguousarray(
+                    np.concatenate(debug_branch_pixels, axis=0)
+                    if debug_branch_pixels
+                    else np.empty((0, 2), dtype=np.float32),
+                    dtype=np.float32,
+                ),
             )
         return FrameObservation(
             cables=(observations[0], observations[1]),
-            processing_ms=float((time.perf_counter() - started) * 1000.0),
+            processing_ms=processing_ms,
+            cable_probability=probability,
+            scene_depth=scene_depth,
+            cable_pixel_count=int(np.count_nonzero(cable_mask)),
+            fragments=tuple(global_fragments),
+            profile=profile,
+            skeleton_debug=skeleton_debug,
         )
 
     def _endpoint_measurements(
         self,
         cable_index: int,
         endpoint_mask: np.ndarray,
-        cloud_xyz: np.ndarray,
-        finite_cloud: np.ndarray,
-    ) -> tuple[list[EndpointMeasurement], str]:
+        geometry: _SegmentedGeometry,
+    ) -> list[EndpointMeasurement | None]:
+        slots: list[EndpointMeasurement | None] = [None, None]
+        endpoint_u8 = endpoint_mask.astype(np.uint8)
+        x_offset, _, roi_width, _ = cv2.boundingRect(endpoint_u8)
+        if roi_width == 0:
+            return slots
+
+        # Endpoint pixels are sparse, so processing empty columns wastes most
+        # of the connected-components work. Keep the full image height: OpenCV
+        # partitions connected components by rows, and retaining those rows
+        # preserves the existing component numbering and association tie order.
+        endpoint_roi = endpoint_u8[:, x_offset : x_offset + roi_width]
         count, labels, stats, centroids = cv2.connectedComponentsWithStats(
-            endpoint_mask.astype(np.uint8), connectivity=8
+            endpoint_roi, connectivity=8
         )
-        valid_ids = [
-            component
-            for component in range(1, count)
-            if int(stats[component, cv2.CC_STAT_AREA]) >= self.config.endpoint_min_area_px
-        ]
-        if len(valid_ids) != 2:
-            return [], (
-                f"endpoint class {cable_index + 1}: expected 2 components, "
-                f"found {len(valid_ids)}"
-            )
-        measurements = []
-        for component in valid_ids:
-            x = int(stats[component, cv2.CC_STAT_LEFT])
+        candidates = []
+        for component in range(1, count):
+            area = int(stats[component, cv2.CC_STAT_AREA])
+            if area < self.config.endpoint_min_area_px:
+                continue
+            local_x = int(stats[component, cv2.CC_STAT_LEFT])
+            x = local_x + x_offset
             y = int(stats[component, cv2.CC_STAT_TOP])
             width = int(stats[component, cv2.CC_STAT_WIDTH])
             height = int(stats[component, cv2.CC_STAT_HEIGHT])
-            region = np.s_[y : y + height, x : x + width]
-            selected = (labels[region] == component) & finite_cloud[region]
+            label_region = np.s_[y : y + height, local_x : local_x + width]
+            geometry_region = np.s_[y : y + height, x : x + width]
+            selected = (
+                (labels[label_region] == component)
+                & geometry.valid[geometry_region]
+            )
             if not np.any(selected):
-                return [], f"endpoint class {cable_index + 1}: component has no finite depth"
-            points = cloud_xyz[region][selected]
+                continue
+            local_y, local_x = np.nonzero(selected)
+            points = geometry.points_at(local_y + y, local_x + x)
             center = np.median(points, axis=0).astype(np.float32)
             spread = float(np.median(np.linalg.norm(points - center, axis=1)))
-            measurements.append(
+            candidates.append(
                 EndpointMeasurement(
-                    pixel_xy=np.asarray(centroids[component], dtype=np.float32),
+                    pixel_xy=np.asarray(
+                        (
+                            centroids[component, 0] + x_offset,
+                            centroids[component, 1],
+                        ),
+                        dtype=np.float32,
+                    ),
                     xyz=center,
-                    area_px=int(stats[component, cv2.CC_STAT_AREA]),
+                    area_px=area,
                     spread_m=spread,
                 )
             )
+        if not candidates:
+            return slots
         previous = self.previous_endpoints[cable_index]
-        if previous is None:
-            measurements.sort(
-                key=lambda item: (float(item.pixel_xy[0]), float(item.pixel_xy[1]))
-            )
+        if np.all(np.isfinite(previous)):
+            best_assignment = None
+            best_key = None
+            choices = (-1, *range(len(candidates)))
+            for first in choices:
+                for second in choices:
+                    if first >= 0 and first == second:
+                        continue
+                    assignment = (first, second)
+                    assigned = 0
+                    cost = 0.0
+                    valid = True
+                    for endpoint_index, candidate_index in enumerate(assignment):
+                        if candidate_index < 0:
+                            continue
+                        distance = float(
+                            np.linalg.norm(
+                                candidates[candidate_index].xyz - previous[endpoint_index]
+                            )
+                        )
+                        if distance > self.config.endpoint_association_gate_m:
+                            valid = False
+                            break
+                        assigned += 1
+                        cost += distance
+                    if not valid:
+                        continue
+                    key = (-assigned, cost)
+                    if best_key is None or key < best_key:
+                        best_key = key
+                        best_assignment = assignment
+            if best_assignment is not None:
+                for endpoint_index, candidate_index in enumerate(best_assignment):
+                    if candidate_index >= 0:
+                        slots[endpoint_index] = candidates[candidate_index]
+            if sum(endpoint is not None for endpoint in slots) < 2 and len(candidates) >= 2:
+                # With both class-specific endpoints visible, their pair is
+                # observable even after motion beyond the partial-association
+                # gate. Use the two strongest components and choose only their
+                # ordering from the previous state.
+                pair = sorted(candidates, key=lambda item: -item.area_px)[:2]
+                direct = float(
+                    np.linalg.norm(pair[0].xyz - previous[0])
+                    + np.linalg.norm(pair[1].xyz - previous[1])
+                )
+                swapped = float(
+                    np.linalg.norm(pair[1].xyz - previous[0])
+                    + np.linalg.norm(pair[0].xyz - previous[1])
+                )
+                if swapped < direct:
+                    pair.reverse()
+                slots = [pair[0], pair[1]]
         else:
-            direct = float(
-                np.linalg.norm(measurements[0].xyz - previous[0])
-                + np.linalg.norm(measurements[1].xyz - previous[1])
-            )
-            swapped = float(
-                np.linalg.norm(measurements[1].xyz - previous[0])
-                + np.linalg.norm(measurements[0].xyz - previous[1])
-            )
-            if swapped < direct:
-                measurements.reverse()
-        return measurements, ""
+            selected = sorted(candidates, key=lambda item: -item.area_px)[:2]
+            selected.sort(key=lambda item: (float(item.pixel_xy[0]), float(item.pixel_xy[1])))
+            for endpoint_index, endpoint in enumerate(selected):
+                slots[endpoint_index] = endpoint
+        return slots
 
-    def _finish_cable(
+    def _assemble_cable(
         self,
         cable_index: int,
-        endpoints: list[EndpointMeasurement],
-        component: np.ndarray,
-        graph: _SkeletonGraph,
-        endpoint_nodes: tuple[int, int],
-        cloud_xyz: np.ndarray,
-        finite_cloud: np.ndarray,
-    ) -> CableObservation:
-        measured_tangents = np.stack(
-            [
-                _measured_endpoint_tangent(
+        endpoints: list[EndpointMeasurement | None],
+        component_labels: np.ndarray,
+        graph_data: dict[
+            int,
+            tuple[np.ndarray, _SkeletonGraph | None, dict[tuple[int, int], int], str],
+        ],
+        geometry: _SegmentedGeometry,
+    ) -> tuple[CableObservation, _CableAssemblyProfile]:
+        visible = np.asarray([endpoint is not None for endpoint in endpoints], dtype=bool)
+        endpoints_xyz = np.full((2, 3), np.nan, dtype=np.float32)
+        endpoint_pixels = np.full((2, 2), np.nan, dtype=np.float32)
+        tangents = np.zeros((2, 3), dtype=np.float32)
+        stage_started = time.perf_counter()
+        for endpoint_index, endpoint in enumerate(endpoints):
+            if endpoint is None:
+                continue
+            endpoints_xyz[endpoint_index] = endpoint.xyz
+            endpoint_pixels[endpoint_index] = endpoint.pixel_xy
+            component_label = int(component_labels[endpoint_index])
+            data = graph_data.get(component_label)
+            if data is not None:
+                component = data[0]
+                tangents[endpoint_index] = _measured_endpoint_tangent(
                     endpoint,
                     component,
-                    cloud_xyz,
-                    finite_cloud,
+                    geometry,
                     self.config.endpoint_tangent_radius_px,
                     self.config.endpoint_tangent_min_points,
                 )
-                for endpoint in endpoints
-            ]
-        ).astype(np.float32)
-        trails, truncated = _enumerate_graph_trails(
-            graph,
-            endpoint_nodes[0],
-            endpoint_nodes[1],
-            self.cable_lengths_m[cable_index],
-            self.config.route_candidate_limit,
-            self.config.route_search_state_limit,
-            self.config.route_edge_limit,
-            self.config.route_length_margin_m,
-        )
+        tangents_ms = float((time.perf_counter() - stage_started) * 1000.0)
+
+        stage_started = time.perf_counter()
+        fragments = []
+        fragment_keys = set()
+        for endpoint_index, endpoint in enumerate(endpoints):
+            if endpoint is None:
+                continue
+            component_label = int(component_labels[endpoint_index])
+            data = graph_data.get(component_label)
+            if data is None or data[1] is None:
+                continue
+            _component, graph, node_by_owner, _reason = data
+            assert graph is not None
+            endpoint_node = node_by_owner.get((cable_index, endpoint_index), -1)
+            if endpoint_node < 0:
+                continue
+            for edge in graph.edges:
+                if edge.node_a != endpoint_node and edge.node_b != endpoint_node:
+                    continue
+                key = (component_label, edge.edge_id)
+                if key in fragment_keys:
+                    continue
+                fragment = _fragment_from_edge(
+                    component_label,
+                    edge,
+                    endpoint_node,
+                    endpoint,
+                    self.config.fragment_samples,
+                )
+                if fragment is not None:
+                    fragments.append(fragment)
+                    fragment_keys.add(key)
+        fragments_ms = float((time.perf_counter() - stage_started) * 1000.0)
+
         routes = []
-        endpoint_pair = (endpoints[0], endpoints[1])
-        for trail in trails:
-            route = _assemble_route(
-                graph,
-                trail,
-                endpoint_pair,
-                measured_tangents,
-                self.config.route_samples,
-            )
-            if route is not None:
-                routes.append(route)
+        truncated = False
+        route_search_ms = 0.0
+        route_assembly_ms = 0.0
+        if visible.all() and int(component_labels[0]) == int(component_labels[1]):
+            component_label = int(component_labels[0])
+            data = graph_data.get(component_label)
+            if component_label > 0 and data is not None and data[1] is not None:
+                _component, graph, node_by_owner, _reason = data
+                assert graph is not None
+                endpoint_nodes = (
+                    node_by_owner.get((cable_index, 0), -1),
+                    node_by_owner.get((cable_index, 1), -1),
+                )
+                if endpoint_nodes[0] >= 0 and endpoint_nodes[1] >= 0:
+                    stage_started = time.perf_counter()
+                    trails, truncated = _enumerate_graph_trails(
+                        graph,
+                        endpoint_nodes[0],
+                        endpoint_nodes[1],
+                        self.cable_lengths_m[cable_index],
+                        self.config.route_candidate_limit,
+                        self.config.route_search_state_limit,
+                        self.config.route_edge_limit,
+                        self.config.route_length_margin_m,
+                    )
+                    route_search_ms += float(
+                        (time.perf_counter() - stage_started) * 1000.0
+                    )
+                    endpoint_pair = (endpoints[0], endpoints[1])
+                    assert endpoint_pair[0] is not None and endpoint_pair[1] is not None
+                    stage_started = time.perf_counter()
+                    for trail in trails:
+                        route = _assemble_route(
+                            graph,
+                            trail,
+                            endpoint_pair,
+                            tangents,
+                            self.config.route_samples,
+                        )
+                        if route is not None:
+                            routes.append(route)
+                    route_assembly_ms += float(
+                        (time.perf_counter() - stage_started) * 1000.0
+                    )
+        stage_started = time.perf_counter()
         routes.sort(
             key=lambda route: (
                 abs(route.length_m - self.cable_lengths_m[cable_index]),
                 route.endpoint_alignment_error,
             )
         )
-        if not routes:
-            return _empty_cable(
-                f"cable {cable_index + 1}: graph has no length-bounded endpoint trail"
-            )
-        self.previous_endpoints[cable_index] = np.stack(
-            [endpoint.xyz for endpoint in endpoints]
+
+        if np.all(np.isfinite(self.previous_endpoints[cable_index])):
+            for endpoint_index, endpoint in enumerate(endpoints):
+                if endpoint is not None:
+                    self.previous_endpoints[cable_index, endpoint_index] = endpoint.xyz
+        elif visible.all():
+            self.previous_endpoints[cable_index] = endpoints_xyz
+
+        labels_used = {int(label) for label in component_labels[visible] if int(label) > 0}
+        components = [graph_data[label] for label in labels_used if label in graph_data]
+        component_points = int(sum(np.count_nonzero(item[0]) for item in components))
+        graph_nodes = int(sum(item[1].node_count for item in components if item[1] is not None))
+        graph_edges = int(sum(len(item[1].edges) for item in components if item[1] is not None))
+        branch_pixels = int(
+            sum(item[1].branch_pixels for item in components if item[1] is not None)
         )
-        return CableObservation(
-            valid=True,
-            reason="ok",
-            endpoints_xyz=np.ascontiguousarray(
-                [endpoint.xyz for endpoint in endpoints], dtype=np.float32
-            ),
-            endpoint_pixels_xy=np.ascontiguousarray(
-                [endpoint.pixel_xy for endpoint in endpoints], dtype=np.float32
-            ),
-            endpoint_tangents=np.ascontiguousarray(measured_tangents, dtype=np.float32),
+        if routes:
+            reason = "complete endpoint-to-endpoint routes"
+        elif visible.any() or fragments:
+            reason = (
+                f"partial observation: {int(visible.sum())}/2 endpoints, "
+                f"{len(fragments)} endpoint-connected fragments"
+            )
+        else:
+            reason = "no cable-specific endpoint or fragment evidence"
+        observation = CableObservation(
+            valid=bool(routes or fragments or visible.any()),
+            reason=reason,
+            endpoints_xyz=np.ascontiguousarray(endpoints_xyz, dtype=np.float32),
+            endpoint_pixels_xy=np.ascontiguousarray(endpoint_pixels, dtype=np.float32),
+            endpoint_tangents=np.ascontiguousarray(tangents, dtype=np.float32),
+            endpoint_visible=np.ascontiguousarray(visible, dtype=bool),
             routes=tuple(routes),
-            component_points=int(np.count_nonzero(component)),
-            graph_nodes=graph.node_count,
-            graph_edges=len(graph.edges),
-            branch_pixels=graph.branch_pixels,
+            fragments=tuple(fragments),
+            component_points=component_points,
+            graph_nodes=graph_nodes,
+            graph_edges=graph_edges,
+            branch_pixels=branch_pixels,
             route_search_truncated=truncated,
+        )
+        finalization_ms = float((time.perf_counter() - stage_started) * 1000.0)
+        return (
+            observation,
+            _CableAssemblyProfile(
+                tangents_ms=tangents_ms,
+                fragments_ms=fragments_ms,
+                route_search_ms=route_search_ms,
+                route_assembly_ms=route_assembly_ms,
+                finalization_ms=finalization_ms,
+            ),
         )
