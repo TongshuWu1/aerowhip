@@ -66,9 +66,9 @@ profile_console_period_s = 1.0
 [particle_filter]
 device = "cuda"
 particle_count = 800
-node_count = 12
+node_count = 16
 # Both physical cables are identical and measured as 0.515 m tip-to-tip.
-cable_lengths_m = [0.515, 0.515]
+cable_lengths_m = [0.518, 0.518]
 dense_samples_per_segment = 4
 deformation_modes = 5
 initial_noise_m = 0.010
@@ -124,8 +124,8 @@ motion_adaptive_noise = true
 global_particles = true
 # Correct ordinary and 10% route-centered particles independently from their
 # actual constrained parent-to-proposal displacement.
-measurement_velocity_update = true
-global_particle_velocity_update = true
+measurement_velocity_update = false
+global_particle_velocity_update = false
 kink_limit = false
 partial_observation = true
 depth_occlusion = true
