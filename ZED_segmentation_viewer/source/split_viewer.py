@@ -3,10 +3,14 @@
 from __future__ import annotations
 
 import ctypes
+from datetime import datetime
 from pathlib import Path
+from queue import Empty, Full, Queue
 import sys
-from threading import Lock
+from threading import Event, Lock, Thread
+import time
 
+import cv2
 import numpy as np
 
 from particle_filter import (
@@ -67,6 +71,239 @@ SKELETON_LINE = (0.93, 0.96, 0.98)
 SKELETON_NODE = (0.22, 0.80, 1.00)
 SKELETON_BRANCH = (1.00, 0.28, 0.35)
 
+
+class DiagnosticWindowRecorder:
+    """Bounded asynchronous encoder for complete viewer-window recordings."""
+
+    def __init__(
+        self,
+        output_directory: str | Path,
+        fps: float = 30.0,
+        codec: str = "avc1",
+        queue_frames: int = 8,
+    ):
+        self.output_directory = Path(output_directory).expanduser().resolve()
+        self.fps = float(np.clip(fps, 1.0, 60.0))
+        self.preferred_codec = str(codec)
+        self.queue_frames = max(2, int(queue_frames))
+        self.lock = Lock()
+        self.queue: Queue | None = None
+        self.stop_event: Event | None = None
+        self.thread: Thread | None = None
+        self.active = False
+        self.path: Path | None = None
+        self.codec = ""
+        self.frame_size = (0, 0)
+        self.started_at = 0.0
+        self.stopped_at = 0.0
+        self.next_capture_index = 0
+        self.pending_capture_index = 0
+        self.target_frame_count = 0
+        self.written_frames = 0
+        self.dropped_frames = 0
+        self.error = ""
+
+    def _open_writer(
+        self,
+        path: Path,
+        frame_size: tuple[int, int],
+    ) -> tuple[cv2.VideoWriter, str]:
+        attempts = []
+        preferred = self.preferred_codec
+        if sys.platform == "win32" and preferred in ("avc1", "H264"):
+            attempts.append((cv2.CAP_MSMF, "H264"))
+        elif len(preferred) == 4:
+            attempts.append((cv2.CAP_ANY, preferred))
+        attempts.append((cv2.CAP_ANY, "mp4v"))
+        for backend, codec in attempts:
+            writer = cv2.VideoWriter(
+                str(path),
+                backend,
+                cv2.VideoWriter_fourcc(*codec),
+                self.fps,
+                frame_size,
+            )
+            if writer.isOpened():
+                return writer, codec
+            writer.release()
+        raise RuntimeError(
+            "OpenCV could not open an H.264 or MPEG-4 video encoder."
+        )
+
+    def start(self, width: int, height: int) -> Path:
+        width = max(2, int(width) - int(width) % 2)
+        height = max(2, int(height) - int(height) % 2)
+        with self.lock:
+            if self.active:
+                raise RuntimeError("A diagnostic recording is already active.")
+            if self.thread is not None and self.thread.is_alive():
+                raise RuntimeError("The previous recording is still finalizing.")
+
+        self.output_directory.mkdir(parents=True, exist_ok=True)
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+        path = self.output_directory / f"pf_diagnostic_{timestamp}.mp4"
+        writer, codec = self._open_writer(path, (width, height))
+        frame_queue: Queue = Queue(maxsize=self.queue_frames)
+        stop_event = Event()
+        started_at = time.perf_counter()
+        thread = Thread(
+            target=self._encode,
+            args=(writer, frame_queue, stop_event, (width, height)),
+            name="diagnostic-window-recorder",
+            daemon=True,
+        )
+        with self.lock:
+            self.queue = frame_queue
+            self.stop_event = stop_event
+            self.thread = thread
+            self.active = True
+            self.path = path
+            self.codec = codec
+            self.frame_size = (width, height)
+            self.started_at = started_at
+            self.stopped_at = 0.0
+            self.next_capture_index = 0
+            self.pending_capture_index = 0
+            self.target_frame_count = 0
+            self.written_frames = 0
+            self.dropped_frames = 0
+            self.error = ""
+        thread.start()
+        return path
+
+    def should_capture(self, now: float) -> bool:
+        with self.lock:
+            if not self.active:
+                return False
+            capture_index = max(
+                0,
+                int((now - self.started_at) * self.fps),
+            )
+            if capture_index < self.next_capture_index:
+                return False
+            self.dropped_frames += max(
+                0,
+                capture_index - self.next_capture_index,
+            )
+            self.pending_capture_index = capture_index
+            self.next_capture_index = capture_index + 1
+            return True
+
+    def submit(self, frame: np.ndarray) -> None:
+        with self.lock:
+            if not self.active or self.queue is None:
+                return
+            frame_queue = self.queue
+            capture_index = self.pending_capture_index
+        try:
+            frame_queue.put_nowait((capture_index, frame))
+        except Full:
+            with self.lock:
+                self.dropped_frames += 1
+
+    def _encode(
+        self,
+        writer: cv2.VideoWriter,
+        frame_queue: Queue,
+        stop_event: Event,
+        frame_size: tuple[int, int],
+    ) -> None:
+        last_frame = None
+        last_capture_index = -1
+        written_frames = 0
+        try:
+            while not stop_event.is_set() or not frame_queue.empty():
+                try:
+                    capture_index, frame = frame_queue.get(timeout=0.1)
+                except Empty:
+                    continue
+                if frame.shape[1] != frame_size[0] or frame.shape[0] != frame_size[1]:
+                    frame = cv2.resize(
+                        frame,
+                        frame_size,
+                        interpolation=cv2.INTER_AREA,
+                    )
+                frame = np.ascontiguousarray(frame, dtype=np.uint8)
+                if last_frame is None:
+                    repeated_frames = max(0, capture_index)
+                    repeated_frame = frame
+                else:
+                    repeated_frames = max(
+                        0,
+                        capture_index - last_capture_index - 1,
+                    )
+                    repeated_frame = last_frame
+                for _ in range(repeated_frames):
+                    writer.write(repeated_frame)
+                writer.write(frame)
+                written_frames += repeated_frames + 1
+                with self.lock:
+                    self.written_frames = written_frames
+                last_frame = frame
+                last_capture_index = capture_index
+
+            with self.lock:
+                target_frame_count = self.target_frame_count
+            while last_frame is not None and written_frames < target_frame_count:
+                writer.write(last_frame)
+                written_frames += 1
+            with self.lock:
+                self.written_frames = written_frames
+        except Exception as exc:
+            with self.lock:
+                self.error = str(exc)
+        finally:
+            writer.release()
+            with self.lock:
+                self.active = False
+                if self.stopped_at <= 0.0:
+                    self.stopped_at = time.perf_counter()
+
+    def stop(self, timeout_s: float = 10.0) -> dict:
+        with self.lock:
+            stop_event = self.stop_event
+            thread = self.thread
+            if self.active:
+                self.active = False
+                self.stopped_at = time.perf_counter()
+                elapsed_s = max(0.0, self.stopped_at - self.started_at)
+                self.target_frame_count = max(
+                    self.next_capture_index,
+                    int(np.ceil(elapsed_s * self.fps)),
+                )
+            if stop_event is not None:
+                stop_event.set()
+        if thread is not None and thread.is_alive():
+            thread.join(timeout=max(0.1, float(timeout_s)))
+        with self.lock:
+            if thread is not None and thread.is_alive():
+                self.error = "Video encoder did not finish within the timeout."
+            if self.stopped_at <= 0.0:
+                self.stopped_at = time.perf_counter()
+        return self.snapshot()
+
+    def snapshot(self) -> dict:
+        with self.lock:
+            end_time = (
+                time.perf_counter()
+                if self.active
+                else self.stopped_at
+            )
+            elapsed = (
+                max(0.0, end_time - self.started_at)
+                if self.started_at > 0.0
+                else 0.0
+            )
+            return {
+                "active": bool(self.active),
+                "path": self.path,
+                "codec": self.codec,
+                "elapsed_s": elapsed,
+                "written_frames": int(self.written_frames),
+                "dropped_frames": int(self.dropped_frames),
+                "error": self.error,
+            }
+
 FEATURE_CONTROLS = (
     ("1", "endpoint_direction_proposal", "PROPOSAL"),
     ("2", "connected_trace", "GRAPH TRACE"),
@@ -75,6 +312,8 @@ FEATURE_CONTROLS = (
     ("5", "smoothness", "SMOOTH"),
     ("6", "fixed_length", "FIXED LENGTH"),
     ("7", "temporal_prediction", "TEMPORAL"),
+    ("M", "endpoint_motion_transport", "END TRANSPORT"),
+    ("E", "ess_resampling", "ESS RESAMPLE"),
     ("8", "motion_adaptive_noise", "ADAPTIVE"),
     ("9", "global_particles", "RETRACK 10%"),
     ("V", "measurement_velocity_update", "MOTION VELOCITY"),
@@ -82,7 +321,7 @@ FEATURE_CONTROLS = (
     ("0", "kink_limit", "KINK"),
     ("A", "partial_observation", "PARTIAL OBS"),
     ("S", "depth_occlusion", "DEPTH OCC"),
-    ("D", "fragment_score", "FRAGMENTS"),
+    ("D", "fragment_score", "ROOTED TRACE"),
     ("F", "single_endpoint_updates", "ONE ENDPOINT"),
     ("G", "prediction_without_measurement", "PREDICT HIDDEN"),
     ("H", "posterior_uncertainty", "UNCERTAINTY"),
@@ -127,6 +366,10 @@ class SplitPointCloudViewer:
         left_panel_width=620,
         point_size=1.0,
         title="ZED PIDNet Segmentation",
+        recording_directory="diagnostics/recordings",
+        recording_fps=30.0,
+        recording_codec="avc1",
+        recording_queue_frames=8,
     ):
         self.width = max(1, int(width))
         self.height = max(1, int(height))
@@ -170,6 +413,14 @@ class SplitPointCloudViewer:
         self.feature_states = {}
         self.feature_callback = None
         self.feature_hitboxes = []
+        self.record_button_hitbox = None
+        self.reported_recording_path = None
+        self.recorder = DiagnosticWindowRecorder(
+            recording_directory,
+            recording_fps,
+            recording_codec,
+            recording_queue_frames,
+        )
 
         self.vbo = None
         self.vao = None
@@ -254,6 +505,25 @@ class SplitPointCloudViewer:
         return self.available
 
     def close(self):
+        recording = self.recorder.stop()
+        if recording["error"]:
+            print(
+                f"DIAGNOSTIC_RECORDING_FAILED error={recording['error']}",
+                flush=True,
+            )
+        elif (
+            recording["path"] is not None
+            and recording["written_frames"] > 0
+            and recording["path"] != self.reported_recording_path
+        ):
+            print(
+                "DIAGNOSTIC_RECORDING_SAVED "
+                f"path={recording['path']} "
+                f"frames={recording['written_frames']} "
+                f"missed_captures={recording['dropped_frames']}",
+                flush=True,
+            )
+            self.reported_recording_path = recording["path"]
         window_id = self.window_id
         self.available = False
         self.window_id = None
@@ -397,7 +667,30 @@ class SplitPointCloudViewer:
         self._draw_camera_origin()
         self._draw_cloud_overlay(cloud_width, self.height)
         self._draw_divider(left_width)
+        now = time.perf_counter()
+        if self.recorder.should_capture(now):
+            self.recorder.submit(self._capture_window())
         glutSwapBuffers()
+
+    def _capture_window(self) -> np.ndarray:
+        """Read the complete back buffer after every viewer element is drawn."""
+
+        glReadBuffer(GL_BACK)
+        glPixelStorei(GL_PACK_ALIGNMENT, 1)
+        pixels = glReadPixels(
+            0,
+            0,
+            self.width,
+            self.height,
+            GL_BGR,
+            GL_UNSIGNED_BYTE,
+        )
+        frame = np.frombuffer(
+            pixels,
+            dtype=np.uint8,
+            count=self.width * self.height * 3,
+        ).reshape(self.height, self.width, 3)
+        return np.ascontiguousarray(frame[::-1])
 
     def _draw_rgb(self, width, height):
         glViewport(0, 0, width, height)
@@ -761,6 +1054,48 @@ class SplitPointCloudViewer:
             f"3D point cloud (viewer stride {stride})",
             UI_TEXT,
         )
+        recording = self.recorder.snapshot()
+        button_width = 190
+        button_height = 27
+        button_x = max(18, width - button_width - 18)
+        button_y = height - 43
+        if recording["active"]:
+            button_text = f"STOP RECORDING  {recording['elapsed_s']:05.1f}s"
+            button_color = (1.00, 0.22, 0.18)
+        elif recording["error"]:
+            button_text = "RECORDING ERROR"
+            button_color = (1.00, 0.55, 0.15)
+        else:
+            button_text = "START RECORDING"
+            button_color = UI_ACCENT
+        self._rect(
+            button_x,
+            button_y,
+            button_width,
+            button_height,
+            UI_PANEL,
+        )
+        self._rect(
+            button_x,
+            button_y,
+            4,
+            button_height,
+            button_color,
+        )
+        self._text(
+            button_x + 13,
+            button_y + 8,
+            button_text,
+            UI_TEXT,
+            GLUT_BITMAP_HELVETICA_12,
+        )
+        left_width, _cloud_width = self._panel_sizes()
+        self.record_button_hitbox = (
+            left_width + button_x,
+            left_width + button_x + button_width,
+            button_y,
+            button_y + button_height,
+        )
         self._text(
             18,
             height - 53,
@@ -831,7 +1166,8 @@ class SplitPointCloudViewer:
                     f"sigma={diagnostic.maximum_node_uncertainty_mm:.1f} mm "
                     f"age={diagnostic.complete_observation_age_s:.2f}s | "
                     f"trace={diagnostic.trace_mean_mm:.1f} mm "
-                    f"ESS={diagnostic.effective_sample_size:.0f}",
+                    f"ESS={diagnostic.effective_sample_size:.0f} "
+                    f"RS={'Y' if diagnostic.resampled else 'N'}",
                     color,
                     GLUT_BITMAP_HELVETICA_12,
                 )
@@ -973,7 +1309,8 @@ class SplitPointCloudViewer:
             10,
             f"Orbit: left drag    Pan: right drag    Zoom: wheel    Reset: R    "
             f"Top particles: P ({'on' if self.show_top_particles else 'off'})    "
-            f"Point size: +/- ({self.point_size:.1f})    Click a feature or use its key    Quit: Q",
+            f"Point size: +/- ({self.point_size:.1f})    Record: C    "
+            f"Click a feature or use its key    Quit: Q",
             UI_MUTED,
             GLUT_BITMAP_HELVETICA_12,
         )
@@ -1069,6 +1406,8 @@ class SplitPointCloudViewer:
             self.point_size = max(1.0, self.point_size - 0.5)
         elif key in (b"p", b"P"):
             self.show_top_particles = not self.show_top_particles
+        elif key in (b"c", b"C"):
+            self._toggle_recording()
         else:
             try:
                 character = key.decode("ascii").upper()
@@ -1098,6 +1437,12 @@ class SplitPointCloudViewer:
     def _mouse(self, button, state, x, y):
         if button == GLUT_LEFT_BUTTON and state == GLUT_DOWN:
             bottom_y = self.height - y
+            if self.record_button_hitbox is not None:
+                x0, x1, y0, y1 = self.record_button_hitbox
+                if x0 <= x <= x1 and y0 <= bottom_y <= y1:
+                    self._toggle_recording()
+                    self.rotating = False
+                    return
             for x0, x1, y0, y1, name in self.feature_hitboxes:
                 if x0 <= x <= x1 and y0 <= bottom_y <= y1:
                     self._toggle_feature(name)
@@ -1126,6 +1471,54 @@ class SplitPointCloudViewer:
             return
         self.feature_states[name] = enabled
         self.update_status(f"{name.replace('_', ' ')}: {'on' if enabled else 'off'}")
+
+    def start_recording(self) -> Path:
+        path = self.recorder.start(self.width, self.height)
+        self.reported_recording_path = None
+        message = (
+            f"Recording started: {path.name} "
+            f"({self.recorder.codec}, {self.recorder.fps:.0f} fps)"
+        )
+        print(f"DIAGNOSTIC_RECORDING_STARTED path={path}", flush=True)
+        self.update_status(message)
+        self.redraw_requested = True
+        return path
+
+    def stop_recording(self) -> dict:
+        result = self.recorder.stop()
+        path = result["path"]
+        if result["error"]:
+            message = f"Recording failed: {result['error']}"
+            print(f"DIAGNOSTIC_RECORDING_FAILED error={result['error']}", flush=True)
+        elif path is None or result["written_frames"] <= 0:
+            message = "Recording stopped before any frames were captured."
+        else:
+            message = (
+                f"Saved {path.name} | {result['written_frames']} frames | "
+                f"repeated {result['dropped_frames']}"
+            )
+            print(
+                "DIAGNOSTIC_RECORDING_SAVED "
+                f"path={path} "
+                f"frames={result['written_frames']} "
+                f"missed_captures={result['dropped_frames']} "
+                f"codec={result['codec']}",
+                flush=True,
+            )
+            self.reported_recording_path = path
+        self.update_status(message)
+        self.redraw_requested = True
+        return result
+
+    def _toggle_recording(self) -> None:
+        if self.recorder.snapshot()["active"]:
+            self.stop_recording()
+            return
+        try:
+            self.start_recording()
+        except Exception as exc:
+            self.update_status(f"Recording could not start: {exc}")
+            print(f"DIAGNOSTIC_RECORDING_FAILED error={exc}", flush=True)
 
     def _motion(self, x, y):
         previous_x, previous_y = self.last_mouse

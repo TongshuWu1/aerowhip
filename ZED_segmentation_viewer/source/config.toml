@@ -31,6 +31,12 @@ point_cloud_fps = 4
 # Viewer-only spatial sampling. A stride of 2 renders one pixel from each 2x2
 # image block (about 25% of the cloud). Tracking always uses full resolution.
 point_cloud_stride = 2
+# Complete-window diagnostic recording. Encoding is asynchronous and the queue
+# is bounded so a slow encoder drops video frames instead of blocking tracking.
+recording_directory = "diagnostics/recordings"
+recording_fps = 30
+recording_codec = "avc1"
+recording_queue_frames = 8
 
 [pidnet]
 checkpoint = "data/models/pidnet_two_cable_best.pt"
@@ -74,6 +80,9 @@ deformation_modes = 5
 initial_noise_m = 0.010
 global_noise_m = 0.018
 global_fraction = 0.10
+# Resample only when effective sample size falls below this fraction of the
+# population. Systematic resampling is performed entirely on CUDA.
+ess_resample_fraction = 0.50
 # Constant-velocity state transition with smooth acceleration process noise.
 acceleration_noise_mps2 = 0.45
 motion_acceleration_gain = 1.50
@@ -113,24 +122,32 @@ random_seed = 7
 profile_stages = true
 
 [features]
-endpoint_direction_proposal = true
+endpoint_direction_proposal = false
 connected_trace = true
-route_length_score = true
-endpoint_tangent_score = true
+route_length_score = false
+endpoint_tangent_score = false
 smoothness = true
 fixed_length = true
 temporal_prediction = true
-motion_adaptive_noise = true
+# Transport the predicted cable by the measured endpoint boundary residuals
+# before fixed-length projection. This is deterministic motion conditioning,
+# not a recovery fallback.
+endpoint_motion_transport = true
+ess_resampling = true
+motion_adaptive_noise = false
 global_particles = true
 # Correct ordinary and 10% route-centered particles independently from their
 # actual constrained parent-to-proposal displacement.
-measurement_velocity_update = false
-global_particle_velocity_update = false
+measurement_velocity_update = true
+global_particle_velocity_update = true
 kink_limit = false
+# When a complete endpoint-to-endpoint route is broken, use only the
+# endpoint-rooted graph prefixes/suffixes. Hidden middle sections remain under
+# temporal prediction and fixed-length constraints.
 partial_observation = true
-depth_occlusion = true
+depth_occlusion = false
 fragment_score = true
-single_endpoint_updates = true
+single_endpoint_updates = false
 prediction_without_measurement = true
 posterior_uncertainty = true
 # Fuses anchored FABRIK sweeps and every velocity projection into native CUDA.

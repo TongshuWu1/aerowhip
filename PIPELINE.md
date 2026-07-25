@@ -416,16 +416,23 @@ is also resampled to match the PF node and dense-sample layouts.
 ### Visible fragments
 
 When one endpoint is hidden or the segmentation is broken, no full route may
-exist. The graph still contains useful unambiguous edge fragments.
+exist. The graph can still contain a visible trace rooted at either labeled
+endpoint.
 
-The observation builder therefore keeps:
+For each visible endpoint, the observation builder:
 
-- cable-specific fragments incident to a visible endpoint;
-- generic visible graph-edge fragments.
+1. finds the graph node associated with that endpoint;
+2. orients every incident edge from the endpoint into the graph;
+3. compares each candidate with the independently measured inward endpoint
+   tangent;
+4. retains at most one inward trace for that endpoint.
 
-Each fragment retains its point order. A fragment does not claim to determine
-the hidden part of the cable. It only says that some consecutive section of a
-particle should align with this observed section.
+The one-trace rule rejects the common short outward tail created when an
+endpoint blob splits an otherwise degree-two centerline. Each retained trace
+has a known cable identity, endpoint identity, direction, 3D polyline, and
+length. Generic graph edges remain available for visualization and topology
+diagnostics, but do not update a cable PF because they do not have a defensible
+cable or arc-length identity.
 
 ---
 
@@ -634,20 +641,35 @@ Occlusion is not the same as missing evidence. If a hand is closer to the
 camera than the predicted cable, absence of cable pixels behind the hand
 should not be treated like proof that the cable moved away.
 
-### 9.7 Ordered fragment score
+### 9.7 Endpoint-rooted partial trace score
 
-If no complete route exists, each visible ordered fragment is slid along the
-particle’s dense samples. Both fragment directions are tested. The best
-consecutive matching window supplies the fragment cost.
+If no complete route exists, a retained endpoint-0 trace is compared only with
+the particle prefix and a retained endpoint-1 trace is compared only with the
+reversed particle suffix. The number of compared dense samples comes from the
+observed trace length divided by the known physical cable length. Point order
+is preserved and corresponding arc-length samples are compared with the same
+Huber distance used by the complete-route score.
 
-This lets a visible portion update the corresponding section of the cable
-without pretending that it observes the entire hidden shape.
+The partial trace is never slid through the particle and is never reversed to
+find a lower cost. Those operations would discard the endpoint identity and
+could reward a geometrically close but topologically wrong branch.
+
+The two rooted trace costs are averaged by their observed physical lengths.
+Only the observed prefix and suffix receive supported or missing labels. The
+unseen middle remains unknown and is carried by temporal prediction and the
+fixed-length constraint.
 
 ### 9.8 Unsupported-gap check
 
 The code measures the longest consecutive arc of a particle that is not
-supported by route or partial evidence. A long unsupported section is
-penalized and can make a particle invalid.
+supported by route or partial evidence. A long unsupported section always
+receives a continuous penalty. It can make a particle invalid only when a
+complete endpoint-to-endpoint route exists.
+
+A rooted partial trace never uses this hard rejection. During fast motion the
+whole predicted prefix can temporarily be far from its new observation; a
+hard gate would reject every particle and prevent recovery. The Huber trace
+cost and continuous gap penalty instead keep ranking the population.
 
 This is more informative than only counting the percentage of supported
 samples. Ten scattered small errors and one continuous 80 mm unexplained jump
@@ -686,19 +708,28 @@ If no valid particle exists, the bad measurement is not blindly committed.
 
 ### Current resampling behavior
 
-The current implementation uses multinomial resampling with replacement when:
+The current implementation computes effective sample size
 
-- the cable PF is already initialized; and
-- a complete observed graph route is present.
+\[
+N_{\mathrm{eff}}=\frac{1}{\sum_k w_k^2}.
+\]
 
-Partial evidence does **not** trigger population resampling. This is
-intentional: resampling from a small visible fragment could destroy diversity
-in the unobserved section and convert random process noise into apparent
-motion.
+An initialized population is resampled only when usable complete or partial
+evidence exists and \(N_{\mathrm{eff}}\) falls below the configured fraction of
+the particle count. The current fraction is 0.50. Systematic resampling uses
+one uniformly random offset and equally spaced cumulative-weight positions.
+It has lower sampling variance than multinomial resampling and runs as one
+batched operation on the active device.
 
-Effective sample size is calculated and displayed as a diagnostic, but it does
-not currently gate resampling. The code does not currently use systematic
-resampling.
+After resampling, the 10% exploration population is rejuvenated with smooth
+shape noise. With a complete route it remains route-centred. With only rooted
+partial traces it remains centred on the boundary-transported prior because
+the hidden route is not observed. The viewer reports `RS=Y` only on frames
+where resampling actually occurred.
+
+The `ess_resampling` switch provides a research ablation. When it is off, the
+documented baseline behavior is restored: multinomial resampling on every
+complete-route frame and no partial-frame resampling.
 
 ### Choosing a route mode
 
@@ -714,7 +745,7 @@ highest-weight particle.
 Within the selected route group:
 
 1. particle weights are renormalized;
-2. the 12 node positions are averaged with those conditional weights;
+2. the node positions are averaged with those conditional weights;
 3. the fixed-length constraint is applied again to the averaged shape;
 4. dense output samples and diagnostics are generated.
 
@@ -739,10 +770,20 @@ additional observations.
 
 ### Normal motion
 
-With full observations, particles are resampled from the previous weighted
-population, moved by damped per-node velocity, perturbed by smooth acceleration
-noise, anchored to measured endpoints, constrained to fixed link length, and
-rescored against complete graph routes.
+Particles are moved by damped per-node velocity and smooth acceleration noise.
+Before measurement scoring, each predicted particle receives the minimum
+arc-length-linear correction needed to satisfy its measured endpoint boundary:
+
+\[
+\mathbf x_i^- \leftarrow \mathbf x_i^-
+ (1-s_i)(\mathbf e_0-\mathbf x_0^-)
+ s_i(\mathbf e_1-\mathbf x_{N-1}^-).
+\]
+
+If only one endpoint is usable, its correction fades to zero at the opposite
+end. Fixed-length projection follows this transport, then the particle is
+scored against complete routes or rooted partial traces. This uses measured
+boundary motion directly without assuming a hidden cable route.
 
 ### Fast motion
 
@@ -755,16 +796,29 @@ narrow high-probability population.
 
 When a complete route disappears:
 
-- the population is not resampled from partial evidence;
+- endpoint boundary residuals transport the entire predicted population before
+  scoring;
+- ESS-triggered systematic resampling prevents repeated partial likelihoods
+  from collapsing the population to one particle;
 - ordinary particles continue mostly by damped velocity;
 - acceleration noise is suppressed for ordinary particles so stationary
   visible nodes do not swim;
-- exploration particles retain process noise;
-- a visible endpoint remains anchored;
-- ordered graph fragments and depth visibility update the portions that are
-  still observed;
-- predicted points behind a nearer object are marked occluded rather than
-  missing.
+- the 10% exploration particles retain process and wider smooth shape noise
+  around the transported prior;
+- each visible endpoint remains anchored;
+- an endpoint-rooted graph trace updates only the corresponding particle
+  prefix or suffix;
+- the hidden middle is not scored as missing and remains under the motion and
+  fixed-length models;
+- optional depth visibility can mark predicted points behind a nearer object
+  as occluded rather than missing.
+
+The frame is reported as `PARTIAL` only when rooted evidence actually
+contributes a measurement. Its trace error is computed over the observed
+prefixes and suffixes, and the viewer reports supported, missing, and unknown
+fractions separately. Turning off either `partial_observation` or
+`fragment_score` removes this update path, which makes the behavior directly
+ablatable.
 
 ### No usable measurement
 
@@ -926,6 +980,22 @@ thinner than the final estimate.
 
 A low full-cloud update rate does not imply low tracking rate.
 
+### Diagnostic window recording
+
+The 3D viewer includes a **START RECORDING** button in its upper-right corner.
+Click it, or press `C`, to record the complete application window: RGB
+segmentation, skeleton graph, 3D point cloud, PF estimates, diagnostics, and
+feature controls. Click **STOP RECORDING**, or press `C` again, to finalize the
+video.
+
+Recordings are saved under `diagnostics/recordings` as timestamped MP4 files.
+H.264 is preferred for phone compatibility, with MPEG-4 as an automatic
+fallback. Encoding runs on a background thread behind a bounded queue. If the
+encoder or viewer cannot keep up, missed captures are counted and the previous
+frame is repeated so playback duration remains aligned with real time. This
+never blocks the tracking worker. The saved path, encoded-frame count, and
+missed-frame count are printed to the console.
+
 ---
 
 ## 15. Feature isolation
@@ -942,14 +1012,16 @@ Every major PF behavior can be enabled or disabled in
 | `smoothness` | Penalizes repeated sharp link turns |
 | `fixed_length` | Projects and validates equal-length cable links |
 | `temporal_prediction` | Uses per-node velocity from the previous state |
+| `endpoint_motion_transport` | Applies measured endpoint boundary residuals across particle arc length |
+| `ess_resampling` | Uses ESS-triggered systematic resampling for complete and partial evidence |
 | `motion_adaptive_noise` | Widens motion uncertainty as endpoints move faster |
 | `global_particles` | Keeps a 10% wider route-centered exploration population |
 | `measurement_velocity_update` | Corrects ordinary-particle velocity from accepted node displacement |
 | `global_particle_velocity_update` | Gives route-centered retracking particles consistent measured velocity |
 | `kink_limit` | Optional hard large-turn penalty; currently off |
-| `partial_observation` | Enables image/depth evidence without a complete route |
+| `partial_observation` | Allows endpoint-rooted visible traces to update a disconnected cable |
 | `depth_occlusion` | Separates hidden cable from unsupported visible cable |
-| `fragment_score` | Matches ordered graph fragments to consecutive particle sections |
+| `fragment_score` | Matches each endpoint-rooted trace only to its corresponding particle prefix or suffix |
 | `single_endpoint_updates` | Allows a cable update with one visible endpoint |
 | `prediction_without_measurement` | Advances the state using motion alone |
 | `posterior_uncertainty` | Computes node covariance diagnostics |

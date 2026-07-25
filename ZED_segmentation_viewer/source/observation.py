@@ -49,13 +49,14 @@ class RouteHypothesis:
 
 @dataclass(frozen=True)
 class FragmentObservation:
-    """One visible, topologically unambiguous skeleton edge."""
+    """One endpoint-rooted, inward-oriented visible skeleton trace."""
 
     component_label: int
     edge_id: int
     xyz: np.ndarray
     pixels_xy: np.ndarray
     length_m: float
+    endpoint_index: int = -1
 
 
 @dataclass(frozen=True)
@@ -948,6 +949,7 @@ def _fragment_from_edge(
     component_label: int,
     edge: _GraphEdge,
     endpoint_node: int,
+    endpoint_index: int,
     endpoint: EndpointMeasurement,
     sample_count: int,
 ) -> FragmentObservation | None:
@@ -975,6 +977,7 @@ def _fragment_from_edge(
         xyz=np.ascontiguousarray(sampled_xyz, dtype=np.float32),
         pixels_xy=np.ascontiguousarray(sampled_pixels, dtype=np.float32),
         length_m=length_m,
+        endpoint_index=int(endpoint_index),
     )
 
 
@@ -996,6 +999,7 @@ def _generic_fragment_from_edge(
         xyz=np.ascontiguousarray(sampled_xyz, dtype=np.float32),
         pixels_xy=np.ascontiguousarray(sampled_pixels, dtype=np.float32),
         length_m=length_m,
+        endpoint_index=-1,
     )
 
 
@@ -1633,7 +1637,6 @@ class ObservationBuilder:
 
         stage_started = time.perf_counter()
         fragments = []
-        fragment_keys = set()
         for endpoint_index, endpoint in enumerate(endpoints):
             if endpoint is None:
                 continue
@@ -1646,22 +1649,36 @@ class ObservationBuilder:
             endpoint_node = node_by_owner.get((cable_index, endpoint_index), -1)
             if endpoint_node < 0:
                 continue
+            candidates = []
             for edge in graph.edges:
                 if edge.node_a != endpoint_node and edge.node_b != endpoint_node:
-                    continue
-                key = (component_label, edge.edge_id)
-                if key in fragment_keys:
                     continue
                 fragment = _fragment_from_edge(
                     component_label,
                     edge,
                     endpoint_node,
+                    endpoint_index,
                     endpoint,
                     self.config.fragment_samples,
                 )
                 if fragment is not None:
-                    fragments.append(fragment)
-                    fragment_keys.add(key)
+                    inward = _normalize(fragment.xyz[-1] - fragment.xyz[0])
+                    tangent = tangents[endpoint_index]
+                    if float(np.linalg.norm(tangent)) > 1e-6:
+                        alignment = float(np.dot(inward, tangent))
+                    else:
+                        alignment = 0.0
+                    candidates.append(
+                        (alignment, float(fragment.length_m), fragment)
+                    )
+            if candidates:
+                # The endpoint anchor can split a degree-two skeleton into an
+                # inward cable edge and a short outward endpoint tail. Keep one
+                # trace, using the independently measured inward tangent to
+                # preserve endpoint identity without introducing a route prior.
+                fragments.append(
+                    max(candidates, key=lambda item: (item[0], item[1]))[2]
+                )
         fragments_ms = float((time.perf_counter() - stage_started) * 1000.0)
 
         routes = []

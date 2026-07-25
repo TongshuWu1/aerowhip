@@ -1784,6 +1784,17 @@ def main() -> None:
             height=int(viewer_config.get("height", 900)),
             left_panel_width=int(viewer_config.get("rgb_width", 620)),
             point_size=float(viewer_config.get("point_size", 1.0)),
+            recording_directory=resolve_project_path(
+                viewer_config.get(
+                    "recording_directory",
+                    "diagnostics/recordings",
+                )
+            ),
+            recording_fps=float(viewer_config.get("recording_fps", 30.0)),
+            recording_codec=str(viewer_config.get("recording_codec", "avc1")),
+            recording_queue_frames=int(
+                viewer_config.get("recording_queue_frames", 8)
+            ),
         )
         viewer.init()
         viewer.update_status("Loading PIDNet on CUDA...")
