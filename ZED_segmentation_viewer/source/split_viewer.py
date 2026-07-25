@@ -15,7 +15,6 @@ import numpy as np
 
 from particle_filter import (
     VISIBILITY_MISSING,
-    VISIBILITY_OCCLUDED,
     VISIBILITY_SUPPORTED,
     VISIBILITY_UNKNOWN,
 )
@@ -305,22 +304,16 @@ class DiagnosticWindowRecorder:
             }
 
 FEATURE_CONTROLS = (
-    ("1", "endpoint_direction_proposal", "PROPOSAL"),
     ("2", "connected_trace", "GRAPH TRACE"),
-    ("3", "route_length_score", "ROUTE LENGTH"),
-    ("4", "endpoint_tangent_score", "TANGENT SCORE"),
     ("5", "smoothness", "SMOOTH"),
     ("6", "fixed_length", "FIXED LENGTH"),
     ("7", "temporal_prediction", "TEMPORAL"),
     ("M", "endpoint_motion_transport", "END TRANSPORT"),
     ("E", "ess_resampling", "ESS RESAMPLE"),
-    ("8", "motion_adaptive_noise", "ADAPTIVE"),
     ("9", "global_particles", "RETRACK 10%"),
     ("V", "measurement_velocity_update", "MOTION VELOCITY"),
     ("B", "global_particle_velocity_update", "RETRACK VELOCITY"),
-    ("0", "kink_limit", "KINK"),
     ("A", "partial_observation", "PARTIAL OBS"),
-    ("S", "depth_occlusion", "DEPTH OCC"),
     ("D", "fragment_score", "ROOTED TRACE"),
     ("F", "single_endpoint_updates", "ONE ENDPOINT"),
     ("G", "prediction_without_measurement", "PREDICT HIDDEN"),
@@ -959,8 +952,6 @@ class SplitPointCloudViewer:
                     )
                     if state == VISIBILITY_MISSING or next_state == VISIBILITY_MISSING:
                         segment_color, alpha = (1.0, 0.18, 0.15), 1.0
-                    elif state == VISIBILITY_OCCLUDED or next_state == VISIBILITY_OCCLUDED:
-                        segment_color, alpha = YELLOW, 0.95
                     elif state == VISIBILITY_SUPPORTED and next_state == VISIBILITY_SUPPORTED:
                         segment_color, alpha = color, 1.0
                     else:
@@ -993,9 +984,7 @@ class SplitPointCloudViewer:
                         )
                         if state == VISIBILITY_SUPPORTED:
                             continue
-                        if state == VISIBILITY_OCCLUDED:
-                            uncertainty_color = YELLOW
-                        elif state == VISIBILITY_MISSING:
+                        if state == VISIBILITY_MISSING:
                             uncertainty_color = (1.0, 0.18, 0.15)
                         else:
                             uncertainty_color = color
@@ -1159,8 +1148,7 @@ class SplitPointCloudViewer:
                     f"frag={diagnostic.fragment_count} "
                     f"route={diagnostic.selected_route_index + 1}/"
                     f"{diagnostic.route_candidate_count} "
-                    f"V/O/M/U={100.0 * diagnostic.visible_fraction:.0f}/"
-                    f"{100.0 * diagnostic.occluded_fraction:.0f}/"
+                    f"V/M/U={100.0 * diagnostic.visible_fraction:.0f}/"
                     f"{100.0 * diagnostic.missing_fraction:.0f}/"
                     f"{100.0 * diagnostic.unknown_fraction:.0f}% | "
                     f"sigma={diagnostic.maximum_node_uncertainty_mm:.1f} mm "
@@ -1198,7 +1186,7 @@ class SplitPointCloudViewer:
                 f"PF {self.pipeline_stats.get('particle_filter_ms', 0.0):.1f} ms "
                 f"(CUDA {self.pipeline_stats.get('particle_filter_gpu_ms', 0.0):.1f} ms) | "
                 f"total {self.pipeline_stats.get('tracking_ms', 0.0):.1f} ms | "
-                "PF: color=supported yellow=occluded red=missing dim=unknown",
+                "PF: color=supported red=missing dim=unknown",
                 UI_MUTED,
                 GLUT_BITMAP_HELVETICA_12,
             )

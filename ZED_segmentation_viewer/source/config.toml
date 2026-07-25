@@ -85,8 +85,6 @@ global_fraction = 0.10
 ess_resample_fraction = 0.50
 # Constant-velocity state transition with smooth acceleration process noise.
 acceleration_noise_mps2 = 0.45
-motion_acceleration_gain = 1.50
-maximum_acceleration_noise_mps2 = 3.00
 velocity_damping_per_second = 1.25
 endpoint_velocity_smoothing = 0.50
 # Blend position-derived node motion into the velocity state after a complete
@@ -99,22 +97,10 @@ velocity_projection_iterations = 2
 endpoint_tolerance_m = 0.003
 trace_sigma_m = 0.008
 huber_delta = 1.5
-route_length_sigma_m = 0.025
-route_length_weight = 1.0
-endpoint_tangent_weight = 0.35
 smoothness_weight = 2.0
 support_distance_m = 0.015
 maximum_unsupported_length_m = 0.080
 unsupported_weight = 1.0
-maximum_kink_degrees = 145.0
-kink_weight = 0.20
-# A predicted point is occluded only when ZED sees a nearer surface by this margin.
-occlusion_depth_margin_m = 0.012
-visibility_depth_sigma_m = 0.012
-visibility_depth_tolerance_m = 0.020
-visibility_probability_threshold = 0.50
-image_likelihood_weight = 1.00
-depth_likelihood_weight = 0.35
 fragment_likelihood_weight = 1.00
 top_particle_count = 40
 random_seed = 7
@@ -122,10 +108,7 @@ random_seed = 7
 profile_stages = true
 
 [features]
-endpoint_direction_proposal = false
 connected_trace = true
-route_length_score = false
-endpoint_tangent_score = false
 smoothness = true
 fixed_length = true
 temporal_prediction = true
@@ -134,18 +117,15 @@ temporal_prediction = true
 # not a recovery fallback.
 endpoint_motion_transport = true
 ess_resampling = true
-motion_adaptive_noise = false
 global_particles = true
 # Correct ordinary and 10% route-centered particles independently from their
 # actual constrained parent-to-proposal displacement.
 measurement_velocity_update = true
 global_particle_velocity_update = true
-kink_limit = false
 # When a complete endpoint-to-endpoint route is broken, use only the
 # endpoint-rooted graph prefixes/suffixes. Hidden middle sections remain under
 # temporal prediction and fixed-length constraints.
 partial_observation = true
-depth_occlusion = false
 fragment_score = true
 single_endpoint_updates = false
 prediction_without_measurement = true
@@ -154,5 +134,3 @@ posterior_uncertainty = true
 # The exact PyTorch CUDA Graph remains active for centroid-preserving unanchored prediction.
 fused_constraint_kernels = true
 cuda_graph_replay = true
-# The crossing channel is displayed but is deliberately excluded from phase 1.
-crossing = false

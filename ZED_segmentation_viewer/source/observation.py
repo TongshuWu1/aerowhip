@@ -10,7 +10,6 @@ import time
 import cv2
 import numpy as np
 import torch
-import torch.nn.functional as torch_functional
 
 
 @dataclass(frozen=True)
@@ -43,7 +42,6 @@ class RouteHypothesis:
     route_xyz: np.ndarray
     route_pixels_xy: np.ndarray
     length_m: float
-    endpoint_alignment_error: float
     turn_rms_degrees: float
 
 
@@ -101,7 +99,6 @@ class CableObservation:
     reason: str
     endpoints_xyz: np.ndarray
     endpoint_pixels_xy: np.ndarray
-    endpoint_tangents: np.ndarray
     endpoint_visible: np.ndarray
     routes: tuple[RouteHypothesis, ...]
     fragments: tuple[FragmentObservation, ...]
@@ -125,9 +122,6 @@ class SkeletonDebug:
 class FrameObservation:
     cables: tuple[CableObservation, CableObservation]
     processing_ms: float
-    cable_probability: torch.Tensor | None = None
-    scene_depth: torch.Tensor | None = None
-    cable_pixel_count: int = 0
     fragments: tuple[FragmentObservation, ...] = ()
     profile: ObservationProfile | None = None
     skeleton_debug: SkeletonDebug | None = None
@@ -254,7 +248,6 @@ def _empty_cable(reason: str) -> CableObservation:
         reason=str(reason),
         endpoints_xyz=np.full((2, 3), np.nan, dtype=np.float32),
         endpoint_pixels_xy=np.full((2, 2), np.nan, dtype=np.float32),
-        endpoint_tangents=np.zeros((2, 3), dtype=np.float32),
         endpoint_visible=np.zeros(2, dtype=bool),
         routes=(),
         fragments=(),
@@ -509,17 +502,6 @@ def _measured_endpoint_tangent(
         return np.zeros(3, dtype=np.float32)
     points = geometry.points_at(local_y + y0, local_x + x0)
     return _principal_tangent(points, endpoint.xyz)
-
-
-def _route_endpoint_tangents(route_xyz: np.ndarray, count: int = 12) -> np.ndarray:
-    count = min(max(3, int(count)), len(route_xyz))
-    return np.ascontiguousarray(
-        (
-            _principal_tangent(route_xyz[:count], route_xyz[0]),
-            _principal_tangent(route_xyz[-count:], route_xyz[-1]),
-        ),
-        dtype=np.float32,
-    )
 
 
 def _turn_rms_degrees(route_xyz: np.ndarray) -> float:
@@ -889,7 +871,6 @@ def _assemble_route(
     graph: _SkeletonGraph,
     trail: tuple[tuple[int, bool], ...],
     endpoints: tuple[EndpointMeasurement, EndpointMeasurement],
-    measured_tangents: np.ndarray,
     sample_count: int,
 ) -> RouteHypothesis | None:
     xyz_parts = []
@@ -918,29 +899,11 @@ def _assemble_route(
     route_xyz[0] = endpoints[0].xyz
     route_xyz[-1] = endpoints[1].xyz
     length_m = float(np.sum(np.linalg.norm(np.diff(route_xyz, axis=0), axis=1)))
-    route_tangents = _route_endpoint_tangents(route_xyz)
-    alignment_terms = []
-    for endpoint_index in range(2):
-        measured = measured_tangents[endpoint_index]
-        if float(np.linalg.norm(measured)) <= 1e-6:
-            continue
-        alignment_terms.append(
-            1.0
-            - float(
-                np.clip(
-                    np.dot(measured, route_tangents[endpoint_index]),
-                    -1.0,
-                    1.0,
-                )
-            )
-        )
-    alignment_error = float(np.mean(alignment_terms)) if alignment_terms else 0.0
     return RouteHypothesis(
         edge_ids=tuple(edge_id for edge_id, _forward in trail),
         route_xyz=np.ascontiguousarray(route_xyz, dtype=np.float32),
         route_pixels_xy=np.ascontiguousarray(route_pixels, dtype=np.float32),
         length_m=length_m,
-        endpoint_alignment_error=alignment_error,
         turn_rms_degrees=_turn_rms_degrees(route_xyz),
     )
 
@@ -1043,17 +1006,11 @@ class ObservationBuilder:
         self.depth_buffer: torch.Tensor | None = None
         self.previous_endpoints = np.full((2, 2, 3), np.nan, dtype=np.float32)
 
-    def _prepare_resident_maps_and_geometry(
+    def _prepare_geometry(
         self,
         depth: np.ndarray,
-        cable_probability: torch.Tensor,
         relevant_pixels: np.ndarray,
-    ) -> tuple[
-        torch.Tensor,
-        torch.Tensor,
-        _SegmentedGeometry,
-        _GeometryProfile,
-    ]:
+    ) -> tuple[_SegmentedGeometry, _GeometryProfile]:
         """Upload depth once and unproject all segmented pixels in one GPU batch."""
 
         started = time.perf_counter()
@@ -1078,27 +1035,6 @@ class ObservationBuilder:
         valid_depth = torch.isfinite(self.depth_buffer) & (self.depth_buffer > 0.0)
         self.depth_buffer.masked_fill_(~valid_depth, 0.0)
 
-        if not isinstance(cable_probability, torch.Tensor):
-            raise TypeError("Cable probability must remain a torch.Tensor from PIDNet")
-        probability = cable_probability.detach()
-        if probability.device != self.device:
-            raise ValueError(
-                f"Cable probability is on {probability.device}, expected {self.device}"
-            )
-        if probability.ndim != 2:
-            raise ValueError(
-                f"Cable probability must have shape HxW; got {tuple(probability.shape)}"
-            )
-        if tuple(probability.shape) != shape:
-            probability = torch_functional.interpolate(
-                probability[None, None].float(),
-                size=shape,
-                mode="bilinear",
-                align_corners=False,
-            )[0, 0]
-        elif probability.dtype != torch.float32:
-            probability = probability.float()
-        probability = probability.contiguous()
         if cuda_events is not None:
             cuda_events[1].record()
 
@@ -1119,8 +1055,6 @@ class ObservationBuilder:
                 valid=valid_image,
             )
             return (
-                probability,
-                self.depth_buffer,
                 geometry,
                 _GeometryProfile(
                     wall_ms=float((time.perf_counter() - started) * 1000.0),
@@ -1175,8 +1109,6 @@ class ObservationBuilder:
             valid=valid_image,
         )
         return (
-            probability,
-            self.depth_buffer,
             geometry,
             _GeometryProfile(
                 wall_ms=float((time.perf_counter() - started) * 1000.0),
@@ -1192,7 +1124,6 @@ class ObservationBuilder:
         self,
         masks: tuple[np.ndarray, ...],
         depth: np.ndarray,
-        cable_probability: torch.Tensor,
         *,
         include_skeleton_debug: bool = False,
     ) -> FrameObservation:
@@ -1218,12 +1149,9 @@ class ObservationBuilder:
         endpoint_masks = (_mask_bool(masks[1], shape), _mask_bool(masks[2], shape))
         relevant_pixels = cable_mask | endpoint_masks[0] | endpoint_masks[1]
         masks_ms = float((time.perf_counter() - stage_started) * 1000.0)
-        probability, scene_depth, geometry, geometry_profile = (
-            self._prepare_resident_maps_and_geometry(
-                depth,
-                cable_probability,
-                relevant_pixels,
-            )
+        geometry, geometry_profile = self._prepare_geometry(
+            depth,
+            relevant_pixels,
         )
 
         stage_started = time.perf_counter()
@@ -1475,9 +1403,6 @@ class ObservationBuilder:
         return FrameObservation(
             cables=(observations[0], observations[1]),
             processing_ms=processing_ms,
-            cable_probability=probability,
-            scene_depth=scene_depth,
-            cable_pixel_count=int(np.count_nonzero(cable_mask)),
             fragments=tuple(global_fragments),
             profile=profile,
             skeleton_debug=skeleton_debug,
@@ -1718,7 +1643,6 @@ class ObservationBuilder:
                             graph,
                             trail,
                             endpoint_pair,
-                            tangents,
                             self.config.route_samples,
                         )
                         if route is not None:
@@ -1728,9 +1652,8 @@ class ObservationBuilder:
                     )
         stage_started = time.perf_counter()
         routes.sort(
-            key=lambda route: (
-                abs(route.length_m - self.cable_lengths_m[cable_index]),
-                route.endpoint_alignment_error,
+            key=lambda route: abs(
+                route.length_m - self.cable_lengths_m[cable_index]
             )
         )
 
@@ -1763,7 +1686,6 @@ class ObservationBuilder:
             reason=reason,
             endpoints_xyz=np.ascontiguousarray(endpoints_xyz, dtype=np.float32),
             endpoint_pixels_xy=np.ascontiguousarray(endpoint_pixels, dtype=np.float32),
-            endpoint_tangents=np.ascontiguousarray(tangents, dtype=np.float32),
             endpoint_visible=np.ascontiguousarray(visible, dtype=bool),
             routes=tuple(routes),
             fragments=tuple(fragments),

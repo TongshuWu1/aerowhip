@@ -1155,8 +1155,8 @@ class AsyncSegmentationPipeline:
     def set_feature(self, name: str, enabled: bool) -> None:
         """Queue one ablation change; the tracking worker applies it between frames."""
 
-        if name not in ParticleFeatures.__dataclass_fields__ or name == "crossing":
-            raise ValueError(f"Feature is not available in phase 1: {name}")
+        if name not in ParticleFeatures.__dataclass_fields__:
+            raise ValueError(f"Unknown particle-filter feature: {name}")
         with self.lock:
             self.pending_features = replace(
                 self.pending_features,
@@ -1599,14 +1599,13 @@ class AsyncSegmentationPipeline:
     ) -> TrackingResult:
         tracking_start = time.perf_counter()
         inference_start = tracking_start
-        masks, cable_probability = self.segmenter.tracking_channels(
+        masks, _ = self.segmenter.tracking_channels(
             bgr, self.thresholds
         )
         inference_finished = time.perf_counter()
         observation = self.observation_builder.build(
             masks,
             depth,
-            cable_probability,
             include_skeleton_debug=self.visualization_enabled,
         )
         particle_filter = self.particle_filter.update(
@@ -1615,11 +1614,6 @@ class AsyncSegmentationPipeline:
             refresh_diagnostics=(
                 render_cloud is not None or render_depth is not None
             ),
-        )
-        display_observation = replace(
-            observation,
-            cable_probability=None,
-            scene_depth=None,
         )
         completed_at = time.perf_counter()
         return TrackingResult(
@@ -1632,7 +1626,7 @@ class AsyncSegmentationPipeline:
             render_depth=render_depth,
             render_captured_at=render_captured_at,
             masks=masks,
-            observation=display_observation,
+            observation=observation,
             particle_filter=particle_filter,
             inference_ms=float((inference_finished - inference_start) * 1000.0),
             tracking_ms=float((completed_at - tracking_start) * 1000.0),
@@ -1839,7 +1833,6 @@ def main() -> None:
             BatchedCableParticleFilter(
                 particle_filter_config,
                 particle_features,
-                camera_model,
             ),
             float(viewer_config.get("point_cloud_fps", 5.0)),
             int(viewer_config.get("rgb_width", 620)),

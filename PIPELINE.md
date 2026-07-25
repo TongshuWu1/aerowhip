@@ -43,7 +43,7 @@ flowchart LR
     I --> K
     J --> K
     K --> L["Batched CUDA particle prediction"]
-    L --> M["Connected-route, visibility, fragment, length, tangent, and smoothness scoring"]
+    L --> M["Connected-route, rooted-fragment, gap, and smoothness scoring"]
     M --> N["Independent PF1 and PF2 posterior estimates"]
     N --> O["RGB, skeleton, and 3D diagnostic viewer"]
     F --> O
@@ -109,7 +109,7 @@ For each cable, the tracker returns:
 - 12 ordered 3D cable nodes;
 - a denser polyline for display and scoring diagnostics;
 - the most likely observed graph route, when a complete route exists;
-- visible, occluded, missing, and unknown portions of the estimate;
+- supported, missing, and unknown portions of the estimate;
 - endpoint, link-length, trace, support, and curvature diagnostics;
 - posterior uncertainty;
 - the highest-weight particles for visual inspection.
@@ -219,11 +219,9 @@ The optimized data path is:
 2. Depth is uploaded once into a reusable CUDA tensor.
 3. Relevant pixels are unprojected in parallel on the GPU.
 4. Only the compact results needed by CPU topology code are read back.
-5. The full cable probability and depth maps remain resident on the GPU for PF
-   visibility scoring.
 
 This avoids constructing a full XYZRGBA point cloud for every tracking frame
-and avoids a full-resolution GPU-to-CPU-to-GPU probability round trip.
+and avoids a full-resolution point-cloud readback.
 
 Invalid or non-finite depth cannot become a valid 3D cable observation. The
 runtime still keeps the original 2D mask for image diagnostics.
@@ -586,33 +584,30 @@ smoothly, while an unusually large error grows linearly instead of dominating
 the entire score. This provides robustness without making large unexplained
 errors free.
 
-### 9.2 Route-length prior
+### 9.2 Graph route-length filtering and ordering
 
-An observed graph route is preferred when its measured 3D length is near the
-known physical cable length. This is applied to the route candidate before it
-is combined with a particle.
+Graph search is bounded by the known physical cable length plus a configured
+margin, and complete routes are ordered by their length error before they reach
+the particle filter.
 
 Length is particularly valuable at a crossing or branch. Two projected paths
 may look locally plausible, but only one may produce a complete
 endpoint-to-endpoint route compatible with the measured cable length.
 
-### 9.3 Endpoint-tangent score
+Length is not added again as a PF energy term. Fixed-length particles already
+encode the same physical quantity, so another soft route-length penalty was
+redundant.
 
-The particle directions leaving the two endpoints are compared with the local
-PCA tangent measurements. Agreement lowers the energy. This is a soft local
-cue and cannot override all other evidence by itself.
-
-### 9.4 Smoothness score
+### 9.3 Smoothness score
 
 Angles between consecutive particle links are measured. Repeated sharp turns
 raise the energy. This discourages high-frequency wavy particles that fit
 individual points but do not resemble a cable.
 
 Smoothness does not assume the whole cable is straight and does not erase
-large legitimate bends. The separate hard kink-limit feature is currently
-disabled.
+large legitimate bends.
 
-### 9.5 Fixed-length and endpoint validity
+### 9.4 Fixed-length and endpoint validity
 
 When fixed-length constraints are enabled, a particle is valid only if:
 
@@ -622,26 +617,7 @@ When fixed-length constraints are enabled, a particle is valid only if:
 
 These are validity checks in addition to proposal projection.
 
-### 9.6 Image probability and depth visibility
-
-For incomplete observations, dense 3D particle samples are projected into the
-camera image. The GPU-resident PIDNet cable probability and ZED depth are
-sampled at those positions.
-
-Each sample can be classified as:
-
-- **supported**: image probability and depth agree with visible cable;
-- **occluded**: the camera sees a nearer surface in front of the predicted
-  cable location;
-- **missing**: the cable should be visible there but the observation does not
-  support it;
-- **unknown**: the camera data cannot make a reliable decision.
-
-Occlusion is not the same as missing evidence. If a hand is closer to the
-camera than the predicted cable, absence of cable pixels behind the hand
-should not be treated like proof that the cable moved away.
-
-### 9.7 Endpoint-rooted partial trace score
+### 9.5 Endpoint-rooted partial trace score
 
 If no complete route exists, a retained endpoint-0 trace is compared only with
 the particle prefix and a retained endpoint-1 trace is compared only with the
@@ -649,6 +625,10 @@ reversed particle suffix. The number of compared dense samples comes from the
 observed trace length divided by the known physical cable length. Point order
 is preserved and corresponding arc-length samples are compared with the same
 Huber distance used by the complete-route score.
+
+The local endpoint PCA tangent is used only to choose the inward rooted graph
+edge when an endpoint touches more than one candidate. It is not a particle
+proposal offset or an added PF energy term.
 
 The partial trace is never slid through the particle and is never reversed to
 find a lower cost. Those operations would discard the endpoint identity and
@@ -659,7 +639,7 @@ Only the observed prefix and suffix receive supported or missing labels. The
 unseen middle remains unknown and is carried by temporal prediction and the
 fixed-length constraint.
 
-### 9.8 Unsupported-gap check
+### 9.6 Unsupported-gap check
 
 The code measures the longest consecutive arc of a particle that is not
 supported by route or partial evidence. A long unsupported section always
@@ -685,9 +665,6 @@ Important current values include:
 | Supported-route distance | 15 mm |
 | Maximum unsupported continuous length | 80 mm |
 | Endpoint/link tolerance | 3 mm |
-| Route-length scale | 25 mm |
-| Depth visibility tolerance | 20 mm |
-| Foreground occlusion margin | 12 mm |
 
 These values are configuration, not hidden constants.
 
@@ -766,7 +743,7 @@ additional observations.
 
 ---
 
-## 11. Motion and occlusion behavior
+## 11. Motion and partial-observation behavior
 
 ### Normal motion
 
@@ -787,10 +764,10 @@ boundary motion directly without assuming a hidden cable route.
 
 ### Fast motion
 
-Measured endpoint speed increases acceleration uncertainty. The 10% wider
-route-centered exploration population supplies additional alternatives. This
-is the mechanism intended to recover from a shape that moves outside the
-narrow high-probability population.
+The constant acceleration-noise model remains predictable across motion
+regimes. A 10% wider route-centered exploration population supplies additional
+alternatives when the shape moves outside the narrow high-probability
+population.
 
 ### Partial occlusion
 
@@ -809,9 +786,7 @@ When a complete route disappears:
 - an endpoint-rooted graph trace updates only the corresponding particle
   prefix or suffix;
 - the hidden middle is not scored as missing and remains under the motion and
-  fixed-length models;
-- optional depth visibility can mark predicted points behind a nearer object
-  as occluded rather than missing.
+  fixed-length models.
 
 The frame is reported as `PARTIAL` only when rooted evidence actually
 contributes a measurement. Its trace error is computed over the observed
@@ -842,9 +817,9 @@ PIDNet produces a crossing probability mask. It is thresholded and displayed
 in bright yellow. This tells the operator where the RGB network believes a
 cross-like image pattern exists.
 
-The `crossing` PF feature is currently set to `false`. Therefore the explicit
-crossing mask currently contributes **no particle reward, penalty, ownership,
-contact test, or physical constraint**.
+There is no explicit crossing term in the particle filter. The crossing mask
+contributes **no particle reward, penalty, ownership, contact test, or physical
+constraint**.
 
 ### Crossing represented implicitly by the cable graph
 
@@ -903,8 +878,8 @@ route candidates:
 - route-centered proposal creation;
 - dense segment sampling;
 - connected trace residuals;
-- visibility sampling;
-- smoothness and tangent scores;
+- rooted-fragment residuals;
+- smoothness scores;
 - validity masks;
 - weight normalization;
 - posterior statistics.
@@ -1000,34 +975,27 @@ missed-frame count are printed to the console.
 
 ## 15. Feature isolation
 
-Every major PF behavior can be enabled or disabled in
+The major retained PF behaviors can be enabled or disabled in
 `ZED_segmentation_viewer/source/config.toml` and through the feature UI.
 
 | Feature | Purpose |
 |---|---|
-| `endpoint_direction_proposal` | Uses local endpoint tangents to center proposals |
 | `connected_trace` | Scores particles against ordered graph routes |
-| `route_length_score` | Prefers observed routes near physical cable length |
-| `endpoint_tangent_score` | Rewards local endpoint direction agreement |
 | `smoothness` | Penalizes repeated sharp link turns |
 | `fixed_length` | Projects and validates equal-length cable links |
 | `temporal_prediction` | Uses per-node velocity from the previous state |
 | `endpoint_motion_transport` | Applies measured endpoint boundary residuals across particle arc length |
 | `ess_resampling` | Uses ESS-triggered systematic resampling for complete and partial evidence |
-| `motion_adaptive_noise` | Widens motion uncertainty as endpoints move faster |
 | `global_particles` | Keeps a 10% wider route-centered exploration population |
 | `measurement_velocity_update` | Corrects ordinary-particle velocity from accepted node displacement |
 | `global_particle_velocity_update` | Gives route-centered retracking particles consistent measured velocity |
-| `kink_limit` | Optional hard large-turn penalty; currently off |
 | `partial_observation` | Allows endpoint-rooted visible traces to update a disconnected cable |
-| `depth_occlusion` | Separates hidden cable from unsupported visible cable |
 | `fragment_score` | Matches each endpoint-rooted trace only to its corresponding particle prefix or suffix |
 | `single_endpoint_updates` | Allows a cable update with one visible endpoint |
 | `prediction_without_measurement` | Advances the state using motion alone |
 | `posterior_uncertainty` | Computes node covariance diagnostics |
 | `fused_constraint_kernels` | Uses native CUDA fixed-length/velocity kernels |
 | `cuda_graph_replay` | Replays compatible repeated CUDA constraint work |
-| `crossing` | Reserved explicit crossing-PF feature; currently off |
 
 Feature isolation is intended for research ablation. The meaningful comparison
 is not only FPS. Each run should also compare route correctness, trace error,
@@ -1229,10 +1197,12 @@ The current pipeline has several defensible design choices:
 - scoring preserves order along the cable;
 - fixed physical length is enforced on every particle;
 - both PFs are independent but efficiently batched on CUDA;
-- temporal velocity and motion-dependent uncertainty handle movement;
+- temporal velocity, endpoint transport, and a wider exploration population
+  handle movement;
 - partial evidence does not collapse the hidden particle distribution;
-- depth explicitly distinguishes occluded from visibly unsupported sections;
-- every major algorithm can be ablated;
+- hidden sections remain explicitly unknown instead of being treated as
+  visibly unsupported;
+- every retained major algorithm can be ablated;
 - the diagnostic UI exposes intermediate representations rather than only the
   final green curves.
 
@@ -1249,8 +1219,7 @@ The following remain genuine limitations rather than hidden fallback behavior:
   artifacts;
 - endpoint PCA can be noisy if the local mask or depth is poor;
 - a long complete occlusion remains underdetermined;
-- multinomial resampling can lose particle diversity;
-- effective sample size is diagnostic only;
+- particle resampling can still lose diversity despite ESS gating;
 - the two PFs do not jointly explain the shared observation;
 - there is no explicit physical crossing/contact model;
 - the NN crossing proposal is visualization-only in the current phase;
@@ -1273,8 +1242,8 @@ heuristic “recovery” modes that are difficult to explain or reproduce.
 > CUDA-batched particle filters then track the two cables. Particles are
 > initialized and proposed around the graph routes, constrained to fixed
 > length, and scored mainly by ordered arc-length correspondence to complete
-> graph trails, with additional endpoint-tangent, smoothness, visibility,
-> occlusion, and fragment evidence. The reported shape is a constrained
+> graph trails, with additional smoothness, unsupported-gap, and
+> endpoint-rooted fragment evidence. The reported shape is a constrained
 > posterior mean within the most probable route mode. The explicit crossing
 > channel is currently displayed for diagnosis but is not yet used as a
 > physical contact constraint.
