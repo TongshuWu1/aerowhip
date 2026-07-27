@@ -52,8 +52,6 @@ overlay_alpha = 0.62
 # Endpoint components smaller than this are treated as NN speckle, not endpoints.
 endpoint_min_area_px = 24
 endpoint_label_search_px = 18
-endpoint_tangent_radius_px = 28
-endpoint_tangent_min_points = 24
 route_depth_radius_px = 2
 route_samples = 128
 graph_node_dilation_px = 3
@@ -61,8 +59,8 @@ route_candidate_limit = 16
 route_search_state_limit = 4096
 route_edge_limit = 24
 route_length_margin_m = 0.18
-fragment_samples = 24
-fragment_component_min_area_px = 8
+graph_edge_samples = 24
+component_min_area_px = 8
 endpoint_association_gate_m = 0.12
 # Diagnostic-only stage timing. This does not change observation mathematics.
 profile_stages = true
@@ -73,7 +71,7 @@ profile_console_period_s = 1.0
 device = "cuda"
 particle_count = 800
 node_count = 16
-# Both physical cables are identical and measured as 0.515 m tip-to-tip.
+# Both physical cables are identical and measured as 0.518 m tip-to-tip.
 cable_lengths_m = [0.518, 0.518]
 dense_samples_per_segment = 4
 deformation_modes = 5
@@ -101,7 +99,14 @@ smoothness_weight = 2.0
 support_distance_m = 0.015
 maximum_unsupported_length_m = 0.080
 unsupported_weight = 1.0
-fragment_likelihood_weight = 1.00
+# Prior-based ordered graph-edge association. These costs determine cable
+# identity and arc interval; particle likelihood still uses trace_sigma_m.
+attribution_curve_samples_per_segment = 4
+attribution_distance_sigma_m = 0.012
+attribution_length_sigma_m = 0.025
+attribution_length_weight = 0.25
+attribution_unassigned_energy = 3.0
+attribution_minimum_identity_probability = 0.60
 top_particle_count = 40
 random_seed = 7
 # Reuses CUDA events and the PF's existing synchronization; no extra GPU wait.
@@ -122,11 +127,6 @@ global_particles = true
 # actual constrained parent-to-proposal displacement.
 measurement_velocity_update = true
 global_particle_velocity_update = true
-# When a complete endpoint-to-endpoint route is broken, use only the
-# endpoint-rooted graph prefixes/suffixes. Hidden middle sections remain under
-# temporal prediction and fixed-length constraints.
-partial_observation = true
-fragment_score = true
 single_endpoint_updates = false
 prediction_without_measurement = true
 posterior_uncertainty = true
@@ -134,3 +134,15 @@ posterior_uncertainty = true
 # The exact PyTorch CUDA Graph remains active for centroid-preserving unanchored prediction.
 fused_constraint_kernels = true
 cuda_graph_replay = true
+# Show the prior-based cable identity and ordered arc interval assigned to
+# every observed skeleton edge.
+graph_edge_attribution = true
+# Score initialized particles against all confidently attributed visible
+# edges, even when no complete endpoint-to-endpoint graph route exists.
+visible_edge_scoring = true
+# Transport the predicted cable with the displacement measured on its visible
+# attributed arc intervals. Hidden intervals retain predicted geometry.
+visible_edge_transport = true
+# Keep the 10% broad proposal population centered on the visible-edge-
+# transported prior while the graph is disconnected.
+visible_edge_exploration = true

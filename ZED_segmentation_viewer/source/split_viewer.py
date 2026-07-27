@@ -313,13 +313,15 @@ FEATURE_CONTROLS = (
     ("9", "global_particles", "RETRACK 10%"),
     ("V", "measurement_velocity_update", "MOTION VELOCITY"),
     ("B", "global_particle_velocity_update", "RETRACK VELOCITY"),
-    ("A", "partial_observation", "PARTIAL OBS"),
-    ("D", "fragment_score", "ROOTED TRACE"),
     ("F", "single_endpoint_updates", "ONE ENDPOINT"),
     ("G", "prediction_without_measurement", "PREDICT HIDDEN"),
     ("H", "posterior_uncertainty", "UNCERTAINTY"),
     ("K", "fused_constraint_kernels", "FUSED LINKS"),
     ("J", "cuda_graph_replay", "CUDA GRAPH"),
+    ("Y", "graph_edge_attribution", "EDGE ATTR"),
+    ("A", "visible_edge_scoring", "EDGE SCORE"),
+    ("D", "visible_edge_transport", "EDGE MOTION"),
+    ("S", "visible_edge_exploration", "EDGE RETRACK"),
 )
 
 POINT_VERTEX_SHADER = """
@@ -1145,9 +1147,10 @@ class SplitPointCloudViewer:
                     y,
                     f"PF{cable_index + 1} {diagnostic.tracking_state} | "
                     f"ep={diagnostic.endpoint_visible_count}/2 "
-                    f"frag={diagnostic.fragment_count} "
                     f"route={diagnostic.selected_route_index + 1}/"
                     f"{diagnostic.route_candidate_count} "
+                    f"edge={diagnostic.attributed_edge_count} "
+                    f"src={diagnostic.measurement_source} "
                     f"V/M/U={100.0 * diagnostic.visible_fraction:.0f}/"
                     f"{100.0 * diagnostic.missing_fraction:.0f}/"
                     f"{100.0 * diagnostic.unknown_fraction:.0f}% | "
@@ -1239,7 +1242,8 @@ class SplitPointCloudViewer:
                 f"{self.pipeline_stats.get('observation_graph_edges', 0)}/"
                 f"{self.pipeline_stats.get('observation_branch_pixels', 0)} | "
                 f"routes {self.pipeline_stats.get('observation_route_candidates', 0)} | "
-                f"fragments {self.pipeline_stats.get('observation_fragments', 0)}",
+                f"observed edges "
+                f"{self.pipeline_stats.get('observation_graph_edge_count', 0)}",
                 UI_MUTED,
                 GLUT_BITMAP_HELVETICA_12,
             )
@@ -1249,8 +1253,8 @@ class SplitPointCloudViewer:
                 "OBS latest other ms | "
                 f"masks {self.pipeline_stats.get('observation_masks_latest_ms', 0.0):.2f} | "
                 f"component prep {self.pipeline_stats.get('observation_component_preparation_latest_ms', 0.0):.2f} | "
-                f"fragments {self.pipeline_stats.get('observation_fragments_latest_ms', 0.0):.2f} | "
-                f"tangents {self.pipeline_stats.get('observation_tangents_latest_ms', 0.0):.2f} | "
+                f"graph edges "
+                f"{self.pipeline_stats.get('observation_graph_edges_latest_ms', 0.0):.2f} | "
                 f"route search/build "
                 f"{self.pipeline_stats.get('observation_route_search_latest_ms', 0.0):.2f}/"
                 f"{self.pipeline_stats.get('observation_route_assembly_latest_ms', 0.0):.2f} | "
@@ -1287,7 +1291,7 @@ class SplitPointCloudViewer:
                 )
             )
             x += chip_width + 6
-        phase_text = "CROSSING: PHASE 2"
+        phase_text = "CROSSING: OBSERVATION ONLY"
         if x + self._text_width(phase_text, GLUT_BITMAP_HELVETICA_12) + 16 > width:
             x = 18
             chip_y -= 25

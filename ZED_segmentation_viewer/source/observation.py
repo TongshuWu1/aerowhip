@@ -46,15 +46,25 @@ class RouteHypothesis:
 
 
 @dataclass(frozen=True)
-class FragmentObservation:
-    """One endpoint-rooted, inward-oriented visible skeleton trace."""
+class GraphEndpointAnchor:
+    """Known endpoint identity attached to one end of an observed graph edge."""
+
+    edge_end: int
+    cable_index: int
+    endpoint_index: int
+
+
+@dataclass(frozen=True)
+class GraphEdgeObservation:
+    """One ordered, directly observed 3D skeleton edge."""
 
     component_label: int
     edge_id: int
+    node_ids: tuple[int, int]
     xyz: np.ndarray
     pixels_xy: np.ndarray
     length_m: float
-    endpoint_index: int = -1
+    endpoint_anchors: tuple[GraphEndpointAnchor, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -72,9 +82,7 @@ class ObservationProfile:
     component_preparation_ms: float
     skeleton_ms: float
     graph_ms: float
-    global_fragments_ms: float
-    tangents_ms: float
-    cable_fragments_ms: float
+    graph_edges_ms: float
     route_search_ms: float
     route_assembly_ms: float
     finalization_ms: float
@@ -90,7 +98,7 @@ class ObservationProfile:
     graph_edges: int
     branch_pixels: int
     route_candidates: int
-    fragments: int
+    graph_edge_count: int
 
 
 @dataclass(frozen=True)
@@ -101,7 +109,6 @@ class CableObservation:
     endpoint_pixels_xy: np.ndarray
     endpoint_visible: np.ndarray
     routes: tuple[RouteHypothesis, ...]
-    fragments: tuple[FragmentObservation, ...]
     component_points: int
     graph_nodes: int
     graph_edges: int
@@ -122,7 +129,7 @@ class SkeletonDebug:
 class FrameObservation:
     cables: tuple[CableObservation, CableObservation]
     processing_ms: float
-    fragments: tuple[FragmentObservation, ...] = ()
+    graph_edges: tuple[GraphEdgeObservation, ...] = ()
     profile: ObservationProfile | None = None
     skeleton_debug: SkeletonDebug | None = None
 
@@ -131,8 +138,6 @@ class FrameObservation:
 class ObservationConfig:
     endpoint_min_area_px: int = 24
     endpoint_label_search_px: int = 18
-    endpoint_tangent_radius_px: int = 28
-    endpoint_tangent_min_points: int = 24
     route_depth_radius_px: int = 2
     route_samples: int = 128
     graph_node_dilation_px: int = 3
@@ -140,8 +145,8 @@ class ObservationConfig:
     route_search_state_limit: int = 4096
     route_edge_limit: int = 24
     route_length_margin_m: float = 0.18
-    fragment_samples: int = 24
-    fragment_component_min_area_px: int = 8
+    graph_edge_samples: int = 24
+    component_min_area_px: int = 8
     endpoint_association_gate_m: float = 0.12
     profile_stages: bool = True
     profile_console_period_s: float = 1.0
@@ -152,12 +157,6 @@ class ObservationConfig:
         return cls(
             endpoint_min_area_px=max(1, int(values.get("endpoint_min_area_px", 24))),
             endpoint_label_search_px=max(1, int(values.get("endpoint_label_search_px", 18))),
-            endpoint_tangent_radius_px=max(
-                3, int(values.get("endpoint_tangent_radius_px", 28))
-            ),
-            endpoint_tangent_min_points=max(
-                3, int(values.get("endpoint_tangent_min_points", 24))
-            ),
             route_depth_radius_px=max(0, int(values.get("route_depth_radius_px", 2))),
             route_samples=max(16, int(values.get("route_samples", 128))),
             graph_node_dilation_px=max(
@@ -171,9 +170,10 @@ class ObservationConfig:
             route_length_margin_m=max(
                 0.01, float(values.get("route_length_margin_m", 0.18))
             ),
-            fragment_samples=max(4, int(values.get("fragment_samples", 24))),
-            fragment_component_min_area_px=max(
-                2, int(values.get("fragment_component_min_area_px", 8))
+            graph_edge_samples=max(4, int(values.get("graph_edge_samples", 24))),
+            component_min_area_px=max(
+                2,
+                int(values.get("component_min_area_px", 8)),
             ),
             endpoint_association_gate_m=max(
                 0.01, float(values.get("endpoint_association_gate_m", 0.12))
@@ -215,8 +215,6 @@ class _GeometryProfile:
 
 @dataclass(frozen=True)
 class _CableAssemblyProfile:
-    tangents_ms: float
-    fragments_ms: float
     route_search_ms: float
     route_assembly_ms: float
     finalization_ms: float
@@ -250,7 +248,6 @@ def _empty_cable(reason: str) -> CableObservation:
         endpoint_pixels_xy=np.full((2, 2), np.nan, dtype=np.float32),
         endpoint_visible=np.zeros(2, dtype=bool),
         routes=(),
-        fragments=(),
         component_points=0,
         graph_nodes=0,
         graph_edges=0,
@@ -264,14 +261,6 @@ def _mask_bool(mask: np.ndarray, shape: tuple[int, int]) -> np.ndarray:
     if array.shape != shape:
         array = cv2.resize(array, (shape[1], shape[0]), interpolation=cv2.INTER_NEAREST)
     return np.ascontiguousarray(array > 0)
-
-
-def _normalize(vector: np.ndarray) -> np.ndarray:
-    vector = np.asarray(vector, dtype=np.float64)
-    length = float(np.linalg.norm(vector))
-    if not np.isfinite(length) or length <= 1e-12:
-        return np.zeros(3, dtype=np.float32)
-    return np.asarray(vector / length, dtype=np.float32)
 
 
 def _resample_polyline(points: np.ndarray, count: int) -> np.ndarray:
@@ -464,44 +453,6 @@ def _lift_route_samples(
     valid = valid_counts > 0
     points[~valid] = np.nan
     return np.ascontiguousarray(points, dtype=np.float32), valid
-
-
-def _principal_tangent(points: np.ndarray, endpoint: np.ndarray) -> np.ndarray:
-    points = np.asarray(points, dtype=np.float64)
-    if len(points) < 3:
-        return np.zeros(3, dtype=np.float32)
-    centered = points - np.mean(points, axis=0, keepdims=True)
-    covariance = centered.T @ centered / max(1, len(points) - 1)
-    values, vectors = np.linalg.eigh(covariance)
-    direction = vectors[:, int(np.argmax(values))]
-    inward = np.mean(points, axis=0) - np.asarray(endpoint, dtype=np.float64)
-    if float(np.dot(direction, inward)) < 0.0:
-        direction = -direction
-    return _normalize(direction)
-
-
-def _measured_endpoint_tangent(
-    endpoint: EndpointMeasurement,
-    component: np.ndarray,
-    geometry: _SegmentedGeometry,
-    radius_px: int,
-    minimum_points: int,
-) -> np.ndarray:
-    """Estimate inward direction from local observed cable points, independent of a route."""
-
-    x = int(round(float(endpoint.pixel_xy[0])))
-    y = int(round(float(endpoint.pixel_xy[1])))
-    height, width = component.shape
-    x0, x1 = max(0, x - radius_px), min(width, x + radius_px + 1)
-    y0, y1 = max(0, y - radius_px), min(height, y + radius_px + 1)
-    yy, xx = np.ogrid[y0:y1, x0:x1]
-    circle = (xx - x) ** 2 + (yy - y) ** 2 <= radius_px * radius_px
-    selected = component[y0:y1, x0:x1] & geometry.valid[y0:y1, x0:x1] & circle
-    local_y, local_x = np.nonzero(selected)
-    if len(local_x) < minimum_points:
-        return np.zeros(3, dtype=np.float32)
-    points = geometry.points_at(local_y + y0, local_x + x0)
-    return _principal_tangent(points, endpoint.xyz)
 
 
 def _turn_rms_degrees(route_xyz: np.ndarray) -> float:
@@ -908,47 +859,12 @@ def _assemble_route(
     )
 
 
-def _fragment_from_edge(
-    component_label: int,
-    edge: _GraphEdge,
-    endpoint_node: int,
-    endpoint_index: int,
-    endpoint: EndpointMeasurement,
-    sample_count: int,
-) -> FragmentObservation | None:
-    if edge.node_a == endpoint_node:
-        xyz, pixels = edge.xyz, edge.pixels_xy
-    elif edge.node_b == endpoint_node:
-        xyz, pixels = edge.xyz[::-1], edge.pixels_xy[::-1]
-    else:
-        return None
-    raw_xyz = np.ascontiguousarray(xyz, dtype=np.float32).copy()
-    raw_pixels = np.ascontiguousarray(pixels, dtype=np.float32)
-    if len(raw_xyz) < 2:
-        return None
-    raw_xyz[0] = endpoint.xyz
-    sampled_xyz = _resample_polyline(raw_xyz, sample_count)
-    sampled_pixels = _resample_polyline(raw_pixels, sample_count)
-    if len(sampled_xyz) != sample_count:
-        return None
-    length_m = float(np.sum(np.linalg.norm(np.diff(sampled_xyz, axis=0), axis=1)))
-    if not np.isfinite(length_m) or length_m <= 1e-6:
-        return None
-    return FragmentObservation(
-        component_label=int(component_label),
-        edge_id=int(edge.edge_id),
-        xyz=np.ascontiguousarray(sampled_xyz, dtype=np.float32),
-        pixels_xy=np.ascontiguousarray(sampled_pixels, dtype=np.float32),
-        length_m=length_m,
-        endpoint_index=int(endpoint_index),
-    )
-
-
-def _generic_fragment_from_edge(
+def _graph_edge_observation(
     component_label: int,
     edge: _GraphEdge,
     sample_count: int,
-) -> FragmentObservation | None:
+    node_by_owner: dict[tuple[int, int], int],
+) -> GraphEdgeObservation | None:
     sampled_xyz = _resample_polyline(edge.xyz, sample_count)
     sampled_pixels = _resample_polyline(edge.pixels_xy, sample_count)
     if len(sampled_xyz) != sample_count:
@@ -956,18 +872,34 @@ def _generic_fragment_from_edge(
     length_m = float(np.sum(np.linalg.norm(np.diff(sampled_xyz, axis=0), axis=1)))
     if not np.isfinite(length_m) or length_m <= 1e-6:
         return None
-    return FragmentObservation(
+    anchors = []
+    for owner, node_id in sorted(node_by_owner.items()):
+        if int(node_id) == int(edge.node_a):
+            edge_end = 0
+        elif int(node_id) == int(edge.node_b):
+            edge_end = 1
+        else:
+            continue
+        anchors.append(
+            GraphEndpointAnchor(
+                edge_end=edge_end,
+                cable_index=int(owner[0]),
+                endpoint_index=int(owner[1]),
+            )
+        )
+    return GraphEdgeObservation(
         component_label=int(component_label),
         edge_id=int(edge.edge_id),
+        node_ids=(int(edge.node_a), int(edge.node_b)),
         xyz=np.ascontiguousarray(sampled_xyz, dtype=np.float32),
         pixels_xy=np.ascontiguousarray(sampled_pixels, dtype=np.float32),
         length_m=length_m,
-        endpoint_index=-1,
+        endpoint_anchors=tuple(anchors),
     )
 
 
 class ObservationBuilder:
-    """Build complete routes and honest endpoint-connected partial fragments."""
+    """Build complete routes and expose every directly observed graph edge."""
 
     def __init__(
         self,
@@ -1126,6 +1058,7 @@ class ObservationBuilder:
         depth: np.ndarray,
         *,
         include_skeleton_debug: bool = False,
+        include_graph_edges: bool = False,
     ) -> FrameObservation:
         started = time.perf_counter()
         if len(masks) < 3:
@@ -1196,7 +1129,7 @@ class ObservationBuilder:
         debug_branch_pixels: list[np.ndarray] = []
         for component_label in range(1, cable_count):
             area = int(cable_stats[component_label, cv2.CC_STAT_AREA])
-            if area < self.config.fragment_component_min_area_px:
+            if area < self.config.component_min_area_px:
                 continue
             component_started = time.perf_counter()
             component = cable_labels == component_label
@@ -1276,19 +1209,26 @@ class ObservationBuilder:
             )
 
         stage_started = time.perf_counter()
-        global_fragments = []
-        for component_label, (_component, graph, _owners, _reason) in graph_data.items():
-            if graph is None:
-                continue
-            for edge in graph.edges:
-                fragment = _generic_fragment_from_edge(
-                    component_label,
-                    edge,
-                    self.config.fragment_samples,
-                )
-                if fragment is not None:
-                    global_fragments.append(fragment)
-        global_fragments_ms = float(
+        graph_edges = []
+        if include_graph_edges:
+            for component_label, (
+                _component,
+                graph,
+                node_by_owner,
+                _reason,
+            ) in graph_data.items():
+                if graph is None:
+                    continue
+                for edge in graph.edges:
+                    observation = _graph_edge_observation(
+                        component_label,
+                        edge,
+                        self.config.graph_edge_samples,
+                        node_by_owner,
+                    )
+                    if observation is not None:
+                        graph_edges.append(observation)
+        graph_edges_ms = float(
             (time.perf_counter() - stage_started) * 1000.0
         )
 
@@ -1300,7 +1240,6 @@ class ObservationBuilder:
                 endpoint_slots[cable_index],
                 endpoint_component_labels[cable_index],
                 graph_data,
-                geometry,
             )
             observations.append(cable_observation)
             assembly_profiles.append(assembly_profile)
@@ -1309,10 +1248,6 @@ class ObservationBuilder:
         processing_ms = float((finished - started) * 1000.0)
         profile = None
         if self.config.profile_stages:
-            tangents_ms = float(sum(item.tangents_ms for item in assembly_profiles))
-            cable_fragments_ms = float(
-                sum(item.fragments_ms for item in assembly_profiles)
-            )
             route_search_ms = float(
                 sum(item.route_search_ms for item in assembly_profiles)
             )
@@ -1330,9 +1265,7 @@ class ObservationBuilder:
                 + component_preparation_ms
                 + skeleton_ms
                 + graph_ms
-                + global_fragments_ms
-                + tangents_ms
-                + cable_fragments_ms
+                + graph_edges_ms
                 + route_search_ms
                 + route_assembly_ms
                 + finalization_ms
@@ -1352,9 +1285,7 @@ class ObservationBuilder:
                 component_preparation_ms=component_preparation_ms,
                 skeleton_ms=skeleton_ms,
                 graph_ms=graph_ms,
-                global_fragments_ms=global_fragments_ms,
-                tangents_ms=tangents_ms,
-                cable_fragments_ms=cable_fragments_ms,
+                graph_edges_ms=graph_edges_ms,
                 route_search_ms=route_search_ms,
                 route_assembly_ms=route_assembly_ms,
                 finalization_ms=finalization_ms,
@@ -1376,7 +1307,7 @@ class ObservationBuilder:
                 graph_edges=int(sum(len(graph.edges) for graph in valid_graphs)),
                 branch_pixels=int(sum(graph.branch_pixels for graph in valid_graphs)),
                 route_candidates=int(sum(len(item.routes) for item in observations)),
-                fragments=int(len(global_fragments)),
+                graph_edge_count=int(len(graph_edges)),
             )
         skeleton_debug = None
         if include_skeleton_debug:
@@ -1403,7 +1334,7 @@ class ObservationBuilder:
         return FrameObservation(
             cables=(observations[0], observations[1]),
             processing_ms=processing_ms,
-            fragments=tuple(global_fragments),
+            graph_edges=tuple(graph_edges),
             profile=profile,
             skeleton_debug=skeleton_debug,
         )
@@ -1535,76 +1466,15 @@ class ObservationBuilder:
             int,
             tuple[np.ndarray, _SkeletonGraph | None, dict[tuple[int, int], int], str],
         ],
-        geometry: _SegmentedGeometry,
     ) -> tuple[CableObservation, _CableAssemblyProfile]:
         visible = np.asarray([endpoint is not None for endpoint in endpoints], dtype=bool)
         endpoints_xyz = np.full((2, 3), np.nan, dtype=np.float32)
         endpoint_pixels = np.full((2, 2), np.nan, dtype=np.float32)
-        tangents = np.zeros((2, 3), dtype=np.float32)
-        stage_started = time.perf_counter()
         for endpoint_index, endpoint in enumerate(endpoints):
             if endpoint is None:
                 continue
             endpoints_xyz[endpoint_index] = endpoint.xyz
             endpoint_pixels[endpoint_index] = endpoint.pixel_xy
-            component_label = int(component_labels[endpoint_index])
-            data = graph_data.get(component_label)
-            if data is not None:
-                component = data[0]
-                tangents[endpoint_index] = _measured_endpoint_tangent(
-                    endpoint,
-                    component,
-                    geometry,
-                    self.config.endpoint_tangent_radius_px,
-                    self.config.endpoint_tangent_min_points,
-                )
-        tangents_ms = float((time.perf_counter() - stage_started) * 1000.0)
-
-        stage_started = time.perf_counter()
-        fragments = []
-        for endpoint_index, endpoint in enumerate(endpoints):
-            if endpoint is None:
-                continue
-            component_label = int(component_labels[endpoint_index])
-            data = graph_data.get(component_label)
-            if data is None or data[1] is None:
-                continue
-            _component, graph, node_by_owner, _reason = data
-            assert graph is not None
-            endpoint_node = node_by_owner.get((cable_index, endpoint_index), -1)
-            if endpoint_node < 0:
-                continue
-            candidates = []
-            for edge in graph.edges:
-                if edge.node_a != endpoint_node and edge.node_b != endpoint_node:
-                    continue
-                fragment = _fragment_from_edge(
-                    component_label,
-                    edge,
-                    endpoint_node,
-                    endpoint_index,
-                    endpoint,
-                    self.config.fragment_samples,
-                )
-                if fragment is not None:
-                    inward = _normalize(fragment.xyz[-1] - fragment.xyz[0])
-                    tangent = tangents[endpoint_index]
-                    if float(np.linalg.norm(tangent)) > 1e-6:
-                        alignment = float(np.dot(inward, tangent))
-                    else:
-                        alignment = 0.0
-                    candidates.append(
-                        (alignment, float(fragment.length_m), fragment)
-                    )
-            if candidates:
-                # The endpoint anchor can split a degree-two skeleton into an
-                # inward cable edge and a short outward endpoint tail. Keep one
-                # trace, using the independently measured inward tangent to
-                # preserve endpoint identity without introducing a route prior.
-                fragments.append(
-                    max(candidates, key=lambda item: (item[0], item[1]))[2]
-                )
-        fragments_ms = float((time.perf_counter() - stage_started) * 1000.0)
 
         routes = []
         truncated = False
@@ -1674,21 +1544,17 @@ class ObservationBuilder:
         )
         if routes:
             reason = "complete endpoint-to-endpoint routes"
-        elif visible.any() or fragments:
-            reason = (
-                f"partial observation: {int(visible.sum())}/2 endpoints, "
-                f"{len(fragments)} endpoint-connected fragments"
-            )
+        elif visible.any():
+            reason = f"partial observation: {int(visible.sum())}/2 endpoints"
         else:
-            reason = "no cable-specific endpoint or fragment evidence"
+            reason = "no cable-specific endpoint evidence"
         observation = CableObservation(
-            valid=bool(routes or fragments or visible.any()),
+            valid=bool(routes or visible.any()),
             reason=reason,
             endpoints_xyz=np.ascontiguousarray(endpoints_xyz, dtype=np.float32),
             endpoint_pixels_xy=np.ascontiguousarray(endpoint_pixels, dtype=np.float32),
             endpoint_visible=np.ascontiguousarray(visible, dtype=bool),
             routes=tuple(routes),
-            fragments=tuple(fragments),
             component_points=component_points,
             graph_nodes=graph_nodes,
             graph_edges=graph_edges,
@@ -1699,8 +1565,6 @@ class ObservationBuilder:
         return (
             observation,
             _CableAssemblyProfile(
-                tangents_ms=tangents_ms,
-                fragments_ms=fragments_ms,
                 route_search_ms=route_search_ms,
                 route_assembly_ms=route_assembly_ms,
                 finalization_ms=finalization_ms,

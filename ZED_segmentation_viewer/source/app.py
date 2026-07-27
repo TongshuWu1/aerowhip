@@ -72,6 +72,8 @@ SKELETON_MASK_RGB = np.asarray((38, 43, 49), dtype=np.uint8)
 SKELETON_LINE_RGB = np.asarray((238, 244, 250), dtype=np.uint8)
 SKELETON_NODE_RGB = np.asarray((55, 205, 255), dtype=np.uint8)
 SKELETON_BRANCH_RGB = np.asarray((255, 72, 88), dtype=np.uint8)
+SKELETON_AMBIGUOUS_RGB = np.asarray((255, 166, 48), dtype=np.uint8)
+SKELETON_UNASSIGNED_RGB = np.asarray((150, 156, 166), dtype=np.uint8)
 
 
 def _packed_rgb_float(rgb: np.ndarray) -> np.float32:
@@ -417,6 +419,7 @@ def segmentation_overlay(
 def skeleton_diagnostic_image(
     masks: tuple[np.ndarray, ...],
     observation: FrameObservation,
+    particle_filter: ParticleFilterFrame,
     maximum_width: int,
 ) -> np.ndarray:
     """Render the exact thinned mask and compressed graph used by tracking."""
@@ -490,6 +493,102 @@ def skeleton_diagnostic_image(
                     lineType=cv2.LINE_AA,
                 )
 
+    def draw_edge(
+        points_xy: np.ndarray,
+        color: np.ndarray,
+        thickness: int = 2,
+    ) -> tuple[int, int] | None:
+        points = np.asarray(points_xy, dtype=np.float32).reshape(-1, 2)
+        points = points[np.all(np.isfinite(points), axis=1)]
+        if len(points) < 2:
+            return None
+        displayed = np.column_stack(
+            (
+                np.rint(points[:, 0] * scale_x),
+                np.rint(points[:, 1] * scale_y),
+            )
+        ).astype(np.int32)
+        valid = (
+            (displayed[:, 0] >= 0)
+            & (displayed[:, 0] < width)
+            & (displayed[:, 1] >= 0)
+            & (displayed[:, 1] < height)
+        )
+        displayed = displayed[valid]
+        if len(displayed) < 2:
+            return None
+        cv2.polylines(
+            output,
+            [displayed.reshape(-1, 1, 2)],
+            isClosed=False,
+            color=tuple(int(value) for value in color),
+            thickness=thickness,
+            lineType=cv2.LINE_AA,
+        )
+        center = displayed[len(displayed) // 2]
+        return int(center[0]), int(center[1])
+
+    attribution_by_edge = {}
+    attribution = particle_filter.graph_attribution
+    if attribution is not None:
+        attribution_by_edge = {
+            (int(item.component_label), int(item.edge_id)): item
+            for item in attribution.edges
+        }
+    endpoint_colors = (
+        np.rint(ENDPOINT_1_RGB * 255.0).astype(np.uint8),
+        np.rint(ENDPOINT_2_RGB * 255.0).astype(np.uint8),
+    )
+    for edge in observation.graph_edges:
+        assigned = attribution_by_edge.get(
+            (int(edge.component_label), int(edge.edge_id))
+        )
+        if assigned is None:
+            draw_edge(edge.pixels_xy, SKELETON_LINE_RGB, thickness=2)
+            continue
+        cable_probability = np.asarray(
+            assigned.cable_probabilities,
+            dtype=np.float32,
+        )
+        if assigned.selected_cable in (0, 1):
+            color = endpoint_colors[assigned.selected_cable]
+        elif (
+            assigned.unassigned_probability
+            >= float(np.max(cable_probability))
+        ):
+            color = SKELETON_UNASSIGNED_RGB
+        else:
+            color = SKELETON_AMBIGUOUS_RGB
+        center = draw_edge(edge.pixels_xy, color, thickness=3)
+        if center is None:
+            continue
+        if assigned.selected_cable in (0, 1):
+            identity = f"C{assigned.selected_cable + 1}"
+            arc_text = (
+                f" {assigned.arc_start_m:.2f}>{assigned.arc_end_m:.2f}m"
+                if np.isfinite(assigned.arc_start_m)
+                and np.isfinite(assigned.arc_end_m)
+                else ""
+            )
+        else:
+            identity = "UNASSIGNED"
+            arc_text = ""
+        cv2.putText(
+            output,
+            (
+                f"{identity} p={assigned.confidence:.2f}{arc_text} "
+                f"r={assigned.mean_residual_m * 1000.0:.0f}mm"
+                if np.isfinite(assigned.mean_residual_m)
+                else f"{identity} p={assigned.confidence:.2f}{arc_text}"
+            ),
+            (center[0] + 3, center[1] - 3),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.32,
+            tuple(int(value) for value in color),
+            1,
+            cv2.LINE_AA,
+        )
+
     draw_points(debug.node_pixels_xy, SKELETON_NODE_RGB, 5)
     draw_points(debug.branch_pixels_xy, SKELETON_BRANCH_RGB, 3)
     for cable_index, cable_observation in enumerate(observation.cables):
@@ -523,6 +622,26 @@ def skeleton_diagnostic_image(
             ),
             thickness=2,
             lineType=cv2.LINE_AA,
+        )
+    if attribution is not None:
+        cv2.putText(
+            output,
+            (
+                "ORDERED EDGE ASSOCIATION "
+                f"edges={len(attribution.edges)} "
+                f"assigned/ambiguous/unassigned="
+                f"{attribution.attributed_count}/"
+                f"{attribution.ambiguous_count}/"
+                f"{attribution.unassigned_count} "
+                f"cpu/gpu={attribution.processing_ms:.2f}/"
+                f"{attribution.gpu_ms:.2f}ms"
+            ),
+            (8, 17),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.42,
+            tuple(int(value) for value in SKELETON_AMBIGUOUS_RGB),
+            1,
+            cv2.LINE_AA,
         )
     return np.ascontiguousarray(output)
 
@@ -733,18 +852,21 @@ class AsyncSegmentationPipeline:
                 "viewer_source_age",
                 "pf_cpu_route_input",
                 "pf_gpu_inputs",
+                "pf_gpu_graph_attribution",
                 "pf_gpu_prediction",
                 "pf_gpu_prediction_constraint",
                 "pf_gpu_proposal",
                 "pf_gpu_measurement_constraint",
                 "pf_gpu_velocity_correction",
                 "pf_gpu_route_score",
-                "pf_gpu_partial_score",
+                "pf_gpu_visible_edge_score",
+                "pf_gpu_regularization",
                 "pf_gpu_weights",
                 "pf_gpu_posterior",
                 "pf_gpu_estimate_constraint",
                 "pf_gpu_diagnostics",
                 "pf_cpu_readback",
+                "pf_graph_attribution_wall",
             )
         }
         self.performance_stats: dict[str, float | int | str] = {
@@ -1067,18 +1189,21 @@ class AsyncSegmentationPipeline:
         values = {
             "pf_cpu_route_input": profile.route_input_cpu_ms,
             "pf_gpu_inputs": profile.inputs_gpu_ms,
+            "pf_gpu_graph_attribution": profile.graph_attribution_gpu_ms,
             "pf_gpu_prediction": profile.prediction_gpu_ms,
             "pf_gpu_prediction_constraint": profile.prediction_constraint_gpu_ms,
             "pf_gpu_proposal": profile.proposal_gpu_ms,
             "pf_gpu_measurement_constraint": profile.measurement_constraint_gpu_ms,
             "pf_gpu_velocity_correction": profile.velocity_correction_gpu_ms,
             "pf_gpu_route_score": profile.route_score_gpu_ms,
-            "pf_gpu_partial_score": profile.partial_score_gpu_ms,
+            "pf_gpu_visible_edge_score": profile.visible_edge_score_gpu_ms,
+            "pf_gpu_regularization": profile.regularization_gpu_ms,
             "pf_gpu_weights": profile.weight_update_gpu_ms,
             "pf_gpu_posterior": profile.posterior_gpu_ms,
             "pf_gpu_estimate_constraint": profile.estimate_constraint_gpu_ms,
             "pf_gpu_diagnostics": profile.diagnostics_gpu_ms,
             "pf_cpu_readback": profile.readback_cpu_ms,
+            "pf_graph_attribution_wall": profile.graph_attribution_wall_ms,
         }
         for name, value in values.items():
             self._append_performance(name, value)
@@ -1119,10 +1244,9 @@ class AsyncSegmentationPipeline:
                 "observation_component_preparation_latest_ms": float(
                     profile.component_preparation_ms
                 ),
-                "observation_fragments_latest_ms": float(
-                    profile.global_fragments_ms + profile.cable_fragments_ms
+                "observation_graph_edges_latest_ms": float(
+                    profile.graph_edges_ms
                 ),
-                "observation_tangents_latest_ms": float(profile.tangents_ms),
                 "observation_route_search_latest_ms": float(
                     profile.route_search_ms
                 ),
@@ -1148,7 +1272,9 @@ class AsyncSegmentationPipeline:
                 "observation_graph_edges": int(profile.graph_edges),
                 "observation_branch_pixels": int(profile.branch_pixels),
                 "observation_route_candidates": int(profile.route_candidates),
-                "observation_fragments": int(profile.fragments),
+                "observation_graph_edge_count": int(
+                    profile.graph_edge_count
+                ),
             }
         )
 
@@ -1224,6 +1350,23 @@ class AsyncSegmentationPipeline:
                 self.last_observation_ms = float(result.observation.processing_ms)
                 self.last_particle_filter_ms = float(result.particle_filter.processing_ms)
                 self.last_particle_filter_gpu_ms = float(result.particle_filter.gpu_ms)
+                for cable_index, cable in enumerate(
+                    result.particle_filter.cables
+                ):
+                    prefix = f"pf{cable_index + 1}"
+                    diagnostic = cable.diagnostics
+                    self.performance_stats[f"{prefix}_state"] = (
+                        diagnostic.tracking_state
+                    )
+                    self.performance_stats[f"{prefix}_source"] = (
+                        diagnostic.measurement_source
+                    )
+                    self.performance_stats[f"{prefix}_edges"] = int(
+                        diagnostic.attributed_edge_count
+                    )
+                    self.performance_stats[f"{prefix}_trace_mm"] = float(
+                        diagnostic.trace_mean_mm
+                    )
                 capture = result.capture_profile
                 for name, value in (
                     ("grab", capture.grab_ms),
@@ -1502,10 +1645,8 @@ class AsyncSegmentationPipeline:
             f"{float(stats.get('observation_masks_latest_ms', 0.0)):.2f} "
             f"component_prep="
             f"{float(stats.get('observation_component_preparation_latest_ms', 0.0)):.2f} "
-            f"fragments="
-            f"{float(stats.get('observation_fragments_latest_ms', 0.0)):.2f} "
-            f"tangents="
-            f"{float(stats.get('observation_tangents_latest_ms', 0.0)):.2f} "
+            f"graph_edges="
+            f"{float(stats.get('observation_graph_edges_latest_ms', 0.0)):.2f} "
             f"route_search/build="
             f"{float(stats.get('observation_route_search_latest_ms', 0.0)):.2f}/"
             f"{float(stats.get('observation_route_assembly_latest_ms', 0.0)):.2f} "
@@ -1527,7 +1668,8 @@ class AsyncSegmentationPipeline:
             f"{int(stats.get('observation_graph_edges', 0))}/"
             f"{int(stats.get('observation_branch_pixels', 0))} "
             f"routes={int(stats.get('observation_route_candidates', 0))} "
-            f"fragments={int(stats.get('observation_fragments', 0))}",
+            f"observed_edges="
+            f"{int(stats.get('observation_graph_edge_count', 0))}",
             flush=True,
         )
 
@@ -1568,19 +1710,31 @@ class AsyncSegmentationPipeline:
             f"latency={pair('viewer_latency')} "
             f"source_age={pair('viewer_source_age')}\n"
             f"PF_PROFILE gpu_median/p95_ms inputs={pair('pf_gpu_inputs')} "
+            f"edge_attr={pair('pf_gpu_graph_attribution')} "
             f"prediction={pair('pf_gpu_prediction')} "
             f"predict_constraint={pair('pf_gpu_prediction_constraint')} "
             f"proposal={pair('pf_gpu_proposal')} "
             f"measure_constraint={pair('pf_gpu_measurement_constraint')} "
             f"velocity_update={pair('pf_gpu_velocity_correction')}\n"
             f"  route={pair('pf_gpu_route_score')} "
-            f"partial={pair('pf_gpu_partial_score')} "
+            f"visible_edges={pair('pf_gpu_visible_edge_score')} "
+            f"regularization={pair('pf_gpu_regularization')} "
             f"weights={pair('pf_gpu_weights')} "
             f"posterior={pair('pf_gpu_posterior')} "
             f"estimate_constraint={pair('pf_gpu_estimate_constraint')} "
             f"diagnostics={pair('pf_gpu_diagnostics')} "
             f"cpu_route_input={pair('pf_cpu_route_input')} "
-            f"cpu_readback={pair('pf_cpu_readback')}",
+            f"cpu_readback={pair('pf_cpu_readback')} "
+            f"edge_attr_readback={pair('pf_graph_attribution_wall')}\n"
+            f"  measurement PF1="
+            f"{stats.get('pf1_state', 'unknown')}/"
+            f"{stats.get('pf1_source', 'none')}/"
+            f"{int(stats.get('pf1_edges', 0))}edges/"
+            f"{float(stats.get('pf1_trace_mm', float('nan'))):.1f}mm "
+            f"PF2={stats.get('pf2_state', 'unknown')}/"
+            f"{stats.get('pf2_source', 'none')}/"
+            f"{int(stats.get('pf2_edges', 0))}edges/"
+            f"{float(stats.get('pf2_trace_mm', float('nan'))):.1f}mm",
             flush=True,
         )
 
@@ -1607,6 +1761,12 @@ class AsyncSegmentationPipeline:
             masks,
             depth,
             include_skeleton_debug=self.visualization_enabled,
+            include_graph_edges=bool(
+                self.particle_filter.features.graph_edge_attribution
+                or self.particle_filter.features.visible_edge_scoring
+                or self.particle_filter.features.visible_edge_transport
+                or self.particle_filter.features.visible_edge_exploration
+            ),
         )
         particle_filter = self.particle_filter.update(
             observation,
@@ -1688,6 +1848,7 @@ class AsyncSegmentationPipeline:
         skeleton_image = skeleton_diagnostic_image(
             tracked.masks,
             tracked.observation,
+            tracked.particle_filter,
             self.visualization_image_width,
         )
         overlay_finished = time.perf_counter()

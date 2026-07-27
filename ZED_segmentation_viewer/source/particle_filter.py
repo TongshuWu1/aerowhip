@@ -10,7 +10,13 @@ import numpy as np
 import torch
 
 from cuda_constraints import FusedCudaConstraints
-from observation import CableObservation, FrameObservation
+from graph_attribution import (
+    GraphAttributionBatch,
+    GraphAttributionConfig,
+    GraphAttributionDiagnostics,
+    GraphEdgeAttributor,
+)
+from observation import FrameObservation
 
 
 VISIBILITY_UNKNOWN = 0
@@ -29,13 +35,15 @@ class ParticleFeatures:
     global_particles: bool = True
     measurement_velocity_update: bool = True
     global_particle_velocity_update: bool = True
-    partial_observation: bool = True
-    fragment_score: bool = True
     single_endpoint_updates: bool = True
     prediction_without_measurement: bool = True
     posterior_uncertainty: bool = True
     fused_constraint_kernels: bool = True
     cuda_graph_replay: bool = True
+    graph_edge_attribution: bool = True
+    visible_edge_scoring: bool = True
+    visible_edge_transport: bool = True
+    visible_edge_exploration: bool = True
 
     @classmethod
     def from_mapping(cls, values: dict | None) -> "ParticleFeatures":
@@ -81,7 +89,12 @@ class ParticleFilterConfig:
     support_distance_m: float = 0.015
     maximum_unsupported_length_m: float = 0.080
     unsupported_weight: float = 1.0
-    fragment_likelihood_weight: float = 1.00
+    attribution_curve_samples_per_segment: int = 4
+    attribution_distance_sigma_m: float = 0.012
+    attribution_length_sigma_m: float = 0.025
+    attribution_length_weight: float = 0.25
+    attribution_unassigned_energy: float = 3.0
+    attribution_minimum_identity_probability: float = 0.60
     top_particle_count: int = 12
     random_seed: int = 7
     profile_stages: bool = True
@@ -135,8 +148,35 @@ class ParticleFilterConfig:
                 0.0, float(values.get("maximum_unsupported_length_m", 0.080))
             ),
             unsupported_weight=max(0.0, float(values.get("unsupported_weight", 1.0))),
-            fragment_likelihood_weight=max(
-                0.0, float(values.get("fragment_likelihood_weight", 1.00))
+            attribution_curve_samples_per_segment=max(
+                1,
+                int(values.get("attribution_curve_samples_per_segment", 4)),
+            ),
+            attribution_distance_sigma_m=max(
+                1e-6,
+                float(values.get("attribution_distance_sigma_m", 0.012)),
+            ),
+            attribution_length_sigma_m=max(
+                1e-6,
+                float(values.get("attribution_length_sigma_m", 0.025)),
+            ),
+            attribution_length_weight=max(
+                0.0,
+                float(values.get("attribution_length_weight", 0.25)),
+            ),
+            attribution_unassigned_energy=max(
+                0.0,
+                float(values.get("attribution_unassigned_energy", 3.0)),
+            ),
+            attribution_minimum_identity_probability=float(
+                np.clip(
+                    values.get(
+                        "attribution_minimum_identity_probability",
+                        0.60,
+                    ),
+                    0.0,
+                    1.0,
+                )
             ),
             top_particle_count=max(1, int(values.get("top_particle_count", 12))),
             random_seed=int(values.get("random_seed", 7)),
@@ -167,7 +207,6 @@ class CableFilterDiagnostics:
     turn_rms_degrees: float
     tracking_state: str
     endpoint_visible_count: int
-    fragment_count: int
     visible_fraction: float
     missing_fraction: float
     unknown_fraction: float
@@ -178,6 +217,8 @@ class CableFilterDiagnostics:
     corrected_node_speed_mps: float
     maximum_corrected_node_speed_mps: float
     velocity_correction_applied: bool
+    attributed_edge_count: int
+    measurement_source: str
 
 
 @dataclass(frozen=True)
@@ -199,6 +240,7 @@ class ParticleFilterFrame:
     active_features: str
     profile: "ParticleFilterProfile | None" = None
     diagnostics_refreshed: bool = True
+    graph_attribution: GraphAttributionDiagnostics | None = None
 
 
 @dataclass(frozen=True)
@@ -207,18 +249,21 @@ class ParticleFilterProfile:
 
     route_input_cpu_ms: float
     inputs_gpu_ms: float
+    graph_attribution_gpu_ms: float
     prediction_gpu_ms: float
     prediction_constraint_gpu_ms: float
     proposal_gpu_ms: float
     measurement_constraint_gpu_ms: float
     velocity_correction_gpu_ms: float
     route_score_gpu_ms: float
-    partial_score_gpu_ms: float
+    visible_edge_score_gpu_ms: float
+    regularization_gpu_ms: float
     weight_update_gpu_ms: float
     posterior_gpu_ms: float
     estimate_constraint_gpu_ms: float
     diagnostics_gpu_ms: float
     readback_cpu_ms: float
+    graph_attribution_wall_ms: float
 
 
 @dataclass(frozen=True)
@@ -230,7 +275,6 @@ class _PendingCableOutput:
     diagnostic_float_payload: torch.Tensor | None
     diagnostic_visibility_payload: torch.Tensor | None
     endpoint_visible_count: int
-    fragment_count: int
     route_candidate_count: int
     dense_count: int
     top_count: int
@@ -286,7 +330,6 @@ def _empty_output(status: str, measurement_valid: bool = False) -> CableFilterOu
         turn_rms_degrees=float("nan"),
         tracking_state="LOST",
         endpoint_visible_count=0,
-        fragment_count=0,
         visible_fraction=0.0,
         missing_fraction=0.0,
         unknown_fraction=1.0,
@@ -297,6 +340,8 @@ def _empty_output(status: str, measurement_valid: bool = False) -> CableFilterOu
         corrected_node_speed_mps=float("nan"),
         maximum_corrected_node_speed_mps=float("nan"),
         velocity_correction_applied=False,
+        attributed_edge_count=0,
+        measurement_source="none",
     )
     return CableFilterOutput(
         curve=np.empty((0, 3), dtype=np.float32),
@@ -488,11 +533,26 @@ class BatchedCableParticleFilter:
     ):
         self.config = config
         self.features = features
+        graph_attribution_config = GraphAttributionConfig(
+            curve_samples_per_segment=config.attribution_curve_samples_per_segment,
+            distance_sigma_m=config.attribution_distance_sigma_m,
+            length_sigma_m=config.attribution_length_sigma_m,
+            length_weight=config.attribution_length_weight,
+            huber_delta=config.huber_delta,
+            unassigned_energy=config.attribution_unassigned_energy,
+            minimum_identity_probability=(
+                config.attribution_minimum_identity_probability
+            ),
+        )
         self.device = torch.device(config.device)
         if self.device.type == "cuda" and not torch.cuda.is_available():
             raise RuntimeError("CUDA particle filtering was requested but torch.cuda is unavailable")
         if self.device.type == "cuda" and self.device.index is None:
             self.device = torch.device("cuda", torch.cuda.current_device())
+        self.graph_edge_attributor = GraphEdgeAttributor(
+            graph_attribution_config,
+            self.device,
+        )
         self.dtype = torch.float32
         self.generator = torch.Generator(device=self.device)
         self.generator.manual_seed(config.random_seed)
@@ -585,13 +645,15 @@ class BatchedCableParticleFilter:
                     for name in (
                         "start",
                         "inputs",
+                        "attribution",
                         "prediction",
                         "prediction_constraint",
                         "proposal",
                         "measurement_constraint",
                         "velocity_correction",
                         "route_score",
-                        "partial_score",
+                        "visible_edge_score",
+                        "regularization",
                         "weights",
                         "posterior",
                         "estimate_constraint",
@@ -605,8 +667,14 @@ class BatchedCableParticleFilter:
             self._profile_events = {}
 
     def set_features(self, features: ParticleFeatures) -> None:
+        pf_feature_changed = any(
+            getattr(self.features, name) != getattr(features, name)
+            for name in ParticleFeatures.__dataclass_fields__
+            if name != "graph_edge_attribution"
+        )
         self.features = features
-        self._diagnostic_cache = [None, None]
+        if pf_feature_changed:
+            self._diagnostic_cache = [None, None]
 
     def _capture_constraint_graph(
         self,
@@ -811,6 +879,349 @@ class BatchedCableParticleFilter:
         noise = torch.einsum("cpkd,nk->cpnd", coefficients, self.basis)
         return noise * scale.view(2, 1, 1, 1)
 
+    def _edge_arc_samples(
+        self,
+        attribution: GraphAttributionBatch,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        """Return normalized ordered arc samples and selected-edge flags.
+
+        The attributor fits each observed edge to an interval of the predicted
+        cable.  Its raw point order is retained, so a decreasing interval
+        represents the same edge observed in the opposite orientation.
+        """
+
+        sample_fraction = torch.linspace(
+            0.0,
+            1.0,
+            attribution.observed_count,
+            device=self.device,
+            dtype=self.dtype,
+        )
+        arc_m = (
+            attribution.best_arc_start_m[:, :, None]
+            + sample_fraction[None, None, :]
+            * (
+                attribution.best_arc_end_m
+                - attribution.best_arc_start_m
+            )[:, :, None]
+        )
+        normalized_arc = (
+            arc_m / self.lengths[:, None, None].clamp_min(1e-9)
+        )
+        normalized_arc = torch.nan_to_num(
+            normalized_arc,
+            nan=0.0,
+            posinf=1.0,
+            neginf=0.0,
+        ).clamp(0.0, 1.0)
+        return normalized_arc, attribution.selected_mask()
+
+    def _sample_particles_at_arc(
+        self,
+        particles: torch.Tensor,
+        normalized_arc: torch.Tensor,
+    ) -> torch.Tensor:
+        """Sample all particles at common cable arc coordinates on CUDA."""
+
+        target_index = normalized_arc * float(self.config.node_count - 1)
+        lower = torch.floor(target_index).to(torch.int64).clamp(
+            0,
+            self.config.node_count - 1,
+        )
+        upper = (lower + 1).clamp_max(self.config.node_count - 1)
+        alpha = target_index - lower.to(self.dtype)
+        cable_count, particle_count = particles.shape[:2]
+        sample_count = int(normalized_arc.shape[1] * normalized_arc.shape[2])
+        lower_flat = lower.reshape(cable_count, sample_count)
+        upper_flat = upper.reshape(cable_count, sample_count)
+        lower_index = lower_flat[:, None, :, None].expand(
+            -1,
+            particle_count,
+            -1,
+            3,
+        )
+        upper_index = upper_flat[:, None, :, None].expand_as(lower_index)
+        point_a = torch.gather(particles, 2, lower_index)
+        point_b = torch.gather(particles, 2, upper_index)
+        sampled = point_a + alpha.reshape(
+            cable_count,
+            1,
+            sample_count,
+            1,
+        ) * (point_b - point_a)
+        return sampled.reshape(
+            cable_count,
+            particle_count,
+            normalized_arc.shape[1],
+            normalized_arc.shape[2],
+            3,
+        )
+
+    def _visible_edge_energy(
+        self,
+        particles: torch.Tensor,
+        attribution: GraphAttributionBatch,
+        normalized_arc: torch.Tensor,
+        selected_edges: torch.Tensor,
+    ) -> torch.Tensor:
+        """Robust ordered line-to-line likelihood for attributed visible edges."""
+
+        particle_samples = self._sample_particles_at_arc(
+            particles,
+            normalized_arc,
+        )
+        residual = torch.linalg.vector_norm(
+            particle_samples
+            - attribution.observed_xyz[None, None, :, :, :],
+            dim=-1,
+        )
+        normalized = residual / self.config.trace_sigma_m
+        delta = self.config.huber_delta
+        huber = torch.where(
+            normalized <= delta,
+            0.5 * normalized.square(),
+            delta * (normalized - 0.5 * delta),
+        )
+        edge_energy = huber.mean(dim=-1)
+        edge_weight = (
+            selected_edges.to(self.dtype)
+            * attribution.selected_confidence[None, :]
+            * attribution.edge_lengths_m[None, :].clamp_min(1e-6)
+        )
+        energy = torch.sum(
+            edge_energy * edge_weight[:, None, :],
+            dim=-1,
+        ) / edge_weight.sum(dim=-1, keepdim=True).clamp_min(1e-9)
+        return energy
+
+    def _visible_edge_displacement(
+        self,
+        attribution: GraphAttributionBatch,
+        normalized_arc: torch.Tensor,
+        selected_edges: torch.Tensor,
+    ) -> torch.Tensor:
+        """Interpolate measured motion along cable arc without bridging in XYZ.
+
+        Each visible edge directly measures displacement relative to the
+        predicted prior at its fitted arc interval.  At particle nodes, the
+        closest measured displacement on either side is linearly interpolated.
+        Hidden geometry is therefore transported by neighboring cable motion;
+        no straight 3D segment is inserted across an occlusion.
+        """
+
+        sample_arc = normalized_arc.reshape(2, -1)
+        displacement = (
+            attribution.observed_xyz[None, :, :, :]
+            - attribution.best_model_xyz
+        ).reshape(2, -1, 3)
+        valid = selected_edges[:, :, None].expand(
+            -1,
+            -1,
+            attribution.observed_count,
+        ).reshape(2, -1)
+        node_arc = torch.linspace(
+            0.0,
+            1.0,
+            self.config.node_count,
+            device=self.device,
+            dtype=self.dtype,
+        )[None, :, None]
+        arc = sample_arc[:, None, :]
+        valid_expanded = valid[:, None, :]
+
+        left_valid = valid_expanded & (arc <= node_arc)
+        left_score = torch.where(
+            left_valid,
+            arc,
+            torch.full_like(arc, -torch.inf),
+        )
+        left_index = torch.argmax(left_score, dim=-1)
+        has_left = left_valid.any(dim=-1)
+
+        right_valid = valid_expanded & (arc >= node_arc)
+        right_score = torch.where(
+            right_valid,
+            arc,
+            torch.full_like(arc, torch.inf),
+        )
+        right_index = torch.argmin(right_score, dim=-1)
+        has_right = right_valid.any(dim=-1)
+
+        left_displacement = torch.gather(
+            displacement,
+            1,
+            left_index[:, :, None].expand(-1, -1, 3),
+        )
+        right_displacement = torch.gather(
+            displacement,
+            1,
+            right_index[:, :, None].expand(-1, -1, 3),
+        )
+        left_arc = torch.gather(sample_arc, 1, left_index)
+        right_arc = torch.gather(sample_arc, 1, right_index)
+        interpolation = (
+            (node_arc[:, :, 0] - left_arc)
+            / (right_arc - left_arc).clamp_min(1e-9)
+        ).clamp(0.0, 1.0)
+        between = left_displacement + interpolation[:, :, None] * (
+            right_displacement - left_displacement
+        )
+        # Duplicate samples occur at graph junctions.  Averaging their two
+        # nearest displacement observations avoids arbitrary edge-order ties.
+        coincident = (right_arc - left_arc).abs() <= 1e-8
+        between = torch.where(
+            coincident[:, :, None],
+            0.5 * (left_displacement + right_displacement),
+            between,
+        )
+        field = torch.where(
+            (has_left & has_right)[:, :, None],
+            between,
+            torch.where(
+                has_left[:, :, None],
+                left_displacement,
+                torch.where(
+                    has_right[:, :, None],
+                    right_displacement,
+                    torch.zeros_like(right_displacement),
+                ),
+            ),
+        )
+        return field
+
+    def _visible_edge_diagnostics(
+        self,
+        selected_particles: torch.Tensor,
+        attribution: GraphAttributionBatch,
+        normalized_arc: torch.Tensor,
+        selected_edges: torch.Tensor,
+        dense_count: int,
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        """Summarize only the cable intervals that are directly observed."""
+
+        selected_samples = self._sample_particles_at_arc(
+            selected_particles[:, None, :, :],
+            normalized_arc,
+        )[:, 0]
+        residual = torch.linalg.vector_norm(
+            selected_samples - attribution.observed_xyz[None, :, :, :],
+            dim=-1,
+        )
+        flat_residual = residual.reshape(2, -1)
+        flat_valid = selected_edges[:, :, None].expand(
+            -1,
+            -1,
+            attribution.observed_count,
+        ).reshape(2, -1)
+        valid_count = flat_valid.sum(dim=1)
+        denominator = valid_count.clamp_min(1).to(self.dtype)
+        trace_mean = torch.sum(
+            torch.where(flat_valid, flat_residual, 0.0),
+            dim=1,
+        ) / denominator
+        trace_rms = torch.sqrt(
+            torch.sum(
+                torch.where(flat_valid, flat_residual.square(), 0.0),
+                dim=1,
+            )
+            / denominator
+        )
+        sorted_residual = torch.sort(
+            torch.where(
+                flat_valid,
+                flat_residual,
+                torch.full_like(flat_residual, torch.inf),
+            ),
+            dim=1,
+        ).values
+        percentile_index = (
+            torch.ceil(valid_count.to(self.dtype) * 0.95).to(torch.int64) - 1
+        ).clamp_min(0)
+        trace_p95 = torch.gather(
+            sorted_residual,
+            1,
+            percentile_index[:, None],
+        )[:, 0]
+        trace_max = torch.where(
+            flat_valid,
+            flat_residual,
+            torch.full_like(flat_residual, -torch.inf),
+        ).amax(dim=1)
+        trace = torch.stack(
+            (trace_mean, trace_rms, trace_p95, trace_max),
+            dim=1,
+        )
+        trace = torch.where(
+            (valid_count > 0)[:, None],
+            trace,
+            self._nan_scalar.expand(2, 4),
+        )
+
+        dense_arc = torch.linspace(
+            0.0,
+            1.0,
+            dense_count,
+            device=self.device,
+            dtype=self.dtype,
+        )
+        interval_low = torch.minimum(
+            normalized_arc[:, :, 0],
+            normalized_arc[:, :, -1],
+        )
+        interval_high = torch.maximum(
+            normalized_arc[:, :, 0],
+            normalized_arc[:, :, -1],
+        )
+        covered = (
+            selected_edges[:, None, :]
+            & (dense_arc[None, :, None] >= interval_low[:, None, :])
+            & (dense_arc[None, :, None] <= interval_high[:, None, :])
+        ).any(dim=-1)
+        sample_arc = normalized_arc.reshape(2, -1)
+        sample_distance = torch.abs(
+            dense_arc[None, :, None] - sample_arc[:, None, :]
+        )
+        sample_distance = torch.where(
+            flat_valid[:, None, :],
+            sample_distance,
+            torch.full_like(sample_distance, torch.inf),
+        )
+        nearest_sample = torch.argmin(sample_distance, dim=-1)
+        nearest_residual = torch.gather(
+            flat_residual,
+            1,
+            nearest_sample,
+        )
+        supported = (
+            covered
+            & (nearest_residual <= self.config.support_distance_m)
+        )
+        visibility = torch.where(
+            supported,
+            torch.full(
+                (),
+                VISIBILITY_SUPPORTED,
+                device=self.device,
+                dtype=torch.uint8,
+            ),
+            torch.where(
+                covered,
+                torch.full(
+                    (),
+                    VISIBILITY_MISSING,
+                    device=self.device,
+                    dtype=torch.uint8,
+                ),
+                torch.full(
+                    (),
+                    VISIBILITY_UNKNOWN,
+                    device=self.device,
+                    dtype=torch.uint8,
+                ),
+            ),
+        )
+        return visibility, trace
+
     def _systematic_resample_indices(self) -> torch.Tensor:
         """Low-variance batched resampling performed on the active device."""
 
@@ -845,7 +1256,6 @@ class BatchedCableParticleFilter:
         np.ndarray,
         np.ndarray,
         np.ndarray,
-        np.ndarray,
         list[str],
     ]:
         endpoints = np.zeros((2, 2, 3), dtype=np.float32)
@@ -868,14 +1278,12 @@ class BatchedCableParticleFilter:
         route_valid = np.zeros((2, maximum_routes), dtype=bool)
         route_counts = np.zeros(2, dtype=np.int64)
         initializable = np.zeros(2, dtype=bool)
-        fragment_counts = np.zeros(2, dtype=np.int64)
         reasons = []
         for cable_index, cable in enumerate(observation.cables):
             reason = cable.reason
             endpoint_visible[cable_index] = cable.endpoint_visible
             visible = endpoint_visible[cable_index]
             endpoints[cable_index, visible] = cable.endpoints_xyz[visible]
-            fragment_counts[cable_index] = len(cable.fragments)
             routes_allowed = bool(visible.all())
             if routes_allowed:
                 chord = float(np.linalg.norm(cable.endpoints_xyz[1] - cable.endpoints_xyz[0]))
@@ -909,125 +1317,8 @@ class BatchedCableParticleFilter:
             route_lengths,
             route_valid,
             route_counts,
-            fragment_counts,
             reasons,
         )
-
-    def _endpoint_fragment_terms(
-        self,
-        dense_cable: torch.Tensor,
-        cable_index: int,
-        cable: CableObservation,
-    ) -> tuple[torch.Tensor, torch.Tensor, float]:
-        """Compare rooted graph traces with their known cable prefix or suffix."""
-
-        weighted_energy = torch.zeros(
-            dense_cable.shape[0],
-            device=self.device,
-            dtype=self.dtype,
-        )
-        residual_map = torch.full(
-            dense_cable.shape[:2],
-            torch.inf,
-            device=self.device,
-            dtype=self.dtype,
-        )
-        total_length = 0.0
-        dense_count = dense_cable.shape[1]
-        for fragment in cable.fragments:
-            endpoint_index = int(fragment.endpoint_index)
-            if endpoint_index not in (0, 1):
-                continue
-            span = int(
-                round(
-                    fragment.length_m
-                    / self.config.cable_lengths_m[cable_index]
-                    * (dense_count - 1)
-                )
-            ) + 1
-            span = max(2, min(dense_count, span))
-            fragment_samples = _resample_curve(fragment.xyz, span)
-            if len(fragment_samples) != span:
-                continue
-            target = torch.as_tensor(
-                fragment_samples,
-                device=self.device,
-                dtype=self.dtype,
-            )
-            if endpoint_index == 0:
-                particle_trace = dense_cable[:, :span]
-                dense_indices = torch.arange(
-                    span,
-                    device=self.device,
-                    dtype=torch.int64,
-                )
-            else:
-                particle_trace = torch.flip(
-                    dense_cable[:, -span:],
-                    dims=(1,),
-                )
-                dense_indices = torch.arange(
-                    dense_count - 1,
-                    dense_count - span - 1,
-                    -1,
-                    device=self.device,
-                    dtype=torch.int64,
-                )
-            distance = torch.linalg.vector_norm(
-                particle_trace - target[None, :, :],
-                dim=-1,
-            )
-            normalized = distance / self.config.trace_sigma_m
-            delta = self.config.huber_delta
-            robust = torch.where(
-                normalized <= delta,
-                0.5 * normalized.square(),
-                delta * (normalized - 0.5 * delta),
-            ).mean(dim=-1)
-            weighted_energy += float(fragment.length_m) * robust
-            residual_map[:, dense_indices] = torch.minimum(
-                residual_map[:, dense_indices],
-                distance,
-            )
-            total_length += float(fragment.length_m)
-        if total_length > 0.0:
-            weighted_energy = weighted_energy / total_length
-        return weighted_energy, residual_map, total_length
-
-    def _endpoint_fragment_likelihood(
-        self,
-        dense: torch.Tensor,
-        observation: FrameObservation,
-        route_counts: np.ndarray,
-    ) -> tuple[torch.Tensor, torch.Tensor, np.ndarray]:
-        energy = torch.zeros(
-            dense.shape[:2],
-            device=self.device,
-            dtype=self.dtype,
-        )
-        residual = torch.full(
-            dense.shape[:-1],
-            torch.inf,
-            device=self.device,
-            dtype=self.dtype,
-        )
-        available = np.zeros(2, dtype=bool)
-        for cable_index, cable in enumerate(observation.cables):
-            if route_counts[cable_index] > 0 or not cable.fragments:
-                continue
-            cable_energy, cable_residual, total_length = (
-                self._endpoint_fragment_terms(
-                    dense[cable_index],
-                    cable_index,
-                    cable,
-                )
-            )
-            if total_length <= 0.0:
-                continue
-            energy[cable_index] = cable_energy
-            residual[cable_index] = cable_residual
-            available[cable_index] = True
-        return energy, residual, available
 
     @torch.inference_mode()
     def update(
@@ -1058,7 +1349,6 @@ class BatchedCableParticleFilter:
             route_lengths_np,
             route_valid_np,
             route_counts_np,
-            fragment_counts_np,
             reasons,
         ) = self._route_arrays(observation)
         dt = 1.0 / 30.0 if self.last_timestamp is None else float(timestamp - self.last_timestamp)
@@ -1092,16 +1382,6 @@ class BatchedCableParticleFilter:
                     measured_endpoint_velocities[cable_index, endpoint_index] = 0.0
 
         complete_evidence_np = route_counts_np > 0
-        fragment_evidence_requested_np = np.zeros(2, dtype=bool)
-        if self.features.partial_observation and self.features.fragment_score:
-            fragment_evidence_requested_np = fragment_counts_np > 0
-        # Partial evidence is cable-identified only through its labeled
-        # endpoint. It may update and resample an initialized population, but
-        # only a complete route may initialize a cable.
-        measurement_requested_np = (
-            complete_evidence_np
-            | fragment_evidence_requested_np
-        )
 
         route_input_finished = time.perf_counter()
         gpu_start = gpu_end = None
@@ -1133,6 +1413,91 @@ class BatchedCableParticleFilter:
         if self.config.profile_stages and self.device.type == "cuda":
             self._profile_events["inputs"].record()
 
+        attribution_batch = None
+        attribution_curves = None
+        attribution_spread = None
+        attribution_initialized = self.initialized.copy()
+        edge_feature_active = bool(
+            self.features.visible_edge_scoring
+            or self.features.visible_edge_transport
+            or self.features.visible_edge_exploration
+        )
+        attribution_requested = bool(
+            observation.graph_edges
+            and (
+                edge_feature_active
+                or (
+                    self.features.graph_edge_attribution
+                    and diagnostics_required
+                )
+            )
+        )
+        damping = math.exp(-self.config.velocity_damping_per_second * dt)
+        if attribution_requested:
+            prior_velocity = (
+                damping * self.velocities
+                if self.features.temporal_prediction
+                else torch.zeros_like(self.velocities)
+            )
+            attribution_particles = self.particles + prior_velocity * dt
+            prior_weights = self.weights / self.weights.sum(
+                dim=1,
+                keepdim=True,
+            ).clamp_min(1e-12)
+            attribution_curves = torch.sum(
+                prior_weights[:, :, None, None] * attribution_particles,
+                dim=1,
+            )
+            centered_prediction = (
+                attribution_particles - attribution_curves[:, None]
+            )
+            attribution_spread = torch.sqrt(
+                torch.sum(
+                    prior_weights
+                    * torch.mean(
+                        torch.sum(centered_prediction.square(), dim=-1),
+                        dim=-1,
+                    ),
+                    dim=1,
+                ).clamp_min(0.0)
+            )
+            attribution_batch = self.graph_edge_attributor.attribute_batch(
+                observation.graph_edges,
+                attribution_curves,
+                attribution_spread,
+                attribution_initialized,
+            )
+        if attribution_batch is not None:
+            normalized_edge_arc, selected_edges = self._edge_arc_samples(
+                attribution_batch
+            )
+            edge_available = selected_edges.any(dim=1) & initialized
+            attributed_edge_counts = selected_edges.sum(dim=1)
+        else:
+            normalized_edge_arc = None
+            selected_edges = None
+            edge_available = torch.zeros(
+                2,
+                device=self.device,
+                dtype=torch.bool,
+            )
+            attributed_edge_counts = torch.zeros(
+                2,
+                device=self.device,
+                dtype=torch.int64,
+            )
+        route_available = route_counts > 0
+        if self.features.visible_edge_scoring:
+            edge_measurement = initialized & edge_available
+            route_measurement = (~initialized) & route_available
+            measurement_requested = edge_measurement | route_measurement
+        else:
+            edge_measurement = torch.zeros_like(initialized)
+            route_measurement = route_available
+            measurement_requested = route_available
+        if self.config.profile_stages and self.device.type == "cuda":
+            self._profile_events["attribution"].record()
+
         identity_parent_indices = self._particle_indices.expand(2, -1)
         if self.features.ess_resampling:
             sampled_parent_indices = self._systematic_resample_indices()
@@ -1142,11 +1507,7 @@ class BatchedCableParticleFilter:
             )
             resample = (
                 initialized
-                & torch.as_tensor(
-                    measurement_requested_np,
-                    device=self.device,
-                    dtype=torch.bool,
-                )
+                & measurement_requested
                 & (
                     prior_effective_sample_size
                     < (
@@ -1156,20 +1517,16 @@ class BatchedCableParticleFilter:
                 )
             )
         else:
-            # Ablation baseline: the original implementation used multinomial
-            # resampling on every complete-route frame and never on a partial
-            # frame.
+            # Resampling-policy ablation: multinomial resampling is applied to
+            # every real measurement, regardless of whether that measurement
+            # is a complete route or a set of attributed visible edges.
             sampled_parent_indices = torch.multinomial(
                 self.weights,
                 self.config.particle_count,
                 replacement=True,
                 generator=self.generator,
             )
-            resample = initialized & torch.as_tensor(
-                complete_evidence_np,
-                device=self.device,
-                dtype=torch.bool,
-            )
+            resample = initialized & measurement_requested
         parent_indices = torch.where(
             resample[:, None], sampled_parent_indices, identity_parent_indices
         )
@@ -1179,7 +1536,6 @@ class BatchedCableParticleFilter:
         parent_particles = torch.gather(self.particles, 1, gather_index)
         parent_velocities = torch.gather(self.velocities, 1, gather_index)
 
-        damping = math.exp(-self.config.velocity_damping_per_second * dt)
         if self.features.temporal_prediction:
             deterministic_velocity = damping * parent_velocities
         else:
@@ -1195,20 +1551,29 @@ class BatchedCableParticleFilter:
             exploration_count = max(
                 1, int(round(self.config.particle_count * self.config.global_fraction))
             )
-        incomplete_prediction_np = self.initialized & ~complete_evidence_np
-        if np.any(incomplete_prediction_np):
-            acceleration_enabled = torch.ones(
+        incomplete_prediction = initialized & ~measurement_requested
+        if exploration_count > 0:
+            exploration_particle_mask = (
+                self._particle_indices[0] < exploration_count
+            )
+        else:
+            exploration_particle_mask = torch.zeros(
+                self.config.particle_count,
+                device=self.device,
+                dtype=torch.bool,
+            )
+        acceleration_enabled = torch.where(
+            incomplete_prediction[:, None],
+            exploration_particle_mask[None, :],
+            torch.ones(
                 (2, self.config.particle_count),
                 device=self.device,
-                dtype=self.dtype,
-            )
-            for cable_index in range(2):
-                if not incomplete_prediction_np[cable_index]:
-                    continue
-                acceleration_enabled[cable_index] = 0.0
-                if exploration_count > 0:
-                    acceleration_enabled[cable_index, :exploration_count] = 1.0
-            acceleration = acceleration * acceleration_enabled[:, :, None, None]
+                dtype=torch.bool,
+            ),
+        )
+        acceleration = acceleration * acceleration_enabled[
+            :, :, None, None
+        ].to(self.dtype)
         predicted_velocities = deterministic_velocity + acceleration * dt
         proposals = (
             parent_particles
@@ -1268,6 +1633,28 @@ class BatchedCableParticleFilter:
                 predicted_velocities,
             )
 
+        edge_displacement = torch.zeros(
+            (2, self.config.node_count, 3),
+            device=self.device,
+            dtype=self.dtype,
+        )
+        if (
+            self.features.visible_edge_transport
+            and attribution_batch is not None
+            and normalized_edge_arc is not None
+            and selected_edges is not None
+        ):
+            edge_displacement = self._visible_edge_displacement(
+                attribution_batch,
+                normalized_edge_arc,
+                selected_edges,
+            )
+            proposals = torch.where(
+                edge_measurement[:, None, None, None],
+                proposals + edge_displacement[:, None, :, :],
+                proposals,
+            )
+
         global_count = exploration_count
         if global_count > 0:
             global_proposals = particle_centers[:, :global_count].clone()
@@ -1286,14 +1673,26 @@ class BatchedCableParticleFilter:
                         * self.config.global_noise_m
                     )
                     predicted_velocities[cable_index, :global_count] = 0.0
-                elif fragment_evidence_requested_np[cable_index]:
-                    # With a disconnected graph there is no defensible full
-                    # route center. Rejuvenate the predicted shape before the
-                    # boundary transport instead of inventing a hidden route.
-                    proposals[cable_index, :global_count] += (
-                        global_noise[cable_index]
-                        * self.config.global_noise_m
-                    )
+            if (
+                self.features.visible_edge_exploration
+                and attribution_curves is not None
+            ):
+                disconnected_edge_measurement = (
+                    edge_measurement & ~route_available
+                )
+                edge_center = (
+                    attribution_curves + edge_displacement
+                )[:, None, :, :]
+                edge_global_proposals = (
+                    edge_center
+                    + global_noise[:, :global_count]
+                    * self.config.global_noise_m
+                )
+                proposals[:, :global_count] = torch.where(
+                    disconnected_edge_measurement[:, None, None, None],
+                    edge_global_proposals,
+                    proposals[:, :global_count],
+                )
 
         if self.features.endpoint_motion_transport:
             endpoint_transport_mask = torch.as_tensor(
@@ -1358,7 +1757,16 @@ class BatchedCableParticleFilter:
             device=self.device,
             dtype=torch.bool,
         )
-        velocity_update_cables_np = self.initialized & complete_evidence_np
+        # The fused kernel accepts a static per-cable launch mask.  Graph-edge
+        # presence is a conservative launch condition; only particles with an
+        # actual accepted route/edge measurement are committed below.
+        velocity_update_cables_np = self.initialized & (
+            complete_evidence_np
+            | (
+                bool(observation.graph_edges)
+                & bool(self.features.visible_edge_scoring)
+            )
+        )
         ordinary_velocity_update_np = (
             velocity_update_cables_np
             & bool(self.features.measurement_velocity_update)
@@ -1395,6 +1803,7 @@ class BatchedCableParticleFilter:
             )
             velocity_update_particle_mask = (
                 velocity_update_cables[:, None]
+                & measurement_requested[:, None]
                 & enabled_particle_category[None, :]
             )
             if (
@@ -1516,35 +1925,33 @@ class BatchedCableParticleFilter:
             best_route_indices,
             torch.full_like(best_route_indices, -1),
         )
-        energy = torch.where(
-            has_route[:, None],
-            best_route_energy,
-            torch.zeros_like(best_route_energy),
-        )
         if self.config.profile_stages and self.device.type == "cuda":
             self._profile_events["route_score"].record()
 
-        fragment_residual = torch.full(
-            dense.shape[:-1],
-            torch.inf,
-            device=self.device,
-            dtype=self.dtype,
+        visible_edge_energy = torch.zeros_like(best_route_energy)
+        if (
+            self.features.visible_edge_scoring
+            and attribution_batch is not None
+            and normalized_edge_arc is not None
+            and selected_edges is not None
+        ):
+            visible_edge_energy = self._visible_edge_energy(
+                proposals,
+                attribution_batch,
+                normalized_edge_arc,
+                selected_edges,
+            )
+        energy = torch.where(
+            edge_measurement[:, None],
+            visible_edge_energy,
+            torch.where(
+                route_measurement[:, None],
+                best_route_energy,
+                torch.zeros_like(best_route_energy),
+            ),
         )
-        fragment_available_np = np.zeros(2, dtype=bool)
-        if self.features.partial_observation and self.features.fragment_score:
-            (
-                fragment_energy,
-                fragment_residual,
-                fragment_available_np,
-            ) = self._endpoint_fragment_likelihood(
-                dense,
-                observation,
-                route_counts_np,
-            )
-            energy = (
-                energy
-                + self.config.fragment_likelihood_weight * fragment_energy
-            )
+        if self.config.profile_stages and self.device.type == "cuda":
+            self._profile_events["visible_edge_score"].record()
 
         route_supported = residual <= self.config.support_distance_m
         bad_samples = torch.zeros_like(route_supported)
@@ -1552,16 +1959,6 @@ class BatchedCableParticleFilter:
             has_route[:, None, None],
             ~route_supported,
             bad_samples,
-        )
-        fragment_observed = torch.isfinite(fragment_residual)
-        fragment_missing = (
-            fragment_observed
-            & (fragment_residual > self.config.support_distance_m)
-        )
-        bad_samples = torch.where(
-            has_route[:, None, None],
-            bad_samples,
-            fragment_missing,
         )
         supported_for_gap = ~bad_samples
         sample_indices = self._dense_sample_indices
@@ -1583,13 +1980,8 @@ class BatchedCableParticleFilter:
             self.config.maximum_unsupported_length_m,
             1e-6,
         )
-        evidence_for_gap = torch.as_tensor(
-            complete_evidence_np | fragment_available_np,
-            device=self.device,
-            dtype=torch.bool,
-        )
         energy = energy + torch.where(
-            evidence_for_gap[:, None],
+            route_measurement[:, None],
             self.config.unsupported_weight * gap_fraction.square(),
             torch.zeros_like(gap_fraction),
         )
@@ -1624,30 +2016,20 @@ class BatchedCableParticleFilter:
             endpoint_mask, endpoint_distance, torch.zeros_like(endpoint_distance)
         ).amax(dim=-1)
         if self.config.profile_stages and self.device.type == "cuda":
-            self._profile_events["partial_score"].record()
+            self._profile_events["regularization"].record()
 
         trackable = initialized | initializable
         particle_valid = torch.isfinite(energy) & trackable[:, None]
         if self.features.fixed_length:
             particle_valid &= endpoint_error <= self.config.endpoint_tolerance_m
             particle_valid &= link_error <= self.config.endpoint_tolerance_m
-        # A complete route supplies correspondence along the whole cable, so a
-        # long unsupported section is a genuine geometric contradiction.
-        # Rooted partial traces do not: when the cable moves quickly, every
-        # predicted prefix can temporarily be far away. Keep the same
-        # continuous gap penalty for ranking partial particles, but never turn
-        # that recoverable distance into an all-particle rejection.
         particle_valid &= torch.where(
-            has_route[:, None],
+            route_measurement[:, None],
             longest_unsupported <= self.config.maximum_unsupported_length_m,
             torch.ones_like(particle_valid),
         )
 
-        measurement_available = torch.as_tensor(
-            complete_evidence_np | fragment_available_np,
-            device=self.device,
-            dtype=torch.bool,
-        )
+        measurement_available = measurement_requested
 
         particle_any_valid = torch.any(particle_valid, dim=1)
         eligible_np = self.initialized | initializable_np
@@ -1693,7 +2075,7 @@ class BatchedCableParticleFilter:
         )
         self.weights = torch.where(accepted[:, None], candidate_weights, self.weights)
         self.route_indices = torch.where(
-            accepted[:, None],
+            (accepted & route_measurement)[:, None],
             best_route_indices,
             self.route_indices,
         )
@@ -1707,6 +2089,9 @@ class BatchedCableParticleFilter:
         posterior_means: list[torch.Tensor] = []
         for cable_index in range(2):
             measurement_accepted = accepted[cable_index]
+            route_measurement_accepted = (
+                measurement_accepted & route_measurement[cable_index]
+            )
             selected_route = self._negative_one_index
             candidate_route = self._negative_one_index
             route_mask = self._all_particles_mask
@@ -1733,12 +2118,12 @@ class BatchedCableParticleFilter:
                 )
                 candidate_route = torch.argmax(route_mass)
                 selected_route = torch.where(
-                    measurement_accepted,
+                    route_measurement_accepted,
                     candidate_route,
                     self._negative_one_index,
                 )
                 route_mask = torch.where(
-                    measurement_accepted,
+                    route_measurement_accepted,
                     valid_route_assignment
                     & (particle_route_indices == candidate_route),
                     self._all_particles_mask,
@@ -1811,6 +2196,22 @@ class BatchedCableParticleFilter:
             selected_visibility_batch = self._unknown_visibility[None, :].expand(
                 2, -1
             )
+            edge_visibility_batch = selected_visibility_batch
+            edge_trace_batch = self._nan_scalar.expand(2, 4)
+            if (
+                attribution_batch is not None
+                and normalized_edge_arc is not None
+                and selected_edges is not None
+            ):
+                edge_visibility_batch, edge_trace_batch = (
+                    self._visible_edge_diagnostics(
+                        selected_particles,
+                        attribution_batch,
+                        normalized_edge_arc,
+                        selected_edges,
+                        selected_dense_batch.shape[1],
+                    )
+                )
 
             selected_links = selected_particles[:, 1:] - selected_particles[:, :-1]
             selected_link_lengths = torch.linalg.vector_norm(selected_links, dim=-1)
@@ -1902,6 +2303,9 @@ class BatchedCableParticleFilter:
                     current_initialized.to(self.dtype),
                     measurement_available[cable_index].to(self.dtype),
                     particle_any_valid[cable_index].to(self.dtype),
+                    edge_measurement[cable_index].to(self.dtype),
+                    route_measurement[cable_index].to(self.dtype),
+                    attributed_edge_counts[cable_index].to(self.dtype),
                 )
             )
             diagnostic_float_payload = None
@@ -1911,7 +2315,7 @@ class BatchedCableParticleFilter:
                 candidate_route = candidate_routes[cable_index]
                 selected_index = selected_indices[cable_index]
                 selected_visibility = selected_visibility_batch[cable_index]
-                partial_observed_length = 0.0
+                trace_values = self._nan_scalar.expand(4)
                 if route_counts_np[cable_index] > 0:
                     if self.features.connected_trace:
                         selected_residual = torch.linalg.vector_norm(
@@ -1935,7 +2339,10 @@ class BatchedCableParticleFilter:
                         torch.full_like(selected_visibility, VISIBILITY_MISSING),
                     )
                     selected_visibility = torch.where(
-                        measurement_accepted,
+                        (
+                            measurement_accepted
+                            & route_measurement[cable_index]
+                        ),
                         route_visibility,
                         selected_visibility,
                     )
@@ -1948,64 +2355,29 @@ class BatchedCableParticleFilter:
                         )
                     )
                     trace_values = torch.where(
-                        measurement_accepted,
-                        measured_trace_values,
-                        self._nan_scalar.expand(4),
-                    )
-                elif fragment_available_np[cable_index]:
-                    (
-                        _fragment_energy,
-                        selected_fragment_residual,
-                        partial_observed_length,
-                    ) = self._endpoint_fragment_terms(
-                        selected_dense[None, :, :],
-                        cable_index,
-                        observation.cables[cable_index],
-                    )
-                    selected_fragment_residual = selected_fragment_residual[0]
-                    fragment_observed = torch.isfinite(
-                        selected_fragment_residual
-                    )
-                    observed_residual = selected_fragment_residual[
-                        fragment_observed
-                    ]
-                    fragment_support = (
-                        selected_fragment_residual
-                        <= self.config.support_distance_m
-                    )
-                    fragment_visibility = torch.where(
-                        fragment_support,
-                        torch.full_like(
-                            selected_visibility,
-                            VISIBILITY_SUPPORTED,
-                        ),
-                        torch.full_like(
-                            selected_visibility,
-                            VISIBILITY_MISSING,
-                        ),
-                    )
-                    selected_visibility = torch.where(
-                        measurement_accepted & fragment_observed,
-                        fragment_visibility,
-                        selected_visibility,
-                    )
-                    measured_trace_values = torch.stack(
                         (
-                            observed_residual.mean(),
-                            torch.sqrt(
-                                torch.mean(observed_residual.square())
-                            ),
-                            torch.quantile(observed_residual, 0.95),
-                            observed_residual.max(),
-                        )
-                    )
-                    trace_values = torch.where(
-                        measurement_accepted,
+                            measurement_accepted
+                            & route_measurement[cable_index]
+                        ),
                         measured_trace_values,
                         self._nan_scalar.expand(4),
                     )
-                else:
-                    trace_values = self._nan_scalar.expand(4)
+                selected_visibility = torch.where(
+                    (
+                        measurement_accepted
+                        & edge_measurement[cable_index]
+                    ),
+                    edge_visibility_batch[cable_index],
+                    selected_visibility,
+                )
+                trace_values = torch.where(
+                    (
+                        measurement_accepted
+                        & edge_measurement[cable_index]
+                    ),
+                    edge_trace_batch[cable_index],
+                    trace_values,
+                )
                 selected_supported = selected_visibility == VISIBILITY_SUPPORTED
                 selected_missing = selected_visibility == VISIBILITY_MISSING
                 selected_unknown = selected_visibility == VISIBILITY_UNKNOWN
@@ -2032,22 +2404,14 @@ class BatchedCableParticleFilter:
                 node_visibility = selected_visibility[self._node_dense_indices]
                 observed_route_length = (
                     torch.where(
-                        measurement_accepted,
+                        (
+                            measurement_accepted
+                            & route_measurement[cable_index]
+                        ),
                         route_lengths[cable_index, candidate_route],
                         self._nan_scalar,
                     )
                     if route_counts_np[cable_index] > 0
-                    else torch.where(
-                        measurement_accepted,
-                        selected_dense.new_tensor(
-                            min(
-                                partial_observed_length,
-                                self.config.cable_lengths_m[cable_index],
-                            )
-                        ),
-                        self._nan_scalar,
-                    )
-                    if fragment_available_np[cable_index]
                     else self._nan_scalar
                 )
                 predicted_node_speeds = torch.linalg.vector_norm(
@@ -2122,7 +2486,6 @@ class BatchedCableParticleFilter:
                     diagnostic_float_payload=diagnostic_float_payload,
                     diagnostic_visibility_payload=diagnostic_visibility_payload,
                     endpoint_visible_count=endpoint_visible_count,
-                    fragment_count=int(fragment_counts_np[cable_index]),
                     route_candidate_count=int(route_counts_np[cable_index]),
                     dense_count=len(selected_dense),
                     top_count=top_count,
@@ -2148,7 +2511,8 @@ class BatchedCableParticleFilter:
 
             stage_gpu_ms = {
                 "inputs": elapsed("start", "inputs"),
-                "prediction": elapsed("inputs", "prediction"),
+                "attribution": elapsed("inputs", "attribution"),
+                "prediction": elapsed("attribution", "prediction"),
                 "prediction_constraint": elapsed(
                     "prediction", "prediction_constraint"
                 ),
@@ -2162,8 +2526,13 @@ class BatchedCableParticleFilter:
                 "route_score": elapsed(
                     "velocity_correction", "route_score"
                 ),
-                "partial_score": elapsed("route_score", "partial_score"),
-                "weights": elapsed("partial_score", "weights"),
+                "visible_edge_score": elapsed(
+                    "route_score", "visible_edge_score"
+                ),
+                "regularization": elapsed(
+                    "visible_edge_score", "regularization"
+                ),
+                "weights": elapsed("regularization", "weights"),
                 "posterior": elapsed("weights", "posterior"),
                 "estimate_constraint": elapsed(
                     "posterior", "estimate_constraint"
@@ -2200,19 +2569,34 @@ class BatchedCableParticleFilter:
                 current_initialized_value,
                 measurement_available_value,
                 particle_any_valid_value,
+                edge_measurement_value,
+                route_measurement_value,
+                attributed_edge_count_value,
             ) = (float(value) for value in state_payload)
             measurement_accepted = bool(measurement_accepted_value)
             current_initialized = bool(current_initialized_value)
             measurement_available_value = bool(measurement_available_value)
             particle_any_valid_value = bool(particle_any_valid_value)
+            edge_measurement_value = bool(edge_measurement_value)
+            route_measurement_value = bool(route_measurement_value)
+            attributed_edge_count = int(round(attributed_edge_count_value))
             if not eligible_np[cable_index]:
                 status = "LOST: complete route required for initialization"
             elif not measurement_available_value:
-                status = "no usable measurement"
+                status = (
+                    "no confidently attributed visible edge"
+                    if self.features.visible_edge_scoring
+                    else "no complete-route measurement"
+                )
             elif not particle_any_valid_value:
                 status = "all particles rejected by geometric/support constraints"
             else:
                 status = "measurement accepted"
+            measurement_source = (
+                "visible edges"
+                if edge_measurement_value
+                else ("complete route" if route_measurement_value else "none")
+            )
 
             self.initialized[cable_index] = current_initialized
             if measurement_accepted and complete_evidence_np[cable_index]:
@@ -2340,7 +2724,7 @@ class BatchedCableParticleFilter:
                 if measurement_accepted and selected_route >= 0
                 else float("nan")
             )
-            if measurement_accepted and selected_route >= 0:
+            if measurement_accepted and complete_evidence_np[cable_index]:
                 tracking_state = "FULL"
             elif measurement_accepted and (
                 support_fraction > 0.0 or pending.endpoint_visible_count > 0
@@ -2376,7 +2760,6 @@ class BatchedCableParticleFilter:
                 turn_rms_degrees=turn_rms_degrees,
                 tracking_state=tracking_state,
                 endpoint_visible_count=pending.endpoint_visible_count,
-                fragment_count=pending.fragment_count,
                 visible_fraction=support_fraction,
                 missing_fraction=missing_fraction,
                 unknown_fraction=unknown_fraction,
@@ -2391,6 +2774,8 @@ class BatchedCableParticleFilter:
                 velocity_correction_applied=bool(
                     velocity_correction_applied_value
                 ),
+                attributed_edge_count=attributed_edge_count,
+                measurement_source=measurement_source,
             )
             output = CableFilterOutput(
                 curve=curve,
@@ -2409,6 +2794,21 @@ class BatchedCableParticleFilter:
                 top_particles=output.top_particles,
                 diagnostics=output.diagnostics,
             )
+        readback_cpu_ms = float(
+            (time.perf_counter() - readback_started) * 1000.0
+        )
+        graph_attribution = None
+        graph_attribution_started = time.perf_counter()
+        if (
+            self.features.graph_edge_attribution
+            and attribution_batch is not None
+        ):
+            graph_attribution = self.graph_edge_attributor.diagnostics(
+                attribution_batch
+            )
+        graph_attribution_wall_ms = float(
+            (time.perf_counter() - graph_attribution_started) * 1000.0
+        )
         profile = None
         if self.config.profile_stages:
             profile = ParticleFilterProfile(
@@ -2416,6 +2816,9 @@ class BatchedCableParticleFilter:
                     (route_input_finished - started) * 1000.0
                 ),
                 inputs_gpu_ms=stage_gpu_ms.get("inputs", 0.0),
+                graph_attribution_gpu_ms=stage_gpu_ms.get(
+                    "attribution", 0.0
+                ),
                 prediction_gpu_ms=stage_gpu_ms.get("prediction", 0.0),
                 prediction_constraint_gpu_ms=stage_gpu_ms.get(
                     "prediction_constraint", 0.0
@@ -2428,16 +2831,18 @@ class BatchedCableParticleFilter:
                     "velocity_correction", 0.0
                 ),
                 route_score_gpu_ms=stage_gpu_ms.get("route_score", 0.0),
-                partial_score_gpu_ms=stage_gpu_ms.get("partial_score", 0.0),
+                visible_edge_score_gpu_ms=stage_gpu_ms.get(
+                    "visible_edge_score", 0.0
+                ),
+                regularization_gpu_ms=stage_gpu_ms.get("regularization", 0.0),
                 weight_update_gpu_ms=stage_gpu_ms.get("weights", 0.0),
                 posterior_gpu_ms=stage_gpu_ms.get("posterior", 0.0),
                 estimate_constraint_gpu_ms=stage_gpu_ms.get(
                     "estimate_constraint", 0.0
                 ),
                 diagnostics_gpu_ms=stage_gpu_ms.get("diagnostics", 0.0),
-                readback_cpu_ms=float(
-                    (time.perf_counter() - readback_started) * 1000.0
-                ),
+                readback_cpu_ms=readback_cpu_ms,
+                graph_attribution_wall_ms=graph_attribution_wall_ms,
             )
         return ParticleFilterFrame(
             cables=(outputs[0], outputs[1]),
@@ -2446,4 +2851,5 @@ class BatchedCableParticleFilter:
             active_features=self.features.summary(),
             profile=profile,
             diagnostics_refreshed=diagnostics_required,
+            graph_attribution=graph_attribution,
         )
