@@ -2888,15 +2888,14 @@ class PidNetTrainingApp:
         self.prediction_label_mode = str(getattr(segmenter, "label_mode", "")).strip().lower()
         predicted, _raw_predicted, component_count = self.cleaned_prediction_mask(probability)
         if item is not None:
-            cable_count = max(1, int(self.cable_count_var.get()))
             targets = self.target_masks_by_channel(item["mask"], multilabel=True)
             predictions = self.prediction_masks_by_channel(probability)
             metrics = [binary_mask_metrics(predicted_mask, target) for predicted_mask, target in zip(predictions, targets)]
             self.prediction_summary = (
-                f"IoU body/e1/e2/cross {metrics[0]['iou']:.3f}/{metrics[1]['iou']:.3f}/"
-                f"{metrics[2]['iou']:.3f}/{metrics[3]['iou']:.3f} | pred px "
-                f"{metrics[0]['predicted']}/{metrics[1]['predicted']}/{metrics[2]['predicted']}/"
-                f"{metrics[3]['predicted']} | body comp {component_count}"
+                f"IoU body/e1/e2 {metrics[0]['iou']:.3f}/{metrics[1]['iou']:.3f}/"
+                f"{metrics[2]['iou']:.3f} | pred px "
+                f"{metrics[0]['predicted']}/{metrics[1]['predicted']}/{metrics[2]['predicted']} "
+                f"| body comp {component_count}"
             )
         else:
             self.prediction_summary = f"cleaned cable pixels {int(np.count_nonzero(predicted))} comp {component_count}"

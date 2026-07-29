@@ -69,6 +69,7 @@ class ParticleFilterConfig:
     particle_count: int = 1024
     node_count: int = 13
     cable_lengths_m: tuple[float, float] = (0.515, 0.515)
+    cable_diameter_m: float = 0.009
     dense_samples_per_segment: int = 4
     deformation_modes: int = 5
     initial_noise_m: float = 0.010
@@ -112,11 +113,19 @@ class ParticleFilterConfig:
         lengths = tuple(float(item) for item in values.get("cable_lengths_m", (0.515, 0.515)))
         if len(lengths) != 2 or any(not np.isfinite(item) or item <= 0.0 for item in lengths):
             raise ValueError("particle_filter.cable_lengths_m must contain two positive lengths")
+        cable_diameter_m = float(values.get("cable_diameter_m", 0.009))
+        if not np.isfinite(cable_diameter_m) or cable_diameter_m <= 0.0:
+            raise ValueError("particle_filter.cable_diameter_m must be positive")
+        if cable_diameter_m >= min(lengths):
+            raise ValueError(
+                "particle_filter.cable_diameter_m must be smaller than both cable lengths"
+            )
         return cls(
             device=str(values.get("device", "cuda")),
             particle_count=max(32, int(values.get("particle_count", 1024))),
             node_count=max(4, int(values.get("node_count", 13))),
             cable_lengths_m=(lengths[0], lengths[1]),
+            cable_diameter_m=cable_diameter_m,
             dense_samples_per_segment=max(1, int(values.get("dense_samples_per_segment", 4))),
             deformation_modes=max(1, int(values.get("deformation_modes", 5))),
             initial_noise_m=max(0.0, float(values.get("initial_noise_m", 0.010))),
@@ -276,6 +285,7 @@ class CableFilterOutput:
 @dataclass(frozen=True)
 class ParticleFilterFrame:
     cables: tuple[CableFilterOutput, CableFilterOutput]
+    cable_radius_m: float
     processing_ms: float
     gpu_ms: float
     active_features: str
@@ -2810,6 +2820,7 @@ class BatchedCableParticleFilter:
             )
         return ParticleFilterFrame(
             cables=(outputs[0], outputs[1]),
+            cable_radius_m=0.5 * self.config.cable_diameter_m,
             processing_ms=float((time.perf_counter() - started) * 1000.0),
             gpu_ms=gpu_ms,
             active_features=self.features.summary(),

@@ -26,6 +26,14 @@ if str(NN_SOURCE_DIR) not in sys.path:
     sys.path.insert(0, str(NN_SOURCE_DIR))
 
 from cable_pidnet import PidNetSegmenter  # noqa: E402
+from cube_tracker import (  # noqa: E402
+    CameraModel as CubeCameraModel,
+    CubeTrackerConfig,
+    CubeTrackingResult,
+    KnownCubeTracker,
+    draw_cube_wireframe_overlay,
+)
+from live_evaluation import LiveEvaluation  # noqa: E402
 from observation import (  # noqa: E402
     CameraModel,
     FrameObservation,
@@ -129,9 +137,11 @@ class TrackingResult:
     masks: tuple[np.ndarray, ...]
     observation: FrameObservation
     particle_filter: ParticleFilterFrame
+    cube_tracking: CubeTrackingResult | None
     inference_ms: float
     tracking_ms: float
     schedule_wait_ms: float
+    evaluation_sampled: bool
     capture_profile: CaptureProfile
 
 
@@ -154,6 +164,7 @@ class SegmentationResult:
     source_age_ms: float
     observation: FrameObservation
     particle_filter: ParticleFilterFrame
+    cube_tracking: CubeTrackingResult | None
 
 
 @dataclass(frozen=True)
@@ -695,11 +706,13 @@ class AsyncSegmentationPipeline:
         overlay_alpha: float,
         observation_builder: ObservationBuilder,
         particle_filter: BatchedCableParticleFilter,
+        cube_tracker: KnownCubeTracker | None,
         visualization_max_fps: float,
         visualization_image_width: int,
         visualization_point_cloud_stride: int,
         visualization_enabled: bool = True,
         visualization_source: str = "zed",
+        live_evaluation: LiveEvaluation | None = None,
     ):
         self.zed = zed
         self.runtime = runtime
@@ -708,6 +721,7 @@ class AsyncSegmentationPipeline:
         self.overlay_alpha = float(overlay_alpha)
         self.observation_builder = observation_builder
         self.particle_filter = particle_filter
+        self.cube_tracker = cube_tracker
         self.visualization_image_width = max(
             1,
             int(visualization_image_width),
@@ -717,6 +731,7 @@ class AsyncSegmentationPipeline:
             int(visualization_point_cloud_stride),
         )
         self.visualization_enabled = bool(visualization_enabled)
+        self.live_evaluation = live_evaluation
         self.visualization_source = str(visualization_source).strip().lower()
         if self.visualization_source not in {"zed", "depth"}:
             raise ValueError(
@@ -728,6 +743,11 @@ class AsyncSegmentationPipeline:
         self.depth = sl.Mat()
         self.point_cloud = sl.Mat()
         self.tracking_executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="tracking")
+        self.cube_executor = (
+            ThreadPoolExecutor(max_workers=1, thread_name_prefix="cube-tracking")
+            if self.cube_tracker is not None
+            else None
+        )
         self.visualization_executor = ThreadPoolExecutor(
             max_workers=1,
             thread_name_prefix="visualization",
@@ -776,6 +796,7 @@ class AsyncSegmentationPipeline:
         self.last_observation_ms = 0.0
         self.last_particle_filter_ms = 0.0
         self.last_particle_filter_gpu_ms = 0.0
+        self.last_cube_tracking_ms = 0.0
         self._last_fps_time = time.perf_counter()
         self._last_fps_frame = 0
         self._last_rate_time = self._last_fps_time
@@ -814,6 +835,7 @@ class AsyncSegmentationPipeline:
                 "observation",
                 "pf_wall",
                 "pf_gpu",
+                "cube",
                 "tracking",
                 "viewer_prep",
                 "viewer_cloud",
@@ -868,7 +890,18 @@ class AsyncSegmentationPipeline:
             blank,
             self.thresholds,
         )
+        cube_future = (
+            self.cube_executor.submit(
+                self.cube_tracker.track,
+                blank,
+                np.full((height, width), np.nan, dtype=np.float32),
+            )
+            if self.cube_executor is not None and self.cube_tracker is not None
+            else None
+        )
         future.result()
+        if cube_future is not None:
+            cube_future.result()
         return float((time.perf_counter() - started) * 1000.0)
 
     def stop(self) -> None:
@@ -884,6 +917,8 @@ class AsyncSegmentationPipeline:
             if self.thread.is_alive():
                 raise RuntimeError("ZED capture thread did not stop within five seconds.")
         self.tracking_executor.shutdown(wait=True, cancel_futures=True)
+        if self.cube_executor is not None:
+            self.cube_executor.shutdown(wait=True, cancel_futures=True)
         self.visualization_executor.shutdown(wait=True, cancel_futures=True)
         self.point_cloud_executor.shutdown(wait=True, cancel_futures=True)
         with self.tracking_gate:
@@ -920,6 +955,7 @@ class AsyncSegmentationPipeline:
                 "observation_ms": float(self.last_observation_ms),
                 "particle_filter_ms": float(self.last_particle_filter_ms),
                 "particle_filter_gpu_ms": float(self.last_particle_filter_gpu_ms),
+                "cube_tracking_ms": float(self.last_cube_tracking_ms),
                 "captured": int(self.frame_count),
                 "tracking_published": int(self.tracking_published),
                 "tracking_submitted": int(self.tracking_submitted),
@@ -1320,6 +1356,19 @@ class AsyncSegmentationPipeline:
                 self.last_observation_ms = float(result.observation.processing_ms)
                 self.last_particle_filter_ms = float(result.particle_filter.processing_ms)
                 self.last_particle_filter_gpu_ms = float(result.particle_filter.gpu_ms)
+                self.last_cube_tracking_ms = float(
+                    result.cube_tracking.processing_ms
+                    if result.cube_tracking is not None
+                    else 0.0
+                )
+                if result.cube_tracking is not None:
+                    cube = result.cube_tracking
+                    self.performance_stats["cube_valid"] = bool(cube.valid)
+                    self.performance_stats["cube_faces"] = int(cube.face_count)
+                    self.performance_stats["cube_surface_rms_mm"] = float(
+                        cube.surface_rms_m * 1000.0
+                    )
+                    self.performance_stats["cube_reason"] = str(cube.reason)
                 for cable_index, cable in enumerate(
                     result.particle_filter.cables
                 ):
@@ -1350,6 +1399,12 @@ class AsyncSegmentationPipeline:
                     ("observation", result.observation.processing_ms),
                     ("pf_wall", result.particle_filter.processing_ms),
                     ("pf_gpu", result.particle_filter.gpu_ms),
+                    (
+                        "cube",
+                        result.cube_tracking.processing_ms
+                        if result.cube_tracking is not None
+                        else 0.0,
+                    ),
                     ("tracking", result.tracking_ms),
                 ):
                     self._append_performance(name, value)
@@ -1362,6 +1417,13 @@ class AsyncSegmentationPipeline:
                 self._record_particle_filter_profile(result.particle_filter.profile)
                 if result.observation.profile is not None:
                     self._record_observation_profile(result.observation.profile)
+
+            if self.live_evaluation is not None and result.evaluation_sampled:
+                self.live_evaluation.append(
+                    result.frame_index,
+                    result.captured_at,
+                    result.particle_filter,
+                )
 
             # Raw RGB/depth storage is retained only while the diagnostic viewer
             # actually consumes this result. It is returned to the fixed pool
@@ -1664,7 +1726,8 @@ class AsyncSegmentationPipeline:
             f"  median/p95_ms total={pair('tracking')} "
             f"schedule={pair('schedule_wait')} NN={pair('inference')} "
             f"observation={pair('observation')} PFwall={pair('pf_wall')} "
-            f"PFgpu={pair('pf_gpu')} submit_interval={pair('submit_interval')}\n"
+            f"PFgpu={pair('pf_gpu')} cube={pair('cube')} "
+            f"submit_interval={pair('submit_interval')}\n"
             f"  mailbox published/consumed/replaced/starved="
             f"{int(stats.get('tracking_published', 0))}/"
             f"{int(stats.get('tracking_consumed', 0))}/"
@@ -1704,7 +1767,10 @@ class AsyncSegmentationPipeline:
             f"PF2={stats.get('pf2_state', 'unknown')}/"
             f"{stats.get('pf2_source', 'none')}/"
             f"{int(stats.get('pf2_edges', 0))}edges/"
-            f"{float(stats.get('pf2_trace_mm', float('nan'))):.1f}mm",
+            f"{float(stats.get('pf2_trace_mm', float('nan'))):.1f}mm "
+            f"Cube={'valid' if stats.get('cube_valid', False) else 'invalid'}/"
+            f"{int(stats.get('cube_faces', 0))}faces/"
+            f"{float(stats.get('cube_surface_rms_mm', float('nan'))):.1f}mm",
             flush=True,
         )
 
@@ -1722,6 +1788,19 @@ class AsyncSegmentationPipeline:
         capture_profile: CaptureProfile,
     ) -> TrackingResult:
         tracking_start = time.perf_counter()
+        evaluation_sampled = bool(
+            self.live_evaluation is not None
+            and self.live_evaluation.should_sample(captured_at)
+        )
+        cube_future = (
+            self.cube_executor.submit(
+                self.cube_tracker.track,
+                bgr,
+                depth,
+            )
+            if self.cube_executor is not None and self.cube_tracker is not None
+            else None
+        )
         inference_start = tracking_start
         masks, _ = self.segmenter.tracking_channels(
             bgr, self.thresholds
@@ -1743,8 +1822,10 @@ class AsyncSegmentationPipeline:
             captured_at,
             refresh_diagnostics=(
                 render_cloud is not None or render_depth is not None
+                or evaluation_sampled
             ),
         )
+        cube_tracking = cube_future.result() if cube_future is not None else None
         completed_at = time.perf_counter()
         return TrackingResult(
             buffer_index=buffer_index,
@@ -1758,9 +1839,11 @@ class AsyncSegmentationPipeline:
             masks=masks,
             observation=observation,
             particle_filter=particle_filter,
+            cube_tracking=cube_tracking,
             inference_ms=float((inference_finished - inference_start) * 1000.0),
             tracking_ms=float((completed_at - tracking_start) * 1000.0),
             schedule_wait_ms=float((tracking_start - submitted_at) * 1000.0),
+            evaluation_sampled=evaluation_sampled,
             capture_profile=capture_profile,
         )
 
@@ -1821,6 +1904,27 @@ class AsyncSegmentationPipeline:
             tracked.particle_filter,
             self.visualization_image_width,
         )
+        if tracked.cube_tracking is not None and self.cube_tracker is not None:
+            source_camera = self.cube_tracker.camera
+            scale_x = rgb_image.shape[1] / float(source_camera.width)
+            scale_y = rgb_image.shape[0] / float(source_camera.height)
+            display_camera = CubeCameraModel(
+                fx=source_camera.fx * scale_x,
+                fy=source_camera.fy * scale_y,
+                cx=source_camera.cx * scale_x,
+                cy=source_camera.cy * scale_y,
+                width=rgb_image.shape[1],
+                height=rgb_image.shape[0],
+            )
+            rgb_image = cv2.cvtColor(
+                draw_cube_wireframe_overlay(
+                    cv2.cvtColor(rgb_image, cv2.COLOR_RGB2BGR),
+                    tracked.cube_tracking,
+                    display_camera,
+                    self.cube_tracker.config.cube_side_m,
+                ),
+                cv2.COLOR_BGR2RGB,
+            )
         overlay_finished = time.perf_counter()
         if cloud_future is not None:
             self.cached_point_cloud = cloud_future.result()
@@ -1856,6 +1960,7 @@ class AsyncSegmentationPipeline:
             ),
             observation=tracked.observation,
             particle_filter=tracked.particle_filter,
+            cube_tracking=tracked.cube_tracking,
         )
 
 
@@ -1888,6 +1993,14 @@ def main() -> None:
     camera_config = config["camera"]
     viewer_config = config["viewer"]
     pidnet_config = config["pidnet"]
+    evaluation_config = config.get("evaluation") or {}
+    cube_tracking_values = config.get("cube_tracking") or {}
+    cube_tracking_enabled = bool(cube_tracking_values.get("enabled", False))
+    cube_tracker_config = (
+        CubeTrackerConfig.from_mapping(cube_tracking_values)
+        if cube_tracking_enabled
+        else None
+    )
     observation_config = ObservationConfig.from_mapping(config.get("observation"))
     particle_filter_config = ParticleFilterConfig.from_mapping(config.get("particle_filter"))
     particle_features = ParticleFeatures.from_mapping(config.get("features"))
@@ -1927,7 +2040,26 @@ def main() -> None:
 
     pipeline: AsyncSegmentationPipeline | None = None
     zed: sl.Camera | None = None
+    live_evaluation: LiveEvaluation | None = None
     try:
+        if bool(evaluation_config.get("enabled", True)):
+            live_evaluation = LiveEvaluation(
+                resolve_project_path(
+                    evaluation_config.get(
+                        "directory",
+                        "diagnostics/evaluation_runs",
+                    )
+                ),
+                sample_hz=float(evaluation_config.get("sample_hz", 10.0)),
+                history_seconds=float(
+                    evaluation_config.get("history_seconds", 30.0)
+                ),
+            )
+            live_evaluation.init_window()
+            print(
+                f"LIVE_EVALUATION_STARTED path={live_evaluation.run_directory}",
+                flush=True,
+            )
         segmenter = PidNetSegmenter(
             checkpoint,
             device=str(pidnet_config.get("device", "cuda")),
@@ -1948,6 +2080,21 @@ def main() -> None:
         if viewer is not None:
             configure_viewer_from_zed(zed, viewer)
         camera_model = camera_model_from_zed(zed)
+        cube_tracker = (
+            KnownCubeTracker(
+                CubeCameraModel(
+                    fx=camera_model.fx,
+                    fy=camera_model.fy,
+                    cx=camera_model.cx,
+                    cy=camera_model.cy,
+                    width=camera_model.width,
+                    height=camera_model.height,
+                ),
+                cube_tracker_config,
+            )
+            if cube_tracker_config is not None
+            else None
+        )
         pipeline = AsyncSegmentationPipeline(
             zed,
             runtime,
@@ -1964,11 +2111,13 @@ def main() -> None:
                 particle_filter_config,
                 particle_features,
             ),
+            cube_tracker,
             float(viewer_config.get("point_cloud_fps", 5.0)),
             int(viewer_config.get("rgb_width", 620)),
             int(viewer_config.get("point_cloud_stride", 1)),
             visualization_enabled=viewer_enabled,
             visualization_source=configured_source,
+            live_evaluation=live_evaluation,
         )
         if viewer is not None:
             viewer.set_feature_controls(particle_features, pipeline.set_feature)
@@ -2002,6 +2151,8 @@ def main() -> None:
                 next_display = now + display_period
             else:
                 time.sleep(min(0.002, next_display - now))
+            if live_evaluation is not None:
+                live_evaluation.poll()
     finally:
         try:
             if pipeline is not None:
@@ -2011,11 +2162,21 @@ def main() -> None:
                     pipeline.free()
         finally:
             try:
-                if zed is not None:
-                    zed.close()
+                if live_evaluation is not None:
+                    live_evaluation.close()
+                    print(
+                        "LIVE_EVALUATION_SAVED "
+                        f"csv={live_evaluation.csv_path} "
+                        f"plot={live_evaluation.plot_path}",
+                        flush=True,
+                    )
             finally:
-                if viewer is not None:
-                    viewer.close()
+                try:
+                    if zed is not None:
+                        zed.close()
+                finally:
+                    if viewer is not None:
+                        viewer.close()
 
 
 if __name__ == "__main__":

@@ -13,6 +13,8 @@ import time
 import cv2
 import numpy as np
 
+from cable_geometry import swept_capsule_mesh
+from cube_tracker import CUBE_CORNERS, CUBE_EDGES
 from particle_filter import (
     VISIBILITY_MISSING,
     VISIBILITY_SUPPORTED,
@@ -68,6 +70,7 @@ SKELETON_MASK = (0.15, 0.17, 0.19)
 SKELETON_LINE = (0.93, 0.96, 0.98)
 SKELETON_NODE = (0.22, 0.80, 1.00)
 SKELETON_BRANCH = (1.00, 0.28, 0.35)
+CUBE_TRACKING = (1.00, 0.22, 0.86)
 
 
 class DiagnosticWindowRecorder:
@@ -402,7 +405,19 @@ class SplitPointCloudViewer:
         self.source_age_ms = 0.0
         self.observation = None
         self.particle_filter = None
+        self.cube_tracking = None
         self.show_top_particles = True
+        self.show_cable_volume = True
+        self.cable_meshes = (
+            (
+                np.empty((0, 3), dtype=np.float32),
+                np.empty((0, 3), dtype=np.uint32),
+            ),
+            (
+                np.empty((0, 3), dtype=np.float32),
+                np.empty((0, 3), dtype=np.uint32),
+            ),
+        )
         self.feature_states = {}
         self.feature_callback = None
         self.feature_hitboxes = []
@@ -586,6 +601,7 @@ class SplitPointCloudViewer:
             "source_age_ms": float(result.source_age_ms),
             "observation": result.observation,
             "particle_filter": result.particle_filter,
+            "cube_tracking": result.cube_tracking,
         }
         with self.lock:
             self.pending = payload
@@ -636,6 +652,19 @@ class SplitPointCloudViewer:
         self.source_age_ms = payload["source_age_ms"]
         self.observation = payload["observation"]
         self.particle_filter = payload["particle_filter"]
+        self.cube_tracking = payload["cube_tracking"]
+        cable_radius_m = float(self.particle_filter.cable_radius_m)
+        self.cable_meshes = tuple(
+            swept_capsule_mesh(
+                # The 16 PF nodes are the actual piecewise-linear medial axis.
+                # Dense samples add no geometry and would only repeat rings.
+                np.asarray(cable.curve, dtype=np.float32),
+                cable_radius_m,
+                radial_sides=12,
+                cap_rings=4,
+            )
+            for cable in self.particle_filter.cables
+        )
         if cloud_changed:
             self._update_scene_bounds(payload["center"], payload["radius"])
             glBindBuffer(GL_ARRAY_BUFFER, self.vbo)
@@ -661,6 +690,7 @@ class SplitPointCloudViewer:
         mvp = self._set_camera(cloud_width, self.height)
         self._draw_grid()
         self._draw_cloud(mvp)
+        self._draw_cube_tracking()
         self._draw_particle_filter()
         self._draw_camera_origin()
         self._draw_cloud_overlay(cloud_width, self.height)
@@ -916,15 +946,73 @@ class SplitPointCloudViewer:
         glEnd()
         glEnable(GL_DEPTH_TEST)
 
+    def _draw_cube_tracking(self):
+        result = self.cube_tracking
+        if (
+            result is None
+            or not result.valid
+            or result.center_m is None
+            or result.rotation is None
+        ):
+            return
+        center = np.asarray(result.center_m, dtype=np.float32)
+        rotation = np.asarray(result.rotation, dtype=np.float32)
+        half_side = 0.5 * float(result.cube_side_m)
+        corners = center + (half_side * CUBE_CORNERS) @ rotation.T
+
+        glUseProgram(0)
+        glDisable(GL_TEXTURE_2D)
+        glEnable(GL_DEPTH_TEST)
+        glLineWidth(4.0)
+        glColor4f(*CUBE_TRACKING, 1.0)
+        glBegin(GL_LINES)
+        for first, second in CUBE_EDGES:
+            glVertex3f(*corners[first])
+            glVertex3f(*corners[second])
+        glEnd()
+
+        axis_length = 0.42 * float(result.cube_side_m)
+        glLineWidth(3.0)
+        glBegin(GL_LINES)
+        glColor3f(1.0, 0.25, 0.22)
+        glVertex3f(*center)
+        glVertex3f(*(center + axis_length * rotation[:, 0]))
+        glColor3f(0.25, 1.0, 0.42)
+        glVertex3f(*center)
+        glVertex3f(*(center + axis_length * rotation[:, 1]))
+        glColor3f(0.30, 0.55, 1.0)
+        glVertex3f(*center)
+        glVertex3f(*(center + axis_length * rotation[:, 2]))
+        glEnd()
+
     def _draw_particle_filter(self):
         if self.particle_filter is None:
             return
         glUseProgram(0)
         glDisable(GL_TEXTURE_2D)
-        glDisable(GL_DEPTH_TEST)
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         colors = (BLUE, GREEN)
+        if self.show_cable_volume:
+            glEnable(GL_DEPTH_TEST)
+            glDepthMask(GL_FALSE)
+            glDisable(GL_CULL_FACE)
+            for cable_index, mesh in enumerate(self.cable_meshes):
+                vertices, triangles = mesh
+                if len(vertices) == 0 or len(triangles) == 0:
+                    continue
+                glColor4f(*colors[cable_index], 0.34)
+                glEnableClientState(GL_VERTEX_ARRAY)
+                glVertexPointer(3, GL_FLOAT, 0, vertices)
+                glDrawElements(
+                    GL_TRIANGLES,
+                    int(triangles.size),
+                    GL_UNSIGNED_INT,
+                    triangles,
+                )
+                glDisableClientState(GL_VERTEX_ARRAY)
+            glDepthMask(GL_TRUE)
+        glDisable(GL_DEPTH_TEST)
         for cable_index, cable in enumerate(self.particle_filter.cables):
             color = colors[cable_index]
             if self.show_top_particles:
@@ -1137,6 +1225,36 @@ class SplitPointCloudViewer:
             (0.95, 0.65, 0.22),
         )
 
+        if self.cube_tracking is not None:
+            cube = self.cube_tracking
+            if cube.valid and cube.center_m is not None:
+                span = (
+                    f" span={cube.observed_span_m * 1000.0:.1f}mm"
+                    if np.isfinite(cube.observed_span_m)
+                    else ""
+                )
+                cube_text = (
+                    f"CUBE valid {cube.face_count}F | "
+                    f"surface={cube.surface_rms_m * 1000.0:.1f}mm{span} | "
+                    f"xyz=({cube.center_m[0]:+.3f},"
+                    f"{cube.center_m[1]:+.3f},{cube.center_m[2]:+.3f})m | "
+                    f"{cube.processing_ms:.1f}ms"
+                )
+                cube_color = CUBE_TRACKING
+            else:
+                cube_text = (
+                    f"CUBE invalid | {cube.reason} | "
+                    f"{cube.processing_ms:.1f}ms"
+                )
+                cube_color = (1.0, 0.38, 0.28)
+            self._text(
+                18,
+                height - 129,
+                cube_text,
+                cube_color,
+                GLUT_BITMAP_HELVETICA_12,
+            )
+
         if self.particle_filter is not None:
             for cable_index, cable in enumerate(self.particle_filter.cables):
                 diagnostic = cable.diagnostics
@@ -1297,6 +1415,7 @@ class SplitPointCloudViewer:
             10,
             f"Orbit: left drag    Pan: right drag    Zoom: wheel    Refit: R    "
             f"Top particles: P ({'on' if self.show_top_particles else 'off'})    "
+            f"9 mm body: B ({'on' if self.show_cable_volume else 'off'})    "
             f"Point size: +/- ({self.point_size:.1f})    Record: C    "
             f"Click a feature or use its key    Quit: Q",
             UI_MUTED,
@@ -1402,6 +1521,8 @@ class SplitPointCloudViewer:
             self.point_size = max(1.0, self.point_size - 0.5)
         elif key in (b"p", b"P"):
             self.show_top_particles = not self.show_top_particles
+        elif key in (b"b", b"B"):
+            self.show_cable_volume = not self.show_cable_volume
         elif key in (b"c", b"C"):
             self._toggle_recording()
         else:

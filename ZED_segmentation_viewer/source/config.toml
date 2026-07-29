@@ -38,6 +38,37 @@ recording_fps = 30
 recording_codec = "avc1"
 recording_queue_frames = 8
 
+[evaluation]
+# Separate live plot with the three primary tracking signals. The sampled
+# values and the final plot are saved for later analysis.
+enabled = true
+directory = "diagnostics/evaluation_runs"
+sample_hz = 10
+history_seconds = 30
+
+[cube_tracking]
+# Passive, frame-synchronized RGB-D cube observation. This does not modify
+# either cable particle filter and can be disabled for timing isolation.
+enabled = true
+cube_side_m = 0.150
+hue_min = 18
+hue_max = 40
+saturation_min = 100
+value_min = 80
+minimum_component_area_px = 2500
+depth_min_m = 0.20
+depth_max_m = 3.00
+pixel_stride = 2
+maximum_points = 12000
+plane_inlier_threshold_m = 0.006
+ransac_iterations = 96
+minimum_face_points = 300
+minimum_face_fraction = 0.04
+orthogonality_tolerance_deg = 15.0
+two_face_minimum_span_fraction = 0.90
+two_face_maximum_span_fraction = 1.10
+random_seed = 7
+
 [pidnet]
 checkpoint = "data/models/pidnet_two_cable_best.pt"
 device = "cuda"
@@ -72,6 +103,9 @@ particle_count = 800
 node_count = 16
 # Both physical cables are identical and measured as 0.518 m tip-to-tip.
 cable_lengths_m = [0.518, 0.518]
+# Measured physical cable diameter. The PF state remains the medial
+# centerline; downstream geometry expands it into a 4.5 mm-radius capsule tube.
+cable_diameter_m = 0.009
 dense_samples_per_segment = 4
 deformation_modes = 5
 initial_noise_m = 0.010

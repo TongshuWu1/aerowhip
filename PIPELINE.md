@@ -15,33 +15,41 @@ outside the neural network.
 ```text
 ZED RGB + registered depth
         |
-        v
-PIDNet: cable body + endpoint group 1 + endpoint group 2
+        +--> PIDNet: cable body + endpoint group 1 + endpoint group 2
+        |           |
+        |           v
+        |    2D thinning and compressed skeleton graph
+        |           |
+        |           +--> endpoint-identified complete graph routes
+        |           |
+        |           +--> all directly observed ordered 3D graph edges
+        |           |
+        |           v
+        |    Two batched but statistically independent CUDA particle filters
+        |           |
+        |           +--> complete-route initialization / route-centred retracking
+        |           |
+        |           +--> prior-based ordered graph-edge attribution
+        |           |
+        |           +--> visible-edge motion transport and particle likelihood
+        |
+        +--> yellow mask + registered depth + known 150 mm cube fit
+                    |
+                    +--> passive raw cube pose and surface residual
         |
         v
-2D thinning and compressed skeleton graph
-        |
-        +--> endpoint-identified complete graph routes
-        |
-        +--> all directly observed ordered 3D graph edges
-        |
-        v
-Two batched but statistically independent CUDA particle filters
-        |
-        +--> complete-route initialization / route-centred retracking
-        |
-        +--> prior-based ordered graph-edge attribution
-        |
-        +--> visible-edge motion transport and particle likelihood
-        |
-        v
-3D estimate, uncertainty, graph diagnostics, and viewer
+Cable estimates, cube observation, uncertainty, diagnostics, and viewer
 ```
 
 There is one PIDNet inference and one batched PF computation per tracked frame.
 The two PF populations have separate weights and posterior estimates. The cable
 batch dimension lets CUDA evaluate them together without coupling their
 probabilities.
+
+The cube observation uses the exact same immutable RGB-depth frame as the cable
+tracker. Its serial CPU worker runs concurrently with the CUDA cable path, and
+the results rejoin before visualization. Cube evidence does not alter cable
+particles, weights, proposals, constraints, or resampling.
 
 ## Information provided by the neural network
 
@@ -69,6 +77,40 @@ CUDA buffer, and all relevant semantic pixels are unprojected together.
 The result is a compact 3D array and pixel-to-point index image. Full
 XYZRGBA point-cloud construction is not part of tracking. The viewer constructs
 its point cloud independently and can use a display-only stride.
+
+## Passive cube observation
+
+The known rigid object is a bright-yellow cube with side length \(0.150\) m.
+Its current observation is deliberately geometric rather than learned:
+
+1. threshold yellow pixels in the rectified left image;
+2. retain the largest connected component;
+3. unproject its registered depth pixels;
+4. robustly extract planar subsets;
+5. select mutually perpendicular cube faces;
+6. recover the raw cube pose from the visible planes and known side length.
+
+Three visible faces directly constrain the cube centre. With two visible
+adjacent faces, their normals determine the three cube axes and the robust
+shared-edge point span supplies the remaining centre coordinate. The span must
+cover 90--110% of the known width; incomplete observations are rejected rather
+than extrapolated. Fewer than two perpendicular faces also produce an invalid
+measurement.
+
+A geometrically uniform cube has 24 equivalent proper rotations. The tracker
+selects the representation closest to the preceding valid observation solely
+to prevent representation-only 90-degree changes. It does not smooth position,
+predict through invalid frames, or hold a stale pose.
+
+The camera panel shows the measured yellow boundary and cube wireframe. The 3D
+viewer shows the same raw pose as a magenta wireframe and reports face count,
+surface residual, centre, and CPU time. `[cube_tracking].enabled` isolates the
+entire observation for timing. The standalone
+`cube_tracking_tester/run_cube_tracking.py` uses this same canonical module.
+
+Cube tracking is currently observational only. Contact proposal, temporal
+contact confidence, sticking/sliding classification, and contact feedback to
+the cable PF are not implemented.
 
 ## Skeleton graph
 
@@ -138,6 +180,37 @@ Consecutive nodes are constrained to equal segment lengths:
 The segments are a discretization, not an assumption that the cable is
 globally straight. Dense samples are interpolated along every link for
 measurement scoring and visualization.
+
+### Physical cable volume
+
+Both cables have a configured measured diameter of \(0.009\) m and radius
+\(0.0045\) m. The PF state remains the ordered medial centerline because this
+is the minimal state needed for efficient batched prediction and scoring.
+Every selected centerline also defines a physical capsule tube:
+
+\[
+\mathcal K(X,r)
+=
+\left\{
+\mathbf y:
+\min_i d\!\left(
+\mathbf y,
+[\mathbf x_i,\mathbf x_{i+1}]
+\right)
+\le r
+\right\}.
+\]
+
+The viewer renders this volume as a closed swept tube with hemispherical end
+caps. Its cross-section frames use parallel transport, avoiding the twisting
+and undefined straight-section behavior of Frenet frames. Press `B` to isolate
+the physical body visualization.
+
+Only the two selected estimates are meshed. Particle prediction, constraints,
+and likelihood still operate on centerlines, so adding the physical volume
+does not increase PF state size or mesh all 1,600 particles. The configured
+radius is now carried in every `ParticleFilterFrame` for subsequent analytic
+cable-object, cable-cable, and self-contact calculations.
 
 Each particle also has ordered per-node velocity. Prediction uses damped
 constant velocity plus smooth process noise. Ten percent of the population is
@@ -390,8 +463,9 @@ crossing, or whether the cables physically touch.
 
 Endpoint identity, fixed cable length, temporal continuity, visible-edge
 attribution, and particle likelihood resolve cable traversal hypotheses.
-Physical contact, height ordering, and cable radius remain outside the current
-observation model.
+Physical contact and height ordering remain outside the current observation
+model. The measured cable radius is represented geometrically but does not yet
+alter the centerline measurement likelihood.
 
 ## Feature controls
 
@@ -421,6 +495,25 @@ Current live controls are:
 The removed `partial_observation` and `fragment_score` switches no longer
 exist because their implementation was removed rather than retained as legacy
 code.
+
+## Live evaluation
+
+The main application opens one separate evaluation window with three signals
+for each cable:
+
+- visible trace error in millimetres;
+- maximum posterior node uncertainty in millimetres;
+- fraction of the estimated cable supported by the current observation.
+
+These are complementary: measurement fit, estimator confidence, and how much
+of the cable is actually visible. Endpoint and fixed-length errors are not
+plotted because the active endpoint and link constraints make them poor
+independent quality indicators.
+
+Evaluation diagnostics are sampled at 10 Hz rather than every tracking frame.
+The live history is saved to `metrics.csv`, and the final displayed plot is
+saved to `metrics.png` under `diagnostics/evaluation_runs/<timestamp>`. These
+two files are the intended compact inputs for later analysis.
 
 ## Performance isolation
 
@@ -455,6 +548,9 @@ depends on the number of observed graph edges.
 | `ZED_segmentation_viewer/source/graph_attribution.py` | Prior-based ordered edge-to-prediction association |
 | `ZED_segmentation_viewer/source/particle_filter.py` | Batched PF prediction, scoring, constraints, posterior, attribution orchestration |
 | `ZED_segmentation_viewer/source/cuda_constraints.py` | Fused CUDA fixed-link kernels |
+| `ZED_segmentation_viewer/source/cable_geometry.py` | Capsule-tube geometry and parallel-transport mesh construction |
+| `ZED_segmentation_viewer/source/cube_tracker.py` | Passive known-cube RGB-D plane fitting and raw pose |
+| `ZED_segmentation_viewer/source/live_evaluation.py` | Three-signal live plot and CSV logger |
 | `ZED_segmentation_viewer/source/app.py` | Asynchronous capture/tracking/viewer preparation and console profiling |
 | `ZED_segmentation_viewer/source/split_viewer.py` | OpenGL viewer, diagnostics, feature controls, recording |
 | `ZED_segmentation_viewer/source/config.toml` | Runtime parameters and independent feature switches |
