@@ -170,142 +170,6 @@ extern "C" __global__ void project_link_velocities_kernel(
     }
 }
 
-extern "C" __global__ void correct_and_project_velocities_kernel(
-    const float* velocities,
-    const float* parent_particles,
-    const float* particles,
-    float* output,
-    int cable_count,
-    int particle_count,
-    int node_count,
-    int iterations,
-    int visibility_bits,
-    int ordinary_update_bits,
-    int global_update_bits,
-    int global_count,
-    double measurement_gain_argument,
-    double maximum_velocity_argument,
-    double inverse_dt_argument
-) {
-    const int particle = blockIdx.x * blockDim.x + threadIdx.x;
-    const int total_particles = cable_count * particle_count;
-    if (particle >= total_particles) {
-        return;
-    }
-
-    const int cable_index = particle / particle_count;
-    const int particle_index = particle - cable_index * particle_count;
-    const int base = particle * node_count * 3;
-    const float measurement_gain = (float) measurement_gain_argument;
-    const float maximum_velocity = (float) maximum_velocity_argument;
-    const float inverse_dt = (float) inverse_dt_argument;
-    const bool is_global = particle_index < global_count;
-    const bool update_particle = is_global
-        ? ((global_update_bits & (1 << cable_index)) != 0)
-        : ((ordinary_update_bits & (1 << cable_index)) != 0);
-    const bool clamp_cable =
-        ((ordinary_update_bits | global_update_bits) & (1 << cable_index)) != 0;
-    const float epsilon = 1.1920928955078125e-7f;
-
-    for (int node = 0; node < node_count; ++node) {
-        const int index = base + node * 3;
-        float velocity_x = velocities[index];
-        float velocity_y = velocities[index + 1];
-        float velocity_z = velocities[index + 2];
-
-        if (update_particle && node > 0 && node + 1 < node_count) {
-            float measured_x =
-                (particles[index] - parent_particles[index]) * inverse_dt;
-            float measured_y =
-                (particles[index + 1] - parent_particles[index + 1]) * inverse_dt;
-            float measured_z =
-                (particles[index + 2] - parent_particles[index + 2]) * inverse_dt;
-            const float measured_norm = sqrtf(
-                measured_x * measured_x
-                + measured_y * measured_y
-                + measured_z * measured_z
-            );
-            const float measured_scale = fminf(
-                1.0f,
-                maximum_velocity / fmaxf(measured_norm, epsilon)
-            );
-            measured_x *= measured_scale;
-            measured_y *= measured_scale;
-            measured_z *= measured_scale;
-            velocity_x += measurement_gain * (measured_x - velocity_x);
-            velocity_y += measurement_gain * (measured_y - velocity_y);
-            velocity_z += measurement_gain * (measured_z - velocity_z);
-        }
-
-        if (clamp_cable) {
-            const float velocity_norm = sqrtf(
-                velocity_x * velocity_x
-                + velocity_y * velocity_y
-                + velocity_z * velocity_z
-            );
-            const float velocity_scale = fminf(
-                1.0f,
-                maximum_velocity / fmaxf(velocity_norm, epsilon)
-            );
-            velocity_x *= velocity_scale;
-            velocity_y *= velocity_scale;
-            velocity_z *= velocity_scale;
-        }
-
-        output[index] = velocity_x;
-        output[index + 1] = velocity_y;
-        output[index + 2] = velocity_z;
-    }
-
-    const bool start_visible =
-        (visibility_bits & (1 << (2 * cable_index))) != 0;
-    const bool end_visible =
-        (visibility_bits & (1 << (2 * cable_index + 1))) != 0;
-
-    for (int iteration = 0; iteration < iterations; ++iteration) {
-        for (int node = 0; node < node_count - 1; ++node) {
-            const int first = base + node * 3;
-            const int second = first + 3;
-            float x = particles[second] - particles[first];
-            float y = particles[second + 1] - particles[first + 1];
-            float z = particles[second + 2] - particles[first + 2];
-            const float norm = fmaxf(
-                sqrtf(x * x + y * y + z * z),
-                epsilon
-            );
-            x /= norm;
-            y /= norm;
-            z /= norm;
-
-            const float velocity_x = output[second] - output[first];
-            const float velocity_y = output[second + 1] - output[first + 1];
-            const float velocity_z = output[second + 2] - output[first + 2];
-            const float radial =
-                velocity_x * x + velocity_y * y + velocity_z * z;
-            const bool first_fixed = node == 0 && start_visible;
-            const bool second_fixed =
-                node + 1 == node_count - 1 && end_visible;
-
-            if (first_fixed && !second_fixed) {
-                output[second] -= radial * x;
-                output[second + 1] -= radial * y;
-                output[second + 2] -= radial * z;
-            } else if (second_fixed && !first_fixed) {
-                output[first] += radial * x;
-                output[first + 1] += radial * y;
-                output[first + 2] += radial * z;
-            } else if (!first_fixed && !second_fixed) {
-                const float half_radial = 0.5f * radial;
-                output[first] += half_radial * x;
-                output[first + 1] += half_radial * y;
-                output[first + 2] += half_radial * z;
-                output[second] -= half_radial * x;
-                output[second + 1] -= half_radial * y;
-                output[second + 2] -= half_radial * z;
-            }
-        }
-    }
-}
 """
 
 
@@ -332,11 +196,6 @@ class FusedCudaConstraints:
             self._velocity_kernel = torch.cuda._compile_kernel(
                 _CUDA_SOURCE,
                 "project_link_velocities_kernel",
-                nvcc_options=options,
-            )
-            self._measurement_velocity_kernel = torch.cuda._compile_kernel(
-                _CUDA_SOURCE,
-                "correct_and_project_velocities_kernel",
                 nvcc_options=options,
             )
 
@@ -421,7 +280,6 @@ class FusedCudaConstraints:
                 ],
             )
         return output
-
     def project_velocities(
         self,
         velocities: torch.Tensor,
@@ -456,78 +314,6 @@ class FusedCudaConstraints:
                     node_count,
                     int(iterations),
                     self._visibility_bits(endpoint_visible),
-                ],
-            )
-        return output
-
-    def correct_and_project_velocities(
-        self,
-        velocities: torch.Tensor,
-        parent_particles: torch.Tensor,
-        particles: torch.Tensor,
-        endpoint_visible: tuple[tuple[bool, bool], ...],
-        iterations: int,
-        ordinary_update: tuple[bool, ...],
-        global_update: tuple[bool, ...],
-        global_count: int,
-        measurement_gain: float,
-        maximum_velocity: float,
-        dt: float,
-    ) -> torch.Tensor:
-        self._validate_particles(velocities, "velocities")
-        self._validate_particles(parent_particles, "parent_particles")
-        self._validate_particles(particles, "particles")
-        if velocities.shape != particles.shape or parent_particles.shape != particles.shape:
-            raise ValueError(
-                "velocities, parent_particles, and particles must have identical shapes"
-            )
-        cable_count, particle_count, node_count, _ = particles.shape
-        if len(endpoint_visible) != cable_count:
-            raise ValueError("Endpoint visibility must match the cable dimension")
-        if len(ordinary_update) != cable_count or len(global_update) != cable_count:
-            raise ValueError("Velocity-update flags must match the cable dimension")
-        if iterations < 1:
-            raise ValueError("Velocity projection requires at least one iteration")
-        if not 0 <= int(global_count) <= particle_count:
-            raise ValueError("global_count must be within the particle population")
-        if not 0.0 <= float(measurement_gain) <= 1.0:
-            raise ValueError("measurement_gain must be in [0, 1]")
-        if float(maximum_velocity) <= 0.0 or float(dt) <= 0.0:
-            raise ValueError("maximum_velocity and dt must be positive")
-
-        ordinary_bits = sum(
-            int(bool(enabled)) << index
-            for index, enabled in enumerate(ordinary_update)
-        )
-        global_bits = sum(
-            int(bool(enabled)) << index
-            for index, enabled in enumerate(global_update)
-        )
-        output = torch.empty_like(velocities)
-        total_particles = cable_count * particle_count
-        block_count = (
-            total_particles + self._threads_per_block - 1
-        ) // self._threads_per_block
-        with torch.cuda.device(self.device):
-            self._measurement_velocity_kernel(
-                grid=(block_count, 1, 1),
-                block=(self._threads_per_block, 1, 1),
-                args=[
-                    velocities,
-                    parent_particles,
-                    particles,
-                    output,
-                    cable_count,
-                    particle_count,
-                    node_count,
-                    int(iterations),
-                    self._visibility_bits(endpoint_visible),
-                    ordinary_bits,
-                    global_bits,
-                    int(global_count),
-                    float(measurement_gain),
-                    float(maximum_velocity),
-                    1.0 / float(dt),
                 ],
             )
         return output

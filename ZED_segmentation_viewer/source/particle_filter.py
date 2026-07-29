@@ -33,14 +33,14 @@ class ParticleFeatures:
     endpoint_motion_transport: bool = True
     ess_resampling: bool = True
     global_particles: bool = True
-    measurement_velocity_update: bool = True
-    global_particle_velocity_update: bool = True
+    local_node_motion: bool = True
     single_endpoint_updates: bool = True
     prediction_without_measurement: bool = True
     posterior_uncertainty: bool = True
     fused_constraint_kernels: bool = True
     cuda_graph_replay: bool = True
     graph_edge_attribution: bool = True
+    temporal_edge_identity: bool = True
     visible_edge_scoring: bool = True
     visible_edge_transport: bool = True
     visible_edge_exploration: bool = True
@@ -78,7 +78,8 @@ class ParticleFilterConfig:
     acceleration_noise_mps2: float = 0.45
     velocity_damping_per_second: float = 1.25
     endpoint_velocity_smoothing: float = 0.50
-    measurement_velocity_gain: float = 0.65
+    local_velocity_gain: float = 0.65
+    local_support_radius_nodes: float = 1.0
     maximum_node_velocity_mps: float = 2.50
     projection_iterations: int = 8
     velocity_projection_iterations: int = 2
@@ -95,6 +96,12 @@ class ParticleFilterConfig:
     attribution_length_weight: float = 0.25
     attribution_unassigned_energy: float = 3.0
     attribution_minimum_identity_probability: float = 0.60
+    attribution_temporal_identity_weight: float = 1.0
+    attribution_temporal_match_sigma_m: float = 0.020
+    attribution_temporal_match_gate_m: float = 0.050
+    attribution_temporal_history_frames: int = 5
+    attribution_temporal_history_decay: float = 0.75
+    attribution_temporal_probability_floor: float = 0.05
     top_particle_count: int = 12
     random_seed: int = 7
     profile_stages: bool = True
@@ -127,8 +134,11 @@ class ParticleFilterConfig:
             endpoint_velocity_smoothing=float(
                 np.clip(values.get("endpoint_velocity_smoothing", 0.50), 0.0, 0.999)
             ),
-            measurement_velocity_gain=float(
-                np.clip(values.get("measurement_velocity_gain", 0.65), 0.0, 1.0)
+            local_velocity_gain=float(
+                np.clip(values.get("local_velocity_gain", 0.65), 0.0, 1.0)
+            ),
+            local_support_radius_nodes=max(
+                0.1, float(values.get("local_support_radius_nodes", 1.0))
             ),
             maximum_node_velocity_mps=max(
                 1e-3, float(values.get("maximum_node_velocity_mps", 2.50))
@@ -178,6 +188,36 @@ class ParticleFilterConfig:
                     1.0,
                 )
             ),
+            attribution_temporal_identity_weight=max(
+                0.0,
+                float(values.get("attribution_temporal_identity_weight", 1.0)),
+            ),
+            attribution_temporal_match_sigma_m=max(
+                1e-6,
+                float(values.get("attribution_temporal_match_sigma_m", 0.020)),
+            ),
+            attribution_temporal_match_gate_m=max(
+                1e-6,
+                float(values.get("attribution_temporal_match_gate_m", 0.050)),
+            ),
+            attribution_temporal_history_frames=max(
+                1,
+                int(values.get("attribution_temporal_history_frames", 5)),
+            ),
+            attribution_temporal_history_decay=float(
+                np.clip(
+                    values.get("attribution_temporal_history_decay", 0.75),
+                    0.0,
+                    1.0,
+                )
+            ),
+            attribution_temporal_probability_floor=float(
+                np.clip(
+                    values.get("attribution_temporal_probability_floor", 0.05),
+                    0.0,
+                    1.0 / 3.0,
+                )
+            ),
             top_particle_count=max(1, int(values.get("top_particle_count", 12))),
             random_seed=int(values.get("random_seed", 7)),
             profile_stages=bool(values.get("profile_stages", True)),
@@ -213,10 +253,11 @@ class CableFilterDiagnostics:
     maximum_node_uncertainty_mm: float
     complete_observation_age_s: float
     predicted_node_speed_mps: float
-    measured_displacement_speed_mps: float
+    local_velocity_innovation_speed_mps: float
     corrected_node_speed_mps: float
     maximum_corrected_node_speed_mps: float
-    velocity_correction_applied: bool
+    local_node_motion_applied: bool
+    locally_supported_node_fraction: float
     attributed_edge_count: int
     measurement_source: str
 
@@ -254,7 +295,7 @@ class ParticleFilterProfile:
     prediction_constraint_gpu_ms: float
     proposal_gpu_ms: float
     measurement_constraint_gpu_ms: float
-    velocity_correction_gpu_ms: float
+    local_motion_gpu_ms: float
     route_score_gpu_ms: float
     visible_edge_score_gpu_ms: float
     regularization_gpu_ms: float
@@ -336,10 +377,11 @@ def _empty_output(status: str, measurement_valid: bool = False) -> CableFilterOu
         maximum_node_uncertainty_mm=float("nan"),
         complete_observation_age_s=float("inf"),
         predicted_node_speed_mps=float("nan"),
-        measured_displacement_speed_mps=float("nan"),
+        local_velocity_innovation_speed_mps=float("nan"),
         corrected_node_speed_mps=float("nan"),
         maximum_corrected_node_speed_mps=float("nan"),
-        velocity_correction_applied=False,
+        local_node_motion_applied=False,
+        locally_supported_node_fraction=0.0,
         attributed_edge_count=0,
         measurement_source="none",
     )
@@ -543,6 +585,14 @@ class BatchedCableParticleFilter:
             minimum_identity_probability=(
                 config.attribution_minimum_identity_probability
             ),
+            temporal_identity_weight=config.attribution_temporal_identity_weight,
+            temporal_match_sigma_m=config.attribution_temporal_match_sigma_m,
+            temporal_match_gate_m=config.attribution_temporal_match_gate_m,
+            temporal_history_frames=config.attribution_temporal_history_frames,
+            temporal_history_decay=config.attribution_temporal_history_decay,
+            temporal_probability_floor=(
+                config.attribution_temporal_probability_floor
+            ),
         )
         self.device = torch.device(config.device)
         if self.device.type == "cuda" and not torch.cuda.is_available():
@@ -650,7 +700,7 @@ class BatchedCableParticleFilter:
                         "prediction_constraint",
                         "proposal",
                         "measurement_constraint",
-                        "velocity_correction",
+                        "local_motion",
                         "route_score",
                         "visible_edge_score",
                         "regularization",
@@ -667,12 +717,18 @@ class BatchedCableParticleFilter:
             self._profile_events = {}
 
     def set_features(self, features: ParticleFeatures) -> None:
+        temporal_identity_changed = (
+            self.features.temporal_edge_identity
+            != features.temporal_edge_identity
+        )
         pf_feature_changed = any(
             getattr(self.features, name) != getattr(features, name)
             for name in ParticleFeatures.__dataclass_fields__
             if name != "graph_edge_attribution"
         )
         self.features = features
+        if temporal_identity_changed:
+            self.graph_edge_attributor.clear_temporal_history()
         if pf_feature_changed:
             self._diagnostic_cache = [None, None]
 
@@ -999,14 +1055,12 @@ class BatchedCableParticleFilter:
         attribution: GraphAttributionBatch,
         normalized_arc: torch.Tensor,
         selected_edges: torch.Tensor,
-    ) -> torch.Tensor:
-        """Interpolate measured motion along cable arc without bridging in XYZ.
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        """Measure a local displacement and support flag for every cable node.
 
-        Each visible edge directly measures displacement relative to the
-        predicted prior at its fitted arc interval.  At particle nodes, the
-        closest measured displacement on either side is linearly interpolated.
-        Hidden geometry is therefore transported by neighboring cable motion;
-        no straight 3D segment is inserted across an occlusion.
+        Observed graph samples only influence nodes within a configurable arc
+        radius.  This deliberately neither interpolates across an occlusion nor
+        extrapolates a visible fragment's motion over the rest of the cable.
         """
 
         sample_arc = normalized_arc.reshape(2, -1)
@@ -1026,68 +1080,34 @@ class BatchedCableParticleFilter:
             device=self.device,
             dtype=self.dtype,
         )[None, :, None]
-        arc = sample_arc[:, None, :]
-        valid_expanded = valid[:, None, :]
-
-        left_valid = valid_expanded & (arc <= node_arc)
-        left_score = torch.where(
-            left_valid,
-            arc,
-            torch.full_like(arc, -torch.inf),
+        arc_distance = torch.abs(sample_arc[:, None, :] - node_arc)
+        radius = (
+            self.config.local_support_radius_nodes
+            / float(self.config.node_count - 1)
         )
-        left_index = torch.argmax(left_score, dim=-1)
-        has_left = left_valid.any(dim=-1)
-
-        right_valid = valid_expanded & (arc >= node_arc)
-        right_score = torch.where(
-            right_valid,
-            arc,
-            torch.full_like(arc, torch.inf),
+        inside = valid[:, None, :] & (arc_distance <= radius)
+        confidence = (
+            attribution.selected_confidence[None, :, None]
+            .expand(2, -1, attribution.observed_count)
+            .reshape(2, 1, -1)
         )
-        right_index = torch.argmin(right_score, dim=-1)
-        has_right = right_valid.any(dim=-1)
-
-        left_displacement = torch.gather(
-            displacement,
-            1,
-            left_index[:, :, None].expand(-1, -1, 3),
+        weights = torch.where(
+            inside,
+            confidence * torch.exp(-0.5 * (arc_distance / radius).square()),
+            torch.zeros_like(arc_distance),
         )
-        right_displacement = torch.gather(
-            displacement,
-            1,
-            right_index[:, :, None].expand(-1, -1, 3),
-        )
-        left_arc = torch.gather(sample_arc, 1, left_index)
-        right_arc = torch.gather(sample_arc, 1, right_index)
-        interpolation = (
-            (node_arc[:, :, 0] - left_arc)
-            / (right_arc - left_arc).clamp_min(1e-9)
-        ).clamp(0.0, 1.0)
-        between = left_displacement + interpolation[:, :, None] * (
-            right_displacement - left_displacement
-        )
-        # Duplicate samples occur at graph junctions.  Averaging their two
-        # nearest displacement observations avoids arbitrary edge-order ties.
-        coincident = (right_arc - left_arc).abs() <= 1e-8
-        between = torch.where(
-            coincident[:, :, None],
-            0.5 * (left_displacement + right_displacement),
-            between,
-        )
+        weight_sum = weights.sum(dim=-1)
+        field = torch.sum(
+            weights[:, :, :, None] * displacement[:, None, :, :],
+            dim=2,
+        ) / weight_sum[:, :, None].clamp_min(1e-9)
+        supported = weight_sum > 0.0
         field = torch.where(
-            (has_left & has_right)[:, :, None],
-            between,
-            torch.where(
-                has_left[:, :, None],
-                left_displacement,
-                torch.where(
-                    has_right[:, :, None],
-                    right_displacement,
-                    torch.zeros_like(right_displacement),
-                ),
-            ),
+            supported[:, :, None],
+            field,
+            torch.zeros_like(field),
         )
-        return field
+        return field, supported
 
     def _visible_edge_diagnostics(
         self,
@@ -1466,6 +1486,7 @@ class BatchedCableParticleFilter:
                 attribution_curves,
                 attribution_spread,
                 attribution_initialized,
+                use_temporal_identity=self.features.temporal_edge_identity,
             )
         if attribution_batch is not None:
             normalized_edge_arc, selected_edges = self._edge_arc_samples(
@@ -1638,13 +1659,18 @@ class BatchedCableParticleFilter:
             device=self.device,
             dtype=self.dtype,
         )
+        locally_supported_nodes = torch.zeros(
+            (2, self.config.node_count),
+            device=self.device,
+            dtype=torch.bool,
+        )
         if (
             self.features.visible_edge_transport
             and attribution_batch is not None
             and normalized_edge_arc is not None
             and selected_edges is not None
         ):
-            edge_displacement = self._visible_edge_displacement(
+            edge_displacement, locally_supported_nodes = self._visible_edge_displacement(
                 attribution_batch,
                 normalized_edge_arc,
                 selected_edges,
@@ -1746,117 +1772,42 @@ class BatchedCableParticleFilter:
         if self.config.profile_stages and self.device.type == "cuda":
             self._profile_events["measurement_constraint"].record()
 
-        # A position observation must also update the velocity part of the
-        # state. The previous implementation committed constrained positions
-        # but retained their pre-correction velocities; route-centered retrack
-        # particles were even assigned zero velocity. Arc-length node ordering
-        # makes parent-to-proposal displacement a valid per-node measurement.
+        # Update motion only where a currently attributed graph edge directly
+        # supports the node.  The displacement is measured relative to the
+        # damped constant-velocity prior, so displacement / dt is the local
+        # velocity innovation.  Hidden nodes retain their own predicted
+        # velocity; motion is never copied across an unobserved cable interval.
         velocity_prediction_before_correction = predicted_velocities
-        velocity_update_particle_mask = torch.zeros(
-            (2, self.config.particle_count),
-            device=self.device,
-            dtype=torch.bool,
+        local_innovation = torch.zeros_like(edge_displacement)
+        local_velocity_update = (
+            self.features.local_node_motion and attribution_batch is not None
         )
-        # The fused kernel accepts a static per-cable launch mask.  Graph-edge
-        # presence is a conservative launch condition; only particles with an
-        # actual accepted route/edge measurement are committed below.
-        velocity_update_cables_np = self.initialized & (
-            complete_evidence_np
-            | (
-                bool(observation.graph_edges)
-                & bool(self.features.visible_edge_scoring)
+        if local_velocity_update:
+            local_innovation = edge_displacement / dt
+            corrected_velocity = (
+                predicted_velocities
+                + self.config.local_velocity_gain
+                * local_innovation[:, None, :, :]
             )
-        )
-        ordinary_velocity_update_np = (
-            velocity_update_cables_np
-            & bool(self.features.measurement_velocity_update)
-        )
-        global_velocity_update_np = (
-            velocity_update_cables_np
-            & bool(self.features.global_particle_velocity_update)
-            & (global_count > 0)
-        )
-        velocity_update_requested = bool(
-            np.any(ordinary_velocity_update_np)
-            or np.any(global_velocity_update_np)
-        )
-        velocity_projection_complete = False
-        if velocity_update_requested and np.any(velocity_update_cables_np):
-            is_global_particle = self._particle_indices[0] < global_count
-            if (
-                self.features.measurement_velocity_update
-                and self.features.global_particle_velocity_update
-            ):
-                enabled_particle_category = self._all_particles_mask
-            elif self.features.measurement_velocity_update:
-                enabled_particle_category = ~is_global_particle
-            elif global_count > 0:
-                enabled_particle_category = is_global_particle
-            else:
-                enabled_particle_category = torch.zeros_like(
-                    self._all_particles_mask
-                )
-            velocity_update_cables = torch.as_tensor(
-                velocity_update_cables_np,
-                device=self.device,
-                dtype=torch.bool,
+            update_mask = (
+                edge_measurement[:, None, None, None]
+                & locally_supported_nodes[:, None, :, None]
+                & self._interior_node_mask
             )
-            velocity_update_particle_mask = (
-                velocity_update_cables[:, None]
-                & measurement_requested[:, None]
-                & enabled_particle_category[None, :]
+            predicted_velocities = torch.where(
+                update_mask,
+                corrected_velocity,
+                predicted_velocities,
             )
-            if (
-                self.features.fixed_length
-                and self.device.type == "cuda"
-                and self.features.fused_constraint_kernels
-            ):
-                if self._fused_constraints is None:
-                    raise RuntimeError("Fused CUDA constraints were not initialized")
-                predicted_velocities = (
-                    self._fused_constraints.correct_and_project_velocities(
-                        predicted_velocities,
-                        parent_particles,
-                        proposals,
-                        endpoint_anchor_pattern,
-                        self.config.velocity_projection_iterations,
-                        tuple(bool(value) for value in ordinary_velocity_update_np),
-                        tuple(bool(value) for value in global_velocity_update_np),
-                        global_count,
-                        self.config.measurement_velocity_gain,
-                        self.config.maximum_node_velocity_mps,
-                        dt,
-                    )
-                )
-                velocity_projection_complete = True
-            else:
-                measured_displacement_velocities = _clamp_vector_norm(
-                    (proposals - parent_particles) / dt,
-                    self.config.maximum_node_velocity_mps,
-                )
-                measured_blend = torch.lerp(
-                    predicted_velocities,
-                    measured_displacement_velocities,
-                    self.config.measurement_velocity_gain,
-                )
-                velocity_update_node_mask = (
-                    velocity_update_particle_mask[:, :, None, None]
-                    & self._interior_node_mask
-                )
-                predicted_velocities = torch.where(
-                    velocity_update_node_mask,
-                    measured_blend,
-                    predicted_velocities,
-                )
-                predicted_velocities = _clamp_vector_norm(
-                    predicted_velocities,
-                    self.config.maximum_node_velocity_mps,
-                )
+        predicted_velocities = _clamp_vector_norm(
+            predicted_velocities,
+            self.config.maximum_node_velocity_mps,
+        )
 
-        # Reuse the existing projection exactly once, after measurement
-        # correction, so the corrected velocity remains tangent to the fixed
-        # link-length constraints.
-        if self.features.fixed_length and not velocity_projection_complete:
+        # Enforce inextensibility once after local motion correction. This
+        # removes only adjacent radial relative velocity; it does not impose a
+        # shared translation or acceleration on the cable.
+        if self.features.fixed_length:
             predicted_velocities = self._project_velocities(
                 predicted_velocities,
                 proposals,
@@ -1864,7 +1815,7 @@ class BatchedCableParticleFilter:
                 "measurement",
             )
         if self.config.profile_stages and self.device.type == "cuda":
-            self._profile_events["velocity_correction"].record()
+            self._profile_events["local_motion"].record()
 
         dense = _dense_samples(
             proposals,
@@ -2424,24 +2375,32 @@ class BatchedCableParticleFilter:
                     predicted_velocities[cable_index, selected_index],
                     dim=-1,
                 )
-                velocity_correction_applied = velocity_update_particle_mask[
-                    cable_index, selected_index
-                ]
-                selected_displacement_velocity = _clamp_vector_norm(
-                    (
-                        proposals[cable_index, selected_index]
-                        - parent_particles[cable_index, selected_index]
-                    )
-                    / dt,
-                    self.config.maximum_node_velocity_mps,
+                supported_node_mask = (
+                    locally_supported_nodes[cable_index]
+                    & self._interior_node_mask[0, 0, :, 0]
                 )
-                measured_displacement_speed = torch.where(
-                    velocity_correction_applied,
-                    torch.linalg.vector_norm(
-                        selected_displacement_velocity,
-                        dim=-1,
-                    ).mean(),
+                supported_node_count = supported_node_mask.sum()
+                local_node_motion_applied = (
+                    measurement_accepted
+                    & edge_measurement[cable_index]
+                    & (supported_node_count > 0)
+                    & bool(self.features.local_node_motion)
+                )
+                local_velocity_innovation_speed = torch.where(
+                    local_node_motion_applied,
+                    torch.sum(
+                        torch.linalg.vector_norm(
+                            local_innovation[cable_index],
+                            dim=-1,
+                        )
+                        * supported_node_mask.to(self.dtype)
+                    )
+                    / supported_node_count.clamp_min(1).to(self.dtype),
                     self._nan_scalar,
+                )
+                locally_supported_fraction = (
+                    supported_node_count.to(self.dtype)
+                    / float(self.config.node_count)
                 )
                 scalar_values = torch.stack(
                     (
@@ -2463,10 +2422,11 @@ class BatchedCableParticleFilter:
                         maximum_node_uncertainty_batch[cable_index],
                         selected_route.to(self.dtype),
                         predicted_node_speeds.mean(),
-                        measured_displacement_speed,
+                        local_velocity_innovation_speed,
                         corrected_node_speeds.mean(),
                         corrected_node_speeds.max(),
-                        velocity_correction_applied.to(self.dtype),
+                        local_node_motion_applied.to(self.dtype),
+                        locally_supported_fraction,
                     )
                 )
                 diagnostic_float_payload = torch.cat(
@@ -2520,11 +2480,11 @@ class BatchedCableParticleFilter:
                 "measurement_constraint": elapsed(
                     "proposal", "measurement_constraint"
                 ),
-                "velocity_correction": elapsed(
-                    "measurement_constraint", "velocity_correction"
+                "local_motion": elapsed(
+                    "measurement_constraint", "local_motion"
                 ),
                 "route_score": elapsed(
-                    "velocity_correction", "route_score"
+                    "local_motion", "route_score"
                 ),
                 "visible_edge_score": elapsed(
                     "route_score", "visible_edge_score"
@@ -2686,10 +2646,11 @@ class BatchedCableParticleFilter:
                 maximum_node_uncertainty,
                 selected_route_value,
                 predicted_node_speed_mps,
-                measured_displacement_speed_mps,
+                local_velocity_innovation_speed_mps,
                 corrected_node_speed_mps,
                 maximum_corrected_node_speed_mps,
-                velocity_correction_applied_value,
+                local_node_motion_applied_value,
+                locally_supported_node_fraction,
             ) = (
                 float(value)
                 for value in diagnostic_payload[diagnostic_offset:]
@@ -2766,14 +2727,17 @@ class BatchedCableParticleFilter:
                 maximum_node_uncertainty_mm=maximum_node_uncertainty_mm,
                 complete_observation_age_s=complete_age,
                 predicted_node_speed_mps=predicted_node_speed_mps,
-                measured_displacement_speed_mps=measured_displacement_speed_mps,
+                local_velocity_innovation_speed_mps=(
+                    local_velocity_innovation_speed_mps
+                ),
                 corrected_node_speed_mps=corrected_node_speed_mps,
                 maximum_corrected_node_speed_mps=(
                     maximum_corrected_node_speed_mps
                 ),
-                velocity_correction_applied=bool(
-                    velocity_correction_applied_value
+                local_node_motion_applied=bool(
+                    local_node_motion_applied_value
                 ),
+                locally_supported_node_fraction=locally_supported_node_fraction,
                 attributed_edge_count=attributed_edge_count,
                 measurement_source=measurement_source,
             )
@@ -2827,8 +2791,8 @@ class BatchedCableParticleFilter:
                 measurement_constraint_gpu_ms=stage_gpu_ms.get(
                     "measurement_constraint", 0.0
                 ),
-                velocity_correction_gpu_ms=stage_gpu_ms.get(
-                    "velocity_correction", 0.0
+                local_motion_gpu_ms=stage_gpu_ms.get(
+                    "local_motion", 0.0
                 ),
                 route_score_gpu_ms=stage_gpu_ms.get("route_score", 0.0),
                 visible_edge_score_gpu_ms=stage_gpu_ms.get(

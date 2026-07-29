@@ -39,13 +39,11 @@ from pidnet_schema import (
     ANNOTATION_BODY_LAYER_COUNT,
     ANNOTATION_CHANNEL_COUNT,
     ANNOTATION_SCHEMA_VERSION,
-    CROSSING_CHANNEL,
     ENDPOINT_CHANNELS,
     ENDPOINT_SEMANTICS,
     OUTPUT_CHANNEL_COUNT,
     PIDNET_LABEL_MODE,
     PIDNET_SCHEMA_VERSION,
-    crossing_label_value,
     endpoint_label_value,
     label_bit,
 )
@@ -63,7 +61,7 @@ DEFAULT_THRESHOLD_GRID = tuple(float(value) for value in np.linspace(0.05, 0.95,
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Train the four-head PIDNet cable observation model.")
+    parser = argparse.ArgumentParser(description="Train the three-head PIDNet cable observation model.")
     parser.add_argument("--dataset", type=Path, default=DATA_DIR / "datasets" / "two_cable_pidnet")
     parser.add_argument("--output", type=Path, default=DATA_DIR / "models" / "pidnet_two_cable_best.pt")
     parser.add_argument("--epochs", type=int, default=120)
@@ -91,7 +89,6 @@ def parse_args():
     )
     parser.add_argument("--seed", type=int, default=17)
     parser.add_argument("--endpoint-weight", type=float, default=2.0)
-    parser.add_argument("--crossing-weight", type=float, default=1.0)
     parser.add_argument("--boundary-weight", type=float, default=0.20)
     parser.add_argument("--focal-gamma", type=float, default=2.0)
     parser.add_argument("--dice-weight", type=float, default=1.0)
@@ -135,8 +132,7 @@ class GenericCableEndpointDataset(Dataset):
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         body = generic_body_mask(mask, self.cable_count, multilabel=multilabel).astype(np.uint8)
         endpoint_channels = generic_endpoint_masks(mask, self.cable_count, multilabel=multilabel)
-        crossing = generic_crossing_mask(mask, self.cable_count, multilabel=multilabel).astype(np.uint8)
-        mask_channels = np.stack([body, *endpoint_channels, crossing], axis=0).astype(np.uint8, copy=False)
+        mask_channels = np.stack([body, *endpoint_channels], axis=0).astype(np.uint8, copy=False)
         boundary = mask_boundary(body).astype(np.uint8, copy=False)
 
         image = torch.from_numpy(np.ascontiguousarray(image.transpose(2, 0, 1)))
@@ -196,10 +192,6 @@ def generic_endpoint_masks(mask, cable_count, multilabel=False):
         label_pixels(mask, endpoint_label_value(cable_index), cable_count, multilabel=multilabel).astype(np.float32)
         for cable_index in range(1, int(cable_count) + 1)
     ]
-
-
-def generic_crossing_mask(mask, cable_count, multilabel=False):
-    return label_pixels(mask, crossing_label_value(), cable_count, multilabel=multilabel)
 
 
 def find_dataset_splits(dataset_root, verified_only=True):
@@ -475,7 +467,6 @@ def segmentation_loss(
     boundary,
     channel_alpha,
     endpoint_weight,
-    crossing_weight,
     boundary_weight,
     focal_gamma,
     dice_weight,
@@ -496,14 +487,12 @@ def segmentation_loss(
     total = (
         head_losses[0]
         + float(endpoint_weight) * endpoint_loss
-        + float(crossing_weight) * head_losses[CROSSING_CHANNEL]
         + float(boundary_weight) * boundary_loss
     )
     detached = {
         "body": float(head_losses[0].detach().item()),
         "endpoint1": float(head_losses[ENDPOINT_CHANNELS[0]].detach().item()),
         "endpoint2": float(head_losses[ENDPOINT_CHANNELS[1]].detach().item()),
-        "crossing": float(head_losses[CROSSING_CHANNEL].detach().item()),
         "boundary": float(boundary_loss.detach().item()),
     }
     return total, detached
@@ -519,7 +508,6 @@ def compute_channel_profile(pairs, cable_count):
         channels = [
             generic_body_mask(mask, cable_count, multilabel),
             *generic_endpoint_masks(mask, cable_count, multilabel),
-            generic_crossing_mask(mask, cable_count, multilabel),
         ]
         frame_pixels = np.asarray([np.count_nonzero(channel) for channel in channels], dtype=np.int64)
         positive_pixels += frame_pixels
@@ -569,7 +557,7 @@ def dataset_profile_warnings(profiles, session_counts):
         warnings.append(
             f"validation contains only {validation['frame_count']} frames; threshold and component metrics will be noisy"
         )
-    channel_names = ("body", "endpoint1", "endpoint2", "crossing")
+    channel_names = ("body", "endpoint1", "endpoint2")
     for split in ("train", "val"):
         for name, count in zip(channel_names, profiles[split]["positive_frames"]):
             if count == 0:
@@ -595,7 +583,6 @@ def early_stop_summary(epoch, best_epoch, best_score, current_score, patience, m
         "body_iou": float(metrics["body_iou"]),
         "endpoint1_quality": float(metrics["endpoint1_quality"]),
         "endpoint2_quality": float(metrics["endpoint2_quality"]),
-        "crossing_quality": float(metrics["crossing_quality"]),
     }
 
 
@@ -614,8 +601,7 @@ def print_early_stop_summary(summary):
     print(
         f"  current validation heads: body_iou={summary['body_iou']:.4f} "
         f"endpoint1_quality={summary['endpoint1_quality']:.4f} "
-        f"endpoint2_quality={summary['endpoint2_quality']:.4f} "
-        f"crossing_quality={summary['crossing_quality']:.4f}"
+        f"endpoint2_quality={summary['endpoint2_quality']:.4f}"
     )
     print("  To continue regardless of a plateau, set Early-stop patience to 0.")
 
@@ -809,7 +795,10 @@ def evaluate(
         for c in range(OUTPUT_CHANNEL_COUNT)
     ])
 
-    component_counts = {channel: np.zeros(4, dtype=np.float64) for channel in (*ENDPOINT_CHANNELS, CROSSING_CHANNEL)}
+    component_counts = {
+        channel: np.zeros(4, dtype=np.float64)
+        for channel in ENDPOINT_CHANNELS
+    }
     for image, mask, _boundary in loader:
         image = prepare_image_batch(image, device, channels_last=channels_last)
         with torch.amp.autocast("cuda", enabled=use_amp):
@@ -818,9 +807,9 @@ def evaluate(
         height, width = target.shape[-2:]
         diagonal = math.hypot(width, height)
         for batch_index in range(target.shape[0]):
-            for channel in (*ENDPOINT_CHANNELS, CROSSING_CHANNEL):
+            for channel in ENDPOINT_CHANNELS:
                 predicted = probability[batch_index, channel] >= selected_thresholds[channel]
-                maximum_distance = diagonal * (0.020 if channel in ENDPOINT_CHANNELS else 0.025)
+                maximum_distance = diagonal * 0.020
                 counts = component_match_counts(predicted, target[batch_index, channel], maximum_distance)
                 component_counts[channel] += np.asarray(counts, dtype=np.float64)
 
@@ -830,13 +819,11 @@ def evaluate(
     }
     endpoint1 = component_metrics[ENDPOINT_CHANNELS[0]]
     endpoint2 = component_metrics[ENDPOINT_CHANNELS[1]]
-    crossing = component_metrics[CROSSING_CHANNEL]
     endpoint1_quality = 0.5 * (channel_iou[ENDPOINT_CHANNELS[0]] + endpoint1["f1"])
     endpoint2_quality = 0.5 * (channel_iou[ENDPOINT_CHANNELS[1]] + endpoint2["f1"])
-    crossing_quality = 0.5 * (channel_iou[CROSSING_CHANNEL] + crossing["f1"])
     score = weighted_harmonic_mean(
-        (channel_iou[0], endpoint1_quality, endpoint2_quality, crossing_quality),
-        (0.35, 0.25, 0.25, 0.15),
+        (channel_iou[0], endpoint1_quality, endpoint2_quality),
+        (0.40, 0.30, 0.30),
     )
     return {
         "score": score,
@@ -846,13 +833,10 @@ def evaluate(
         "body_dice": float(channel_dice[0]),
         "endpoint1_iou": float(channel_iou[ENDPOINT_CHANNELS[0]]),
         "endpoint2_iou": float(channel_iou[ENDPOINT_CHANNELS[1]]),
-        "crossing_iou": float(channel_iou[CROSSING_CHANNEL]),
         "endpoint1_component": endpoint1,
         "endpoint2_component": endpoint2,
-        "crossing_component": crossing,
         "endpoint1_quality": float(endpoint1_quality),
         "endpoint2_quality": float(endpoint2_quality),
-        "crossing_quality": float(crossing_quality),
         "thresholds": list(selected_thresholds),
         "threshold_grid": list(threshold_grid),
         "channel_iou_grid": channel_iou_grid.tolist(),
@@ -925,20 +909,17 @@ def checkpoint_payload(model_state, args, metrics, epoch, channel_alpha, extra=N
             "annotation_body_layer_count": ANNOTATION_BODY_LAYER_COUNT,
             "endpoint_channels": True,
             "endpoint_channel_count": len(ENDPOINT_CHANNELS),
-            "crossing_channels": True,
-            "crossing_channel": CROSSING_CHANNEL,
             "imgsz": image_size_text(args.imgsz),
             "recommended_thresholds": list(metrics.get("thresholds", (0.5,) * OUTPUT_CHANNEL_COUNT)),
         },
         "training": {
-            "target": "cable+endpoints_cable1+endpoints_cable2+crossing",
+            "target": "cable+endpoints_cable1+endpoints_cable2",
             "epoch": int(epoch),
             "epochs": int(args.epochs),
             "batch_size": int(args.batch_size),
             "lr": float(args.lr),
             "weight_decay": float(args.weight_decay),
             "endpoint_weight": float(args.endpoint_weight),
-            "crossing_weight": float(args.crossing_weight),
             "boundary_weight": float(args.boundary_weight),
             "focal_gamma": float(args.focal_gamma),
             "dice_weight": float(args.dice_weight),
@@ -1048,7 +1029,6 @@ def validate_resume_checkpoint(payload, args, dataset_sha256):
         "lr": float(args.lr),
         "weight_decay": float(args.weight_decay),
         "endpoint_weight": float(args.endpoint_weight),
-        "crossing_weight": float(args.crossing_weight),
         "boundary_weight": float(args.boundary_weight),
         "focal_gamma": float(args.focal_gamma),
         "dice_weight": float(args.dice_weight),
@@ -1090,7 +1070,7 @@ def validate_training_arguments(args):
     if float(args.lr) <= 0.0:
         raise ValueError("Learning rate must be positive.")
     for name in (
-        "weight_decay", "endpoint_weight", "crossing_weight", "boundary_weight",
+        "weight_decay", "endpoint_weight", "boundary_weight",
         "focal_gamma", "dice_weight", "grad_clip", "min_delta",
     ):
         if float(getattr(args, name)) < 0.0:
@@ -1216,10 +1196,10 @@ def train(args):
     run_path.write_text(json.dumps(run_info, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
     history_fields = (
-        "epoch", "loss", "body_loss", "endpoint1_loss", "endpoint2_loss", "crossing_loss", "boundary_loss",
-        "val_score", "val_iou", "val_dice", "body_iou", "endpoint1_iou", "endpoint2_iou", "crossing_iou",
-        "endpoint1_f1", "endpoint2_f1", "crossing_f1", "threshold_body", "threshold_endpoint1",
-        "threshold_endpoint2", "threshold_crossing", "lr", "seconds",
+        "epoch", "loss", "body_loss", "endpoint1_loss", "endpoint2_loss", "boundary_loss",
+        "val_score", "val_iou", "val_dice", "body_iou", "endpoint1_iou", "endpoint2_iou",
+        "endpoint1_f1", "endpoint2_f1", "threshold_body", "threshold_endpoint1",
+        "threshold_endpoint2", "lr", "seconds",
     )
     write_header = not history_path.exists() or start_epoch == 1
     history_stream = history_path.open("a" if not write_header else "w", newline="", encoding="utf-8")
@@ -1235,7 +1215,7 @@ def train(args):
         f"amp={use_amp}, channels_last={bool(args.channels_last)}, gpu_augment={use_gpu_augment}"
     )
     print(f"channel_prevalence={prevalence.tolist()} focal_alpha={channel_alpha.tolist()}")
-    channel_names = ("body", "endpoint1", "endpoint2", "crossing")
+    channel_names = ("body", "endpoint1", "endpoint2")
     for split in DATASET_SPLITS:
         profile = dataset_profiles[split]
         coverage = ",".join(
@@ -1258,7 +1238,10 @@ def train(args):
         for epoch in range(start_epoch, int(args.epochs) + 1):
             epoch_start = time.time()
             model.train()
-            totals = {name: 0.0 for name in ("loss", "body", "endpoint1", "endpoint2", "crossing", "boundary")}
+            totals = {
+                name: 0.0
+                for name in ("loss", "body", "endpoint1", "endpoint2", "boundary")
+            }
             for image, mask, boundary in train_loader:
                 image = prepare_image_batch(image, device, channels_last=bool(args.channels_last))
                 mask = prepare_target_batch(mask, device)
@@ -1273,7 +1256,6 @@ def train(args):
                         boundary,
                         channel_alpha,
                         args.endpoint_weight,
-                        args.crossing_weight,
                         args.boundary_weight,
                         args.focal_gamma,
                         args.dice_weight,
@@ -1302,13 +1284,12 @@ def train(args):
             thresholds = metrics["thresholds"]
             e1_f1 = metrics["endpoint1_component"]["f1"]
             e2_f1 = metrics["endpoint2_component"]["f1"]
-            cross_f1 = metrics["crossing_component"]["f1"]
             train_loss = totals["loss"] / batches
             print(
                 f"epoch {epoch:03d}/{args.epochs} loss {train_loss:.4f} "
                 f"val_score {metrics['score']:.4f} val_iou {metrics['iou']:.4f} val_dice {metrics['dice']:.4f} "
                 f"body_iou {metrics['body_iou']:.4f} e1_f1 {e1_f1:.4f} e2_f1 {e2_f1:.4f} "
-                f"cross_f1 {cross_f1:.4f} thresholds {'/'.join(f'{value:.2f}' for value in thresholds)} "
+                f"thresholds {'/'.join(f'{value:.2f}' for value in thresholds)} "
                 f"lr {optimizer.param_groups[0]['lr']:.3g} time {elapsed:.1f}s"
             )
             row = {
@@ -1317,7 +1298,6 @@ def train(args):
                 "body_loss": totals["body"] / batches,
                 "endpoint1_loss": totals["endpoint1"] / batches,
                 "endpoint2_loss": totals["endpoint2"] / batches,
-                "crossing_loss": totals["crossing"] / batches,
                 "boundary_loss": totals["boundary"] / batches,
                 "val_score": metrics["score"],
                 "val_iou": metrics["iou"],
@@ -1325,14 +1305,11 @@ def train(args):
                 "body_iou": metrics["body_iou"],
                 "endpoint1_iou": metrics["endpoint1_iou"],
                 "endpoint2_iou": metrics["endpoint2_iou"],
-                "crossing_iou": metrics["crossing_iou"],
                 "endpoint1_f1": e1_f1,
                 "endpoint2_f1": e2_f1,
-                "crossing_f1": cross_f1,
                 "threshold_body": thresholds[0],
                 "threshold_endpoint1": thresholds[1],
                 "threshold_endpoint2": thresholds[2],
-                "threshold_crossing": thresholds[3],
                 "lr": optimizer.param_groups[0]["lr"],
                 "seconds": elapsed,
             }
@@ -1442,8 +1419,7 @@ def train(args):
         print(
             f"locked_test score={test_metrics['score']:.4f} body_iou={test_metrics['body_iou']:.4f} "
             f"e1_f1={test_metrics['endpoint1_component']['f1']:.4f} "
-            f"e2_f1={test_metrics['endpoint2_component']['f1']:.4f} "
-            f"cross_f1={test_metrics['crossing_component']['f1']:.4f}"
+            f"e2_f1={test_metrics['endpoint2_component']['f1']:.4f}"
         )
     run_info.update({
         "finished_at": time.strftime("%Y-%m-%d %H:%M:%S"),

@@ -1,22 +1,20 @@
-"""Canonical PIDNet observation and annotation schema.
+"""Canonical three-channel PIDNet observation and annotation schema.
 
-The neural observation and the editable annotation use the same four-layer
-layout.  Cable is one shared visual class.  Each endpoint layer contains both
-ends of one physical cable, so endpoint-layer identity is also PF identity.
-Crossing is an RGB proposal layer only; physical ownership/contact stays in the
-particle filters.
+Cable is one shared visual class.  Each endpoint layer contains both ends of
+one physical cable, so endpoint-layer identity is also PF identity. Projected
+junctions are derived from the cable-body skeleton graph rather than predicted
+as a separate semantic class.
 """
 
-PIDNET_SCHEMA_VERSION = 3
-PIDNET_LABEL_MODE = "cable_with_per_cable_endpoints_and_crossing"
+PIDNET_SCHEMA_VERSION = 4
+PIDNET_LABEL_MODE = "cable_with_per_cable_endpoints"
 ENDPOINT_SEMANTICS = "per_cable_endpoint_sets"
-ANNOTATION_SCHEMA_VERSION = 1
+ANNOTATION_SCHEMA_VERSION = 2
 
 CABLE_CHANNEL = 0
 ENDPOINT_CABLE_NAMES = ("cable1", "cable2")
 ENDPOINT_CHANNELS = (1, 2)
-CROSSING_CHANNEL = 3
-OUTPUT_CHANNEL_COUNT = 4
+OUTPUT_CHANNEL_COUNT = 3
 
 # Editable layered masks map one-to-one onto the neural observation.  There are
 # no cable1/cable2 body labels: cable ownership is decided by the PF.
@@ -32,10 +30,6 @@ def endpoint_label_value(cable_index, _cable_count=None):
             f"Endpoint cable index must be in 1..{ANNOTATION_ENDPOINT_GROUP_COUNT}; got {cable_index}."
         )
     return CABLE_CHANNEL + 1 + cable_index
-
-
-def crossing_label_value(_cable_count=None):
-    return CROSSING_CHANNEL + 1
 
 
 def max_label_value(_cable_count=None):
@@ -75,9 +69,5 @@ def validate_checkpoint_schema(config):
     if int(config.get("output_channels", 0)) != OUTPUT_CHANNEL_COUNT:
         raise ValueError(
             f"PIDNet must output {OUTPUT_CHANNEL_COUNT} channels; got {config.get('output_channels')}."
-        )
-    if int(config.get("crossing_channel", -1)) != CROSSING_CHANNEL:
-        raise ValueError(
-            f"PIDNet crossing channel must be {CROSSING_CHANNEL}; got {config.get('crossing_channel')}."
         )
     return endpoint_count

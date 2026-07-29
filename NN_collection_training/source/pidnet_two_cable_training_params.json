@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "dataset": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet",
   "output": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
   "init_checkpoint": "",
@@ -15,7 +15,6 @@
   "prefetch_factor": 1,
   "endpoint_weight": 2.0,
   "boundary_weight": 0.2,
-  "crossing_weight": 1.0,
   "focal_gamma": 2.0,
   "dice_weight": 1.0,
   "ema_decay": 0.995,
@@ -37,7 +36,6 @@
     0.89999998,
     0.75
   ],
-  "crossing_threshold": 0.94999999,
   "config": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\NN_collection_training\\source\\config.toml",
   "live_mask_cleanup": {
     "threshold": 0.85000002,

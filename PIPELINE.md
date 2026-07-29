@@ -7,8 +7,8 @@ active tracking measurements from diagnostics and from planned work.
 
 The system reconstructs two visually identical deformable cables using one ZED
 RGB-D camera. The neural network observes a shared cable body, two endpoint
-groups, and projected crossing regions. Cable identity and 3D shape are
-estimated outside the neural network.
+groups. Cable identity, projected junction topology, and 3D shape are estimated
+outside the neural network.
 
 ## Runtime data flow
 
@@ -16,7 +16,7 @@ estimated outside the neural network.
 ZED RGB + registered depth
         |
         v
-PIDNet: cable body + endpoint group 1 + endpoint group 2 + crossing
+PIDNet: cable body + endpoint group 1 + endpoint group 2
         |
         v
 2D thinning and compressed skeleton graph
@@ -45,19 +45,20 @@ probabilities.
 
 ## Information provided by the neural network
 
-PIDNet returns four independent sigmoid channels:
+PIDNet returns three independent sigmoid channels:
 
 1. **Cable body:** all visible cable pixels, without cable identity.
 2. **Endpoint group 1:** both endpoints belonging to physical cable 1.
 3. **Endpoint group 2:** both endpoints belonging to physical cable 2.
-4. **Crossing:** an image region likely to contain a projected crossing.
-
-The crossing channel does not identify participating cable sections, infer
-physical contact, or determine over/under ordering.
 
 The endpoint groups are the direct cable-identity measurements. Endpoint
 components are associated temporally within their own group so the two ends do
 not exchange start/end labels merely because their image ordering changes.
+
+The deployed checkpoint was migrated from the former four-channel model by
+removing only the obsolete output row. The cable and two endpoint logits are
+bit-for-bit unchanged by that migration. Future training runs use the
+three-channel annotation and checkpoint schemas directly.
 
 ## RGB-D geometry
 
@@ -292,6 +293,29 @@ participate in motion transport or likelihood evaluation until one cable has
 enough probability. This prevents a visually shared branch from being forced
 into a false hard identity.
 
+### Temporal fragment identity
+
+The skeleton graph is rebuilt every frame, so component and edge numbers are
+not persistent identities. Each current 3D edge is therefore matched against a
+short history of observed edges using directed point-to-polyline distance.
+Directed distance allows a new fragment to match a subset of an older edge
+when occlusion splits the graph.
+
+The matched edge's previous cable probabilities form a decaying soft prior:
+
+\[
+E_{\mathrm{identity}}(c)
+=
+E_{\mathrm{attr}}(c)
+-
+\lambda_T\log p_{t-1}(c).
+\]
+
+Spatial match quality and history age reduce the prior toward a uniform
+distribution. The prior is ignored beyond the configured 3D match gate.
+Consequently, current geometric evidence can override history; identity is
+never hard-locked. Endpoint anchors remain authoritative.
+
 ### Attribution UI
 
 The live skeleton panel displays:
@@ -303,10 +327,12 @@ The live skeleton panel displays:
 - identity probability;
 - attributed arc interval;
 - mean 3D residual;
+- temporal-match distance and matched-fragment count;
 - assigned, ambiguous, and unassigned counts;
 - attribution CPU preparation and CUDA time.
 
-The `Y` control toggles attribution visualization only. The measurement
+The `Y` control toggles attribution visualization only. `I` independently
+enables the temporal identity prior. The measurement
 switches are independent, allowing tracking to remain active with a clean
 skeleton view or allowing attribution to be inspected without applying its
 measurements.
@@ -319,14 +345,14 @@ The implemented state after removing the unsound endpoint-fragment scorer is:
 - initialized cable: confidently attributed visible edges are measurements;
 - graph disconnected: visible edges still update particle weights and motion;
 - no attributed edge: prediction-only update;
-- hidden geometry remains the predicted full-particle shape, transported by
-  displacement measured on neighboring visible cable intervals;
+- hidden geometry retains its own damped per-node motion prediction;
 - uncertainty is reported from the particle posterior;
 - no straight hidden connector is created.
 
-## Hidden-motion update
+## Local node-motion update
 
-For visible particle nodes, measurement displacement will be:
+For a node near a confidently attributed visible edge, measurement
+displacement is:
 
 \[
 \Delta\mathbf{x}_i
@@ -336,29 +362,36 @@ For visible particle nodes, measurement displacement will be:
 \mathbf{x}_i^{\mathrm{predicted}}.
 \]
 
-For a hidden node between visible boundaries \(L\) and \(R\), displacement is
-interpolated in cable arc coordinates:
+Observed edge samples affect a node only when their cable-arc distance is
+within the configured local support radius. Their confidence-weighted
+displacement gives the local velocity innovation:
 
 \[
-\Delta\mathbf{x}_i
+\mathbf{v}_{i,t+1}
 =
-(1-\alpha_i)\Delta\mathbf{x}_L
-+\alpha_i\Delta\mathbf{x}_R.
+\mathbf{v}_{i,t}^{\mathrm{predicted}}
++
+K\,\frac{\Delta\mathbf{x}_i}{\Delta t}.
 \]
 
-Outside the visible arc range, the nearest measured displacement is retained.
-This transports the previous hidden curve; it does not replace the hidden
-curve with a straight line. Fixed-length projection then restores
-inextensibility.
+No displacement is interpolated across a hidden interval or extrapolated
+beyond a visible fragment. Unsupported nodes keep their own damped predicted
+velocity. The fixed-link velocity projection is then applied once; it removes
+only adjacent radial relative velocity required by inextensibility and does not
+impose a shared cable translation.
 
-## Crossing policy
+## Projected-junction policy
 
-The crossing NN output currently remains a viewer observation. It is not a
-contact constraint and does not alter PF weights.
+Projected crossing candidates come from junction regions in the thinned
+cable-body graph, not from a neural semantic channel. A junction supplies a
+location and incident graph edges. It does not determine which half-edges form
+one physical cable, whether the junction is a self-crossing or two-cable
+crossing, or whether the cables physically touch.
 
-Later graph hypotheses may use a crossing region to enumerate half-edge
-pairings. Physical contact, height ordering, and cable radius belong to a
-separate 3D verification layer.
+Endpoint identity, fixed cable length, temporal continuity, visible-edge
+attribution, and particle likelihood resolve cable traversal hypotheses.
+Physical contact, height ordering, and cable radius remain outside the current
+observation model.
 
 ## Feature controls
 
@@ -373,14 +406,14 @@ Current live controls are:
 | `M` | `endpoint_motion_transport` | Boundary-conditioned proposal transport |
 | `E` | `ess_resampling` | ESS-triggered systematic resampling |
 | `9` | `global_particles` | Ten-percent retracking proposals |
-| `V` | `measurement_velocity_update` | Ordinary-particle velocity correction |
-| `B` | `global_particle_velocity_update` | Retracking-particle velocity correction |
+| `V` | `local_node_motion` | Evidence-gated velocity update for locally supported nodes |
 | `F` | `single_endpoint_updates` | Permit one-endpoint anchoring |
 | `G` | `prediction_without_measurement` | Commit temporal prediction when observation is unavailable |
 | `H` | `posterior_uncertainty` | Posterior covariance diagnostics |
 | `K` | `fused_constraint_kernels` | Native fused CUDA link constraints |
 | `J` | `cuda_graph_replay` | CUDA graph replay for supported constraint paths |
 | `Y` | `graph_edge_attribution` | Display ordered edge attribution |
+| `I` | `temporal_edge_identity` | Soft graph-fragment identity memory across frames |
 | `A` | `visible_edge_scoring` | Use attributed visible edges as PF likelihoods |
 | `D` | `visible_edge_transport` | Transport predicted shape from visible-edge displacement |
 | `S` | `visible_edge_exploration` | Centre the 10% broad population on the transported prior during disconnection |
@@ -436,6 +469,6 @@ The following are intentional research constraints:
 - attribution is computed before the current measurement changes the PF;
 - only confidently attributed visible edges change tracking;
 - missing geometry is never drawn as a measured straight cable;
-- crossing segmentation never declares physical contact;
+- graph junctions never declare physical contact or over/under ordering;
 - every future partial measurement must retain order and arc identity;
 - hidden geometry must remain uncertain when it is not observable.

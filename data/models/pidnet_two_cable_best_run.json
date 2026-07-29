@@ -1,150 +1,24 @@
 {
-  "arguments": {
-    "amp": true,
-    "base_channels": 24,
-    "batch_size": 8,
-    "boundary_weight": 0.2,
-    "cable_count": 2,
-    "channels_last": true,
-    "compile": false,
-    "crossing_weight": 1.0,
-    "dataset": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet",
-    "deterministic": false,
-    "device": "cuda",
-    "dice_weight": 1.0,
-    "early_stop": 24,
-    "ema_decay": 0.995,
-    "endpoint_weight": 2.0,
-    "epochs": 80,
-    "evaluate_test": false,
-    "focal_gamma": 2.0,
-    "gpu_augment": true,
-    "grad_clip": 5.0,
-    "imgsz": [
-      1280,
-      720
-    ],
-    "init_checkpoint": null,
-    "lr": 0.001,
-    "min_delta": 0.0001,
-    "num_workers": 2,
-    "output": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
-    "prefetch_factor": 1,
-    "resume": null,
-    "seed": 17,
-    "tf32": true,
-    "verified_only": true,
-    "weight_decay": 0.0001
-  },
-  "channel_prevalence": [
-    0.011620618471648301,
-    0.0010285292556244262,
-    0.0007527422664141414,
-    0.00035037878787878786
-  ],
-  "cuda": {
-    "capability": [
-      8,
-      9
-    ],
-    "cuda_version": "12.8",
-    "device": "NVIDIA GeForce RTX 4080",
-    "total_memory": 17170956288
-  },
-  "dataset_profiles": {
-    "test": {
-      "both_endpoint_frames": 0,
-      "frame_count": 0,
-      "positive_frames": [
-        0,
-        0,
-        0,
-        0
-      ],
-      "positive_pixels": [
-        0,
-        0,
-        0,
-        0
-      ],
-      "prevalence": [
-        0.0,
-        0.0,
-        0.0,
-        0.0
-      ],
-      "total_pixels": 0
-    },
-    "train": {
-      "both_endpoint_frames": 97,
-      "frame_count": 121,
-      "positive_frames": [
-        121,
-        111,
-        107,
-        88
-      ],
-      "positive_pixels": [
-        1295857,
-        114695,
-        83941,
-        39072
-      ],
-      "prevalence": [
-        0.011620618471648301,
-        0.0010285292556244262,
-        0.0007527422664141414,
-        0.00035037878787878786
-      ],
-      "total_pixels": 111513600
-    },
-    "val": {
-      "both_endpoint_frames": 32,
-      "frame_count": 32,
-      "positive_frames": [
-        32,
-        32,
-        32,
-        30
-      ],
-      "positive_pixels": [
-        361363,
-        30063,
-        26805,
-        15742
-      ],
-      "prevalence": [
-        0.012253248426649306,
-        0.0010193888346354167,
-        0.0009089152018229167,
-        0.0005337863498263888
-      ],
-      "total_pixels": 29491200
-    }
-  },
-  "dataset_snapshot": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best_dataset.json",
-  "focal_alpha": [
-    0.9883793815283517,
-    0.9989714707443755,
-    0.9992472577335858,
-    0.9996496212121212
-  ],
-  "git": {
-    "commit": "88c7ac47d45bd6f74285749b3512b096cfb2ff2d",
-    "dirty": true
-  },
-  "platform": "Windows-11-10.0.26200-SP0",
-  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
-  "selected_session_counts": {
-    "test": 0,
-    "train": 8,
-    "val": 6
-  },
-  "split_counts": {
+  "artifact_type": "checkpoint_schema_migration",
+  "created_at": "2026-07-27T20:04:51+00:00",
+  "dataset_selection_preserved": true,
+  "dataset_sha256": "17a6c7852aa2c753762e209ab6b84fd1b1cd87abd12b3dde4fa2933802eeb6a9",
+  "migrated_split_counts": {
     "test": 0,
     "train": 121,
     "val": 32
   },
-  "started_at": "2026-07-27 13:35:21",
-  "torch": "2.11.0+cu128"
+  "model_outputs": [
+    "cable",
+    "endpoint1",
+    "endpoint2"
+  ],
+  "note": "The first three trained logits are unchanged; only the obsolete fourth output row was removed. The original 121/32/0 train/validation/test selection is preserved.",
+  "preserved_logits_exact": true,
+  "recommended_thresholds": [
+    0.75,
+    0.7999999999999999,
+    0.75
+  ],
+  "source_checkpoint_sha256": "8babe17d0780b300adb6dcdf37e0f1ef906d82c887f567a3ad25bb597cfec04f"
 }

@@ -63,11 +63,9 @@ DEPTH_MODES = {
 CABLE_RGB = np.asarray((1.00, 0.58, 0.08), dtype=np.float32)
 ENDPOINT_1_RGB = np.asarray((0.05, 0.35, 1.00), dtype=np.float32)
 ENDPOINT_2_RGB = np.asarray((0.15, 1.00, 0.30), dtype=np.float32)
-CROSSING_RGB = np.asarray((1.00, 1.00, 0.00), dtype=np.float32)
 CABLE_BGR = np.asarray((20, 148, 255), dtype=np.uint8)
 ENDPOINT_1_BGR = np.asarray((255, 89, 13), dtype=np.uint8)
 ENDPOINT_2_BGR = np.asarray((77, 255, 38), dtype=np.uint8)
-CROSSING_BGR = np.asarray((0, 255, 255), dtype=np.uint8)
 SKELETON_MASK_RGB = np.asarray((38, 43, 49), dtype=np.uint8)
 SKELETON_LINE_RGB = np.asarray((238, 244, 250), dtype=np.uint8)
 SKELETON_NODE_RGB = np.asarray((55, 205, 255), dtype=np.uint8)
@@ -85,7 +83,6 @@ def _packed_rgb_float(rgb: np.ndarray) -> np.float32:
 CABLE_PACKED = _packed_rgb_float(CABLE_RGB)
 ENDPOINT_1_PACKED = _packed_rgb_float(ENDPOINT_1_RGB)
 ENDPOINT_2_PACKED = _packed_rgb_float(ENDPOINT_2_RGB)
-CROSSING_PACKED = _packed_rgb_float(CROSSING_RGB)
 
 
 @dataclass(frozen=True)
@@ -217,9 +214,9 @@ def full_point_cloud_vertices(
     cloud = np.asarray(point_data)
     if cloud.ndim != 3 or cloud.shape[2] < 4:
         raise ValueError(f"ZED point cloud must have shape HxWx4; got {cloud.shape}.")
-    if len(masks) < 4:
+    if len(masks) != 3:
         raise ValueError(
-            f"PIDNet must return cable, two endpoint, and crossing masks; got {len(masks)}."
+            f"PIDNet must return one cable and two endpoint masks; got {len(masks)}."
         )
 
     height, width = cloud.shape[:2]
@@ -234,10 +231,6 @@ def full_point_cloud_vertices(
     endpoint_2 = _boolean_mask(masks[2], source_shape)[
         ::sample_stride, ::sample_stride
     ].reshape(-1)
-    crossing = _boolean_mask(masks[3], source_shape)[
-        ::sample_stride, ::sample_stride
-    ].reshape(-1)
-
     flat = cloud[::sample_stride, ::sample_stride, :4].reshape(-1, 4)
     xyz_all = flat[:, :3]
     finite = np.all(np.isfinite(xyz_all), axis=1)
@@ -251,20 +244,17 @@ def full_point_cloud_vertices(
         valid_cable = cable
         valid_endpoint_1 = endpoint_1
         valid_endpoint_2 = endpoint_2
-        valid_crossing = crossing
     else:
         vertices[:, :3] = xyz_all[finite]
         vertices[:, 3] = flat[finite, 3]
         valid_cable = cable[finite]
         valid_endpoint_1 = endpoint_1[finite]
         valid_endpoint_2 = endpoint_2[finite]
-        valid_crossing = crossing[finite]
 
-    # Lowest-to-highest priority: cable, endpoint 2, endpoint 1, crossing.
+    # Lowest-to-highest priority: cable, endpoint 2, endpoint 1.
     vertices[valid_cable, 3] = CABLE_PACKED
     vertices[valid_endpoint_2, 3] = ENDPOINT_2_PACKED
     vertices[valid_endpoint_1, 3] = ENDPOINT_1_PACKED
-    vertices[valid_crossing, 3] = CROSSING_PACKED
     stats = {
         "total_pixels": int(len(flat)),
         "source_pixels": int(height * width),
@@ -274,7 +264,6 @@ def full_point_cloud_vertices(
         "cable_points": int(np.count_nonzero(valid_cable)),
         "endpoint_1_points": int(np.count_nonzero(valid_endpoint_1)),
         "endpoint_2_points": int(np.count_nonzero(valid_endpoint_2)),
-        "crossing_points": int(np.count_nonzero(valid_crossing)),
     }
     center, radius = _scene_bounds(vertices[:, :3])
     return vertices, stats, center, radius
@@ -295,9 +284,9 @@ def depth_point_cloud_vertices(
         raise ValueError(
             f"Depth/RGB viewer inputs disagree: {depth_array.shape} vs {image.shape}."
         )
-    if len(masks) < 4:
+    if len(masks) != 3:
         raise ValueError(
-            f"PIDNet must return cable, two endpoint, and crossing masks; got {len(masks)}."
+            f"PIDNet must return one cable and two endpoint masks; got {len(masks)}."
         )
 
     height, width = depth_array.shape
@@ -310,9 +299,6 @@ def depth_point_cloud_vertices(
         ::sample_stride, ::sample_stride
     ].reshape(-1)
     endpoint_2 = _boolean_mask(masks[2], source_shape)[
-        ::sample_stride, ::sample_stride
-    ].reshape(-1)
-    crossing = _boolean_mask(masks[3], source_shape)[
         ::sample_stride, ::sample_stride
     ].reshape(-1)
     sampled_depth = depth_array[::sample_stride, ::sample_stride]
@@ -350,7 +336,6 @@ def depth_point_cloud_vertices(
     vertices[cable[finite], 3] = CABLE_PACKED
     vertices[endpoint_2[finite], 3] = ENDPOINT_2_PACKED
     vertices[endpoint_1[finite], 3] = ENDPOINT_1_PACKED
-    vertices[crossing[finite], 3] = CROSSING_PACKED
     stats = {
         "total_pixels": int(flat_depth.size),
         "source_pixels": int(height * width),
@@ -360,7 +345,6 @@ def depth_point_cloud_vertices(
         "cable_points": int(np.count_nonzero(finite & cable)),
         "endpoint_1_points": int(np.count_nonzero(finite & endpoint_1)),
         "endpoint_2_points": int(np.count_nonzero(finite & endpoint_2)),
-        "crossing_points": int(np.count_nonzero(finite & crossing)),
     }
     center, radius = _scene_bounds(vertices[:, :3])
     return vertices, stats, center, radius
@@ -398,14 +382,12 @@ def segmentation_overlay(
     cable = display_mask(masks[0])
     endpoint_1 = display_mask(masks[1])
     endpoint_2 = display_mask(masks[2])
-    crossing = display_mask(masks[3])
     output = image.copy()
     blend = float(np.clip(alpha, 0.0, 1.0))
     for selected, color in (
         (cable, CABLE_BGR),
         (endpoint_2, ENDPOINT_2_BGR),
         (endpoint_1, ENDPOINT_1_BGR),
-        (crossing, CROSSING_BGR),
     ):
         if not np.any(selected):
             continue
@@ -424,9 +406,9 @@ def skeleton_diagnostic_image(
 ) -> np.ndarray:
     """Render the exact thinned mask and compressed graph used by tracking."""
 
-    if len(masks) < 4:
+    if len(masks) != 3:
         raise ValueError(
-            f"Skeleton diagnostics require four PIDNet masks; got {len(masks)}."
+            f"Skeleton diagnostics require three PIDNet masks; got {len(masks)}."
         )
     source_shape = np.asarray(masks[0]).shape[:2]
     if len(source_shape) != 2:
@@ -451,7 +433,6 @@ def skeleton_diagnostic_image(
         return selected
 
     cable = display_mask(masks[0])
-    crossing = display_mask(masks[3])
     output = np.full((target_height, target_width, 3), 8, dtype=np.uint8)
     output[cable] = SKELETON_MASK_RGB
 
@@ -578,6 +559,12 @@ def skeleton_diagnostic_image(
             (
                 f"{identity} p={assigned.confidence:.2f}{arc_text} "
                 f"r={assigned.mean_residual_m * 1000.0:.0f}mm"
+                + (
+                    f" T={assigned.temporal_match_distance_m * 1000.0:.0f}mm"
+                    if assigned.temporal_prior_applied
+                    and np.isfinite(assigned.temporal_match_distance_m)
+                    else ""
+                )
                 if np.isfinite(assigned.mean_residual_m)
                 else f"{identity} p={assigned.confidence:.2f}{arc_text}"
             ),
@@ -605,24 +592,6 @@ def skeleton_diagnostic_image(
             8,
         )
 
-    crossing_u8 = crossing.astype(np.uint8)
-    if np.any(crossing_u8):
-        contours, _hierarchy = cv2.findContours(
-            crossing_u8,
-            cv2.RETR_EXTERNAL,
-            cv2.CHAIN_APPROX_SIMPLE,
-        )
-        cv2.drawContours(
-            output,
-            contours,
-            contourIdx=-1,
-            color=tuple(
-                int(value)
-                for value in np.rint(CROSSING_RGB * 255.0).astype(np.uint8)
-            ),
-            thickness=2,
-            lineType=cv2.LINE_AA,
-        )
     if attribution is not None:
         cv2.putText(
             output,
@@ -633,6 +602,7 @@ def skeleton_diagnostic_image(
                 f"{attribution.attributed_count}/"
                 f"{attribution.ambiguous_count}/"
                 f"{attribution.unassigned_count} "
+                f"temporal={attribution.temporally_matched_count} "
                 f"cpu/gpu={attribution.processing_ms:.2f}/"
                 f"{attribution.gpu_ms:.2f}ms"
             ),
@@ -857,7 +827,7 @@ class AsyncSegmentationPipeline:
                 "pf_gpu_prediction_constraint",
                 "pf_gpu_proposal",
                 "pf_gpu_measurement_constraint",
-                "pf_gpu_velocity_correction",
+                "pf_gpu_local_motion",
                 "pf_gpu_route_score",
                 "pf_gpu_visible_edge_score",
                 "pf_gpu_regularization",
@@ -1194,7 +1164,7 @@ class AsyncSegmentationPipeline:
             "pf_gpu_prediction_constraint": profile.prediction_constraint_gpu_ms,
             "pf_gpu_proposal": profile.proposal_gpu_ms,
             "pf_gpu_measurement_constraint": profile.measurement_constraint_gpu_ms,
-            "pf_gpu_velocity_correction": profile.velocity_correction_gpu_ms,
+            "pf_gpu_local_motion": profile.local_motion_gpu_ms,
             "pf_gpu_route_score": profile.route_score_gpu_ms,
             "pf_gpu_visible_edge_score": profile.visible_edge_score_gpu_ms,
             "pf_gpu_regularization": profile.regularization_gpu_ms,
@@ -1715,7 +1685,7 @@ class AsyncSegmentationPipeline:
             f"predict_constraint={pair('pf_gpu_prediction_constraint')} "
             f"proposal={pair('pf_gpu_proposal')} "
             f"measure_constraint={pair('pf_gpu_measurement_constraint')} "
-            f"velocity_update={pair('pf_gpu_velocity_correction')}\n"
+            f"local_motion={pair('pf_gpu_local_motion')}\n"
             f"  route={pair('pf_gpu_route_score')} "
             f"visible_edges={pair('pf_gpu_visible_edge_score')} "
             f"regularization={pair('pf_gpu_regularization')} "
@@ -1967,10 +1937,9 @@ def main() -> None:
         thresholds = (
             float(pidnet_config.get("threshold", 0.85)),
             *tuple(float(value) for value in pidnet_config.get("endpoint_thresholds", (0.90, 0.75))),
-            float(pidnet_config.get("crossing_threshold", 0.95)),
         )
-        if len(thresholds) != 4:
-            raise ValueError("PIDNet requires one cable, two endpoint, and one crossing threshold.")
+        if len(thresholds) != 3:
+            raise ValueError("PIDNet requires one cable and two endpoint thresholds.")
 
         if viewer is not None:
             viewer.update_status("Opening ZED camera...")

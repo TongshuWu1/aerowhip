@@ -43,11 +43,9 @@ from pidnet_dataset import (
 from pidnet_schema import (
     ANNOTATION_CHANNEL_COUNT,
     ANNOTATION_SCHEMA_VERSION,
-    CROSSING_CHANNEL,
     ENDPOINT_CHANNELS,
     OUTPUT_CHANNEL_COUNT,
     PIDNET_LABEL_MODE,
-    crossing_label_value,
     endpoint_label_value,
     label_bit,
     max_label_value,
@@ -64,7 +62,6 @@ LABEL_COLORS_BGR = (
     (40, 255, 40),     # cable body
     (255, 0, 255),     # endpoints_cable1
     (255, 220, 0),     # endpoints_cable2
-    (0, 255, 255),     # RGB crossing proposal
 )
 MASK_UNDO_LIMIT = 12
 
@@ -95,7 +92,6 @@ def parse_args():
     parser.add_argument("--prefetch-factor", type=int, default=1)
     parser.add_argument("--endpoint-weight", type=float, default=2.0)
     parser.add_argument("--boundary-weight", type=float, default=0.20)
-    parser.add_argument("--crossing-weight", type=float, default=1.0)
     parser.add_argument("--focal-gamma", type=float, default=2.0)
     parser.add_argument("--dice-weight", type=float, default=1.0)
     parser.add_argument("--ema-decay", type=float, default=0.995)
@@ -226,7 +222,7 @@ def find_existing_mask(
         if layer_path.exists():
             return read_layered_mask(layer_path, cable_count), split, mask_path
         if mask_path.exists():
-            raise ValueError(f"Flat preview mask exists without its required four-layer annotation: {layer_path}")
+            raise ValueError(f"Flat preview mask exists without its required three-layer annotation: {layer_path}")
     return None, None, None
 
 
@@ -276,7 +272,7 @@ def item_mask_state(item):
 
 
 def prediction_channels_to_draft(predicted_channels, target_shape):
-    """Convert the four independent network heads to the editable bitmask schema."""
+    """Convert the three independent network channels to the editable bitmask schema."""
     channels = tuple(predicted_channels)
     if len(channels) != ANNOTATION_CHANNEL_COUNT:
         raise ValueError(
@@ -298,8 +294,8 @@ def prediction_channels_to_draft(predicted_channels, target_shape):
             ) > 0
         draft[predicted] |= label_bit(channel)
 
-    # Endpoint and crossing pixels are still cable pixels in the annotation
-    # schema. Preserve overlaps instead of collapsing the semantic heads.
+    # Endpoint pixels are still cable pixels in the annotation schema.
+    # Preserve overlaps instead of collapsing the semantic heads.
     semantic_bits = np.uint16(~int(label_bit(1)) & 0xFFFF)
     draft[(draft & semantic_bits) != 0] |= label_bit(1)
     return np.ascontiguousarray(draft)
@@ -407,8 +403,6 @@ def label_display_name(label, cable_count):
         return "cable 1 endpoints (both ends)"
     if label == endpoint_label_value(2):
         return "cable 2 endpoints (both ends)"
-    if label == crossing_label_value():
-        return "RGB crossing proposal"
     return f"unknown label {label}"
 
 
@@ -552,7 +546,7 @@ def dataset_image_mask_pairs(dataset_dir, split, verified_only=False):
 def read_dataset_mask(mask_path, cable_count):
     layer_path = layered_mask_path_from_mask_path(mask_path)
     if not layer_path.exists():
-        raise FileNotFoundError(f"Required four-layer annotation is missing: {layer_path}")
+        raise FileNotFoundError(f"Required three-layer annotation is missing: {layer_path}")
     return read_layered_mask(layer_path, cable_count), True
 
 
@@ -608,15 +602,6 @@ def dataset_metadata_counts(dataset_dir):
 def body_label_mask(mask, cable_count, multilabel=False):
     labels = np.asarray(mask)
     return label_pixels(labels, 1, cable_count, multilabel=multilabel)
-
-
-def crossing_label_mask(mask, cable_count, multilabel=False):
-    return label_pixels(
-        np.asarray(mask),
-        crossing_label_value(),
-        cable_count,
-        multilabel=multilabel,
-    )
 
 
 def apply_binary_cleanup(mask, params):
@@ -737,10 +722,6 @@ def toml_scalar(value):
     return json.dumps(str(value))
 
 
-def crossing_prediction_label_mode(label_mode):
-    return str(label_mode).strip().lower() == PIDNET_LABEL_MODE
-
-
 class PidNetTrainingApp:
     def __init__(self, root, args):
         self.root = root
@@ -754,7 +735,6 @@ class PidNetTrainingApp:
         self.live_config = load_toml_config(args.config)
         pidnet_config = self.live_config.get("pidnet", {})
         detector_config = self.live_config.get("detector", {})
-        crossing_config = self.live_config.get("crossing", {})
         body_threshold = float(pidnet_config.get("threshold", 0.50))
         endpoint_thresholds = tuple(
             float(value)
@@ -793,7 +773,6 @@ class PidNetTrainingApp:
         self.prefetch_factor_var = tk.IntVar(value=int(args.prefetch_factor))
         self.endpoint_weight_var = tk.DoubleVar(value=float(args.endpoint_weight))
         self.boundary_weight_var = tk.DoubleVar(value=float(args.boundary_weight))
-        self.crossing_weight_var = tk.DoubleVar(value=float(args.crossing_weight))
         self.focal_gamma_var = tk.DoubleVar(value=float(args.focal_gamma))
         self.dice_weight_var = tk.DoubleVar(value=float(args.dice_weight))
         self.ema_decay_var = tk.DoubleVar(value=float(args.ema_decay))
@@ -815,9 +794,6 @@ class PidNetTrainingApp:
         self.endpoint_threshold_vars = tuple(
             tk.DoubleVar(value=value) for value in endpoint_thresholds
         )
-        self.crossing_threshold_var = tk.DoubleVar(
-            value=float(crossing_config.get("threshold", body_threshold))
-        )
         self.threshold_text_var = tk.StringVar(value=f"{body_threshold:.2f}")
         self.live_test_var = tk.BooleanVar(value=False)
         self.prediction_channel_var = tk.StringVar(value="combined")
@@ -825,7 +801,6 @@ class PidNetTrainingApp:
             "cable": tk.BooleanVar(value=True),
             "endpoint1": tk.BooleanVar(value=True),
             "endpoint2": tk.BooleanVar(value=True),
-            "crossing": tk.BooleanVar(value=True),
         }
         self.morph_kernel_var = tk.IntVar(value=5)
         self.morph_iterations_var = tk.IntVar(value=1)
@@ -921,7 +896,7 @@ class PidNetTrainingApp:
         ttk.Label(title_block, text="Cable Label Studio", style="HeaderTitle.TLabel").pack(anchor="w")
         ttk.Label(
             title_block,
-            text="Four-layer PIDNet annotation and training",
+            text="Three-channel PIDNet annotation and training",
             style="HeaderSub.TLabel",
         ).pack(anchor="w")
         header_actions = ttk.Frame(header, style="Header.TFrame")
@@ -1056,7 +1031,7 @@ class PidNetTrainingApp:
         review_section = section(annotate_tab, "Human review", 4)
         ttk.Label(
             review_section,
-            text="After reviewing and correcting all four layers:",
+            text="After reviewing and correcting all three layers:",
             foreground="#53687a",
         ).grid(row=0, column=0, columnspan=2, sticky="w")
         ttk.Button(
@@ -1075,7 +1050,7 @@ class PidNetTrainingApp:
             annotate_tab,
             text=(
                 "The prediction becomes the same editable paint layers as a manual label. "
-                "Endpoint and crossing pixels retain the generic cable layer; verification is never automatic."
+                "Endpoint pixels retain the generic cable layer; verification is never automatic."
             ),
             wraplength=420,
             foreground="#586b7b",
@@ -1146,7 +1121,7 @@ class PidNetTrainingApp:
         channel_box = ttk.Combobox(
             assist_section,
             textvariable=self.prediction_channel_var,
-            values=("combined", "cable", "endpoint1", "endpoint2", "crossing"),
+            values=("combined", "cable", "endpoint1", "endpoint2"),
             state="readonly",
             width=16,
         )
@@ -1157,7 +1132,6 @@ class PidNetTrainingApp:
             ("Cable body", self.test_threshold_var),
             ("Endpoint 1", self.endpoint_threshold_vars[0]),
             ("Endpoint 2", self.endpoint_threshold_vars[1]),
-            ("Crossing", self.crossing_threshold_var),
         )):
             ttk.Label(threshold_section, text=label).grid(row=index, column=0, sticky="w", pady=3)
             threshold = ttk.Spinbox(threshold_section, from_=0.05, to=0.99, increment=0.01, textvariable=variable, width=8, command=self.on_threshold_change)
@@ -1217,8 +1191,8 @@ class PidNetTrainingApp:
         for index, (label, variable) in enumerate(basic_fields):
             field(basic_tab, index // 2, label, variable, column=index % 2)
         loss_fields = (
-            ("Endpoint weight", self.endpoint_weight_var), ("Crossing weight", self.crossing_weight_var),
-            ("Boundary weight", self.boundary_weight_var), ("Focal gamma", self.focal_gamma_var),
+            ("Endpoint weight", self.endpoint_weight_var), ("Boundary weight", self.boundary_weight_var),
+            ("Focal gamma", self.focal_gamma_var),
             ("Dice weight", self.dice_weight_var), ("EMA decay", self.ema_decay_var),
             ("Gradient clip", self.grad_clip_var), ("Min delta", self.min_delta_var),
         )
@@ -1266,8 +1240,6 @@ class PidNetTrainingApp:
             ("Cable body  [1]", "paint_1", "#5de35d", "#102410"),
             ("Cable 1 endpoints  [2]", "endpoint_1", "#e058d1", "#ffffff"),
             ("Cable 2 endpoints  [3]", "endpoint_2", "#43cbe8", "#10242b"),
-            ("Crossing proposal  [X]", "crossing", "#f0d84b", "#282205"),
-            ("Erase crossing  [C]", "erase_crossing", "#d9e0e6", "#263746"),
             ("Erase all  [E]", "erase", "#f0c3c3", "#672020"),
         )
         for index, (text, value, color, foreground) in enumerate(tools):
@@ -1296,8 +1268,6 @@ class PidNetTrainingApp:
         self.root.bind("1", lambda _event: self.set_mode("paint_1"))
         self.root.bind("2", lambda _event: self.set_mode("endpoint_1"))
         self.root.bind("3", lambda _event: self.set_mode("endpoint_2"))
-        self.root.bind("x", lambda _event: self.set_mode("crossing"))
-        self.root.bind("c", lambda _event: self.set_mode("erase_crossing"))
         self.root.bind("e", lambda _event: self.set_mode("erase"))
         self.root.bind("s", lambda _event: self.save_current_label())
         self.root.bind("a", lambda _event: self.save_all_labels())
@@ -1358,8 +1328,6 @@ class PidNetTrainingApp:
         if mode == "erase":
             return 0
         cable_count = max(1, int(self.cable_count_var.get()))
-        if mode in ("crossing", "erase_crossing"):
-            return crossing_label_value(cable_count)
         if mode.startswith("paint_"):
             try:
                 return int(np.clip(int(mode.split("_", 1)[1]), 1, cable_count))
@@ -1377,8 +1345,6 @@ class PidNetTrainingApp:
         mode = str(self.mode_var.get())
         if mode == "erase":
             return "erase all"
-        if mode == "erase_crossing":
-            return "erase crossing"
         return label_display_name(self.active_label_value(), self.cable_count_var.get())
 
     def set_active_split(self):
@@ -1520,7 +1486,7 @@ class PidNetTrainingApp:
             elif bool(annotation.get("human_edited")):
                 message = "Model draft has manual corrections; review all layers, then mark Human verified."
             else:
-                message = "Editable model draft is active; inspect and correct all four paint layers."
+                message = "Editable model draft is active; inspect and correct all three paint layers."
         elif bool(item.get("verified")):
             message = "Manual label is human verified and ready to save."
         else:
@@ -1608,7 +1574,6 @@ class PidNetTrainingApp:
         config = load_toml_config(path)
         pidnet_config = config.get("pidnet", {})
         detector_config = config.get("detector", {})
-        crossing_config = config.get("crossing", {})
         if "threshold" in pidnet_config:
             self.test_threshold_var.set(float(pidnet_config["threshold"]))
             self.threshold_text_var.set(f"{float(pidnet_config['threshold']):.2f}")
@@ -1620,8 +1585,6 @@ class PidNetTrainingApp:
                 )
             for variable, value in zip(self.endpoint_threshold_vars, values):
                 variable.set(value)
-        if "threshold" in crossing_config:
-            self.crossing_threshold_var.set(float(crossing_config["threshold"]))
         if "min_area_px" in detector_config:
             self.detector_min_area_var.set(int(detector_config["min_area_px"]))
         if "open_kernel" in detector_config:
@@ -1653,12 +1616,6 @@ class PidNetTrainingApp:
                 safe_float(variable, 0.50, min_value=0.05, max_value=0.99)
                 for variable in self.endpoint_threshold_vars
             ),
-            "crossing": safe_float(
-                self.crossing_threshold_var,
-                0.50,
-                min_value=0.05,
-                max_value=0.99,
-            ),
         }
 
     def save_live_cleanup_to_config(self):
@@ -1671,7 +1628,6 @@ class PidNetTrainingApp:
                 {
                     ("pidnet", "threshold"): thresholds["cable"],
                     ("pidnet", "endpoint_thresholds"): thresholds["endpoints"],
-                    ("crossing", "threshold"): thresholds["crossing"],
                     ("detector", "min_area_px"): params["min_area_px"],
                     ("detector", "open_kernel"): params["open_kernel"],
                     ("detector", "close_kernel"): params["close_kernel"],
@@ -1683,8 +1639,8 @@ class PidNetTrainingApp:
         self.status_var.set(
             f"Saved live PIDNet cleanup to {config_path.name}: "
             f"thresholds={thresholds['cable']:.2f}/"
-            f"{thresholds['endpoints'][0]:.2f}/{thresholds['endpoints'][1]:.2f}/"
-            f"{thresholds['crossing']:.2f}, min_area={params['min_area_px']}, "
+            f"{thresholds['endpoints'][0]:.2f}/{thresholds['endpoints'][1]:.2f}, "
+            f"min_area={params['min_area_px']}, "
             f"open={params['open_kernel']}, close={params['close_kernel']}."
         )
         self.refresh_command_text()
@@ -1735,7 +1691,6 @@ class PidNetTrainingApp:
                 "cable": float(thresholds["cable"]),
                 "endpoint1": float(thresholds["endpoints"][0]),
                 "endpoint2": float(thresholds["endpoints"][1]),
-                "crossing": float(thresholds["crossing"]),
             },
             "body_cleanup": {
                 "min_area_px": int(cleanup["min_area_px"]),
@@ -1758,7 +1713,6 @@ class PidNetTrainingApp:
                     f"/{getattr(self.segmenter, 'input_mode', '?')}"
                     f" in={getattr(self.segmenter, 'input_channels', '?')}"
                     f" out={getattr(self.segmenter, 'output_channels', '?')}"
-                    f" crossing_ch={getattr(self.segmenter, 'crossing_channel', None)}"
                 )
             self.model_status_var.set(f"model {loaded}: {checkpoint_path.name} ({size_mb:.1f} MB){detail}")
         else:
@@ -1776,7 +1730,6 @@ class PidNetTrainingApp:
             self.test_threshold_var.set(recommended[0])
             self.endpoint_threshold_vars[0].set(recommended[1])
             self.endpoint_threshold_vars[1].set(recommended[2])
-            self.crossing_threshold_var.set(recommended[3])
             self.on_threshold_change()
         self.status_var.set(f"Loaded model: {Path(self.output_var.get()).name}")
         self.update_model_status()
@@ -2050,7 +2003,7 @@ class PidNetTrainingApp:
         )
         self.refresh()
         self.status_var.set(
-            f"Captured {filename.name} in session {item['session_id']}. Paint the four independent layers."
+            f"Captured {filename.name} in session {item['session_id']}. Paint the three independent layers."
             f"{duplicate_text}"
         )
         return True
@@ -2215,7 +2168,7 @@ class PidNetTrainingApp:
         self.update_active_metadata()
         if not bool(item.get("verified")):
             self.status_var.set(
-                "Review and correct all four layers, then check Human verified before saving this label."
+                "Review and correct all three layers, then check Human verified before saving this label."
             )
             if hasattr(self, "sidebar_notebook") and hasattr(self, "annotate_tab"):
                 self.sidebar_notebook.select(self.annotate_tab)
@@ -2297,7 +2250,6 @@ class PidNetTrainingApp:
             "prefetch_factor": safe_int(self.prefetch_factor_var, 1, min_value=1),
             "endpoint_weight": safe_float(self.endpoint_weight_var, 2.0, min_value=0.0),
             "boundary_weight": safe_float(self.boundary_weight_var, 0.20, min_value=0.0),
-            "crossing_weight": safe_float(self.crossing_weight_var, 1.0, min_value=0.0),
             "focal_gamma": safe_float(self.focal_gamma_var, 2.0, min_value=0.0),
             "dice_weight": safe_float(self.dice_weight_var, 1.0, min_value=0.0),
             "ema_decay": safe_float(self.ema_decay_var, 0.995, min_value=0.0, max_value=0.99999),
@@ -2316,7 +2268,6 @@ class PidNetTrainingApp:
             "resume_last": bool(self.resume_var.get()),
             "test_threshold": thresholds["cable"],
             "endpoint_thresholds": list(thresholds["endpoints"]),
-            "crossing_threshold": thresholds["crossing"],
             "config": str(Path(self.config_var.get() or DEFAULT_CONFIG_PATH)),
             "live_mask_cleanup": self.live_cleanup_params(),
             "label_mask_cleanup": {
@@ -2353,7 +2304,6 @@ class PidNetTrainingApp:
             ("weight_decay", self.weight_decay_var),
             ("boundary_weight", self.boundary_weight_var),
             ("endpoint_weight", self.endpoint_weight_var),
-            ("crossing_weight", self.crossing_weight_var),
             ("focal_gamma", self.focal_gamma_var),
             ("dice_weight", self.dice_weight_var),
             ("ema_decay", self.ema_decay_var),
@@ -2371,8 +2321,6 @@ class PidNetTrainingApp:
                 )
             for variable, value in zip(self.endpoint_threshold_vars, values):
                 variable.set(value)
-        if "crossing_threshold" in params:
-            self.crossing_threshold_var.set(float(params["crossing_threshold"]))
         if "imgsz" in params:
             self.imgsz_var.set(str(params["imgsz"]))
         if "device" in params:
@@ -2474,7 +2422,6 @@ class PidNetTrainingApp:
             heavy = 0
             shape_mismatch = 0
             overlap_pixels = 0
-            crossing_pixels = 0
             unreadable_images = 0
             invalid_layers = 0
             positive_frames = np.zeros(OUTPUT_CHANNEL_COUNT, dtype=np.int64)
@@ -2500,16 +2447,6 @@ class PidNetTrainingApp:
                 if mask_is_multilabel:
                     bit_counts = np.unpackbits(mask.astype(np.uint16).view(np.uint8), axis=None).reshape(mask.size, 2, 8).sum(axis=(1, 2))
                     overlap_pixels += int(np.count_nonzero(bit_counts > 1))
-                    crossing_pixels += int(
-                        np.count_nonzero(
-                            label_pixels(
-                                mask,
-                                crossing_label_value(),
-                                max(1, int(self.cable_count_var.get())),
-                                multilabel=True,
-                            )
-                        )
-                    )
                 channel_presence = np.asarray(
                     [
                         np.any(
@@ -2536,10 +2473,10 @@ class PidNetTrainingApp:
                 f"missing_layers={missing_layers} orphan_layers={orphan_layers} "
                 f"empty={empty} very_large_masks={heavy} shape_mismatch={shape_mismatch} "
                 f"unreadable_images={unreadable_images} invalid_layers={invalid_layers} "
-                f"overlap_px={overlap_pixels} crossing_px={crossing_pixels} "
+                f"overlap_px={overlap_pixels} "
                 f"positive_frames=body:{positive_frames[0]}/{len(pairs)},"
-                f"endpoint1:{positive_frames[1]}/{len(pairs)},endpoint2:{positive_frames[2]}/{len(pairs)},"
-                f"crossing:{positive_frames[3]}/{len(pairs)} both_endpoints:{both_endpoint_frames}/{len(pairs)}"
+                f"endpoint1:{positive_frames[1]}/{len(pairs)},endpoint2:{positive_frames[2]}/{len(pairs)} "
+                f"both_endpoints:{both_endpoint_frames}/{len(pairs)}"
             )
         for left_index, left in enumerate(DATASET_SPLITS):
             for right in DATASET_SPLITS[left_index + 1:]:
@@ -2593,8 +2530,6 @@ class PidNetTrainingApp:
             f"{safe_float(self.endpoint_weight_var, 2.0, min_value=0.0):.8g}",
             "--boundary-weight",
             f"{safe_float(self.boundary_weight_var, 0.20, min_value=0.0):.8g}",
-            "--crossing-weight",
-            f"{safe_float(self.crossing_weight_var, 1.0, min_value=0.0):.8g}",
             "--focal-gamma",
             f"{safe_float(self.focal_gamma_var, 2.0, min_value=0.0):.8g}",
             "--dice-weight",
@@ -2636,19 +2571,18 @@ class PidNetTrainingApp:
         thresholds = self.preview_thresholds()
         counts = count_labeled_pairs(Path(self.dataset_var.get()))
         metadata_counts, conflicts = dataset_metadata_counts(Path(self.dataset_var.get()))
-        convention = "Mask layers: 1=generic cable, 2=Cable 1 endpoints, 3=Cable 2 endpoints, 4=RGB crossing proposal."
+        convention = "Mask layers: 1=generic cable, 2=Cable 1 endpoints, 3=Cable 2 endpoints."
         text = (
             f"Dataset: train={counts['train']} val={counts['val']} locked_test={counts['test']} | "
             f"verified={metadata_counts['train']['verified']}/{metadata_counts['val']['verified']}/{metadata_counts['test']['verified']} | "
             f"sessions={metadata_counts['train']['sessions']}/{metadata_counts['val']['sessions']}/{metadata_counts['test']['sessions']}\n"
             f"{convention} Layers are stored as independent bits in masks_layers/*.npz.\n"
-            "Training uses independent focal+Dice losses for cable, endpoint 1, endpoint 2, and crossing; "
+            "Training uses independent focal+Dice losses for cable, endpoint 1, and endpoint 2; "
             "the boundary target is the generic cable only.\n"
             f"Session split conflicts: {len(conflicts)}\n"
             f"Checkpoint: {Path(self.output_var.get())}\n"
             f"Live thresholds: cable={thresholds['cable']:.2f}, "
-            f"endpoints={thresholds['endpoints'][0]:.2f}/{thresholds['endpoints'][1]:.2f}, "
-            f"crossing={thresholds['crossing']:.2f}\n"
+            f"endpoints={thresholds['endpoints'][0]:.2f}/{thresholds['endpoints'][1]:.2f}\n"
             f"Live cleanup preview: min_area={cleanup_params['min_area_px']}, "
             f"open={cleanup_params['open_kernel']}, close={cleanup_params['close_kernel']}\n"
             "Train: use the Train PIDNet-S on CUDA button; the GUI passes these settings to the trainer.\n"
@@ -2823,7 +2757,7 @@ class PidNetTrainingApp:
             raise ValueError(
                 f"PIDNet prediction must have shape HxWx{expected_channels}; got {probability.shape}."
             )
-        if not crossing_prediction_label_mode(self.prediction_label_mode):
+        if str(self.prediction_label_mode).strip().lower() != PIDNET_LABEL_MODE:
             raise ValueError(f"Unsupported PIDNet label mode: {self.prediction_label_mode!r}")
         labels = np.zeros(probability.shape[:2], dtype=np.uint8)
         raw_labels = np.zeros(probability.shape[:2], dtype=np.uint8)
@@ -2840,11 +2774,6 @@ class PidNetTrainingApp:
                 endpoint_label = endpoint_label_value(endpoint_index + 1, configured_cable_count)
                 raw_labels[endpoint_raw] = endpoint_label
                 labels[endpoint_raw] = endpoint_label
-        crossing_channel = CROSSING_CHANNEL
-        crossing_raw = probability[:, :, crossing_channel] >= thresholds["crossing"]
-        crossing_label = crossing_label_value(configured_cable_count)
-        raw_labels[crossing_raw] = crossing_label
-        labels[crossing_raw] = crossing_label
         return labels, raw_labels, component_count
 
     def cable_probability_union(self, probability):
@@ -2887,41 +2816,21 @@ class PidNetTrainingApp:
             for endpoint_index, threshold in enumerate(thresholds)
         )
 
-    def crossing_probability(self, probability):
-        probability = np.asarray(probability, dtype=np.float32)
-        if not crossing_prediction_label_mode(self.prediction_label_mode):
-            raise ValueError(f"Unsupported PIDNet label mode: {self.prediction_label_mode!r}")
-        crossing_channel = CROSSING_CHANNEL
-        if probability.ndim != 3 or probability.shape[2] != crossing_channel + 1:
-            raise ValueError(f"PIDNet crossing prediction is missing from shape {probability.shape}.")
-        return np.ascontiguousarray(probability[:, :, crossing_channel], dtype=np.float32)
-
     def labeled_probability_union(self, probability):
         cable = self.cable_probability_union(probability)
         endpoint = self.endpoint_probability_union(probability)
         if endpoint.shape == cable.shape and np.any(endpoint):
             cable = np.maximum(cable, endpoint)
-        crossing = self.crossing_probability(probability)
-        if crossing.shape == cable.shape and np.any(crossing):
-            cable = np.maximum(cable, crossing)
         return cable
 
     def segmenter_probability(self, segmenter, bgr, mask=None, mask_is_multilabel=False):
         probability = segmenter.probability_maps(bgr)
         cable_count = max(1, int(self.cable_count_var.get()))
         expected_channels = OUTPUT_CHANNEL_COUNT
-        expected_crossing_channel = CROSSING_CHANNEL
         if probability.ndim != 3 or probability.shape[2] != expected_channels:
             raise RuntimeError(
                 f"The selected checkpoint must output {expected_channels} channels: "
-                f"cable, endpoints_1..endpoints_{cable_count}, and crossing."
-            )
-        if not bool(getattr(segmenter, "crossing_channels", False)):
-            raise RuntimeError("The selected checkpoint does not declare a crossing prediction channel. Retrain it.")
-        if int(getattr(segmenter, "crossing_channel", -1)) != expected_crossing_channel:
-            raise RuntimeError(
-                f"Checkpoint crossing channel is {getattr(segmenter, 'crossing_channel', None)}; "
-                f"expected {expected_crossing_channel}."
+                f"cable and endpoints_1..endpoints_{cable_count}."
             )
         return probability
 
@@ -3062,7 +2971,7 @@ class PidNetTrainingApp:
         self.refresh()
         self.status_var.set(
             "Created an unverified editable draft from the current prediction. "
-            "Correct it on the source image, review all four layers, then mark Human verified and save."
+            "Correct it on the source image, review all three layers, then mark Human verified and save."
         )
         return True
 
@@ -3108,13 +3017,9 @@ class PidNetTrainingApp:
         self.prediction_label_mode = str(getattr(segmenter, "label_mode", "")).strip().lower()
         predicted, _raw_predicted, component_count = self.cleaned_prediction_mask(probability)
         endpoint_pixels = int(np.count_nonzero(self.endpoint_prediction_mask(probability)))
-        crossing_probability = self.crossing_probability(probability)
-        crossing_pixels = int(np.count_nonzero(
-            crossing_probability >= self.preview_thresholds()["crossing"]
-        ))
         self.prediction_summary = (
             f"live cable pixels {int(np.count_nonzero(predicted))} endpoints {endpoint_pixels} "
-            f"crossing {crossing_pixels} comp {component_count}"
+            f"components {component_count}"
         )
         self.live_test_last_time = now
         return True
@@ -3125,14 +3030,12 @@ class PidNetTrainingApp:
             body_label_mask(mask, cable_count, multilabel=multilabel),
             label_pixels(mask, endpoint_label_value(1), cable_count, multilabel=multilabel),
             label_pixels(mask, endpoint_label_value(2), cable_count, multilabel=multilabel),
-            crossing_label_mask(mask, cable_count, multilabel=multilabel),
         )
 
     def prediction_masks_by_channel(self, probability):
         body, _raw_body, _component_count = self.cleaned_prediction_mask(probability)
         endpoint1, endpoint2 = self.endpoint_prediction_masks(probability)
-        crossing = self.crossing_probability(probability) >= self.preview_thresholds()["crossing"]
-        return body, endpoint1, endpoint2, crossing
+        return body, endpoint1, endpoint2
 
     def test_dataset_split(self, split):
         split = str(split).strip().lower()
@@ -3190,13 +3093,11 @@ class PidNetTrainingApp:
         line = (
             f"{split} test: {tested} images | thresholds "
             f"{thresholds['cable']:.2f}/"
-            f"{thresholds['endpoints'][0]:.2f}/{thresholds['endpoints'][1]:.2f}/"
-            f"{thresholds['crossing']:.2f} "
+            f"{thresholds['endpoints'][0]:.2f}/{thresholds['endpoints'][1]:.2f} "
             f"open {params['open_kernel']} close {params['close_kernel']} min_area {params['min_area_px']} "
             f"| body IoU/Dice {iou[0]:.4f}/{dice[0]:.4f} "
             f"| endpoint1 IoU/Dice {iou[1]:.4f}/{dice[1]:.4f} "
-            f"| endpoint2 IoU/Dice {iou[2]:.4f}/{dice[2]:.4f} "
-            f"| crossing IoU/Dice {iou[3]:.4f}/{dice[3]:.4f}\n"
+            f"| endpoint2 IoU/Dice {iou[2]:.4f}/{dice[2]:.4f}\n"
         )
         self.output_text.insert(tk.END, line)
         self.output_text.see(tk.END)
@@ -3257,7 +3158,6 @@ class PidNetTrainingApp:
         self.test_threshold_var.set(calibrated[0])
         self.endpoint_threshold_vars[0].set(calibrated[1])
         self.endpoint_threshold_vars[1].set(calibrated[2])
-        self.crossing_threshold_var.set(calibrated[3])
         self.on_threshold_change()
         line = (
             f"Validation calibration ({tested} frames): thresholds "
@@ -3317,7 +3217,6 @@ class PidNetTrainingApp:
             "cable": 1,
             "endpoint1": endpoint_label_value(1),
             "endpoint2": endpoint_label_value(2),
-            "crossing": crossing_label_value(),
         }
         return {
             label
@@ -3385,7 +3284,7 @@ class PidNetTrainingApp:
             elif state == "saved mask":
                 cv2.putText(panel, "SAVED BACKGROUND-ONLY MASK", (28, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.82, (80, 230, 80), 2, cv2.LINE_AA)
             else:
-                cv2.putText(panel, "Paint cable, endpoints, and crossing labels", (28, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 255), 2, cv2.LINE_AA)
+                cv2.putText(panel, "Paint cable and endpoint labels", (28, 70), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 255), 2, cv2.LINE_AA)
         return panel
 
     def make_prediction_panel(self, bgr, mask, probability):
@@ -3399,7 +3298,7 @@ class PidNetTrainingApp:
         predicted_channels = self.prediction_masks_by_channel(probability)
         target_channels = self.target_masks_by_channel(mask, multilabel=True)
         selected = str(self.prediction_channel_var.get() or "combined")
-        channel_map = {"cable": 0, "endpoint1": 1, "endpoint2": 2, "crossing": 3}
+        channel_map = {"cable": 0, "endpoint1": 1, "endpoint2": 2}
         if selected == "combined":
             heat_probability = self.labeled_probability_union(probability)
         else:
@@ -3437,7 +3336,7 @@ class PidNetTrainingApp:
         cv2.putText(
             panel,
             f"channel {selected} | thresholds {thresholds['cable']:.2f}/{thresholds['endpoints'][0]:.2f}/"
-            f"{thresholds['endpoints'][1]:.2f}/{thresholds['crossing']:.2f} | open {params['open_kernel']} "
+            f"{thresholds['endpoints'][1]:.2f} | open {params['open_kernel']} "
             f"close {params['close_kernel']} min {params['min_area_px']}",
             (24, 42),
             cv2.FONT_HERSHEY_SIMPLEX,
@@ -3480,9 +3379,6 @@ class PidNetTrainingApp:
             counts.extend(
                 f"endpoints_{index}={int(np.count_nonzero(label_pixels(item['mask'], endpoint_label_value(index), cable_count, multilabel=True)))}"
                 for index in range(1, cable_count + 1)
-            )
-            counts.append(
-                f"crossing={int(np.count_nonzero(label_pixels(item['mask'], crossing_label_value(), cable_count, multilabel=True)))}"
             )
             label_counts = " | " + " ".join(counts)
             duplicate_text = (
@@ -3741,9 +3637,6 @@ class PidNetTrainingApp:
         mode = str(self.mode_var.get())
         if mode == "erase":
             item["mask"][pixels] = 0
-        elif mode == "erase_crossing":
-            bit = label_bit(crossing_label_value())
-            item["mask"][pixels] &= np.uint16(~int(bit) & 0xFFFF)
         else:
             active_label = self.active_label_value()
             item["mask"][pixels] |= label_bit(active_label)

@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from pathlib import Path
 
 import cv2
@@ -13,11 +12,8 @@ except Exception:  # pragma: no cover - handled by require_torch
     nn = None
     F = None
 
-from cable_detection import CableDetection2D, CableMaskDetector, resize_detection
 from pidnet_schema import (
     CABLE_CHANNEL,
-    CROSSING_CHANNEL,
-    ENDPOINT_CHANNELS,
     OUTPUT_CHANNEL_COUNT,
     PIDNET_LABEL_MODE,
     validate_checkpoint_schema,
@@ -27,17 +23,6 @@ from pidnet_schema import (
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
 ACTIVE_LABEL_MODE = PIDNET_LABEL_MODE
-
-
-@dataclass(frozen=True)
-class PidNetObservationMasks:
-    """One four-head observation with one endpoint mask per physical cable."""
-
-    cable_detection: CableDetection2D
-    endpoint_mask: np.ndarray
-    endpoint_masks_by_cable: tuple
-    crossing_mask: np.ndarray
-    crossing_probability: np.ndarray
 
 
 def require_torch():
@@ -215,8 +200,6 @@ class PidNetSegmenter:
             "input_mode",
             "label_mode",
             "endpoint_channels",
-            "crossing_channels",
-            "crossing_channel",
         }
         missing = sorted(required_keys.difference(config))
         if missing:
@@ -232,24 +215,17 @@ class PidNetSegmenter:
         self.label_mode = str(config["label_mode"]).strip().lower()
         self.endpoint_channel_count = int(config["endpoint_channel_count"])
         self.endpoint_channels = bool(config["endpoint_channels"])
-        self.crossing_channels = bool(config["crossing_channels"])
-        self.crossing_channel = int(config["crossing_channel"])
         expected_output_channels = OUTPUT_CHANNEL_COUNT
         if self.input_mode != "rgb" or self.input_channels != 3:
             raise ValueError(
                 f"PIDNet checkpoint must use RGB input with 3 channels; got mode={self.input_mode!r}, "
                 f"channels={self.input_channels}."
             )
-        if not self.endpoint_channels or not self.crossing_channels:
-            raise ValueError("PIDNet checkpoint must provide endpoint and crossing channels.")
+        if not self.endpoint_channels:
+            raise ValueError("PIDNet checkpoint must provide the two endpoint channels.")
         if self.output_channels != expected_output_channels:
             raise ValueError(
                 f"PIDNet checkpoint must output {expected_output_channels} channels; got {self.output_channels}."
-            )
-        if self.crossing_channel != CROSSING_CHANNEL:
-            raise ValueError(
-                f"PIDNet crossing channel must be {CROSSING_CHANNEL}; "
-                f"got {self.crossing_channel}."
             )
         self.model = PIDNetSmallBinary(
             base_channels=base_channels,
@@ -343,16 +319,6 @@ class PidNetSegmenter:
             dtype=np.float16,
         )
 
-    def observation_channels(self, bgr, thresholds):
-        """Compatibility API used by annotation: masks plus crossing probability."""
-
-        return self._thresholded_observation(
-            bgr,
-            thresholds,
-            CROSSING_CHANNEL,
-            keep_probability_on_device=False,
-        )
-
     def tracking_channels(self, bgr, thresholds):
         """Tracking API: masks plus cable probability from the same forward pass."""
 
@@ -361,134 +327,6 @@ class PidNetSegmenter:
             thresholds,
             CABLE_CHANNEL,
             keep_probability_on_device=True,
-        )
-
-
-class PidNetCableDetector(CableMaskDetector):
-    def __init__(
-        self,
-        checkpoint_path,
-        device="cuda",
-        threshold=0.50,
-        min_area=80,
-        open_kernel=3,
-        close_kernel=5,
-        amp=True,
-        channels_last=True,
-    ):
-        super().__init__(
-            min_area=min_area,
-            open_kernel=open_kernel,
-            close_kernel=close_kernel,
-        )
-        self.segmenter = PidNetSegmenter(
-            checkpoint_path,
-            device=device,
-            amp=amp,
-            channels_last=channels_last,
-        )
-        self.threshold = float(threshold)
-
-    @property
-    def output_channels(self):
-        return int(getattr(self.segmenter, "output_channels", 1))
-
-    @property
-    def label_mode(self):
-        return str(self.segmenter.label_mode)
-
-    @property
-    def trained_endpoint_channel_count(self):
-        return int(self.segmenter.endpoint_channel_count)
-
-    @property
-    def has_crossing_channel(self):
-        return bool(self.segmenter.crossing_channels)
-
-    @property
-    def crossing_channel(self):
-        return int(self.segmenter.crossing_channel)
-
-    def detect_observation_masks(
-        self,
-        bgr,
-        endpoint_channel_count=2,
-        scale=1.0,
-        endpoint_thresholds=None,
-        crossing_threshold=None,
-        include_endpoint_mask=True,
-    ):
-        endpoint_channel_count = int(endpoint_channel_count)
-        if endpoint_channel_count != self.trained_endpoint_channel_count:
-            raise ValueError(
-                f"Runtime endpoint_channel_count={endpoint_channel_count} does not match checkpoint "
-                f"endpoint channel count={self.trained_endpoint_channel_count}."
-            )
-        if not include_endpoint_mask:
-            raise ValueError("The live two-cable tracker requires endpoint masks.")
-
-        bgr = np.asarray(bgr, dtype=np.uint8)
-        if bgr.ndim != 3 or bgr.shape[2] < 3:
-            raise ValueError(f"PIDNet input must be an HxWx3 BGR image; got shape {bgr.shape}.")
-        original_h, original_w = bgr.shape[:2]
-        scale = float(np.clip(scale, 0.10, 1.0))
-        if scale < 0.999:
-            scaled_w = max(2, int(round(original_w * scale)))
-            scaled_h = max(2, int(round(original_h * scale)))
-            detector_input = cv2.resize(bgr, (scaled_w, scaled_h), interpolation=cv2.INTER_AREA)
-        else:
-            detector_input = bgr
-
-        if endpoint_thresholds is None:
-            endpoint_thresholds = (self.threshold,) * len(ENDPOINT_CHANNELS)
-        elif np.isscalar(endpoint_thresholds):
-            endpoint_thresholds = (float(endpoint_thresholds),) * len(ENDPOINT_CHANNELS)
-        else:
-            endpoint_thresholds = tuple(float(value) for value in endpoint_thresholds)
-        if len(endpoint_thresholds) != len(ENDPOINT_CHANNELS):
-            raise ValueError(
-                f"Expected {len(ENDPOINT_CHANNELS)} endpoint thresholds; got {len(endpoint_thresholds)}."
-            )
-        crossing_threshold = self.threshold if crossing_threshold is None else float(crossing_threshold)
-        thresholds = (
-            self.threshold,
-            *endpoint_thresholds,
-            crossing_threshold,
-        )
-        masks, crossing_probability = self.segmenter.observation_channels(detector_input, thresholds)
-        cable_mask = masks[CABLE_CHANNEL]
-        endpoint_masks = [masks[channel] for channel in ENDPOINT_CHANNELS]
-        crossing_mask = masks[CROSSING_CHANNEL]
-        combined_detection = self._detection_from_raw_mask(cable_mask)
-        endpoint_mask = np.zeros_like(cable_mask, dtype=np.uint8)
-        for mask in endpoint_masks:
-            endpoint_mask = cv2.bitwise_or(endpoint_mask, mask)
-
-        if scale < 0.999:
-            combined_detection = resize_detection(combined_detection, (original_h, original_w))
-            endpoint_mask = resize_mask(endpoint_mask, (original_h, original_w))
-            endpoint_masks = [resize_mask(mask, (original_h, original_w)) for mask in endpoint_masks]
-            crossing_mask = resize_mask(crossing_mask, (original_h, original_w))
-            crossing_probability = cv2.resize(
-                crossing_probability.astype(np.float32),
-                (original_w, original_h),
-                interpolation=cv2.INTER_LINEAR,
-            ).astype(np.float16, copy=False)
-        return PidNetObservationMasks(
-            cable_detection=combined_detection,
-            endpoint_mask=np.ascontiguousarray(endpoint_mask, dtype=np.uint8),
-            endpoint_masks_by_cable=tuple(endpoint_masks),
-            crossing_mask=np.ascontiguousarray(crossing_mask, dtype=np.uint8),
-            crossing_probability=np.ascontiguousarray(crossing_probability, dtype=np.float16),
-        )
-
-    def _detection_from_raw_mask(self, raw_mask):
-        mask, component_count, component_rejected, morphology_rejected = self.clean_mask(raw_mask)
-        return CableDetection2D(
-            mask=mask,
-            component_count=component_count,
-            component_rejected_mask=component_rejected,
-            morphology_rejected_mask=morphology_rejected,
         )
 
 
@@ -516,11 +354,3 @@ def configure_torch_inference(device):
 def probability_to_logit_threshold(threshold):
     threshold = float(np.clip(threshold, 1e-6, 1.0 - 1e-6))
     return float(np.log(threshold / (1.0 - threshold)))
-
-
-def resize_mask(mask, output_shape):
-    output_h, output_w = [int(v) for v in output_shape[:2]]
-    mask = np.asarray(mask, dtype=np.uint8)
-    if mask.shape[:2] == (output_h, output_w):
-        return np.ascontiguousarray(mask, dtype=np.uint8)
-    return np.ascontiguousarray(cv2.resize(mask, (output_w, output_h), interpolation=cv2.INTER_NEAREST), dtype=np.uint8)

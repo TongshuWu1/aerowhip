@@ -43,7 +43,6 @@ checkpoint = "data/models/pidnet_two_cable_best.pt"
 device = "cuda"
 threshold = 0.85000002
 endpoint_thresholds = [0.89999998, 0.75]
-crossing_threshold = 0.94999999
 amp = true
 channels_last = true
 overlay_alpha = 0.62
@@ -85,10 +84,10 @@ ess_resample_fraction = 0.50
 acceleration_noise_mps2 = 0.45
 velocity_damping_per_second = 1.25
 endpoint_velocity_smoothing = 0.50
-# Blend position-derived node motion into the velocity state after a complete
-# graph-route measurement. The maximum rejects route/detection jumps without
-# limiting normal hand motion.
-measurement_velocity_gain = 0.65
+# Blend local visible-edge displacement into only the nearby node velocities.
+# The arc radius is measured in node spacings; hidden nodes keep their prior.
+local_velocity_gain = 0.65
+local_support_radius_nodes = 1.0
 maximum_node_velocity_mps = 2.50
 projection_iterations = 8
 velocity_projection_iterations = 2
@@ -107,6 +106,15 @@ attribution_length_sigma_m = 0.025
 attribution_length_weight = 0.25
 attribution_unassigned_energy = 3.0
 attribution_minimum_identity_probability = 0.60
+# Soft temporal prior for graph-fragment cable identity. Current geometric
+# evidence remains the likelihood and can override this prior.
+attribution_temporal_identity_weight = 1.0
+attribution_temporal_match_sigma_m = 0.020
+attribution_temporal_match_gate_m = 0.050
+attribution_temporal_history_frames = 5
+attribution_temporal_history_decay = 0.75
+# Prevent history from becoming a hard identity lock.
+attribution_temporal_probability_floor = 0.05
 top_particle_count = 40
 random_seed = 7
 # Reuses CUDA events and the PF's existing synchronization; no extra GPU wait.
@@ -123,10 +131,9 @@ temporal_prediction = true
 endpoint_motion_transport = true
 ess_resampling = true
 global_particles = true
-# Correct ordinary and 10% route-centered particles independently from their
-# actual constrained parent-to-proposal displacement.
-measurement_velocity_update = true
-global_particle_velocity_update = true
+# Update each supported node from local visible-edge motion. No displacement
+# is interpolated or extrapolated across an occluded cable interval.
+local_node_motion = true
 single_endpoint_updates = false
 prediction_without_measurement = true
 posterior_uncertainty = true
@@ -137,6 +144,8 @@ cuda_graph_replay = true
 # Show the prior-based cable identity and ordered arc interval assigned to
 # every observed skeleton edge.
 graph_edge_attribution = true
+# Preserve fragment identity across graph rebuilds and short occlusions.
+temporal_edge_identity = true
 # Score initialized particles against all confidently attributed visible
 # edges, even when no complete endpoint-to-endpoint graph route exists.
 visible_edge_scoring = true

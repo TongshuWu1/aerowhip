@@ -64,7 +64,6 @@ UI_ACCENT = (0.270, 0.620, 0.960)
 ORANGE = (1.00, 0.58, 0.08)
 BLUE = (0.05, 0.35, 1.00)
 GREEN = (0.15, 1.00, 0.30)
-YELLOW = (1.00, 1.00, 0.00)
 SKELETON_MASK = (0.15, 0.17, 0.19)
 SKELETON_LINE = (0.93, 0.96, 0.98)
 SKELETON_NODE = (0.22, 0.80, 1.00)
@@ -311,14 +310,14 @@ FEATURE_CONTROLS = (
     ("M", "endpoint_motion_transport", "END TRANSPORT"),
     ("E", "ess_resampling", "ESS RESAMPLE"),
     ("9", "global_particles", "RETRACK 10%"),
-    ("V", "measurement_velocity_update", "MOTION VELOCITY"),
-    ("B", "global_particle_velocity_update", "RETRACK VELOCITY"),
+    ("V", "local_node_motion", "LOCAL NODE MOTION"),
     ("F", "single_endpoint_updates", "ONE ENDPOINT"),
     ("G", "prediction_without_measurement", "PREDICT HIDDEN"),
     ("H", "posterior_uncertainty", "UNCERTAINTY"),
     ("K", "fused_constraint_kernels", "FUSED LINKS"),
     ("J", "cuda_graph_replay", "CUDA GRAPH"),
     ("Y", "graph_edge_attribution", "EDGE ATTR"),
+    ("I", "temporal_edge_identity", "EDGE ID MEMORY"),
     ("A", "visible_edge_scoring", "EDGE SCORE"),
     ("D", "visible_edge_transport", "EDGE MOTION"),
     ("S", "visible_edge_exploration", "EDGE RETRACK"),
@@ -394,7 +393,6 @@ class SplitPointCloudViewer:
             "cable_points": 0,
             "endpoint_1_points": 0,
             "endpoint_2_points": 0,
-            "crossing_points": 0,
         }
         self.pipeline_stats = {}
         self.frame_index = -1
@@ -427,6 +425,8 @@ class SplitPointCloudViewer:
         self.fov_y_deg = 70.0
         self.scene_center = np.asarray((0.0, 0.0, -2.0), dtype=np.float32)
         self.scene_radius = 2.0
+        self.latest_scene_center = self.scene_center.copy()
+        self.latest_scene_radius = self.scene_radius
         self.has_scene = False
         self.yaw_deg = -35.0
         self.pitch_deg = 22.0
@@ -596,6 +596,9 @@ class SplitPointCloudViewer:
         self.yaw_deg = -35.0
         self.pitch_deg = 22.0
         self.zoom = 1.0
+        if self.has_scene:
+            self.scene_center = self.latest_scene_center.copy()
+            self.scene_radius = self.latest_scene_radius
         self.redraw_requested = True
 
     def _consume_pending(self):
@@ -634,7 +637,7 @@ class SplitPointCloudViewer:
         self.observation = payload["observation"]
         self.particle_filter = payload["particle_filter"]
         if cloud_changed:
-            self._smooth_scene(payload["center"], payload["radius"])
+            self._update_scene_bounds(payload["center"], payload["radius"])
             glBindBuffer(GL_ARRAY_BUFFER, self.vbo)
             glBufferData(
                 GL_ARRAY_BUFFER,
@@ -706,7 +709,6 @@ class SplitPointCloudViewer:
         self._legend(margin, height - 55, ORANGE, "cable")
         self._legend(margin + 112, height - 55, BLUE, "endpoint 1")
         self._legend(margin + 246, height - 55, GREEN, "endpoint 2")
-        self._legend(margin + 380, height - 55, YELLOW, "crossing")
         self._line(0, height - header, width, height - header, UI_STROKE)
         if self.rgb_image is None:
             self._text(margin, height - header - 30, self.status, UI_MUTED)
@@ -752,7 +754,6 @@ class SplitPointCloudViewer:
         self._legend(margin + 72, legend_y, SKELETON_LINE, "skeleton")
         self._legend(margin + 172, legend_y, SKELETON_NODE, "node")
         self._legend(margin + 242, legend_y, SKELETON_BRANCH, "junction")
-        self._legend(margin + 342, legend_y, YELLOW, "NN cross")
         self._line(
             0,
             skeleton_header_y0,
@@ -1103,8 +1104,7 @@ class SplitPointCloudViewer:
         x = self._metric(x, y, "INVALID XYZ", f"{self.stats.get('invalid_points', 0):,}", (0.95, 0.42, 0.35))
         x = self._metric(x, y, "CABLE", f"{self.stats.get('cable_points', 0):,}", ORANGE)
         x = self._metric(x, y, "ENDPOINT 1", f"{self.stats.get('endpoint_1_points', 0):,}", BLUE)
-        x = self._metric(x, y, "ENDPOINT 2", f"{self.stats.get('endpoint_2_points', 0):,}", GREEN)
-        self._metric(x, y, "CROSSING", f"{self.stats.get('crossing_points', 0):,}", YELLOW)
+        self._metric(x, y, "ENDPOINT 2", f"{self.stats.get('endpoint_2_points', 0):,}", GREEN)
 
         y = height - 119
         x = 18
@@ -1165,19 +1165,20 @@ class SplitPointCloudViewer:
             motion_text = []
             for cable_index, cable in enumerate(self.particle_filter.cables):
                 diagnostic = cable.diagnostics
-                applied = "ON" if diagnostic.velocity_correction_applied else "OFF"
+                applied = "ON" if diagnostic.local_node_motion_applied else "OFF"
                 motion_text.append(
                     f"PF{cable_index + 1} "
                     f"{diagnostic.predicted_node_speed_mps:.2f}/"
-                    f"{diagnostic.measured_displacement_speed_mps:.2f}/"
+                    f"{diagnostic.local_velocity_innovation_speed_mps:.2f}/"
                     f"{diagnostic.corrected_node_speed_mps:.2f}/"
                     f"{diagnostic.maximum_corrected_node_speed_mps:.2f} "
+                    f"support={100.0 * diagnostic.locally_supported_node_fraction:.0f}% "
                     f"[{applied}]"
                 )
             self._text(
                 18,
                 height - 195,
-                "Motion m/s predicted/measured/corrected/max | "
+                "Motion m/s predicted/local-innovation/corrected/max | "
                 + " | ".join(motion_text),
                 UI_TEXT,
                 GLUT_BITMAP_HELVETICA_12,
@@ -1291,15 +1292,10 @@ class SplitPointCloudViewer:
                 )
             )
             x += chip_width + 6
-        phase_text = "CROSSING: OBSERVATION ONLY"
-        if x + self._text_width(phase_text, GLUT_BITMAP_HELVETICA_12) + 16 > width:
-            x = 18
-            chip_y -= 25
-        self._text(x + 5, chip_y + 6, phase_text, YELLOW, GLUT_BITMAP_HELVETICA_12)
         self._text(
             18,
             10,
-            f"Orbit: left drag    Pan: right drag    Zoom: wheel    Reset: R    "
+            f"Orbit: left drag    Pan: right drag    Zoom: wheel    Refit: R    "
             f"Top particles: P ({'on' if self.show_top_particles else 'off'})    "
             f"Point size: +/- ({self.point_size:.1f})    Record: C    "
             f"Click a feature or use its key    Quit: Q",
@@ -1372,15 +1368,23 @@ class SplitPointCloudViewer:
         left = int(np.clip(left, min(260, self.width // 2), max(260, self.width - 360)))
         return left, max(1, self.width - left)
 
-    def _smooth_scene(self, center, radius):
+    def _update_scene_bounds(self, center, radius):
+        """Remember cloud bounds without moving an established viewport.
+
+        The first valid cloud establishes the camera target and distance.
+        Later cloud bounds are retained for the explicit R refit command.
+        """
+
+        center = np.asarray(center, dtype=np.float32).reshape(3)
         radius = float(np.clip(radius, 0.25, 20.0))
+        if not np.all(np.isfinite(center)):
+            return
+        self.latest_scene_center = center.copy()
+        self.latest_scene_radius = radius
         if not self.has_scene:
             self.scene_center = center.copy()
             self.scene_radius = radius
             self.has_scene = True
-            return
-        self.scene_center = (0.9 * self.scene_center + 0.1 * center).astype(np.float32)
-        self.scene_radius = 0.9 * self.scene_radius + 0.1 * radius
 
     def _reshape(self, width, height):
         self.width = max(1, int(width))

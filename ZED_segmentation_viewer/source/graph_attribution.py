@@ -22,6 +22,12 @@ class GraphAttributionConfig:
     huber_delta: float = 1.5
     unassigned_energy: float = 3.0
     minimum_identity_probability: float = 0.60
+    temporal_identity_weight: float = 1.0
+    temporal_match_sigma_m: float = 0.020
+    temporal_match_gate_m: float = 0.050
+    temporal_history_frames: int = 5
+    temporal_history_decay: float = 0.75
+    temporal_probability_floor: float = 0.05
 
 
 @dataclass(frozen=True)
@@ -39,6 +45,8 @@ class GraphEdgeAttribution:
     forward: bool
     mean_residual_m: float
     endpoint_anchored: bool
+    temporal_prior_applied: bool
+    temporal_match_distance_m: float
 
 
 @dataclass(frozen=True)
@@ -51,6 +59,7 @@ class GraphAttributionDiagnostics:
     attributed_count: int
     ambiguous_count: int
     unassigned_count: int
+    temporally_matched_count: int
     processing_ms: float
     gpu_ms: float
 
@@ -78,6 +87,8 @@ class GraphAttributionBatch:
     selected_cable: torch.Tensor
     selected_confidence: torch.Tensor
     endpoint_anchored: torch.Tensor
+    temporal_prior_applied: torch.Tensor
+    temporal_match_distance_m: torch.Tensor
     prediction_spread_m: torch.Tensor
     initialized: np.ndarray
     processing_ms: float
@@ -196,6 +207,132 @@ class GraphEdgeAttributor:
         self.device = torch.device(device)
         self.dtype = torch.float32
         self._candidate_grids: dict[tuple[int, int], _CandidateGrid] = {}
+        self._temporal_history: list[
+            tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+        ] = []
+
+    def clear_temporal_history(self) -> None:
+        self._temporal_history.clear()
+
+    def _temporal_identity_prior(
+        self,
+        observed: torch.Tensor,
+        edge_valid: torch.Tensor,
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        """Match current fragments to recent observed fragments on the device.
+
+        Directed current-to-history distance deliberately supports graph-edge
+        splitting: a newly visible fragment may be a subset of an older edge.
+        The returned probability is a soft prior, never a hard identity lock.
+        """
+
+        edge_count = int(observed.shape[0])
+        uniform = torch.full(
+            (edge_count, 3),
+            1.0 / 3.0,
+            device=self.device,
+            dtype=self.dtype,
+        )
+        no_match = torch.full(
+            (edge_count,),
+            torch.inf,
+            device=self.device,
+            dtype=self.dtype,
+        )
+        if not self._temporal_history:
+            return uniform, torch.zeros_like(edge_valid), no_match
+
+        history_xyz = []
+        history_probability = []
+        history_valid = []
+        history_age = []
+        for age, (xyz, probability, valid) in enumerate(
+            reversed(self._temporal_history),
+            start=1,
+        ):
+            if xyz.numel() == 0 or xyz.shape[1] != observed.shape[1]:
+                continue
+            history_xyz.append(xyz)
+            history_probability.append(probability)
+            history_valid.append(valid)
+            history_age.append(
+                torch.full(
+                    (xyz.shape[0],),
+                    age,
+                    device=self.device,
+                    dtype=self.dtype,
+                )
+            )
+        if not history_xyz:
+            return uniform, torch.zeros_like(edge_valid), no_match
+
+        previous_xyz = torch.cat(history_xyz, dim=0)
+        previous_probability = torch.cat(history_probability, dim=0)
+        previous_valid = torch.cat(history_valid, dim=0)
+        previous_age = torch.cat(history_age, dim=0)
+        pairwise = torch.cdist(
+            observed[:, None, :, :],
+            previous_xyz[None, :, :, :],
+        )
+        directed_distance = pairwise.amin(dim=-1).mean(dim=-1)
+        candidate_valid = edge_valid[:, None] & previous_valid[None, :]
+        match_cost = directed_distance + (
+            previous_age[None, :] - 1.0
+        ) * (0.25 * self.config.temporal_match_sigma_m)
+        match_cost = torch.where(
+            candidate_valid,
+            match_cost,
+            torch.full_like(match_cost, torch.inf),
+        )
+        best_cost, best_index = torch.min(match_cost, dim=1)
+        best_distance = torch.gather(
+            directed_distance,
+            1,
+            best_index[:, None],
+        )[:, 0]
+        best_age = previous_age[best_index]
+        matched = (
+            torch.isfinite(best_cost)
+            & (best_distance <= self.config.temporal_match_gate_m)
+        )
+        floor = float(np.clip(self.config.temporal_probability_floor, 0.0, 1.0 / 3.0))
+        previous_prior = (
+            (1.0 - 3.0 * floor) * previous_probability[best_index] + floor
+        )
+        distance_strength = torch.exp(
+            -0.5
+            * (
+                best_distance / self.config.temporal_match_sigma_m
+            ).square()
+        )
+        age_strength = self.config.temporal_history_decay ** (
+            best_age - 1.0
+        )
+        strength = (distance_strength * age_strength).clamp(0.0, 1.0)
+        prior = (
+            strength[:, None] * previous_prior
+            + (1.0 - strength[:, None]) * uniform
+        )
+        prior = torch.where(matched[:, None], prior, uniform)
+        best_distance = torch.where(matched, best_distance, no_match)
+        return prior, matched, best_distance
+
+    def _remember_temporal_identity(
+        self,
+        observed: torch.Tensor,
+        probability: torch.Tensor,
+        edge_valid: torch.Tensor,
+    ) -> None:
+        self._temporal_history.append(
+            (
+                observed.detach().clone(),
+                probability.detach().clone(),
+                edge_valid.detach().clone(),
+            )
+        )
+        maximum = max(1, int(self.config.temporal_history_frames))
+        if len(self._temporal_history) > maximum:
+            del self._temporal_history[:-maximum]
 
     def _candidate_grid(
         self,
@@ -322,6 +459,7 @@ class GraphEdgeAttributor:
         predicted_curves: torch.Tensor,
         prediction_spread_m: torch.Tensor,
         initialized: np.ndarray,
+        use_temporal_identity: bool = True,
     ) -> GraphAttributionBatch:
         """Associate all observed edges and retain the result on the device."""
 
@@ -343,6 +481,15 @@ class GraphEdgeAttributor:
                 device=self.device,
                 dtype=torch.int64,
             )
+            empty_probability = empty_float.reshape(0, 3)
+            if use_temporal_identity:
+                self._remember_temporal_identity(
+                    empty_float.reshape(0, 0, 3),
+                    empty_probability,
+                    empty_long.to(torch.bool),
+                )
+            else:
+                self.clear_temporal_history()
             return GraphAttributionBatch(
                 graph_edges=(),
                 observed_xyz=empty_float.reshape(0, 0, 3),
@@ -353,10 +500,12 @@ class GraphEdgeAttributor:
                 best_arc_start_m=empty_float.reshape(2, 0),
                 best_arc_end_m=empty_float.reshape(2, 0),
                 best_model_xyz=empty_float.reshape(2, 0, 0, 3),
-                probabilities=empty_float.reshape(0, 3),
+                probabilities=empty_probability,
                 selected_cable=empty_long,
                 selected_confidence=empty_float,
                 endpoint_anchored=empty_long.to(torch.bool),
+                temporal_prior_applied=empty_long.to(torch.bool),
+                temporal_match_distance_m=empty_float,
                 prediction_spread_m=spread,
                 initialized=np.ascontiguousarray(initialized_np),
                 processing_ms=float(
@@ -531,6 +680,28 @@ class GraphEdgeAttributor:
             ),
             dim=1,
         )
+        edge_valid = torch.as_tensor(
+            edge_valid_np,
+            device=self.device,
+            dtype=torch.bool,
+        )
+        if use_temporal_identity:
+            temporal_prior, temporal_prior_applied, temporal_match_distance = (
+                self._temporal_identity_prior(observed, edge_valid)
+            )
+            probability_energy = probability_energy - (
+                self.config.temporal_identity_weight
+                * torch.log(temporal_prior.clamp_min(1e-6))
+            )
+        else:
+            self.clear_temporal_history()
+            temporal_prior_applied = torch.zeros_like(edge_valid)
+            temporal_match_distance = torch.full(
+                edge_valid.shape,
+                torch.inf,
+                device=self.device,
+                dtype=self.dtype,
+            )
         probability = torch.softmax(-probability_energy, dim=1)
         anchored_identity = torch.as_tensor(
             anchored_identity_np,
@@ -574,6 +745,12 @@ class GraphEdgeAttributor:
             best_cable,
             torch.full_like(best_cable, -1),
         )
+        if use_temporal_identity:
+            self._remember_temporal_identity(
+                observed,
+                probability,
+                edge_valid,
+            )
 
         if gpu_end is not None:
             gpu_end.record()
@@ -581,11 +758,7 @@ class GraphEdgeAttributor:
             graph_edges=graph_edges,
             observed_xyz=observed,
             edge_lengths_m=edge_lengths,
-            edge_valid=torch.as_tensor(
-                edge_valid_np,
-                device=self.device,
-                dtype=torch.bool,
-            ),
+            edge_valid=edge_valid,
             best_energy=best_energy,
             best_residual_m=best_residual,
             best_arc_start_m=best_arc_start,
@@ -599,6 +772,8 @@ class GraphEdgeAttributor:
                 device=self.device,
                 dtype=torch.bool,
             ),
+            temporal_prior_applied=temporal_prior_applied,
+            temporal_match_distance_m=temporal_match_distance,
             prediction_spread_m=spread,
             initialized=np.ascontiguousarray(initialized_np),
             processing_ms=float(
@@ -625,6 +800,7 @@ class GraphEdgeAttributor:
                 attributed_count=0,
                 ambiguous_count=0,
                 unassigned_count=0,
+                temporally_matched_count=0,
                 processing_ms=float(batch.processing_ms),
                 gpu_ms=0.0,
             )
@@ -644,6 +820,8 @@ class GraphEdgeAttributor:
                 batch.probabilities,
                 batch.selected_cable[:, None].to(self.dtype),
                 batch.selected_confidence[:, None],
+                batch.temporal_prior_applied[:, None].to(self.dtype),
+                batch.temporal_match_distance_m[:, None],
             ),
             dim=1,
         ).cpu().numpy()
@@ -666,6 +844,8 @@ class GraphEdgeAttributor:
             cable_probabilities = probability_np[:2]
             selected_cable = int(round(float(result[edge_index, 11])))
             confidence = float(result[edge_index, 12])
+            temporal_prior_applied = bool(round(float(result[edge_index, 13])))
+            temporal_match_distance_m = float(result[edge_index, 14])
             if selected_cable >= 0:
                 residual_m = float(fit[selected_cable, 1])
                 arc_start_m = float(fit[selected_cable, 2])
@@ -694,6 +874,8 @@ class GraphEdgeAttributor:
                     endpoint_anchored=bool(
                         batch.endpoint_anchored[edge_index].item()
                     ),
+                    temporal_prior_applied=temporal_prior_applied,
+                    temporal_match_distance_m=temporal_match_distance_m,
                 )
             )
 
@@ -708,6 +890,9 @@ class GraphEdgeAttributor:
         ambiguous_count = (
             len(attributions) - attributed_count - unassigned_count
         )
+        temporally_matched_count = sum(
+            edge.temporal_prior_applied for edge in attributions
+        )
         return GraphAttributionDiagnostics(
             edges=tuple(attributions),
             prediction_spread_m=spread_np,
@@ -715,6 +900,7 @@ class GraphEdgeAttributor:
             attributed_count=int(attributed_count),
             ambiguous_count=int(max(0, ambiguous_count)),
             unassigned_count=int(unassigned_count),
+            temporally_matched_count=int(temporally_matched_count),
             processing_ms=float(batch.processing_ms),
             gpu_ms=gpu_ms,
         )
