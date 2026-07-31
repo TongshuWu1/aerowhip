@@ -1,0 +1,27 @@
+[camera]
+resolution = "HD1080"
+fps = 30
+depth_mode = "NEURAL"
+confidence = 100
+texture_confidence = 100
+fill = true
+disable_self_calibration = true
+
+[svo]
+recording_directory = "recordings"
+compression = "LOSSLESS"
+playback_realtime = false
+
+[pidnet]
+runtime_config = "NN_collection_training/source/config.toml"
+
+[viewer]
+enabled = true
+window_name = "Cable Twin Perception"
+width_px = 1280
+depth_min_m = 0.20
+depth_max_m = 3.00
+overlay_alpha = 0.58
+
+[runtime]
+status_period_s = 1.0
