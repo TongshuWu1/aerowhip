@@ -33,6 +33,11 @@ from cube_tracker import (  # noqa: E402
     KnownCubeTracker,
     draw_cube_wireframe_overlay,
 )
+from cube_state_filter import (  # noqa: E402
+    CubeStateEstimate,
+    CubeStateFilterConfig,
+    RigidCubeStateFilter,
+)
 from live_evaluation import LiveEvaluation  # noqa: E402
 from observation import (  # noqa: E402
     CameraModel,
@@ -138,6 +143,7 @@ class TrackingResult:
     observation: FrameObservation
     particle_filter: ParticleFilterFrame
     cube_tracking: CubeTrackingResult | None
+    cube_state: CubeStateEstimate | None
     inference_ms: float
     tracking_ms: float
     schedule_wait_ms: float
@@ -165,6 +171,7 @@ class SegmentationResult:
     observation: FrameObservation
     particle_filter: ParticleFilterFrame
     cube_tracking: CubeTrackingResult | None
+    cube_state: CubeStateEstimate | None
 
 
 @dataclass(frozen=True)
@@ -707,6 +714,7 @@ class AsyncSegmentationPipeline:
         observation_builder: ObservationBuilder,
         particle_filter: BatchedCableParticleFilter,
         cube_tracker: KnownCubeTracker | None,
+        cube_state_filter: RigidCubeStateFilter | None,
         visualization_max_fps: float,
         visualization_image_width: int,
         visualization_point_cloud_stride: int,
@@ -722,6 +730,7 @@ class AsyncSegmentationPipeline:
         self.observation_builder = observation_builder
         self.particle_filter = particle_filter
         self.cube_tracker = cube_tracker
+        self.cube_state_filter = cube_state_filter
         self.visualization_image_width = max(
             1,
             int(visualization_image_width),
@@ -797,6 +806,7 @@ class AsyncSegmentationPipeline:
         self.last_particle_filter_ms = 0.0
         self.last_particle_filter_gpu_ms = 0.0
         self.last_cube_tracking_ms = 0.0
+        self.last_cube_state_ms = 0.0
         self._last_fps_time = time.perf_counter()
         self._last_fps_frame = 0
         self._last_rate_time = self._last_fps_time
@@ -958,6 +968,7 @@ class AsyncSegmentationPipeline:
                 "particle_filter_ms": float(self.last_particle_filter_ms),
                 "particle_filter_gpu_ms": float(self.last_particle_filter_gpu_ms),
                 "cube_tracking_ms": float(self.last_cube_tracking_ms),
+                "cube_state_ms": float(self.last_cube_state_ms),
                 "captured": int(self.frame_count),
                 "tracking_published": int(self.tracking_published),
                 "tracking_submitted": int(self.tracking_submitted),
@@ -1363,6 +1374,11 @@ class AsyncSegmentationPipeline:
                     if result.cube_tracking is not None
                     else 0.0
                 )
+                self.last_cube_state_ms = float(
+                    result.cube_state.processing_ms
+                    if result.cube_state is not None
+                    else 0.0
+                )
                 if result.cube_tracking is not None:
                     cube = result.cube_tracking
                     self.performance_stats["cube_valid"] = bool(cube.valid)
@@ -1370,7 +1386,24 @@ class AsyncSegmentationPipeline:
                     self.performance_stats["cube_surface_rms_mm"] = float(
                         cube.surface_rms_m * 1000.0
                     )
+                    self.performance_stats["cube_refinement_valid"] = bool(
+                        cube.refinement_valid
+                    )
+                    self.performance_stats["cube_refined_surface_rms_mm"] = float(
+                        cube.refined_surface_rms_m * 1000.0
+                    )
                     self.performance_stats["cube_reason"] = str(cube.reason)
+                if result.cube_state is not None:
+                    state = result.cube_state
+                    self.performance_stats["cube_state_valid"] = bool(state.valid)
+                    self.performance_stats["cube_state_age_ms"] = float(
+                        state.measurement_age_s * 1000.0
+                    )
+                    self.performance_stats["cube_state_speed_mps"] = float(
+                        np.linalg.norm(state.linear_velocity_mps)
+                        if state.linear_velocity_mps is not None
+                        else float("nan")
+                    )
                 for cable_index, cable in enumerate(
                     result.particle_filter.cables
                 ):
@@ -1405,6 +1438,12 @@ class AsyncSegmentationPipeline:
                         "cube",
                         result.cube_tracking.processing_ms
                         if result.cube_tracking is not None
+                        else 0.0,
+                    ),
+                    (
+                        "cube_state",
+                        result.cube_state.processing_ms
+                        if result.cube_state is not None
                         else 0.0,
                     ),
                     ("tracking", result.tracking_ms),
@@ -1774,7 +1813,12 @@ class AsyncSegmentationPipeline:
             f"{float(stats.get('pf2_trace_mm', float('nan'))):.1f}mm "
             f"Cube={'valid' if stats.get('cube_valid', False) else 'invalid'}/"
             f"{int(stats.get('cube_faces', 0))}faces/"
-            f"{float(stats.get('cube_surface_rms_mm', float('nan'))):.1f}mm",
+            f"raw={float(stats.get('cube_surface_rms_mm', float('nan'))):.1f}mm/"
+            f"ref="
+            f"{float(stats.get('cube_refined_surface_rms_mm', float('nan'))):.1f}mm "
+            f"state={'valid' if stats.get('cube_state_valid', False) else 'invalid'}/"
+            f"{float(stats.get('cube_state_age_ms', float('nan'))):.0f}ms/"
+            f"{float(stats.get('cube_state_speed_mps', float('nan'))):.3f}mps",
             flush=True,
         )
 
@@ -1852,6 +1896,11 @@ class AsyncSegmentationPipeline:
             ),
         )
         cube_tracking = cube_future.result() if cube_future is not None else None
+        cube_state = (
+            self.cube_state_filter.update(cube_tracking, captured_at)
+            if self.cube_state_filter is not None
+            else None
+        )
         completed_at = time.perf_counter()
         return TrackingResult(
             buffer_index=buffer_index,
@@ -1866,6 +1915,7 @@ class AsyncSegmentationPipeline:
             observation=observation,
             particle_filter=particle_filter,
             cube_tracking=cube_tracking,
+            cube_state=cube_state,
             inference_ms=float((inference_finished - inference_start) * 1000.0),
             tracking_ms=float((completed_at - tracking_start) * 1000.0),
             schedule_wait_ms=float((tracking_start - submitted_at) * 1000.0),
@@ -1987,6 +2037,7 @@ class AsyncSegmentationPipeline:
             observation=tracked.observation,
             particle_filter=tracked.particle_filter,
             cube_tracking=tracked.cube_tracking,
+            cube_state=tracked.cube_state,
         )
 
 
@@ -2025,6 +2076,15 @@ def main() -> None:
     cube_tracker_config = (
         CubeTrackerConfig.from_mapping(cube_tracking_values)
         if cube_tracking_enabled
+        else None
+    )
+    cube_state_values = config.get("cube_state_filter") or {}
+    cube_state_enabled = bool(
+        cube_state_values.get("enabled", cube_tracking_enabled)
+    )
+    cube_state_config = (
+        CubeStateFilterConfig.from_mapping(cube_state_values)
+        if cube_tracking_enabled and cube_state_enabled
         else None
     )
     observation_config = ObservationConfig.from_mapping(config.get("observation"))
@@ -2121,6 +2181,11 @@ def main() -> None:
             if cube_tracker_config is not None
             else None
         )
+        cube_state_filter = (
+            RigidCubeStateFilter(cube_state_config)
+            if cube_state_config is not None
+            else None
+        )
         pipeline = AsyncSegmentationPipeline(
             zed,
             runtime,
@@ -2138,6 +2203,7 @@ def main() -> None:
                 particle_features,
             ),
             cube_tracker,
+            cube_state_filter,
             float(viewer_config.get("point_cloud_fps", 5.0)),
             int(viewer_config.get("rgb_width", 620)),
             int(viewer_config.get("point_cloud_stride", 1)),

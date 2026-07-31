@@ -406,6 +406,7 @@ class SplitPointCloudViewer:
         self.observation = None
         self.particle_filter = None
         self.cube_tracking = None
+        self.cube_state = None
         self.show_top_particles = True
         self.show_cable_volume = True
         self.cable_meshes = (
@@ -602,6 +603,7 @@ class SplitPointCloudViewer:
             "observation": result.observation,
             "particle_filter": result.particle_filter,
             "cube_tracking": result.cube_tracking,
+            "cube_state": result.cube_state,
         }
         with self.lock:
             self.pending = payload
@@ -653,6 +655,7 @@ class SplitPointCloudViewer:
         self.observation = payload["observation"]
         self.particle_filter = payload["particle_filter"]
         self.cube_tracking = payload["cube_tracking"]
+        self.cube_state = payload["cube_state"]
         cable_radius_m = float(self.particle_filter.cable_radius_m)
         self.cable_meshes = tuple(
             swept_capsule_mesh(
@@ -947,7 +950,12 @@ class SplitPointCloudViewer:
         glEnable(GL_DEPTH_TEST)
 
     def _draw_cube_tracking(self):
-        result = self.cube_tracking
+        state = self.cube_state
+        result = (
+            state
+            if state is not None and state.valid
+            else self.cube_tracking
+        )
         if (
             result is None
             or not result.valid
@@ -1235,11 +1243,18 @@ class SplitPointCloudViewer:
                 )
                 cube_text = (
                     f"CUBE valid {cube.face_count}F | "
-                    f"surface={cube.surface_rms_m * 1000.0:.1f}mm{span} | "
+                    f"raw={cube.surface_rms_m * 1000.0:.1f}mm"
+                    f"{span} | "
                     f"xyz=({cube.center_m[0]:+.3f},"
                     f"{cube.center_m[1]:+.3f},{cube.center_m[2]:+.3f})m | "
                     f"{cube.processing_ms:.1f}ms"
                 )
+                if cube.refinement_valid:
+                    cube_text += (
+                        f" | REF={cube.refined_surface_rms_m * 1000.0:.1f}mm"
+                    )
+                else:
+                    cube_text += f" | REF invalid: {cube.refinement_reason}"
                 cube_color = CUBE_TRACKING
             else:
                 cube_text = (
@@ -1247,6 +1262,20 @@ class SplitPointCloudViewer:
                     f"{cube.processing_ms:.1f}ms"
                 )
                 cube_color = (1.0, 0.38, 0.28)
+            state = self.cube_state
+            if state is not None and state.initialized:
+                speed = (
+                    float(np.linalg.norm(state.linear_velocity_mps))
+                    if state.linear_velocity_mps is not None
+                    else float("nan")
+                )
+                source = "M" if state.measurement_used else "P"
+                cube_text += (
+                    f" | STATE {source} age={state.measurement_age_s * 1000.0:.0f}ms"
+                    f" v={speed:.3f}m/s"
+                )
+                if state.valid:
+                    cube_color = CUBE_TRACKING
             self._text(
                 18,
                 height - 129,

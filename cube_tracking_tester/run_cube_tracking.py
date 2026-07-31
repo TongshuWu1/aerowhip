@@ -57,15 +57,32 @@ CSV_FIELDS = (
     "quaternion_y",
     "quaternion_z",
     "quaternion_w",
+    "refinement_valid",
+    "refined_zed_x_m",
+    "refined_zed_y_m",
+    "refined_zed_z_m",
+    "refined_quaternion_x",
+    "refined_quaternion_y",
+    "refined_quaternion_z",
+    "refined_quaternion_w",
     "face_count",
     "candidate_plane_count",
     "surface_rms_mm",
+    "refined_surface_rms_mm",
+    "position_std_x_mm",
+    "position_std_y_mm",
+    "position_std_z_mm",
+    "rotation_std_x_deg",
+    "rotation_std_y_deg",
+    "rotation_std_z_deg",
     "observed_span_mm",
     "yellow_pixels",
     "valid_depth_points",
     "depth_coverage",
+    "refinement_ms",
     "processing_ms",
     "reason",
+    "refinement_reason",
 )
 WINDOW_NAME = "RGB-D cube tracking tester"
 
@@ -162,6 +179,19 @@ def csv_row(
     else:
         center = np.full(3, np.nan, dtype=np.float64)
         quaternion = np.full(4, np.nan, dtype=np.float64)
+    if result.refinement_valid:
+        assert result.refined_center_m is not None
+        assert result.refined_quaternion_xyzw is not None
+        assert result.pose_covariance is not None
+        refined_center = result.refined_center_m
+        refined_quaternion = result.refined_quaternion_xyzw
+        pose_standard_deviation = np.sqrt(
+            np.maximum(np.diag(result.pose_covariance), 0.0)
+        )
+    else:
+        refined_center = np.full(3, np.nan, dtype=np.float64)
+        refined_quaternion = np.full(4, np.nan, dtype=np.float64)
+        pose_standard_deviation = np.full(6, np.nan, dtype=np.float64)
     return {
         "frame": frame_index,
         "zed_timestamp_ns": timestamp_ns,
@@ -173,15 +203,40 @@ def csv_row(
         "quaternion_y": finite_or_blank(quaternion[1]),
         "quaternion_z": finite_or_blank(quaternion[2]),
         "quaternion_w": finite_or_blank(quaternion[3]),
+        "refinement_valid": int(result.refinement_valid),
+        "refined_zed_x_m": finite_or_blank(refined_center[0]),
+        "refined_zed_y_m": finite_or_blank(refined_center[1]),
+        "refined_zed_z_m": finite_or_blank(refined_center[2]),
+        "refined_quaternion_x": finite_or_blank(refined_quaternion[0]),
+        "refined_quaternion_y": finite_or_blank(refined_quaternion[1]),
+        "refined_quaternion_z": finite_or_blank(refined_quaternion[2]),
+        "refined_quaternion_w": finite_or_blank(refined_quaternion[3]),
         "face_count": result.face_count,
         "candidate_plane_count": result.candidate_plane_count,
         "surface_rms_mm": finite_or_blank(result.surface_rms_m * 1000.0),
+        "refined_surface_rms_mm": finite_or_blank(
+            result.refined_surface_rms_m * 1000.0
+        ),
+        "position_std_x_mm": finite_or_blank(pose_standard_deviation[0] * 1000.0),
+        "position_std_y_mm": finite_or_blank(pose_standard_deviation[1] * 1000.0),
+        "position_std_z_mm": finite_or_blank(pose_standard_deviation[2] * 1000.0),
+        "rotation_std_x_deg": finite_or_blank(
+            np.rad2deg(pose_standard_deviation[3])
+        ),
+        "rotation_std_y_deg": finite_or_blank(
+            np.rad2deg(pose_standard_deviation[4])
+        ),
+        "rotation_std_z_deg": finite_or_blank(
+            np.rad2deg(pose_standard_deviation[5])
+        ),
         "observed_span_mm": finite_or_blank(result.observed_span_m * 1000.0),
         "yellow_pixels": result.yellow_pixels,
         "valid_depth_points": result.valid_depth_points,
         "depth_coverage": result.depth_coverage,
+        "refinement_ms": result.refinement_ms,
         "processing_ms": result.processing_ms,
         "reason": result.reason,
+        "refinement_reason": result.refinement_reason,
     }
 
 

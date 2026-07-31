@@ -3,9 +3,11 @@
 ## Status and purpose
 
 This document records the planned research methodology for cable--object
-interaction estimation. It is a design specification, not a description of
-features that are already implemented. The implemented tracking pipeline is
-documented separately in `PIPELINE.md`.
+interaction estimation. The raw/refined cube observation, pose covariance,
+separate temporal cube-state filter, and analytical cube surface query are now
+implemented foundations. The interaction/contact and mechanics sections remain
+a design specification. The implemented tracking pipeline is documented
+separately in `PIPELINE.md`.
 
 The immediate scope is contact between either tracked cable and the known
 rigid cube. Cable--cable and cable self-contact are deliberately deferred.
@@ -119,22 +121,35 @@ The cable PF continues to supply:
 
 The raw geometric cube observation remains an unsmoothed visual measurement.
 For interaction inference, it feeds a separate rigid-body temporal state
-distribution:
+distribution. The implemented representation is a Gaussian error state about
+the filtered rigid pose and velocity:
 
 \[
-O_t^{(j)}
+\delta \mathbf o_t
 =
 \left(
-T_t^{(j)},
-\mathbf v_{o,t}^{(j)},
-\boldsymbol\omega_{o,t}^{(j)}
+\delta\mathbf p_t,
+\delta\boldsymbol\theta_t,
+\delta\mathbf v_{o,t},
+\delta\boldsymbol\omega_{o,t}
 \right).
+\qquad
+\delta\mathbf o_t\sim\mathcal N(\mathbf 0,P_{o,t}).
 \]
 
-Here \(T\) is the cube pose, \(\mathbf v_o\) is centre velocity, and
-\(\boldsymbol\omega_o\) is angular velocity. The state distribution may be
-implemented as a small rigid-object particle filter. The current plane-fit
-pose and surface residual form its observation.
+The nominal state contains cube pose \(T\), centre velocity \(\mathbf v_o\),
+and angular velocity \(\boldsymbol\omega_o\). A robust joint fit supplies a
+six-dimensional tangent-space pose measurement and covariance to a separate
+constant-velocity error-state Kalman filter. This is deliberately not a
+persistent cube particle population: after resolving the cube's finite
+rotation symmetry, the local rigid-pose posterior is expected to be unimodal,
+and the Gaussian representation is substantially cheaper to predict and
+update.
+
+When the later nonlinear contact factor needs numerical marginalization,
+index \(j\) denotes a small deterministic set of temporary cubature or sigma
+hypotheses drawn from this Gaussian. These hypotheses exist only during the
+interaction calculation; they are not another temporal tracker.
 
 The cube's 24 geometrically equivalent proper rotations describe the same
 physical surface. A temporally continuous representative is required for
@@ -327,15 +342,16 @@ posterior should remain uncertain rather than force a decision.
 ## Bidirectional cable--cube interaction update
 
 After the independent visual updates, the joint interaction posterior for
-cable particle \(i\), cube hypothesis \(j\), and contact state \(z\) is
+cable particle \(i\), cube error state \(\delta\mathbf o\), and contact state
+\(z\) is
 
 \[
-P_t(i,j,z)
+P_t(i,\delta\mathbf o,z)
 \propto
 w_{c,t}^{(i)}
-w_{o,t}^{(j)}
+\mathcal N(\delta\mathbf o;\mathbf0,P_{o,t})
 \pi_{c,t}^{-}(z)
-\Psi_z^{ij}.
+\Psi_z^{i}(\delta\mathbf o).
 \]
 
 Marginalizing this joint distribution gives the updated cable weights,
@@ -343,15 +359,15 @@ Marginalizing this joint distribution gives the updated cable weights,
 \[
 \widetilde w_{c,t}^{(i)}
 =
-\sum_{j,z}P_t(i,j,z),
+\sum_z\int P_t(i,\delta\mathbf o,z)\,d\delta\mathbf o,
 \]
 
-the updated cube weights,
+the contact-conditioned cube distribution,
 
 \[
-\widetilde w_{o,t}^{(j)}
+p_t(\delta\mathbf o\mid\text{interaction})
 =
-\sum_{i,z}P_t(i,j,z),
+\sum_{i,z}P_t(i,\delta\mathbf o,z),
 \]
 
 and the updated contact probability,
@@ -359,14 +375,19 @@ and the updated contact probability,
 \[
 \pi_{c,t}(z)
 =
-\sum_{i,j}P_t(i,j,z).
+\sum_i\int P_t(i,\delta\mathbf o,z)\,d\delta\mathbf o.
 \]
+
+The integrals can be evaluated with a small deterministic sigma set and the
+resulting cube message moment-matched back to the Gaussian error state. This
+keeps the interaction cost proportional to cable particles times a small
+fixed sigma count, without running another object-particle population.
 
 This is the central two-way inference mechanism:
 
 - cube pose and motion reweight cable hypotheses;
-- cable shape and motion reweight cube hypotheses;
-- both state populations contribute to contact confidence.
+- cable shape and motion update the cube state distribution;
+- both state distributions contribute to contact confidence.
 
 The interaction update is evaluated once per frame. Iterating the same factor
 within the frame would count the same evidence multiple times and could create
@@ -374,7 +395,7 @@ self-confirming contact.
 
 For two cables, each cable has its own joint interaction factor with the same
 cube distribution. If both are likely to contact the cube, their messages
-jointly update the cube weights. The cable PF populations remain separate but
+jointly update the cube Gaussian. The cable PF populations remain separate but
 become conditionally coupled through the shared cube state only when physical
 interaction is supported.
 
@@ -399,8 +420,7 @@ The proposal population is a mixture determined by the contact posterior:
 - contact hypotheses receive normal contact conditioning;
 - uncertain contact preserves both possibilities.
 
-This is not a hard fallback population. It is direct sampling from the current
-binary interaction posterior.
+This is direct sampling from the current binary interaction posterior.
 
 The cube receives the corresponding probabilistic message, but strong current
 visual cube evidence remains authoritative. Contact should help carry the cube
@@ -553,6 +573,18 @@ cable deformation and cube motion:
 \right].
 \]
 
+Mass and inertia belong to this mechanics layer, not to the visual cube-state
+filter. The later implementation will require the measured cube mass \(m_o\)
+and centre-frame inertia \(I_o\). For a homogeneous cube of side \(a\),
+
+\[
+I_o=\frac{m_o a^2}{6}I_3,
+\]
+
+but the printed cube must be weighed and its actual mass distribution checked
+before using this expression. Hollow walls, ballast, or attached markers make
+the homogeneous approximation inappropriate.
+
 The current cube rests on a supporting surface. Its dynamics therefore also
 contain table normal force and table friction:
 
@@ -573,6 +605,11 @@ reaction. Initially:
 - cube motion provides contact evidence and a force-consistency term;
 - absolute force from cube dynamics requires a known or separately identified
   table-contact model.
+
+The support model will therefore be a separate mechanics component with a
+known table plane, unilateral normal reaction, gravity, and later a calibrated
+table-friction law. None of these parameters is inserted into pose refinement
+or the temporal visual filter.
 
 ## Later sticking, sliding, and friction
 
@@ -696,17 +733,26 @@ Additionally:
 
 ## Planned implementation sequence
 
-1. Add the temporal rigid cube-state distribution while retaining the raw
-   geometric cube observation.
-2. Implement the physical cable-radius/oriented-cube contact query.
-3. Evaluate pairwise cable-particle/cube-hypothesis gap and normal velocity.
-4. Add the binary temporal contact posterior for each cable.
-5. Add one-pass bidirectional cable/cube particle reweighting.
-6. Add contact-conditioned normal proposals behind an isolated feature switch.
-7. Add the quasi-static inverse cable mechanics force estimator.
-8. Add cube action--reaction consistency when the support model is available.
-9. Later extend contact to sticking/sliding and estimate friction.
-10. Later add cable--cable contact through the common interaction interface.
+Completed foundations:
+
+1. Retain the raw plane observation and add robust refined pose/covariance.
+2. Add the separate temporal Gaussian rigid cube-state filter.
+3. Add the analytical oriented-cube signed-distance, closest-point, and normal
+   query.
+
+Remaining sequence:
+
+1. Apply the physical cable radius and evaluate cable-particle/cube-sigma
+   physical gap and normal velocity.
+2. Add the binary temporal contact posterior for each cable.
+3. Add one-pass bidirectional cable-PF reweighting and a moment-matched
+   Gaussian cube message.
+4. Add contact-conditioned normal proposals behind an isolated feature switch.
+5. Add the quasi-static inverse cable mechanics force estimator.
+6. Add cube action--reaction consistency after mass, inertia, and the support
+   model are available.
+7. Later extend contact to sticking/sliding and estimate friction.
+8. Later add cable--cable contact through the common interaction interface.
 
 ## Required methodological invariants
 

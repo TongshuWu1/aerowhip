@@ -70,7 +70,26 @@ minimum_face_fraction = 0.04
 orthogonality_tolerance_deg = 15.0
 two_face_minimum_span_fraction = 0.90
 two_face_maximum_span_fraction = 1.10
+# Four small robust Gauss-Newton steps jointly align the known cube centre and
+# axes to the selected face points. Covariance floors prevent thousands of
+# correlated depth pixels from producing false sub-millimetre certainty.
+pose_refinement_iterations = 4
+pose_refinement_huber_m = 0.004
+pose_translation_std_floor_m = 0.0015
+pose_rotation_std_floor_deg = 0.75
+two_face_center_std_m = 0.004
 random_seed = 7
+
+[cube_state_filter]
+# This causal SE(3) filter consumes the refined measurement after the raw
+# cube worker rejoins the tracking thread. It never modifies the raw fit.
+enabled = true
+linear_acceleration_std_mps2 = 1.5
+angular_acceleration_std_rps2 = 4.0
+initial_linear_velocity_std_mps = 0.20
+initial_angular_velocity_std_rps = 0.80
+maximum_prediction_age_s = 0.50
+maximum_prediction_step_s = 0.10
 
 [pidnet]
 checkpoint = "data/models/pidnet_two_cable_best.pt"

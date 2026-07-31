@@ -35,7 +35,9 @@ ZED RGB + registered depth
         |
         +--> yellow mask + registered depth + known 150 mm cube fit
                     |
-                    +--> passive raw cube pose and surface residual
+                    +--> raw plane pose (preserved)
+                    +--> robust joint pose refinement and covariance
+                    +--> temporal rigid pose and velocity state
         |
         v
 Cable estimates, cube observation, uncertainty, diagnostics, and viewer
@@ -46,10 +48,11 @@ The two PF populations have separate weights and posterior estimates. The cable
 batch dimension lets CUDA evaluate them together without coupling their
 probabilities.
 
-The cube observation uses the exact same immutable RGB-depth frame as the cable
-tracker. Its serial CPU worker runs concurrently with the CUDA cable path, and
-the results rejoin before visualization. Cube evidence does not alter cable
-particles, weights, proposals, constraints, or resampling.
+The raw cube observation uses the exact same immutable RGB-depth frame as the
+cable tracker. Its serial CPU worker runs concurrently with the CUDA cable
+path. After the results rejoin, a small causal SE(3) filter updates on the
+tracking thread using the exact capture timestamp. Cube evidence does not yet
+alter cable particles, weights, proposals, constraints, or resampling.
 
 ## Information provided by the neural network
 
@@ -88,7 +91,9 @@ Its current observation is deliberately geometric rather than learned:
 3. unproject its registered depth pixels;
 4. robustly extract planar subsets;
 5. select mutually perpendicular cube faces;
-6. recover the raw cube pose from the visible planes and known side length.
+6. recover the raw cube pose from the visible planes and known side length;
+7. jointly refine centre and rotation against the selected face points;
+8. estimate a six-dimensional tangent-space pose covariance.
 
 Three visible faces directly constrain the cube centre. With two visible
 adjacent faces, their normals determine the three cube axes and the robust
@@ -111,20 +116,44 @@ construction and the PF update, preventing the cube fit from becoming a serial
 frame-rate limiter. PIDNet mask union, dilation, and exclusion execute inside
 the cube worker rather than on the cable tracking thread.
 
-A geometrically uniform cube has 24 equivalent proper rotations. The tracker
-selects the representation closest to the preceding valid observation solely
-to prevent representation-only 90-degree changes. It does not smooth position,
-predict through invalid frames, or hold a stale pose.
+A geometrically uniform cube has 24 equivalent proper rotations. The raw
+tracker selects the representation closest to the preceding valid observation
+solely to prevent representation-only 90-degree changes. The raw centre,
+rotation, quaternion, and surface RMS retain their original per-frame meaning.
+Refined centre, rotation, surface RMS, and pose covariance are separate fields
+on the same measurement, with their own validity and reason. A refinement
+failure does not invalidate or overwrite a valid raw plane measurement. The
+six-dimensional covariance is ordered as camera-frame centre translation
+\((x,y,z)\), then camera-frame left rotation-vector perturbation
+\((r_x,r_y,r_z)\).
 
-The camera panel shows the measured yellow boundary and cube wireframe. The 3D
-viewer shows the same raw pose as a magenta wireframe and reports face count,
-surface residual, centre, and CPU time. `[cube_tracking].enabled` isolates the
-entire observation for timing. The standalone
+The separate `RigidCubeStateFilter` consumes only the refined fields. It is a
+constant-velocity error-state Kalman filter on centre, rotation, linear
+velocity, and angular velocity. Invalid raw measurements produce causal
+prediction with increasing covariance for at most the configured prediction
+age; an expired state is marked invalid rather than held indefinitely. A new
+measurement after expiry reinitializes the state. The raw measurement is never
+changed by the temporal filter. Its 12-dimensional error covariance appends
+camera-frame linear and angular velocity to the six pose components. Rotation
+prediction uses the SO(3) exponential and its left Jacobian.
+
+The camera panel shows the measured yellow boundary and raw cube wireframe.
+The 3D viewer shows the valid temporal cube state as a magenta wireframe and
+uses the current raw pose before the temporal state initializes. It
+reports whether the state used a measurement or prediction, measurement age,
+linear speed, face count, refined surface residual, centre, and CPU time.
+`[cube_tracking].enabled` isolates the raw observation and
+`[cube_state_filter].enabled` isolates the temporal state. The standalone
 `cube_tracking_tester/run_cube_tracking.py` uses this same canonical module.
 
 Cube tracking is currently observational only. Contact proposal, temporal
 contact confidence, sticking/sliding classification, and contact feedback to
 the cable PF are not implemented.
+
+The canonical cube geometry also exposes an analytical signed oriented-box
+query. For arbitrary camera-frame points it returns signed distance, closest
+surface point, and outward surface normal. This is the geometry interface for
+future cable-radius-aware contact and does not construct a cube mesh.
 
 ## Skeleton graph
 
@@ -574,7 +603,8 @@ depends on the number of observed graph edges.
 | `ZED_segmentation_viewer/source/particle_filter.py` | Batched PF prediction, scoring, constraints, posterior, attribution orchestration |
 | `ZED_segmentation_viewer/source/cuda_constraints.py` | Fused CUDA fixed-link kernels |
 | `ZED_segmentation_viewer/source/cable_geometry.py` | Capsule-tube geometry and parallel-transport mesh construction |
-| `ZED_segmentation_viewer/source/cube_tracker.py` | Passive known-cube RGB-D plane fitting and raw pose |
+| `ZED_segmentation_viewer/source/cube_tracker.py` | Raw known-cube RGB-D plane fitting, joint pose refinement/covariance, and analytical cube surface queries |
+| `ZED_segmentation_viewer/source/cube_state_filter.py` | Separate causal SE(3) cube pose/velocity state and covariance |
 | `ZED_segmentation_viewer/source/live_evaluation.py` | Three-signal live plot and CSV logger |
 | `ZED_segmentation_viewer/source/app.py` | Asynchronous capture/tracking/viewer preparation and console profiling |
 | `ZED_segmentation_viewer/source/split_viewer.py` | OpenGL viewer, diagnostics, feature controls, recording |

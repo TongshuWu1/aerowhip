@@ -51,6 +51,11 @@ class CubeTrackerConfig:
     orthogonality_tolerance_deg: float = 15.0
     two_face_minimum_span_fraction: float = 0.90
     two_face_maximum_span_fraction: float = 1.10
+    pose_refinement_iterations: int = 4
+    pose_refinement_huber_m: float = 0.004
+    pose_translation_std_floor_m: float = 0.0015
+    pose_rotation_std_floor_deg: float = 0.75
+    two_face_center_std_m: float = 0.004
     random_seed: int = 7
 
     @classmethod
@@ -119,6 +124,36 @@ class CubeTrackerConfig:
                     defaults.two_face_maximum_span_fraction,
                 )
             ),
+            pose_refinement_iterations=int(
+                source.get(
+                    "pose_refinement_iterations",
+                    defaults.pose_refinement_iterations,
+                )
+            ),
+            pose_refinement_huber_m=float(
+                source.get(
+                    "pose_refinement_huber_m",
+                    defaults.pose_refinement_huber_m,
+                )
+            ),
+            pose_translation_std_floor_m=float(
+                source.get(
+                    "pose_translation_std_floor_m",
+                    defaults.pose_translation_std_floor_m,
+                )
+            ),
+            pose_rotation_std_floor_deg=float(
+                source.get(
+                    "pose_rotation_std_floor_deg",
+                    defaults.pose_rotation_std_floor_deg,
+                )
+            ),
+            two_face_center_std_m=float(
+                source.get(
+                    "two_face_center_std_m",
+                    defaults.two_face_center_std_m,
+                )
+            ),
             random_seed=int(source.get("random_seed", defaults.random_seed)),
         )
         config.validate()
@@ -166,6 +201,16 @@ class CubeTrackerConfig:
             raise ValueError(
                 "The two-face minimum span fraction must be below the maximum."
             )
+        if not 1 <= self.pose_refinement_iterations <= 12:
+            raise ValueError("pose_refinement_iterations must be in [1, 12].")
+        if self.pose_refinement_huber_m <= 0.0:
+            raise ValueError("pose_refinement_huber_m must be positive.")
+        if self.pose_translation_std_floor_m <= 0.0:
+            raise ValueError("pose_translation_std_floor_m must be positive.")
+        if not 0.0 < self.pose_rotation_std_floor_deg < 45.0:
+            raise ValueError("pose_rotation_std_floor_deg must be in (0, 45).")
+        if self.two_face_center_std_m <= 0.0:
+            raise ValueError("two_face_center_std_m must be positive.")
 
 
 @dataclass(frozen=True)
@@ -179,6 +224,12 @@ class PlaneEstimate:
 
 @dataclass(frozen=True)
 class CubeTrackingResult:
+    """Raw plane fit plus an independently valid refined pose measurement.
+
+    The pose covariance uses camera-frame left perturbation order
+    [centre xyz, rotation-vector xyz].
+    """
+
     valid: bool
     reason: str
     cube_side_m: float
@@ -186,6 +237,12 @@ class CubeTrackingResult:
     center_m: np.ndarray | None
     rotation: np.ndarray | None
     quaternion_xyzw: np.ndarray | None
+    refinement_valid: bool
+    refinement_reason: str
+    refined_center_m: np.ndarray | None
+    refined_rotation: np.ndarray | None
+    refined_quaternion_xyzw: np.ndarray | None
+    pose_covariance: np.ndarray | None
     candidate_plane_count: int
     face_count: int
     yellow_pixels: int
@@ -194,9 +251,30 @@ class CubeTrackingResult:
     depth_coverage: float
     fit_point_count: int
     surface_rms_m: float
+    refined_surface_rms_m: float
     observed_span_m: float
+    refinement_iterations: int
+    refinement_ms: float
     processing_ms: float
     face_pixels: tuple[np.ndarray, ...]
+
+
+@dataclass(frozen=True)
+class CubePoseRefinement:
+    center_m: np.ndarray
+    rotation: np.ndarray
+    covariance: np.ndarray
+    surface_rms_m: float
+    iterations: int
+
+
+@dataclass(frozen=True)
+class CubeSurfaceQuery:
+    """Signed oriented-box query for one or more camera-frame points."""
+
+    signed_distance_m: np.ndarray
+    closest_points_m: np.ndarray
+    normals: np.ndarray
 
 
 def _cube_symmetries() -> tuple[np.ndarray, ...]:
@@ -568,6 +646,264 @@ def two_face_span_is_valid(
     return bool(minimum <= observed_span_m <= maximum)
 
 
+def _rotation_vector_to_matrix(vector: np.ndarray) -> np.ndarray:
+    value = np.asarray(vector, dtype=np.float64).reshape(3)
+    angle = float(np.linalg.norm(value))
+    skew = np.array(
+        (
+            (0.0, -value[2], value[1]),
+            (value[2], 0.0, -value[0]),
+            (-value[1], value[0], 0.0),
+        ),
+        dtype=np.float64,
+    )
+    if angle < 1.0e-8:
+        return np.eye(3, dtype=np.float64) + skew + 0.5 * (skew @ skew)
+    first = math.sin(angle) / angle
+    second = (1.0 - math.cos(angle)) / (angle * angle)
+    return np.eye(3, dtype=np.float64) + first * skew + second * (skew @ skew)
+
+
+def _face_axis_assignments(
+    faces: tuple[PlaneEstimate, ...],
+    rotation: np.ndarray,
+) -> tuple[tuple[int, float], ...]:
+    normals = np.stack(tuple(face.normal for face in faces), axis=0)
+    agreement = normals @ np.asarray(rotation, dtype=np.float64)
+    best_axes: tuple[int, ...] | None = None
+    best_score = float("-inf")
+    for axes in permutations(range(3), len(faces)):
+        score = sum(abs(float(agreement[index, axis])) for index, axis in enumerate(axes))
+        if score > best_score:
+            best_axes = axes
+            best_score = score
+    if best_axes is None:
+        raise ValueError("Cube faces could not be associated with distinct model axes.")
+    return tuple(
+        (
+            axis,
+            1.0 if float(agreement[index, axis]) >= 0.0 else -1.0,
+        )
+        for index, axis in enumerate(best_axes)
+    )
+
+
+def _two_face_center_constraint(
+    points: np.ndarray,
+    faces: tuple[PlaneEstimate, ...],
+) -> tuple[np.ndarray, float] | None:
+    if len(faces) != 2:
+        return None
+    direction = np.cross(faces[0].normal, faces[1].normal)
+    length = float(np.linalg.norm(direction))
+    if length <= 1.0e-8:
+        raise ValueError("The two selected face normals are degenerate.")
+    direction /= length
+    indices = np.unique(np.concatenate(tuple(face.point_indices for face in faces)))
+    coordinates = points[indices] @ direction
+    lower, upper = np.quantile(coordinates, (0.01, 0.99))
+    return direction, 0.5 * float(lower + upper)
+
+
+def _cube_pose_normal_system(
+    points: np.ndarray,
+    faces: tuple[PlaneEstimate, ...],
+    assignments: tuple[tuple[int, float], ...],
+    center_m: np.ndarray,
+    rotation: np.ndarray,
+    config: CubeTrackerConfig,
+    edge_constraint: tuple[np.ndarray, float] | None,
+) -> tuple[np.ndarray, np.ndarray, float, int]:
+    information = np.zeros((6, 6), dtype=np.float64)
+    gradient = np.zeros(6, dtype=np.float64)
+    weighted_square_sum = 0.0
+    residual_count = 0
+    half_side = 0.5 * config.cube_side_m
+    point_scale = config.pose_refinement_huber_m
+
+    for face, (axis, sign) in zip(faces, assignments):
+        face_points = points[face.point_indices]
+        centered = face_points - center_m
+        normal = sign * rotation[:, axis]
+        residual = centered @ normal - half_side
+        jacobian = np.empty((len(face_points), 6), dtype=np.float64)
+        jacobian[:, :3] = -normal
+        jacobian[:, 3:] = np.cross(normal[None, :], centered)
+
+        normalized_residual = residual / point_scale
+        normalized_jacobian = jacobian / point_scale
+        absolute = np.abs(normalized_residual)
+        weights = np.ones_like(absolute)
+        outside = absolute > 1.0
+        weights[outside] = 1.0 / absolute[outside]
+        weighted_jacobian = weights[:, None] * normalized_jacobian
+        information += normalized_jacobian.T @ weighted_jacobian
+        gradient += normalized_jacobian.T @ (weights * normalized_residual)
+        weighted_square_sum += float(
+            np.dot(weights * normalized_residual, normalized_residual)
+        )
+        residual_count += len(face_points)
+
+    if edge_constraint is not None:
+        direction, target = edge_constraint
+        scale = config.two_face_center_std_m
+        residual = (float(np.dot(direction, center_m)) - target) / scale
+        jacobian = np.zeros(6, dtype=np.float64)
+        jacobian[:3] = direction / scale
+        information += np.outer(jacobian, jacobian)
+        gradient += jacobian * residual
+        weighted_square_sum += residual * residual
+        residual_count += 1
+
+    return information, gradient, weighted_square_sum, residual_count
+
+
+def refine_cube_pose(
+    points: np.ndarray,
+    faces: tuple[PlaneEstimate, ...],
+    center_m: np.ndarray,
+    rotation: np.ndarray,
+    config: CubeTrackerConfig,
+) -> CubePoseRefinement:
+    """Jointly refine a known cube pose and estimate its tangent-space covariance."""
+
+    center = np.asarray(center_m, dtype=np.float64).reshape(3).copy()
+    refined_rotation = np.asarray(rotation, dtype=np.float64).reshape(3, 3).copy()
+    assignments = _face_axis_assignments(faces, refined_rotation)
+    edge_constraint = _two_face_center_constraint(points, faces)
+    iterations = 0
+
+    for iteration in range(config.pose_refinement_iterations):
+        information, gradient, _, _ = _cube_pose_normal_system(
+            points,
+            faces,
+            assignments,
+            center,
+            refined_rotation,
+            config,
+            edge_constraint,
+        )
+        diagonal_scale = max(float(np.trace(information)) / 6.0, 1.0)
+        damped = information + (1.0e-9 * diagonal_scale) * np.eye(6)
+        try:
+            increment = -np.linalg.solve(damped, gradient)
+        except np.linalg.LinAlgError as exc:
+            raise ValueError("The cube pose refinement is numerically singular.") from exc
+        if not np.all(np.isfinite(increment)):
+            raise ValueError("The cube pose refinement produced a non-finite update.")
+
+        center += increment[:3]
+        refined_rotation = (
+            _rotation_vector_to_matrix(increment[3:]) @ refined_rotation
+        )
+        left, _, right_t = np.linalg.svd(refined_rotation)
+        refined_rotation = left @ right_t
+        if np.linalg.det(refined_rotation) < 0.0:
+            left[:, -1] *= -1.0
+            refined_rotation = left @ right_t
+        iterations = iteration + 1
+        if (
+            float(np.linalg.norm(increment[:3])) < 1.0e-7
+            and float(np.linalg.norm(increment[3:])) < 1.0e-7
+        ):
+            break
+
+    information, _, weighted_square_sum, residual_count = _cube_pose_normal_system(
+        points,
+        faces,
+        assignments,
+        center,
+        refined_rotation,
+        config,
+        edge_constraint,
+    )
+    degrees_of_freedom = max(1, residual_count - 6)
+    scale = max(1.0, weighted_square_sum / float(degrees_of_freedom))
+    covariance = scale * np.linalg.pinv(information, rcond=1.0e-10, hermitian=True)
+    translation_floor = config.pose_translation_std_floor_m**2
+    rotation_floor = math.radians(config.pose_rotation_std_floor_deg) ** 2
+    covariance += np.diag(
+        (
+            translation_floor,
+            translation_floor,
+            translation_floor,
+            rotation_floor,
+            rotation_floor,
+            rotation_floor,
+        )
+    )
+    covariance = 0.5 * (covariance + covariance.T)
+
+    fit_indices = np.unique(np.concatenate(tuple(face.point_indices for face in faces)))
+    surface_distance = point_to_cube_surface_distance(
+        points[fit_indices],
+        center,
+        refined_rotation,
+        config.cube_side_m,
+    )
+    surface_rms = float(np.sqrt(np.mean(np.square(surface_distance))))
+    return CubePoseRefinement(
+        center_m=center,
+        rotation=refined_rotation,
+        covariance=covariance,
+        surface_rms_m=surface_rms,
+        iterations=iterations,
+    )
+
+
+def query_cube_surface(
+    points: np.ndarray,
+    center_m: np.ndarray,
+    rotation: np.ndarray,
+    side_m: float,
+) -> CubeSurfaceQuery:
+    """Return exact signed distance, closest point, and outward surface normal."""
+
+    values = np.asarray(points, dtype=np.float64)
+    if values.ndim == 1:
+        values = values.reshape(1, 3)
+    if values.ndim != 2 or values.shape[1] != 3:
+        raise ValueError(f"Cube surface query expects Nx3 points, got {values.shape}.")
+    if side_m <= 0.0:
+        raise ValueError("Cube side length must be positive.")
+
+    center = np.asarray(center_m, dtype=np.float64).reshape(3)
+    orientation = np.asarray(rotation, dtype=np.float64).reshape(3, 3)
+    half_side = 0.5 * float(side_m)
+    local = (values - center) @ orientation
+    relative = np.abs(local) - half_side
+    outside_vector = np.maximum(relative, 0.0)
+    outside_distance = np.linalg.norm(outside_vector, axis=1)
+    signed_distance = outside_distance + np.minimum(
+        np.max(relative, axis=1),
+        0.0,
+    )
+
+    closest_local = np.clip(local, -half_side, half_side)
+    normal_local = np.zeros_like(local)
+    outside = outside_distance > 1.0e-12
+    if np.any(outside):
+        delta = local[outside] - closest_local[outside]
+        normal_local[outside] = delta / outside_distance[outside, None]
+
+    inside_indices = np.flatnonzero(~outside)
+    if len(inside_indices):
+        inside_local = local[inside_indices]
+        face_axes = np.argmax(np.abs(inside_local), axis=1)
+        signs = np.sign(inside_local[np.arange(len(inside_indices)), face_axes])
+        signs[signs == 0.0] = 1.0
+        closest_local[inside_indices, face_axes] = signs * half_side
+        normal_local[inside_indices, face_axes] = signs
+
+    closest_points = center + closest_local @ orientation.T
+    normals = normal_local @ orientation.T
+    return CubeSurfaceQuery(
+        signed_distance_m=signed_distance,
+        closest_points_m=closest_points,
+        normals=normals,
+    )
+
+
 def point_to_cube_surface_distance(
     points: np.ndarray,
     center_m: np.ndarray,
@@ -576,11 +912,14 @@ def point_to_cube_surface_distance(
 ) -> np.ndarray:
     """Unsigned distance to the surface of a closed oriented cube."""
 
-    local = (points - center_m) @ rotation
-    relative = np.abs(local) - 0.5 * side_m
-    outside = np.linalg.norm(np.maximum(relative, 0.0), axis=1)
-    inside = np.minimum(np.max(relative, axis=1), 0.0)
-    return np.abs(outside + inside)
+    return np.abs(
+        query_cube_surface(
+            points,
+            center_m,
+            rotation,
+            side_m,
+        ).signed_distance_m
+    )
 
 
 def rotation_matrix_to_quaternion(rotation: np.ndarray) -> np.ndarray:
@@ -667,6 +1006,12 @@ class KnownCubeTracker:
             center_m=None,
             rotation=None,
             quaternion_xyzw=None,
+            refinement_valid=False,
+            refinement_reason="raw cube measurement is invalid",
+            refined_center_m=None,
+            refined_rotation=None,
+            refined_quaternion_xyzw=None,
+            pose_covariance=None,
             candidate_plane_count=candidate_plane_count,
             face_count=0,
             yellow_pixels=yellow_pixels,
@@ -675,7 +1020,10 @@ class KnownCubeTracker:
             depth_coverage=depth_coverage,
             fit_point_count=0,
             surface_rms_m=float("nan"),
+            refined_surface_rms_m=float("nan"),
             observed_span_m=float("nan"),
+            refinement_iterations=0,
+            refinement_ms=0.0,
             processing_ms=(time.perf_counter() - started) * 1000.0,
             face_pixels=(),
         )
@@ -812,6 +1160,33 @@ class KnownCubeTracker:
                 depth_coverage=coverage,
             )
 
+        refinement_started = time.perf_counter()
+        refinement: CubePoseRefinement | None = None
+        try:
+            candidate_refinement = refine_cube_pose(
+                points,
+                faces,
+                center,
+                rotation,
+                self.config,
+            )
+        except ValueError as exc:
+            refinement_reason = str(exc)
+        else:
+            if (
+                not np.isfinite(candidate_refinement.surface_rms_m)
+                or candidate_refinement.surface_rms_m > maximum_rms
+            ):
+                refinement_reason = (
+                    f"refined cube surface RMS "
+                    f"{candidate_refinement.surface_rms_m * 1000.0:.1f} mm exceeds "
+                    f"{maximum_rms * 1000.0:.1f} mm"
+                )
+            else:
+                refinement = candidate_refinement
+                refinement_reason = "joint cube pose refinement fitted"
+        refinement_ms = (time.perf_counter() - refinement_started) * 1000.0
+
         self.previous_rotation = rotation.copy()
         face_pixels = tuple(pixels[face.point_indices] for face in faces)
         if len(faces) == 3:
@@ -829,6 +1204,22 @@ class KnownCubeTracker:
             center_m=center,
             rotation=rotation,
             quaternion_xyzw=rotation_matrix_to_quaternion(rotation),
+            refinement_valid=refinement is not None,
+            refinement_reason=refinement_reason,
+            refined_center_m=(
+                refinement.center_m if refinement is not None else None
+            ),
+            refined_rotation=(
+                refinement.rotation if refinement is not None else None
+            ),
+            refined_quaternion_xyzw=(
+                rotation_matrix_to_quaternion(refinement.rotation)
+                if refinement is not None
+                else None
+            ),
+            pose_covariance=(
+                refinement.covariance if refinement is not None else None
+            ),
             candidate_plane_count=len(candidates),
             face_count=len(faces),
             yellow_pixels=yellow_pixels,
@@ -837,7 +1228,16 @@ class KnownCubeTracker:
             depth_coverage=coverage,
             fit_point_count=len(fit_points),
             surface_rms_m=surface_rms,
+            refined_surface_rms_m=(
+                refinement.surface_rms_m
+                if refinement is not None
+                else float("nan")
+            ),
             observed_span_m=observed_span,
+            refinement_iterations=(
+                refinement.iterations if refinement is not None else 0
+            ),
+            refinement_ms=refinement_ms,
             processing_ms=(time.perf_counter() - started) * 1000.0,
             face_pixels=face_pixels,
         )

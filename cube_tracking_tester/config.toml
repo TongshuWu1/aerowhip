@@ -33,6 +33,11 @@ orthogonality_tolerance_deg = 15.0
 # centre coordinate. Reject incomplete/contaminated spans rather than guessing.
 two_face_minimum_span_fraction = 0.90
 two_face_maximum_span_fraction = 1.10
+pose_refinement_iterations = 4
+pose_refinement_huber_m = 0.004
+pose_translation_std_floor_m = 0.0015
+pose_rotation_std_floor_deg = 0.75
+two_face_center_std_m = 0.004
 random_seed = 7
 
 [output]

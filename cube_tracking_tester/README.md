@@ -12,13 +12,15 @@ pipeline.
 Each frame performs exactly one observation path:
 
 1. Threshold bright yellow in the rectified left image.
-2. Keep the largest yellow connected component.
+2. Pool all cleaned yellow fragments whose combined area is sufficient.
 3. Unproject its registered depth pixels.
 4. Robustly extract planar subsets.
 5. Use three mutually perpendicular faces when they are visible.
 6. With two perpendicular faces, measure their shared-edge span and require it
    to agree with the known 150 mm cube width.
-7. Infer the cube centre from the visible outward face planes and known size.
+7. Infer the raw cube centre from the visible outward face planes and known size.
+8. Jointly refine centre and orientation against all selected face points.
+9. Estimate a six-dimensional pose covariance with configured sensor floors.
 
 Two faces determine the three cube axes. Their measured shared-edge midpoint
 supplies the centre coordinate not constrained by the two face planes. An
@@ -44,13 +46,16 @@ Controls:
 - `Q` or `Esc`: finish the run.
 - `S`: save the current annotated frame.
 
-The window shows the yellow component, the visible face samples, the fitted cube
-wireframe, surface RMS, depth coverage, and processing time.
+The window shows the yellow evidence, visible face samples, raw cube wireframe,
+surface RMS, depth coverage, and processing time. The CSV retains both the raw
+and refined poses, refined surface RMS, pose standard deviations, and
+refinement time. Raw validity and refinement validity are recorded separately;
+a rejected refinement never deletes a valid plane-based measurement.
 
 Every run saves:
 
-- `poses.csv`: exact ZED image timestamp, raw cube pose, surface RMS, valid
-  depth coverage, and processing time.
+- `poses.csv`: exact ZED image timestamp, raw and refined cube poses, pose
+  uncertainty, surface RMS, valid depth coverage, and processing time.
 - `last_frame.png`: the final annotated image.
 - `config.toml`: the exact tester settings.
 

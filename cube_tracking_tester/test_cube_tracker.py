@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
 import unittest
 from pathlib import Path
 import sys
@@ -16,17 +17,21 @@ if str(MAIN_SOURCE_DIR) not in sys.path:
     sys.path.insert(0, str(MAIN_SOURCE_DIR))
 
 from cube_tracker import (
+    CubeTrackingResult,
     CubeTrackerConfig,
     CUBE_SYMMETRIES,
     cube_pose_from_faces,
     extract_plane_candidates,
     point_to_cube_surface_distance,
+    query_cube_surface,
+    refine_cube_pose,
     remove_cable_pixels,
     segment_yellow,
     select_orthogonal_pair,
     select_orthogonal_faces,
     two_face_span_is_valid,
 )
+from cube_state_filter import CubeStateFilterConfig, RigidCubeStateFilter
 
 
 def axis_angle_rotation(axis: np.ndarray, angle: float) -> np.ndarray:
@@ -43,6 +48,42 @@ def axis_angle_rotation(axis: np.ndarray, angle: float) -> np.ndarray:
         np.eye(3)
         + np.sin(angle) * skew
         + (1.0 - np.cos(angle)) * (skew @ skew)
+    )
+
+
+def refined_measurement(
+    center: np.ndarray,
+    rotation: np.ndarray,
+    covariance: np.ndarray,
+) -> CubeTrackingResult:
+    return CubeTrackingResult(
+        valid=True,
+        reason="synthetic refined measurement",
+        cube_side_m=0.150,
+        mask=np.zeros((4, 4), dtype=np.uint8),
+        center_m=np.asarray(center, dtype=np.float64).copy(),
+        rotation=np.asarray(rotation, dtype=np.float64).copy(),
+        quaternion_xyzw=np.array((0.0, 0.0, 0.0, 1.0)),
+        refinement_valid=True,
+        refinement_reason="synthetic joint refinement",
+        refined_center_m=np.asarray(center, dtype=np.float64).copy(),
+        refined_rotation=np.asarray(rotation, dtype=np.float64).copy(),
+        refined_quaternion_xyzw=np.array((0.0, 0.0, 0.0, 1.0)),
+        pose_covariance=np.asarray(covariance, dtype=np.float64).copy(),
+        candidate_plane_count=3,
+        face_count=3,
+        yellow_pixels=1000,
+        sampled_mask_pixels=1000,
+        valid_depth_points=1000,
+        depth_coverage=1.0,
+        fit_point_count=1000,
+        surface_rms_m=0.001,
+        refined_surface_rms_m=0.001,
+        observed_span_m=float("nan"),
+        refinement_iterations=3,
+        refinement_ms=0.1,
+        processing_ms=1.0,
+        face_pixels=(),
     )
 
 
@@ -67,6 +108,38 @@ class CubeGeometryTests(unittest.TestCase):
         points = center + local @ rotation.T
         distance = point_to_cube_surface_distance(points, center, rotation, 0.150)
         np.testing.assert_allclose(distance, 0.0, atol=1.0e-12)
+
+    def test_signed_surface_query_returns_closest_points_and_normals(self) -> None:
+        center = np.array((0.04, -0.02, -0.80))
+        rotation = axis_angle_rotation(np.array((0.2, 0.9, 0.3)), 0.48)
+        half_side = 0.075
+        local = np.array(
+            (
+                (half_side + 0.010, 0.020, -0.030),
+                (half_side - 0.020, 0.000, 0.000),
+                (half_side, -0.010, 0.025),
+            )
+        )
+        points = center + local @ rotation.T
+        query = query_cube_surface(points, center, rotation, 0.150)
+
+        np.testing.assert_allclose(
+            query.signed_distance_m,
+            (0.010, -0.020, 0.0),
+            atol=1.0e-12,
+        )
+        expected_closest = local.copy()
+        expected_closest[:, 0] = half_side
+        np.testing.assert_allclose(
+            query.closest_points_m,
+            center + expected_closest @ rotation.T,
+            atol=1.0e-12,
+        )
+        np.testing.assert_allclose(
+            query.normals,
+            np.repeat(rotation[:, 0][None, :], 3, axis=0),
+            atol=1.0e-12,
+        )
 
     def test_ransac_recovers_three_orthogonal_faces(self) -> None:
         rng = np.random.default_rng(9)
@@ -159,6 +232,104 @@ class CubeGeometryTests(unittest.TestCase):
         self.assertLess(float(np.linalg.norm(estimated_center - center)), 0.003)
         agreement = np.abs(rotation.T @ estimated_rotation)
         self.assertGreater(float(np.min(np.max(agreement, axis=1))), 0.995)
+        refined = refine_cube_pose(
+            cloud,
+            selected,
+            estimated_center,
+            estimated_rotation,
+            config,
+        )
+        self.assertLess(float(np.linalg.norm(refined.center_m - center)), 0.004)
+        self.assertTrue(np.isfinite(refined.surface_rms_m))
+        self.assertGreater(
+            float(np.min(np.linalg.eigvalsh(refined.covariance))),
+            0.0,
+        )
+
+    def test_joint_refinement_reduces_pose_surface_residual_and_returns_covariance(
+        self,
+    ) -> None:
+        rng = np.random.default_rng(27)
+        config = CubeTrackerConfig(
+            maximum_points=9000,
+            plane_inlier_threshold_m=0.003,
+            ransac_iterations=180,
+            minimum_face_points=250,
+            minimum_face_fraction=0.03,
+            pose_refinement_huber_m=0.0025,
+        )
+        true_rotation = axis_angle_rotation(np.array((0.3, 0.5, 0.8)), 0.59)
+        true_center = np.array((0.06, 0.025, -0.88))
+        half_side = 0.5 * config.cube_side_m
+        camera_direction = -true_center / np.linalg.norm(true_center)
+        clouds: list[np.ndarray] = []
+        for axis_index in range(3):
+            axis = true_rotation[:, axis_index]
+            normal = axis if np.dot(axis, camera_direction) >= 0.0 else -axis
+            tangents = [
+                true_rotation[:, index]
+                for index in range(3)
+                if index != axis_index
+            ]
+            coordinates = rng.uniform(-half_side, half_side, size=(1000, 2))
+            face = (
+                true_center
+                + half_side * normal
+                + coordinates[:, :1] * tangents[0]
+                + coordinates[:, 1:] * tangents[1]
+            )
+            face += rng.normal(0.0, 0.0007, size=face.shape)
+            clouds.append(face)
+        cloud = np.vstack(clouds)
+        candidates = extract_plane_candidates(cloud, config, rng)
+        faces = select_orthogonal_faces(
+            candidates,
+            config.orthogonality_tolerance_deg,
+        )
+        self.assertIsNotNone(faces)
+        assert faces is not None
+
+        initial_center, initial_rotation, _ = cube_pose_from_faces(
+            cloud,
+            faces,
+            config.cube_side_m,
+        )
+        perturbed_center = initial_center + np.array((0.004, -0.003, 0.002))
+        perturbed_rotation = (
+            axis_angle_rotation(np.array((0.6, -0.2, 0.4)), 0.035)
+            @ initial_rotation
+        )
+        fit_indices = np.unique(
+            np.concatenate(tuple(face.point_indices for face in faces))
+        )
+        before = point_to_cube_surface_distance(
+            cloud[fit_indices],
+            perturbed_center,
+            perturbed_rotation,
+            config.cube_side_m,
+        )
+        refined = refine_cube_pose(
+            cloud,
+            faces,
+            perturbed_center,
+            perturbed_rotation,
+            config,
+        )
+
+        self.assertLess(
+            refined.surface_rms_m,
+            float(np.sqrt(np.mean(np.square(before)))),
+        )
+        self.assertLess(
+            float(np.linalg.norm(refined.center_m - true_center)),
+            float(np.linalg.norm(perturbed_center - true_center)),
+        )
+        np.testing.assert_allclose(
+            refined.covariance,
+            refined.covariance.T,
+            atol=1.0e-12,
+        )
+        self.assertGreater(float(np.min(np.linalg.eigvalsh(refined.covariance))), 0.0)
 
     def test_incomplete_two_face_span_is_rejected(self) -> None:
         config = CubeTrackerConfig()
@@ -198,6 +369,68 @@ class CubeGeometryTests(unittest.TestCase):
         self.assertTrue(np.all(cleaned[:, 35:] == 255))
         self.assertTrue(np.all(yellow == 255))
         self.assertEqual(int(np.count_nonzero(cable)), 40)
+
+    def test_temporal_cube_filter_estimates_motion_and_expires_prediction(
+        self,
+    ) -> None:
+        config = CubeStateFilterConfig(
+            initial_linear_velocity_std_mps=0.5,
+            initial_angular_velocity_std_rps=1.0,
+            maximum_prediction_age_s=0.25,
+            maximum_prediction_step_s=0.05,
+        )
+        state_filter = RigidCubeStateFilter(config)
+        covariance = np.diag(
+            (
+                0.001**2,
+                0.001**2,
+                0.001**2,
+                np.deg2rad(0.5) ** 2,
+                np.deg2rad(0.5) ** 2,
+                np.deg2rad(0.5) ** 2,
+            )
+        )
+        first = state_filter.update(
+            refined_measurement(np.array((0.0, 0.0, -0.8)), np.eye(3), covariance),
+            1.0,
+        )
+        self.assertTrue(first.valid)
+        self.assertTrue(first.measurement_used)
+
+        second_rotation = axis_angle_rotation(np.array((0.0, 1.0, 0.0)), 0.04)
+        second = state_filter.update(
+            refined_measurement(
+                np.array((0.010, 0.0, -0.8)),
+                second_rotation,
+                covariance,
+            ),
+            1.1,
+        )
+        self.assertTrue(second.valid)
+        assert second.linear_velocity_mps is not None
+        assert second.angular_velocity_rps is not None
+        self.assertGreater(float(second.linear_velocity_mps[0]), 0.01)
+        self.assertGreater(float(second.angular_velocity_rps[1]), 0.01)
+
+        raw_only = replace(
+            refined_measurement(
+                np.array((0.020, 0.0, -0.8)),
+                second_rotation,
+                covariance,
+            ),
+            refinement_valid=False,
+            refinement_reason="synthetic refinement rejection",
+        )
+        predicted = state_filter.update(raw_only, 1.2)
+        self.assertTrue(predicted.valid)
+        self.assertFalse(predicted.measurement_used)
+        assert predicted.center_m is not None
+        assert second.center_m is not None
+        self.assertGreater(float(predicted.center_m[0]), float(second.center_m[0]))
+
+        expired = state_filter.update(None, 1.4)
+        self.assertFalse(expired.valid)
+        self.assertTrue(expired.initialized)
 
 
 if __name__ == "__main__":
