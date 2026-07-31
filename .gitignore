@@ -1,5 +1,6 @@
 __pycache__/
 *.py[cod]
-diagnostics/recordings/
-diagnostics/experiments/
-diagnostics/evaluation_runs/
+.venv/
+.idea/
+tmp/
+diagnostics/
