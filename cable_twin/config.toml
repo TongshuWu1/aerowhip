@@ -17,11 +17,16 @@ runtime_config = "NN_collection_training/source/config.toml"
 
 [viewer]
 enabled = true
-window_name = "Cable Twin Perception"
-width_px = 1280
+window_name = "Cable Twin 3D Scene"
+width_px = 1600
+height_px = 900
 depth_min_m = 0.20
 depth_max_m = 3.00
 overlay_alpha = 0.58
+point_cloud_stride = 4
+point_size_px = 2.0
+inset_width_px = 420
+render_fps = 15.0
 
 [runtime]
 status_period_s = 1.0

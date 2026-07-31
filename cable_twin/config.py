@@ -73,19 +73,36 @@ class ViewerSettings:
     enabled: bool
     window_name: str
     width_px: int
+    height_px: int
     depth_min_m: float
     depth_max_m: float
     overlay_alpha: float
+    point_cloud_stride: int
+    point_size_px: float
+    inset_width_px: int
+    render_fps: float
 
     def __post_init__(self) -> None:
         if not self.window_name.strip():
             raise ValueError("viewer.window_name must be non-empty")
         if self.width_px < 640:
             raise ValueError("viewer.width_px must be at least 640")
+        if self.height_px < 480:
+            raise ValueError("viewer.height_px must be at least 480")
         if not 0.0 < self.depth_min_m < self.depth_max_m:
             raise ValueError("viewer depth range must satisfy 0 < min < max")
         if not 0.0 <= self.overlay_alpha <= 1.0:
             raise ValueError("viewer.overlay_alpha must be in [0, 1]")
+        if not 1 <= self.point_cloud_stride <= 16:
+            raise ValueError("viewer.point_cloud_stride must be in [1, 16]")
+        if not 1.0 <= self.point_size_px <= 10.0:
+            raise ValueError("viewer.point_size_px must be in [1, 10]")
+        if not 160 <= self.inset_width_px < self.width_px:
+            raise ValueError(
+                "viewer.inset_width_px must be at least 160 and less than width_px"
+            )
+        if not 1.0 <= self.render_fps <= 120.0:
+            raise ValueError("viewer.render_fps must be in [1, 120]")
 
 
 @dataclass(frozen=True, slots=True)
@@ -127,9 +144,14 @@ def load_settings(path: Path = DEFAULT_CONFIG_PATH) -> RuntimeSettings:
             enabled=bool(viewer["enabled"]),
             window_name=str(viewer["window_name"]),
             width_px=int(viewer["width_px"]),
+            height_px=int(viewer["height_px"]),
             depth_min_m=float(viewer["depth_min_m"]),
             depth_max_m=float(viewer["depth_max_m"]),
             overlay_alpha=float(viewer["overlay_alpha"]),
+            point_cloud_stride=int(viewer["point_cloud_stride"]),
+            point_size_px=float(viewer["point_size_px"]),
+            inset_width_px=int(viewer["inset_width_px"]),
+            render_fps=float(viewer["render_fps"]),
         ),
         status_period_s=float(runtime["status_period_s"]),
     )

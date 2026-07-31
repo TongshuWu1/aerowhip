@@ -1,4 +1,4 @@
-"""Live/SVO PIDNet diagnostic runtime with lossless source recording."""
+"""Live/SVO PIDNet metric-scene runtime with lossless source recording."""
 
 from __future__ import annotations
 
@@ -18,7 +18,8 @@ from .recording import (
     load_recording_manifest,
     new_recording_path,
 )
-from .viewer import OpenCvViewer, ViewerAction, ViewerSnapshot
+from .scene import SceneViewerSnapshot
+from .scene_viewer import AsyncOpenGlSceneViewer, ViewerAction
 from .zed_source import LiveZedSource, SvoZedSource
 
 
@@ -197,30 +198,56 @@ def _viewer_snapshot(
     perception: PerceptionFrame,
     *,
     source: LiveZedSource | SvoZedSource,
+    point_cloud_stride: int,
     pipeline_fps: float | None,
     paused: bool,
     message: str,
-) -> ViewerSnapshot:
+) -> SceneViewerSnapshot:
     frame = perception.rgbd
     status = source.recording_status
-    return ViewerSnapshot(
-        bgr_u8=frame.bgr_u8,
-        depth_m_f32=frame.depth_m_f32,
+    total_frames = source.descriptor.total_frames
+    position = f"{frame.key.source_position}"
+    if total_frames is not None:
+        position = f"{frame.key.source_position + 1}/{total_frames}"
+    pipeline_text = "--" if pipeline_fps is None else f"{pipeline_fps:.1f}"
+    latency_ms = max(0.0, (time.perf_counter_ns() - frame.host_received_ns) / 1.0e6)
+    if status.active:
+        elapsed_s = _recording_elapsed_s(status)
+        state = "RECORDING" if elapsed_s is None else f"RECORDING {elapsed_s:.1f}s"
+    else:
+        state = "PAUSED" if paused else "RUNNING"
+    status_lines = (
+        f"{source.descriptor.kind.upper()} {source.descriptor.label} | "
+        f"frame={frame.key.sequence_index} source={position} | "
+        f"timestamp_ns={frame.key.timestamp_ns}",
+        f"PIDNet={perception.timing.total_ms:.1f}ms | pipeline={pipeline_text}fps | "
+        f"latency={latency_ms:.1f}ms | source_replaced={source.replaced_count}",
+        f"{state} | {message}",
+    )
+    return SceneViewerSnapshot.from_rgbd(
+        frame,
+        source.descriptor.calibration,
+        sample_stride_px=point_cloud_stride,
         masks_u8=perception.masks_u8,
-        source_kind=source.descriptor.kind,
-        source_label=source.descriptor.label,
-        frame_index=frame.key.sequence_index,
-        source_position=frame.key.source_position,
-        timestamp_ns=frame.key.timestamp_ns,
-        total_frames=source.descriptor.total_frames,
-        pipeline_fps=pipeline_fps,
-        inference_ms=perception.timing.total_ms,
-        latency_ms=max(0.0, (time.perf_counter_ns() - frame.host_received_ns) / 1.0e6),
-        recording=status.active,
-        recording_elapsed_s=_recording_elapsed_s(status),
-        paused=paused,
-        skipped_frames=source.replaced_count,
-        message=message,
+        geometry=None,
+        status_lines=status_lines,
+    )
+
+
+def _snapshot_with_playback_state(
+    snapshot: SceneViewerSnapshot,
+    *,
+    paused: bool,
+    message: str,
+) -> SceneViewerSnapshot:
+    """Change only the viewer status while preserving the frozen SVO frame."""
+
+    if not snapshot.status_lines:
+        raise RuntimeError("Viewer snapshot is missing its runtime status")
+    state = "PAUSED" if paused else "RUNNING"
+    return replace(
+        snapshot,
+        status_lines=(*snapshot.status_lines[:-1], f"{state} | {message}"),
     )
 
 
@@ -247,53 +274,69 @@ def run(args: argparse.Namespace) -> None:
         f"warmup={warmup.total_ms:.1f}ms"
     )
 
-    if args.svo is None:
-        source: LiveZedSource | SvoZedSource = LiveZedSource(settings.camera)
-    else:
-        svo_path = Path(args.svo).expanduser().resolve()
-        manifest = load_recording_manifest(svo_path)
-        exact_timestamps = exact_frame_timestamps_ns(manifest)
-        source = SvoZedSource(
-            svo_path,
-            settings.camera,
-            playback_realtime=False,
-            exact_timestamps_ns=exact_timestamps,
+    viewer_enabled = bool(settings.viewer.enabled and not args.headless)
+    viewer = (
+        AsyncOpenGlSceneViewer(
+            window_name=settings.viewer.window_name,
+            width_px=settings.viewer.width_px,
+            height_px=settings.viewer.height_px,
+            depth_min_m=settings.viewer.depth_min_m,
+            depth_max_m=settings.viewer.depth_max_m,
+            overlay_alpha=settings.viewer.overlay_alpha,
+            point_cloud_stride=settings.viewer.point_cloud_stride,
+            point_size_px=settings.viewer.point_size_px,
+            inset_width_px=settings.viewer.inset_width_px,
+            render_fps=settings.viewer.render_fps,
         )
-        try:
+        if viewer_enabled
+        else None
+    )
+
+    source: LiveZedSource | SvoZedSource | None = None
+    try:
+        if args.svo is None:
+            source = LiveZedSource(settings.camera)
+        else:
+            svo_path = Path(args.svo).expanduser().resolve()
+            manifest = load_recording_manifest(svo_path)
+            exact_timestamps = exact_frame_timestamps_ns(manifest)
+            source = SvoZedSource(
+                svo_path,
+                settings.camera,
+                playback_realtime=False,
+                exact_timestamps_ns=exact_timestamps,
+            )
             _validate_replay_manifest(
                 manifest,
                 settings=settings,
                 perception=perception,
                 source=source,
             )
-        except BaseException:
-            source.close()
-            raise
-        print(
-            "Replay manifest validated "
-            f"frames={source.descriptor.total_frames} "
-            f"sdk={source.sdk_version} exact_timestamps=yes"
-        )
-
-    viewer_enabled = bool(settings.viewer.enabled and not args.headless)
-    viewer = (
-        OpenCvViewer(
-            window_name=settings.viewer.window_name,
-            width_px=settings.viewer.width_px,
-            depth_min_m=settings.viewer.depth_min_m,
-            depth_max_m=settings.viewer.depth_max_m,
-            overlay_alpha=settings.viewer.overlay_alpha,
-        )
-        if viewer_enabled
-        else None
-    )
+            print(
+                "Replay manifest validated "
+                f"frames={source.descriptor.total_frames} "
+                f"sdk={source.sdk_version} exact_timestamps=yes"
+            )
+    except BaseException:
+        try:
+            if source is not None:
+                source.close()
+        finally:
+            if viewer is not None:
+                viewer.close()
+        raise
+    assert source is not None
     recording = (
         RecordingController(source, settings, perception)
         if isinstance(source, LiveZedSource)
         else None
     )
     if args.record_to is not None and recording is None:
-        source.close()
+        try:
+            if viewer is not None:
+                viewer.close()
+        finally:
+            source.close()
         raise ValueError("--record-to is valid only with a live ZED source")
 
     processed = 0
@@ -303,7 +346,7 @@ def run(args: argparse.Namespace) -> None:
     next_status = fps_started
     paused = False
     step_once = False
-    last_snapshot: ViewerSnapshot | None = None
+    last_snapshot: SceneViewerSnapshot | None = None
     message = "Q quit | R record" if recording is not None else "Q quit | Space pause | N step"
     first_svo_timestamp_ns: int | None = None
     playback_started_ns: int | None = None
@@ -326,15 +369,27 @@ def run(args: argparse.Namespace) -> None:
                     action = viewer.poll()
                 if action is ViewerAction.QUIT:
                     break
-                if action is ViewerAction.TOGGLE_PAUSE:
+                if action is ViewerAction.TOGGLE_RECORDING:
+                    message = _toggle_recording(recording)
+                    last_snapshot = _snapshot_with_playback_state(
+                        last_snapshot,
+                        paused=True,
+                        message=message,
+                    )
+                    redraw_snapshot = True
+                elif action is ViewerAction.TOGGLE_PAUSE:
                     paused = False
-                    last_snapshot = replace(last_snapshot, paused=False)
+                    last_snapshot = _snapshot_with_playback_state(
+                        last_snapshot,
+                        paused=False,
+                        message=message,
+                    )
                     if (
                         first_svo_timestamp_ns is not None
                         and playback_started_ns is not None
                     ):
                         playback_started_ns = time.perf_counter_ns() - (
-                            last_snapshot.timestamp_ns - first_svo_timestamp_ns
+                            last_snapshot.key.timestamp_ns - first_svo_timestamp_ns
                         )
                 elif action is ViewerAction.STEP:
                     step_once = True
@@ -375,14 +430,18 @@ def run(args: argparse.Namespace) -> None:
                 fps_count = 0
                 fps_started = now
 
-            last_snapshot = _viewer_snapshot(
-                result,
-                source=source,
-                pipeline_fps=fps_value,
-                paused=paused,
-                message=message,
-            )
-            action = viewer.show(last_snapshot) if viewer is not None else ViewerAction.NONE
+            if viewer is not None:
+                last_snapshot = _viewer_snapshot(
+                    result,
+                    source=source,
+                    point_cloud_stride=settings.viewer.point_cloud_stride,
+                    pipeline_fps=fps_value,
+                    paused=paused,
+                    message=message,
+                )
+                action = viewer.show(last_snapshot)
+            else:
+                action = ViewerAction.NONE
             if action is ViewerAction.QUIT:
                 break
             if action is ViewerAction.TOGGLE_RECORDING:
@@ -390,7 +449,11 @@ def run(args: argparse.Namespace) -> None:
             elif action is ViewerAction.TOGGLE_PAUSE:
                 if source.descriptor.kind == "svo":
                     paused = not paused
-                    last_snapshot = replace(last_snapshot, paused=paused)
+                    last_snapshot = _snapshot_with_playback_state(
+                        last_snapshot,
+                        paused=paused,
+                        message=message,
+                    )
                     redraw_snapshot = paused
                     if (
                         not paused
@@ -398,7 +461,7 @@ def run(args: argparse.Namespace) -> None:
                         and playback_started_ns is not None
                     ):
                         playback_started_ns = time.perf_counter_ns() - (
-                            last_snapshot.timestamp_ns - first_svo_timestamp_ns
+                            last_snapshot.key.timestamp_ns - first_svo_timestamp_ns
                         )
                 else:
                     message = "Pause applies only to SVO playback"
@@ -409,7 +472,11 @@ def run(args: argparse.Namespace) -> None:
             if stepping and action is not ViewerAction.TOGGLE_PAUSE:
                 paused = True
                 if last_snapshot is not None:
-                    last_snapshot = replace(last_snapshot, paused=True)
+                    last_snapshot = _snapshot_with_playback_state(
+                        last_snapshot,
+                        paused=True,
+                        message=message,
+                    )
                     redraw_snapshot = True
 
             if now >= next_status:
@@ -473,7 +540,7 @@ def run(args: argparse.Namespace) -> None:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Synchronized ZED RGB-D and PIDNet diagnostic runtime",
+        description="Synchronized ZED RGB-D and PIDNet metric-scene runtime",
     )
     parser.add_argument(
         "--config",
