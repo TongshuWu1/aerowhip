@@ -38,9 +38,16 @@ ZED RGB + registered depth
                     +--> raw plane pose (preserved)
                     +--> robust joint pose refinement and covariance
                     +--> temporal rigid pose and velocity state
+        |                       |
+        +-----------------------+
+                    |
+                    v
+        Passive CUDA cable--cube contact observer
+        physical gap + normal motion + optional co-motion
+        binary temporal posterior for each cable
         |
         v
-Cable estimates, cube observation, uncertainty, diagnostics, and viewer
+Cable estimates, cube state, passive contact posteriors, diagnostics, and viewer
 ```
 
 There is one PIDNet inference and one batched PF computation per tracked frame.
@@ -53,6 +60,11 @@ cable tracker. Its serial CPU worker runs concurrently with the CUDA cable
 path. After the results rejoin, a small causal SE(3) filter updates on the
 tracking thread using the exact capture timestamp. Cube evidence does not yet
 alter cable particles, weights, proposals, constraints, or resampling.
+
+After both visual estimators finish, a read-only CUDA contact observer evaluates
+the cable particle populations against the temporal cube state. This observer
+does not modify either estimator. Contact feedback and force estimation remain
+separate later stages.
 
 ## Information provided by the neural network
 
@@ -146,14 +158,53 @@ linear speed, face count, refined surface residual, centre, and CPU time.
 `[cube_state_filter].enabled` isolates the temporal state. The standalone
 `cube_tracking_tester/run_cube_tracking.py` uses this same canonical module.
 
-Cube tracking is currently observational only. Contact proposal, temporal
-contact confidence, sticking/sliding classification, and contact feedback to
-the cable PF are not implemented.
+Cube tracking and the first contact stage are currently observational only.
+The system now reports a passive binary temporal contact probability for each
+cable, but contact feedback to the cable PF, force estimation, and
+sticking/sliding classification are not implemented.
 
 The canonical cube geometry also exposes an analytical signed oriented-box
 query. For arbitrary camera-frame points it returns signed distance, closest
-surface point, and outward surface normal. This is the geometry interface for
-future cable-radius-aware contact and does not construct a cube mesh.
+surface point, and outward surface normal. The CUDA contact observer implements
+the same oriented-box geometry for batched particles and does not construct a
+cube mesh.
+
+## Passive cable--cube contact observer
+
+For every cable particle, the observer densely samples the ordered PF
+centerline and queries the analytical oriented cube. Its physical surface gap
+is
+
+\[
+g = d_{\rm cube}(\mathbf x)-r_{\rm cable},
+\]
+
+so a centreline lying one cable radius from the cube has zero gap. The closest
+dense sample supplies its surface point, outward normal, cable arc coordinate,
+and a contiguous near-surface arc interval. Cube pose covariance is projected
+onto that surface normal and combined with the current refined surface RMS and
+a fixed sensor floor. Cable uncertainty is integrated directly through the PF
+weights rather than reduced to a second Gaussian approximation.
+
+The per-particle contact compatibility combines near-zero physical gap with
+near-zero relative normal velocity. Tangential agreement is not required,
+because binary contact must allow sliding. When both bodies are moving,
+compatible full 3D co-motion can provide a bounded positive Bayes factor; it is
+inactive while stationary and its absence never argues against contact.
+
+Each cable has a two-state continuous-time Markov prior and a scalar contact
+posterior. The observation likelihood includes a bounded outlier mixture, so
+one frame cannot become decisive. A measurement update is permitted only when
+both the cable PF and cube state accepted evidence from the current synchronized
+frame. If either is prediction-only, the contact state only predicts forward;
+missing observations cannot create contact confidence.
+
+`[contact].enabled` isolates this observer. It reads PF tensors only after the
+visual update and never changes particles, velocities, weights, proposals,
+constraints, ESS, or resampling. The 3D viewer shows a near-surface contact
+point and normal plus one compact line with probability, gap, normal velocity,
+arc interval, and whether the frame used measurements (`M`) or prediction
+(`P`).
 
 ## Skeleton graph
 
@@ -506,9 +557,9 @@ crossing, or whether the cables physically touch.
 
 Endpoint identity, fixed cable length, temporal continuity, visible-edge
 attribution, and particle likelihood resolve cable traversal hypotheses.
-Physical contact and height ordering remain outside the current observation
-model. The measured cable radius is represented geometrically but does not yet
-alter the centerline measurement likelihood.
+Physical contact and height ordering remain outside the skeleton observation
+model. The separate passive contact observer uses the measured cable radius,
+but this radius still does not alter the PF centreline measurement likelihood.
 
 ## Feature controls
 
@@ -563,6 +614,12 @@ cube measurement: validity, rejection reason, fitted face count, centre XYZ,
 and cube-surface RMS. Invalid cube measurements leave centre and RMS empty
 rather than substituting a held or predicted pose.
 
+When contact inference is enabled, the same row also saves each cable's contact
+probability, evidence/prediction flag, physical gap and uncertainty, relative
+normal velocity, co-motion score, contact arc interval, closest surface point,
+surface normal, and reason. These values are intentionally logged rather than
+added as more live plots.
+
 The CSV also records four compact observation diagnostics for each cable:
 detected endpoint count, the two endpoint body-component labels, complete-route
 count, and the observation reason. These values distinguish a segmentation
@@ -585,6 +642,7 @@ Profiler output separates:
 - PF readback;
 - graph attribution CPU preparation/readback and CUDA time;
 - visible-edge likelihood CUDA time.
+- passive contact wall and CUDA time.
 
 The initial NumPy implementation was removed after the live viewer exposed
 approximately 39 ms diagnostic-frame latency for eight edges. The implemented
@@ -605,6 +663,7 @@ depends on the number of observed graph edges.
 | `ZED_segmentation_viewer/source/cable_geometry.py` | Capsule-tube geometry and parallel-transport mesh construction |
 | `ZED_segmentation_viewer/source/cube_tracker.py` | Raw known-cube RGB-D plane fitting, joint pose refinement/covariance, and analytical cube surface queries |
 | `ZED_segmentation_viewer/source/cube_state_filter.py` | Separate causal SE(3) cube pose/velocity state and covariance |
+| `ZED_segmentation_viewer/source/contact_estimator.py` | Read-only uncertainty-aware binary cable--cube contact observer |
 | `ZED_segmentation_viewer/source/live_evaluation.py` | Three-signal live plot and CSV logger |
 | `ZED_segmentation_viewer/source/app.py` | Asynchronous capture/tracking/viewer preparation and console profiling |
 | `ZED_segmentation_viewer/source/split_viewer.py` | OpenGL viewer, diagnostics, feature controls, recording |

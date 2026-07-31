@@ -2,12 +2,12 @@
 
 ## Status and purpose
 
-This document records the planned research methodology for cable--object
-interaction estimation. The raw/refined cube observation, pose covariance,
-separate temporal cube-state filter, and analytical cube surface query are now
-implemented foundations. The interaction/contact and mechanics sections remain
-a design specification. The implemented tracking pipeline is documented
-separately in `PIPELINE.md`.
+This document records the research methodology for cable--object interaction
+estimation. The raw/refined cube observation, pose covariance, separate
+temporal cube-state filter, analytical cube surface query, and passive binary
+contact observer are implemented. Bidirectional estimator feedback and the
+mechanics sections remain a design specification. The implemented tracking
+pipeline is documented separately in `PIPELINE.md`.
 
 The immediate scope is contact between either tracked cable and the known
 rigid cube. Cable--cable and cable self-contact are deliberately deferred.
@@ -66,10 +66,10 @@ Synchronized RGB-D
        physical gap, normal motion, co-motion
                     |
                     v
-       Binary temporal contact inference
+       Binary temporal contact inference       [implemented, passive]
                     |
                     v
-       Bidirectional cable/cube reweighting
+       Bidirectional cable/cube reweighting     [future]
                     |
                     v
        Contact-conditioned prediction/proposals
@@ -298,21 +298,24 @@ near-zero physical gap and compatible normal motion:
 \right].
 \]
 
-The scales include cable posterior spread, cube-state uncertainty, and
-measurement resolution. They are not arbitrary physical contact thicknesses.
+Cube pose covariance and surface measurement resolution determine
+\(\sigma_g\). Cable uncertainty is not counted a second time in this scalar:
+the compatibility is evaluated for every cable particle and then marginalized
+with its normalized PF weight.
 
-The free-space likelihood allows positive separation and penalizes only
-physical penetration:
+The implemented free-space compatibility is the Gaussian probability that the
+uncertain physical gap lies on the separated side of the contact boundary:
 
 \[
 \Psi_{\rm free}^{ij}
-=
-\exp\left[
--
-\frac{\left[-g_{ij}\right]_+^2}
-{2\sigma_{\rm pen}^2}
-\right].
+= \Phi\!\left(\frac{g_{ij}}{\sigma_g}\right).
 \]
+
+Thus clear positive separation supports `free`, physical penetration opposes
+it, and a zero measured gap remains ambiguous rather than being declared
+contact by geometry alone. Both state likelihoods are mixed with a fixed
+outlier component before the Bayesian update, bounding the influence of any
+single frame.
 
 Co-motion supplies a temporal Bayes factor that can increase the contact odds
 when spatial proximity is already plausible. It must not turn distant
@@ -739,20 +742,22 @@ Completed foundations:
 2. Add the separate temporal Gaussian rigid cube-state filter.
 3. Add the analytical oriented-cube signed-distance, closest-point, and normal
    query.
+4. Apply the physical cable radius and evaluate weighted cable-particle gap,
+   normal motion, and bounded positive co-motion evidence on CUDA.
+5. Add a passive binary temporal contact posterior for each cable, with
+   measurement gating and prediction-only propagation.
 
 Remaining sequence:
 
-1. Apply the physical cable radius and evaluate cable-particle/cube-sigma
-   physical gap and normal velocity.
-2. Add the binary temporal contact posterior for each cable.
-3. Add one-pass bidirectional cable-PF reweighting and a moment-matched
+1. Analyse passive contact recordings before enabling any estimator feedback.
+2. Add one-pass bidirectional cable-PF reweighting and a moment-matched
    Gaussian cube message.
-4. Add contact-conditioned normal proposals behind an isolated feature switch.
-5. Add the quasi-static inverse cable mechanics force estimator.
-6. Add cube action--reaction consistency after mass, inertia, and the support
+3. Add contact-conditioned normal proposals behind an isolated feature switch.
+4. Add the quasi-static inverse cable mechanics force estimator.
+5. Add cube action--reaction consistency after mass, inertia, and the support
    model are available.
-7. Later extend contact to sticking/sliding and estimate friction.
-8. Later add cable--cable contact through the common interaction interface.
+6. Later extend contact to sticking/sliding and estimate friction.
+7. Later add cable--cable contact through the common interaction interface.
 
 ## Required methodological invariants
 

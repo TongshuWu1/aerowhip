@@ -91,6 +91,27 @@ initial_angular_velocity_std_rps = 0.80
 maximum_prediction_age_s = 0.50
 maximum_prediction_step_s = 0.10
 
+[contact]
+# Passive only: reads the two cable posteriors and temporal cube state but
+# never changes PF particles, weights, proposals, constraints, or resampling.
+enabled = true
+# The per-frame gap standard deviation combines filtered cube pose covariance
+# with the current refined surface residual and at least this sensor floor.
+surface_noise_floor_m = 0.002
+normal_velocity_std_floor_mps = 0.040
+# Continuous-time two-state contact prior. Visual evidence is applied only
+# when both the cable and cube used current measurements.
+initial_contact_probability = 0.02
+contact_entry_rate_hz = 0.05
+contact_exit_rate_hz = 0.50
+# Bounded observation mixture prevents one frame from becoming decisive.
+observation_outlier_probability = 0.10
+interval_sigma_scale = 2.0
+# Co-motion can only increase contact odds and is inactive while stationary.
+comotion_min_speed_mps = 0.020
+comotion_relative_speed_std_mps = 0.040
+comotion_max_bayes_factor = 3.0
+
 [pidnet]
 checkpoint = "data/models/pidnet_two_cable_best.pt"
 device = "cuda"

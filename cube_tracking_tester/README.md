@@ -81,5 +81,8 @@ metric plane threshold.
 ## Synthetic verification
 
 ```powershell
-.\.venv\Scripts\python.exe -m unittest cube_tracking_tester.test_cube_tracker
+.\.venv\Scripts\python.exe -m unittest discover -s cube_tracking_tester -p "test_*.py"
 ```
+
+This runs the cube geometry/state checks and the deterministic CPU/CUDA checks
+for the passive cable--cube contact observer.

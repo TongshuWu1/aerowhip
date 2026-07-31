@@ -35,6 +35,21 @@ class EvaluationSample:
     cube_face_count: int
     cube_center_m: tuple[float, float, float]
     cube_surface_rms_mm: float
+    contact_probability: tuple[float, float]
+    contact_evidence_used: tuple[bool, bool]
+    contact_gap_mm: tuple[float, float]
+    contact_gap_std_mm: tuple[float, float]
+    contact_normal_velocity_mps: tuple[float, float]
+    contact_comotion_score: tuple[float, float]
+    contact_arc_m: tuple[float, float]
+    contact_interval_m: tuple[tuple[float, float], tuple[float, float]]
+    contact_point_m: tuple[
+        tuple[float, float, float], tuple[float, float, float]
+    ]
+    contact_normal: tuple[
+        tuple[float, float, float], tuple[float, float, float]
+    ]
+    contact_reason: tuple[str, str]
 
 
 def _finite_or_nan(value: float) -> float:
@@ -103,6 +118,38 @@ class LiveEvaluation:
                 "cube_center_y_m",
                 "cube_center_z_m",
                 "cube_surface_rms_mm",
+                "cable_1_contact_probability",
+                "cable_2_contact_probability",
+                "cable_1_contact_evidence_used",
+                "cable_2_contact_evidence_used",
+                "cable_1_contact_gap_mm",
+                "cable_2_contact_gap_mm",
+                "cable_1_contact_gap_std_mm",
+                "cable_2_contact_gap_std_mm",
+                "cable_1_contact_normal_velocity_mps",
+                "cable_2_contact_normal_velocity_mps",
+                "cable_1_contact_comotion_score",
+                "cable_2_contact_comotion_score",
+                "cable_1_contact_arc_m",
+                "cable_2_contact_arc_m",
+                "cable_1_contact_interval_start_m",
+                "cable_1_contact_interval_end_m",
+                "cable_2_contact_interval_start_m",
+                "cable_2_contact_interval_end_m",
+                "cable_1_contact_point_x_m",
+                "cable_1_contact_point_y_m",
+                "cable_1_contact_point_z_m",
+                "cable_2_contact_point_x_m",
+                "cable_2_contact_point_y_m",
+                "cable_2_contact_point_z_m",
+                "cable_1_contact_normal_x",
+                "cable_1_contact_normal_y",
+                "cable_1_contact_normal_z",
+                "cable_2_contact_normal_x",
+                "cable_2_contact_normal_y",
+                "cable_2_contact_normal_z",
+                "cable_1_contact_reason",
+                "cable_2_contact_reason",
             )
         )
         self.csv_stream.flush()
@@ -131,6 +178,7 @@ class LiveEvaluation:
         particle_filter,
         observation=None,
         cube_tracking=None,
+        contact=None,
     ) -> None:
         if self.closed or not particle_filter.diagnostics_refreshed:
             return
@@ -181,6 +229,83 @@ class LiveEvaluation:
             if cube_tracking is not None
             else float("nan")
         )
+        contact_cables = tuple(contact.cables) if contact is not None else ()
+        if len(contact_cables) == 2:
+            contact_probability = tuple(
+                _finite_or_nan(item.contact_probability)
+                for item in contact_cables
+            )
+            contact_evidence_used = tuple(
+                bool(item.evidence_used) for item in contact_cables
+            )
+            contact_gap_mm = tuple(
+                _finite_or_nan(item.minimum_gap_m * 1000.0)
+                for item in contact_cables
+            )
+            contact_gap_std_mm = tuple(
+                _finite_or_nan(item.gap_std_m * 1000.0)
+                for item in contact_cables
+            )
+            contact_normal_velocity_mps = tuple(
+                _finite_or_nan(item.normal_velocity_mps)
+                for item in contact_cables
+            )
+            contact_comotion_score = tuple(
+                _finite_or_nan(item.comotion_score)
+                for item in contact_cables
+            )
+            contact_arc_m = tuple(
+                _finite_or_nan(item.contact_arc_m)
+                for item in contact_cables
+            )
+            contact_interval_m = tuple(
+                tuple(_finite_or_nan(value) for value in item.arc_interval_m)
+                for item in contact_cables
+            )
+            contact_point_m = tuple(
+                tuple(
+                    _finite_or_nan(value)
+                    for value in (
+                        np.asarray(item.closest_point_m).reshape(3)
+                        if item.closest_point_m is not None
+                        else np.full(3, np.nan)
+                    )
+                )
+                for item in contact_cables
+            )
+            contact_normal = tuple(
+                tuple(
+                    _finite_or_nan(value)
+                    for value in (
+                        np.asarray(item.surface_normal).reshape(3)
+                        if item.surface_normal is not None
+                        else np.full(3, np.nan)
+                    )
+                )
+                for item in contact_cables
+            )
+            contact_reason = tuple(str(item.reason) for item in contact_cables)
+        else:
+            contact_probability = (float("nan"), float("nan"))
+            contact_evidence_used = (False, False)
+            contact_gap_mm = (float("nan"), float("nan"))
+            contact_gap_std_mm = (float("nan"), float("nan"))
+            contact_normal_velocity_mps = (float("nan"), float("nan"))
+            contact_comotion_score = (float("nan"), float("nan"))
+            contact_arc_m = (float("nan"), float("nan"))
+            contact_interval_m = (
+                (float("nan"), float("nan")),
+                (float("nan"), float("nan")),
+            )
+            contact_point_m = (
+                (float("nan"),) * 3,
+                (float("nan"),) * 3,
+            )
+            contact_normal = (
+                (float("nan"),) * 3,
+                (float("nan"),) * 3,
+            )
+            contact_reason = ("not available", "not available")
         sample = EvaluationSample(
             time_s=float(relative_time),
             frame_index=int(frame_index),
@@ -215,6 +340,17 @@ class LiveEvaluation:
             ),
             cube_center_m=tuple(_finite_or_nan(value) for value in cube_center),
             cube_surface_rms_mm=cube_surface_rms_mm,
+            contact_probability=contact_probability,
+            contact_evidence_used=contact_evidence_used,
+            contact_gap_mm=contact_gap_mm,
+            contact_gap_std_mm=contact_gap_std_mm,
+            contact_normal_velocity_mps=contact_normal_velocity_mps,
+            contact_comotion_score=contact_comotion_score,
+            contact_arc_m=contact_arc_m,
+            contact_interval_m=contact_interval_m,
+            contact_point_m=contact_point_m,
+            contact_normal=contact_normal,
+            contact_reason=contact_reason,
         )
         with self.lock:
             self.samples.append(sample)
@@ -258,6 +394,30 @@ class LiveEvaluation:
                         if not np.isfinite(sample.cube_surface_rms_mm)
                         else f"{sample.cube_surface_rms_mm:.6f}"
                     ),
+                    *(
+                        "" if not np.isfinite(value) else f"{value:.6f}"
+                        for value in sample.contact_probability
+                    ),
+                    int(sample.contact_evidence_used[0]),
+                    int(sample.contact_evidence_used[1]),
+                    *(
+                        "" if not np.isfinite(value) else f"{value:.6f}"
+                        for value in (
+                            *sample.contact_gap_mm,
+                            *sample.contact_gap_std_mm,
+                            *sample.contact_normal_velocity_mps,
+                            *sample.contact_comotion_score,
+                            *sample.contact_arc_m,
+                            *sample.contact_interval_m[0],
+                            *sample.contact_interval_m[1],
+                            *sample.contact_point_m[0],
+                            *sample.contact_point_m[1],
+                            *sample.contact_normal[0],
+                            *sample.contact_normal[1],
+                        )
+                    ),
+                    sample.contact_reason[0],
+                    sample.contact_reason[1],
                 )
             )
             self.csv_stream.flush()

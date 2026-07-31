@@ -286,6 +286,8 @@ class CableFilterOutput:
 class ParticleFilterFrame:
     cables: tuple[CableFilterOutput, CableFilterOutput]
     cable_radius_m: float
+    initialized: tuple[bool, bool]
+    measurement_used: tuple[bool, bool]
     processing_ms: float
     gpu_ms: float
     active_features: str
@@ -741,6 +743,23 @@ class BatchedCableParticleFilter:
             self.graph_edge_attributor.clear_temporal_history()
         if pf_feature_changed:
             self._diagnostic_cache = [None, None]
+
+    def posterior_tensors(
+        self,
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        """Return read-only references to the current CUDA posterior state.
+
+        Downstream passive observers may evaluate these tensors after
+        :meth:`update` completes. They must not modify them.
+        """
+
+        if (
+            self.particles is None
+            or self.velocities is None
+            or self.weights is None
+        ):
+            raise RuntimeError("The cable posterior has not been allocated.")
+        return self.particles, self.velocities, self.weights
 
     def _capture_constraint_graph(
         self,
@@ -2515,6 +2534,8 @@ class BatchedCableParticleFilter:
         readback_started = time.perf_counter()
 
         outputs = []
+        frame_initialized: list[bool] = []
+        frame_measurement_used: list[bool] = []
         for cable_index, pending in enumerate(pending_outputs):
             estimate_payload = pending.estimate_payload.cpu().numpy()
             state_payload = pending.state_payload.cpu().numpy()
@@ -2545,6 +2566,8 @@ class BatchedCableParticleFilter:
             ) = (float(value) for value in state_payload)
             measurement_accepted = bool(measurement_accepted_value)
             current_initialized = bool(current_initialized_value)
+            frame_initialized.append(current_initialized)
+            frame_measurement_used.append(measurement_accepted)
             measurement_available_value = bool(measurement_available_value)
             particle_any_valid_value = bool(particle_any_valid_value)
             edge_measurement_value = bool(edge_measurement_value)
@@ -2821,6 +2844,11 @@ class BatchedCableParticleFilter:
         return ParticleFilterFrame(
             cables=(outputs[0], outputs[1]),
             cable_radius_m=0.5 * self.config.cable_diameter_m,
+            initialized=(frame_initialized[0], frame_initialized[1]),
+            measurement_used=(
+                frame_measurement_used[0],
+                frame_measurement_used[1],
+            ),
             processing_ms=float((time.perf_counter() - started) * 1000.0),
             gpu_ms=gpu_ms,
             active_features=self.features.summary(),

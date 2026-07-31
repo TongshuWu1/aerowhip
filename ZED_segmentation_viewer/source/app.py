@@ -26,6 +26,11 @@ if str(NN_SOURCE_DIR) not in sys.path:
     sys.path.insert(0, str(NN_SOURCE_DIR))
 
 from cable_pidnet import PidNetSegmenter  # noqa: E402
+from contact_estimator import (  # noqa: E402
+    CableCubeContactEstimator,
+    ContactEstimatorConfig,
+    ContactFrame,
+)
 from cube_tracker import (  # noqa: E402
     CameraModel as CubeCameraModel,
     CubeTrackerConfig,
@@ -144,6 +149,7 @@ class TrackingResult:
     particle_filter: ParticleFilterFrame
     cube_tracking: CubeTrackingResult | None
     cube_state: CubeStateEstimate | None
+    contact: ContactFrame | None
     inference_ms: float
     tracking_ms: float
     schedule_wait_ms: float
@@ -172,6 +178,7 @@ class SegmentationResult:
     particle_filter: ParticleFilterFrame
     cube_tracking: CubeTrackingResult | None
     cube_state: CubeStateEstimate | None
+    contact: ContactFrame | None
 
 
 @dataclass(frozen=True)
@@ -715,6 +722,7 @@ class AsyncSegmentationPipeline:
         particle_filter: BatchedCableParticleFilter,
         cube_tracker: KnownCubeTracker | None,
         cube_state_filter: RigidCubeStateFilter | None,
+        contact_estimator: CableCubeContactEstimator | None,
         visualization_max_fps: float,
         visualization_image_width: int,
         visualization_point_cloud_stride: int,
@@ -731,6 +739,7 @@ class AsyncSegmentationPipeline:
         self.particle_filter = particle_filter
         self.cube_tracker = cube_tracker
         self.cube_state_filter = cube_state_filter
+        self.contact_estimator = contact_estimator
         self.visualization_image_width = max(
             1,
             int(visualization_image_width),
@@ -807,6 +816,8 @@ class AsyncSegmentationPipeline:
         self.last_particle_filter_gpu_ms = 0.0
         self.last_cube_tracking_ms = 0.0
         self.last_cube_state_ms = 0.0
+        self.last_contact_ms = 0.0
+        self.last_contact_gpu_ms = 0.0
         self._last_fps_time = time.perf_counter()
         self._last_fps_frame = 0
         self._last_rate_time = self._last_fps_time
@@ -846,6 +857,9 @@ class AsyncSegmentationPipeline:
                 "pf_wall",
                 "pf_gpu",
                 "cube",
+                "cube_state",
+                "contact",
+                "contact_gpu",
                 "tracking",
                 "viewer_prep",
                 "viewer_cloud",
@@ -914,6 +928,8 @@ class AsyncSegmentationPipeline:
         future.result()
         if cube_future is not None:
             cube_future.result()
+        if self.contact_estimator is not None:
+            self.contact_estimator.warmup()
         return float((time.perf_counter() - started) * 1000.0)
 
     def stop(self) -> None:
@@ -969,6 +985,8 @@ class AsyncSegmentationPipeline:
                 "particle_filter_gpu_ms": float(self.last_particle_filter_gpu_ms),
                 "cube_tracking_ms": float(self.last_cube_tracking_ms),
                 "cube_state_ms": float(self.last_cube_state_ms),
+                "contact_ms": float(self.last_contact_ms),
+                "contact_gpu_ms": float(self.last_contact_gpu_ms),
                 "captured": int(self.frame_count),
                 "tracking_published": int(self.tracking_published),
                 "tracking_submitted": int(self.tracking_submitted),
@@ -1379,6 +1397,16 @@ class AsyncSegmentationPipeline:
                     if result.cube_state is not None
                     else 0.0
                 )
+                self.last_contact_ms = float(
+                    result.contact.processing_ms
+                    if result.contact is not None
+                    else 0.0
+                )
+                self.last_contact_gpu_ms = float(
+                    result.contact.gpu_ms
+                    if result.contact is not None
+                    else 0.0
+                )
                 if result.cube_tracking is not None:
                     cube = result.cube_tracking
                     self.performance_stats["cube_valid"] = bool(cube.valid)
@@ -1404,6 +1432,21 @@ class AsyncSegmentationPipeline:
                         if state.linear_velocity_mps is not None
                         else float("nan")
                     )
+                if result.contact is not None:
+                    for cable_index, contact in enumerate(result.contact.cables):
+                        prefix = f"contact{cable_index + 1}"
+                        self.performance_stats[f"{prefix}_initialized"] = bool(
+                            contact.initialized
+                        )
+                        self.performance_stats[f"{prefix}_probability"] = float(
+                            contact.contact_probability
+                        )
+                        self.performance_stats[f"{prefix}_gap_mm"] = float(
+                            contact.minimum_gap_m * 1000.0
+                        )
+                        self.performance_stats[f"{prefix}_evidence"] = bool(
+                            contact.evidence_used
+                        )
                 for cable_index, cable in enumerate(
                     result.particle_filter.cables
                 ):
@@ -1446,6 +1489,18 @@ class AsyncSegmentationPipeline:
                         if result.cube_state is not None
                         else 0.0,
                     ),
+                    (
+                        "contact",
+                        result.contact.processing_ms
+                        if result.contact is not None
+                        else 0.0,
+                    ),
+                    (
+                        "contact_gpu",
+                        result.contact.gpu_ms
+                        if result.contact is not None
+                        else 0.0,
+                    ),
                     ("tracking", result.tracking_ms),
                 ):
                     self._append_performance(name, value)
@@ -1466,6 +1521,7 @@ class AsyncSegmentationPipeline:
                     result.particle_filter,
                     observation=result.observation,
                     cube_tracking=result.cube_tracking,
+                    contact=result.contact,
                 )
 
             # Raw RGB/depth storage is retained only while the diagnostic viewer
@@ -1770,6 +1826,7 @@ class AsyncSegmentationPipeline:
             f"schedule={pair('schedule_wait')} NN={pair('inference')} "
             f"observation={pair('observation')} PFwall={pair('pf_wall')} "
             f"PFgpu={pair('pf_gpu')} cube={pair('cube')} "
+            f"contact={pair('contact')} contactGPU={pair('contact_gpu')} "
             f"submit_interval={pair('submit_interval')}\n"
             f"  mailbox published/consumed/replaced/starved="
             f"{int(stats.get('tracking_published', 0))}/"
@@ -1818,7 +1875,14 @@ class AsyncSegmentationPipeline:
             f"{float(stats.get('cube_refined_surface_rms_mm', float('nan'))):.1f}mm "
             f"state={'valid' if stats.get('cube_state_valid', False) else 'invalid'}/"
             f"{float(stats.get('cube_state_age_ms', float('nan'))):.0f}ms/"
-            f"{float(stats.get('cube_state_speed_mps', float('nan'))):.3f}mps",
+            f"{float(stats.get('cube_state_speed_mps', float('nan'))):.3f}mps\n"
+            f"  contact C1="
+            f"{float(stats.get('contact1_probability', float('nan'))):.3f}/"
+            f"{float(stats.get('contact1_gap_mm', float('nan'))):+.1f}mm/"
+            f"{'M' if stats.get('contact1_evidence', False) else 'P'} "
+            f"C2={float(stats.get('contact2_probability', float('nan'))):.3f}/"
+            f"{float(stats.get('contact2_gap_mm', float('nan'))):+.1f}mm/"
+            f"{'M' if stats.get('contact2_evidence', False) else 'P'}",
             flush=True,
         )
 
@@ -1901,6 +1965,17 @@ class AsyncSegmentationPipeline:
             if self.cube_state_filter is not None
             else None
         )
+        contact = (
+            self.contact_estimator.update(
+                self.particle_filter,
+                particle_filter,
+                cube_state,
+                cube_tracking,
+                captured_at,
+            )
+            if self.contact_estimator is not None
+            else None
+        )
         completed_at = time.perf_counter()
         return TrackingResult(
             buffer_index=buffer_index,
@@ -1916,6 +1991,7 @@ class AsyncSegmentationPipeline:
             particle_filter=particle_filter,
             cube_tracking=cube_tracking,
             cube_state=cube_state,
+            contact=contact,
             inference_ms=float((inference_finished - inference_start) * 1000.0),
             tracking_ms=float((completed_at - tracking_start) * 1000.0),
             schedule_wait_ms=float((tracking_start - submitted_at) * 1000.0),
@@ -2038,6 +2114,7 @@ class AsyncSegmentationPipeline:
             particle_filter=tracked.particle_filter,
             cube_tracking=tracked.cube_tracking,
             cube_state=tracked.cube_state,
+            contact=tracked.contact,
         )
 
 
@@ -2085,6 +2162,18 @@ def main() -> None:
     cube_state_config = (
         CubeStateFilterConfig.from_mapping(cube_state_values)
         if cube_tracking_enabled and cube_state_enabled
+        else None
+    )
+    contact_values = config.get("contact") or {}
+    contact_enabled = bool(contact_values.get("enabled", False))
+    if contact_enabled and cube_state_config is None:
+        raise ValueError(
+            "Passive contact inference requires cube tracking and the temporal "
+            "cube-state filter."
+        )
+    contact_config = (
+        ContactEstimatorConfig.from_mapping(contact_values)
+        if contact_enabled
         else None
     )
     observation_config = ObservationConfig.from_mapping(config.get("observation"))
@@ -2186,6 +2275,24 @@ def main() -> None:
             if cube_state_config is not None
             else None
         )
+        particle_filter = BatchedCableParticleFilter(
+            particle_filter_config,
+            particle_features,
+        )
+        contact_estimator = (
+            CableCubeContactEstimator(
+                contact_config,
+                cable_lengths_m=particle_filter_config.cable_lengths_m,
+                particle_count=particle_filter_config.particle_count,
+                node_count=particle_filter_config.node_count,
+                dense_samples_per_segment=(
+                    particle_filter_config.dense_samples_per_segment
+                ),
+                device=particle_filter_config.device,
+            )
+            if contact_config is not None
+            else None
+        )
         pipeline = AsyncSegmentationPipeline(
             zed,
             runtime,
@@ -2198,12 +2305,10 @@ def main() -> None:
                 camera_model,
                 particle_filter_config.device,
             ),
-            BatchedCableParticleFilter(
-                particle_filter_config,
-                particle_features,
-            ),
+            particle_filter,
             cube_tracker,
             cube_state_filter,
+            contact_estimator,
             float(viewer_config.get("point_cloud_fps", 5.0)),
             int(viewer_config.get("rgb_width", 620)),
             int(viewer_config.get("point_cloud_stride", 1)),

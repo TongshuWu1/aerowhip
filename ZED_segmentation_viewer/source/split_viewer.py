@@ -407,6 +407,7 @@ class SplitPointCloudViewer:
         self.particle_filter = None
         self.cube_tracking = None
         self.cube_state = None
+        self.contact = None
         self.show_top_particles = True
         self.show_cable_volume = True
         self.cable_meshes = (
@@ -604,6 +605,7 @@ class SplitPointCloudViewer:
             "particle_filter": result.particle_filter,
             "cube_tracking": result.cube_tracking,
             "cube_state": result.cube_state,
+            "contact": result.contact,
         }
         with self.lock:
             self.pending = payload
@@ -656,6 +658,7 @@ class SplitPointCloudViewer:
         self.particle_filter = payload["particle_filter"]
         self.cube_tracking = payload["cube_tracking"]
         self.cube_state = payload["cube_state"]
+        self.contact = payload["contact"]
         cable_radius_m = float(self.particle_filter.cable_radius_m)
         self.cable_meshes = tuple(
             swept_capsule_mesh(
@@ -695,6 +698,7 @@ class SplitPointCloudViewer:
         self._draw_cloud(mvp)
         self._draw_cube_tracking()
         self._draw_particle_filter()
+        self._draw_contact()
         self._draw_camera_origin()
         self._draw_cloud_overlay(cloud_width, self.height)
         self._draw_divider(left_width)
@@ -1095,6 +1099,39 @@ class SplitPointCloudViewer:
         glDisable(GL_BLEND)
         glEnable(GL_DEPTH_TEST)
 
+    def _draw_contact(self):
+        if self.contact is None:
+            return
+        colors = (BLUE, GREEN)
+        glUseProgram(0)
+        glDisable(GL_TEXTURE_2D)
+        glDisable(GL_DEPTH_TEST)
+        for cable_index, contact in enumerate(self.contact.cables):
+            if (
+                not contact.geometry_valid
+                or contact.closest_point_m is None
+                or contact.surface_normal is None
+                or not np.isfinite(contact.minimum_gap_m)
+                or not np.isfinite(contact.gap_std_m)
+                or abs(contact.minimum_gap_m) > 2.0 * contact.gap_std_m
+            ):
+                continue
+            point = np.asarray(contact.closest_point_m, dtype=np.float32)
+            normal = np.asarray(contact.surface_normal, dtype=np.float32)
+            color = colors[cable_index]
+            glPointSize(12.0)
+            glColor3f(*color)
+            glBegin(GL_POINTS)
+            glVertex3f(*point)
+            glEnd()
+            glLineWidth(3.0)
+            glBegin(GL_LINES)
+            glVertex3f(*point)
+            glVertex3f(*(point + 0.035 * normal))
+            glEnd()
+        glPointSize(self.point_size)
+        glEnable(GL_DEPTH_TEST)
+
     @staticmethod
     def _draw_covariance_ellipsoid(center, covariance, color):
         if not np.all(np.isfinite(covariance)):
@@ -1131,7 +1168,7 @@ class SplitPointCloudViewer:
         glMatrixMode(GL_MODELVIEW)
         glPushMatrix()
         glLoadIdentity()
-        header = 296
+        header = 330
         self._rect(0, height - header, width, header, (0.018, 0.021, 0.025))
         self._rect(0, height - header, 5, header, UI_ACCENT)
         self._rect(0, height - header, width, 1, UI_STROKE)
@@ -1330,12 +1367,35 @@ class SplitPointCloudViewer:
                 UI_TEXT,
                 GLUT_BITMAP_HELVETICA_12,
             )
+            if self.contact is not None:
+                contact_text = []
+                for cable_index, estimate in enumerate(self.contact.cables):
+                    if estimate.initialized:
+                        source = "M" if estimate.evidence_used else "P"
+                        interval = estimate.arc_interval_m
+                        contact_text.append(
+                            f"C{cable_index + 1} p={estimate.contact_probability:.2f} "
+                            f"{source} gap={estimate.minimum_gap_m * 1000.0:+.1f}mm "
+                            f"vn={estimate.normal_velocity_mps:+.2f}m/s "
+                            f"arc={interval[0]:.2f}-{interval[1]:.2f}m"
+                        )
+                    else:
+                        contact_text.append(f"C{cable_index + 1} waiting")
+                self._text(
+                    18,
+                    height - 217,
+                    "CONTACT passive | " + " | ".join(contact_text),
+                    UI_TEXT,
+                    GLUT_BITMAP_HELVETICA_12,
+                )
             self._text(
                 18,
-                height - 217,
+                height - 239,
                 f"Observation {self.pipeline_stats.get('observation_ms', 0.0):.1f} ms | "
                 f"PF {self.pipeline_stats.get('particle_filter_ms', 0.0):.1f} ms "
                 f"(CUDA {self.pipeline_stats.get('particle_filter_gpu_ms', 0.0):.1f} ms) | "
+                f"contact {self.pipeline_stats.get('contact_ms', 0.0):.1f} ms "
+                f"(CUDA {self.pipeline_stats.get('contact_gpu_ms', 0.0):.1f} ms) | "
                 f"total {self.pipeline_stats.get('tracking_ms', 0.0):.1f} ms | "
                 "PF: color=supported red=missing dim=unknown",
                 UI_MUTED,
@@ -1344,7 +1404,7 @@ class SplitPointCloudViewer:
         if "observation_total_median_ms" in self.pipeline_stats:
             self._text(
                 18,
-                height - 239,
+                height - 261,
                 "OBS median/p95 ms | "
                 f"total {self.pipeline_stats.get('observation_total_median_ms', 0.0):.1f}/"
                 f"{self.pipeline_stats.get('observation_total_p95_ms', 0.0):.1f} | "
@@ -1365,7 +1425,7 @@ class SplitPointCloudViewer:
             )
             self._text(
                 18,
-                height - 260,
+                height - 282,
                 "OBS latest GPU ms | "
                 f"maps {self.pipeline_stats.get('observation_maps_cuda_ms', 0.0):.2f} | "
                 f"unproject {self.pipeline_stats.get('observation_unprojection_cuda_ms', 0.0):.2f} | "
@@ -1379,7 +1439,7 @@ class SplitPointCloudViewer:
             )
             self._text(
                 18,
-                height - 281,
+                height - 303,
                 "OBS topology | "
                 f"components {self.pipeline_stats.get('observation_processed_component_count', 0)}/"
                 f"{self.pipeline_stats.get('observation_component_count', 0)} | "
@@ -1397,7 +1457,7 @@ class SplitPointCloudViewer:
             )
             self._text(
                 18,
-                height - 302,
+                height - 324,
                 "OBS latest other ms | "
                 f"masks {self.pipeline_stats.get('observation_masks_latest_ms', 0.0):.2f} | "
                 f"component prep {self.pipeline_stats.get('observation_component_preparation_latest_ms', 0.0):.2f} | "
