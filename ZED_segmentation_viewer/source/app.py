@@ -1444,6 +1444,9 @@ class AsyncSegmentationPipeline:
                         self.performance_stats[f"{prefix}_gap_mm"] = float(
                             contact.minimum_gap_m * 1000.0
                         )
+                        self.performance_stats[f"{prefix}_support_mass"] = float(
+                            contact.local_support_mass
+                        )
                         self.performance_stats[f"{prefix}_evidence"] = bool(
                             contact.evidence_used
                         )
@@ -1876,12 +1879,14 @@ class AsyncSegmentationPipeline:
             f"state={'valid' if stats.get('cube_state_valid', False) else 'invalid'}/"
             f"{float(stats.get('cube_state_age_ms', float('nan'))):.0f}ms/"
             f"{float(stats.get('cube_state_speed_mps', float('nan'))):.3f}mps\n"
-            f"  contact C1="
+            f"  contact probability/gap/support/source C1="
             f"{float(stats.get('contact1_probability', float('nan'))):.3f}/"
             f"{float(stats.get('contact1_gap_mm', float('nan'))):+.1f}mm/"
+            f"{float(stats.get('contact1_support_mass', float('nan'))):.2f}/"
             f"{'M' if stats.get('contact1_evidence', False) else 'P'} "
             f"C2={float(stats.get('contact2_probability', float('nan'))):.3f}/"
             f"{float(stats.get('contact2_gap_mm', float('nan'))):+.1f}mm/"
+            f"{float(stats.get('contact2_support_mass', float('nan'))):.2f}/"
             f"{'M' if stats.get('contact2_evidence', False) else 'P'}",
             flush=True,
         )
@@ -1958,6 +1963,7 @@ class AsyncSegmentationPipeline:
                 render_cloud is not None or render_depth is not None
                 or evaluation_sampled
             ),
+            require_contact_support=(self.contact_estimator is not None),
         )
         cube_tracking = cube_future.result() if cube_future is not None else None
         cube_state = (

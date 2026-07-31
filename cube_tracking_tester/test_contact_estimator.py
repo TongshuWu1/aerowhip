@@ -34,11 +34,16 @@ class _Posterior:
         particles: torch.Tensor,
         velocities: torch.Tensor,
         weights: torch.Tensor,
+        dense_support: torch.Tensor,
     ):
         self.tensors = (particles, velocities, weights)
+        self.dense_support = dense_support
 
     def posterior_tensors(self):
         return self.tensors
+
+    def contact_support_tensor(self):
+        return self.dense_support
 
 
 def _inputs(
@@ -67,7 +72,12 @@ def _inputs(
         dtype=torch.float32,
         device=device,
     )
-    return _Posterior(particles, velocities, weights)
+    dense_support = torch.ones(
+        (2, (NODE_COUNT - 1) * 3 + 1),
+        dtype=torch.bool,
+        device=device,
+    )
+    return _Posterior(particles, velocities, weights, dense_support)
 
 
 def _frame(*, cable_measurements: tuple[bool, bool] = (True, True)):
@@ -211,6 +221,7 @@ class ContactEstimatorTests(unittest.TestCase):
         self.assertGreater(last_contact.contact_probability, 0.80)
         self.assertLess(last_free.contact_probability, 0.01)
         self.assertAlmostEqual(last_contact.minimum_gap_m, 0.0, places=6)
+        self.assertAlmostEqual(last_contact.local_support_mass, 1.0, places=6)
         self.assertAlmostEqual(last_free.minimum_gap_m, 0.0255, places=5)
         self.assertAlmostEqual(last_contact.arc_interval_m[0], 0.0, places=6)
         self.assertAlmostEqual(
@@ -250,6 +261,77 @@ class ContactEstimatorTests(unittest.TestCase):
         self.assertLess(
             predicted.cables[0].contact_probability,
             previous.cables[0].contact_probability,
+        )
+
+    def test_remote_visible_fragment_cannot_update_hidden_contact_arc(self):
+        device = torch.device("cpu")
+        estimator = _estimator(device)
+        posterior = _inputs(device)
+        measurement = _cube_measurement()
+        previous = None
+        for frame_index in range(12):
+            timestamp = frame_index * 0.05
+            previous = estimator.update(
+                posterior,
+                _frame(),
+                _cube_state(timestamp),
+                measurement,
+                timestamp,
+            )
+        assert previous is not None
+        posterior.dense_support[0] = False
+        posterior.dense_support[0, -1] = True
+        expected = estimator._predict_probability(
+            previous.cables[0].contact_probability,
+            0.05,
+        )
+        hidden = estimator.update(
+            posterior,
+            _frame(),
+            _cube_state(0.60),
+            measurement,
+            0.60,
+        )
+        self.assertFalse(hidden.cables[0].evidence_used)
+        self.assertAlmostEqual(hidden.cables[0].local_support_mass, 0.0)
+        self.assertAlmostEqual(hidden.cables[0].contact_probability, expected)
+        self.assertIn("closest cable arc unobserved", hidden.cables[0].reason)
+
+    def test_partial_local_support_scales_evidence_without_threshold(self):
+        device = torch.device("cpu")
+        measurement = _cube_measurement()
+        fully_supported = _estimator(device).update(
+            _inputs(device),
+            _frame(),
+            _cube_state(0.0),
+            measurement,
+            0.0,
+        )
+
+        posterior = _inputs(device)
+        particles = posterior.tensors[0]
+        particles[0, PARTICLE_COUNT // 2 :, :, 1] = 0.100
+        particles[0, PARTICLE_COUNT // 2 :, -1, 1] = (
+            0.5 * CUBE_SIDE_M + CABLE_RADIUS_M
+        )
+        posterior.dense_support[0] = False
+        posterior.dense_support[0, 0] = True
+        partial = _estimator(device).update(
+            posterior,
+            _frame(),
+            _cube_state(0.0),
+            measurement,
+            0.0,
+        )
+        self.assertAlmostEqual(partial.cables[0].local_support_mass, 0.5)
+        self.assertTrue(partial.cables[0].evidence_used)
+        self.assertGreater(
+            partial.cables[0].contact_probability,
+            ContactEstimatorConfig().initial_contact_probability,
+        )
+        self.assertLess(
+            partial.cables[0].contact_probability,
+            fully_supported.cables[0].contact_probability,
         )
 
     def test_observer_does_not_modify_particle_filter_tensors(self):

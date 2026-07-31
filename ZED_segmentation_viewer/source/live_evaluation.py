@@ -41,6 +41,7 @@ class EvaluationSample:
     contact_gap_std_mm: tuple[float, float]
     contact_normal_velocity_mps: tuple[float, float]
     contact_comotion_score: tuple[float, float]
+    contact_local_support_mass: tuple[float, float]
     contact_arc_m: tuple[float, float]
     contact_interval_m: tuple[tuple[float, float], tuple[float, float]]
     contact_point_m: tuple[
@@ -130,6 +131,8 @@ class LiveEvaluation:
                 "cable_2_contact_normal_velocity_mps",
                 "cable_1_contact_comotion_score",
                 "cable_2_contact_comotion_score",
+                "cable_1_contact_local_support_mass",
+                "cable_2_contact_local_support_mass",
                 "cable_1_contact_arc_m",
                 "cable_2_contact_arc_m",
                 "cable_1_contact_interval_start_m",
@@ -254,6 +257,10 @@ class LiveEvaluation:
                 _finite_or_nan(item.comotion_score)
                 for item in contact_cables
             )
+            contact_local_support_mass = tuple(
+                _finite_or_nan(item.local_support_mass)
+                for item in contact_cables
+            )
             contact_arc_m = tuple(
                 _finite_or_nan(item.contact_arc_m)
                 for item in contact_cables
@@ -292,6 +299,7 @@ class LiveEvaluation:
             contact_gap_std_mm = (float("nan"), float("nan"))
             contact_normal_velocity_mps = (float("nan"), float("nan"))
             contact_comotion_score = (float("nan"), float("nan"))
+            contact_local_support_mass = (float("nan"), float("nan"))
             contact_arc_m = (float("nan"), float("nan"))
             contact_interval_m = (
                 (float("nan"), float("nan")),
@@ -346,6 +354,7 @@ class LiveEvaluation:
             contact_gap_std_mm=contact_gap_std_mm,
             contact_normal_velocity_mps=contact_normal_velocity_mps,
             contact_comotion_score=contact_comotion_score,
+            contact_local_support_mass=contact_local_support_mass,
             contact_arc_m=contact_arc_m,
             contact_interval_m=contact_interval_m,
             contact_point_m=contact_point_m,
@@ -407,6 +416,7 @@ class LiveEvaluation:
                             *sample.contact_gap_std_mm,
                             *sample.contact_normal_velocity_mps,
                             *sample.contact_comotion_score,
+                            *sample.contact_local_support_mass,
                             *sample.contact_arc_m,
                             *sample.contact_interval_m[0],
                             *sample.contact_interval_m[1],

@@ -629,6 +629,7 @@ class BatchedCableParticleFilter:
         self.last_complete_timestamps = np.full(2, np.nan, dtype=np.float64)
         self.last_timestamp: float | None = None
         self._diagnostic_cache: list[_CachedCableDiagnostics | None] = [None, None]
+        self._contact_dense_support: torch.Tensor | None = None
         self.lengths = torch.tensor(config.cable_lengths_m, device=self.device, dtype=self.dtype)
         self.segment_lengths = self.lengths / float(config.node_count - 1)
         positions = torch.linspace(0.0, 1.0, config.node_count, device=self.device)
@@ -760,6 +761,15 @@ class BatchedCableParticleFilter:
         ):
             raise RuntimeError("The cable posterior has not been allocated.")
         return self.particles, self.velocities, self.weights
+
+    def contact_support_tensor(self) -> torch.Tensor:
+        """Return the current read-only dense cable-arc support mask on CUDA."""
+
+        if self._contact_dense_support is None:
+            raise RuntimeError(
+                "Current contact support was not requested from the PF update."
+            )
+        return self._contact_dense_support
 
     def _capture_constraint_graph(
         self,
@@ -1138,15 +1148,15 @@ class BatchedCableParticleFilter:
         )
         return field, supported
 
-    def _visible_edge_diagnostics(
+    def _visible_edge_support(
         self,
         selected_particles: torch.Tensor,
         attribution: GraphAttributionBatch,
         normalized_arc: torch.Tensor,
         selected_edges: torch.Tensor,
         dense_count: int,
-    ) -> tuple[torch.Tensor, torch.Tensor]:
-        """Summarize only the cable intervals that are directly observed."""
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        """Return current dense visibility and its edge residual inputs."""
 
         selected_samples = self._sample_particles_at_arc(
             selected_particles[:, None, :, :],
@@ -1162,50 +1172,6 @@ class BatchedCableParticleFilter:
             -1,
             attribution.observed_count,
         ).reshape(2, -1)
-        valid_count = flat_valid.sum(dim=1)
-        denominator = valid_count.clamp_min(1).to(self.dtype)
-        trace_mean = torch.sum(
-            torch.where(flat_valid, flat_residual, 0.0),
-            dim=1,
-        ) / denominator
-        trace_rms = torch.sqrt(
-            torch.sum(
-                torch.where(flat_valid, flat_residual.square(), 0.0),
-                dim=1,
-            )
-            / denominator
-        )
-        sorted_residual = torch.sort(
-            torch.where(
-                flat_valid,
-                flat_residual,
-                torch.full_like(flat_residual, torch.inf),
-            ),
-            dim=1,
-        ).values
-        percentile_index = (
-            torch.ceil(valid_count.to(self.dtype) * 0.95).to(torch.int64) - 1
-        ).clamp_min(0)
-        trace_p95 = torch.gather(
-            sorted_residual,
-            1,
-            percentile_index[:, None],
-        )[:, 0]
-        trace_max = torch.where(
-            flat_valid,
-            flat_residual,
-            torch.full_like(flat_residual, -torch.inf),
-        ).amax(dim=1)
-        trace = torch.stack(
-            (trace_mean, trace_rms, trace_p95, trace_max),
-            dim=1,
-        )
-        trace = torch.where(
-            (valid_count > 0)[:, None],
-            trace,
-            self._nan_scalar.expand(2, 4),
-        )
-
         dense_arc = torch.linspace(
             0.0,
             1.0,
@@ -1269,7 +1235,58 @@ class BatchedCableParticleFilter:
                 ),
             ),
         )
-        return visibility, trace
+        return visibility, flat_residual, flat_valid
+
+    def _visible_edge_trace(
+        self,
+        flat_residual: torch.Tensor,
+        flat_valid: torch.Tensor,
+    ) -> torch.Tensor:
+        """Summarize residuals only when viewer diagnostics are requested."""
+
+        valid_count = flat_valid.sum(dim=1)
+        denominator = valid_count.clamp_min(1).to(self.dtype)
+        trace_mean = torch.sum(
+            torch.where(flat_valid, flat_residual, 0.0),
+            dim=1,
+        ) / denominator
+        trace_rms = torch.sqrt(
+            torch.sum(
+                torch.where(flat_valid, flat_residual.square(), 0.0),
+                dim=1,
+            )
+            / denominator
+        )
+        sorted_residual = torch.sort(
+            torch.where(
+                flat_valid,
+                flat_residual,
+                torch.full_like(flat_residual, torch.inf),
+            ),
+            dim=1,
+        ).values
+        percentile_index = (
+            torch.ceil(valid_count.to(self.dtype) * 0.95).to(torch.int64) - 1
+        ).clamp_min(0)
+        trace_p95 = torch.gather(
+            sorted_residual,
+            1,
+            percentile_index[:, None],
+        )[:, 0]
+        trace_max = torch.where(
+            flat_valid,
+            flat_residual,
+            torch.full_like(flat_residual, -torch.inf),
+        ).amax(dim=1)
+        trace = torch.stack(
+            (trace_mean, trace_rms, trace_p95, trace_max),
+            dim=1,
+        )
+        return torch.where(
+            (valid_count > 0)[:, None],
+            trace,
+            self._nan_scalar.expand(2, 4),
+        )
 
     def _systematic_resample_indices(self) -> torch.Tensor:
         """Low-variance batched resampling performed on the active device."""
@@ -1376,6 +1393,7 @@ class BatchedCableParticleFilter:
         timestamp: float,
         *,
         refresh_diagnostics: bool = True,
+        require_contact_support: bool = False,
     ) -> ParticleFilterFrame:
         """Advance both filters and optionally refresh viewer-only diagnostics."""
 
@@ -1384,6 +1402,7 @@ class BatchedCableParticleFilter:
             refresh_diagnostics
             or any(cached is None for cached in self._diagnostic_cache)
         )
+        self._contact_dense_support = None
         self._allocate()
         assert self.particles is not None
         assert self.velocities is not None
@@ -2152,6 +2171,90 @@ class BatchedCableParticleFilter:
             self._dense_alpha,
         )[:, 0]
         top_count = min(self.config.top_particle_count, self.config.particle_count)
+        visibility_required = bool(
+            diagnostics_required or require_contact_support
+        )
+        selected_visibility_batch = self._unknown_visibility[None, :].expand(
+            2, -1
+        )
+        edge_visibility_batch = selected_visibility_batch
+        edge_trace_batch = self._nan_scalar.expand(2, 4)
+        route_residuals: list[torch.Tensor | None] = [None, None]
+        if visibility_required:
+            if (
+                attribution_batch is not None
+                and normalized_edge_arc is not None
+                and selected_edges is not None
+            ):
+                (
+                    edge_visibility_batch,
+                    flat_edge_residual,
+                    flat_edge_valid,
+                ) = self._visible_edge_support(
+                    selected_particles,
+                    attribution_batch,
+                    normalized_edge_arc,
+                    selected_edges,
+                    selected_dense_batch.shape[1],
+                )
+                if diagnostics_required:
+                    edge_trace_batch = self._visible_edge_trace(
+                        flat_edge_residual,
+                        flat_edge_valid,
+                    )
+
+            current_visibility: list[torch.Tensor] = []
+            for cable_index in range(2):
+                cable_visibility = self._unknown_visibility
+                if route_counts_np[cable_index] > 0:
+                    candidate_route = candidate_routes[cable_index]
+                    if self.features.connected_trace:
+                        selected_residual = torch.linalg.vector_norm(
+                            selected_dense_batch[cable_index]
+                            - route_dense[cable_index, candidate_route],
+                            dim=-1,
+                        )
+                    else:
+                        graph_points = route_dense[
+                            cable_index, route_valid[cable_index]
+                        ].reshape(-1, 3)
+                        selected_residual = torch.cdist(
+                            selected_dense_batch[cable_index][None, :, :],
+                            graph_points[None, :, :],
+                        )[0].amin(dim=-1)
+                    route_residuals[cable_index] = selected_residual
+                    route_visibility = torch.where(
+                        selected_residual <= self.config.support_distance_m,
+                        torch.full_like(
+                            cable_visibility,
+                            VISIBILITY_SUPPORTED,
+                        ),
+                        torch.full_like(
+                            cable_visibility,
+                            VISIBILITY_MISSING,
+                        ),
+                    )
+                    cable_visibility = torch.where(
+                        accepted[cable_index]
+                        & route_measurement[cable_index],
+                        route_visibility,
+                        cable_visibility,
+                    )
+                cable_visibility = torch.where(
+                    accepted[cable_index] & edge_measurement[cable_index],
+                    edge_visibility_batch[cable_index],
+                    cable_visibility,
+                )
+                current_visibility.append(cable_visibility)
+            selected_visibility_batch = torch.stack(
+                current_visibility,
+                dim=0,
+            )
+            if require_contact_support:
+                self._contact_dense_support = (
+                    selected_visibility_batch == VISIBILITY_SUPPORTED
+                )
+
         if diagnostics_required:
             route_mask_batch = torch.stack(route_masks, dim=0)
             conditional_weights_batch = torch.stack(
@@ -2173,26 +2276,6 @@ class BatchedCableParticleFilter:
                 torch.full_like(representative_distance, torch.inf),
             )
             selected_indices = torch.argmin(representative_distance, dim=1)
-            selected_visibility_batch = self._unknown_visibility[None, :].expand(
-                2, -1
-            )
-            edge_visibility_batch = selected_visibility_batch
-            edge_trace_batch = self._nan_scalar.expand(2, 4)
-            if (
-                attribution_batch is not None
-                and normalized_edge_arc is not None
-                and selected_edges is not None
-            ):
-                edge_visibility_batch, edge_trace_batch = (
-                    self._visible_edge_diagnostics(
-                        selected_particles,
-                        attribution_batch,
-                        normalized_edge_arc,
-                        selected_edges,
-                        selected_dense_batch.shape[1],
-                    )
-                )
-
             selected_links = selected_particles[:, 1:] - selected_particles[:, :-1]
             selected_link_lengths = torch.linalg.vector_norm(selected_links, dim=-1)
             selected_unit = selected_links / selected_link_lengths[..., None].clamp_min(
@@ -2297,35 +2380,8 @@ class BatchedCableParticleFilter:
                 selected_visibility = selected_visibility_batch[cable_index]
                 trace_values = self._nan_scalar.expand(4)
                 if route_counts_np[cable_index] > 0:
-                    if self.features.connected_trace:
-                        selected_residual = torch.linalg.vector_norm(
-                            selected_dense - route_dense[cable_index, candidate_route],
-                            dim=-1,
-                        )
-                    else:
-                        graph_points = route_dense[
-                            cable_index, route_valid[cable_index]
-                        ].reshape(-1, 3)
-                        selected_residual = torch.cdist(
-                            selected_dense[None, :, :],
-                            graph_points[None, :, :],
-                        )[0].amin(dim=-1)
-                    route_support = selected_residual <= self.config.support_distance_m
-                    route_visibility = torch.where(
-                        route_support,
-                        torch.full_like(
-                            selected_visibility, VISIBILITY_SUPPORTED
-                        ),
-                        torch.full_like(selected_visibility, VISIBILITY_MISSING),
-                    )
-                    selected_visibility = torch.where(
-                        (
-                            measurement_accepted
-                            & route_measurement[cable_index]
-                        ),
-                        route_visibility,
-                        selected_visibility,
-                    )
+                    selected_residual = route_residuals[cable_index]
+                    assert selected_residual is not None
                     measured_trace_values = torch.stack(
                         (
                             selected_residual.mean(),
@@ -2342,14 +2398,6 @@ class BatchedCableParticleFilter:
                         measured_trace_values,
                         self._nan_scalar.expand(4),
                     )
-                selected_visibility = torch.where(
-                    (
-                        measurement_accepted
-                        & edge_measurement[cable_index]
-                    ),
-                    edge_visibility_batch[cable_index],
-                    selected_visibility,
-                )
                 trace_values = torch.where(
                     (
                         measurement_accepted

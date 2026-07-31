@@ -141,6 +141,7 @@ class CableContactEstimate:
     gap_std_m: float
     normal_velocity_mps: float
     comotion_score: float
+    local_support_mass: float
     contact_arc_m: float
     arc_interval_m: tuple[float, float]
     closest_point_m: np.ndarray | None
@@ -301,6 +302,7 @@ class CableCubeContactEstimator:
         particles: torch.Tensor,
         velocities: torch.Tensor,
         weights: torch.Tensor,
+        dense_support: torch.Tensor,
         *,
         cable_radius_m: float,
         cube_side_m: float,
@@ -324,6 +326,12 @@ class CableCubeContactEstimator:
             raise ValueError("Contact particle positions and velocities must align.")
         if weights.shape != (2, self.particle_count):
             raise ValueError(f"Unexpected contact weight shape: {weights.shape}.")
+        if dense_support.shape != (2, self.sample_count):
+            raise ValueError(
+                f"Unexpected contact support shape: {dense_support.shape}."
+            )
+        if dense_support.device != self.device:
+            raise ValueError("Contact support must remain on the PF device.")
 
         if self._gpu_start is not None:
             self._gpu_start.record()
@@ -376,6 +384,15 @@ class CableCubeContactEstimator:
         )
 
         minimum_gap, minimum_index = torch.min(gap, dim=-1)
+        particle_support = torch.gather(
+            dense_support[:, None, :].expand(
+                -1,
+                self.particle_count,
+                -1,
+            ),
+            2,
+            minimum_index[:, :, None],
+        )[:, :, 0].to(self.dtype)
         sample_index_3 = minimum_index[..., None, None].expand(-1, -1, 1, 3)
         sample_index_1 = minimum_index[..., None]
         selected_closest = torch.gather(
@@ -459,19 +476,33 @@ class CableCubeContactEstimator:
         comotion_particle = (
             proximity_score * excitation * comotion_compatibility
         )
-        comotion_score = torch.sum(
-            normalized_weights * comotion_particle,
+        local_support_mass = torch.sum(
+            normalized_weights * particle_support,
             dim=1,
         )
-        comotion_bayes_factor = 1.0 + (
-            self.config.comotion_max_bayes_factor - 1.0
-        ) * comotion_score
-        cable_contact_likelihood = torch.sum(
-            normalized_weights * contact_likelihood,
+        comotion_score = torch.sum(
+            normalized_weights * particle_support * comotion_particle,
             dim=1,
-        ) * comotion_bayes_factor
+        )
+        particle_comotion_bayes_factor = 1.0 + (
+            self.config.comotion_max_bayes_factor - 1.0
+        ) * comotion_particle
+        gated_contact_likelihood = (
+            particle_support
+            * contact_likelihood
+            * particle_comotion_bayes_factor
+            + (1.0 - particle_support)
+        )
+        gated_free_likelihood = (
+            particle_support * free_likelihood
+            + (1.0 - particle_support)
+        )
+        cable_contact_likelihood = torch.sum(
+            normalized_weights * gated_contact_likelihood,
+            dim=1,
+        )
         cable_free_likelihood = torch.sum(
-            normalized_weights * free_likelihood,
+            normalized_weights * gated_free_likelihood,
             dim=1,
         )
 
@@ -529,6 +560,7 @@ class CableCubeContactEstimator:
                 map_gap_std[:, None],
                 map_normal_velocity[:, None],
                 comotion_score[:, None],
+                local_support_mass[:, None],
                 map_arc[:, None],
                 interval_start[:, None],
                 interval_end[:, None],
@@ -565,6 +597,11 @@ class CableCubeContactEstimator:
         )
         particles[..., 1] = 0.080
         velocities = torch.zeros_like(particles)
+        dense_support = torch.ones(
+            (2, self.sample_count),
+            device=self.device,
+            dtype=torch.bool,
+        )
         weights = torch.full(
             (2, self.particle_count),
             1.0 / float(self.particle_count),
@@ -575,6 +612,7 @@ class CableCubeContactEstimator:
             particles,
             velocities,
             weights,
+            dense_support,
             cable_radius_m=0.0045,
             cube_side_m=0.150,
             center_m=np.zeros(3, dtype=np.float64),
@@ -602,11 +640,13 @@ class CableCubeContactEstimator:
         float,
         float,
         float,
+        float,
         tuple[float, float],
         np.ndarray | None,
         np.ndarray | None,
     ]:
         return (
+            float("nan"),
             float("nan"),
             float("nan"),
             float("nan"),
@@ -670,10 +710,12 @@ class CableCubeContactEstimator:
         if geometry_available:
             assert cube_state is not None
             particles, velocities, weights = particle_filter.posterior_tensors()
+            dense_support = particle_filter.contact_support_tensor()
             geometry = self._evaluate_geometry(
                 particles,
                 velocities,
                 weights,
+                dense_support,
                 cable_radius_m=particle_frame.cable_radius_m,
                 cube_side_m=cube_state.cube_side_m,
                 center_m=cube_state.center_m,
@@ -689,12 +731,6 @@ class CableCubeContactEstimator:
             cable_geometry_valid = bool(
                 geometry is not None and particle_frame.initialized[cable_index]
             )
-            evidence_used = bool(
-                cable_geometry_valid
-                and cube_state is not None
-                and cube_state.measurement_used
-                and particle_frame.measurement_used[cable_index]
-            )
             if cable_geometry_valid:
                 assert geometry is not None
                 row = geometry.payload[cable_index]
@@ -704,22 +740,36 @@ class CableCubeContactEstimator:
                 gap_std = float(row[3])
                 normal_velocity = float(row[4])
                 comotion_score = float(np.clip(row[5], 0.0, 1.0))
-                contact_arc = float(row[6])
-                interval = (float(row[7]), float(row[8]))
-                closest_point = np.ascontiguousarray(row[9:12], dtype=np.float32)
-                surface_normal = np.ascontiguousarray(row[12:15], dtype=np.float32)
+                local_support_mass = float(np.clip(row[6], 0.0, 1.0))
+                contact_arc = float(row[7])
+                interval = (float(row[8]), float(row[9]))
+                closest_point = np.ascontiguousarray(
+                    row[10:13], dtype=np.float32
+                )
+                surface_normal = np.ascontiguousarray(
+                    row[13:16], dtype=np.float32
+                )
             else:
                 (
                     minimum_gap,
                     gap_std,
                     normal_velocity,
                     comotion_score,
+                    local_support_mass,
                     contact_arc,
                     interval,
                     closest_point,
                     surface_normal,
                 ) = self._empty_geometry()
                 contact_likelihood = free_likelihood = 1.0
+
+            evidence_used = bool(
+                cable_geometry_valid
+                and cube_state is not None
+                and cube_state.measurement_used
+                and particle_frame.measurement_used[cable_index]
+                and local_support_mass > 0.0
+            )
 
             if evidence_used:
                 prior = (
@@ -743,6 +793,8 @@ class CableCubeContactEstimator:
                 reason = "contact prediction only: cube measurement unavailable"
             elif not particle_frame.measurement_used[cable_index]:
                 reason = "contact prediction only: cable measurement unavailable"
+            elif local_support_mass <= 0.0:
+                reason = "contact prediction only: closest cable arc unobserved"
             else:
                 reason = "contact prediction only"
 
@@ -768,6 +820,7 @@ class CableCubeContactEstimator:
                     gap_std_m=gap_std,
                     normal_velocity_mps=normal_velocity,
                     comotion_score=comotion_score,
+                    local_support_mass=local_support_mass,
                     contact_arc_m=contact_arc,
                     arc_interval_m=interval,
                     closest_point_m=closest_point,

@@ -1376,6 +1376,7 @@ class SplitPointCloudViewer:
                         contact_text.append(
                             f"C{cable_index + 1} p={estimate.contact_probability:.2f} "
                             f"{source} gap={estimate.minimum_gap_m * 1000.0:+.1f}mm "
+                            f"support={estimate.local_support_mass:.2f} "
                             f"vn={estimate.normal_velocity_mps:+.2f}m/s "
                             f"arc={interval[0]:.2f}-{interval[1]:.2f}m"
                         )

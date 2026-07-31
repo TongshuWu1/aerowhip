@@ -321,6 +321,21 @@ Co-motion supplies a temporal Bayes factor that can increase the contact odds
 when spatial proximity is already plausible. It must not turn distant
 co-moving bodies into contact.
 
+The current image must support the cable arc at which each particle is closest
+to the cube. Let (q_i\in\{0,1\}) denote that local support lookup. The
+implemented marginalized likelihood is
+
+\[
+L_z = \sum_i w_i\left[q_i\,\Psi_z^i + (1-q_i)\right].
+\]
+
+The neutral term is identical for `contact` and `free`, so geometry inferred
+only from a hidden or missing arc cannot change the contact odds. Particles
+whose closest arc is observed still contribute normally, making
+\(\sum_i w_iq_i\) a continuous local support mass rather than introducing a
+global visibility threshold. Co-motion is gated by the same (q_i), because a
+predicted velocity at a hidden contact arc is not new motion evidence.
+
 ## Temporal contact inference
 
 The predicted binary contact probability is
@@ -746,6 +761,8 @@ Completed foundations:
    normal motion, and bounded positive co-motion evidence on CUDA.
 5. Add a passive binary temporal contact posterior for each cable, with
    measurement gating and prediction-only propagation.
+6. Gate geometry and co-motion by posterior-weighted support at the candidate
+   contact arc, leaving hidden arcs neutral.
 
 Remaining sequence:
 

@@ -196,15 +196,21 @@ Each cable has a two-state continuous-time Markov prior and a scalar contact
 posterior. The observation likelihood includes a bounded outlier mixture, so
 one frame cannot become decisive. A measurement update is permitted only when
 both the cable PF and cube state accepted evidence from the current synchronized
-frame. If either is prediction-only, the contact state only predicts forward;
-missing observations cannot create contact confidence.
+frame. In addition, each particle's closest cube sample is looked up in the
+PF's current dense arc-support mask. A supported sample uses its contact/free
+likelihood; a missing or unknown sample contributes the same neutral likelihood
+to both states. The posterior-weighted supported mass therefore scales the
+evidence continuously without a global visibility threshold. Remote visible
+fragments cannot validate a hidden contact arc. If either estimator is
+prediction-only or local support mass is zero, the contact state only predicts
+forward; missing observations cannot create contact confidence.
 
 `[contact].enabled` isolates this observer. It reads PF tensors only after the
 visual update and never changes particles, velocities, weights, proposals,
 constraints, ESS, or resampling. The 3D viewer shows a near-surface contact
 point and normal plus one compact line with probability, gap, normal velocity,
-arc interval, and whether the frame used measurements (`M`) or prediction
-(`P`).
+local support mass, arc interval, and whether the frame used measurements (`M`)
+or prediction (`P`).
 
 ## Skeleton graph
 
@@ -616,9 +622,9 @@ rather than substituting a held or predicted pose.
 
 When contact inference is enabled, the same row also saves each cable's contact
 probability, evidence/prediction flag, physical gap and uncertainty, relative
-normal velocity, co-motion score, contact arc interval, closest surface point,
-surface normal, and reason. These values are intentionally logged rather than
-added as more live plots.
+normal velocity, co-motion score, local contact-arc support mass, contact arc
+interval, closest surface point, surface normal, and reason. These values are
+intentionally logged rather than added as more live plots.
 
 The CSV also records four compact observation diagnostics for each cable:
 detected endpoint count, the two endpoint body-component labels, complete-route
