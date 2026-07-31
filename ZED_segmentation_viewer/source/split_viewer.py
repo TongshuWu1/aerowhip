@@ -311,7 +311,8 @@ FEATURE_CONTROLS = (
     ("6", "fixed_length", "FIXED LENGTH"),
     ("7", "temporal_prediction", "TEMPORAL"),
     ("M", "endpoint_motion_transport", "END TRANSPORT"),
-    ("E", "ess_resampling", "ESS RESAMPLE"),
+    ("O", "hold_occluded_endpoints", "HOLD HIDDEN ENDS"),
+    ("E", "adaptive_ess_resampling", "ADAPTIVE ESS"),
     ("9", "global_particles", "RETRACK 10%"),
     ("V", "local_node_motion", "LOCAL NODE MOTION"),
     ("F", "single_endpoint_updates", "ONE ENDPOINT"),
@@ -319,7 +320,7 @@ FEATURE_CONTROLS = (
     ("H", "posterior_uncertainty", "UNCERTAINTY"),
     ("K", "fused_constraint_kernels", "FUSED LINKS"),
     ("J", "cuda_graph_replay", "CUDA GRAPH"),
-    ("Y", "graph_edge_attribution", "EDGE ATTR"),
+    ("Y", "edge_attribution_diagnostics", "EDGE DISPLAY"),
     ("I", "temporal_edge_identity", "EDGE ID MEMORY"),
     ("A", "visible_edge_scoring", "EDGE SCORE"),
     ("D", "visible_edge_transport", "EDGE MOTION"),
@@ -422,6 +423,7 @@ class SplitPointCloudViewer:
         )
         self.feature_states = {}
         self.feature_callback = None
+        self.top_particles_callback = None
         self.feature_hitboxes = []
         self.record_button_hitbox = None
         self.reported_recording_path = None
@@ -571,6 +573,10 @@ class SplitPointCloudViewer:
             name: bool(getattr(features, name)) for _key, name, _label in FEATURE_CONTROLS
         }
         self.feature_callback = callback
+
+    def set_top_particle_control(self, callback):
+        self.top_particles_callback = callback
+        callback(bool(self.show_top_particles))
 
     def update_frame(self, result, pipeline_stats):
         vertices = np.asarray(result.vertices, dtype=np.float32)
@@ -1610,7 +1616,10 @@ class SplitPointCloudViewer:
         elif key in (b"-", b"_"):
             self.point_size = max(1.0, self.point_size - 0.5)
         elif key in (b"p", b"P"):
-            self.show_top_particles = not self.show_top_particles
+            enabled = not self.show_top_particles
+            if self.top_particles_callback is not None:
+                self.top_particles_callback(enabled)
+            self.show_top_particles = enabled
         elif key in (b"b", b"B"):
             self.show_cable_volume = not self.show_cable_volume
         elif key in (b"c", b"C"):

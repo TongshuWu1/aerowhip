@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 import heapq
 import itertools
@@ -31,18 +32,14 @@ class EndpointMeasurement:
     pixel_xy: np.ndarray
     xyz: np.ndarray
     area_px: int
-    spread_m: float
 
 
 @dataclass(frozen=True)
 class RouteHypothesis:
     """One edge-simple trail through the complete observed skeleton graph."""
 
-    edge_ids: tuple[int, ...]
     route_xyz: np.ndarray
-    route_pixels_xy: np.ndarray
     length_m: float
-    turn_rms_degrees: float
 
 
 @dataclass(frozen=True)
@@ -60,7 +57,6 @@ class GraphEdgeObservation:
 
     component_label: int
     edge_id: int
-    node_ids: tuple[int, int]
     xyz: np.ndarray
     pixels_xy: np.ndarray
     length_m: float
@@ -110,11 +106,6 @@ class CableObservation:
     endpoint_visible: np.ndarray
     endpoint_component_labels: np.ndarray
     routes: tuple[RouteHypothesis, ...]
-    component_points: int
-    graph_nodes: int
-    graph_edges: int
-    branch_pixels: int
-    route_search_truncated: bool
 
 
 @dataclass(frozen=True)
@@ -250,19 +241,35 @@ def _empty_cable(reason: str) -> CableObservation:
         endpoint_visible=np.zeros(2, dtype=bool),
         endpoint_component_labels=np.zeros(2, dtype=np.int32),
         routes=(),
-        component_points=0,
-        graph_nodes=0,
-        graph_edges=0,
-        branch_pixels=0,
-        route_search_truncated=False,
     )
 
 
-def _mask_bool(mask: np.ndarray, shape: tuple[int, int]) -> np.ndarray:
+def _mask_u8(mask: np.ndarray, shape: tuple[int, int]) -> np.ndarray:
     array = np.asarray(mask)
     if array.shape != shape:
         array = cv2.resize(array, (shape[1], shape[0]), interpolation=cv2.INTER_NEAREST)
-    return np.ascontiguousarray(array > 0)
+    if array.dtype == np.uint8:
+        return np.ascontiguousarray(array)
+    return np.ascontiguousarray(array > 0, dtype=np.uint8)
+
+
+def _component_roi(
+    labels: np.ndarray,
+    stats: np.ndarray,
+    component_label: int,
+    padding: int = 2,
+) -> tuple[np.ndarray, tuple[int, int]]:
+    """Return one exact component crop without scanning the full label image."""
+
+    left = int(stats[component_label, cv2.CC_STAT_LEFT])
+    top = int(stats[component_label, cv2.CC_STAT_TOP])
+    width = int(stats[component_label, cv2.CC_STAT_WIDTH])
+    height = int(stats[component_label, cv2.CC_STAT_HEIGHT])
+    x0 = max(0, left - padding)
+    x1 = min(labels.shape[1], left + width + padding)
+    y0 = max(0, top - padding)
+    y1 = min(labels.shape[0], top + height + padding)
+    return labels[y0:y1, x0:x1] == int(component_label), (y0, x0)
 
 
 def _resample_polyline(points: np.ndarray, count: int) -> np.ndarray:
@@ -409,7 +416,8 @@ def _nearest_component_label(
 def _lift_route_samples(
     route_yx: np.ndarray,
     geometry: _SegmentedGeometry,
-    component: np.ndarray,
+    component_labels: np.ndarray,
+    component_label: int,
     radius: int,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Lift pixels with the exact median of valid same-component neighbors."""
@@ -426,7 +434,7 @@ def _lift_route_samples(
             np.full((sample_count, 3), np.nan, dtype=np.float32),
             np.zeros(sample_count, dtype=bool),
         )
-    height, width = component.shape
+    height, width = component_labels.shape
     offsets = np.arange(-radius, radius + 1, dtype=np.int32)
     offset_y, offset_x = np.meshgrid(offsets, offsets, indexing="ij")
     sample_y = route_yx[:, 0, None] + offset_y.reshape(1, -1)
@@ -436,7 +444,11 @@ def _lift_route_samples(
     )
     safe_y = np.clip(sample_y, 0, height - 1)
     safe_x = np.clip(sample_x, 0, width - 1)
-    selected = in_bounds & component[safe_y, safe_x] & geometry.valid[safe_y, safe_x]
+    selected = (
+        in_bounds
+        & (component_labels[safe_y, safe_x] == int(component_label))
+        & geometry.valid[safe_y, safe_x]
+    )
     point_indices = geometry.index_image[safe_y, safe_x]
     local_xyz = geometry.xyz[np.maximum(point_indices, 0)]
 
@@ -455,18 +467,6 @@ def _lift_route_samples(
     valid = valid_counts > 0
     points[~valid] = np.nan
     return np.ascontiguousarray(points, dtype=np.float32), valid
-
-
-def _turn_rms_degrees(route_xyz: np.ndarray) -> float:
-    links = np.diff(np.asarray(route_xyz, dtype=np.float64), axis=0)
-    lengths = np.linalg.norm(links, axis=1)
-    valid = lengths > 1e-9
-    if np.count_nonzero(valid) < 2:
-        return 0.0
-    unit = links[valid] / lengths[valid, None]
-    cosine = np.sum(unit[:-1] * unit[1:], axis=1).clip(-1.0, 1.0)
-    angles = np.arccos(cosine)
-    return float(np.degrees(np.sqrt(np.mean(angles * angles))))
 
 
 def _pixel_adjacency(
@@ -565,7 +565,8 @@ def _build_skeleton_graph(
     skeleton: np.ndarray,
     anchors_yx: tuple[tuple[int, int], ...],
     crop_origin_yx: tuple[int, int],
-    component: np.ndarray,
+    component_labels: np.ndarray,
+    component_label: int,
     geometry: _SegmentedGeometry,
     depth_radius: int,
     node_dilation: int,
@@ -642,7 +643,8 @@ def _build_skeleton_graph(
     lifted_xyz, lifted_valid = _lift_route_samples(
         global_coordinates_yx,
         geometry,
-        component,
+        component_labels,
+        component_label,
         depth_radius,
     )
     edges: list[_GraphEdge] = []
@@ -772,7 +774,7 @@ def _enumerate_graph_trails(
     state_limit: int,
     edge_limit: int,
     length_margin_m: float,
-) -> tuple[list[tuple[tuple[int, bool], ...]], bool]:
+) -> list[tuple[tuple[int, bool], ...]]:
     """Enumerate several length-compatible edge-simple trails, never one shortest path."""
 
     adjacency: list[list[tuple[int, int, bool]]] = [
@@ -817,7 +819,7 @@ def _enumerate_graph_trails(
                 ),
             )
     completed.sort(key=lambda item: (abs(item[0] - target_length_m), len(item[1])))
-    return [trail for _length, trail in completed[:candidate_limit]], bool(queue)
+    return [trail for _length, trail in completed[:candidate_limit]]
 
 
 def _assemble_route(
@@ -827,37 +829,28 @@ def _assemble_route(
     sample_count: int,
 ) -> RouteHypothesis | None:
     xyz_parts = []
-    pixel_parts = []
     for edge_id, forward in trail:
         edge = graph.edges[edge_id]
         xyz = edge.xyz if forward else edge.xyz[::-1]
-        pixels = edge.pixels_xy if forward else edge.pixels_xy[::-1]
         if xyz_parts:
             xyz = xyz[1:]
-            pixels = pixels[1:]
         xyz_parts.append(xyz)
-        pixel_parts.append(pixels)
     if not xyz_parts:
         return None
     raw_xyz = np.concatenate(xyz_parts, axis=0).astype(np.float32, copy=False)
-    raw_pixels = np.concatenate(pixel_parts, axis=0).astype(np.float32, copy=False)
     if len(raw_xyz) < 2:
         return None
     raw_xyz[0] = endpoints[0].xyz
     raw_xyz[-1] = endpoints[1].xyz
     route_xyz = _resample_polyline(raw_xyz, sample_count)
-    route_pixels = _resample_polyline(raw_pixels, sample_count)
     if len(route_xyz) != sample_count:
         return None
     route_xyz[0] = endpoints[0].xyz
     route_xyz[-1] = endpoints[1].xyz
     length_m = float(np.sum(np.linalg.norm(np.diff(route_xyz, axis=0), axis=1)))
     return RouteHypothesis(
-        edge_ids=tuple(edge_id for edge_id, _forward in trail),
         route_xyz=np.ascontiguousarray(route_xyz, dtype=np.float32),
-        route_pixels_xy=np.ascontiguousarray(route_pixels, dtype=np.float32),
         length_m=length_m,
-        turn_rms_degrees=_turn_rms_degrees(route_xyz),
     )
 
 
@@ -892,7 +885,6 @@ def _graph_edge_observation(
     return GraphEdgeObservation(
         component_label=int(component_label),
         edge_id=int(edge.edge_id),
-        node_ids=(int(edge.node_a), int(edge.node_b)),
         xyz=np.ascontiguousarray(sampled_xyz, dtype=np.float32),
         pixels_xy=np.ascontiguousarray(sampled_pixels, dtype=np.float32),
         length_m=length_m,
@@ -937,52 +929,28 @@ class ObservationBuilder:
         if self.device.type == "cuda" and self.device.index is None:
             self.device = torch.device("cuda", torch.cuda.current_device())
         self.camera_model = camera_model
-        self.depth_buffer: torch.Tensor | None = None
         self.previous_endpoints = np.full((2, 2, 3), np.nan, dtype=np.float32)
+        self._cpu_executor = ThreadPoolExecutor(
+            max_workers=2,
+            thread_name_prefix="cable-observation",
+        )
+
+    def close(self) -> None:
+        self._cpu_executor.shutdown(wait=True, cancel_futures=True)
 
     def _prepare_geometry(
         self,
         depth: np.ndarray,
         relevant_pixels: np.ndarray,
     ) -> tuple[_SegmentedGeometry, _GeometryProfile]:
-        """Upload depth once and unproject all segmented pixels in one GPU batch."""
+        """Upload and unproject only pixels selected by the three PIDNet masks."""
 
         started = time.perf_counter()
         shape = depth.shape
         pixel_y, pixel_x = np.nonzero(relevant_pixels)
         index_image = np.full(shape, -1, dtype=np.int32)
         valid_image = np.zeros(shape, dtype=bool)
-        cuda_events = None
-        if self.config.profile_stages and self.device.type == "cuda":
-            cuda_events = tuple(
-                torch.cuda.Event(enable_timing=True) for _ in range(3)
-            )
-            cuda_events[0].record()
-        if self.depth_buffer is None or tuple(self.depth_buffer.shape) != shape:
-            self.depth_buffer = torch.empty(
-                shape,
-                device=self.device,
-                dtype=torch.float32,
-            )
-        depth_source = torch.from_numpy(np.ascontiguousarray(depth, dtype=np.float32))
-        self.depth_buffer.copy_(depth_source, non_blocking=False)
-        valid_depth = torch.isfinite(self.depth_buffer) & (self.depth_buffer > 0.0)
-        self.depth_buffer.masked_fill_(~valid_depth, 0.0)
-
-        if cuda_events is not None:
-            cuda_events[1].record()
-
         if len(pixel_x) == 0:
-            maps_cuda_ms = unprojection_cuda_ms = 0.0
-            if cuda_events is not None:
-                cuda_events[2].record()
-                cuda_events[2].synchronize()
-                maps_cuda_ms = float(
-                    cuda_events[0].elapsed_time(cuda_events[1])
-                )
-                unprojection_cuda_ms = float(
-                    cuda_events[1].elapsed_time(cuda_events[2])
-                )
             geometry = _SegmentedGeometry(
                 xyz=np.empty((0, 3), dtype=np.float32),
                 index_image=index_image,
@@ -992,25 +960,41 @@ class ObservationBuilder:
                 geometry,
                 _GeometryProfile(
                     wall_ms=float((time.perf_counter() - started) * 1000.0),
-                    maps_cuda_ms=maps_cuda_ms,
-                    unprojection_cuda_ms=unprojection_cuda_ms,
+                    maps_cuda_ms=0.0,
+                    unprojection_cuda_ms=0.0,
                     readback_wall_ms=0.0,
                     relevant_pixels=0,
                     valid_3d_points=0,
                 ),
             )
 
-        y_cuda = torch.as_tensor(pixel_y, device=self.device, dtype=torch.int64)
-        x_cuda = torch.as_tensor(pixel_x, device=self.device, dtype=torch.int64)
-        selected_depth = self.depth_buffer[y_cuda, x_cuda]
-        selected_valid = selected_depth > 0.0
+        selected_depth_cpu = np.ascontiguousarray(
+            depth[pixel_y, pixel_x],
+            dtype=np.float32,
+        )
+        cuda_events = None
+        if self.config.profile_stages and self.device.type == "cuda":
+            cuda_events = tuple(
+                torch.cuda.Event(enable_timing=True) for _ in range(3)
+            )
+            cuda_events[0].record()
+        y_cuda = torch.as_tensor(pixel_y, device=self.device, dtype=torch.float32)
+        x_cuda = torch.as_tensor(pixel_x, device=self.device, dtype=torch.float32)
+        selected_depth = torch.as_tensor(
+            selected_depth_cpu,
+            device=self.device,
+            dtype=torch.float32,
+        )
+        selected_valid = torch.isfinite(selected_depth) & (selected_depth > 0.0)
+        if cuda_events is not None:
+            cuda_events[1].record()
         point_x = (
-            (x_cuda.to(torch.float32) - self.camera_model.cx)
+            (x_cuda - self.camera_model.cx)
             * selected_depth
             / self.camera_model.fx
         )
         point_y = (
-            (y_cuda.to(torch.float32) - self.camera_model.cy)
+            (y_cuda - self.camera_model.cy)
             * selected_depth
             / (self.camera_model.image_y_sign * self.camera_model.fy)
         )
@@ -1080,9 +1064,10 @@ class ObservationBuilder:
             )
             return FrameObservation((empty, empty), (time.perf_counter() - started) * 1000.0)
         stage_started = time.perf_counter()
-        cable_mask = _mask_bool(masks[0], shape)
-        endpoint_masks = (_mask_bool(masks[1], shape), _mask_bool(masks[2], shape))
-        relevant_pixels = cable_mask | endpoint_masks[0] | endpoint_masks[1]
+        cable_mask = _mask_u8(masks[0], shape)
+        endpoint_masks = (_mask_u8(masks[1], shape), _mask_u8(masks[2], shape))
+        relevant_pixels = cv2.bitwise_or(cable_mask, endpoint_masks[0])
+        cv2.bitwise_or(relevant_pixels, endpoint_masks[1], dst=relevant_pixels)
         masks_ms = float((time.perf_counter() - stage_started) * 1000.0)
         geometry, geometry_profile = self._prepare_geometry(
             depth,
@@ -1091,7 +1076,7 @@ class ObservationBuilder:
 
         stage_started = time.perf_counter()
         cable_count, cable_labels, cable_stats, _ = cv2.connectedComponentsWithStats(
-            cable_mask.astype(np.uint8), connectivity=8
+            cable_mask, connectivity=8
         )
         connected_components_ms = float(
             (time.perf_counter() - stage_started) * 1000.0
@@ -1119,7 +1104,7 @@ class ObservationBuilder:
 
         graph_data: dict[
             int,
-            tuple[np.ndarray, _SkeletonGraph | None, dict[tuple[int, int], int], str],
+            tuple[_SkeletonGraph | None, dict[tuple[int, int], int], str],
         ] = {}
         component_preparation_ms = 0.0
         skeleton_ms = 0.0
@@ -1129,33 +1114,41 @@ class ObservationBuilder:
         debug_skeleton_pixels: list[np.ndarray] = []
         debug_node_pixels: list[np.ndarray] = []
         debug_branch_pixels: list[np.ndarray] = []
+        component_inputs: list[tuple[int, np.ndarray, int, int]] = []
         for component_label in range(1, cable_count):
             area = int(cable_stats[component_label, cv2.CC_STAT_AREA])
             if area < self.config.component_min_area_px:
                 continue
             component_started = time.perf_counter()
-            component = cable_labels == component_label
-            component_y, component_x = np.nonzero(component)
-            if len(component_x) < 2:
-                component_preparation_ms += float(
-                    (time.perf_counter() - component_started) * 1000.0
-                )
-                continue
-            x0, x1 = max(0, int(component_x.min()) - 2), min(
-                shape[1], int(component_x.max()) + 3
-            )
-            y0, y1 = max(0, int(component_y.min()) - 2), min(
-                shape[0], int(component_y.max()) + 3
+            component_roi, (y0, x0) = _component_roi(
+                cable_labels,
+                cable_stats,
+                component_label,
             )
             component_preparation_ms += float(
                 (time.perf_counter() - component_started) * 1000.0
             )
-            processed_component_count += 1
-            skeleton_started = time.perf_counter()
-            skeleton = _morphological_skeleton(component[y0:y1, x0:x1])
-            skeleton_ms += float(
-                (time.perf_counter() - skeleton_started) * 1000.0
+            component_inputs.append((component_label, component_roi, y0, x0))
+
+        processed_component_count = len(component_inputs)
+        skeleton_started = time.perf_counter()
+        if len(component_inputs) > 1:
+            skeletons = list(
+                self._cpu_executor.map(
+                    _morphological_skeleton,
+                    (item[1] for item in component_inputs),
+                )
             )
+        else:
+            skeletons = [
+                _morphological_skeleton(item[1]) for item in component_inputs
+            ]
+        skeleton_ms = float((time.perf_counter() - skeleton_started) * 1000.0)
+
+        for (component_label, _component_roi_mask, y0, x0), skeleton in zip(
+            component_inputs,
+            skeletons,
+        ):
             skeleton_pixels += int(np.count_nonzero(skeleton))
             if include_skeleton_debug:
                 skeleton_y, skeleton_x = np.nonzero(skeleton)
@@ -1186,7 +1179,8 @@ class ObservationBuilder:
                 skeleton,
                 tuple(anchors),
                 (y0, x0),
-                component,
+                cable_labels,
+                component_label,
                 geometry,
                 self.config.route_depth_radius_px,
                 self.config.graph_node_dilation_px,
@@ -1204,7 +1198,6 @@ class ObservationBuilder:
                 else {}
             )
             graph_data[component_label] = (
-                component,
                 graph,
                 node_by_owner,
                 graph_reason,
@@ -1214,7 +1207,6 @@ class ObservationBuilder:
         graph_edges = []
         if include_graph_edges:
             for component_label, (
-                _component,
                 graph,
                 node_by_owner,
                 _reason,
@@ -1273,7 +1265,7 @@ class ObservationBuilder:
                 + finalization_ms
             )
             valid_graphs = [
-                item[1] for item in graph_data.values() if item[1] is not None
+                item[0] for item in graph_data.values() if item[0] is not None
             ]
             profile = ObservationProfile(
                 total_ms=processing_ms,
@@ -1292,7 +1284,9 @@ class ObservationBuilder:
                 route_assembly_ms=route_assembly_ms,
                 finalization_ms=finalization_ms,
                 unaccounted_ms=max(0.0, processing_ms - accounted_ms),
-                cable_pixels=int(np.count_nonzero(cable_mask)),
+                cable_pixels=int(
+                    np.sum(cable_stats[1:, cv2.CC_STAT_AREA], dtype=np.int64)
+                ),
                 relevant_pixels=geometry_profile.relevant_pixels,
                 valid_3d_points=geometry_profile.valid_3d_points,
                 component_count=max(0, int(cable_count) - 1),
@@ -1348,16 +1342,17 @@ class ObservationBuilder:
         geometry: _SegmentedGeometry,
     ) -> list[EndpointMeasurement | None]:
         slots: list[EndpointMeasurement | None] = [None, None]
-        endpoint_u8 = endpoint_mask.astype(np.uint8)
-        x_offset, _, roi_width, _ = cv2.boundingRect(endpoint_u8)
-        if roi_width == 0:
+        endpoint_u8 = np.ascontiguousarray(endpoint_mask, dtype=np.uint8)
+        x_offset, y_offset, roi_width, roi_height = cv2.boundingRect(endpoint_u8)
+        if roi_width == 0 or roi_height == 0:
             return slots
 
-        # Endpoint pixels are sparse, so processing empty columns wastes most
-        # of the connected-components work. Keep the full image height: OpenCV
-        # partitions connected components by rows, and retaining those rows
-        # preserves the existing component numbering and association tie order.
-        endpoint_roi = endpoint_u8[:, x_offset : x_offset + roi_width]
+        # Removing empty border rows and columns preserves the row-major
+        # component order while avoiding a full 1080-line component scan.
+        endpoint_roi = endpoint_u8[
+            y_offset : y_offset + roi_height,
+            x_offset : x_offset + roi_width,
+        ]
         count, labels, stats, centroids = cv2.connectedComponentsWithStats(
             endpoint_roi, connectivity=8
         )
@@ -1367,11 +1362,15 @@ class ObservationBuilder:
             if area < self.config.endpoint_min_area_px:
                 continue
             local_x = int(stats[component, cv2.CC_STAT_LEFT])
+            local_y = int(stats[component, cv2.CC_STAT_TOP])
             x = local_x + x_offset
-            y = int(stats[component, cv2.CC_STAT_TOP])
+            y = local_y + y_offset
             width = int(stats[component, cv2.CC_STAT_WIDTH])
             height = int(stats[component, cv2.CC_STAT_HEIGHT])
-            label_region = np.s_[y : y + height, local_x : local_x + width]
+            label_region = np.s_[
+                local_y : local_y + height,
+                local_x : local_x + width,
+            ]
             geometry_region = np.s_[y : y + height, x : x + width]
             selected = (
                 (labels[label_region] == component)
@@ -1382,19 +1381,17 @@ class ObservationBuilder:
             local_y, local_x = np.nonzero(selected)
             points = geometry.points_at(local_y + y, local_x + x)
             center = np.median(points, axis=0).astype(np.float32)
-            spread = float(np.median(np.linalg.norm(points - center, axis=1)))
             candidates.append(
                 EndpointMeasurement(
                     pixel_xy=np.asarray(
                         (
                             centroids[component, 0] + x_offset,
-                            centroids[component, 1],
+                            centroids[component, 1] + y_offset,
                         ),
                         dtype=np.float32,
                     ),
                     xyz=center,
                     area_px=area,
-                    spread_m=spread,
                 )
             )
         if not candidates:
@@ -1466,7 +1463,7 @@ class ObservationBuilder:
         component_labels: np.ndarray,
         graph_data: dict[
             int,
-            tuple[np.ndarray, _SkeletonGraph | None, dict[tuple[int, int], int], str],
+            tuple[_SkeletonGraph | None, dict[tuple[int, int], int], str],
         ],
     ) -> tuple[CableObservation, _CableAssemblyProfile]:
         visible = np.asarray([endpoint is not None for endpoint in endpoints], dtype=bool)
@@ -1479,14 +1476,13 @@ class ObservationBuilder:
             endpoint_pixels[endpoint_index] = endpoint.pixel_xy
 
         routes = []
-        truncated = False
         route_search_ms = 0.0
         route_assembly_ms = 0.0
         if visible.all() and int(component_labels[0]) == int(component_labels[1]):
             component_label = int(component_labels[0])
             data = graph_data.get(component_label)
-            if component_label > 0 and data is not None and data[1] is not None:
-                _component, graph, node_by_owner, _reason = data
+            if component_label > 0 and data is not None and data[0] is not None:
+                graph, node_by_owner, _reason = data
                 assert graph is not None
                 endpoint_nodes = (
                     node_by_owner.get((cable_index, 0), -1),
@@ -1494,7 +1490,7 @@ class ObservationBuilder:
                 )
                 if endpoint_nodes[0] >= 0 and endpoint_nodes[1] >= 0:
                     stage_started = time.perf_counter()
-                    trails, truncated = _enumerate_graph_trails(
+                    trails = _enumerate_graph_trails(
                         graph,
                         endpoint_nodes[0],
                         endpoint_nodes[1],
@@ -1536,14 +1532,6 @@ class ObservationBuilder:
         elif visible.all():
             self.previous_endpoints[cable_index] = endpoints_xyz
 
-        labels_used = {int(label) for label in component_labels[visible] if int(label) > 0}
-        components = [graph_data[label] for label in labels_used if label in graph_data]
-        component_points = int(sum(np.count_nonzero(item[0]) for item in components))
-        graph_nodes = int(sum(item[1].node_count for item in components if item[1] is not None))
-        graph_edges = int(sum(len(item[1].edges) for item in components if item[1] is not None))
-        branch_pixels = int(
-            sum(item[1].branch_pixels for item in components if item[1] is not None)
-        )
         if routes:
             reason = "complete endpoint-to-endpoint routes"
         elif not visible.any():
@@ -1562,11 +1550,11 @@ class ObservationBuilder:
                 reason = "no complete route: endpoints are not attached to cable body"
             elif data is None:
                 reason = "no complete route: body component was not graphable"
-            elif data[1] is None:
-                reason = f"no complete route: {data[3]}"
+            elif data[0] is None:
+                reason = f"no complete route: {data[2]}"
             else:
-                graph = data[1]
-                node_by_owner = data[2]
+                graph = data[0]
+                node_by_owner = data[1]
                 assert graph is not None
                 endpoint_nodes = (
                     node_by_owner.get((cable_index, 0), -1),
@@ -1586,11 +1574,6 @@ class ObservationBuilder:
                 component_labels, dtype=np.int32
             ),
             routes=tuple(routes),
-            component_points=component_points,
-            graph_nodes=graph_nodes,
-            graph_edges=graph_edges,
-            branch_pixels=branch_pixels,
-            route_search_truncated=truncated,
         )
         finalization_ms = float((time.perf_counter() - stage_started) * 1000.0)
         return (

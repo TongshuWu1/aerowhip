@@ -17,14 +17,16 @@ from cube_tracker import (
 
 @dataclass(frozen=True)
 class CubeStateFilterConfig:
-    """Constant-velocity SE(3) filter parameters."""
+    """Translation dynamics and symmetry-safe orientation-state parameters."""
 
     linear_acceleration_std_mps2: float = 1.5
     angular_acceleration_std_rps2: float = 4.0
     initial_linear_velocity_std_mps: float = 0.20
     initial_angular_velocity_std_rps: float = 0.80
+    angular_velocity_smoothing: float = 0.25
     maximum_prediction_age_s: float = 0.50
     maximum_prediction_step_s: float = 0.10
+    innovation_gate_chi2: float = 22.458
 
     @classmethod
     def from_mapping(cls, values: dict | None) -> "CubeStateFilterConfig":
@@ -55,6 +57,12 @@ class CubeStateFilterConfig:
                     defaults.initial_angular_velocity_std_rps,
                 )
             ),
+            angular_velocity_smoothing=float(
+                source.get(
+                    "angular_velocity_smoothing",
+                    defaults.angular_velocity_smoothing,
+                )
+            ),
             maximum_prediction_age_s=float(
                 source.get(
                     "maximum_prediction_age_s",
@@ -65,6 +73,12 @@ class CubeStateFilterConfig:
                 source.get(
                     "maximum_prediction_step_s",
                     defaults.maximum_prediction_step_s,
+                )
+            ),
+            innovation_gate_chi2=float(
+                source.get(
+                    "innovation_gate_chi2",
+                    defaults.innovation_gate_chi2,
                 )
             ),
         )
@@ -80,6 +94,10 @@ class CubeStateFilterConfig:
             raise ValueError("initial_linear_velocity_std_mps must be positive.")
         if self.initial_angular_velocity_std_rps <= 0.0:
             raise ValueError("initial_angular_velocity_std_rps must be positive.")
+        if not 0.0 < self.angular_velocity_smoothing <= 1.0:
+            raise ValueError(
+                "angular_velocity_smoothing must be in the interval (0, 1]."
+            )
         if self.maximum_prediction_age_s <= 0.0:
             raise ValueError("maximum_prediction_age_s must be positive.")
         if not 0.0 < self.maximum_prediction_step_s <= self.maximum_prediction_age_s:
@@ -87,6 +105,8 @@ class CubeStateFilterConfig:
                 "maximum_prediction_step_s must be positive and no greater than "
                 "maximum_prediction_age_s."
             )
+        if self.innovation_gate_chi2 <= 0.0:
+            raise ValueError("innovation_gate_chi2 must be positive.")
 
 
 @dataclass(frozen=True)
@@ -95,7 +115,7 @@ class CubeStateEstimate:
 
     Pose covariance order is camera-frame left perturbation
     [position xyz, rotation-vector xyz]. State covariance appends camera-frame
-    linear velocity xyz and angular velocity xyz.
+    linear velocity xyz and the separately observed angular velocity xyz.
     """
 
     valid: bool
@@ -107,7 +127,6 @@ class CubeStateEstimate:
     measurement_age_s: float
     center_m: np.ndarray | None
     rotation: np.ndarray | None
-    quaternion_xyzw: np.ndarray | None
     linear_velocity_mps: np.ndarray | None
     angular_velocity_rps: np.ndarray | None
     pose_covariance: np.ndarray | None
@@ -138,17 +157,6 @@ def _rotation_exp(vector: np.ndarray) -> np.ndarray:
     return np.eye(3, dtype=np.float64) + first * skew + second * (skew @ skew)
 
 
-def _so3_left_jacobian(vector: np.ndarray) -> np.ndarray:
-    value = np.asarray(vector, dtype=np.float64).reshape(3)
-    angle = float(np.linalg.norm(value))
-    skew = _skew(value)
-    if angle < 1.0e-8:
-        return np.eye(3, dtype=np.float64) + 0.5 * skew + (skew @ skew) / 6.0
-    second = (1.0 - math.cos(angle)) / (angle * angle)
-    third = (angle - math.sin(angle)) / (angle**3)
-    return np.eye(3, dtype=np.float64) + second * skew + third * (skew @ skew)
-
-
 def _rotation_log(rotation: np.ndarray) -> np.ndarray:
     quaternion = rotation_matrix_to_quaternion(rotation)
     if quaternion[3] < 0.0:
@@ -172,7 +180,7 @@ def _symmetric_positive_covariance(covariance: np.ndarray) -> np.ndarray:
 
 
 class RigidCubeStateFilter:
-    """One-thread error-state Kalman filter on position, rotation, and velocity."""
+    """Translation CV filter with symmetry-anchored, measurement-driven rotation."""
 
     def __init__(self, config: CubeStateFilterConfig):
         config.validate()
@@ -181,10 +189,15 @@ class RigidCubeStateFilter:
         self.rotation: np.ndarray | None = None
         self.linear_velocity_mps = np.zeros(3, dtype=np.float64)
         self.angular_velocity_rps = np.zeros(3, dtype=np.float64)
+        self.angular_velocity_covariance = (
+            config.initial_angular_velocity_std_rps**2
+        ) * np.eye(3, dtype=np.float64)
         self.covariance: np.ndarray | None = None
         self.cube_side_m = float("nan")
         self.last_timestamp: float | None = None
         self.last_measurement_timestamp: float | None = None
+        self.last_measurement_rotation: np.ndarray | None = None
+        self.last_measurement_rotation_covariance: np.ndarray | None = None
 
     @property
     def initialized(self) -> bool:
@@ -223,50 +236,61 @@ class RigidCubeStateFilter:
         ).reshape(3, 3).copy()
         self.linear_velocity_mps.fill(0.0)
         self.angular_velocity_rps.fill(0.0)
-        covariance = np.zeros((12, 12), dtype=np.float64)
-        covariance[:6, :6] = _symmetric_positive_covariance(
+        measurement_covariance = _symmetric_positive_covariance(
             measurement.pose_covariance
         )
+        covariance = np.zeros((9, 9), dtype=np.float64)
+        covariance[:6, :6] = measurement_covariance
         covariance[6:9, 6:9] = (
             self.config.initial_linear_velocity_std_mps**2
         ) * np.eye(3)
-        covariance[9:12, 9:12] = (
+        self.angular_velocity_covariance = (
             self.config.initial_angular_velocity_std_rps**2
         ) * np.eye(3)
         self.covariance = covariance
         self.cube_side_m = float(measurement.cube_side_m)
         self.last_timestamp = timestamp
         self.last_measurement_timestamp = timestamp
+        self.last_measurement_rotation = self.rotation.copy()
+        self.last_measurement_rotation_covariance = measurement_covariance[
+            3:6, 3:6
+        ].copy()
 
     def _predict_step(self, dt: float) -> None:
         assert self.center_m is not None
         assert self.rotation is not None
         assert self.covariance is not None
         self.center_m += dt * self.linear_velocity_mps
-        rotation_vector = dt * self.angular_velocity_rps
-        rotation_increment = _rotation_exp(rotation_vector)
-        rotation_jacobian = _so3_left_jacobian(rotation_vector)
-        self.rotation = rotation_increment @ self.rotation
 
-        transition = np.eye(12, dtype=np.float64)
+        transition = np.eye(9, dtype=np.float64)
         transition[:3, 6:9] = dt * np.eye(3)
-        transition[3:6, 3:6] = rotation_increment
-        transition[3:6, 9:12] = dt * rotation_jacobian
-        process = np.zeros((12, 12), dtype=np.float64)
-        linear_noise_map = np.zeros((12, 3), dtype=np.float64)
+        process = np.zeros((9, 9), dtype=np.float64)
+        linear_noise_map = np.zeros((9, 3), dtype=np.float64)
         linear_noise_map[:3] = 0.5 * dt**2 * np.eye(3)
         linear_noise_map[6:9] = dt * np.eye(3)
         process += (
             self.config.linear_acceleration_std_mps2**2
         ) * (linear_noise_map @ linear_noise_map.T)
-        angular_noise_map = np.zeros((12, 3), dtype=np.float64)
-        angular_noise_map[3:6] = 0.5 * dt**2 * rotation_jacobian
-        angular_noise_map[9:12] = dt * np.eye(3)
-        process += (
-            self.config.angular_acceleration_std_rps2**2
-        ) * (angular_noise_map @ angular_noise_map.T)
+        angular_acceleration_variance = (
+            self.config.angular_acceleration_std_rps2 * dt
+        ) ** 2
+        process[3:6, 3:6] += (
+            dt**2
+            * (
+                self.angular_velocity_covariance
+                + np.outer(
+                    self.angular_velocity_rps,
+                    self.angular_velocity_rps,
+                )
+            )
+            + 0.25 * angular_acceleration_variance * dt**2 * np.eye(3)
+        )
         self.covariance = _symmetric_positive_covariance(
             transition @ self.covariance @ transition.T + process
+        )
+        self.angular_velocity_covariance = _symmetric_positive_covariance(
+            self.angular_velocity_covariance
+            + angular_acceleration_variance * np.eye(3)
         )
 
     def _predict_to(self, timestamp: float) -> None:
@@ -283,7 +307,11 @@ class RigidCubeStateFilter:
             remaining -= dt
         self.last_timestamp = timestamp
 
-    def _measurement_update(self, measurement: CubeTrackingResult) -> None:
+    def _measurement_update(
+        self,
+        measurement: CubeTrackingResult,
+        timestamp: float,
+    ) -> tuple[bool, float]:
         assert self.center_m is not None
         assert self.rotation is not None
         assert self.covariance is not None
@@ -295,9 +323,10 @@ class RigidCubeStateFilter:
             measurement.refined_center_m,
             dtype=np.float64,
         ).reshape(3)
+        assert self.last_measurement_rotation is not None
         measured_rotation = choose_equivalent_rotation(
             np.asarray(measurement.refined_rotation, dtype=np.float64).reshape(3, 3),
-            self.rotation,
+            self.last_measurement_rotation,
         )
         residual = np.concatenate(
             (
@@ -305,7 +334,7 @@ class RigidCubeStateFilter:
                 _rotation_log(measured_rotation @ self.rotation.T),
             )
         )
-        observation = np.zeros((6, 12), dtype=np.float64)
+        observation = np.zeros((6, 9), dtype=np.float64)
         observation[:, :6] = np.eye(6)
         measurement_covariance = _symmetric_positive_covariance(
             measurement.pose_covariance
@@ -314,6 +343,16 @@ class RigidCubeStateFilter:
             observation @ self.covariance @ observation.T
             + measurement_covariance
         )
+        whitened_residual = np.linalg.solve(
+            innovation_covariance,
+            residual,
+        )
+        innovation_chi2 = float(residual @ whitened_residual)
+        if (
+            not np.isfinite(innovation_chi2)
+            or innovation_chi2 > self.config.innovation_gate_chi2
+        ):
+            return False, innovation_chi2
         covariance_observation_t = self.covariance @ observation.T
         gain = np.linalg.solve(
             innovation_covariance,
@@ -323,15 +362,14 @@ class RigidCubeStateFilter:
         self.center_m += increment[:3]
         self.rotation = _rotation_exp(increment[3:6]) @ self.rotation
         self.linear_velocity_mps += increment[6:9]
-        self.angular_velocity_rps += increment[9:12]
 
-        identity = np.eye(12, dtype=np.float64)
+        identity = np.eye(9, dtype=np.float64)
         correction = identity - gain @ observation
         posterior_covariance = (
             correction @ self.covariance @ correction.T
             + gain @ measurement_covariance @ gain.T
         )
-        reset_jacobian = np.eye(12, dtype=np.float64)
+        reset_jacobian = np.eye(9, dtype=np.float64)
         # The filter uses a left orientation error:
         # R_true = Exp(delta_theta) R_nominal. After injecting the estimated
         # increment on the left, the first-order reset Jacobian has a positive
@@ -340,6 +378,42 @@ class RigidCubeStateFilter:
         self.covariance = _symmetric_positive_covariance(
             reset_jacobian @ posterior_covariance @ reset_jacobian.T
         )
+        measurement_interval = (
+            timestamp - self.last_measurement_timestamp
+            if self.last_measurement_timestamp is not None
+            else 0.0
+        )
+        if measurement_interval > 1.0e-6:
+            observed_angular_velocity = (
+                _rotation_log(
+                    measured_rotation @ self.last_measurement_rotation.T
+                )
+                / measurement_interval
+            )
+            previous_rotation_covariance = (
+                self.last_measurement_rotation_covariance
+                if self.last_measurement_rotation_covariance is not None
+                else measurement_covariance[3:6, 3:6]
+            )
+            observed_angular_covariance = (
+                measurement_covariance[3:6, 3:6]
+                + previous_rotation_covariance
+            ) / (measurement_interval**2)
+            smoothing = self.config.angular_velocity_smoothing
+            self.angular_velocity_rps = (
+                (1.0 - smoothing) * self.angular_velocity_rps
+                + smoothing * observed_angular_velocity
+            )
+            self.angular_velocity_covariance = _symmetric_positive_covariance(
+                (1.0 - smoothing) ** 2
+                * self.angular_velocity_covariance
+                + smoothing**2 * observed_angular_covariance
+            )
+        self.last_measurement_rotation = measured_rotation.copy()
+        self.last_measurement_rotation_covariance = measurement_covariance[
+            3:6, 3:6
+        ].copy()
+        return True, innovation_chi2
 
     def _estimate(
         self,
@@ -368,7 +442,6 @@ class RigidCubeStateFilter:
                 measurement_age_s=float("inf"),
                 center_m=None,
                 rotation=None,
-                quaternion_xyzw=None,
                 linear_velocity_mps=None,
                 angular_velocity_rps=None,
                 pose_covariance=None,
@@ -379,6 +452,9 @@ class RigidCubeStateFilter:
         assert self.center_m is not None
         assert self.rotation is not None
         assert self.covariance is not None
+        state_covariance = np.zeros((12, 12), dtype=np.float64)
+        state_covariance[:9, :9] = self.covariance
+        state_covariance[9:12, 9:12] = self.angular_velocity_covariance
         return CubeStateEstimate(
             valid=valid,
             initialized=True,
@@ -389,11 +465,10 @@ class RigidCubeStateFilter:
             measurement_age_s=max(0.0, age),
             center_m=self.center_m.copy(),
             rotation=self.rotation.copy(),
-            quaternion_xyzw=rotation_matrix_to_quaternion(self.rotation),
             linear_velocity_mps=self.linear_velocity_mps.copy(),
             angular_velocity_rps=self.angular_velocity_rps.copy(),
             pose_covariance=self.covariance[:6, :6].copy(),
-            state_covariance=self.covariance.copy(),
+            state_covariance=state_covariance,
             processing_ms=processing_ms,
         )
 
@@ -436,10 +511,22 @@ class RigidCubeStateFilter:
             measurement_used = True
         elif has_measurement:
             assert measurement is not None
-            self._measurement_update(measurement)
-            self.last_measurement_timestamp = timestamp
-            reason = "refined cube measurement update"
-            measurement_used = True
+            measurement_used, innovation_chi2 = self._measurement_update(
+                measurement,
+                timestamp,
+            )
+            if measurement_used:
+                self.last_measurement_timestamp = timestamp
+                reason = (
+                    "refined cube measurement update "
+                    f"(innovation chi2={innovation_chi2:.2f})"
+                )
+            else:
+                reason = (
+                    "refined cube measurement rejected "
+                    f"(innovation chi2={innovation_chi2:.2f} > "
+                    f"{self.config.innovation_gate_chi2:.2f})"
+                )
         else:
             measurement_used = False
             age = max(0.0, age_before_update)

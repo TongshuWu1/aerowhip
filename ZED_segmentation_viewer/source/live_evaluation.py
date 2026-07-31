@@ -156,6 +156,7 @@ class LiveEvaluation:
             )
         )
         self.csv_stream.flush()
+        self.last_flush_time = time.perf_counter()
 
     def init_window(self) -> None:
         cv2.namedWindow(WINDOW_NAME, cv2.WINDOW_NORMAL)
@@ -430,7 +431,10 @@ class LiveEvaluation:
                     sample.contact_reason[1],
                 )
             )
-            self.csv_stream.flush()
+            now = time.perf_counter()
+            if now - self.last_flush_time >= 1.0:
+                self.csv_stream.flush()
+                self.last_flush_time = now
 
     def poll(self) -> None:
         if self.closed:

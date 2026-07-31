@@ -1,6 +1,6 @@
 [camera]
-resolution = "HD720"
-fps = 60
+resolution = "HD1080"
+fps = 30
 depth_mode = "NEURAL"
 confidence = 100
 texture_confidence = 100
@@ -16,7 +16,7 @@ hue_min = 18
 hue_max = 40
 saturation_min = 100
 value_min = 80
-minimum_mask_area_px = 2500
+minimum_mask_area_px = 5625
 
 [fit]
 depth_min_m = 0.20

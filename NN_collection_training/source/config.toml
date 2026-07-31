@@ -1,12 +1,14 @@
+# Canonical PIDNet runtime used by both the collection GUI and main tracker.
 [pidnet]
 checkpoint = "data/models/pidnet_two_cable_best.pt"
 device = "cuda"
-threshold = 0.85000002
-endpoint_thresholds = [0.89999998, 0.75]
+threshold = 0.9
+endpoint_thresholds = [0.82, 0.82]
 amp = true
 channels_last = true
 
 [detector]
-min_area_px = 80
+# Body-only cleanup; both endpoint masks remain exactly as thresholded.
+min_area_px = 180
 open_kernel = 1
-close_kernel = 5
+close_kernel = 7

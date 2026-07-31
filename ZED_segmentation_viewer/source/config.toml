@@ -1,6 +1,6 @@
 [camera]
-resolution = "HD720"
-fps = 60
+resolution = "HD1080"
+fps = 30
 depth_mode = "NEURAL"
 
 # These are the least restrictive ZED runtime thresholds. No application-side
@@ -14,7 +14,7 @@ fill = true
 enabled = true
 # "zed" retrieves the SDK XYZRGBA cloud; "depth" unprojects the depth frame
 # already used by tracking. Set enabled=false for a headless isolation run.
-point_cloud_source = "zed"
+point_cloud_source = "depth"
 rgb_width = 620
 cloud_width = 1180
 height = 900
@@ -22,12 +22,12 @@ height = 900
 point_size = 2.0
 # Redraw the window at the camera rate. New diagnostic frames remain
 # best-effort and never block the asynchronous tracking worker.
-max_fps = 60
+max_fps = 30
 # Full-resolution XYZRGBA geometry is an independent diagnostic stream. RGB,
 # skeleton, PF curves, labels, and window redraw still update at tracking rate.
 # Reusing the GPU vertex buffer avoids charging tracking for a million-point
 # cloud conversion and upload on every frame.
-point_cloud_fps = 4
+point_cloud_fps = 20
 # Viewer-only spatial sampling. A stride of 2 renders one pixel from each 2x2
 # image block (about 25% of the cloud). Tracking always uses full resolution.
 point_cloud_stride = 2
@@ -43,7 +43,7 @@ recording_queue_frames = 8
 # values and the final plot are saved for later analysis.
 enabled = true
 directory = "diagnostics/evaluation_runs"
-sample_hz = 10
+sample_hz = 5
 history_seconds = 30
 
 [cube_tracking]
@@ -55,10 +55,10 @@ hue_min = 18
 hue_max = 40
 saturation_min = 100
 value_min = 80
-minimum_mask_area_px = 2500
+minimum_mask_area_px = 5625
 # Remove PIDNet cable pixels plus this boundary radius before cube depth fitting.
 # Zero disables cable-mask exclusion for ablation.
-cable_exclusion_radius_px = 3
+cable_exclusion_radius_px = 5
 depth_min_m = 0.20
 depth_max_m = 3.00
 pixel_stride = 2
@@ -81,15 +81,21 @@ two_face_center_std_m = 0.004
 random_seed = 7
 
 [cube_state_filter]
-# This causal SE(3) filter consumes the refined measurement after the raw
-# cube worker rejoins the tracking thread. It never modifies the raw fit.
+# This causal filter consumes the refined measurement after the raw cube
+# worker rejoins the tracking thread. It never modifies the raw fit.
 enabled = true
 linear_acceleration_std_mps2 = 1.5
 angular_acceleration_std_rps2 = 4.0
 initial_linear_velocity_std_mps = 0.20
 initial_angular_velocity_std_rps = 0.80
+# Angular velocity is measured from consecutive accepted visual orientations.
+# It is reported for interaction inference but does not rotate prediction-only
+# poses, which prevents a visually symmetric cube from spinning on noise.
+angular_velocity_smoothing = 0.25
 maximum_prediction_age_s = 0.50
 maximum_prediction_step_s = 0.10
+# 99.9% chi-square gate for the six-dimensional pose innovation.
+innovation_gate_chi2 = 22.458
 
 [contact]
 # Passive only: reads the two cable posteriors and temporal cube state but
@@ -113,27 +119,24 @@ comotion_relative_speed_std_mps = 0.040
 comotion_max_bayes_factor = 3.0
 
 [pidnet]
-checkpoint = "data/models/pidnet_two_cable_best.pt"
-device = "cuda"
-threshold = 0.80
-endpoint_thresholds = [0.89999998, 0.75]
-amp = true
-channels_last = true
+# Single source for checkpoint, thresholds, CUDA inference, and mask cleanup.
+# The collection GUI reads and edits the same file.
+runtime_config = "NN_collection_training/source/config.toml"
 overlay_alpha = 0.62
 
 [observation]
 # Endpoint components smaller than this are treated as NN speckle, not endpoints.
-endpoint_min_area_px = 24
-endpoint_label_search_px = 18
-route_depth_radius_px = 2
+endpoint_min_area_px = 54
+endpoint_label_search_px = 27
+route_depth_radius_px = 3
 route_samples = 128
-graph_node_dilation_px = 3
+graph_node_dilation_px = 5
 route_candidate_limit = 16
 route_search_state_limit = 4096
 route_edge_limit = 24
 route_length_margin_m = 0.18
 graph_edge_samples = 24
-component_min_area_px = 8
+component_min_area_px = 18
 endpoint_association_gate_m = 0.12
 # Diagnostic-only stage timing. This does not change observation mathematics.
 profile_stages = true
@@ -142,8 +145,8 @@ profile_console_period_s = 1.0
 
 [particle_filter]
 device = "cuda"
-particle_count = 800
-node_count = 16
+particle_count = 500
+node_count = 12
 # Both physical cables are identical and measured as 0.518 m tip-to-tip.
 cable_lengths_m = [0.518, 0.518]
 # Measured physical cable diameter. The PF state remains the medial
@@ -206,7 +209,12 @@ temporal_prediction = true
 # before fixed-length projection. This is deterministic motion conditioning,
 # not a recovery fallback.
 endpoint_motion_transport = true
-ess_resampling = true
+# Treat a missing endpoint as stationary at its last observed 3D position.
+# The endpoint remains diagnostically occluded; this only sets the PF boundary.
+hold_occluded_endpoints = true
+# When disabled, resample on every accepted measurement; when enabled, use the
+# ESS threshold to avoid unnecessary resampling.
+adaptive_ess_resampling = true
 global_particles = true
 # Update each supported node from local visible-edge motion. No displacement
 # is interpolated or extrapolated across an occluded cable interval.
@@ -218,9 +226,9 @@ posterior_uncertainty = true
 # The exact PyTorch CUDA Graph remains active for centroid-preserving unanchored prediction.
 fused_constraint_kernels = true
 cuda_graph_replay = true
-# Show the prior-based cable identity and ordered arc interval assigned to
-# every observed skeleton edge.
-graph_edge_attribution = true
+# Viewer-only readback of cable identity and ordered arc interval for each
+# observed skeleton edge. Core visible-edge tracking is controlled below.
+edge_attribution_diagnostics = true
 # Preserve fragment identity across graph rebuilds and short occlusions.
 temporal_edge_identity = true
 # Score initialized particles against all confidently attributed visible

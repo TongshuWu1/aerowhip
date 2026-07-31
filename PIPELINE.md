@@ -10,6 +10,13 @@ RGB-D camera. The neural network observes a shared cable body, two endpoint
 groups. Cable identity, projected junction topology, and 3D shape are estimated
 outside the neural network.
 
+The canonical live and collection mode is native ZED HD1080 at 30 FPS. PIDNet
+receives the full 1920 x 1080 RGB frame, and its training default is the same
+resolution; the observation path does not silently downsample frames to 720p.
+Pixel distances are scaled by 1.5 and pixel-area rejection thresholds by 2.25
+from their former HD720 values. All metric geometry and dynamics remain
+resolution-independent and unchanged.
+
 ## Runtime data flow
 
 ```text
@@ -83,15 +90,37 @@ removing only the obsolete output row. The cable and two endpoint logits are
 bit-for-bit unchanged by that migration. Future training runs use the
 three-channel annotation and checkpoint schemas directly.
 
+The collection GUI and main tracker share one runtime mask contract in
+`NN_collection_training/source/config.toml`. The current thresholds are
+0.85/0.90/0.75 for body/endpoint-1/endpoint-2. The body mask then receives a
+7-pixel close and removal of components below 180 pixels; endpoint masks are
+left exactly as thresholded. One shared implementation produces these masks
+for GUI preview/evaluation, editable prediction drafts, the cable observation,
+cube exclusion, and visualization. Loading a checkpoint never changes the
+active thresholds. `Calibrate on Validation` searches the verified validation
+split, and `Save Runtime to config.toml` explicitly publishes those displayed
+thresholds to the shared runtime file. The main process reads that file at
+startup and prints its path, checkpoint SHA-256, thresholds, and cleanup values.
+
 ## RGB-D geometry
 
 The binary semantic masks needed for connected components and skeletonization
-are transferred to the CPU. Registered depth is uploaded once to a persistent
-CUDA buffer, and all relevant semantic pixels are unprojected together.
+are transferred to the CPU. Only the registered-depth samples selected by the
+current semantic masks are gathered and uploaded to CUDA; the observation path
+does not scan or upload an otherwise unused full HD1080 depth tensor.
 
 The result is a compact 3D array and pixel-to-point index image. Full
 XYZRGBA point-cloud construction is not part of tracking. The viewer constructs
 its point cloud independently and can use a display-only stride.
+
+At native HD1080, observation preprocessing reuses the cleaned `uint8` masks
+instead of creating three full-frame Boolean copies. Connected-component
+statistics provide each exact cable bounding box, so thinning materializes only
+the small component crop rather than rescanning the full label image for every
+component. When two separate body components are present, their independent
+skeletons are thinned by two persistent CPU workers. Graph construction and 3D
+lifting still use the original full-resolution component labels, so these
+changes preserve the observation support and route geometry.
 
 ## Passive cube observation
 
@@ -139,15 +168,25 @@ six-dimensional covariance is ordered as camera-frame centre translation
 \((x,y,z)\), then camera-frame left rotation-vector perturbation
 \((r_x,r_y,r_z)\).
 
-The separate `RigidCubeStateFilter` consumes only the refined fields. It is a
-constant-velocity error-state Kalman filter on centre, rotation, linear
-velocity, and angular velocity. Invalid raw measurements produce causal
-prediction with increasing covariance for at most the configured prediction
-age; an expired state is marked invalid rather than held indefinitely. A new
-measurement after expiry reinitializes the state. The raw measurement is never
-changed by the temporal filter. Its 12-dimensional error covariance appends
-camera-frame linear and angular velocity to the six pose components. Rotation
-prediction uses the SO(3) exponential and its left Jacobian.
+The separate `RigidCubeStateFilter` consumes only the refined fields. Centre
+and linear velocity use a constant-velocity error-state Kalman filter. Each
+accepted visual orientation is first mapped to the cube-symmetric equivalent
+nearest the previous accepted visual orientation, then updates the nominal
+rotation on SO(3). Prediction-only frames hold that rotation while its
+covariance grows; noisy angular velocity therefore cannot make a stationary
+cube spin. Angular velocity is a smoothed finite difference of consecutive
+accepted, symmetry-aligned visual orientations and remains available for
+interaction inference without driving the nominal pose.
+
+Invalid raw measurements produce causal centre prediction with increasing
+covariance for at most the configured prediction age; an expired state is
+marked invalid rather than held indefinitely. A new measurement after expiry
+reinitializes the state. The raw measurement is never changed by the temporal
+filter. Its published 12-dimensional error covariance contains pose, linear
+velocity, and the separately observed angular velocity. Before each update,
+the six-dimensional pose innovation is tested with its full covariance. An
+innovation outside the configured chi-square gate is rejected and the filter
+remains prediction-only for that frame, without orientation drift.
 
 The camera panel shows the measured yellow boundary and raw cube wireframe.
 The 3D viewer shows the valid temporal cube state as a magenta wireframe and
@@ -204,6 +243,11 @@ evidence continuously without a global visibility threshold. Remote visible
 fragments cannot validate a hidden contact arc. If either estimator is
 prediction-only or local support mass is zero, the contact state only predicts
 forward; missing observations cannot create contact confidence.
+
+The reported point, normal, gap, and arc interval come from the particle with
+the largest product of PF weight, local observed-arc support, and contact
+compatibility. Thus the displayed contact geometry cannot be selected from a
+high-weight particle whose proposed contact arc is hidden.
 
 `[contact].enabled` isolates this observer. It reads PF tensors only after the
 visual update and never changes particles, velocities, weights, proposals,
@@ -386,13 +430,20 @@ N_{\mathrm{eff}} =
 \frac{1}{\sum_p (w^{(p)})^2}.
 \]
 
-Systematic resampling runs only when a real route or visible-edge measurement
-is available and the configured ESS threshold is crossed. The resampling
-implementation is batched on CUDA.
+With adaptive ESS enabled, systematic resampling runs only when a real route
+or visible-edge measurement is available and the configured ESS threshold is
+crossed. With it disabled, every accepted measurement is resampled. The
+resampling implementation is batched on CUDA.
 
 When there is no usable route or attributed-edge measurement, initialized
 filters can commit their prediction if `prediction_without_measurement` is
-enabled. Missing data therefore does not invent a measurement.
+enabled. Missing data therefore does not invent a cable-shape measurement.
+With `hold_occluded_endpoints` enabled, each endpoint that disappears after a
+valid observation remains a zero-velocity boundary at its last observed 3D
+position. This applies during visible-edge updates and prediction-only frames.
+Actual endpoint visibility remains unchanged in diagnostics, and a newly
+observed endpoint immediately replaces the held boundary. The assumption is
+independently switchable for ablation.
 
 ## Prior-based soft graph-edge attribution
 
@@ -578,7 +629,8 @@ Current live controls are:
 | `6` | `fixed_length` | Fixed-link position constraints |
 | `7` | `temporal_prediction` | Damped velocity prediction |
 | `M` | `endpoint_motion_transport` | Boundary-conditioned proposal transport |
-| `E` | `ess_resampling` | ESS-triggered systematic resampling |
+| `O` | `hold_occluded_endpoints` | Hold a hidden endpoint at its last observed 3D position |
+| `E` | `adaptive_ess_resampling` | Use the ESS threshold; off resamples every accepted measurement |
 | `9` | `global_particles` | Ten-percent retracking proposals |
 | `V` | `local_node_motion` | Evidence-gated velocity update for locally supported nodes |
 | `F` | `single_endpoint_updates` | Permit one-endpoint anchoring |
@@ -586,7 +638,7 @@ Current live controls are:
 | `H` | `posterior_uncertainty` | Posterior covariance diagnostics |
 | `K` | `fused_constraint_kernels` | Native fused CUDA link constraints |
 | `J` | `cuda_graph_replay` | CUDA graph replay for supported constraint paths |
-| `Y` | `graph_edge_attribution` | Display ordered edge attribution |
+| `Y` | `edge_attribution_diagnostics` | Read back and display ordered edge attribution |
 | `I` | `temporal_edge_identity` | Soft graph-fragment identity memory across frames |
 | `A` | `visible_edge_scoring` | Use attributed visible edges as PF likelihoods |
 | `D` | `visible_edge_transport` | Transport predicted shape from visible-edge displacement |
@@ -610,10 +662,14 @@ of the cable is actually visible. Endpoint and fixed-length errors are not
 plotted because the active endpoint and link constraints make them poor
 independent quality indicators.
 
-Evaluation diagnostics are sampled at 10 Hz rather than every tracking frame.
-The live history is saved to `metrics.csv`, and the final displayed plot is
-saved to `metrics.png` under `diagnostics/evaluation_runs/<timestamp>`. These
-two files are the intended compact inputs for later analysis.
+Evaluation diagnostics are sampled at the configured 5 Hz rather than every
+tracking frame. With the viewer active, samples are aligned to fresh viewer
+diagnostic frames so the application performs no extra attribution readback.
+In headless mode, the same configured cadence applies independently. The live
+history is saved to `metrics.csv`, and the final displayed plot is saved to
+`metrics.png` under `diagnostics/evaluation_runs/<timestamp>`. CSV output is
+buffered and flushed once per second and at shutdown. These two files are the
+intended compact inputs for later analysis.
 
 The plot remains cable-only. Each CSV row also records the synchronized raw
 cube measurement: validity, rejection reason, fitted face count, centre XYZ,
@@ -635,8 +691,12 @@ observation or PF mathematics.
 ## Performance isolation
 
 Capture, tracking, point-cloud preparation, and rendering run in separate
-stages. Viewer stride and rendering rate do not reduce the tracking
-observation.
+stages. Tracking buffers are allocated once and acquired before ZED image and
+depth transfers; if tracking is saturated, the frame is skipped without those
+copies. Viewer stride and rendering rate do not reduce the tracking
+observation. The default viewer cloud is reconstructed from the already
+registered depth only on display frames; full ZED XYZRGBA retrieval remains an
+explicit diagnostic option.
 
 Profiler output separates:
 
@@ -647,7 +707,7 @@ Profiler output separates:
 - PF CUDA stages;
 - PF readback;
 - graph attribution CPU preparation/readback and CUDA time;
-- visible-edge likelihood CUDA time.
+- visible-edge likelihood CUDA time;
 - passive contact wall and CUDA time.
 
 The initial NumPy implementation was removed after the live viewer exposed
@@ -661,14 +721,16 @@ depends on the number of observed graph edges.
 
 | File | Responsibility |
 |---|---|
-| `ZED_segmentation_viewer/source/cable_pidnet.py` | PIDNet runtime inference |
+| `NN_collection_training/source/cable_pidnet.py` | Shared PIDNet model and runtime inference |
+| `NN_collection_training/source/cable_detection.py` | Shared PIDNet runtime thresholds and mask cleanup |
+| `NN_collection_training/source/config.toml` | Canonical checkpoint, inference, threshold, and cleanup settings |
 | `ZED_segmentation_viewer/source/observation.py` | RGB-D geometry, endpoints, skeleton graph, routes, raw graph edges |
 | `ZED_segmentation_viewer/source/graph_attribution.py` | Prior-based ordered edge-to-prediction association |
 | `ZED_segmentation_viewer/source/particle_filter.py` | Batched PF prediction, scoring, constraints, posterior, attribution orchestration |
 | `ZED_segmentation_viewer/source/cuda_constraints.py` | Fused CUDA fixed-link kernels |
 | `ZED_segmentation_viewer/source/cable_geometry.py` | Capsule-tube geometry and parallel-transport mesh construction |
 | `ZED_segmentation_viewer/source/cube_tracker.py` | Raw known-cube RGB-D plane fitting, joint pose refinement/covariance, and analytical cube surface queries |
-| `ZED_segmentation_viewer/source/cube_state_filter.py` | Separate causal SE(3) cube pose/velocity state and covariance |
+| `ZED_segmentation_viewer/source/cube_state_filter.py` | Separate causal cube centre/pose state, symmetry-safe visual orientation, velocities, and covariance |
 | `ZED_segmentation_viewer/source/contact_estimator.py` | Read-only uncertainty-aware binary cable--cube contact observer |
 | `ZED_segmentation_viewer/source/live_evaluation.py` | Three-signal live plot and CSV logger |
 | `ZED_segmentation_viewer/source/app.py` | Asynchronous capture/tracking/viewer preparation and console profiling |

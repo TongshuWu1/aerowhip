@@ -507,7 +507,7 @@ class CableCubeContactEstimator:
         )
 
         map_particle = torch.argmax(
-            normalized_weights * contact_score,
+            normalized_weights * particle_support * contact_score,
             dim=1,
         )
         cable_indices = torch.arange(2, device=self.device)

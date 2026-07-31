@@ -128,31 +128,6 @@ class _CandidateGrid:
     length_fraction: torch.Tensor
 
 
-def _resample_polyline(points: np.ndarray, count: int) -> np.ndarray:
-    points = np.asarray(points, dtype=np.float64)
-    if points.ndim != 2 or points.shape[1] != 3 or len(points) < 2:
-        return np.empty((0, 3), dtype=np.float32)
-    points = points[np.all(np.isfinite(points), axis=1)]
-    if len(points) < 2:
-        return np.empty((0, 3), dtype=np.float32)
-    segment_lengths = np.linalg.norm(np.diff(points, axis=0), axis=1)
-    keep = np.concatenate(([True], segment_lengths > 1e-9))
-    points = points[keep]
-    if len(points) < 2:
-        return np.empty((0, 3), dtype=np.float32)
-    cumulative = np.concatenate(([0.0], np.cumsum(
-        np.linalg.norm(np.diff(points, axis=0), axis=1)
-    )))
-    total = float(cumulative[-1])
-    if not np.isfinite(total) or total <= 1e-9:
-        return np.empty((0, 3), dtype=np.float32)
-    arc = np.linspace(0.0, total, max(2, int(count)), dtype=np.float64)
-    sampled = np.column_stack(
-        [np.interp(arc, cumulative, points[:, axis]) for axis in range(3)]
-    )
-    return np.ascontiguousarray(sampled, dtype=np.float32)
-
-
 def _interval_end_constraints(
     edge: GraphEdgeObservation,
     cable_index: int,
@@ -207,6 +182,7 @@ class GraphEdgeAttributor:
         self.device = torch.device(device)
         self.dtype = torch.float32
         self._candidate_grids: dict[tuple[int, int], _CandidateGrid] = {}
+        self._curve_sample_fractions: dict[int, torch.Tensor] = {}
         self._temporal_history: list[
             tuple[torch.Tensor, torch.Tensor, torch.Tensor]
         ] = []
@@ -425,15 +401,19 @@ class GraphEdgeAttributor:
         )
         total_length = cumulative[:, -1]
         curve_valid = finite & torch.isfinite(total_length) & (total_length > 1e-9)
-        target_arc = (
-            total_length[:, None]
-            * torch.linspace(
+        sample_fraction = self._curve_sample_fractions.get(int(dense_count))
+        if sample_fraction is None:
+            sample_fraction = torch.linspace(
                 0.0,
                 1.0,
                 dense_count,
                 device=self.device,
                 dtype=self.dtype,
-            )[None, :]
+            )
+            self._curve_sample_fractions[int(dense_count)] = sample_fraction
+        target_arc = (
+            total_length[:, None]
+            * sample_fraction[None, :]
         )
         segment_index = torch.searchsorted(
             cumulative.contiguous(),
@@ -523,10 +503,11 @@ class GraphEdgeAttributor:
         edge_valid_np = np.zeros(len(graph_edges), dtype=bool)
         edge_lengths_np = np.zeros(len(graph_edges), dtype=np.float32)
         for edge_index, edge in enumerate(graph_edges):
-            sampled = _resample_polyline(edge.xyz, observed_count)
+            sampled = np.asarray(edge.xyz, dtype=np.float32)
             length_m = float(edge.length_m)
             if (
-                len(sampled) != observed_count
+                sampled.shape != (observed_count, 3)
+                or not np.all(np.isfinite(sampled))
                 or not np.isfinite(length_m)
                 or length_m <= 1e-9
             ):
@@ -904,21 +885,3 @@ class GraphEdgeAttributor:
             processing_ms=float(batch.processing_ms),
             gpu_ms=gpu_ms,
         )
-
-    @torch.inference_mode()
-    def attribute(
-        self,
-        graph_edges: tuple[GraphEdgeObservation, ...],
-        predicted_curves: torch.Tensor,
-        prediction_spread_m: torch.Tensor,
-        initialized: np.ndarray,
-    ) -> GraphAttributionDiagnostics:
-        """Compatibility wrapper for diagnostics-only callers."""
-
-        batch = self.attribute_batch(
-            graph_edges,
-            predicted_curves,
-            prediction_spread_m,
-            initialized,
-        )
-        return self.diagnostics(batch)

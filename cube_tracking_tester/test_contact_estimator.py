@@ -109,7 +109,6 @@ def _cube_state(
         measurement_age_s=0.0,
         center_m=np.zeros(3, dtype=np.float64),
         rotation=np.eye(3, dtype=np.float64),
-        quaternion_xyzw=np.array((0.0, 0.0, 0.0, 1.0)),
         linear_velocity_mps=np.array(
             (linear_velocity_mps, 0.0, 0.0), dtype=np.float64
         ),
@@ -333,6 +332,29 @@ class ContactEstimatorTests(unittest.TestCase):
             partial.cables[0].contact_probability,
             fully_supported.cables[0].contact_probability,
         )
+
+    def test_reported_contact_arc_comes_from_supported_particle(self):
+        device = torch.device("cpu")
+        posterior = _inputs(device)
+        particles, _velocities, weights = posterior.tensors
+        particles[0, :, :, 1] = 0.100
+        particles[0, 0, 0, 1] = 0.5 * CUBE_SIDE_M + CABLE_RADIUS_M
+        particles[0, 1, -1, 1] = 0.5 * CUBE_SIDE_M + CABLE_RADIUS_M
+        weights[0] = 0.0
+        weights[0, 0] = 0.9
+        weights[0, 1] = 0.1
+        posterior.dense_support[0] = False
+        posterior.dense_support[0, -1] = True
+
+        output = _estimator(device).update(
+            posterior,
+            _frame(),
+            _cube_state(0.0),
+            _cube_measurement(),
+            0.0,
+        )
+        self.assertTrue(output.cables[0].evidence_used)
+        self.assertGreater(output.cables[0].contact_arc_m, 0.10)
 
     def test_observer_does_not_modify_particle_filter_tensors(self):
         device = torch.device("cpu")

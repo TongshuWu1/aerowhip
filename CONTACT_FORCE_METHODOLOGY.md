@@ -140,11 +140,18 @@ the filtered rigid pose and velocity:
 The nominal state contains cube pose \(T\), centre velocity \(\mathbf v_o\),
 and angular velocity \(\boldsymbol\omega_o\). A robust joint fit supplies a
 six-dimensional tangent-space pose measurement and covariance to a separate
-constant-velocity error-state Kalman filter. This is deliberately not a
-persistent cube particle population: after resolving the cube's finite
-rotation symmetry, the local rigid-pose posterior is expected to be unimodal,
-and the Gaussian representation is substantially cheaper to predict and
-update.
+Gaussian error-state filter. Centre and linear velocity follow a
+constant-velocity model. Orientation is symmetry-aligned to the previous
+accepted visual orientation and updated only from accepted measurements;
+prediction-only frames hold it while its covariance grows. Angular velocity
+is estimated by smoothing finite differences between consecutive accepted
+visual orientations, but it does not drive nominal orientation prediction.
+This prevents an untextured symmetric cube from acquiring false rotation from
+measurement noise while retaining angular motion as evidence for later
+interaction inference. This is deliberately not a persistent cube particle
+population: after resolving the cube's finite rotation symmetry, the local
+rigid-pose posterior is expected to be unimodal, and the Gaussian
+representation is substantially cheaper to predict and update.
 
 When the later nonlinear contact factor needs numerical marginalization,
 index \(j\) denotes a small deterministic set of temporary cubature or sigma
@@ -335,6 +342,12 @@ whose closest arc is observed still contribute normally, making
 \(\sum_i w_iq_i\) a continuous local support mass rather than introducing a
 global visibility threshold. Co-motion is gated by the same (q_i), because a
 predicted velocity at a hidden contact arc is not new motion evidence.
+
+The representative contact geometry is selected from the particle maximizing
+\(w_i q_i \Psi_{\rm contact}^i\), not from the unconstrained PF MAP particle.
+This reporting rule makes the displayed gap, surface point, normal, and arc
+interval consistent with both the observed local cable support and the contact
+hypothesis. It does not alter the marginalized likelihood above.
 
 ## Temporal contact inference
 

@@ -15,6 +15,16 @@ DATASET_MANIFEST_NAME = "dataset_manifest.json"
 DATASET_SPLITS = ("train", "val", "test")
 
 
+def layered_mask_path_from_mask_path(mask_path):
+    mask_path = Path(mask_path)
+    parts = list(mask_path.parts)
+    for index in range(len(parts) - 1, -1, -1):
+        if parts[index] == "masks":
+            parts[index] = "masks_layers"
+            return Path(*parts).with_suffix(".npz")
+    return mask_path.with_suffix(".npz")
+
+
 def utc_now_text():
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 

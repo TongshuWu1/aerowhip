@@ -411,6 +411,8 @@ class CubeGeometryTests(unittest.TestCase):
         assert second.angular_velocity_rps is not None
         self.assertGreater(float(second.linear_velocity_mps[0]), 0.01)
         self.assertGreater(float(second.angular_velocity_rps[1]), 0.01)
+        assert second.rotation is not None
+        accepted_rotation = second.rotation.copy()
 
         raw_only = replace(
             refined_measurement(
@@ -427,10 +429,83 @@ class CubeGeometryTests(unittest.TestCase):
         assert predicted.center_m is not None
         assert second.center_m is not None
         self.assertGreater(float(predicted.center_m[0]), float(second.center_m[0]))
+        assert predicted.rotation is not None
+        np.testing.assert_allclose(predicted.rotation, accepted_rotation, atol=1.0e-12)
 
         expired = state_filter.update(None, 1.4)
         self.assertFalse(expired.valid)
         self.assertTrue(expired.initialized)
+
+    def test_temporal_cube_filter_resolves_symmetry_before_angular_velocity(
+        self,
+    ) -> None:
+        state_filter = RigidCubeStateFilter(CubeStateFilterConfig())
+        covariance = np.diag(
+            (
+                0.001**2,
+                0.001**2,
+                0.001**2,
+                np.deg2rad(0.5) ** 2,
+                np.deg2rad(0.5) ** 2,
+                np.deg2rad(0.5) ** 2,
+            )
+        )
+        rotation = axis_angle_rotation(np.array((0.3, 0.7, 0.2)), 0.35)
+        first = state_filter.update(
+            refined_measurement(
+                np.array((0.0, 0.0, -0.8)),
+                rotation,
+                covariance,
+            ),
+            1.0,
+        )
+        equivalent_measurement = rotation @ CUBE_SYMMETRIES[1]
+        second = state_filter.update(
+            refined_measurement(
+                np.array((0.0, 0.0, -0.8)),
+                equivalent_measurement,
+                covariance,
+            ),
+            1.1,
+        )
+
+        self.assertTrue(second.measurement_used)
+        assert first.rotation is not None
+        assert second.rotation is not None
+        assert second.angular_velocity_rps is not None
+        np.testing.assert_allclose(second.rotation, first.rotation, atol=1.0e-10)
+        np.testing.assert_allclose(
+            second.angular_velocity_rps,
+            np.zeros(3),
+            atol=1.0e-10,
+        )
+
+    def test_temporal_cube_filter_rejects_pose_innovation_outlier(self) -> None:
+        state_filter = RigidCubeStateFilter(CubeStateFilterConfig())
+        covariance = np.eye(6, dtype=np.float64) * 1.0e-6
+        initial = state_filter.update(
+            refined_measurement(
+                np.array((0.0, 0.0, -0.8)),
+                np.eye(3),
+                covariance,
+            ),
+            1.0,
+        )
+        self.assertTrue(initial.measurement_used)
+
+        rejected = state_filter.update(
+            refined_measurement(
+                np.array((0.5, 0.0, -0.8)),
+                np.eye(3),
+                covariance,
+            ),
+            1.1,
+        )
+        self.assertTrue(rejected.valid)
+        self.assertFalse(rejected.measurement_used)
+        self.assertIn("innovation chi2", rejected.reason)
+        assert rejected.center_m is not None
+        self.assertLess(abs(float(rejected.center_m[0])), 0.05)
 
 
 if __name__ == "__main__":

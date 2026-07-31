@@ -4682,6 +4682,528 @@
       "split": "train",
       "updated_at": "2026-07-29T20:46:53+00:00",
       "verified": true
+    },
+    "cable_session_20260731_130230_0d41b2_20260731_130248_477765_af7062bd": {
+      "annotation": {
+        "body_cleanup": {
+          "close_kernel": 5,
+          "min_area_px": 80,
+          "open_kernel": 1
+        },
+        "checkpoint": {
+          "bytes": 3996927,
+          "modified_ns": 1785479137321400000,
+          "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+          "sha256": "cd063c745cd6258c796d75654a72fcabe6b4efa5cd9f6951ffa69041f11e8c08"
+        },
+        "draft_created_at": "2026-07-31T17:02:54+00:00",
+        "human_edited": true,
+        "human_verified_at": "2026-07-31T17:03:17+00:00",
+        "last_human_edit_at": "2026-07-31T17:03:13+00:00",
+        "origin": "model_assisted",
+        "thresholds": {
+          "cable": 0.85000002,
+          "endpoint1": 0.89999998,
+          "endpoint2": 0.75
+        }
+      },
+      "created_at": "2026-07-31T17:04:54+00:00",
+      "negative": false,
+      "notes": "",
+      "session_id": "session_20260731_130230_0d41b2",
+      "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260731_130230_0d41b2_20260731_130248_477765_af7062bd.png",
+      "split": "train",
+      "updated_at": "2026-07-31T17:04:54+00:00",
+      "verified": true
+    },
+    "cable_session_20260731_134327_20c914_20260731_134335_991127_46a2e02b": {
+      "annotation": {
+        "body_cleanup": {
+          "close_kernel": 7,
+          "min_area_px": 180,
+          "open_kernel": 1
+        },
+        "checkpoint": {
+          "bytes": 3996927,
+          "modified_ns": 1785517823533454200,
+          "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+          "sha256": "247c4d4b67e80744475d565944e4b23bfd61a40a58ed05235dbaf38ef866c490"
+        },
+        "draft_created_at": "2026-07-31T17:43:42+00:00",
+        "human_edited": false,
+        "human_verified_at": "2026-07-31T17:43:46+00:00",
+        "origin": "model_assisted",
+        "thresholds": {
+          "cable": 0.85000002,
+          "endpoint1": 0.89999998,
+          "endpoint2": 0.75
+        }
+      },
+      "created_at": "2026-07-31T17:48:44+00:00",
+      "negative": false,
+      "notes": "",
+      "session_id": "session_20260731_134327_20c914",
+      "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260731_134327_20c914_20260731_134335_991127_46a2e02b.png",
+      "split": "train",
+      "updated_at": "2026-07-31T17:52:41+00:00",
+      "verified": true
+    },
+    "cable_session_20260731_134327_20c914_20260731_134358_184108_80cb67ea": {
+      "annotation": {
+        "body_cleanup": {
+          "close_kernel": 7,
+          "min_area_px": 180,
+          "open_kernel": 1
+        },
+        "checkpoint": {
+          "bytes": 3996927,
+          "modified_ns": 1785517823533454200,
+          "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+          "sha256": "247c4d4b67e80744475d565944e4b23bfd61a40a58ed05235dbaf38ef866c490"
+        },
+        "draft_created_at": "2026-07-31T17:44:00+00:00",
+        "human_edited": true,
+        "human_verified_at": "2026-07-31T17:44:17+00:00",
+        "last_human_edit_at": "2026-07-31T17:44:14+00:00",
+        "origin": "model_assisted",
+        "thresholds": {
+          "cable": 0.85000002,
+          "endpoint1": 0.89999998,
+          "endpoint2": 0.75
+        }
+      },
+      "created_at": "2026-07-31T17:48:44+00:00",
+      "negative": false,
+      "notes": "",
+      "session_id": "session_20260731_134327_20c914",
+      "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260731_134327_20c914_20260731_134358_184108_80cb67ea.png",
+      "split": "train",
+      "updated_at": "2026-07-31T17:52:41+00:00",
+      "verified": true
+    },
+    "cable_session_20260731_134327_20c914_20260731_134514_356521_b0344ee0": {
+      "annotation": {
+        "body_cleanup": {
+          "close_kernel": 7,
+          "min_area_px": 180,
+          "open_kernel": 1
+        },
+        "checkpoint": {
+          "bytes": 3996927,
+          "modified_ns": 1785517823533454200,
+          "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+          "sha256": "247c4d4b67e80744475d565944e4b23bfd61a40a58ed05235dbaf38ef866c490"
+        },
+        "draft_created_at": "2026-07-31T17:45:19+00:00",
+        "human_edited": true,
+        "human_verified_at": "2026-07-31T17:45:41+00:00",
+        "last_human_edit_at": "2026-07-31T17:45:33+00:00",
+        "origin": "model_assisted",
+        "thresholds": {
+          "cable": 0.85000002,
+          "endpoint1": 0.89999998,
+          "endpoint2": 0.75
+        }
+      },
+      "created_at": "2026-07-31T17:48:44+00:00",
+      "negative": false,
+      "notes": "",
+      "session_id": "session_20260731_134327_20c914",
+      "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260731_134327_20c914_20260731_134514_356521_b0344ee0.png",
+      "split": "train",
+      "updated_at": "2026-07-31T17:52:41+00:00",
+      "verified": true
+    },
+    "cable_session_20260731_134327_20c914_20260731_134552_998041_82452bf2": {
+      "annotation": {
+        "body_cleanup": {
+          "close_kernel": 7,
+          "min_area_px": 180,
+          "open_kernel": 1
+        },
+        "checkpoint": {
+          "bytes": 3996927,
+          "modified_ns": 1785517823533454200,
+          "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+          "sha256": "247c4d4b67e80744475d565944e4b23bfd61a40a58ed05235dbaf38ef866c490"
+        },
+        "draft_created_at": "2026-07-31T17:46:05+00:00",
+        "human_edited": true,
+        "human_verified_at": "2026-07-31T17:46:16+00:00",
+        "last_human_edit_at": "2026-07-31T17:46:13+00:00",
+        "origin": "model_assisted",
+        "thresholds": {
+          "cable": 0.85000002,
+          "endpoint1": 0.89999998,
+          "endpoint2": 0.75
+        }
+      },
+      "created_at": "2026-07-31T17:48:44+00:00",
+      "negative": false,
+      "notes": "",
+      "session_id": "session_20260731_134327_20c914",
+      "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260731_134327_20c914_20260731_134552_998041_82452bf2.png",
+      "split": "train",
+      "updated_at": "2026-07-31T17:52:41+00:00",
+      "verified": true
+    },
+    "cable_session_20260731_134327_20c914_20260731_134600_781571_f2a0ae46": {
+      "annotation": {
+        "body_cleanup": {
+          "close_kernel": 7,
+          "min_area_px": 180,
+          "open_kernel": 1
+        },
+        "checkpoint": {
+          "bytes": 3996927,
+          "modified_ns": 1785517823533454200,
+          "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+          "sha256": "247c4d4b67e80744475d565944e4b23bfd61a40a58ed05235dbaf38ef866c490"
+        },
+        "draft_created_at": "2026-07-31T17:46:02+00:00",
+        "human_edited": true,
+        "human_verified_at": "2026-07-31T17:46:23+00:00",
+        "last_human_edit_at": "2026-07-31T17:46:22+00:00",
+        "origin": "model_assisted",
+        "thresholds": {
+          "cable": 0.85000002,
+          "endpoint1": 0.89999998,
+          "endpoint2": 0.75
+        }
+      },
+      "created_at": "2026-07-31T17:48:44+00:00",
+      "negative": false,
+      "notes": "",
+      "session_id": "session_20260731_134327_20c914",
+      "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260731_134327_20c914_20260731_134600_781571_f2a0ae46.png",
+      "split": "train",
+      "updated_at": "2026-07-31T17:52:41+00:00",
+      "verified": true
+    },
+    "cable_session_20260731_134327_20c914_20260731_134639_358856_bab15bb9": {
+      "annotation": {
+        "body_cleanup": {
+          "close_kernel": 7,
+          "min_area_px": 180,
+          "open_kernel": 1
+        },
+        "checkpoint": {
+          "bytes": 3996927,
+          "modified_ns": 1785517823533454200,
+          "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+          "sha256": "247c4d4b67e80744475d565944e4b23bfd61a40a58ed05235dbaf38ef866c490"
+        },
+        "draft_created_at": "2026-07-31T17:46:41+00:00",
+        "human_edited": true,
+        "human_verified_at": "2026-07-31T17:47:07+00:00",
+        "last_human_edit_at": "2026-07-31T17:47:04+00:00",
+        "origin": "model_assisted",
+        "thresholds": {
+          "cable": 0.85000002,
+          "endpoint1": 0.89999998,
+          "endpoint2": 0.75
+        }
+      },
+      "created_at": "2026-07-31T17:48:44+00:00",
+      "negative": false,
+      "notes": "",
+      "session_id": "session_20260731_134327_20c914",
+      "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260731_134327_20c914_20260731_134639_358856_bab15bb9.png",
+      "split": "train",
+      "updated_at": "2026-07-31T17:52:42+00:00",
+      "verified": true
+    },
+    "cable_session_20260731_134327_20c914_20260731_134726_667193_d0070f22": {
+      "annotation": {
+        "body_cleanup": {
+          "close_kernel": 7,
+          "min_area_px": 180,
+          "open_kernel": 1
+        },
+        "checkpoint": {
+          "bytes": 3996927,
+          "modified_ns": 1785517823533454200,
+          "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+          "sha256": "247c4d4b67e80744475d565944e4b23bfd61a40a58ed05235dbaf38ef866c490"
+        },
+        "draft_created_at": "2026-07-31T17:47:28+00:00",
+        "human_edited": true,
+        "human_verified_at": "2026-07-31T17:48:24+00:00",
+        "last_human_edit_at": "2026-07-31T17:48:21+00:00",
+        "origin": "model_assisted",
+        "thresholds": {
+          "cable": 0.85000002,
+          "endpoint1": 0.89999998,
+          "endpoint2": 0.75
+        }
+      },
+      "created_at": "2026-07-31T17:48:44+00:00",
+      "negative": false,
+      "notes": "",
+      "session_id": "session_20260731_134327_20c914",
+      "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260731_134327_20c914_20260731_134726_667193_d0070f22.png",
+      "split": "train",
+      "updated_at": "2026-07-31T17:52:42+00:00",
+      "verified": true
+    },
+    "cable_session_20260731_134327_20c914_20260731_134836_958924_72774c0d": {
+      "annotation": {
+        "body_cleanup": {
+          "close_kernel": 7,
+          "min_area_px": 180,
+          "open_kernel": 1
+        },
+        "checkpoint": {
+          "bytes": 3996927,
+          "modified_ns": 1785517823533454200,
+          "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+          "sha256": "247c4d4b67e80744475d565944e4b23bfd61a40a58ed05235dbaf38ef866c490"
+        },
+        "draft_created_at": "2026-07-31T17:48:38+00:00",
+        "human_edited": false,
+        "human_verified_at": "2026-07-31T17:48:40+00:00",
+        "origin": "model_assisted",
+        "thresholds": {
+          "cable": 0.85000002,
+          "endpoint1": 0.89999998,
+          "endpoint2": 0.75
+        }
+      },
+      "created_at": "2026-07-31T17:48:44+00:00",
+      "negative": false,
+      "notes": "",
+      "session_id": "session_20260731_134327_20c914",
+      "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260731_134327_20c914_20260731_134836_958924_72774c0d.png",
+      "split": "train",
+      "updated_at": "2026-07-31T17:52:42+00:00",
+      "verified": true
+    },
+    "cable_session_20260731_134327_20c914_20260731_134907_074470_e72da76c": {
+      "annotation": {
+        "body_cleanup": {
+          "close_kernel": 7,
+          "min_area_px": 180,
+          "open_kernel": 1
+        },
+        "checkpoint": {
+          "bytes": 3996927,
+          "modified_ns": 1785517823533454200,
+          "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+          "sha256": "247c4d4b67e80744475d565944e4b23bfd61a40a58ed05235dbaf38ef866c490"
+        },
+        "draft_created_at": "2026-07-31T17:49:09+00:00",
+        "human_edited": false,
+        "human_verified_at": "2026-07-31T17:49:11+00:00",
+        "origin": "model_assisted",
+        "thresholds": {
+          "cable": 0.85000002,
+          "endpoint1": 0.89999998,
+          "endpoint2": 0.75
+        }
+      },
+      "created_at": "2026-07-31T17:52:10+00:00",
+      "negative": false,
+      "notes": "",
+      "session_id": "session_20260731_134327_20c914",
+      "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260731_134327_20c914_20260731_134907_074470_e72da76c.png",
+      "split": "train",
+      "updated_at": "2026-07-31T17:52:42+00:00",
+      "verified": true
+    },
+    "cable_session_20260731_134327_20c914_20260731_134920_346758_3097b6bd": {
+      "annotation": {
+        "body_cleanup": {
+          "close_kernel": 7,
+          "min_area_px": 180,
+          "open_kernel": 1
+        },
+        "checkpoint": {
+          "bytes": 3996927,
+          "modified_ns": 1785517823533454200,
+          "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+          "sha256": "247c4d4b67e80744475d565944e4b23bfd61a40a58ed05235dbaf38ef866c490"
+        },
+        "draft_created_at": "2026-07-31T17:49:24+00:00",
+        "human_edited": false,
+        "human_verified_at": "2026-07-31T17:49:25+00:00",
+        "origin": "model_assisted",
+        "thresholds": {
+          "cable": 0.85000002,
+          "endpoint1": 0.89999998,
+          "endpoint2": 0.75
+        }
+      },
+      "created_at": "2026-07-31T17:52:10+00:00",
+      "negative": false,
+      "notes": "",
+      "session_id": "session_20260731_134327_20c914",
+      "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260731_134327_20c914_20260731_134920_346758_3097b6bd.png",
+      "split": "train",
+      "updated_at": "2026-07-31T17:52:42+00:00",
+      "verified": true
+    },
+    "cable_session_20260731_134327_20c914_20260731_134939_000279_19a7721b": {
+      "annotation": {
+        "body_cleanup": {
+          "close_kernel": 7,
+          "min_area_px": 180,
+          "open_kernel": 1
+        },
+        "checkpoint": {
+          "bytes": 3996927,
+          "modified_ns": 1785517823533454200,
+          "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+          "sha256": "247c4d4b67e80744475d565944e4b23bfd61a40a58ed05235dbaf38ef866c490"
+        },
+        "draft_created_at": "2026-07-31T17:49:40+00:00",
+        "human_edited": false,
+        "human_verified_at": "2026-07-31T17:49:41+00:00",
+        "origin": "model_assisted",
+        "thresholds": {
+          "cable": 0.85000002,
+          "endpoint1": 0.89999998,
+          "endpoint2": 0.75
+        }
+      },
+      "created_at": "2026-07-31T17:52:10+00:00",
+      "negative": false,
+      "notes": "",
+      "session_id": "session_20260731_134327_20c914",
+      "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260731_134327_20c914_20260731_134939_000279_19a7721b.png",
+      "split": "train",
+      "updated_at": "2026-07-31T17:52:42+00:00",
+      "verified": true
+    },
+    "cable_session_20260731_134327_20c914_20260731_134958_474831_c66f7924": {
+      "annotation": {
+        "body_cleanup": {
+          "close_kernel": 7,
+          "min_area_px": 180,
+          "open_kernel": 1
+        },
+        "checkpoint": {
+          "bytes": 3996927,
+          "modified_ns": 1785517823533454200,
+          "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+          "sha256": "247c4d4b67e80744475d565944e4b23bfd61a40a58ed05235dbaf38ef866c490"
+        },
+        "draft_created_at": "2026-07-31T17:50:00+00:00",
+        "human_edited": false,
+        "human_verified_at": "2026-07-31T17:50:01+00:00",
+        "origin": "model_assisted",
+        "thresholds": {
+          "cable": 0.85000002,
+          "endpoint1": 0.89999998,
+          "endpoint2": 0.75
+        }
+      },
+      "created_at": "2026-07-31T17:52:10+00:00",
+      "negative": false,
+      "notes": "",
+      "session_id": "session_20260731_134327_20c914",
+      "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260731_134327_20c914_20260731_134958_474831_c66f7924.png",
+      "split": "train",
+      "updated_at": "2026-07-31T17:52:42+00:00",
+      "verified": true
+    },
+    "cable_session_20260731_134327_20c914_20260731_135017_577155_5242483a": {
+      "annotation": {
+        "body_cleanup": {
+          "close_kernel": 7,
+          "min_area_px": 180,
+          "open_kernel": 1
+        },
+        "checkpoint": {
+          "bytes": 3996927,
+          "modified_ns": 1785517823533454200,
+          "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+          "sha256": "247c4d4b67e80744475d565944e4b23bfd61a40a58ed05235dbaf38ef866c490"
+        },
+        "draft_created_at": "2026-07-31T17:50:21+00:00",
+        "human_edited": true,
+        "human_verified_at": "2026-07-31T17:50:37+00:00",
+        "last_human_edit_at": "2026-07-31T17:50:34+00:00",
+        "origin": "model_assisted",
+        "thresholds": {
+          "cable": 0.85000002,
+          "endpoint1": 0.89999998,
+          "endpoint2": 0.75
+        }
+      },
+      "created_at": "2026-07-31T17:52:10+00:00",
+      "negative": false,
+      "notes": "",
+      "session_id": "session_20260731_134327_20c914",
+      "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260731_134327_20c914_20260731_135017_577155_5242483a.png",
+      "split": "train",
+      "updated_at": "2026-07-31T17:52:42+00:00",
+      "verified": true
+    },
+    "cable_session_20260731_134327_20c914_20260731_135047_545369_b2617896": {
+      "annotation": {
+        "body_cleanup": {
+          "close_kernel": 7,
+          "min_area_px": 180,
+          "open_kernel": 1
+        },
+        "checkpoint": {
+          "bytes": 3996927,
+          "modified_ns": 1785517823533454200,
+          "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+          "sha256": "247c4d4b67e80744475d565944e4b23bfd61a40a58ed05235dbaf38ef866c490"
+        },
+        "draft_created_at": "2026-07-31T17:50:50+00:00",
+        "human_edited": true,
+        "human_verified_at": "2026-07-31T17:51:18+00:00",
+        "last_human_edit_at": "2026-07-31T17:51:14+00:00",
+        "origin": "model_assisted",
+        "thresholds": {
+          "cable": 0.85000002,
+          "endpoint1": 0.89999998,
+          "endpoint2": 0.75
+        }
+      },
+      "created_at": "2026-07-31T17:52:11+00:00",
+      "negative": false,
+      "notes": "",
+      "session_id": "session_20260731_134327_20c914",
+      "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260731_134327_20c914_20260731_135047_545369_b2617896.png",
+      "split": "train",
+      "updated_at": "2026-07-31T17:52:42+00:00",
+      "verified": true
+    },
+    "cable_session_20260731_134327_20c914_20260731_135146_474891_39c167c1": {
+      "annotation": {
+        "body_cleanup": {
+          "close_kernel": 7,
+          "min_area_px": 180,
+          "open_kernel": 1
+        },
+        "checkpoint": {
+          "bytes": 3996927,
+          "modified_ns": 1785517823533454200,
+          "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+          "sha256": "247c4d4b67e80744475d565944e4b23bfd61a40a58ed05235dbaf38ef866c490"
+        },
+        "draft_created_at": "2026-07-31T17:51:47+00:00",
+        "human_edited": true,
+        "human_verified_at": "2026-07-31T17:52:05+00:00",
+        "last_human_edit_at": "2026-07-31T17:52:01+00:00",
+        "origin": "model_assisted",
+        "thresholds": {
+          "cable": 0.85000002,
+          "endpoint1": 0.89999998,
+          "endpoint2": 0.75
+        }
+      },
+      "created_at": "2026-07-31T17:52:11+00:00",
+      "negative": false,
+      "notes": "",
+      "session_id": "session_20260731_134327_20c914",
+      "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260731_134327_20c914_20260731_135146_474891_39c167c1.png",
+      "split": "train",
+      "updated_at": "2026-07-31T17:52:42+00:00",
+      "verified": true
     }
   },
   "sessions": {
@@ -4752,8 +5274,16 @@
     "session_20260729_163725_47115f": {
       "created_at": "2026-07-29T20:46:40+00:00",
       "split": "train"
+    },
+    "session_20260731_130230_0d41b2": {
+      "created_at": "2026-07-31T17:04:54+00:00",
+      "split": "train"
+    },
+    "session_20260731_134327_20c914": {
+      "created_at": "2026-07-31T17:48:44+00:00",
+      "split": "train"
     }
   },
-  "updated_at": "2026-07-29T20:46:53+00:00",
+  "updated_at": "2026-07-31T17:52:42+00:00",
   "version": 2
 }

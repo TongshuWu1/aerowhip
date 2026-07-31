@@ -32,6 +32,7 @@ from cable_pidnet import (
 from pidnet_dataset import (
     DATASET_SPLITS,
     dataset_snapshot,
+    layered_mask_path_from_mask_path,
     load_dataset_manifest,
     session_split_conflicts,
 )
@@ -56,7 +57,7 @@ from torch.utils.data import DataLoader, Dataset
 
 
 IMAGE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff")
-DEFAULT_IMAGE_SIZE = "1280x720"
+DEFAULT_IMAGE_SIZE = "1920x1080"
 DEFAULT_THRESHOLD_GRID = tuple(float(value) for value in np.linspace(0.05, 0.95, 19))
 
 
@@ -139,16 +140,6 @@ class GenericCableEndpointDataset(Dataset):
         mask_channels = torch.from_numpy(np.ascontiguousarray(mask_channels))
         boundary = torch.from_numpy(boundary[None, :, :])
         return image, mask_channels, boundary
-
-
-def layered_mask_path_from_mask_path(mask_path):
-    mask_path = Path(mask_path)
-    parts = list(mask_path.parts)
-    for index in range(len(parts) - 1, -1, -1):
-        if parts[index] == "masks":
-            parts[index] = "masks_layers"
-            return Path(*parts).with_suffix(".npz")
-    return mask_path.with_suffix(".npz")
 
 
 def read_training_mask(mask_path, cable_count):
@@ -270,13 +261,15 @@ def parse_image_size(value):
         width, height = value
     else:
         text = str(value).strip().lower()
+        if text in {"1080p", "hd1080"}:
+            return 1920, 1080
         if text in {"720p", "hd720"}:
             return 1280, 720
         text = text.replace(",", "x").replace("*", "x")
         if "x" in text:
             parts = [part.strip() for part in text.split("x") if part.strip()]
             if len(parts) != 2:
-                raise argparse.ArgumentTypeError("Use WIDTHxHEIGHT, for example 1280x720.")
+                raise argparse.ArgumentTypeError("Use WIDTHxHEIGHT, for example 1920x1080.")
             width, height = parts
         else:
             width = height = text

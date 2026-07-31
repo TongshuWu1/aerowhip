@@ -315,7 +315,11 @@ def main() -> None:
                 timestamp_ns = int(
                     zed.get_timestamp(sl.TIME_REFERENCE.IMAGE).get_nanoseconds()
                 )
-                result = tracker.track(bgr, depth_array)
+                result = tracker.track(
+                    bgr,
+                    depth_array,
+                    include_face_pixels=True,
+                )
                 last_display = draw_tracking_result(
                     bgr,
                     result,

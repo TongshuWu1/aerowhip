@@ -6,6 +6,7 @@ import argparse
 from collections import deque
 from concurrent.futures import Future, ThreadPoolExecutor
 from dataclasses import dataclass, replace
+import hashlib
 from pathlib import Path
 import sys
 import threading
@@ -25,6 +26,10 @@ NN_SOURCE_DIR = REPOSITORY_DIR / "NN_collection_training" / "source"
 if str(NN_SOURCE_DIR) not in sys.path:
     sys.path.insert(0, str(NN_SOURCE_DIR))
 
+from cable_detection import (  # noqa: E402
+    PidNetMaskConfig,
+    postprocess_pidnet_masks,
+)
 from cable_pidnet import PidNetSegmenter  # noqa: E402
 from contact_estimator import (  # noqa: E402
     CableCubeContactEstimator,
@@ -122,6 +127,7 @@ class TrackingInput:
     buffer_index: int
     frame_index: int
     captured_at: float
+    host_captured_at: float
     published_at: float
     bgr: np.ndarray
     depth: np.ndarray
@@ -129,6 +135,7 @@ class TrackingInput:
     render_depth: np.ndarray | None
     render_captured_at: float | None
     requested_features: ParticleFeatures
+    include_top_particles: bool
     capture_profile: CaptureProfile
 
 
@@ -139,7 +146,7 @@ class TrackingResult:
     buffer_index: int
     frame_index: int
     captured_at: float
-    completed_at: float
+    host_captured_at: float
     bgr: np.ndarray
     render_cloud: np.ndarray | None
     render_depth: np.ndarray | None
@@ -207,11 +214,18 @@ def resolve_project_path(value: str | Path) -> Path:
     return path.resolve()
 
 
-def _boolean_mask(mask: np.ndarray, shape: tuple[int, int]) -> np.ndarray:
+def _boolean_mask(
+    mask: np.ndarray,
+    shape: tuple[int, int],
+    stride: int = 1,
+) -> np.ndarray:
     array = np.asarray(mask)
     if array.shape != shape:
         array = cv2.resize(array, (shape[1], shape[0]), interpolation=cv2.INTER_NEAREST)
-    return np.ascontiguousarray(array > 0)
+    sample_stride = max(1, int(stride))
+    return np.ascontiguousarray(
+        array[::sample_stride, ::sample_stride] != 0
+    )
 
 
 def _scene_bounds(xyz: np.ndarray) -> tuple[np.ndarray, float]:
@@ -247,15 +261,9 @@ def full_point_cloud_vertices(
     height, width = cloud.shape[:2]
     source_shape = (height, width)
     sample_stride = max(1, int(stride))
-    cable = _boolean_mask(masks[0], source_shape)[
-        ::sample_stride, ::sample_stride
-    ].reshape(-1)
-    endpoint_1 = _boolean_mask(masks[1], source_shape)[
-        ::sample_stride, ::sample_stride
-    ].reshape(-1)
-    endpoint_2 = _boolean_mask(masks[2], source_shape)[
-        ::sample_stride, ::sample_stride
-    ].reshape(-1)
+    cable = _boolean_mask(masks[0], source_shape, sample_stride).reshape(-1)
+    endpoint_1 = _boolean_mask(masks[1], source_shape, sample_stride).reshape(-1)
+    endpoint_2 = _boolean_mask(masks[2], source_shape, sample_stride).reshape(-1)
     flat = cloud[::sample_stride, ::sample_stride, :4].reshape(-1, 4)
     xyz_all = flat[:, :3]
     finite = np.all(np.isfinite(xyz_all), axis=1)
@@ -317,27 +325,24 @@ def depth_point_cloud_vertices(
     height, width = depth_array.shape
     source_shape = (height, width)
     sample_stride = max(1, int(stride))
-    cable = _boolean_mask(masks[0], source_shape)[
-        ::sample_stride, ::sample_stride
-    ].reshape(-1)
-    endpoint_1 = _boolean_mask(masks[1], source_shape)[
-        ::sample_stride, ::sample_stride
-    ].reshape(-1)
-    endpoint_2 = _boolean_mask(masks[2], source_shape)[
-        ::sample_stride, ::sample_stride
-    ].reshape(-1)
+    cable = _boolean_mask(masks[0], source_shape, sample_stride).reshape(-1)
+    endpoint_1 = _boolean_mask(masks[1], source_shape, sample_stride).reshape(-1)
+    endpoint_2 = _boolean_mask(masks[2], source_shape, sample_stride).reshape(-1)
     sampled_depth = depth_array[::sample_stride, ::sample_stride]
     sampled_image = image[::sample_stride, ::sample_stride]
     flat_depth = sampled_depth.reshape(-1)
     finite = np.isfinite(flat_depth) & (flat_depth > 0.0)
-    pixel_y, pixel_x = np.meshgrid(
-        np.arange(0, height, sample_stride, dtype=np.float32),
-        np.arange(0, width, sample_stride, dtype=np.float32),
-        indexing="ij",
-    )
+    valid_indices = np.flatnonzero(finite)
+    sampled_width = sampled_depth.shape[1]
     selected_depth = flat_depth[finite]
-    selected_x = pixel_x.reshape(-1)[finite]
-    selected_y = pixel_y.reshape(-1)[finite]
+    selected_x = np.ascontiguousarray(
+        (valid_indices % sampled_width) * sample_stride,
+        dtype=np.float32,
+    )
+    selected_y = np.ascontiguousarray(
+        (valid_indices // sampled_width) * sample_stride,
+        dtype=np.float32,
+    )
 
     vertices = np.empty((len(selected_depth), 4), dtype=np.float32)
     vertices[:, 0] = (
@@ -395,14 +400,7 @@ def segmentation_overlay(
         image = cv2.resize(image, target_size, interpolation=cv2.INTER_AREA)
 
     def display_mask(mask: np.ndarray) -> np.ndarray:
-        selected = _boolean_mask(mask, source_shape)
-        if target_size != (source_shape[1], source_shape[0]):
-            selected = cv2.resize(
-                selected.astype(np.uint8),
-                target_size,
-                interpolation=cv2.INTER_NEAREST,
-            ) > 0
-        return selected
+        return _boolean_mask(mask, (target_height, target_width))
 
     cable = display_mask(masks[0])
     endpoint_1 = display_mask(masks[1])
@@ -420,7 +418,7 @@ def segmentation_overlay(
             (1.0 - blend) * image[selected].astype(np.float32)
             + blend * color.astype(np.float32)
         ).astype(np.uint8)
-    return np.ascontiguousarray(cv2.cvtColor(output, cv2.COLOR_BGR2RGB))
+    return np.ascontiguousarray(output)
 
 
 def skeleton_diagnostic_image(
@@ -448,14 +446,7 @@ def skeleton_diagnostic_image(
     target_size = (target_width, target_height)
 
     def display_mask(mask: np.ndarray) -> np.ndarray:
-        selected = _boolean_mask(mask, source_shape)
-        if target_size != (source_shape[1], source_shape[0]):
-            selected = cv2.resize(
-                selected.astype(np.uint8),
-                target_size,
-                interpolation=cv2.INTER_NEAREST,
-            ) > 0
-        return selected
+        return _boolean_mask(mask, (target_height, target_width))
 
     cable = display_mask(masks[0])
     output = np.full((target_height, target_width, 3), 8, dtype=np.uint8)
@@ -642,7 +633,7 @@ def skeleton_diagnostic_image(
 
 
 def open_zed(camera_config: dict) -> tuple[sl.Camera, sl.RuntimeParameters]:
-    resolution_name = str(camera_config.get("resolution", "HD720")).upper()
+    resolution_name = str(camera_config.get("resolution", "HD1080")).upper()
     depth_name = str(camera_config.get("depth_mode", "NEURAL")).upper()
     if resolution_name not in RESOLUTIONS:
         raise ValueError(f"Unsupported ZED resolution: {resolution_name}")
@@ -651,7 +642,7 @@ def open_zed(camera_config: dict) -> tuple[sl.Camera, sl.RuntimeParameters]:
 
     init = sl.InitParameters()
     init.camera_resolution = RESOLUTIONS[resolution_name]
-    init.camera_fps = int(camera_config.get("fps", 60))
+    init.camera_fps = int(camera_config.get("fps", 30))
     init.depth_mode = DEPTH_MODES[depth_name]
     init.coordinate_units = sl.UNIT.METER
     init.coordinate_system = sl.COORDINATE_SYSTEM.RIGHT_HANDED_Y_UP
@@ -716,7 +707,7 @@ class AsyncSegmentationPipeline:
         zed: sl.Camera,
         runtime: sl.RuntimeParameters,
         segmenter: PidNetSegmenter,
-        thresholds: tuple[float, ...],
+        mask_config: PidNetMaskConfig,
         overlay_alpha: float,
         observation_builder: ObservationBuilder,
         particle_filter: BatchedCableParticleFilter,
@@ -733,7 +724,8 @@ class AsyncSegmentationPipeline:
         self.zed = zed
         self.runtime = runtime
         self.segmenter = segmenter
-        self.thresholds = thresholds
+        self.mask_config = mask_config
+        self.thresholds = mask_config.thresholds
         self.overlay_alpha = float(overlay_alpha)
         self.observation_builder = observation_builder
         self.particle_filter = particle_filter
@@ -776,7 +768,7 @@ class AsyncSegmentationPipeline:
         )
         # Tracking owns at most one active frame and one replaceable pending
         # frame. Four reusable host buffers cover active, pending, and one
-        # visualization frame without allocating full RGB/depth arrays at 60 Hz.
+        # visualization frame without allocating duplicate full RGB/depth arrays.
         self.tracking_gate = threading.Lock()
         self.tracking_future: Future | None = None
         self.pending_tracking_input: TrackingInput | None = None
@@ -784,6 +776,12 @@ class AsyncSegmentationPipeline:
         self.tracking_buffers: list[tuple[np.ndarray, np.ndarray]] = []
         self.free_tracking_buffers: deque[int] = deque()
         self.tracking_buffer_count = 4
+        frame_height = int(self.observation_builder.camera_model.height)
+        frame_width = int(self.observation_builder.camera_model.width)
+        self._ensure_tracking_buffers(
+            (frame_height, frame_width, 3),
+            (frame_height, frame_width),
+        )
         self.visualization_buffer_index: int | None = None
         self.visualization_future: Future | None = None
         self.pending_visualization_result: TrackingResult | None = None
@@ -827,6 +825,7 @@ class AsyncSegmentationPipeline:
         self._last_tracking_frame_index = -1
         self._last_tracking_capture_time = float("-inf")
         self.pending_features = particle_filter.features
+        self.top_particles_enabled = True
         self.observation_profile_history = {
             name: deque(maxlen=120)
             for name in (
@@ -904,16 +903,15 @@ class AsyncSegmentationPipeline:
         self.thread.start()
 
     def warmup(self, image_shape: tuple[int, int]) -> float:
-        """Initialize CUDA on the persistent tracking thread without timing it as a frame."""
+        """Warm PIDNet, cube observation, and contact tensor paths."""
 
         height, width = (int(value) for value in image_shape)
         blank = np.zeros((height, width, 3), dtype=np.uint8)
         blank_mask = np.zeros((height, width), dtype=np.uint8)
         started = time.perf_counter()
         future = self.tracking_executor.submit(
-            self.segmenter.tracking_channels,
+            self._segment_frame,
             blank,
-            self.thresholds,
         )
         cube_future = (
             self.cube_executor.submit(
@@ -932,6 +930,18 @@ class AsyncSegmentationPipeline:
             self.contact_estimator.warmup()
         return float((time.perf_counter() - started) * 1000.0)
 
+    def _segment_frame(self, bgr: np.ndarray):
+        raw_masks = self.segmenter.mask_channels(
+            bgr,
+            range(len(self.thresholds)),
+            self.thresholds,
+        )
+        masks, _component_count = postprocess_pidnet_masks(
+            raw_masks,
+            self.mask_config,
+        )
+        return masks
+
     def stop(self) -> None:
         self.stop_event.set()
         with self.tracking_gate:
@@ -945,6 +955,7 @@ class AsyncSegmentationPipeline:
             if self.thread.is_alive():
                 raise RuntimeError("ZED capture thread did not stop within five seconds.")
         self.tracking_executor.shutdown(wait=True, cancel_futures=True)
+        self.observation_builder.close()
         if self.cube_executor is not None:
             self.cube_executor.shutdown(wait=True, cancel_futures=True)
         self.visualization_executor.shutdown(wait=True, cancel_futures=True)
@@ -1128,12 +1139,14 @@ class AsyncSegmentationPipeline:
             tracking_input.buffer_index,
             tracking_input.frame_index,
             tracking_input.captured_at,
+            tracking_input.host_captured_at,
             tracking_input.published_at,
             tracking_input.bgr,
             tracking_input.depth,
             tracking_input.render_cloud,
             tracking_input.render_depth,
             tracking_input.render_captured_at,
+            tracking_input.include_top_particles,
             replace(
                 tracking_input.capture_profile,
                 submit_interval_ms=float(submit_interval_ms),
@@ -1325,6 +1338,10 @@ class AsyncSegmentationPipeline:
                 self.pending_features,
                 **{name: bool(enabled)},
             )
+
+    def set_top_particles_enabled(self, enabled: bool) -> None:
+        with self.lock:
+            self.top_particles_enabled = bool(enabled)
 
     def _drain_visualization(self) -> None:
         if self.visualization_future is None or not self.visualization_future.done():
@@ -1552,14 +1569,31 @@ class AsyncSegmentationPipeline:
                 grab_finished = time.perf_counter()
                 if status != sl.ERROR_CODE.SUCCESS:
                     continue
-                captured_at = grab_finished
+                timestamp_ns = int(
+                    self.zed.get_timestamp(
+                        sl.TIME_REFERENCE.IMAGE
+                    ).get_nanoseconds()
+                )
+                if timestamp_ns <= 0:
+                    raise RuntimeError(
+                        f"ZED returned an invalid image timestamp: {timestamp_ns}"
+                    )
+                captured_at = float(timestamp_ns * 1.0e-9)
+                host_captured_at = grab_finished
                 with self.lock:
                     self.frame_count += 1
                     frame_index = int(self.frame_count)
                 self._drain_visualization()
                 self._drain_tracking()
-                self._update_capture_fps(captured_at)
-                self._update_stage_rates(captured_at)
+                self._update_capture_fps(host_captured_at)
+                self._update_stage_rates(host_captured_at)
+
+                acquired = self._acquire_tracking_buffer()
+                if acquired is None:
+                    with self.lock:
+                        self.tracking_buffer_starved += 1
+                    continue
+                buffer_index, bgr, depth = acquired
 
                 image_retrieve_started = time.perf_counter()
                 image_status = self.zed.retrieve_image(
@@ -1574,6 +1608,7 @@ class AsyncSegmentationPipeline:
                 )
                 depth_retrieve_finished = time.perf_counter()
                 if image_status != sl.ERROR_CODE.SUCCESS or depth_status != sl.ERROR_CODE.SUCCESS:
+                    self._release_tracking_buffer(buffer_index)
                     raise RuntimeError(
                         f"ZED retrieval failed: image={image_status}, depth={depth_status}"
                     )
@@ -1583,19 +1618,22 @@ class AsyncSegmentationPipeline:
                     self.depth.get_data(), dtype=np.float32
                 ).squeeze()
                 if depth_source.ndim != 2:
+                    self._release_tracking_buffer(buffer_index)
                     raise RuntimeError(
                         f"ZED returned an invalid depth shape: {depth_source.shape}"
                     )
-                self._ensure_tracking_buffers(
-                    tuple(bgra.shape[:2]) + (3,),
-                    tuple(depth_source.shape),
-                )
-                acquired = self._acquire_tracking_buffer()
-                if acquired is None:
-                    with self.lock:
-                        self.tracking_buffer_starved += 1
-                    continue
-                buffer_index, bgr, depth = acquired
+                expected_bgr_shape = tuple(bgr.shape)
+                actual_bgr_shape = tuple(bgra.shape[:2]) + (3,)
+                if (
+                    actual_bgr_shape != expected_bgr_shape
+                    or tuple(depth_source.shape) != tuple(depth.shape)
+                ):
+                    self._release_tracking_buffer(buffer_index)
+                    raise RuntimeError(
+                        "ZED frame shape changed while tracking: "
+                        f"image={actual_bgr_shape}, depth={depth_source.shape}, "
+                        f"expected image={expected_bgr_shape}, depth={depth.shape}"
+                    )
                 np.copyto(bgr, bgra[:, :, :3], casting="no")
                 image_copy_finished = time.perf_counter()
                 depth_copy_started = image_copy_finished
@@ -1609,7 +1647,7 @@ class AsyncSegmentationPipeline:
                 cloud_copy_ms = 0.0
                 if (
                     self.visualization_enabled
-                    and captured_at >= self.next_visualization_time
+                    and host_captured_at >= self.next_visualization_time
                 ):
                     if self.visualization_source == "zed":
                         cloud_retrieve_started = time.perf_counter()
@@ -1644,10 +1682,13 @@ class AsyncSegmentationPipeline:
                         # until the visualization worker has finished with it.
                         render_depth = depth
                     render_captured_at = captured_at
-                    self.next_visualization_time = captured_at + self.visualization_period
+                    self.next_visualization_time = (
+                        host_captured_at + self.visualization_period
+                    )
 
                 with self.lock:
                     requested_features = self.pending_features
+                    include_top_particles = self.top_particles_enabled
                 published_at = time.perf_counter()
                 capture_profile = CaptureProfile(
                     grab_ms=float((grab_finished - grab_started) * 1000.0),
@@ -1676,6 +1717,7 @@ class AsyncSegmentationPipeline:
                         buffer_index=buffer_index,
                         frame_index=frame_index,
                         captured_at=captured_at,
+                        host_captured_at=host_captured_at,
                         published_at=published_at,
                         bgr=bgr,
                         depth=depth,
@@ -1683,6 +1725,7 @@ class AsyncSegmentationPipeline:
                         render_depth=render_depth,
                         render_captured_at=render_captured_at,
                         requested_features=requested_features,
+                        include_top_particles=include_top_particles,
                         capture_profile=capture_profile,
                     )
                 )
@@ -1914,23 +1957,27 @@ class AsyncSegmentationPipeline:
         buffer_index: int,
         frame_index: int,
         captured_at: float,
+        host_captured_at: float,
         submitted_at: float,
         bgr: np.ndarray,
         depth: np.ndarray,
         render_cloud: np.ndarray | None,
         render_depth: np.ndarray | None,
         render_captured_at: float | None,
+        include_top_particles: bool,
         capture_profile: CaptureProfile,
     ) -> TrackingResult:
         tracking_start = time.perf_counter()
+        viewer_diagnostics = bool(
+            render_cloud is not None or render_depth is not None
+        )
         evaluation_sampled = bool(
             self.live_evaluation is not None
+            and (viewer_diagnostics or not self.visualization_enabled)
             and self.live_evaluation.should_sample(captured_at)
         )
         inference_start = tracking_start
-        masks, _ = self.segmenter.tracking_channels(
-            bgr, self.thresholds
-        )
+        masks = self._segment_frame(bgr)
         inference_finished = time.perf_counter()
         # All mask union/exclusion work stays in the cube worker. Launch it as
         # soon as PIDNet finishes so its CPU fit overlaps the cable observation
@@ -1950,7 +1997,10 @@ class AsyncSegmentationPipeline:
             depth,
             include_skeleton_debug=self.visualization_enabled,
             include_graph_edges=bool(
-                self.particle_filter.features.graph_edge_attribution
+                (
+                    self.particle_filter.features.edge_attribution_diagnostics
+                    and viewer_diagnostics
+                )
                 or self.particle_filter.features.visible_edge_scoring
                 or self.particle_filter.features.visible_edge_transport
                 or self.particle_filter.features.visible_edge_exploration
@@ -1960,8 +2010,11 @@ class AsyncSegmentationPipeline:
             observation,
             captured_at,
             refresh_diagnostics=(
-                render_cloud is not None or render_depth is not None
-                or evaluation_sampled
+                viewer_diagnostics or evaluation_sampled
+            ),
+            refresh_edge_attribution_diagnostics=viewer_diagnostics,
+            include_top_particles=(
+                include_top_particles and viewer_diagnostics
             ),
             require_contact_support=(self.contact_estimator is not None),
         )
@@ -1987,7 +2040,7 @@ class AsyncSegmentationPipeline:
             buffer_index=buffer_index,
             frame_index=frame_index,
             captured_at=captured_at,
-            completed_at=completed_at,
+            host_captured_at=host_captured_at,
             bgr=bgr,
             render_cloud=render_cloud,
             render_depth=render_depth,
@@ -2050,7 +2103,7 @@ class AsyncSegmentationPipeline:
             else None
         )
         overlay_started = time.perf_counter()
-        rgb_image = segmentation_overlay(
+        overlay_bgr = segmentation_overlay(
             tracked.bgr,
             tracked.masks,
             self.overlay_alpha,
@@ -2064,25 +2117,25 @@ class AsyncSegmentationPipeline:
         )
         if tracked.cube_tracking is not None and self.cube_tracker is not None:
             source_camera = self.cube_tracker.camera
-            scale_x = rgb_image.shape[1] / float(source_camera.width)
-            scale_y = rgb_image.shape[0] / float(source_camera.height)
+            scale_x = overlay_bgr.shape[1] / float(source_camera.width)
+            scale_y = overlay_bgr.shape[0] / float(source_camera.height)
             display_camera = CubeCameraModel(
                 fx=source_camera.fx * scale_x,
                 fy=source_camera.fy * scale_y,
                 cx=source_camera.cx * scale_x,
                 cy=source_camera.cy * scale_y,
-                width=rgb_image.shape[1],
-                height=rgb_image.shape[0],
+                width=overlay_bgr.shape[1],
+                height=overlay_bgr.shape[0],
             )
-            rgb_image = cv2.cvtColor(
-                draw_cube_wireframe_overlay(
-                    cv2.cvtColor(rgb_image, cv2.COLOR_RGB2BGR),
-                    tracked.cube_tracking,
-                    display_camera,
-                    self.cube_tracker.config.cube_side_m,
-                ),
-                cv2.COLOR_BGR2RGB,
+            overlay_bgr = draw_cube_wireframe_overlay(
+                overlay_bgr,
+                tracked.cube_tracking,
+                display_camera,
+                self.cube_tracker.config.cube_side_m,
             )
+        rgb_image = np.ascontiguousarray(
+            cv2.cvtColor(overlay_bgr, cv2.COLOR_BGR2RGB)
+        )
         overlay_finished = time.perf_counter()
         if cloud_future is not None:
             self.cached_point_cloud = cloud_future.result()
@@ -2108,7 +2161,7 @@ class AsyncSegmentationPipeline:
             overlay_processing_ms=float(
                 (overlay_finished - overlay_started) * 1000.0
             ),
-            latency_ms=float((finished - tracked.captured_at) * 1000.0),
+            latency_ms=float((finished - tracked.host_captured_at) * 1000.0),
             source_age_ms=float(
                 max(
                     0.0,
@@ -2152,7 +2205,20 @@ def main() -> None:
     config = load_config(args.config.resolve())
     camera_config = config["camera"]
     viewer_config = config["viewer"]
-    pidnet_config = config["pidnet"]
+    pidnet_viewer_config = config["pidnet"]
+    if "runtime_config" not in pidnet_viewer_config:
+        raise ValueError("[pidnet].runtime_config is required.")
+    pidnet_runtime_path = resolve_project_path(
+        pidnet_viewer_config["runtime_config"]
+    )
+    with pidnet_runtime_path.open("rb") as stream:
+        pidnet_runtime = tomllib.load(stream)
+    runtime_pidnet_config = pidnet_runtime.get("pidnet")
+    if not isinstance(runtime_pidnet_config, dict):
+        raise ValueError(
+            f"Shared PIDNet runtime config is missing [pidnet]: {pidnet_runtime_path}"
+        )
+    mask_config = PidNetMaskConfig.from_mapping(pidnet_runtime)
     evaluation_config = config.get("evaluation") or {}
     cube_tracking_values = config.get("cube_tracking") or {}
     cube_tracking_enabled = bool(cube_tracking_values.get("enabled", False))
@@ -2185,9 +2251,11 @@ def main() -> None:
     observation_config = ObservationConfig.from_mapping(config.get("observation"))
     particle_filter_config = ParticleFilterConfig.from_mapping(config.get("particle_filter"))
     particle_features = ParticleFeatures.from_mapping(config.get("features"))
-    checkpoint = resolve_project_path(args.checkpoint or pidnet_config["checkpoint"])
+    checkpoint = resolve_project_path(
+        args.checkpoint or runtime_pidnet_config["checkpoint"]
+    )
 
-    configured_source = str(viewer_config.get("point_cloud_source", "zed"))
+    configured_source = str(viewer_config.get("point_cloud_source", "depth"))
     viewer_enabled = bool(viewer_config.get("enabled", True))
     if args.viewer_mode is not None:
         viewer_enabled = args.viewer_mode != "off"
@@ -2243,16 +2311,19 @@ def main() -> None:
             )
         segmenter = PidNetSegmenter(
             checkpoint,
-            device=str(pidnet_config.get("device", "cuda")),
-            amp=bool(pidnet_config.get("amp", True)),
-            channels_last=bool(pidnet_config.get("channels_last", True)),
+            device=str(runtime_pidnet_config["device"]),
+            amp=bool(runtime_pidnet_config["amp"]),
+            channels_last=bool(runtime_pidnet_config["channels_last"]),
         )
-        thresholds = (
-            float(pidnet_config.get("threshold", 0.85)),
-            *tuple(float(value) for value in pidnet_config.get("endpoint_thresholds", (0.90, 0.75))),
+        checkpoint_sha256 = hashlib.sha256(checkpoint.read_bytes()).hexdigest()
+        print(
+            "PIDNET_RUNTIME "
+            f"checkpoint={checkpoint} sha256={checkpoint_sha256} "
+            f"thresholds={'/'.join(f'{value:.8g}' for value in mask_config.thresholds)} "
+            f"cleanup=open{mask_config.open_kernel}/close{mask_config.close_kernel}/"
+            f"min{mask_config.min_area_px} config={pidnet_runtime_path}",
+            flush=True,
         )
-        if len(thresholds) != 3:
-            raise ValueError("PIDNet requires one cable and two endpoint thresholds.")
 
         if viewer is not None:
             viewer.update_status("Opening ZED camera...")
@@ -2303,8 +2374,8 @@ def main() -> None:
             zed,
             runtime,
             segmenter,
-            thresholds,
-            float(pidnet_config.get("overlay_alpha", 0.62)),
+            mask_config,
+            float(pidnet_viewer_config.get("overlay_alpha", 0.62)),
             ObservationBuilder(
                 observation_config,
                 particle_filter_config.cable_lengths_m,
@@ -2324,10 +2395,16 @@ def main() -> None:
         )
         if viewer is not None:
             viewer.set_feature_controls(particle_features, pipeline.set_feature)
-            viewer.update_status("Warming the persistent CUDA tracking worker...")
+            viewer.set_top_particle_control(
+                pipeline.set_top_particles_enabled
+            )
+            viewer.update_status("Warming PIDNet, cube, and contact paths...")
             viewer.poll()
         warmup_ms = pipeline.warmup(camera_frame_shape(zed))
-        print(f"CUDA tracking worker warm-up: {warmup_ms:.1f} ms (excluded from frame timing)")
+        print(
+            "PIDNet/cube/contact warm-up: "
+            f"{warmup_ms:.1f} ms (excluded from frame timing)"
+        )
         pipeline.start()
         last_frame = -1
         display_fps = max(1.0, float(viewer_config.get("max_fps", 30.0)))

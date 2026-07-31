@@ -5,7 +5,7 @@
   "init_checkpoint": "",
   "epochs": 80,
   "batch_size": 8,
-  "imgsz": "1280x720",
+  "imgsz": "1920x1080",
   "base_channels": 24,
   "cable_count": 2,
   "device": "cuda",
@@ -39,12 +39,12 @@
   "config": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\NN_collection_training\\source\\config.toml",
   "live_mask_cleanup": {
     "threshold": 0.85000002,
-    "min_area_px": 80,
+    "min_area_px": 180,
     "open_kernel": 1,
-    "close_kernel": 5
+    "close_kernel": 7
   },
   "label_mask_cleanup": {
-    "kernel": 5,
+    "kernel": 7,
     "iterations": 1
   }
 }

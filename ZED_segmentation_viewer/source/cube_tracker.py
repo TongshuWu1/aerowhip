@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import lru_cache
 from itertools import combinations, permutations, product
 import math
 import time
@@ -303,10 +304,18 @@ CUBE_EDGES = tuple(
     if np.count_nonzero(CUBE_CORNERS[first] != CUBE_CORNERS[second]) == 1
 )
 FACE_COLOURS = ((255, 80, 80), (80, 255, 80), (80, 160, 255))
+YELLOW_OPEN_KERNEL = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+YELLOW_CLOSE_KERNEL = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+
+
+@lru_cache(maxsize=8)
+def _cable_exclusion_kernel(radius: int) -> np.ndarray:
+    size = 2 * int(radius) + 1
+    return cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (size, size))
 
 
 def segment_yellow(bgr: np.ndarray, config: CubeTrackerConfig) -> np.ndarray:
-    """Return all cleaned yellow evidence when its combined area is sufficient."""
+    """Return all morphologically cleaned yellow evidence."""
 
     image = np.asarray(bgr, dtype=np.uint8)
     if image.ndim != 3 or image.shape[2] < 3:
@@ -317,13 +326,8 @@ def segment_yellow(bgr: np.ndarray, config: CubeTrackerConfig) -> np.ndarray:
         (config.hue_min, config.saturation_min, config.value_min),
         (config.hue_max, 255, 255),
     )
-    open_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
-    close_kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
-    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, open_kernel)
-    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, close_kernel)
-
-    if int(np.count_nonzero(mask)) < config.minimum_mask_area_px:
-        return np.zeros(mask.shape, dtype=np.uint8)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, YELLOW_OPEN_KERNEL)
+    mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, YELLOW_CLOSE_KERNEL)
     return mask
 
 
@@ -343,12 +347,12 @@ def remove_cable_pixels(
         raise ValueError(
             f"Yellow/cable mask shapes disagree: {mask.shape} vs {occluder.shape}."
         )
-    occluder = np.where(occluder != 0, 255, 0).astype(np.uint8)
-    kernel = cv2.getStructuringElement(
-        cv2.MORPH_ELLIPSE,
-        (2 * radius + 1, 2 * radius + 1),
+    occluder = np.ascontiguousarray(occluder, dtype=np.uint8)
+    occluder = cv2.dilate(
+        occluder,
+        _cable_exclusion_kernel(radius),
+        iterations=1,
     )
-    occluder = cv2.dilate(occluder, kernel, iterations=1)
     result = mask.copy()
     result[occluder != 0] = 0
     return result
@@ -1033,6 +1037,8 @@ class KnownCubeTracker:
         bgr: np.ndarray,
         depth: np.ndarray,
         cable_mask: np.ndarray | None = None,
+        *,
+        include_face_pixels: bool = False,
     ) -> CubeTrackingResult:
         started = time.perf_counter()
         mask = segment_yellow(bgr, self.config)
@@ -1188,7 +1194,11 @@ class KnownCubeTracker:
         refinement_ms = (time.perf_counter() - refinement_started) * 1000.0
 
         self.previous_rotation = rotation.copy()
-        face_pixels = tuple(pixels[face.point_indices] for face in faces)
+        face_pixels = (
+            tuple(pixels[face.point_indices] for face in faces)
+            if include_face_pixels
+            else ()
+        )
         if len(faces) == 3:
             reason = "three orthogonal faces fitted"
         else:

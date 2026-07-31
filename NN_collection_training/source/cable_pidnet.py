@@ -13,7 +13,6 @@ except Exception:  # pragma: no cover - handled by require_torch
     F = None
 
 from pidnet_schema import (
-    CABLE_CHANNEL,
     OUTPUT_CHANNEL_COUNT,
     PIDNET_LABEL_MODE,
     validate_checkpoint_schema,
@@ -116,13 +115,19 @@ class SimplePyramidPooling(TorchModule):
 
 
 class PIDNetSmallBinary(TorchModule):
-    """Small PIDNet-inspired binary segmenter.
+    """Small PIDNet-inspired three-channel cable segmenter.
 
     The model keeps separate detail, context, and boundary branches like PIDNet,
-    but is compact enough to train quickly for a single cable class.
+    but is compact enough to train quickly for the shared body and two endpoint
+    channels used by this project.
     """
 
-    def __init__(self, base_channels=24, output_channels=1, input_channels=3):
+    def __init__(
+        self,
+        base_channels=24,
+        output_channels=OUTPUT_CHANNEL_COUNT,
+        input_channels=3,
+    ):
         require_torch()
         super().__init__()
         c = int(base_channels)
@@ -156,7 +161,7 @@ class PIDNetSmallBinary(TorchModule):
             nn.Conv2d(c * 2, output_channels, kernel_size=1),
         )
 
-    def forward(self, x):
+    def forward(self, x, *, return_boundary=True):
         input_size = x.shape[-2:]
         stem = self.stem(x)
         detail = self.detail(stem)
@@ -172,8 +177,15 @@ class PIDNetSmallBinary(TorchModule):
         seg_logits = self.seg_head(fused)
 
         seg_logits = F.interpolate(seg_logits, size=input_size, mode="bilinear", align_corners=False)
-        boundary_logits = F.interpolate(boundary_logits_low, size=input_size, mode="bilinear", align_corners=False)
-        return {"seg": seg_logits, "boundary": boundary_logits}
+        output = {"seg": seg_logits}
+        if return_boundary:
+            output["boundary"] = F.interpolate(
+                boundary_logits_low,
+                size=input_size,
+                mode="bilinear",
+                align_corners=False,
+            )
+        return output
 
 
 class PidNetSegmenter:
@@ -238,14 +250,29 @@ class PidNetSegmenter:
             self.model = self.model.to(memory_format=torch.channels_last)
         self.mean = torch.tensor(IMAGENET_MEAN, dtype=torch.float32, device=self.device).view(1, 3, 1, 1)
         self.std = torch.tensor(IMAGENET_STD, dtype=torch.float32, device=self.device).view(1, 3, 1, 1)
+        self._threshold_cache_key = None
+        self._threshold_cache_tensor = None
+
+    def _threshold_logits(self, thresholds, dtype):
+        key = (tuple(float(value) for value in thresholds), dtype)
+        if key != self._threshold_cache_key:
+            self._threshold_cache_tensor = torch.tensor(
+                [probability_to_logit_threshold(value) for value in key[0]],
+                dtype=dtype,
+                device=self.device,
+            ).view(-1, 1, 1)
+            self._threshold_cache_key = key
+        return self._threshold_cache_tensor
 
     def _input_tensor(self, bgr):
         bgr = np.asarray(bgr, dtype=np.uint8)
         if bgr.ndim != 3 or bgr.shape[2] < 3:
             raise ValueError(f"PIDNet input must be an HxWx3 BGR image; got shape {bgr.shape}.")
-        rgb = cv2.cvtColor(bgr[:, :, :3], cv2.COLOR_BGR2RGB)
-        image = torch.from_numpy(np.ascontiguousarray(rgb)).to(self.device, non_blocking=True)
-        image = image.permute(2, 0, 1).unsqueeze(0).float() / 255.0
+        image = torch.from_numpy(np.ascontiguousarray(bgr[:, :, :3])).to(
+            self.device,
+            non_blocking=True,
+        )
+        image = image.permute(2, 0, 1).flip(0).unsqueeze(0).float() / 255.0
         if self.channels_last:
             image = image.contiguous(memory_format=torch.channels_last)
         return (image - self.mean) / self.std
@@ -253,7 +280,7 @@ class PidNetSegmenter:
     def _forward_logits(self, bgr):
         image = self._input_tensor(bgr)
         with torch.amp.autocast("cuda", enabled=self.use_amp):
-            return self.model(image)["seg"]
+            return self.model(image, return_boundary=False)["seg"]
 
     @torch_inference_mode()
     def probability_maps(self, bgr):
@@ -276,58 +303,14 @@ class PidNetSegmenter:
             raise ValueError(f"PIDNet channel indices out of range: {invalid}")
         logits = self._forward_logits(bgr)
         logits = logits[0]
-        selected = logits[list(channels)]
-        threshold_logits = torch.tensor(
-            [probability_to_logit_threshold(threshold) for threshold in thresholds],
-            dtype=selected.dtype,
-            device=selected.device,
-        ).view(-1, 1, 1)
+        selected = (
+            logits
+            if channels == tuple(range(self.output_channels))
+            else logits[list(channels)]
+        )
+        threshold_logits = self._threshold_logits(thresholds, selected.dtype)
         masks = (selected >= threshold_logits).to(torch.uint8).mul_(255).cpu().numpy()
         return [np.ascontiguousarray(mask, dtype=np.uint8) for mask in masks]
-
-    @torch_inference_mode()
-    def _thresholded_observation(
-        self,
-        bgr,
-        thresholds,
-        probability_channel,
-        keep_probability_on_device=False,
-    ):
-        """Run PIDNet once; transfer masks and optionally retain probability on-device."""
-        thresholds = tuple(float(value) for value in thresholds)
-        if len(thresholds) != OUTPUT_CHANNEL_COUNT:
-            raise ValueError(f"Expected {OUTPUT_CHANNEL_COUNT} thresholds; got {len(thresholds)}.")
-        probability_channel = int(probability_channel)
-        if not 0 <= probability_channel < self.output_channels:
-            raise ValueError(f"Probability channel is out of range: {probability_channel}")
-        logits = self._forward_logits(bgr)[0]
-        threshold_logits = torch.tensor(
-            [probability_to_logit_threshold(value) for value in thresholds],
-            dtype=logits.dtype,
-            device=logits.device,
-        ).view(-1, 1, 1)
-        masks = (logits >= threshold_logits).to(torch.uint8).mul_(255)
-        probability = torch.sigmoid(logits[probability_channel]).float().contiguous()
-        masks_cpu = masks.cpu().numpy()
-        mask_arrays = tuple(
-            np.ascontiguousarray(mask, dtype=np.uint8) for mask in masks_cpu
-        )
-        if keep_probability_on_device:
-            return mask_arrays, probability
-        return mask_arrays, np.ascontiguousarray(
-            probability.to(torch.float16).cpu().numpy(),
-            dtype=np.float16,
-        )
-
-    def tracking_channels(self, bgr, thresholds):
-        """Tracking API: masks plus cable probability from the same forward pass."""
-
-        return self._thresholded_observation(
-            bgr,
-            thresholds,
-            CABLE_CHANNEL,
-            keep_probability_on_device=True,
-        )
 
 
 def resolve_device(device):
