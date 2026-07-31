@@ -884,6 +884,7 @@ class AsyncSegmentationPipeline:
 
         height, width = (int(value) for value in image_shape)
         blank = np.zeros((height, width, 3), dtype=np.uint8)
+        blank_mask = np.zeros((height, width), dtype=np.uint8)
         started = time.perf_counter()
         future = self.tracking_executor.submit(
             self.segmenter.tracking_channels,
@@ -892,9 +893,10 @@ class AsyncSegmentationPipeline:
         )
         cube_future = (
             self.cube_executor.submit(
-                self.cube_tracker.track,
+                self._track_cube,
                 blank,
                 np.full((height, width), np.nan, dtype=np.float32),
+                (blank_mask, blank_mask, blank_mask),
             )
             if self.cube_executor is not None and self.cube_tracker is not None
             else None
@@ -1423,6 +1425,8 @@ class AsyncSegmentationPipeline:
                     result.frame_index,
                     result.captured_at,
                     result.particle_filter,
+                    observation=result.observation,
+                    cube_tracking=result.cube_tracking,
                 )
 
             # Raw RGB/depth storage is retained only while the diagnostic viewer
@@ -1774,6 +1778,24 @@ class AsyncSegmentationPipeline:
             flush=True,
         )
 
+    def _track_cube(
+        self,
+        bgr: np.ndarray,
+        depth: np.ndarray,
+        masks: tuple[np.ndarray, ...],
+    ) -> CubeTrackingResult:
+        if self.cube_tracker is None:
+            raise RuntimeError("Cube tracking is disabled.")
+        if len(masks) != 3:
+            raise ValueError(
+                f"Cube exclusion requires three PIDNet masks; got {len(masks)}."
+            )
+        cable_mask = cv2.bitwise_or(
+            cv2.bitwise_or(masks[0], masks[1]),
+            masks[2],
+        )
+        return self.cube_tracker.track(bgr, depth, cable_mask)
+
     def _run_tracking(
         self,
         buffer_index: int,
@@ -1792,20 +1814,24 @@ class AsyncSegmentationPipeline:
             self.live_evaluation is not None
             and self.live_evaluation.should_sample(captured_at)
         )
-        cube_future = (
-            self.cube_executor.submit(
-                self.cube_tracker.track,
-                bgr,
-                depth,
-            )
-            if self.cube_executor is not None and self.cube_tracker is not None
-            else None
-        )
         inference_start = tracking_start
         masks, _ = self.segmenter.tracking_channels(
             bgr, self.thresholds
         )
         inference_finished = time.perf_counter()
+        # All mask union/exclusion work stays in the cube worker. Launch it as
+        # soon as PIDNet finishes so its CPU fit overlaps the cable observation
+        # and PF instead of becoming a serial frame-rate limiter.
+        cube_future = (
+            self.cube_executor.submit(
+                self._track_cube,
+                bgr,
+                depth,
+                masks,
+            )
+            if self.cube_executor is not None and self.cube_tracker is not None
+            else None
+        )
         observation = self.observation_builder.build(
             masks,
             depth,

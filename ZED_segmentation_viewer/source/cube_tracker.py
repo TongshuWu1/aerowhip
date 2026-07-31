@@ -38,7 +38,8 @@ class CubeTrackerConfig:
     hue_max: int = 40
     saturation_min: int = 100
     value_min: int = 80
-    minimum_component_area_px: int = 2500
+    minimum_mask_area_px: int = 2500
+    cable_exclusion_radius_px: int = 3
     depth_min_m: float = 0.20
     depth_max_m: float = 3.00
     pixel_stride: int = 2
@@ -64,10 +65,16 @@ class CubeTrackerConfig:
                 source.get("saturation_min", defaults.saturation_min)
             ),
             value_min=int(source.get("value_min", defaults.value_min)),
-            minimum_component_area_px=int(
+            minimum_mask_area_px=int(
                 source.get(
-                    "minimum_component_area_px",
-                    defaults.minimum_component_area_px,
+                    "minimum_mask_area_px",
+                    defaults.minimum_mask_area_px,
+                )
+            ),
+            cable_exclusion_radius_px=int(
+                source.get(
+                    "cable_exclusion_radius_px",
+                    defaults.cable_exclusion_radius_px,
                 )
             ),
             depth_min_m=float(source.get("depth_min_m", defaults.depth_min_m)),
@@ -126,8 +133,10 @@ class CubeTrackerConfig:
             raise ValueError("saturation_min must be in [0, 255].")
         if not 0 <= self.value_min <= 255:
             raise ValueError("value_min must be in [0, 255].")
-        if self.minimum_component_area_px < 1:
-            raise ValueError("minimum_component_area_px must be positive.")
+        if self.minimum_mask_area_px < 1:
+            raise ValueError("minimum_mask_area_px must be positive.")
+        if self.cable_exclusion_radius_px < 0:
+            raise ValueError("cable_exclusion_radius_px must be nonnegative.")
         if not 0.0 < self.depth_min_m < self.depth_max_m:
             raise ValueError("Depth limits must satisfy 0 < depth_min_m < depth_max_m.")
         if self.pixel_stride < 1:
@@ -219,7 +228,7 @@ FACE_COLOURS = ((255, 80, 80), (80, 255, 80), (80, 160, 255))
 
 
 def segment_yellow(bgr: np.ndarray, config: CubeTrackerConfig) -> np.ndarray:
-    """Return only the largest sufficiently large yellow connected component."""
+    """Return all cleaned yellow evidence when its combined area is sufficient."""
 
     image = np.asarray(bgr, dtype=np.uint8)
     if image.ndim != 3 or image.shape[2] < 3:
@@ -235,14 +244,36 @@ def segment_yellow(bgr: np.ndarray, config: CubeTrackerConfig) -> np.ndarray:
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, open_kernel)
     mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, close_kernel)
 
-    count, labels, stats, _ = cv2.connectedComponentsWithStats(mask, connectivity=8)
-    if count <= 1:
+    if int(np.count_nonzero(mask)) < config.minimum_mask_area_px:
         return np.zeros(mask.shape, dtype=np.uint8)
-    largest = 1 + int(np.argmax(stats[1:, cv2.CC_STAT_AREA]))
-    area = int(stats[largest, cv2.CC_STAT_AREA])
-    if area < config.minimum_component_area_px:
-        return np.zeros(mask.shape, dtype=np.uint8)
-    return np.where(labels == largest, 255, 0).astype(np.uint8)
+    return mask
+
+
+def remove_cable_pixels(
+    yellow_mask: np.ndarray,
+    cable_mask: np.ndarray | None,
+    exclusion_radius_px: int,
+) -> np.ndarray:
+    """Remove the observed cable and its depth-misalignment boundary."""
+
+    mask = np.asarray(yellow_mask, dtype=np.uint8)
+    radius = int(exclusion_radius_px)
+    if cable_mask is None or radius <= 0:
+        return mask
+    occluder = np.asarray(cable_mask)
+    if occluder.shape != mask.shape:
+        raise ValueError(
+            f"Yellow/cable mask shapes disagree: {mask.shape} vs {occluder.shape}."
+        )
+    occluder = np.where(occluder != 0, 255, 0).astype(np.uint8)
+    kernel = cv2.getStructuringElement(
+        cv2.MORPH_ELLIPSE,
+        (2 * radius + 1, 2 * radius + 1),
+    )
+    occluder = cv2.dilate(occluder, kernel, iterations=1)
+    result = mask.copy()
+    result[occluder != 0] = 0
+    return result
 
 
 def unproject_masked_depth(
@@ -649,14 +680,25 @@ class KnownCubeTracker:
             face_pixels=(),
         )
 
-    def track(self, bgr: np.ndarray, depth: np.ndarray) -> CubeTrackingResult:
+    def track(
+        self,
+        bgr: np.ndarray,
+        depth: np.ndarray,
+        cable_mask: np.ndarray | None = None,
+    ) -> CubeTrackingResult:
         started = time.perf_counter()
         mask = segment_yellow(bgr, self.config)
+        mask = remove_cable_pixels(
+            mask,
+            cable_mask,
+            self.config.cable_exclusion_radius_px,
+        )
         yellow_pixels = int(np.count_nonzero(mask))
-        if yellow_pixels == 0:
+        if yellow_pixels < self.config.minimum_mask_area_px:
             return self._invalid(
                 started,
-                "no sufficiently large yellow component",
+                f"only {yellow_pixels} yellow pixels remain after cable exclusion; "
+                f"need {self.config.minimum_mask_area_px}",
                 mask,
             )
 

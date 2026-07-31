@@ -21,6 +21,8 @@ from cube_tracker import (
     cube_pose_from_faces,
     extract_plane_candidates,
     point_to_cube_surface_distance,
+    remove_cable_pixels,
+    segment_yellow,
     select_orthogonal_pair,
     select_orthogonal_faces,
     two_face_span_is_valid,
@@ -169,6 +171,33 @@ class CubeGeometryTests(unittest.TestCase):
         config = CubeTrackerConfig()
         self.assertGreaterEqual(hue, config.hue_min)
         self.assertLessEqual(hue, config.hue_max)
+
+    def test_yellow_fragments_remain_separate_but_are_pooled(self) -> None:
+        image = np.zeros((180, 240, 3), dtype=np.uint8)
+        image[20:160, 30:210] = (0, 255, 255)
+        image[20:160, 110:130] = 0
+        mask = segment_yellow(
+            image,
+            CubeTrackerConfig(minimum_mask_area_px=1000),
+        )
+
+        self.assertEqual(int(mask[80, 70]), 255)
+        self.assertEqual(int(mask[80, 170]), 255)
+        self.assertEqual(int(mask[80, 120]), 0)
+        component_count, _ = cv2.connectedComponents(mask, connectivity=8)
+        self.assertEqual(component_count - 1, 2)
+
+    def test_cable_exclusion_removes_a_dilated_boundary(self) -> None:
+        yellow = np.full((40, 60), 255, dtype=np.uint8)
+        cable = np.zeros_like(yellow)
+        cable[:, 30] = 255
+        cleaned = remove_cable_pixels(yellow, cable, exclusion_radius_px=3)
+
+        self.assertTrue(np.all(cleaned[:, 27:34] == 0))
+        self.assertTrue(np.all(cleaned[:, :26] == 255))
+        self.assertTrue(np.all(cleaned[:, 35:] == 255))
+        self.assertTrue(np.all(yellow == 255))
+        self.assertEqual(int(np.count_nonzero(cable)), 40)
 
 
 if __name__ == "__main__":

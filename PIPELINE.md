@@ -84,7 +84,7 @@ The known rigid object is a bright-yellow cube with side length \(0.150\) m.
 Its current observation is deliberately geometric rather than learned:
 
 1. threshold yellow pixels in the rectified left image;
-2. retain the largest connected component;
+2. retain all cleaned yellow fragments when their combined area is sufficient;
 3. unproject its registered depth pixels;
 4. robustly extract planar subsets;
 5. select mutually perpendicular cube faces;
@@ -96,6 +96,20 @@ shared-edge point span supplies the remaining centre coordinate. The span must
 cover 90--110% of the known width; incomplete observations are rejected rather
 than extrapolated. Fewer than two perpendicular faces also produce an invalid
 measurement.
+
+Image connectivity is not used as object identity: an occluding cable may
+split one physical face into multiple yellow components. Those original
+fragments are pooled for the robust 3D fit without filling the occluded pixels
+or introducing cable depth into the cube cloud.
+
+The synchronized PIDNet cable and endpoint masks are dilated by
+`cable_exclusion_radius_px` and removed from the yellow evidence before depth
+unprojection. This rejects cable-coloured pixels and RGB/depth boundary bleed;
+setting the radius to zero disables the exclusion for ablation. Cube fitting
+starts immediately after PIDNet inference and overlaps cable observation
+construction and the PF update, preventing the cube fit from becoming a serial
+frame-rate limiter. PIDNet mask union, dilation, and exclusion execute inside
+the cube worker rather than on the cable tracking thread.
 
 A geometrically uniform cube has 24 equivalent proper rotations. The tracker
 selects the representation closest to the preceding valid observation solely
@@ -514,6 +528,17 @@ Evaluation diagnostics are sampled at 10 Hz rather than every tracking frame.
 The live history is saved to `metrics.csv`, and the final displayed plot is
 saved to `metrics.png` under `diagnostics/evaluation_runs/<timestamp>`. These
 two files are the intended compact inputs for later analysis.
+
+The plot remains cable-only. Each CSV row also records the synchronized raw
+cube measurement: validity, rejection reason, fitted face count, centre XYZ,
+and cube-surface RMS. Invalid cube measurements leave centre and RMS empty
+rather than substituting a held or predicted pose.
+
+The CSV also records four compact observation diagnostics for each cable:
+detected endpoint count, the two endpoint body-component labels, complete-route
+count, and the observation reason. These values distinguish a segmentation
+connectivity failure from a 3D graph/depth failure without changing the
+observation or PF mathematics.
 
 ## Performance isolation
 

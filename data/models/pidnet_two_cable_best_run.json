@@ -1,24 +1,138 @@
 {
-  "artifact_type": "checkpoint_schema_migration",
-  "created_at": "2026-07-27T20:04:51+00:00",
-  "dataset_selection_preserved": true,
-  "dataset_sha256": "17a6c7852aa2c753762e209ab6b84fd1b1cd87abd12b3dde4fa2933802eeb6a9",
-  "migrated_split_counts": {
-    "test": 0,
-    "train": 121,
-    "val": 32
+  "arguments": {
+    "amp": true,
+    "base_channels": 24,
+    "batch_size": 8,
+    "boundary_weight": 0.2,
+    "cable_count": 2,
+    "channels_last": true,
+    "compile": false,
+    "dataset": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet",
+    "deterministic": false,
+    "device": "cuda",
+    "dice_weight": 1.0,
+    "early_stop": 0,
+    "ema_decay": 0.995,
+    "endpoint_weight": 2.0,
+    "epochs": 80,
+    "evaluate_test": false,
+    "focal_gamma": 2.0,
+    "gpu_augment": true,
+    "grad_clip": 5.0,
+    "imgsz": [
+      1280,
+      720
+    ],
+    "init_checkpoint": null,
+    "lr": 0.001,
+    "min_delta": 0.0001,
+    "num_workers": 2,
+    "output": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+    "prefetch_factor": 1,
+    "resume": null,
+    "seed": 17,
+    "tf32": true,
+    "verified_only": true,
+    "weight_decay": 0.0001
   },
-  "model_outputs": [
-    "cable",
-    "endpoint1",
-    "endpoint2"
+  "channel_prevalence": [
+    0.011199209175857844,
+    0.0009749508527369281,
+    0.0007218584048202614
   ],
-  "note": "The first three trained logits are unchanged; only the obsolete fourth output row was removed. The original 121/32/0 train/validation/test selection is preserved.",
-  "preserved_logits_exact": true,
-  "recommended_thresholds": [
-    0.75,
-    0.7999999999999999,
-    0.75
+  "cuda": {
+    "capability": [
+      8,
+      9
+    ],
+    "cuda_version": "12.8",
+    "device": "NVIDIA GeForce RTX 4080",
+    "total_memory": 17170956288
+  },
+  "dataset_profiles": {
+    "test": {
+      "both_endpoint_frames": 0,
+      "frame_count": 0,
+      "positive_frames": [
+        0,
+        0,
+        0
+      ],
+      "positive_pixels": [
+        0,
+        0,
+        0
+      ],
+      "prevalence": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "total_pixels": 0
+    },
+    "train": {
+      "both_endpoint_frames": 111,
+      "frame_count": 136,
+      "positive_frames": [
+        136,
+        125,
+        122
+      ],
+      "positive_pixels": [
+        1403682,
+        122198,
+        90476
+      ],
+      "prevalence": [
+        0.011199209175857844,
+        0.0009749508527369281,
+        0.0007218584048202614
+      ],
+      "total_pixels": 125337600
+    },
+    "val": {
+      "both_endpoint_frames": 35,
+      "frame_count": 38,
+      "positive_frames": [
+        38,
+        36,
+        37
+      ],
+      "positive_pixels": [
+        392867,
+        33004,
+        28125
+      ],
+      "prevalence": [
+        0.011218104669225145,
+        0.0009424113669590644,
+        0.0008030941611842105
+      ],
+      "total_pixels": 35020800
+    }
+  },
+  "dataset_snapshot": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best_dataset.json",
+  "focal_alpha": [
+    0.9888007908241422,
+    0.9990250491472631,
+    0.9992781415951797
   ],
-  "source_checkpoint_sha256": "8babe17d0780b300adb6dcdf37e0f1ef906d82c887f567a3ad25bb597cfec04f"
+  "git": {
+    "commit": "cb013236b50b518ea6fcbfadebbede46232cc9bc",
+    "dirty": true
+  },
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "selected_session_counts": {
+    "test": 0,
+    "train": 10,
+    "val": 7
+  },
+  "split_counts": {
+    "test": 0,
+    "train": 136,
+    "val": 38
+  },
+  "started_at": "2026-07-29 16:46:57",
+  "torch": "2.11.0+cu128"
 }

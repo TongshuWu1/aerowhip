@@ -108,6 +108,7 @@ class CableObservation:
     endpoints_xyz: np.ndarray
     endpoint_pixels_xy: np.ndarray
     endpoint_visible: np.ndarray
+    endpoint_component_labels: np.ndarray
     routes: tuple[RouteHypothesis, ...]
     component_points: int
     graph_nodes: int
@@ -247,6 +248,7 @@ def _empty_cable(reason: str) -> CableObservation:
         endpoints_xyz=np.full((2, 3), np.nan, dtype=np.float32),
         endpoint_pixels_xy=np.full((2, 2), np.nan, dtype=np.float32),
         endpoint_visible=np.zeros(2, dtype=bool),
+        endpoint_component_labels=np.zeros(2, dtype=np.int32),
         routes=(),
         component_points=0,
         graph_nodes=0,
@@ -1544,16 +1546,45 @@ class ObservationBuilder:
         )
         if routes:
             reason = "complete endpoint-to-endpoint routes"
-        elif visible.any():
-            reason = f"partial observation: {int(visible.sum())}/2 endpoints"
-        else:
+        elif not visible.any():
             reason = "no cable-specific endpoint evidence"
+        elif not visible.all():
+            reason = f"partial observation: {int(visible.sum())}/2 endpoints"
+        elif int(component_labels[0]) != int(component_labels[1]):
+            reason = (
+                "no complete route: endpoints on different body components "
+                f"{int(component_labels[0])}/{int(component_labels[1])}"
+            )
+        else:
+            component_label = int(component_labels[0])
+            data = graph_data.get(component_label)
+            if component_label <= 0:
+                reason = "no complete route: endpoints are not attached to cable body"
+            elif data is None:
+                reason = "no complete route: body component was not graphable"
+            elif data[1] is None:
+                reason = f"no complete route: {data[3]}"
+            else:
+                graph = data[1]
+                node_by_owner = data[2]
+                assert graph is not None
+                endpoint_nodes = (
+                    node_by_owner.get((cable_index, 0), -1),
+                    node_by_owner.get((cable_index, 1), -1),
+                )
+                if endpoint_nodes[0] < 0 or endpoint_nodes[1] < 0:
+                    reason = "no complete route: endpoint anchor missing from skeleton"
+                else:
+                    reason = "no complete route: no endpoint-to-endpoint graph trail"
         observation = CableObservation(
             valid=bool(routes or visible.any()),
             reason=reason,
             endpoints_xyz=np.ascontiguousarray(endpoints_xyz, dtype=np.float32),
             endpoint_pixels_xy=np.ascontiguousarray(endpoint_pixels, dtype=np.float32),
             endpoint_visible=np.ascontiguousarray(visible, dtype=bool),
+            endpoint_component_labels=np.ascontiguousarray(
+                component_labels, dtype=np.int32
+            ),
             routes=tuple(routes),
             component_points=component_points,
             graph_nodes=graph_nodes,

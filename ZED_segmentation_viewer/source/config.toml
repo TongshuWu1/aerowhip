@@ -55,7 +55,10 @@ hue_min = 18
 hue_max = 40
 saturation_min = 100
 value_min = 80
-minimum_component_area_px = 2500
+minimum_mask_area_px = 2500
+# Remove PIDNet cable pixels plus this boundary radius before cube depth fitting.
+# Zero disables cable-mask exclusion for ablation.
+cable_exclusion_radius_px = 3
 depth_min_m = 0.20
 depth_max_m = 3.00
 pixel_stride = 2
@@ -72,7 +75,7 @@ random_seed = 7
 [pidnet]
 checkpoint = "data/models/pidnet_two_cable_best.pt"
 device = "cuda"
-threshold = 0.85000002
+threshold = 0.80
 endpoint_thresholds = [0.89999998, 0.75]
 amp = true
 channels_last = true

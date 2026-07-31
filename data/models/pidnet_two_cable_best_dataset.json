@@ -1,5 +1,5 @@
 {
-  "dataset_sha256": "17a6c7852aa2c753762e209ab6b84fd1b1cd87abd12b3dde4fa2933802eeb6a9",
+  "dataset_sha256": "28224a1325536caa6698abe733e8281aac7a50831e2fb2fe458048a5b696c069",
   "files": [
     {
       "bytes": 1159104,
@@ -1817,6 +1817,231 @@
       "sha256": "d8fc10cfd98fd42cd70b9c5bdb52ea6d74315b5d04ec8a7b4013bccb3c04855f"
     },
     {
+      "bytes": 1125283,
+      "path": "images/train/cable_session_20260727_142840_7fd892_20260727_143836_520486_bf4a293e.png",
+      "sha256": "396d6ec115c6dc73b4acd2da58688543c52fc45635a9c6fe2253700d45869ae9"
+    },
+    {
+      "bytes": 4848,
+      "path": "masks/train/cable_session_20260727_142840_7fd892_20260727_143836_520486_bf4a293e.png",
+      "sha256": "6b9e771035ab90785a558e4de3f1146174509b43ecc45323d525f794ed81efaa"
+    },
+    {
+      "bytes": 4314,
+      "path": "masks_layers/train/cable_session_20260727_142840_7fd892_20260727_143836_520486_bf4a293e.npz",
+      "sha256": "073841afbe84742344fb070ff208fa4e0d56e518ed90ce76da84e23a188b22f9"
+    },
+    {
+      "bytes": 1126431,
+      "path": "images/train/cable_session_20260727_142840_7fd892_20260727_143944_404647_14d88117.png",
+      "sha256": "790e3390cf29980a7ff0f12b836bbc0c5d4875f7a22ea0e5aec9b7f3e7c26110"
+    },
+    {
+      "bytes": 4876,
+      "path": "masks/train/cable_session_20260727_142840_7fd892_20260727_143944_404647_14d88117.png",
+      "sha256": "a6bf940203195023cfbd3e15ab08c46a42da129e3db8a3205d1d4969ec9ed084"
+    },
+    {
+      "bytes": 4335,
+      "path": "masks_layers/train/cable_session_20260727_142840_7fd892_20260727_143944_404647_14d88117.npz",
+      "sha256": "333402f8bceb83f391c40cfa897e15da552217df145e09a9a56dcbfdde11dd54"
+    },
+    {
+      "bytes": 1127253,
+      "path": "images/train/cable_session_20260727_142840_7fd892_20260727_143959_976923_4f3004f4.png",
+      "sha256": "56a75de1bf95060d4e8ec1b6eceed492bed00cb8b7219820d40ae2afa9d7438e"
+    },
+    {
+      "bytes": 4617,
+      "path": "masks/train/cable_session_20260727_142840_7fd892_20260727_143959_976923_4f3004f4.png",
+      "sha256": "d697095384685302fea5f5c9ca5ce8597c8db48652c5edd14392959112e72bf9"
+    },
+    {
+      "bytes": 4135,
+      "path": "masks_layers/train/cable_session_20260727_142840_7fd892_20260727_143959_976923_4f3004f4.npz",
+      "sha256": "7fdb6f7ce46a0fe932707f0bcf6fcbe8e861c44c726db6bb047ea5324b397290"
+    },
+    {
+      "bytes": 1120904,
+      "path": "images/train/cable_session_20260727_142840_7fd892_20260727_144021_377829_8b9e0ce3.png",
+      "sha256": "e7f1742af1db59021ca1bb48ab522bb409ac009ac55eb138363e203cab7d070a"
+    },
+    {
+      "bytes": 4690,
+      "path": "masks/train/cable_session_20260727_142840_7fd892_20260727_144021_377829_8b9e0ce3.png",
+      "sha256": "3dd7a930b3450f5d1ba49efee5fa2aee36492289b124b89c5ceb9bf52addd700"
+    },
+    {
+      "bytes": 4209,
+      "path": "masks_layers/train/cable_session_20260727_142840_7fd892_20260727_144021_377829_8b9e0ce3.npz",
+      "sha256": "e55d4d5606151688f25f7aa82856c26aebbc8a427ec1cf3c4372192a30f4bf86"
+    },
+    {
+      "bytes": 1137624,
+      "path": "images/train/cable_session_20260727_142840_7fd892_20260727_144046_535981_1b857605.png",
+      "sha256": "4941ba2e388cdfecf46568a695b81b98cd25d7c81b92ed58f89a09f0bc47c562"
+    },
+    {
+      "bytes": 4276,
+      "path": "masks/train/cable_session_20260727_142840_7fd892_20260727_144046_535981_1b857605.png",
+      "sha256": "6b965506d7ed9f54f4f8b9d3a589441d50391db149fb3b2081c8f1415ea7545e"
+    },
+    {
+      "bytes": 3898,
+      "path": "masks_layers/train/cable_session_20260727_142840_7fd892_20260727_144046_535981_1b857605.npz",
+      "sha256": "352d950dff030c862128c31959a6d3ca684a0ef2bdc13c74e4c52d887762dbaa"
+    },
+    {
+      "bytes": 1168257,
+      "path": "images/train/cable_session_20260729_163725_47115f_20260729_163728_248603_cbda27d6.png",
+      "sha256": "a933b6f6e413305a988f7c38a2247b403b34462d3bacfb892f24ecf288c45f7b"
+    },
+    {
+      "bytes": 4182,
+      "path": "masks/train/cable_session_20260729_163725_47115f_20260729_163728_248603_cbda27d6.png",
+      "sha256": "aebb1f5ba86febcde15e71bd916250da0e7812497530aab793ef247b4bd8a72a"
+    },
+    {
+      "bytes": 3746,
+      "path": "masks_layers/train/cable_session_20260729_163725_47115f_20260729_163728_248603_cbda27d6.npz",
+      "sha256": "85de28fe1f6fd36ac820ead5a127d1366d9d02eed4c6e06af8b20e5a5bd236d7"
+    },
+    {
+      "bytes": 1184325,
+      "path": "images/train/cable_session_20260729_163725_47115f_20260729_163822_215581_3ae69405.png",
+      "sha256": "07ba82d3e2acf05be6a2448dbfa52b1e19b05b5bc4e3a0fbab41fc76b97a87b5"
+    },
+    {
+      "bytes": 5305,
+      "path": "masks/train/cable_session_20260729_163725_47115f_20260729_163822_215581_3ae69405.png",
+      "sha256": "19218bd6496d80887d4daa8e221f309ff6127b7aac8735e7fbfeaea7835ebf99"
+    },
+    {
+      "bytes": 4653,
+      "path": "masks_layers/train/cable_session_20260729_163725_47115f_20260729_163822_215581_3ae69405.npz",
+      "sha256": "f5d05e14169ee4ff13b9f982e5063d63d36bc39190c731123a1b4b8113114b4d"
+    },
+    {
+      "bytes": 1175632,
+      "path": "images/train/cable_session_20260729_163725_47115f_20260729_163845_287101_146566b5.png",
+      "sha256": "0984b9fcbc6dc540f8282e1b242acf77a97e258a5582ee3f41aca64cae47201d"
+    },
+    {
+      "bytes": 4421,
+      "path": "masks/train/cable_session_20260729_163725_47115f_20260729_163845_287101_146566b5.png",
+      "sha256": "005cee5a344a0ef942650dcf19e199a01d089939aa7be16bdf1d6427f1cd3b44"
+    },
+    {
+      "bytes": 3839,
+      "path": "masks_layers/train/cable_session_20260729_163725_47115f_20260729_163845_287101_146566b5.npz",
+      "sha256": "febf76c7b39ed9b3931c8229b88b6010fe26fce6750718cdddc3326a7af51093"
+    },
+    {
+      "bytes": 1182966,
+      "path": "images/train/cable_session_20260729_163725_47115f_20260729_164008_039799_428b730a.png",
+      "sha256": "fb3102a9cd5e92b2bea76f9a18dbb089f500ed4b4f1c82e5b4226828861d379f"
+    },
+    {
+      "bytes": 4915,
+      "path": "masks/train/cable_session_20260729_163725_47115f_20260729_164008_039799_428b730a.png",
+      "sha256": "d439b15ec1991a9d9b855bdf655c33c1321b3c8f0089a3249d3d1f7abe278222"
+    },
+    {
+      "bytes": 4318,
+      "path": "masks_layers/train/cable_session_20260729_163725_47115f_20260729_164008_039799_428b730a.npz",
+      "sha256": "111e2fcbfe6969925606010fd2bba3090db47f898b882263346ff5e5fd7e57d7"
+    },
+    {
+      "bytes": 1179118,
+      "path": "images/train/cable_session_20260729_163725_47115f_20260729_164128_385205_628ab113.png",
+      "sha256": "761386ffc1afed49b70560a0298de8a8093f286ee27bac6ffbb3adfa63d7dcbb"
+    },
+    {
+      "bytes": 4624,
+      "path": "masks/train/cable_session_20260729_163725_47115f_20260729_164128_385205_628ab113.png",
+      "sha256": "8529aaac0d9e95678e0a0359db78485052cbe1511f69a1920b02645af09c94a3"
+    },
+    {
+      "bytes": 4016,
+      "path": "masks_layers/train/cable_session_20260729_163725_47115f_20260729_164128_385205_628ab113.npz",
+      "sha256": "80d883afeb87a0442b06431a72b8fef4fea507816f23639d1cca1f757d395a59"
+    },
+    {
+      "bytes": 1180042,
+      "path": "images/train/cable_session_20260729_163725_47115f_20260729_164158_419701_8e27f895.png",
+      "sha256": "0261675da1a0a39bc63bb82b8a4ee399577970af36bac5330af7ffd754ba511c"
+    },
+    {
+      "bytes": 4817,
+      "path": "masks/train/cable_session_20260729_163725_47115f_20260729_164158_419701_8e27f895.png",
+      "sha256": "d9f546e6ef959d95e8491899c8d26a7faf465f693c50a1414c72e1880d614b44"
+    },
+    {
+      "bytes": 4271,
+      "path": "masks_layers/train/cable_session_20260729_163725_47115f_20260729_164158_419701_8e27f895.npz",
+      "sha256": "db6c3b38645fb4fb4a5e6c765f6e4cb10aa018d19799a14fd782a4ec0ce78917"
+    },
+    {
+      "bytes": 1180722,
+      "path": "images/train/cable_session_20260729_163725_47115f_20260729_164248_577184_45ecf9a2.png",
+      "sha256": "1c34eba8a18766ed7c8d4094a1a1b7b3fbbc741b9fdb31050b3f942b8f89af07"
+    },
+    {
+      "bytes": 4866,
+      "path": "masks/train/cable_session_20260729_163725_47115f_20260729_164248_577184_45ecf9a2.png",
+      "sha256": "64221bf6076ceca7c49025c5489318158f4b63f08b34bc44ef5362277994c0bd"
+    },
+    {
+      "bytes": 4192,
+      "path": "masks_layers/train/cable_session_20260729_163725_47115f_20260729_164248_577184_45ecf9a2.npz",
+      "sha256": "17a2f197a3b5016f548edc2f7c2698265714c89984afc3e639983b6c3901406f"
+    },
+    {
+      "bytes": 1186795,
+      "path": "images/train/cable_session_20260729_163725_47115f_20260729_164411_049232_1443bb86.png",
+      "sha256": "1d9132526f7e6df08bb8fed658ec4fab8477298fa87ab1d4a24db56604664f21"
+    },
+    {
+      "bytes": 5571,
+      "path": "masks/train/cable_session_20260729_163725_47115f_20260729_164411_049232_1443bb86.png",
+      "sha256": "6dc0379de3848bfd035bfe0405f5210d487d7c796ce9fd3fac46593f9f08ade8"
+    },
+    {
+      "bytes": 4759,
+      "path": "masks_layers/train/cable_session_20260729_163725_47115f_20260729_164411_049232_1443bb86.npz",
+      "sha256": "457e5f7f1f22d05e727a88a30314892a8ffdefe09fc2c89feceafc8591d352db"
+    },
+    {
+      "bytes": 1166776,
+      "path": "images/train/cable_session_20260729_163725_47115f_20260729_164537_195457_8a415c54.png",
+      "sha256": "3e7b4b0b13027f556747ada52b5a7fcb7ee5ca40e94d00132ddd30caac937a5d"
+    },
+    {
+      "bytes": 3603,
+      "path": "masks/train/cable_session_20260729_163725_47115f_20260729_164537_195457_8a415c54.png",
+      "sha256": "350d3e1b52bc784f3af85b76fe242c664323ea85e2efb2bff1a998e89b018bab"
+    },
+    {
+      "bytes": 3391,
+      "path": "masks_layers/train/cable_session_20260729_163725_47115f_20260729_164537_195457_8a415c54.npz",
+      "sha256": "3e91d8994515d90fa30f5b73a588046298878c6b0ef172566b125af9e01eaa36"
+    },
+    {
+      "bytes": 1168867,
+      "path": "images/train/cable_session_20260729_163725_47115f_20260729_164621_446502_243144af.png",
+      "sha256": "a5026f690d64d047be738df92ca63cc63c754ab028a5b01d050a4613d4d27cd4"
+    },
+    {
+      "bytes": 3893,
+      "path": "masks/train/cable_session_20260729_163725_47115f_20260729_164621_446502_243144af.png",
+      "sha256": "4b5b2411bcfe7c96568f05c30fc4004e7148d8005599cc2eed831dae8f6e9a42"
+    },
+    {
+      "bytes": 3542,
+      "path": "masks_layers/train/cable_session_20260729_163725_47115f_20260729_164621_446502_243144af.npz",
+      "sha256": "111ff2de8992f449c484523399e6db7f306f4d282094b7b1d52c1315026d20b7"
+    },
+    {
       "bytes": 1191185,
       "path": "images/val/cable_session_20260720_145626_c7af51_20260720_145638_302996_927ddfe1.png",
       "sha256": "4914b2bac16a47709da1bf20f98d6b17d1b350cbb063d442a9b0c26220c2b05b"
@@ -2295,6 +2520,96 @@
       "bytes": 4110,
       "path": "masks_layers/val/cable_session_20260727_133259_c97a04_20260727_133439_074385_8cf99d0e.npz",
       "sha256": "28b9001458c3bc3e825440e7ca1972fdf799a243837d08abaf00d50ef619afbe"
+    },
+    {
+      "bytes": 1178624,
+      "path": "images/val/cable_session_20260729_162143_5d2e78_20260729_162218_483915_8993c8a2.png",
+      "sha256": "edcff4eac56597040f5a2426ccdc26a218f7d069afb382c6a00a8c079ff7fdd1"
+    },
+    {
+      "bytes": 4813,
+      "path": "masks/val/cable_session_20260729_162143_5d2e78_20260729_162218_483915_8993c8a2.png",
+      "sha256": "7040c2aa8fbe82c684f24db6f50b61b1a39d8cdbcb7ae16837167dbd407722de"
+    },
+    {
+      "bytes": 4281,
+      "path": "masks_layers/val/cable_session_20260729_162143_5d2e78_20260729_162218_483915_8993c8a2.npz",
+      "sha256": "168d207a746531673c0669c3843d0eee37edc21bb7bc9cfa1e610256f6a3ba34"
+    },
+    {
+      "bytes": 1180694,
+      "path": "images/val/cable_session_20260729_162143_5d2e78_20260729_162308_654383_37de514f.png",
+      "sha256": "645b247316aa5015509eeba116a06d418833c9b04d899ea023582b843ac15c34"
+    },
+    {
+      "bytes": 4427,
+      "path": "masks/val/cable_session_20260729_162143_5d2e78_20260729_162308_654383_37de514f.png",
+      "sha256": "7d36c0c49feb0f5981a029dbae1ee0d0f4939d49c53606b5224ee0728dda2ffc"
+    },
+    {
+      "bytes": 4034,
+      "path": "masks_layers/val/cable_session_20260729_162143_5d2e78_20260729_162308_654383_37de514f.npz",
+      "sha256": "00559aa3d37aa68e917c99e2cac884d766c43d633153deac26467763d4b18332"
+    },
+    {
+      "bytes": 1182289,
+      "path": "images/val/cable_session_20260729_162143_5d2e78_20260729_162357_205398_ad378859.png",
+      "sha256": "ad9fd7aa29590fa958e2c7954cf5731eeb06cfa0f5bd4cc1ab68d22b12eb0817"
+    },
+    {
+      "bytes": 4668,
+      "path": "masks/val/cable_session_20260729_162143_5d2e78_20260729_162357_205398_ad378859.png",
+      "sha256": "db5f54ca86afa07e4c41ce4377e64482686a058c44e384c89e1b2a83c9a11789"
+    },
+    {
+      "bytes": 4179,
+      "path": "masks_layers/val/cable_session_20260729_162143_5d2e78_20260729_162357_205398_ad378859.npz",
+      "sha256": "1ff475cb5b627f6338c6973df94129696a11c204ab39e5f6ddec7962dd00124a"
+    },
+    {
+      "bytes": 1147122,
+      "path": "images/val/cable_session_20260729_162143_5d2e78_20260729_162511_077421_e003df1f.png",
+      "sha256": "791e64f642a79cd571a6d12bcc1349c0f3a9cf6901a18f9d5e8408e1eccd20e1"
+    },
+    {
+      "bytes": 2159,
+      "path": "masks/val/cable_session_20260729_162143_5d2e78_20260729_162511_077421_e003df1f.png",
+      "sha256": "b9d8601afa6d93c8c094733c6b8a40f38acb0d76969a29cb592248822c0fbaee"
+    },
+    {
+      "bytes": 2456,
+      "path": "masks_layers/val/cable_session_20260729_162143_5d2e78_20260729_162511_077421_e003df1f.npz",
+      "sha256": "980d64941e103ae652b5a80301fe113be02449aad343bb3ef44231885aaa3869"
+    },
+    {
+      "bytes": 1170381,
+      "path": "images/val/cable_session_20260729_162143_5d2e78_20260729_162551_751830_31b9f0b2.png",
+      "sha256": "42e466459b00846e89221615d05ecda8f1c73b8915deb7f7a7db50d118711e16"
+    },
+    {
+      "bytes": 4061,
+      "path": "masks/val/cable_session_20260729_162143_5d2e78_20260729_162551_751830_31b9f0b2.png",
+      "sha256": "f9dd75bd673f3d6c7a6ca6fc6dd47be1f919ef3603bbc73bbfd088eec3f8e67b"
+    },
+    {
+      "bytes": 3673,
+      "path": "masks_layers/val/cable_session_20260729_162143_5d2e78_20260729_162551_751830_31b9f0b2.npz",
+      "sha256": "12e79c1aacc73cb2df417d3529b447ffa3213598ebcc9d10d5391ac0d3b6508f"
+    },
+    {
+      "bytes": 1142287,
+      "path": "images/val/cable_session_20260729_162143_5d2e78_20260729_162817_684212_9d606583.png",
+      "sha256": "cb63d4bf0680db9bdbfec11b4e3c94a9b9582fdc99e3ff62ec9bb9634a606b77"
+    },
+    {
+      "bytes": 2160,
+      "path": "masks/val/cable_session_20260729_162143_5d2e78_20260729_162817_684212_9d606583.png",
+      "sha256": "ff216f899246c3f501e47ef1cc1dc663865c03125afe1cd20799af857ae322d2"
+    },
+    {
+      "bytes": 2454,
+      "path": "masks_layers/val/cable_session_20260729_162143_5d2e78_20260729_162817_684212_9d606583.npz",
+      "sha256": "9bef92d7fa135831c517c25328acb1e7486de21237f67334e19183b33a7305ba"
     }
   ],
   "manifest_version": 2,
@@ -6221,6 +6536,694 @@
         "split": "val",
         "updated_at": "2026-07-27T17:35:17+00:00",
         "verified": true
+      },
+      "cable_session_20260727_142840_7fd892_20260727_143836_520486_bf4a293e": {
+        "annotation": {
+          "body_cleanup": {
+            "close_kernel": 5,
+            "min_area_px": 80,
+            "open_kernel": 1
+          },
+          "checkpoint": {
+            "bytes": 3997631,
+            "modified_ns": 1785174194577212700,
+            "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+            "sha256": "8babe17d0780b300adb6dcdf37e0f1ef906d82c887f567a3ad25bb597cfec04f"
+          },
+          "draft_created_at": "2026-07-27T18:38:42+00:00",
+          "human_edited": false,
+          "human_verified_at": "2026-07-27T18:38:45+00:00",
+          "origin": "model_assisted",
+          "thresholds": {
+            "cable": 0.85000002,
+            "endpoint1": 0.89999998,
+            "endpoint2": 0.75
+          }
+        },
+        "created_at": "2026-07-27T18:48:41+00:00",
+        "negative": false,
+        "notes": "",
+        "session_id": "session_20260727_142840_7fd892",
+        "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260727_142840_7fd892_20260727_143836_520486_bf4a293e.png",
+        "split": "train",
+        "updated_at": "2026-07-27T18:48:41+00:00",
+        "verified": true
+      },
+      "cable_session_20260727_142840_7fd892_20260727_143944_404647_14d88117": {
+        "annotation": {
+          "body_cleanup": {
+            "close_kernel": 5,
+            "min_area_px": 80,
+            "open_kernel": 1
+          },
+          "checkpoint": {
+            "bytes": 3997631,
+            "modified_ns": 1785174194577212700,
+            "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+            "sha256": "8babe17d0780b300adb6dcdf37e0f1ef906d82c887f567a3ad25bb597cfec04f"
+          },
+          "draft_created_at": "2026-07-27T18:39:45+00:00",
+          "human_edited": false,
+          "human_verified_at": "2026-07-27T18:39:47+00:00",
+          "origin": "model_assisted",
+          "thresholds": {
+            "cable": 0.85000002,
+            "endpoint1": 0.89999998,
+            "endpoint2": 0.75
+          }
+        },
+        "created_at": "2026-07-27T18:48:41+00:00",
+        "negative": false,
+        "notes": "",
+        "session_id": "session_20260727_142840_7fd892",
+        "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260727_142840_7fd892_20260727_143944_404647_14d88117.png",
+        "split": "train",
+        "updated_at": "2026-07-27T18:48:41+00:00",
+        "verified": true
+      },
+      "cable_session_20260727_142840_7fd892_20260727_143959_976923_4f3004f4": {
+        "annotation": {
+          "body_cleanup": {
+            "close_kernel": 5,
+            "min_area_px": 80,
+            "open_kernel": 1
+          },
+          "checkpoint": {
+            "bytes": 3997631,
+            "modified_ns": 1785174194577212700,
+            "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+            "sha256": "8babe17d0780b300adb6dcdf37e0f1ef906d82c887f567a3ad25bb597cfec04f"
+          },
+          "draft_created_at": "2026-07-27T18:40:02+00:00",
+          "human_edited": false,
+          "human_verified_at": "2026-07-27T18:40:20+00:00",
+          "origin": "model_assisted",
+          "thresholds": {
+            "cable": 0.85000002,
+            "endpoint1": 0.89999998,
+            "endpoint2": 0.75
+          }
+        },
+        "created_at": "2026-07-27T18:48:41+00:00",
+        "negative": false,
+        "notes": "",
+        "session_id": "session_20260727_142840_7fd892",
+        "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260727_142840_7fd892_20260727_143959_976923_4f3004f4.png",
+        "split": "train",
+        "updated_at": "2026-07-27T18:48:41+00:00",
+        "verified": true
+      },
+      "cable_session_20260727_142840_7fd892_20260727_144021_377829_8b9e0ce3": {
+        "annotation": {
+          "body_cleanup": {
+            "close_kernel": 5,
+            "min_area_px": 80,
+            "open_kernel": 1
+          },
+          "checkpoint": {
+            "bytes": 3997631,
+            "modified_ns": 1785174194577212700,
+            "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+            "sha256": "8babe17d0780b300adb6dcdf37e0f1ef906d82c887f567a3ad25bb597cfec04f"
+          },
+          "draft_created_at": "2026-07-27T18:40:22+00:00",
+          "human_edited": false,
+          "human_verified_at": "2026-07-27T18:40:24+00:00",
+          "origin": "model_assisted",
+          "thresholds": {
+            "cable": 0.85000002,
+            "endpoint1": 0.89999998,
+            "endpoint2": 0.75
+          }
+        },
+        "created_at": "2026-07-27T18:48:41+00:00",
+        "negative": false,
+        "notes": "",
+        "session_id": "session_20260727_142840_7fd892",
+        "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260727_142840_7fd892_20260727_144021_377829_8b9e0ce3.png",
+        "split": "train",
+        "updated_at": "2026-07-27T18:48:41+00:00",
+        "verified": true
+      },
+      "cable_session_20260727_142840_7fd892_20260727_144046_535981_1b857605": {
+        "annotation": {
+          "body_cleanup": {
+            "close_kernel": 5,
+            "min_area_px": 80,
+            "open_kernel": 1
+          },
+          "checkpoint": {
+            "bytes": 3997631,
+            "modified_ns": 1785174194577212700,
+            "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+            "sha256": "8babe17d0780b300adb6dcdf37e0f1ef906d82c887f567a3ad25bb597cfec04f"
+          },
+          "draft_created_at": "2026-07-27T18:40:53+00:00",
+          "human_edited": false,
+          "human_verified_at": "2026-07-27T18:40:55+00:00",
+          "origin": "model_assisted",
+          "thresholds": {
+            "cable": 0.85000002,
+            "endpoint1": 0.89999998,
+            "endpoint2": 0.75
+          }
+        },
+        "created_at": "2026-07-27T18:48:41+00:00",
+        "negative": false,
+        "notes": "",
+        "session_id": "session_20260727_142840_7fd892",
+        "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260727_142840_7fd892_20260727_144046_535981_1b857605.png",
+        "split": "train",
+        "updated_at": "2026-07-27T18:48:42+00:00",
+        "verified": true
+      },
+      "cable_session_20260729_162143_5d2e78_20260729_162218_483915_8993c8a2": {
+        "annotation": {
+          "body_cleanup": {
+            "close_kernel": 5,
+            "min_area_px": 80,
+            "open_kernel": 1
+          },
+          "checkpoint": {
+            "bytes": 3990399,
+            "modified_ns": 1785183345747983300,
+            "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+            "sha256": "069a81e438bab08d16d458b932f8b40a4e426bada6d0ce6d9e8e20c47028a972"
+          },
+          "draft_created_at": "2026-07-29T20:22:26+00:00",
+          "human_edited": true,
+          "human_verified_at": "2026-07-29T20:22:50+00:00",
+          "last_human_edit_at": "2026-07-29T20:22:45+00:00",
+          "origin": "model_assisted",
+          "thresholds": {
+            "cable": 0.85000002,
+            "endpoint1": 0.89999998,
+            "endpoint2": 0.75
+          }
+        },
+        "created_at": "2026-07-29T20:26:54+00:00",
+        "negative": false,
+        "notes": "",
+        "session_id": "session_20260729_162143_5d2e78",
+        "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260729_162143_5d2e78_20260729_162218_483915_8993c8a2.png",
+        "split": "val",
+        "updated_at": "2026-07-29T20:46:52+00:00",
+        "verified": true
+      },
+      "cable_session_20260729_162143_5d2e78_20260729_162308_654383_37de514f": {
+        "annotation": {
+          "body_cleanup": {
+            "close_kernel": 5,
+            "min_area_px": 80,
+            "open_kernel": 1
+          },
+          "checkpoint": {
+            "bytes": 3990399,
+            "modified_ns": 1785183345747983300,
+            "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+            "sha256": "069a81e438bab08d16d458b932f8b40a4e426bada6d0ce6d9e8e20c47028a972"
+          },
+          "draft_created_at": "2026-07-29T20:23:11+00:00",
+          "human_edited": true,
+          "human_verified_at": "2026-07-29T20:23:47+00:00",
+          "last_human_edit_at": "2026-07-29T20:23:44+00:00",
+          "origin": "model_assisted",
+          "thresholds": {
+            "cable": 0.85000002,
+            "endpoint1": 0.89999998,
+            "endpoint2": 0.75
+          }
+        },
+        "created_at": "2026-07-29T20:26:54+00:00",
+        "negative": false,
+        "notes": "",
+        "session_id": "session_20260729_162143_5d2e78",
+        "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260729_162143_5d2e78_20260729_162308_654383_37de514f.png",
+        "split": "val",
+        "updated_at": "2026-07-29T20:46:52+00:00",
+        "verified": true
+      },
+      "cable_session_20260729_162143_5d2e78_20260729_162357_205398_ad378859": {
+        "annotation": {
+          "body_cleanup": {
+            "close_kernel": 5,
+            "min_area_px": 80,
+            "open_kernel": 1
+          },
+          "checkpoint": {
+            "bytes": 3990399,
+            "modified_ns": 1785183345747983300,
+            "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+            "sha256": "069a81e438bab08d16d458b932f8b40a4e426bada6d0ce6d9e8e20c47028a972"
+          },
+          "draft_created_at": "2026-07-29T20:23:58+00:00",
+          "human_edited": true,
+          "human_verified_at": "2026-07-29T20:24:37+00:00",
+          "last_human_edit_at": "2026-07-29T20:24:33+00:00",
+          "origin": "model_assisted",
+          "thresholds": {
+            "cable": 0.85000002,
+            "endpoint1": 0.89999998,
+            "endpoint2": 0.75
+          }
+        },
+        "created_at": "2026-07-29T20:26:54+00:00",
+        "negative": false,
+        "notes": "",
+        "session_id": "session_20260729_162143_5d2e78",
+        "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260729_162143_5d2e78_20260729_162357_205398_ad378859.png",
+        "split": "val",
+        "updated_at": "2026-07-29T20:46:52+00:00",
+        "verified": true
+      },
+      "cable_session_20260729_162143_5d2e78_20260729_162511_077421_e003df1f": {
+        "annotation": {
+          "body_cleanup": {
+            "close_kernel": 5,
+            "min_area_px": 80,
+            "open_kernel": 1
+          },
+          "checkpoint": {
+            "bytes": 3990399,
+            "modified_ns": 1785183345747983300,
+            "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+            "sha256": "069a81e438bab08d16d458b932f8b40a4e426bada6d0ce6d9e8e20c47028a972"
+          },
+          "draft_created_at": "2026-07-29T20:25:12+00:00",
+          "human_edited": true,
+          "human_verified_at": "2026-07-29T20:25:33+00:00",
+          "last_human_edit_at": "2026-07-29T20:25:31+00:00",
+          "origin": "model_assisted",
+          "thresholds": {
+            "cable": 0.85000002,
+            "endpoint1": 0.89999998,
+            "endpoint2": 0.75
+          }
+        },
+        "created_at": "2026-07-29T20:26:54+00:00",
+        "negative": false,
+        "notes": "",
+        "session_id": "session_20260729_162143_5d2e78",
+        "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260729_162143_5d2e78_20260729_162511_077421_e003df1f.png",
+        "split": "val",
+        "updated_at": "2026-07-29T20:46:52+00:00",
+        "verified": true
+      },
+      "cable_session_20260729_162143_5d2e78_20260729_162551_751830_31b9f0b2": {
+        "annotation": {
+          "body_cleanup": {
+            "close_kernel": 5,
+            "min_area_px": 80,
+            "open_kernel": 1
+          },
+          "checkpoint": {
+            "bytes": 3990399,
+            "modified_ns": 1785183345747983300,
+            "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+            "sha256": "069a81e438bab08d16d458b932f8b40a4e426bada6d0ce6d9e8e20c47028a972"
+          },
+          "draft_created_at": "2026-07-29T20:25:52+00:00",
+          "human_edited": true,
+          "human_verified_at": "2026-07-29T20:26:48+00:00",
+          "last_human_edit_at": "2026-07-29T20:26:41+00:00",
+          "origin": "model_assisted",
+          "thresholds": {
+            "cable": 0.85000002,
+            "endpoint1": 0.89999998,
+            "endpoint2": 0.75
+          }
+        },
+        "created_at": "2026-07-29T20:26:54+00:00",
+        "negative": false,
+        "notes": "",
+        "session_id": "session_20260729_162143_5d2e78",
+        "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260729_162143_5d2e78_20260729_162551_751830_31b9f0b2.png",
+        "split": "val",
+        "updated_at": "2026-07-29T20:46:52+00:00",
+        "verified": true
+      },
+      "cable_session_20260729_162143_5d2e78_20260729_162817_684212_9d606583": {
+        "annotation": {
+          "body_cleanup": {
+            "close_kernel": 5,
+            "min_area_px": 80,
+            "open_kernel": 1
+          },
+          "checkpoint": {
+            "bytes": 3990399,
+            "modified_ns": 1785183345747983300,
+            "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+            "sha256": "069a81e438bab08d16d458b932f8b40a4e426bada6d0ce6d9e8e20c47028a972"
+          },
+          "draft_created_at": "2026-07-29T20:28:18+00:00",
+          "human_edited": true,
+          "human_verified_at": "2026-07-29T20:28:48+00:00",
+          "last_human_edit_at": "2026-07-29T20:28:45+00:00",
+          "origin": "model_assisted",
+          "thresholds": {
+            "cable": 0.85000002,
+            "endpoint1": 0.89999998,
+            "endpoint2": 0.75
+          }
+        },
+        "created_at": "2026-07-29T20:29:31+00:00",
+        "negative": false,
+        "notes": "",
+        "session_id": "session_20260729_162143_5d2e78",
+        "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260729_162143_5d2e78_20260729_162817_684212_9d606583.png",
+        "split": "val",
+        "updated_at": "2026-07-29T20:46:52+00:00",
+        "verified": true
+      },
+      "cable_session_20260729_163725_47115f_20260729_163728_248603_cbda27d6": {
+        "annotation": {
+          "body_cleanup": {
+            "close_kernel": 5,
+            "min_area_px": 80,
+            "open_kernel": 1
+          },
+          "checkpoint": {
+            "bytes": 3996927,
+            "modified_ns": 1785357150497370700,
+            "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+            "sha256": "7c90274b2c687613a064cb87b0282a8fd6d3be57a89e5a8d1bd1f9fc682b5e9d"
+          },
+          "draft_created_at": "2026-07-29T20:37:46+00:00",
+          "human_edited": true,
+          "human_verified_at": "2026-07-29T20:37:59+00:00",
+          "last_human_edit_at": "2026-07-29T20:37:54+00:00",
+          "origin": "model_assisted",
+          "thresholds": {
+            "cable": 0.8500000238418579,
+            "endpoint1": 0.8999999761581421,
+            "endpoint2": 0.949999988079071
+          }
+        },
+        "created_at": "2026-07-29T20:46:40+00:00",
+        "negative": false,
+        "notes": "",
+        "session_id": "session_20260729_163725_47115f",
+        "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260729_163725_47115f_20260729_163728_248603_cbda27d6.png",
+        "split": "train",
+        "updated_at": "2026-07-29T20:46:52+00:00",
+        "verified": true
+      },
+      "cable_session_20260729_163725_47115f_20260729_163822_215581_3ae69405": {
+        "annotation": {
+          "body_cleanup": {
+            "close_kernel": 5,
+            "min_area_px": 80,
+            "open_kernel": 1
+          },
+          "checkpoint": {
+            "bytes": 3996927,
+            "modified_ns": 1785357150497370700,
+            "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+            "sha256": "7c90274b2c687613a064cb87b0282a8fd6d3be57a89e5a8d1bd1f9fc682b5e9d"
+          },
+          "draft_created_at": "2026-07-29T20:38:23+00:00",
+          "human_edited": true,
+          "human_verified_at": "2026-07-29T20:38:30+00:00",
+          "last_human_edit_at": "2026-07-29T20:38:28+00:00",
+          "origin": "model_assisted",
+          "thresholds": {
+            "cable": 0.8500000238418579,
+            "endpoint1": 0.8999999761581421,
+            "endpoint2": 0.949999988079071
+          }
+        },
+        "created_at": "2026-07-29T20:46:40+00:00",
+        "negative": false,
+        "notes": "",
+        "session_id": "session_20260729_163725_47115f",
+        "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260729_163725_47115f_20260729_163822_215581_3ae69405.png",
+        "split": "train",
+        "updated_at": "2026-07-29T20:46:52+00:00",
+        "verified": true
+      },
+      "cable_session_20260729_163725_47115f_20260729_163845_287101_146566b5": {
+        "annotation": {
+          "body_cleanup": {
+            "close_kernel": 5,
+            "min_area_px": 80,
+            "open_kernel": 1
+          },
+          "checkpoint": {
+            "bytes": 3996927,
+            "modified_ns": 1785357150497370700,
+            "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+            "sha256": "7c90274b2c687613a064cb87b0282a8fd6d3be57a89e5a8d1bd1f9fc682b5e9d"
+          },
+          "draft_created_at": "2026-07-29T20:38:46+00:00",
+          "human_edited": true,
+          "human_verified_at": "2026-07-29T20:39:50+00:00",
+          "last_human_edit_at": "2026-07-29T20:39:46+00:00",
+          "origin": "model_assisted",
+          "thresholds": {
+            "cable": 0.8500000238418579,
+            "endpoint1": 0.8999999761581421,
+            "endpoint2": 0.949999988079071
+          }
+        },
+        "created_at": "2026-07-29T20:46:40+00:00",
+        "negative": false,
+        "notes": "",
+        "session_id": "session_20260729_163725_47115f",
+        "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260729_163725_47115f_20260729_163845_287101_146566b5.png",
+        "split": "train",
+        "updated_at": "2026-07-29T20:46:52+00:00",
+        "verified": true
+      },
+      "cable_session_20260729_163725_47115f_20260729_164008_039799_428b730a": {
+        "annotation": {
+          "body_cleanup": {
+            "close_kernel": 5,
+            "min_area_px": 80,
+            "open_kernel": 1
+          },
+          "checkpoint": {
+            "bytes": 3996927,
+            "modified_ns": 1785357150497370700,
+            "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+            "sha256": "7c90274b2c687613a064cb87b0282a8fd6d3be57a89e5a8d1bd1f9fc682b5e9d"
+          },
+          "draft_created_at": "2026-07-29T20:40:08+00:00",
+          "human_edited": true,
+          "human_verified_at": "2026-07-29T20:40:26+00:00",
+          "last_human_edit_at": "2026-07-29T20:40:22+00:00",
+          "origin": "model_assisted",
+          "thresholds": {
+            "cable": 0.8500000238418579,
+            "endpoint1": 0.8999999761581421,
+            "endpoint2": 0.949999988079071
+          }
+        },
+        "created_at": "2026-07-29T20:46:41+00:00",
+        "negative": false,
+        "notes": "",
+        "session_id": "session_20260729_163725_47115f",
+        "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260729_163725_47115f_20260729_164008_039799_428b730a.png",
+        "split": "train",
+        "updated_at": "2026-07-29T20:46:52+00:00",
+        "verified": true
+      },
+      "cable_session_20260729_163725_47115f_20260729_164128_385205_628ab113": {
+        "annotation": {
+          "body_cleanup": {
+            "close_kernel": 5,
+            "min_area_px": 80,
+            "open_kernel": 1
+          },
+          "checkpoint": {
+            "bytes": 3996927,
+            "modified_ns": 1785357150497370700,
+            "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+            "sha256": "7c90274b2c687613a064cb87b0282a8fd6d3be57a89e5a8d1bd1f9fc682b5e9d"
+          },
+          "draft_created_at": "2026-07-29T20:41:29+00:00",
+          "human_edited": true,
+          "human_verified_at": "2026-07-29T20:41:45+00:00",
+          "last_human_edit_at": "2026-07-29T20:41:43+00:00",
+          "origin": "model_assisted",
+          "thresholds": {
+            "cable": 0.8500000238418579,
+            "endpoint1": 0.8999999761581421,
+            "endpoint2": 0.949999988079071
+          }
+        },
+        "created_at": "2026-07-29T20:46:41+00:00",
+        "negative": false,
+        "notes": "",
+        "session_id": "session_20260729_163725_47115f",
+        "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260729_163725_47115f_20260729_164128_385205_628ab113.png",
+        "split": "train",
+        "updated_at": "2026-07-29T20:46:52+00:00",
+        "verified": true
+      },
+      "cable_session_20260729_163725_47115f_20260729_164158_419701_8e27f895": {
+        "annotation": {
+          "body_cleanup": {
+            "close_kernel": 5,
+            "min_area_px": 80,
+            "open_kernel": 1
+          },
+          "checkpoint": {
+            "bytes": 3996927,
+            "modified_ns": 1785357150497370700,
+            "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+            "sha256": "7c90274b2c687613a064cb87b0282a8fd6d3be57a89e5a8d1bd1f9fc682b5e9d"
+          },
+          "draft_created_at": "2026-07-29T20:41:59+00:00",
+          "human_edited": true,
+          "human_verified_at": "2026-07-29T20:42:31+00:00",
+          "last_human_edit_at": "2026-07-29T20:42:30+00:00",
+          "origin": "model_assisted",
+          "thresholds": {
+            "cable": 0.8500000238418579,
+            "endpoint1": 0.8999999761581421,
+            "endpoint2": 0.949999988079071
+          }
+        },
+        "created_at": "2026-07-29T20:46:41+00:00",
+        "negative": false,
+        "notes": "",
+        "session_id": "session_20260729_163725_47115f",
+        "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260729_163725_47115f_20260729_164158_419701_8e27f895.png",
+        "split": "train",
+        "updated_at": "2026-07-29T20:46:53+00:00",
+        "verified": true
+      },
+      "cable_session_20260729_163725_47115f_20260729_164248_577184_45ecf9a2": {
+        "annotation": {
+          "body_cleanup": {
+            "close_kernel": 5,
+            "min_area_px": 80,
+            "open_kernel": 1
+          },
+          "checkpoint": {
+            "bytes": 3996927,
+            "modified_ns": 1785357150497370700,
+            "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+            "sha256": "7c90274b2c687613a064cb87b0282a8fd6d3be57a89e5a8d1bd1f9fc682b5e9d"
+          },
+          "draft_created_at": "2026-07-29T20:42:49+00:00",
+          "human_edited": true,
+          "human_verified_at": "2026-07-29T20:43:56+00:00",
+          "last_human_edit_at": "2026-07-29T20:43:53+00:00",
+          "origin": "model_assisted",
+          "thresholds": {
+            "cable": 0.8500000238418579,
+            "endpoint1": 0.8999999761581421,
+            "endpoint2": 0.949999988079071
+          }
+        },
+        "created_at": "2026-07-29T20:46:41+00:00",
+        "negative": false,
+        "notes": "",
+        "session_id": "session_20260729_163725_47115f",
+        "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260729_163725_47115f_20260729_164248_577184_45ecf9a2.png",
+        "split": "train",
+        "updated_at": "2026-07-29T20:46:53+00:00",
+        "verified": true
+      },
+      "cable_session_20260729_163725_47115f_20260729_164411_049232_1443bb86": {
+        "annotation": {
+          "body_cleanup": {
+            "close_kernel": 5,
+            "min_area_px": 80,
+            "open_kernel": 1
+          },
+          "checkpoint": {
+            "bytes": 3996927,
+            "modified_ns": 1785357150497370700,
+            "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+            "sha256": "7c90274b2c687613a064cb87b0282a8fd6d3be57a89e5a8d1bd1f9fc682b5e9d"
+          },
+          "draft_created_at": "2026-07-29T20:44:12+00:00",
+          "human_edited": true,
+          "human_verified_at": "2026-07-29T20:45:24+00:00",
+          "last_human_edit_at": "2026-07-29T20:45:15+00:00",
+          "origin": "model_assisted",
+          "thresholds": {
+            "cable": 0.8500000238418579,
+            "endpoint1": 0.8999999761581421,
+            "endpoint2": 0.949999988079071
+          }
+        },
+        "created_at": "2026-07-29T20:46:41+00:00",
+        "negative": false,
+        "notes": "",
+        "session_id": "session_20260729_163725_47115f",
+        "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260729_163725_47115f_20260729_164411_049232_1443bb86.png",
+        "split": "train",
+        "updated_at": "2026-07-29T20:46:53+00:00",
+        "verified": true
+      },
+      "cable_session_20260729_163725_47115f_20260729_164537_195457_8a415c54": {
+        "annotation": {
+          "body_cleanup": {
+            "close_kernel": 5,
+            "min_area_px": 80,
+            "open_kernel": 1
+          },
+          "checkpoint": {
+            "bytes": 3996927,
+            "modified_ns": 1785357150497370700,
+            "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+            "sha256": "7c90274b2c687613a064cb87b0282a8fd6d3be57a89e5a8d1bd1f9fc682b5e9d"
+          },
+          "draft_created_at": "2026-07-29T20:45:38+00:00",
+          "human_edited": true,
+          "human_verified_at": "2026-07-29T20:46:04+00:00",
+          "last_human_edit_at": "2026-07-29T20:46:01+00:00",
+          "origin": "model_assisted",
+          "thresholds": {
+            "cable": 0.8500000238418579,
+            "endpoint1": 0.8999999761581421,
+            "endpoint2": 0.949999988079071
+          }
+        },
+        "created_at": "2026-07-29T20:46:41+00:00",
+        "negative": false,
+        "notes": "",
+        "session_id": "session_20260729_163725_47115f",
+        "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260729_163725_47115f_20260729_164537_195457_8a415c54.png",
+        "split": "train",
+        "updated_at": "2026-07-29T20:46:53+00:00",
+        "verified": true
+      },
+      "cable_session_20260729_163725_47115f_20260729_164621_446502_243144af": {
+        "annotation": {
+          "body_cleanup": {
+            "close_kernel": 5,
+            "min_area_px": 80,
+            "open_kernel": 1
+          },
+          "checkpoint": {
+            "bytes": 3996927,
+            "modified_ns": 1785357150497370700,
+            "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
+            "sha256": "7c90274b2c687613a064cb87b0282a8fd6d3be57a89e5a8d1bd1f9fc682b5e9d"
+          },
+          "draft_created_at": "2026-07-29T20:46:22+00:00",
+          "human_edited": true,
+          "human_verified_at": "2026-07-29T20:46:35+00:00",
+          "last_human_edit_at": "2026-07-29T20:46:34+00:00",
+          "origin": "model_assisted",
+          "thresholds": {
+            "cable": 0.8500000238418579,
+            "endpoint1": 0.8999999761581421,
+            "endpoint2": 0.949999988079071
+          }
+        },
+        "created_at": "2026-07-29T20:46:41+00:00",
+        "negative": false,
+        "notes": "",
+        "session_id": "session_20260729_163725_47115f",
+        "source_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet\\captures\\cable_session_20260729_163725_47115f_20260729_164621_446502_243144af.png",
+        "split": "train",
+        "updated_at": "2026-07-29T20:46:53+00:00",
+        "verified": true
       }
     },
     "manifest_version": 2,
@@ -6280,8 +7283,20 @@
       "session_20260727_133259_c97a04": {
         "created_at": "2026-07-27T17:35:05+00:00",
         "split": "val"
+      },
+      "session_20260727_142840_7fd892": {
+        "created_at": "2026-07-27T18:48:41+00:00",
+        "split": "train"
+      },
+      "session_20260729_162143_5d2e78": {
+        "created_at": "2026-07-29T20:26:54+00:00",
+        "split": "val"
+      },
+      "session_20260729_163725_47115f": {
+        "created_at": "2026-07-29T20:46:40+00:00",
+        "split": "train"
       }
     }
   },
-  "metadata_sha256": "df879e493d954da7e94e0d1c01f6e4c02adbe9f13dcee9464f1e1a11d18408ca"
+  "metadata_sha256": "a0e6ae443d8927dad21738e70faea1bfd54dbe85f8e1a96f494f0cdc91592af4"
 }

@@ -26,6 +26,15 @@ class EvaluationSample:
     uncertainty_mm: tuple[float, float]
     visible_fraction: tuple[float, float]
     measurement_valid: tuple[bool, bool]
+    endpoint_count: tuple[int, int]
+    endpoint_components: tuple[tuple[int, int], tuple[int, int]]
+    route_count: tuple[int, int]
+    observation_reason: tuple[str, str]
+    cube_valid: bool
+    cube_reason: str
+    cube_face_count: int
+    cube_center_m: tuple[float, float, float]
+    cube_surface_rms_mm: float
 
 
 def _finite_or_nan(value: float) -> float:
@@ -79,6 +88,21 @@ class LiveEvaluation:
                 "cable_2_visible_fraction",
                 "cable_1_measurement_valid",
                 "cable_2_measurement_valid",
+                "cable_1_endpoint_count",
+                "cable_2_endpoint_count",
+                "cable_1_endpoint_components",
+                "cable_2_endpoint_components",
+                "cable_1_route_count",
+                "cable_2_route_count",
+                "cable_1_observation_reason",
+                "cable_2_observation_reason",
+                "cube_valid",
+                "cube_reason",
+                "cube_face_count",
+                "cube_center_x_m",
+                "cube_center_y_m",
+                "cube_center_z_m",
+                "cube_surface_rms_mm",
             )
         )
         self.csv_stream.flush()
@@ -100,7 +124,14 @@ class LiveEvaluation:
             self.next_sample_timestamp = timestamp + self.sample_period_s
             return True
 
-    def append(self, frame_index: int, timestamp: float, particle_filter) -> None:
+    def append(
+        self,
+        frame_index: int,
+        timestamp: float,
+        particle_filter,
+        observation=None,
+        cube_tracking=None,
+    ) -> None:
         if self.closed or not particle_filter.diagnostics_refreshed:
             return
         timestamp = float(timestamp)
@@ -109,6 +140,46 @@ class LiveEvaluation:
         relative_time = timestamp - self.first_timestamp
         diagnostics = tuple(
             cable.diagnostics for cable in particle_filter.cables
+        )
+        observed_cables = (
+            tuple(observation.cables)
+            if observation is not None
+            else ()
+        )
+        endpoint_count = tuple(
+            int(np.count_nonzero(cable.endpoint_visible))
+            for cable in observed_cables
+        )
+        endpoint_components = tuple(
+            tuple(
+                int(value)
+                for value in np.asarray(
+                    cable.endpoint_component_labels, dtype=np.int32
+                ).reshape(2)
+            )
+            for cable in observed_cables
+        )
+        route_count = tuple(len(cable.routes) for cable in observed_cables)
+        observation_reason = tuple(str(cable.reason) for cable in observed_cables)
+        if len(observed_cables) != 2:
+            endpoint_count = (0, 0)
+            endpoint_components = ((0, 0), (0, 0))
+            route_count = (0, 0)
+            observation_reason = ("not available", "not available")
+        cube_valid = bool(
+            cube_tracking is not None
+            and cube_tracking.valid
+            and cube_tracking.center_m is not None
+        )
+        cube_center = (
+            np.asarray(cube_tracking.center_m, dtype=np.float64).reshape(3)
+            if cube_valid
+            else np.full(3, np.nan, dtype=np.float64)
+        )
+        cube_surface_rms_mm = (
+            _finite_or_nan(float(cube_tracking.surface_rms_m) * 1000.0)
+            if cube_tracking is not None
+            else float("nan")
         )
         sample = EvaluationSample(
             time_s=float(relative_time),
@@ -127,6 +198,23 @@ class LiveEvaluation:
             measurement_valid=tuple(
                 bool(item.measurement_valid) for item in diagnostics
             ),
+            endpoint_count=endpoint_count,
+            endpoint_components=endpoint_components,
+            route_count=route_count,
+            observation_reason=observation_reason,
+            cube_valid=cube_valid,
+            cube_reason=(
+                str(cube_tracking.reason)
+                if cube_tracking is not None
+                else "not available"
+            ),
+            cube_face_count=(
+                int(cube_tracking.face_count)
+                if cube_tracking is not None
+                else 0
+            ),
+            cube_center_m=tuple(_finite_or_nan(value) for value in cube_center),
+            cube_surface_rms_mm=cube_surface_rms_mm,
         )
         with self.lock:
             self.samples.append(sample)
@@ -144,6 +232,32 @@ class LiveEvaluation:
                     ),
                     int(sample.measurement_valid[0]),
                     int(sample.measurement_valid[1]),
+                    sample.endpoint_count[0],
+                    sample.endpoint_count[1],
+                    (
+                        f"{sample.endpoint_components[0][0]}/"
+                        f"{sample.endpoint_components[0][1]}"
+                    ),
+                    (
+                        f"{sample.endpoint_components[1][0]}/"
+                        f"{sample.endpoint_components[1][1]}"
+                    ),
+                    sample.route_count[0],
+                    sample.route_count[1],
+                    sample.observation_reason[0],
+                    sample.observation_reason[1],
+                    int(sample.cube_valid),
+                    sample.cube_reason,
+                    sample.cube_face_count,
+                    *(
+                        "" if not np.isfinite(value) else f"{value:.6f}"
+                        for value in sample.cube_center_m
+                    ),
+                    (
+                        ""
+                        if not np.isfinite(sample.cube_surface_rms_mm)
+                        else f"{sample.cube_surface_rms_mm:.6f}"
+                    ),
                 )
             )
             self.csv_stream.flush()

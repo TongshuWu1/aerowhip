@@ -890,7 +890,15 @@ def atomic_torch_save(payload, path):
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix(path.suffix + ".tmp")
     torch.save(payload, temporary)
-    os.replace(temporary, path)
+    deadline = time.monotonic() + 5.0
+    while True:
+        try:
+            os.replace(temporary, path)
+            return
+        except PermissionError:
+            if time.monotonic() >= deadline:
+                raise
+            time.sleep(0.10)
 
 
 def checkpoint_payload(model_state, args, metrics, epoch, channel_alpha, extra=None):
