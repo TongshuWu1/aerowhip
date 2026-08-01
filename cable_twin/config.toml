@@ -15,6 +15,24 @@ playback_realtime = false
 [pidnet]
 runtime_config = "NN_collection_training/source/config.toml"
 
+[observation]
+cable_lengths_m = [0.518, 0.518]
+endpoint_min_area_px = 54
+endpoint_label_search_px = 27
+component_min_area_px = 18
+depth_radius_px = 3
+depth_min_samples = 2
+depth_sigma_floor_m = 0.003
+pixel_sigma_px = 0.75
+graph_node_dilation_px = 5
+crossing_depth_exclusion_px = 5.0
+edge_samples = 24
+route_candidate_limit = 16
+route_search_state_limit = 4096
+route_edge_limit = 24
+route_length_margin_m = 0.18
+endpoint_association_gate_m = 0.12
+
 [viewer]
 enabled = true
 window_name = "Cable Twin 3D Scene"

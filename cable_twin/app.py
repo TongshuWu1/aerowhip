@@ -5,10 +5,13 @@ from __future__ import annotations
 import argparse
 from dataclasses import asdict, replace
 from pathlib import Path
+import queue
 import sys
+import threading
 import time
-from typing import Any, Mapping
+from typing import Any
 
+from .cable_observation import CableObservationBuilder, CableObservationFrame
 from .config import DEFAULT_CONFIG_PATH, PROJECT_ROOT, RuntimeSettings, load_settings
 from .frames import RecordingStatus, RgbdFrame
 from .perception import PerceptionFrame, PerceptionRuntime
@@ -18,6 +21,7 @@ from .recording import (
     load_recording_manifest,
     new_recording_path,
 )
+from .replay import validate_replay_manifest
 from .scene import SceneViewerSnapshot
 from .scene_viewer import AsyncOpenGlSceneViewer, ViewerAction
 from .zed_source import LiveZedSource, SvoZedSource
@@ -75,6 +79,7 @@ class RecordingController:
                 },
                 "checkpoint_schema": self.perception.checkpoint_schema,
             },
+            "observation": asdict(self.settings.observation),
             "random_seed": None,
         }
 
@@ -131,51 +136,6 @@ class RecordingController:
         return self.completed_path
 
 
-def _manifest_mapping(root: Mapping[str, Any], key: str) -> Mapping[str, Any]:
-    value = root.get(key)
-    if not isinstance(value, Mapping):
-        raise ValueError(f"Recording manifest requires {key!r}")
-    return value
-
-
-def _validate_replay_manifest(
-    manifest: Mapping[str, Any],
-    *,
-    settings: RuntimeSettings,
-    perception: PerceptionRuntime,
-    source: SvoZedSource,
-) -> None:
-    """Reject silent changes to a canonical observation replay."""
-
-    recording = _manifest_mapping(manifest, "recording")
-    if not bool(recording.get("completed")):
-        raise ValueError("Refusing canonical replay of an incomplete recording")
-    configuration = _manifest_mapping(manifest, "configuration")
-    if configuration.get("zed_sdk_version") != source.sdk_version:
-        raise ValueError(
-            "ZED SDK version differs from the recording: "
-            f"recorded={configuration.get('zed_sdk_version')!r}, "
-            f"current={source.sdk_version!r}"
-        )
-    if configuration.get("camera_request") != asdict(settings.camera):
-        raise ValueError("Camera/depth configuration differs from the recording")
-    recorded_pidnet = _manifest_mapping(configuration, "pidnet")
-    identities = {
-        "runtime_config_sha256": perception.runtime_config_sha256,
-        "checkpoint_sha256": perception.checkpoint_sha256,
-    }
-    for name, current in identities.items():
-        if recorded_pidnet.get(name) != current:
-            raise ValueError(
-                f"PIDNet {name} differs from the recording: "
-                f"recorded={recorded_pidnet.get(name)!r}, current={current!r}"
-            )
-    recorded_source = _manifest_mapping(manifest, "source")
-    recorded_calibration = _manifest_mapping(recorded_source, "calibration")
-    if dict(recorded_calibration) != asdict(source.descriptor.calibration):
-        raise ValueError("SVO calibration does not match its recording manifest")
-
-
 def _recording_elapsed_s(status: RecordingStatus) -> float | None:
     if status.first_timestamp_ns is None or status.last_timestamp_ns is None:
         return None
@@ -194,8 +154,69 @@ def _toggle_recording(recording: RecordingController | None) -> str:
     return f"Recording {path.name}"
 
 
+def _set_recording_state(
+    recording: RecordingController | None,
+    *,
+    active: bool,
+) -> str:
+    """Apply an explicit recording command from the offline controller."""
+
+    if recording is None:
+        return "Recording is available only in live mode"
+    if active:
+        if recording.status.active:
+            return "Recording is already active"
+        path = recording.start()
+        print(f"Recording lossless SVO: {path}", flush=True)
+        return f"Recording {path.name}"
+    if not recording.status.active:
+        return "Recording is already stopped"
+    path = recording.stop()
+    print(f"Saved lossless SVO and manifest: {path}", flush=True)
+    return f"Saved {path.name}" if path is not None else "Recording stopped"
+
+
+def _read_stdin_controls(commands: queue.SimpleQueue[str]) -> None:
+    """Read the private offline-controller protocol without blocking tracking."""
+
+    try:
+        for line in sys.stdin:
+            command = line.strip()
+            if command:
+                commands.put(command)
+    finally:
+        # Losing the controller also closes the live application through its
+        # normal cleanup path, which finalizes an active SVO and manifest.
+        commands.put("quit")
+
+
+def _poll_stdin_controls(
+    commands: queue.SimpleQueue[str] | None,
+    recording: RecordingController | None,
+) -> tuple[bool, str | None]:
+    if commands is None:
+        return False, None
+    quit_requested = False
+    message: str | None = None
+    while True:
+        try:
+            command = commands.get_nowait()
+        except queue.Empty:
+            break
+        if command == "record_start":
+            message = _set_recording_state(recording, active=True)
+        elif command == "record_stop":
+            message = _set_recording_state(recording, active=False)
+        elif command == "quit":
+            quit_requested = True
+        else:
+            raise ValueError(f"Unknown stdin control command: {command!r}")
+    return quit_requested, message
+
+
 def _viewer_snapshot(
     perception: PerceptionFrame,
+    observation: CableObservationFrame,
     *,
     source: LiveZedSource | SvoZedSource,
     point_cloud_stride: int,
@@ -222,6 +243,11 @@ def _viewer_snapshot(
         f"timestamp_ns={frame.key.timestamp_ns}",
         f"PIDNet={perception.timing.total_ms:.1f}ms | pipeline={pipeline_text}fps | "
         f"latency={latency_ms:.1f}ms | source_replaced={source.replaced_count}",
+        f"observation={observation.timing.total_ms:.1f}ms | "
+        f"edges={len(observation.graph_edges)} "
+        f"crossings={len(observation.crossings)} "
+        f"routes={observation.timing.route_count} | "
+        f"ends={len(observation.endpoints)}",
         f"{state} | {message}",
     )
     return SceneViewerSnapshot.from_rgbd(
@@ -229,6 +255,7 @@ def _viewer_snapshot(
         source.descriptor.calibration,
         sample_stride_px=point_cloud_stride,
         masks_u8=perception.masks_u8,
+        observation=observation,
         geometry=None,
         status_lines=status_lines,
     )
@@ -265,6 +292,7 @@ def _pace_svo(
 def run(args: argparse.Namespace) -> None:
     settings = load_settings(Path(args.config).expanduser().resolve())
     perception = PerceptionRuntime(settings.pidnet.runtime_config)
+    observation_builder = CableObservationBuilder(settings.observation)
     warmup = perception.warmup_1080p()
     print(
         "PIDNet ready "
@@ -306,7 +334,7 @@ def run(args: argparse.Namespace) -> None:
                 playback_realtime=False,
                 exact_timestamps_ns=exact_timestamps,
             )
-            _validate_replay_manifest(
+            validate_replay_manifest(
                 manifest,
                 settings=settings,
                 perception=perception,
@@ -352,6 +380,15 @@ def run(args: argparse.Namespace) -> None:
     playback_started_ns: int | None = None
     redraw_snapshot = False
     primary_error: BaseException | None = None
+    control_commands: queue.SimpleQueue[str] | None = None
+    if args.control_stdin:
+        control_commands = queue.SimpleQueue()
+        threading.Thread(
+            target=_read_stdin_controls,
+            args=(control_commands,),
+            name="offline-controller-stdin",
+            daemon=True,
+        ).start()
 
     try:
         if args.record_to is not None:
@@ -359,6 +396,22 @@ def run(args: argparse.Namespace) -> None:
             print(f"Recording lossless SVO: {path}")
 
         while True:
+            quit_requested, control_message = _poll_stdin_controls(
+                control_commands,
+                recording,
+            )
+            if control_message is not None:
+                message = control_message
+                if paused and last_snapshot is not None:
+                    last_snapshot = _snapshot_with_playback_state(
+                        last_snapshot,
+                        paused=True,
+                        message=message,
+                    )
+                    redraw_snapshot = True
+            if quit_requested:
+                break
+
             if paused and not step_once:
                 if viewer is None or last_snapshot is None:
                     raise RuntimeError("SVO pause requires an active viewer snapshot")
@@ -421,6 +474,10 @@ def run(args: argparse.Namespace) -> None:
                 _pace_svo(frame, first_svo_timestamp_ns, int(playback_started_ns))
 
             result = perception.infer(frame)
+            observation = observation_builder.build(
+                result,
+                source.descriptor.calibration,
+            )
             processed += 1
             fps_count += 1
             now = time.perf_counter()
@@ -433,6 +490,7 @@ def run(args: argparse.Namespace) -> None:
             if viewer is not None:
                 last_snapshot = _viewer_snapshot(
                     result,
+                    observation,
                     source=source,
                     point_cloud_stride=settings.viewer.point_cloud_stride,
                     pipeline_fps=fps_value,
@@ -485,6 +543,10 @@ def run(args: argparse.Namespace) -> None:
                     f"source={frame.key.source_position} "
                     f"timestamp_ns={frame.key.timestamp_ns} "
                     f"pidnet={result.timing.total_ms:.1f}ms "
+                    f"observation={observation.timing.total_ms:.1f}ms "
+                    f"edges={len(observation.graph_edges)} "
+                    f"routes={observation.timing.route_count} "
+                    f"crossings={len(observation.crossings)} "
                     f"fps={(fps_value or 0.0):.1f} "
                     f"replaced={source.replaced_count}"
                 )
@@ -572,6 +634,11 @@ def parse_args() -> argparse.Namespace:
         "--max-frames",
         type=int,
         help="Stop after this many processed frames (diagnostic use)",
+    )
+    parser.add_argument(
+        "--control-stdin",
+        action="store_true",
+        help=argparse.SUPPRESS,
     )
     arguments = parser.parse_args()
     if arguments.max_frames is not None and arguments.max_frames <= 0:

@@ -69,6 +69,55 @@ class PidNetSettings:
 
 
 @dataclass(frozen=True, slots=True)
+class ObservationSettings:
+    cable_lengths_m: tuple[float, float]
+    endpoint_min_area_px: int
+    endpoint_label_search_px: int
+    component_min_area_px: int
+    depth_radius_px: int
+    depth_min_samples: int
+    depth_sigma_floor_m: float
+    pixel_sigma_px: float
+    graph_node_dilation_px: int
+    crossing_depth_exclusion_px: float
+    edge_samples: int
+    route_candidate_limit: int
+    route_search_state_limit: int
+    route_edge_limit: int
+    route_length_margin_m: float
+    endpoint_association_gate_m: float
+
+    def __post_init__(self) -> None:
+        if len(self.cable_lengths_m) != 2 or any(
+            value <= 0.0 for value in self.cable_lengths_m
+        ):
+            raise ValueError("observation.cable_lengths_m requires two positive lengths")
+        for name, value in (
+            ("endpoint_min_area_px", self.endpoint_min_area_px),
+            ("endpoint_label_search_px", self.endpoint_label_search_px),
+            ("component_min_area_px", self.component_min_area_px),
+            ("depth_min_samples", self.depth_min_samples),
+            ("edge_samples", self.edge_samples),
+            ("route_candidate_limit", self.route_candidate_limit),
+            ("route_search_state_limit", self.route_search_state_limit),
+            ("route_edge_limit", self.route_edge_limit),
+        ):
+            if value <= 0:
+                raise ValueError(f"observation.{name} must be positive")
+        if self.depth_radius_px < 0 or self.graph_node_dilation_px < 0:
+            raise ValueError("observation pixel radii must be nonnegative")
+        for name, value in (
+            ("depth_sigma_floor_m", self.depth_sigma_floor_m),
+            ("pixel_sigma_px", self.pixel_sigma_px),
+            ("crossing_depth_exclusion_px", self.crossing_depth_exclusion_px),
+            ("route_length_margin_m", self.route_length_margin_m),
+            ("endpoint_association_gate_m", self.endpoint_association_gate_m),
+        ):
+            if value <= 0.0:
+                raise ValueError(f"observation.{name} must be positive")
+
+
+@dataclass(frozen=True, slots=True)
 class ViewerSettings:
     enabled: bool
     window_name: str
@@ -110,6 +159,7 @@ class RuntimeSettings:
     camera: CameraSettings
     svo: SvoSettings
     pidnet: PidNetSettings
+    observation: ObservationSettings
     viewer: ViewerSettings
     status_period_s: float
 
@@ -120,6 +170,7 @@ def load_settings(path: Path = DEFAULT_CONFIG_PATH) -> RuntimeSettings:
     camera = _mapping(root, "camera")
     svo = _mapping(root, "svo")
     pidnet = _mapping(root, "pidnet")
+    observation = _mapping(root, "observation")
     viewer = _mapping(root, "viewer")
     runtime = _mapping(root, "runtime")
     settings = RuntimeSettings(
@@ -139,6 +190,38 @@ def load_settings(path: Path = DEFAULT_CONFIG_PATH) -> RuntimeSettings:
         ),
         pidnet=PidNetSettings(
             runtime_config=project_path(pidnet["runtime_config"]),
+        ),
+        observation=ObservationSettings(
+            cable_lengths_m=tuple(
+                float(value) for value in observation["cable_lengths_m"]
+            ),
+            endpoint_min_area_px=int(observation["endpoint_min_area_px"]),
+            endpoint_label_search_px=int(
+                observation["endpoint_label_search_px"]
+            ),
+            component_min_area_px=int(observation["component_min_area_px"]),
+            depth_radius_px=int(observation["depth_radius_px"]),
+            depth_min_samples=int(observation["depth_min_samples"]),
+            depth_sigma_floor_m=float(observation["depth_sigma_floor_m"]),
+            pixel_sigma_px=float(observation["pixel_sigma_px"]),
+            graph_node_dilation_px=int(
+                observation["graph_node_dilation_px"]
+            ),
+            crossing_depth_exclusion_px=float(
+                observation["crossing_depth_exclusion_px"]
+            ),
+            edge_samples=int(observation["edge_samples"]),
+            route_candidate_limit=int(observation["route_candidate_limit"]),
+            route_search_state_limit=int(
+                observation["route_search_state_limit"]
+            ),
+            route_edge_limit=int(observation["route_edge_limit"]),
+            route_length_margin_m=float(
+                observation["route_length_margin_m"]
+            ),
+            endpoint_association_gate_m=float(
+                observation["endpoint_association_gate_m"]
+            ),
         ),
         viewer=ViewerSettings(
             enabled=bool(viewer["enabled"]),

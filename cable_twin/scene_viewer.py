@@ -20,6 +20,7 @@ from typing import Any
 
 import numpy as np
 
+from .cable_observation import CableObservationFrame
 from .scene import CableGeometry, CubeGeometry, SceneViewerSnapshot
 
 
@@ -738,7 +739,9 @@ class _OpenGlRenderer:
 
     def _draw_geometry(self, projection: np.ndarray, modelview: np.ndarray) -> None:
         snapshot = self.current_snapshot
-        if snapshot is None or snapshot.geometry is None:
+        if snapshot is None or (
+            snapshot.observation is None and snapshot.geometry is None
+        ):
             return
         gl = self.gl
         gl.glUseProgram(0)
@@ -751,13 +754,105 @@ class _OpenGlRenderer:
         gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
         gl.glEnable(gl.GL_POLYGON_OFFSET_FILL)
         gl.glPolygonOffset(-1.0, -1.0)
-        for cable in snapshot.geometry.cables:
-            color = _CABLE_COLORS[cable.cable_id % len(_CABLE_COLORS)]
-            self._draw_cable(cable, color)
-        if snapshot.geometry.cube is not None:
-            self._draw_cube(snapshot.geometry.cube)
+        if snapshot.observation is not None:
+            self._draw_observation(snapshot.observation)
+        if snapshot.geometry is not None:
+            for cable in snapshot.geometry.cables:
+                color = _CABLE_COLORS[cable.cable_id % len(_CABLE_COLORS)]
+                self._draw_cable(cable, color)
+            if snapshot.geometry.cube is not None:
+                self._draw_cube(snapshot.geometry.cube)
         gl.glDisable(gl.GL_POLYGON_OFFSET_FILL)
         gl.glDisable(gl.GL_BLEND)
+
+    def _draw_observation(self, observation: CableObservationFrame) -> None:
+        """Draw measured evidence only; invalid or hidden depth remains absent."""
+
+        for edge in observation.graph_edges:
+            self._draw_valid_polyline(
+                edge.xyz_camera_m_f32,
+                edge.depth_valid_bool,
+                (0.12, 0.95, 0.90, 0.48),
+                1.5,
+            )
+
+        for cable_id, routes in enumerate(observation.routes_by_cable):
+            base = _CABLE_COLORS[cable_id % len(_CABLE_COLORS)]
+            for rank, route in enumerate(routes[:3]):
+                alpha = (0.96, 0.34, 0.18)[rank]
+                width = (4.5, 2.5, 1.5)[rank]
+                self._draw_valid_polyline(
+                    route.xyz_camera_m_f32,
+                    route.depth_valid_bool,
+                    (base[0], base[1], base[2], alpha),
+                    width,
+                )
+
+        gl = self.gl
+        gl.glPointSize(11.0)
+        gl.glBegin(gl.GL_POINTS)
+        for endpoint in observation.endpoints:
+            if not endpoint.depth_valid:
+                continue
+            color = _CABLE_COLORS[endpoint.cable_id % len(_CABLE_COLORS)]
+            gl.glColor4f(color[0], color[1], color[2], 1.0)
+            gl.glVertex3fv(endpoint.xyz_camera_m_f32)
+        gl.glEnd()
+        gl.glPointSize(1.0)
+
+        pairing_colors = (
+            (1.00, 0.10, 0.78, 0.92),
+            (1.00, 0.82, 0.16, 0.25),
+            (0.82, 0.84, 0.88, 0.16),
+        )
+        for crossing in observation.crossings:
+            edge_to_arm = {
+                int(edge_id): index
+                for index, edge_id in enumerate(crossing.incident_edge_ids_i32)
+            }
+            for pairing in crossing.pairings:
+                color = pairing_colors[min(pairing.rank, 2)]
+                gl.glColor4f(*color)
+                gl.glLineWidth(3.5 if pairing.rank == 0 else 1.0)
+                gl.glBegin(gl.GL_LINES)
+                for first_edge, second_edge in pairing.edge_pairs_i32:
+                    first = edge_to_arm[int(first_edge)]
+                    second = edge_to_arm[int(second_edge)]
+                    if not (
+                        crossing.arm_depth_valid_bool[first]
+                        and crossing.arm_depth_valid_bool[second]
+                    ):
+                        continue
+                    gl.glVertex3fv(crossing.arm_xyz_camera_m_f32[first])
+                    gl.glVertex3fv(crossing.arm_xyz_camera_m_f32[second])
+                gl.glEnd()
+        gl.glLineWidth(1.0)
+
+    def _draw_valid_polyline(
+        self,
+        xyz: np.ndarray,
+        valid: np.ndarray,
+        color: tuple[float, float, float, float],
+        width: float,
+    ) -> None:
+        gl = self.gl
+        gl.glColor4f(*color)
+        gl.glLineWidth(width)
+        start = 0
+        count = int(valid.shape[0])
+        while start < count:
+            while start < count and not bool(valid[start]):
+                start += 1
+            stop = start
+            while stop < count and bool(valid[stop]):
+                stop += 1
+            if stop - start >= 2:
+                gl.glBegin(gl.GL_LINE_STRIP)
+                for point in xyz[start:stop]:
+                    gl.glVertex3fv(point)
+                gl.glEnd()
+            start = stop + 1
+        gl.glLineWidth(1.0)
 
     def _draw_cable(
         self,

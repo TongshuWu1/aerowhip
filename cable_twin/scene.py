@@ -14,6 +14,7 @@ from typing import Self
 
 import numpy as np
 
+from .cable_observation import CableObservationFrame
 from .frames import CameraCalibration, FrameKey, RgbdFrame
 
 
@@ -371,6 +372,7 @@ class SceneViewerSnapshot:
     sampled_depth_m_f32: np.ndarray
     sample_stride_px: int
     masks_u8: tuple[np.ndarray, np.ndarray, np.ndarray] | None = None
+    observation: CableObservationFrame | None = None
     geometry: SceneGeometryFrame | None = None
     status_lines: tuple[str, ...] = ()
 
@@ -436,6 +438,16 @@ class SceneViewerSnapshot:
                     "geometry and viewer evidence must use the same calibration"
                 )
 
+        if self.observation is not None:
+            if not isinstance(self.observation, CableObservationFrame):
+                raise TypeError("observation must be CableObservationFrame or None")
+            if self.observation.key != self.key:
+                raise ValueError("observation and viewer evidence must have the same key")
+            if self.observation.calibration != self.calibration:
+                raise ValueError(
+                    "observation and viewer evidence must use the same calibration"
+                )
+
         if not isinstance(self.status_lines, tuple) or any(
             not isinstance(line, str) for line in self.status_lines
         ):
@@ -454,6 +466,7 @@ class SceneViewerSnapshot:
         *,
         sample_stride_px: int = 4,
         masks_u8: tuple[np.ndarray, np.ndarray, np.ndarray] | None = None,
+        observation: CableObservationFrame | None = None,
         geometry: SceneGeometryFrame | None = None,
         status_lines: tuple[str, ...] = (),
     ) -> Self:
@@ -492,6 +505,7 @@ class SceneViewerSnapshot:
             ],
             sample_stride_px=sample_stride_px,
             masks_u8=sampled_masks,
+            observation=observation,
             geometry=geometry,
             status_lines=status_lines,
         )
