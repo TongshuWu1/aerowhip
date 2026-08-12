@@ -7,9 +7,9 @@ import os
 from pathlib import Path
 import platform
 import random
-import subprocess
 import sys
 import time
+import tomllib
 
 import cv2
 import numpy as np
@@ -48,6 +48,12 @@ from pidnet_schema import (
     endpoint_label_value,
     label_bit,
 )
+from pidnet_preprocessing import (
+    DEFAULT_IMAGE_SIZE,
+    image_size_text,
+    parse_image_size,
+    resize_image_and_mask,
+)
 
 require_torch()
 
@@ -57,14 +63,16 @@ from torch.utils.data import DataLoader, Dataset
 
 
 IMAGE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".bmp", ".tif", ".tiff")
-DEFAULT_IMAGE_SIZE = "1920x1080"
 DEFAULT_THRESHOLD_GRID = tuple(float(value) for value in np.linspace(0.05, 0.95, 19))
+DEFAULT_RUNTIME_CONFIG_PATH = SOURCE_DIR / "config.toml"
+CANONICAL_MODEL_PATH = DATA_DIR / "models" / "pidnet_two_cable_best.pt"
+TRAINING_RECORD_DIR = DATA_DIR / "training" / "pidnet"
 
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Train the three-head PIDNet cable observation model.")
     parser.add_argument("--dataset", type=Path, default=DATA_DIR / "datasets" / "two_cable_pidnet")
-    parser.add_argument("--output", type=Path, default=DATA_DIR / "models" / "pidnet_two_cable_best.pt")
+    parser.add_argument("--output", type=Path, default=CANONICAL_MODEL_PATH)
     parser.add_argument("--epochs", type=int, default=120)
     parser.add_argument("--batch-size", type=int, default=8)
     parser.add_argument("--imgsz", type=parse_image_size, default=parse_image_size(DEFAULT_IMAGE_SIZE))
@@ -97,13 +105,6 @@ def parse_args():
     parser.add_argument("--grad-clip", type=float, default=5.0)
     parser.add_argument("--early-stop", type=int, default=24)
     parser.add_argument("--min-delta", type=float, default=1e-4)
-    parser.add_argument("--resume", type=Path, default=None)
-    parser.add_argument(
-        "--init-checkpoint",
-        type=Path,
-        default=None,
-        help="Optional compatible PIDNet checkpoint used only to initialize matching tensors.",
-    )
     return parser.parse_args()
 
 
@@ -126,7 +127,7 @@ class GenericCableEndpointDataset(Dataset):
         mask, multilabel = read_training_mask(mask_path, self.cable_count)
         if image is None:
             raise ValueError(f"Could not read image: {image_path}")
-        image, mask = resize_pair(image, mask, self.image_size)
+        image, mask = resize_image_and_mask(image, mask, self.image_size)
         if self.augment:
             image, mask = augment_pair(image, mask, photometric=not self.gpu_augment)
 
@@ -252,57 +253,6 @@ def strict_split_pairs(dataset_root, split, manifest=None, verified_only=True, r
         qualifier = " human-verified" if verified_only else ""
         raise ValueError(f"No{qualifier} image/mask pairs found in {image_dir}")
     return selected
-
-
-def parse_image_size(value):
-    if isinstance(value, (tuple, list)):
-        if len(value) != 2:
-            raise argparse.ArgumentTypeError("Image size tuple must be (width, height).")
-        width, height = value
-    else:
-        text = str(value).strip().lower()
-        if text in {"1080p", "hd1080"}:
-            return 1920, 1080
-        if text in {"720p", "hd720"}:
-            return 1280, 720
-        text = text.replace(",", "x").replace("*", "x")
-        if "x" in text:
-            parts = [part.strip() for part in text.split("x") if part.strip()]
-            if len(parts) != 2:
-                raise argparse.ArgumentTypeError("Use WIDTHxHEIGHT, for example 1920x1080.")
-            width, height = parts
-        else:
-            width = height = text
-    try:
-        width, height = int(width), int(height)
-    except (TypeError, ValueError) as exc:
-        raise argparse.ArgumentTypeError("Image size must be an integer or WIDTHxHEIGHT.") from exc
-    if width <= 0 or height <= 0:
-        raise argparse.ArgumentTypeError("Image width and height must be positive.")
-    return width, height
-
-
-def image_size_text(image_size):
-    width, height = parse_image_size(image_size)
-    return f"{width}x{height}" if width != height else str(width)
-
-
-def resize_pair(image, mask, image_size):
-    target_w, target_h = parse_image_size(image_size)
-    h, w = image.shape[:2]
-    scale = min(target_w / max(w, 1), target_h / max(h, 1))
-    new_w = max(1, int(round(w * scale)))
-    new_h = max(1, int(round(h * scale)))
-    interpolation = cv2.INTER_AREA if scale < 1.0 else cv2.INTER_LINEAR
-    image = cv2.resize(image, (new_w, new_h), interpolation=interpolation)
-    mask = cv2.resize(mask, (new_w, new_h), interpolation=cv2.INTER_NEAREST)
-    left = (target_w - new_w) // 2
-    right = target_w - new_w - left
-    top = (target_h - new_h) // 2
-    bottom = target_h - new_h - top
-    image = cv2.copyMakeBorder(image, top, bottom, left, right, cv2.BORDER_CONSTANT, value=(0, 0, 0))
-    mask = cv2.copyMakeBorder(mask, top, bottom, left, right, cv2.BORDER_CONSTANT, value=0)
-    return image, mask
 
 
 def _warp_pair(image, mask):
@@ -873,11 +823,6 @@ class ModelEMA:
         )
 
 
-def checkpoint_sibling(path, suffix):
-    path = Path(path)
-    return path.with_name(f"{path.stem}_{suffix}{path.suffix}")
-
-
 def atomic_torch_save(payload, path):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -898,7 +843,7 @@ def checkpoint_payload(model_state, args, metrics, epoch, channel_alpha, extra=N
     payload = {
         "model_state": model_state,
         "config": {
-            "model": "pidnet_small_binary",
+            "model": "compact_pidnet_inspired_v1",
             "base_channels": int(args.base_channels),
             "input_channels": 3,
             "input_mode": "rgb",
@@ -911,7 +856,9 @@ def checkpoint_payload(model_state, args, metrics, epoch, channel_alpha, extra=N
             "endpoint_channels": True,
             "endpoint_channel_count": len(ENDPOINT_CHANNELS),
             "imgsz": image_size_text(args.imgsz),
-            "recommended_thresholds": list(metrics.get("thresholds", (0.5,) * OUTPUT_CHANNEL_COUNT)),
+            "validation_raw_thresholds": list(
+                metrics.get("thresholds", (0.5,) * OUTPUT_CHANNEL_COUNT)
+            ),
         },
         "training": {
             "target": "cable+endpoints_cable1+endpoints_cable2",
@@ -936,15 +883,6 @@ def checkpoint_payload(model_state, args, metrics, epoch, channel_alpha, extra=N
     return payload
 
 
-def git_state():
-    try:
-        commit = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=REPOSITORY_DIR, text=True).strip()
-        dirty = bool(subprocess.check_output(["git", "status", "--porcelain"], cwd=REPOSITORY_DIR, text=True).strip())
-        return {"commit": commit, "dirty": dirty}
-    except Exception:
-        return {"commit": None, "dirty": None}
-
-
 def run_metadata(args, device, pairs_by_split, snapshot_path):
     cuda = None
     if device.type == "cuda":
@@ -961,7 +899,6 @@ def run_metadata(args, device, pairs_by_split, snapshot_path):
         "platform": platform.platform(),
         "torch": torch.__version__,
         "cuda": cuda,
-        "git": git_state(),
         "arguments": {key: str(value) if isinstance(value, Path) else value for key, value in vars(args).items()},
         "split_counts": {split: len(pairs_by_split[split]) for split in DATASET_SPLITS},
         "dataset_snapshot": str(snapshot_path),
@@ -989,73 +926,6 @@ def make_loader(dataset, batch_size, shuffle, workers, device, prefetch_factor):
     return DataLoader(**kwargs)
 
 
-def load_compatible_initialization(model, checkpoint_path, device):
-    payload = torch.load(checkpoint_path, map_location=device, weights_only=False)
-    source = payload.get("model_state", payload)
-    destination = model.state_dict()
-    compatible = {
-        name: value
-        for name, value in source.items()
-        if name in destination and tuple(value.shape) == tuple(destination[name].shape)
-    }
-    if not compatible:
-        raise ValueError(f"No compatible PIDNet tensors found in initialization checkpoint: {checkpoint_path}")
-    result = model.load_state_dict(compatible, strict=False)
-    parameter_total = sum(tensor.numel() for tensor in destination.values())
-    parameter_loaded = sum(destination[name].numel() for name in compatible)
-    return {
-        "tensor_count": len(compatible),
-        "coverage": float(parameter_loaded / max(parameter_total, 1)),
-        "missing": list(result.missing_keys),
-        "unexpected": list(result.unexpected_keys),
-    }
-
-
-def validate_resume_checkpoint(payload, args, dataset_sha256):
-    stored_hash = str(payload.get("dataset_sha256", "")).strip()
-    if not stored_hash:
-        raise ValueError(
-            "Resume checkpoint predates immutable dataset tracking. Start a fresh run, or use it as an "
-            "initialization checkpoint instead of an exact resume."
-        )
-    if stored_hash != str(dataset_sha256):
-        raise ValueError(
-            "Resume dataset does not match the checkpoint dataset snapshot. Exact resume is refused; "
-            "start a fresh run after dataset edits."
-        )
-    stored = payload.get("training", {})
-    expected = {
-        "epochs": int(args.epochs),
-        "batch_size": int(args.batch_size),
-        "lr": float(args.lr),
-        "weight_decay": float(args.weight_decay),
-        "endpoint_weight": float(args.endpoint_weight),
-        "boundary_weight": float(args.boundary_weight),
-        "focal_gamma": float(args.focal_gamma),
-        "dice_weight": float(args.dice_weight),
-        "ema_decay": float(args.ema_decay),
-        "seed": int(args.seed),
-    }
-    mismatches = []
-    for key, current in expected.items():
-        if key not in stored:
-            mismatches.append(f"{key}=missing")
-            continue
-        previous = stored[key]
-        equal = (
-            math.isclose(float(previous), float(current), rel_tol=1e-12, abs_tol=1e-12)
-            if isinstance(current, float)
-            else int(previous) == current
-        )
-        if not equal:
-            mismatches.append(f"{key}={previous!r}->{current!r}")
-    if mismatches:
-        raise ValueError(
-            "Exact resume settings changed: " + ", ".join(mismatches) + ". "
-            "Use the previous settings, or start a new run with --init-checkpoint."
-        )
-
-
 def validate_training_arguments(args):
     positive_integers = {
         "epochs": args.epochs,
@@ -1078,6 +948,16 @@ def validate_training_arguments(args):
             raise ValueError(f"{name} must be non-negative.")
     if not 0.0 <= float(args.ema_decay) < 1.0:
         raise ValueError("ema_decay must be in [0, 1).")
+    with DEFAULT_RUNTIME_CONFIG_PATH.open("rb") as stream:
+        runtime_values = tomllib.load(stream)
+    configured = Path(runtime_values["pidnet"]["checkpoint"]).expanduser()
+    if not configured.is_absolute():
+        configured = REPOSITORY_DIR / configured
+    if Path(args.output).expanduser().resolve() != configured.resolve():
+        raise ValueError(
+            "PIDNet uses one canonical checkpoint. Training output must be "
+            f"{configured.resolve()}."
+        )
 
 
 def train(args):
@@ -1131,15 +1011,6 @@ def train(args):
     model = PIDNetSmallBinary(base_channels=int(args.base_channels), output_channels=OUTPUT_CHANNEL_COUNT, input_channels=3).to(device)
     if bool(args.channels_last):
         model = model.to(memory_format=torch.channels_last)
-    init_checkpoint = getattr(args, "init_checkpoint", None)
-    if args.resume is not None and init_checkpoint is not None:
-        raise ValueError("Use either --resume or --init-checkpoint, not both.")
-    if init_checkpoint is not None:
-        initialization = load_compatible_initialization(model, Path(init_checkpoint), device)
-        print(
-            f"initialized {init_checkpoint} tensors={initialization['tensor_count']} "
-            f"coverage={initialization['coverage']:.3f}"
-        )
     optimizer = torch.optim.AdamW(model.parameters(), lr=float(args.lr), weight_decay=float(args.weight_decay))
     scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
         optimizer,
@@ -1155,39 +1026,11 @@ def train(args):
     best_score = -1.0
     best_epoch = 0
     epochs_without_improvement = 0
-    if args.resume is not None:
-        resume_path = Path(args.resume)
-        payload = torch.load(resume_path, map_location=device, weights_only=False)
-        validate_resume_checkpoint(payload, args, snapshot["dataset_sha256"])
-        model.load_state_dict(payload["model_state"])
-        if "ema_state" in payload and "ema_updates" in payload:
-            ema.load_state_dict(payload["ema_state"], updates=payload["ema_updates"])
-        else:
-            # LEGACY COMPATIBILITY: early resume checkpoints stored EMA
-            # parameters without their update count.  Reusing that state would
-            # apply the wrong decay history, so resume safely from the raw
-            # model and make the compatibility path explicit in the log.
-            ema = ModelEMA(model, decay=float(args.ema_decay))
-            if "ema_state" in payload:
-                print(
-                    "EMA WARNING: legacy resume checkpoint has no update count; "
-                    "resetting EMA from the resumed raw model to avoid random-initialization bias"
-                )
-        optimizer.load_state_dict(payload["optimizer_state"])
-        scheduler.load_state_dict(payload["scheduler_state"])
-        if payload.get("scaler_state"):
-            scaler.load_state_dict(payload["scaler_state"])
-        start_epoch = int(payload.get("epoch", 0)) + 1
-        best_score = float(payload.get("best_score", -1.0))
-        best_epoch = int(payload.get("best_epoch", 0))
-        epochs_without_improvement = int(payload.get("epochs_without_improvement", 0))
-        print(f"resumed {resume_path} at epoch {start_epoch}")
-
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    last_path = checkpoint_sibling(args.output, "last")
-    history_path = checkpoint_sibling(args.output, "history").with_suffix(".csv")
-    snapshot_path = checkpoint_sibling(args.output, "dataset").with_suffix(".json")
-    run_path = checkpoint_sibling(args.output, "run").with_suffix(".json")
+    TRAINING_RECORD_DIR.mkdir(parents=True, exist_ok=True)
+    history_path = TRAINING_RECORD_DIR / "history.csv"
+    snapshot_path = TRAINING_RECORD_DIR / "dataset_snapshot.json"
+    run_path = TRAINING_RECORD_DIR / "run.json"
     snapshot_path.write_text(json.dumps(snapshot, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     run_info = run_metadata(args, device, pairs_by_split, snapshot_path)
     run_info["channel_prevalence"] = prevalence.tolist()
@@ -1338,27 +1181,6 @@ def train(args):
             else:
                 epochs_without_improvement += 1
 
-            last_payload = checkpoint_payload(
-                model.state_dict(),
-                args,
-                metrics,
-                epoch,
-                channel_alpha,
-                extra={
-                    "ema_state": ema.model.state_dict(),
-                    "ema_updates": int(ema.updates),
-                    "ema_effective_decay": float(ema.effective_decay),
-                    "dataset_sha256": snapshot["dataset_sha256"],
-                    "optimizer_state": optimizer.state_dict(),
-                    "scheduler_state": scheduler.state_dict(),
-                    "scaler_state": scaler.state_dict(),
-                    "epoch": epoch,
-                    "best_score": best_score,
-                    "best_epoch": best_epoch,
-                    "epochs_without_improvement": epochs_without_improvement,
-                },
-            )
-            atomic_torch_save(last_payload, last_path)
             if int(args.early_stop) > 0 and epochs_without_improvement >= int(args.early_stop):
                 termination = early_stop_summary(
                     epoch=epoch,

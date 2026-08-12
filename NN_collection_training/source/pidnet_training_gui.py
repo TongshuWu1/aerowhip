@@ -1,6 +1,8 @@
 import argparse
 import hashlib
 import json
+import math
+import os
 from pathlib import Path
 import queue
 import re
@@ -55,13 +57,22 @@ from pidnet_schema import (
     label_bit,
     max_label_value,
 )
+from pidnet_preprocessing import (
+    DEFAULT_IMAGE_SIZE,
+    image_size_text,
+    parse_image_size,
+    resize_image_and_mask,
+)
 
 DATA_DIR = REPOSITORY_DIR / "data"
 DEFAULT_DATASET_DIR = DATA_DIR / "datasets" / "two_cable_pidnet"
-DEFAULT_MODEL_PATH = DATA_DIR / "models" / "pidnet_two_cable_best.pt"
-DEFAULT_IMAGE_SIZE = "1920x1080"
+DEFAULT_RUNTIME_MODEL_PATH = DATA_DIR / "models" / "pidnet_two_cable_best.pt"
 DEFAULT_PARAMS_PATH = SOURCE_DIR / "pidnet_two_cable_training_params.json"
 DEFAULT_CONFIG_PATH = SOURCE_DIR / "config.toml"
+PHASE1_CONFIG_PATH = REPOSITORY_DIR / "phase1_stereo" / "config.toml"
+CANONICAL_RUNTIME_CONFIG_VALUE = DEFAULT_CONFIG_PATH.relative_to(
+    REPOSITORY_DIR
+).as_posix()
 IMAGE_EXTENSIONS = (".png", ".jpg", ".jpeg", ".bmp")
 LABEL_COLORS_BGR = (
     (40, 255, 40),     # cable body
@@ -77,10 +88,12 @@ def label_color_bgr(label, cable_count=None):
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Label cable masks/endpoints and train the PIDNet-S segmenter.")
+    parser = argparse.ArgumentParser(
+        description="Label cable masks/endpoints and train the compact PIDNet-inspired segmenter."
+    )
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG_PATH, help="PIDNet threshold and mask-cleanup configuration.")
     parser.add_argument("--dataset", type=Path, default=DEFAULT_DATASET_DIR)
-    parser.add_argument("--output", type=Path, default=DEFAULT_MODEL_PATH)
+    parser.add_argument("--output", type=Path, default=DEFAULT_RUNTIME_MODEL_PATH)
     parser.add_argument("--image", action="append", default=[], help="Image path to label. Can be repeated.")
     parser.add_argument("--epochs", type=int, default=120)
     parser.add_argument("--batch-size", type=int, default=8)
@@ -111,7 +124,6 @@ def parse_args():
     parser.add_argument("--gpu-augment", action=argparse.BooleanOptionalAction, default=True)
     parser.add_argument("--deterministic", action=argparse.BooleanOptionalAction, default=False)
     parser.add_argument("--device", default="cuda")
-    parser.add_argument("--init-checkpoint", type=Path, default=None)
     parser.add_argument("--resolution", choices=resolution_names(), default="HD1080")
     parser.add_argument("--fps", type=int, default=30)
     return parser.parse_args()
@@ -169,6 +181,18 @@ def make_frame_item(
         "near_duplicate_distance": None,
         "annotation": {"origin": "manual"},
     }
+    if path is not None:
+        source_stem = Path(path).stem
+        for camera_view in ("left", "right"):
+            suffix = f"_{camera_view}"
+            if source_stem.endswith(suffix):
+                item["annotation"] = {
+                    "origin": "manual",
+                    "camera_view": camera_view,
+                    "stereo_pair_id": source_stem[:-len(suffix)],
+                    "synchronized_stereo": True,
+                }
+                break
     if path is not None:
         metadata = metadata_for_stem(dataset_dir, dataset_stem)
         if metadata:
@@ -324,16 +348,10 @@ def compact_item_edit_state(item):
 
 
 def restore_item_edit_state(item, state):
-    if isinstance(state, dict) and "mask" in state:
-        item["mask"] = restore_mask_state(state["mask"])
-        item["verified"] = bool(state.get("verified", False))
-        item["negative"] = bool(state.get("negative", False))
-        item["annotation"] = dict(state.get("annotation") or {"origin": "manual"})
-        return
-    # LEGACY COMPATIBILITY: undo entries created before metadata-aware edit
-    # states contain only the packed mask tuple.  Keep this read path until
-    # projects saved by that GUI generation no longer need to be reopened.
-    item["mask"] = restore_mask_state(state)
+    item["mask"] = restore_mask_state(state["mask"])
+    item["verified"] = bool(state.get("verified", False))
+    item["negative"] = bool(state.get("negative", False))
+    item["annotation"] = dict(state.get("annotation") or {"origin": "manual"})
 
 
 def restore_mask_state(state):
@@ -565,6 +583,62 @@ def binary_mask_metrics(predicted_mask, target_mask):
     }
 
 
+def checkpoint_image_size(segmenter):
+    config = getattr(segmenter, "config", {})
+    if "imgsz" not in config:
+        raise ValueError("Checkpoint is missing its training image size.")
+    return parse_image_size(config["imgsz"])
+
+
+def component_centers(mask, minimum_area):
+    binary = np.ascontiguousarray(np.asarray(mask, dtype=np.uint8) > 0)
+    count, _labels, stats, centroids = cv2.connectedComponentsWithStats(
+        binary.astype(np.uint8), connectivity=8
+    )
+    components = [
+        (int(stats[index, cv2.CC_STAT_AREA]), centroids[index].astype(np.float64))
+        for index in range(1, int(count))
+        if int(stats[index, cv2.CC_STAT_AREA]) >= int(minimum_area)
+    ]
+    components.sort(key=lambda item: (-item[0], item[1][0], item[1][1]))
+    return np.asarray([center for _area, center in components], dtype=np.float64).reshape(-1, 2)
+
+
+def endpoint_component_counts(
+    predicted_mask,
+    target_centers,
+    minimum_area,
+    centroid_gate_px,
+):
+    """Return one-to-one endpoint component TP/FP/FN counts.
+
+    Endpoint observations are independent of cable-body connectivity in the
+    partial-curve pipeline, so calibration matches only their component centres.
+    """
+
+    predicted = component_centers(predicted_mask, minimum_area)
+    target = np.asarray(target_centers, dtype=np.float64).reshape(-1, 2)
+    unmatched_predicted = set(range(len(predicted)))
+    unmatched_target = set(range(len(target)))
+    matches = 0
+    while unmatched_predicted and unmatched_target:
+        distance, predicted_index, target_index = min(
+            (
+                float(np.linalg.norm(predicted[predicted_index] - target[target_index])),
+                predicted_index,
+                target_index,
+            )
+            for predicted_index in unmatched_predicted
+            for target_index in unmatched_target
+        )
+        if distance > float(centroid_gate_px):
+            break
+        unmatched_predicted.remove(predicted_index)
+        unmatched_target.remove(target_index)
+        matches += 1
+    return matches, len(unmatched_predicted), len(unmatched_target)
+
+
 def frame_signature(bgr, width=32, height=18):
     gray = cv2.cvtColor(np.asarray(bgr, dtype=np.uint8), cv2.COLOR_BGR2GRAY)
     small = cv2.resize(gray, (int(width), int(height)), interpolation=cv2.INTER_AREA)
@@ -700,7 +774,9 @@ def replace_toml_values(path, updates):
                 output.append(f"{key} = {toml_scalar(value)}")
                 seen.add(update_key)
 
-    path.write_text("\n".join(output) + "\n", encoding="utf-8")
+    temporary = path.with_suffix(path.suffix + ".tmp")
+    temporary.write_text("\n".join(output) + "\n", encoding="utf-8")
+    os.replace(temporary, path)
 
 
 def toml_scalar(value):
@@ -741,6 +817,9 @@ class PidNetTrainingApp:
         self.frames = []
         self.selected_frame_idx = -1
         self.latest_bgr = None
+        self.latest_left_bgr = None
+        self.latest_right_bgr = None
+        self.latest_zed_timestamp_ns = None
         if int(args.cable_count) != 2:
             raise ValueError(f"This project labels exactly two cables; got cable_count={args.cable_count}.")
         self.cable_count_var = tk.IntVar(value=2)
@@ -755,6 +834,8 @@ class PidNetTrainingApp:
         self.draw_when_zoomed_var = tk.BooleanVar(value=False)
         self.burst_count_var = tk.IntVar(value=5)
         self.burst_interval_ms_var = tk.IntVar(value=250)
+        self.preview_view_var = tk.StringVar(value="left")
+        self.capture_stereo_var = tk.BooleanVar(value=True)
         self.burst_remaining = 0
         self.epochs_var = tk.IntVar(value=int(args.epochs))
         self.batch_var = tk.IntVar(value=int(args.batch_size))
@@ -781,7 +862,6 @@ class PidNetTrainingApp:
         self.compile_var = tk.BooleanVar(value=bool(args.compile))
         self.gpu_augment_var = tk.BooleanVar(value=bool(args.gpu_augment))
         self.deterministic_var = tk.BooleanVar(value=bool(args.deterministic))
-        self.resume_var = tk.BooleanVar(value=False)
         self.verified_only_var = tk.BooleanVar(value=True)
         self.evaluate_test_var = tk.BooleanVar(value=False)
         self.device_var = tk.StringVar(
@@ -806,11 +886,13 @@ class PidNetTrainingApp:
         self.detector_open_kernel_var = tk.IntVar(value=int(detector_config.get("open_kernel", 3)))
         self.detector_close_kernel_var = tk.IntVar(value=int(detector_config.get("close_kernel", 5)))
         self.dataset_var = tk.StringVar(value=str(Path(args.dataset)))
-        configured_checkpoint = Path(pidnet_config.get("checkpoint", args.output)).expanduser()
+        configured_checkpoint = Path(
+            pidnet_config.get("checkpoint", DEFAULT_RUNTIME_MODEL_PATH)
+        ).expanduser()
         if not configured_checkpoint.is_absolute():
             configured_checkpoint = REPOSITORY_DIR / configured_checkpoint
-        self.output_var = tk.StringVar(value=str(configured_checkpoint.resolve()))
-        self.init_checkpoint_var = tk.StringVar(value=str(getattr(args, "init_checkpoint", None) or ""))
+        self.runtime_checkpoint_path = configured_checkpoint.resolve()
+        self.output_var = tk.StringVar(value=str(self.runtime_checkpoint_path))
         self.status_var = tk.StringVar(value="Open or capture frames, paint cable masks, save labels, then train and test PIDNet.")
         self.draft_status_var = tk.StringVar(value="No editable model draft on the selected frame.")
         self.train_progress_var = tk.DoubleVar(value=0.0)
@@ -829,6 +911,8 @@ class PidNetTrainingApp:
         self.zed = None
         self.runtime = None
         self.left_image = None
+        self.right_image = None
+        self.restart_camera_after_training = False
         self.train_process = None
         self.training_termination = None
         self.output_queue = queue.Queue()
@@ -842,6 +926,7 @@ class PidNetTrainingApp:
         self.live_test_last_time = 0.0
         self.live_test_interval_s = 0.10
         self.checkpoint_hash_cache = {}
+        self.calibrated_checkpoint_signature = None
 
         self._build_ui()
         self._bind_keys()
@@ -896,7 +981,7 @@ class PidNetTrainingApp:
         ttk.Label(title_block, text="Cable Label Studio", style="HeaderTitle.TLabel").pack(anchor="w")
         ttk.Label(
             title_block,
-            text="Three-channel PIDNet annotation and training",
+            text="Three-channel compact PIDNet-inspired annotation and training",
             style="HeaderSub.TLabel",
         ).pack(anchor="w")
         header_actions = ttk.Frame(header, style="Header.TFrame")
@@ -1058,7 +1143,7 @@ class PidNetTrainingApp:
         ).grid(row=5, column=0, sticky="ew", pady=4)
 
         capture_section = section(data_tab, "Capture", 0)
-        ttk.Button(capture_section, text="Capture Current Frame", command=self.capture_current_frame, style="Accent.TButton").grid(row=0, column=0, columnspan=2, sticky="ew", pady=(0, 6))
+        ttk.Button(capture_section, text="Capture Current Frame(s)", command=self.capture_current_frame, style="Accent.TButton").grid(row=0, column=0, columnspan=2, sticky="ew", pady=(0, 6))
         ttk.Button(capture_section, text="Capture Burst", command=self.capture_burst).grid(row=1, column=0, sticky="ew", padx=(0, 4))
         burst_options = ttk.Frame(capture_section)
         burst_options.grid(row=1, column=1, sticky="e")
@@ -1066,6 +1151,22 @@ class PidNetTrainingApp:
         ttk.Spinbox(burst_options, from_=2, to=100, width=4, textvariable=self.burst_count_var).pack(side=tk.LEFT, padx=3)
         ttk.Label(burst_options, text="Every ms").pack(side=tk.LEFT, padx=(5, 0))
         ttk.Spinbox(burst_options, from_=50, to=5000, increment=50, width=6, textvariable=self.burst_interval_ms_var).pack(side=tk.LEFT, padx=3)
+        stereo_options = ttk.Frame(capture_section)
+        stereo_options.grid(row=2, column=0, columnspan=2, sticky="ew", pady=(7, 0))
+        ttk.Checkbutton(
+            stereo_options,
+            text="Save synchronized left + right",
+            variable=self.capture_stereo_var,
+        ).pack(side=tk.LEFT)
+        ttk.Label(stereo_options, text="Preview").pack(side=tk.LEFT, padx=(14, 4))
+        for label, value in (("Left", "left"), ("Right", "right")):
+            ttk.Radiobutton(
+                stereo_options,
+                text=label,
+                variable=self.preview_view_var,
+                value=value,
+                command=self.select_preview_view,
+            ).pack(side=tk.LEFT, padx=(0, 5))
         session_section = section(data_tab, "Session and split", 1)
         ttk.Entry(session_section, textvariable=self.session_var, state="readonly").grid(row=0, column=0, columnspan=2, sticky="ew", pady=(0, 6))
         ttk.Button(session_section, text="New Session", command=self.new_capture_session).grid(row=1, column=0, columnspan=2, sticky="ew", pady=(0, 7))
@@ -1101,13 +1202,18 @@ class PidNetTrainingApp:
         ttk.Entry(path_section, textvariable=self.dataset_var).grid(row=0, column=0, sticky="ew")
         ttk.Button(path_section, text="Browse", command=self.choose_dataset_dir).grid(row=0, column=1, padx=(6, 0))
 
-        checkpoint_section = section(model_tab, "Checkpoint", 0)
-        ttk.Entry(checkpoint_section, textvariable=self.output_var).grid(row=0, column=0, sticky="ew")
+        checkpoint_section = section(model_tab, "PIDNet model", 0)
+        ttk.Entry(checkpoint_section, textvariable=self.output_var, state="readonly").grid(row=0, column=0, sticky="ew")
         checkpoint_buttons = ttk.Frame(checkpoint_section)
         checkpoint_buttons.grid(row=0, column=1, padx=(6, 0))
-        ttk.Button(checkpoint_buttons, text="Browse", command=self.choose_output_path).pack(side=tk.LEFT, padx=(0, 3))
         ttk.Button(checkpoint_buttons, text="Load", command=self.load_model_from_button, style="Accent.TButton").pack(side=tk.LEFT)
         ttk.Label(checkpoint_section, textvariable=self.model_status_var, wraplength=410, foreground="#53687a").grid(row=1, column=0, columnspan=2, sticky="w", pady=(7, 0))
+        ttk.Label(
+            checkpoint_section,
+            text="Training, annotation preview, and offline reconstruction use this one checkpoint.",
+            wraplength=410,
+            foreground="#53687a",
+        ).grid(row=2, column=0, columnspan=2, sticky="w", pady=(4, 0))
         assist_section = section(model_tab, "Model-assisted annotation", 1)
         ttk.Button(assist_section, text="Preview Current Frame", command=self.test_current_frame).grid(row=0, column=0, sticky="ew", padx=(0, 4))
         ttk.Button(assist_section, text="Apply Preview as Draft", command=self.use_prediction_as_draft, style="Accent.TButton").grid(row=0, column=1, sticky="ew", padx=(4, 0))
@@ -1145,7 +1251,7 @@ class PidNetTrainingApp:
         )):
             ttk.Button(evaluation_section, text=text, command=command).grid(row=0, column=index, sticky="ew", padx=2)
             evaluation_section.columnconfigure(index, weight=1)
-        ttk.Button(evaluation_section, text="Calibrate on Validation", command=self.calibrate_validation_thresholds).grid(row=1, column=0, columnspan=2, sticky="ew", padx=2, pady=(6, 0))
+        ttk.Button(evaluation_section, text="Calibrate + Save Runtime", command=self.calibrate_validation_thresholds).grid(row=1, column=0, columnspan=2, sticky="ew", padx=2, pady=(6, 0))
         ttk.Button(evaluation_section, text="Clear Preview", command=self.clear_prediction).grid(row=1, column=2, sticky="ew", padx=2, pady=(6, 0))
         live_cleanup_section = section(model_tab, "Runtime mask cleanup", 4, pady=(0, 0))
         for column, (label, variable, upper) in enumerate((
@@ -1157,9 +1263,11 @@ class PidNetTrainingApp:
             ttk.Spinbox(live_cleanup_section, from_=0 if column == 0 else 1, to=upper, increment=1 if column == 0 else 2, width=7, textvariable=variable, command=self.on_live_cleanup_change).grid(row=1, column=column, padx=3)
             live_cleanup_section.columnconfigure(column, weight=1)
         ttk.Button(live_cleanup_section, text="Preview", command=self.refresh).grid(row=2, column=0, sticky="ew", padx=3, pady=(7, 0))
-        ttk.Button(live_cleanup_section, text="Save Runtime to config.toml", command=self.save_live_cleanup_to_config).grid(row=2, column=1, columnspan=2, sticky="ew", padx=3, pady=(7, 0))
-        ttk.Entry(live_cleanup_section, textvariable=self.config_var).grid(row=3, column=0, columnspan=2, sticky="ew", padx=3, pady=(7, 0))
-        ttk.Button(live_cleanup_section, text="Browse", command=self.choose_config_path).grid(row=3, column=2, padx=3, pady=(7, 0))
+        ttk.Button(live_cleanup_section, text="Save Runtime Settings", command=self.save_live_cleanup_to_config, style="Accent.TButton").grid(row=2, column=1, columnspan=2, sticky="ew", padx=3, pady=(7, 0))
+        ttk.Label(
+            live_cleanup_section,
+            text="Shared runtime: NN_collection_training/source/config.toml",
+        ).grid(row=3, column=0, columnspan=3, sticky="w", padx=3, pady=(7, 0))
 
         train_actions = ttk.Frame(train_tab)
         train_actions.grid(row=0, column=0, sticky="ew", pady=(0, 8))
@@ -1207,15 +1315,8 @@ class PidNetTrainingApp:
             ("torch.compile", self.compile_var),
             ("Verified only", self.verified_only_var),
             ("Evaluate locked test", self.evaluate_test_var),
-            ("Resume last", self.resume_var),
         )):
             ttk.Checkbutton(runtime_tab, text=text_value, variable=variable, command=self.refresh_command_text).grid(row=index // 2, column=(index % 2) * 2, columnspan=2, sticky="w", pady=3)
-        ttk.Label(runtime_tab, text="Initialization checkpoint").grid(row=5, column=0, columnspan=4, sticky="w", pady=(10, 3))
-        ttk.Entry(runtime_tab, textvariable=self.init_checkpoint_var).grid(row=6, column=0, columnspan=3, sticky="ew")
-        init_buttons = ttk.Frame(runtime_tab)
-        init_buttons.grid(row=6, column=3, sticky="e", padx=(5, 0))
-        ttk.Button(init_buttons, text="Browse", command=self.choose_init_checkpoint).pack(side=tk.LEFT, padx=(0, 2))
-        ttk.Button(init_buttons, text="Clear", command=lambda: self.init_checkpoint_var.set("")).pack(side=tk.LEFT)
         param_actions = ttk.Frame(train_tab)
         param_actions.grid(row=4, column=0, sticky="ew", pady=(8, 0))
         ttk.Button(param_actions, text="Save Parameters", command=self.save_pidnet_params).pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 3))
@@ -1514,12 +1615,14 @@ class PidNetTrainingApp:
         )
 
     def on_threshold_change(self, _value=None):
+        self.calibrated_checkpoint_signature = None
         self.threshold_text_var.set(
             f"{safe_float(self.test_threshold_var, 0.50, min_value=0.05, max_value=0.99):.2f}"
         )
         self.refresh()
 
     def on_live_cleanup_change(self):
+        self.calibrated_checkpoint_signature = None
         self.detector_open_kernel_var.set(odd_kernel_value(self.detector_open_kernel_var, 3))
         self.detector_close_kernel_var.set(odd_kernel_value(self.detector_close_kernel_var, 5))
         self.refresh()
@@ -1528,82 +1631,11 @@ class PidNetTrainingApp:
         self.brush_radius_var.set(int(np.clip(self.brush_radius_var.get() + delta, 1, 40)))
         self.refresh()
 
-    def choose_config_path(self):
-        path = filedialog.askopenfilename(
-            title="Choose PIDNet cleanup config.toml",
-            initialdir=str(Path(self.config_var.get()).parent),
-            filetypes=[("TOML config", "*.toml"), ("All files", "*.*")],
-        )
-        if not path:
-            return
-        self.config_var.set(path)
-        self.load_live_cleanup_from_config(path)
-        self.status_var.set(f"Loaded live cleanup values from {Path(path).name}")
-        self.refresh()
-
     def choose_dataset_dir(self):
         path = filedialog.askdirectory(title="Choose PIDNet dataset folder", initialdir=str(Path(self.dataset_var.get()).parent))
         if path:
             self.dataset_var.set(path)
             self.refresh()
-
-    def choose_output_path(self):
-        path = filedialog.asksaveasfilename(
-            title="Choose PIDNet checkpoint path",
-            initialfile=Path(self.output_var.get()).name,
-            defaultextension=".pt",
-            filetypes=[("PyTorch checkpoint", "*.pt"), ("All files", "*.*")],
-        )
-        if path:
-            self.output_var.set(path)
-            self.unload_segmenter()
-            self.update_model_status()
-            self.refresh_command_text()
-
-    def choose_init_checkpoint(self):
-        path = filedialog.askopenfilename(
-            title="Choose compatible initialization checkpoint",
-            initialdir=str(Path(self.output_var.get()).parent),
-            filetypes=[("PyTorch checkpoint", "*.pt *.pth"), ("All files", "*.*")],
-        )
-        if path:
-            self.init_checkpoint_var.set(path)
-            self.refresh_command_text()
-
-    def load_live_cleanup_from_config(self, path):
-        config = load_toml_config(path)
-        pidnet_config = config.get("pidnet", {})
-        detector_config = config.get("detector", {})
-        if "checkpoint" in pidnet_config:
-            checkpoint_path = Path(pidnet_config["checkpoint"]).expanduser()
-            if not checkpoint_path.is_absolute():
-                checkpoint_path = REPOSITORY_DIR / checkpoint_path
-            self.output_var.set(str(checkpoint_path.resolve()))
-        if "device" in pidnet_config:
-            self.device_var.set(str(pidnet_config["device"]))
-        if "amp" in pidnet_config:
-            self.amp_var.set(bool(pidnet_config["amp"]))
-        if "channels_last" in pidnet_config:
-            self.channels_last_var.set(bool(pidnet_config["channels_last"]))
-        if "threshold" in pidnet_config:
-            self.test_threshold_var.set(float(pidnet_config["threshold"]))
-            self.threshold_text_var.set(f"{float(pidnet_config['threshold']):.2f}")
-        if "endpoint_thresholds" in pidnet_config:
-            values = tuple(float(value) for value in pidnet_config["endpoint_thresholds"])
-            if len(values) != len(self.endpoint_threshold_vars):
-                raise ValueError(
-                    f"pidnet.endpoint_thresholds must contain {len(self.endpoint_threshold_vars)} values."
-                )
-            for variable, value in zip(self.endpoint_threshold_vars, values):
-                variable.set(value)
-        if "min_area_px" in detector_config:
-            self.detector_min_area_var.set(int(detector_config["min_area_px"]))
-        if "open_kernel" in detector_config:
-            self.detector_open_kernel_var.set(int(detector_config["open_kernel"]))
-        if "close_kernel" in detector_config:
-            self.detector_close_kernel_var.set(int(detector_config["close_kernel"]))
-        self.unload_segmenter()
-        self.update_model_status()
 
     def live_cleanup_params(self):
         open_kernel = odd_kernel_value(self.detector_open_kernel_var, 3)
@@ -1644,11 +1676,15 @@ class PidNetTrainingApp:
         config.validate()
         return config
 
-    def save_live_cleanup_to_config(self):
+    def save_live_cleanup_to_config(self, checkpoint_path=None):
         params = self.live_cleanup_params()
         thresholds = self.preview_thresholds()
-        config_path = Path(self.config_var.get() or DEFAULT_CONFIG_PATH)
-        checkpoint_path = Path(self.output_var.get()).expanduser().resolve()
+        config_path = DEFAULT_CONFIG_PATH.resolve()
+        self.config_var.set(str(config_path))
+        checkpoint_path = Path(
+            checkpoint_path or self.runtime_checkpoint_path
+        ).expanduser().resolve()
+        checkpoint_hash = self.checkpoint_sha256(checkpoint_path)
         try:
             checkpoint_value = checkpoint_path.relative_to(REPOSITORY_DIR).as_posix()
         except ValueError:
@@ -1658,6 +1694,7 @@ class PidNetTrainingApp:
                 config_path,
                 {
                     ("pidnet", "checkpoint"): checkpoint_value,
+                    ("pidnet", "checkpoint_sha256"): checkpoint_hash,
                     ("pidnet", "device"): str(self.device_var.get() or "cuda"),
                     ("pidnet", "threshold"): thresholds["cable"],
                     ("pidnet", "endpoint_thresholds"): thresholds["endpoints"],
@@ -1668,26 +1705,89 @@ class PidNetTrainingApp:
                     ("detector", "close_kernel"): params["close_kernel"],
                 },
             )
+            phase1_config = load_toml_config(PHASE1_CONFIG_PATH)
+            configured_runtime = phase1_config.get("pidnet", {}).get("runtime_config")
+            if configured_runtime != CANONICAL_RUNTIME_CONFIG_VALUE:
+                raise RuntimeError(
+                    "Phase 1 does not point to the canonical PIDNet runtime configuration"
+                )
+            saved_values = load_toml_config(config_path)
+            saved_runtime = PidNetMaskConfig.from_mapping(saved_values)
+            expected_runtime = self.runtime_mask_config()
+            if not np.allclose(
+                saved_runtime.thresholds,
+                expected_runtime.thresholds,
+                rtol=0.0,
+                atol=1.0e-7,
+            ) or (
+                saved_runtime.min_area_px,
+                saved_runtime.open_kernel,
+                saved_runtime.close_kernel,
+            ) != (
+                expected_runtime.min_area_px,
+                expected_runtime.open_kernel,
+                expected_runtime.close_kernel,
+            ):
+                raise RuntimeError("Saved runtime values failed verification")
+            if saved_values.get("pidnet", {}).get("checkpoint_sha256") != checkpoint_hash:
+                raise RuntimeError("Saved runtime checkpoint identity failed verification")
         except Exception as exc:
-            self.status_var.set(f"Could not save live cleanup config: {exc}")
-            return
+            self.status_var.set(f"Could not save shared runtime: {exc}")
+            return False
         self.status_var.set(
-            f"Saved shared PIDNet runtime to {config_path.name}: "
+            "Saved PIDNet runtime for Phase 1: "
             f"checkpoint={checkpoint_path.name}, "
             f"thresholds={thresholds['cable']:.2f}/"
             f"{thresholds['endpoints'][0]:.2f}/{thresholds['endpoints'][1]:.2f}, "
             f"min_area={params['min_area_px']}, "
-            f"open={params['open_kernel']}, close={params['close_kernel']}."
+            f"open={params['open_kernel']}, close={params['close_kernel']}, "
+            f"sha256={checkpoint_hash[:12]}."
         )
         self.refresh_command_text()
+        return True
 
     def unload_segmenter(self):
+        had_segmenter = self.segmenter is not None
         self.segmenter = None
         self.segmenter_key = None
         self.prediction_probability = None
         self.prediction_frame_key = None
         self.prediction_label_mode = ""
         self.prediction_summary = ""
+        if had_segmenter:
+            import gc
+            import torch
+
+            gc.collect()
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+
+    def release_resources_for_training(self):
+        """Release GUI-owned CUDA and ZED resources before training starts."""
+
+        self.restart_camera_after_training = self.zed is not None
+        self.live_test_var.set(False)
+        self.unload_segmenter()
+        if self.zed is not None:
+            self.zed.close()
+            self.zed = None
+        if self.left_image is not None:
+            self.left_image.free()
+            self.left_image = None
+        if self.right_image is not None:
+            self.right_image.free()
+            self.right_image = None
+        self.latest_left_bgr = None
+        self.latest_right_bgr = None
+        self.latest_bgr = None
+        self.latest_zed_timestamp_ns = None
+        self.runtime = None
+
+    def restore_camera_after_training(self):
+        restart = self.restart_camera_after_training
+        self.restart_camera_after_training = False
+        if restart:
+            self.open_zed()
 
     def checkpoint_signature(self, checkpoint_path):
         path = Path(checkpoint_path)
@@ -1961,26 +2061,95 @@ class PidNetTrainingApp:
         init = sl.InitParameters()
         init.camera_resolution = zed_resolution(self.args.resolution)
         init.camera_fps = self.args.fps
-        init.depth_mode = sl.DEPTH_MODE.NEURAL
+        init.depth_mode = sl.DEPTH_MODE.NONE
         init.coordinate_units = sl.UNIT.METER
-        init.depth_minimum_distance = 0.1
-        init.depth_maximum_distance = 3.0
         status = zed.open(init)
         if status != sl.ERROR_CODE.SUCCESS:
             self.status_var.set(f"Could not open ZED camera: {status}. Use Open Images instead.")
             return
+        automatic_status = zed.set_camera_settings(sl.VIDEO_SETTINGS.AEC_AGC, 1)
+        if automatic_status != sl.ERROR_CODE.SUCCESS:
+            zed.close()
+            self.status_var.set(
+                f"Could not enable ZED automatic exposure/gain: {automatic_status}."
+            )
+            return
+        read_status, automatic = zed.get_camera_settings(sl.VIDEO_SETTINGS.AEC_AGC)
+        if read_status != sl.ERROR_CODE.SUCCESS or int(automatic) != 1:
+            zed.close()
+            self.status_var.set("ZED automatic exposure/gain readback failed.")
+            return
         self.zed = zed
         self.runtime = sl.RuntimeParameters()
-        self.runtime.confidence_threshold = 60
-        self.runtime.texture_confidence_threshold = 70
-        self.runtime.remove_saturated_areas = False
+        self.runtime.enable_depth = False
         self.left_image = sl.Mat()
-        self.status_var.set("ZED preview active. Press Capture ZED to freeze a label frame.")
+        self.right_image = sl.Mat()
+        self.status_var.set(
+            "Synchronized ZED preview active. Capture saves both rectified views by default."
+        )
+
+    def select_preview_view(self):
+        selected = str(self.preview_view_var.get()).strip().lower()
+        self.latest_bgr = (
+            self.latest_right_bgr if selected == "right" else self.latest_left_bgr
+        )
+        self.prediction_probability = None
+        self.prediction_frame_key = None
+        self.prediction_summary = ""
+        self.live_test_last_time = 0.0
+        self.refresh()
 
     def poll_camera(self):
         if self.zed is not None and self.zed.grab(self.runtime) == sl.ERROR_CODE.SUCCESS:
-            self.zed.retrieve_image(self.left_image, sl.VIEW.LEFT)
-            self.latest_bgr = cv2.cvtColor(self.left_image.get_data(), cv2.COLOR_BGRA2BGR)
+            camera_timestamp = int(
+                self.zed.get_timestamp(sl.TIME_REFERENCE.IMAGE).get_nanoseconds()
+            )
+            left_status = self.zed.retrieve_image(
+                self.left_image, sl.VIEW.LEFT_BGR, sl.MEM.CPU
+            )
+            right_status = self.zed.retrieve_image(
+                self.right_image, sl.VIEW.RIGHT_BGR, sl.MEM.CPU
+            )
+            left_timestamp = int(self.left_image.timestamp.get_nanoseconds())
+            right_timestamp = int(self.right_image.timestamp.get_nanoseconds())
+            if (
+                left_status != sl.ERROR_CODE.SUCCESS
+                or right_status != sl.ERROR_CODE.SUCCESS
+                or camera_timestamp <= 0
+                or left_timestamp != camera_timestamp
+                or right_timestamp != camera_timestamp
+            ):
+                self.status_var.set(
+                    "ZED stereo synchronization failed; the frame was not exposed for capture."
+                )
+                self.root.after(33, self.poll_camera)
+                return
+            self.latest_zed_timestamp_ns = camera_timestamp
+            self.latest_left_bgr = np.array(
+                self.left_image.get_data(sl.MEM.CPU),
+                dtype=np.uint8,
+                order="C",
+                copy=True,
+            )
+            self.latest_right_bgr = np.array(
+                self.right_image.get_data(sl.MEM.CPU),
+                dtype=np.uint8,
+                order="C",
+                copy=True,
+            )
+            if (
+                self.latest_left_bgr.ndim != 3
+                or self.latest_left_bgr.shape[2] != 3
+                or self.latest_right_bgr.shape != self.latest_left_bgr.shape
+            ):
+                raise RuntimeError(
+                    "ZED stereo capture requires same-sized native three-channel BGR views."
+                )
+            self.latest_bgr = (
+                self.latest_right_bgr
+                if self.preview_view_var.get() == "right"
+                else self.latest_left_bgr
+            )
             if self.live_test_var.get():
                 self.update_live_prediction_if_needed()
                 self.refresh()
@@ -2001,42 +2170,86 @@ class PidNetTrainingApp:
         self.prediction_summary = ""
         capture_dir = Path(self.dataset_var.get()).expanduser().resolve() / "captures"
         capture_dir.mkdir(parents=True, exist_ok=True)
-        filename = capture_dir / f"{unique_capture_stem(self.session_var.get())}.png"
-        if filename.exists():
-            raise FileExistsError(f"Unique capture path unexpectedly exists: {filename}")
-        if not cv2.imwrite(str(filename), self.latest_bgr):
-            raise IOError(f"Could not write captured image: {filename}")
-        current_signature = frame_signature(self.latest_bgr)
-        closest_name = None
-        closest_distance = float("inf")
-        for previous in self.frames[-100:]:
-            distance = frame_signature_distance(current_signature, frame_signature(previous["bgr"]))
-            if distance < closest_distance:
-                closest_distance = distance
-                closest_name = Path(previous.get("path") or "loaded frame").name
-        item = make_frame_item(
-            self.latest_bgr,
-            path=filename,
-            split=self.split_var.get(),
-            dataset_dir=Path(self.dataset_var.get()),
-            cable_count=max(1, int(self.cable_count_var.get())),
-            session_id=self.session_var.get(),
-        )
+        selected_view = str(self.preview_view_var.get()).strip().lower()
+        if bool(self.capture_stereo_var.get()):
+            if self.latest_left_bgr is None or self.latest_right_bgr is None:
+                self.status_var.set("Both synchronized ZED views are required for stereo capture.")
+                return False
+            captures = (
+                ("left", self.latest_left_bgr),
+                ("right", self.latest_right_bgr),
+            )
+        else:
+            captures = ((selected_view, self.latest_bgr),)
+
+        pair_id = unique_capture_stem(self.session_var.get())
+        pending = []
+        for camera_view, bgr in captures:
+            filename = capture_dir / f"{pair_id}_{camera_view}.png"
+            if filename.exists():
+                raise FileExistsError(f"Unique capture path unexpectedly exists: {filename}")
+            success, encoded = cv2.imencode(".png", np.asarray(bgr, dtype=np.uint8))
+            if not success:
+                raise IOError(f"Could not encode captured image: {filename}")
+            pending.append((camera_view, np.asarray(bgr, dtype=np.uint8).copy(), filename, encoded))
+        for _camera_view, _bgr, filename, encoded in pending:
+            temporary = filename.with_suffix(filename.suffix + ".tmp")
+            temporary.write_bytes(encoded.tobytes())
+            os.replace(temporary, filename)
+
+        new_items = []
+        for camera_view, bgr, filename, _encoded in pending:
+            current_signature = frame_signature(bgr)
+            closest_name = None
+            closest_distance = float("inf")
+            for previous in self.frames[-100:]:
+                annotation = previous.get("annotation") or {}
+                if annotation.get("camera_view") not in (None, camera_view):
+                    continue
+                distance = frame_signature_distance(
+                    current_signature,
+                    frame_signature(previous["bgr"]),
+                )
+                if distance < closest_distance:
+                    closest_distance = distance
+                    closest_name = Path(previous.get("path") or "loaded frame").name
+            item = make_frame_item(
+                bgr,
+                path=filename,
+                split=self.split_var.get(),
+                dataset_dir=Path(self.dataset_var.get()),
+                cable_count=max(1, int(self.cable_count_var.get())),
+                session_id=self.session_var.get(),
+            )
+            item["annotation"] = {
+                "origin": "manual",
+                "camera_view": camera_view,
+                "stereo_pair_id": pair_id,
+                "synchronized_stereo": len(captures) == 2,
+                "zed_timestamp_ns": self.latest_zed_timestamp_ns,
+            }
+            if closest_distance < 0.025:
+                item["near_duplicate_of"] = closest_name
+                item["near_duplicate_distance"] = closest_distance
+            new_items.append(item)
+
         self.pending_capture_session = False
-        if closest_distance < 0.025:
-            item["near_duplicate_of"] = closest_name
-            item["near_duplicate_distance"] = closest_distance
-        self.frames.append(item)
-        self.selected_frame_idx = len(self.frames) - 1
+        first_index = len(self.frames)
+        self.frames.extend(new_items)
+        selected_offset = next(
+            (index for index, item in enumerate(new_items)
+             if item["annotation"]["camera_view"] == selected_view),
+            0,
+        )
+        self.selected_frame_idx = first_index + selected_offset
         self.sync_metadata_from_active()
         self.reset_view()
-        duplicate_text = (
-            f" Possible near-duplicate of {closest_name} (distance {closest_distance:.4f}); review manually."
-            if item.get("near_duplicate_of") else ""
-        )
+        duplicate_count = sum(bool(item.get("near_duplicate_of")) for item in new_items)
+        duplicate_text = f" {duplicate_count} possible near-duplicate(s)." if duplicate_count else ""
         self.refresh()
         self.status_var.set(
-            f"Captured {filename.name} in session {item['session_id']}. Paint the three independent layers."
+            f"Captured {len(new_items)} synchronized view(s) for {pair_id} in session "
+            f"{new_items[0]['session_id']}. Paint and verify each view."
             f"{duplicate_text}"
         )
         return True
@@ -2225,7 +2438,9 @@ class PidNetTrainingApp:
             self.push_undo_state(item)
         item["mask"].fill(0)
         item["negative"] = True
-        item["annotation"] = {"origin": "manual", "human_edited": True}
+        annotation = dict(item.get("annotation") or {})
+        annotation.update({"origin": "manual", "human_edited": True})
+        item["annotation"] = annotation
         self.set_item_verified(item, True)
         self.verified_var.set(True)
         if not self.pending_capture_session:
@@ -2267,10 +2482,9 @@ class PidNetTrainingApp:
     def current_pidnet_params(self):
         thresholds = self.preview_thresholds()
         return {
-            "version": 3,
+            "version": 6,
             "dataset": str(Path(self.dataset_var.get())),
-            "output": str(Path(self.output_var.get())),
-            "init_checkpoint": str(self.init_checkpoint_var.get()).strip(),
+            "output": str(self.runtime_checkpoint_path),
             "epochs": safe_int(self.epochs_var, 120, min_value=1),
             "batch_size": safe_int(self.batch_var, 8, min_value=1),
             "imgsz": str(self.imgsz_var.get()).strip() or DEFAULT_IMAGE_SIZE,
@@ -2298,7 +2512,8 @@ class PidNetTrainingApp:
             "deterministic": bool(self.deterministic_var.get()),
             "verified_only": bool(self.verified_only_var.get()),
             "evaluate_test": bool(self.evaluate_test_var.get()),
-            "resume_last": bool(self.resume_var.get()),
+            "capture_stereo": bool(self.capture_stereo_var.get()),
+            "preview_view": str(self.preview_view_var.get()),
             "test_threshold": thresholds["cable"],
             "endpoint_thresholds": list(thresholds["endpoints"]),
             "config": str(Path(self.config_var.get() or DEFAULT_CONFIG_PATH)),
@@ -2312,16 +2527,12 @@ class PidNetTrainingApp:
     def apply_pidnet_params(self, params):
         if not isinstance(params, dict):
             raise ValueError("PIDNet parameter file must contain a JSON object.")
+        self.calibrated_checkpoint_signature = None
         if int(params.get("cable_count", 2)) != 2:
             raise ValueError("This project uses exactly two endpoint sets; cable_count must be 2.")
         if "dataset" in params:
             self.dataset_var.set(str(params["dataset"]))
-        if "output" in params:
-            self.output_var.set(str(params["output"]))
-            self.unload_segmenter()
-            self.update_model_status()
-        if "init_checkpoint" in params:
-            self.init_checkpoint_var.set(str(params["init_checkpoint"]))
+        self.output_var.set(str(self.runtime_checkpoint_path))
         for key, var in (
             ("epochs", self.epochs_var),
             ("batch_size", self.batch_var),
@@ -2368,10 +2579,12 @@ class PidNetTrainingApp:
             ("deterministic", self.deterministic_var),
             ("verified_only", self.verified_only_var),
             ("evaluate_test", self.evaluate_test_var),
-            ("resume_last", self.resume_var),
+            ("capture_stereo", self.capture_stereo_var),
         ):
             if key in params:
                 variable.set(bool(params[key]))
+        if params.get("preview_view") in {"left", "right"}:
+            self.preview_view_var.set(str(params["preview_view"]))
         if "early_stop" in params:
             self.early_stop_var.set(int(params["early_stop"]))
         if "config" in params:
@@ -2589,12 +2802,6 @@ class PidNetTrainingApp:
             ("evaluate-test", self.evaluate_test_var.get()),
         ):
             command.append(f"--{name}" if bool(enabled) else f"--no-{name}")
-        if bool(self.resume_var.get()):
-            output = Path(self.output_var.get())
-            last_path = output.with_name(f"{output.stem}_last{output.suffix}")
-            command.extend(("--resume", str(last_path)))
-        elif str(self.init_checkpoint_var.get()).strip():
-            command.extend(("--init-checkpoint", str(Path(self.init_checkpoint_var.get()))))
         return command
 
     def refresh_command_text(self):
@@ -2613,14 +2820,13 @@ class PidNetTrainingApp:
             "Training uses independent focal+Dice losses for cable, endpoint 1, and endpoint 2; "
             "the boundary target is the generic cable only.\n"
             f"Session split conflicts: {len(conflicts)}\n"
-            f"Checkpoint: {Path(self.output_var.get())}\n"
+            f"Single PIDNet model: {self.runtime_checkpoint_path}\n"
             f"Live thresholds: cable={thresholds['cable']:.2f}, "
             f"endpoints={thresholds['endpoints'][0]:.2f}/{thresholds['endpoints'][1]:.2f}\n"
             f"Live cleanup preview: min_area={cleanup_params['min_area_px']}, "
             f"open={cleanup_params['open_kernel']}, close={cleanup_params['close_kernel']}\n"
-            "Train: use the Train PIDNet-S on CUDA button; the GUI passes these settings to the trainer.\n"
-            "Runtime integration should load the selected checkpoint and use the calibrated thresholds "
-            "stored in this folder's config.toml.\n"
+            "Training updates this checkpoint only when validation improves.\n"
+            "Calibrate + Save Runtime records its identity and thresholds for Phase 1.\n"
         )
         self.command_text.delete("1.0", tk.END)
         self.command_text.insert(tk.END, text)
@@ -2642,14 +2848,9 @@ class PidNetTrainingApp:
         if conflicts:
             self.status_var.set(f"Capture sessions span multiple splits: {sorted(conflicts)}")
             return
-        if bool(self.resume_var.get()):
-            output = Path(self.output_var.get())
-            last_path = output.with_name(f"{output.stem}_last{output.suffix}")
-            if not last_path.exists():
-                self.status_var.set(f"Resume requested, but the last checkpoint does not exist: {last_path}")
-                return
-        elif str(self.init_checkpoint_var.get()).strip() and not Path(self.init_checkpoint_var.get()).exists():
-            self.status_var.set(f"Initialization checkpoint does not exist: {self.init_checkpoint_var.get()}")
+        model_path = Path(self.output_var.get()).expanduser().resolve()
+        if model_path != Path(self.runtime_checkpoint_path).expanduser().resolve():
+            self.status_var.set("PIDNet training must use the single canonical model path.")
             return
         command = self.training_command()
         self.train_progress_var.set(0.0)
@@ -2658,8 +2859,11 @@ class PidNetTrainingApp:
         self.output_text.delete("1.0", tk.END)
         self.output_text.insert(
             tk.END,
-            f"Starting PIDNet-S training on {self.device_var.get() or 'cuda'} from the GUI settings.\n\n",
+            f"Starting compact PIDNet-inspired training on {self.device_var.get() or 'cuda'} "
+            f"into {model_path.name}.\n\n",
         )
+        self.calibrated_checkpoint_signature = None
+        self.release_resources_for_training()
         try:
             self.train_process = subprocess.Popen(
                 command,
@@ -2670,6 +2874,7 @@ class PidNetTrainingApp:
                 bufsize=1,
             )
         except Exception as exc:
+            self.restore_camera_after_training()
             self.status_var.set(f"Could not start training: {exc}")
             return
         threading.Thread(target=self._read_training_output, daemon=True).start()
@@ -2748,8 +2953,10 @@ class PidNetTrainingApp:
             self.output_text.see(tk.END)
             self.update_training_progress_from_line(line)
             if line.lstrip("\r\n").startswith("Training finished"):
+                self.calibrated_checkpoint_signature = None
                 self.unload_segmenter()
                 self.update_model_status()
+                self.restore_camera_after_training()
                 self.status_var.set(self.train_summary_var.get())
         self.root.after(100, self.poll_training_output)
 
@@ -2989,6 +3196,15 @@ class PidNetTrainingApp:
             self.status_var.set("Kept the current annotation; the prediction remains available in Model preview.")
             return False
         draft_metadata = self.model_draft_metadata()
+        source_annotation = item.get("annotation") or {}
+        for key in (
+            "camera_view",
+            "stereo_pair_id",
+            "synchronized_stereo",
+            "zed_timestamp_ns",
+        ):
+            if key in source_annotation:
+                draft_metadata[key] = source_annotation[key]
         self.push_undo_state(item)
         item["mask"] = draft
         item["annotation"] = draft_metadata
@@ -3086,6 +3302,7 @@ class PidNetTrainingApp:
             return
         try:
             segmenter = self.load_segmenter()
+            evaluation_size = checkpoint_image_size(segmenter)
         except Exception as exc:
             self.status_var.set(f"Could not load PIDNet checkpoint: {exc}")
             return
@@ -3108,6 +3325,7 @@ class PidNetTrainingApp:
             if bgr is None or mask is None:
                 continue
             mask, mask_is_multilabel = read_dataset_mask(mask_path, cable_count)
+            bgr, mask = resize_image_and_mask(bgr, mask, evaluation_size)
             probability = self.segmenter_probability(segmenter, bgr, mask=mask, mask_is_multilabel=mask_is_multilabel)
             self.prediction_label_mode = str(getattr(segmenter, "label_mode", "")).strip().lower()
             predicted_channels = self.prediction_masks_by_channel(probability)
@@ -3131,7 +3349,7 @@ class PidNetTrainingApp:
         iou = intersection / np.maximum(union, 1)
         dice = 2.0 * intersection / np.maximum(predicted_count + target_count, 1)
         line = (
-            f"{split} test: {tested} images | thresholds "
+            f"{split} test: {tested} images at {image_size_text(evaluation_size)} | thresholds "
             f"{thresholds['cable']:.2f}/"
             f"{thresholds['endpoints'][0]:.2f}/{thresholds['endpoints'][1]:.2f} "
             f"open {params['open_kernel']} close {params['close_kernel']} min_area {params['min_area_px']} "
@@ -3146,6 +3364,7 @@ class PidNetTrainingApp:
     def calibrate_validation_thresholds(self):
         try:
             segmenter = self.load_segmenter()
+            evaluation_size = checkpoint_image_size(segmenter)
         except Exception as exc:
             self.status_var.set(f"Could not load PIDNet checkpoint: {exc}")
             return
@@ -3156,7 +3375,13 @@ class PidNetTrainingApp:
         grid = np.linspace(0.05, 0.95, 19, dtype=np.float32)
         intersection = np.zeros((OUTPUT_CHANNEL_COUNT, len(grid)), dtype=np.int64)
         union = np.zeros_like(intersection)
+        endpoint_tp = np.zeros((len(ENDPOINT_CHANNELS), len(grid)), dtype=np.int64)
+        endpoint_fp = np.zeros_like(endpoint_tp)
+        endpoint_fn = np.zeros_like(endpoint_tp)
         cleanup = self.live_cleanup_params()
+        phase1 = load_toml_config(PHASE1_CONFIG_PATH)
+        route_config = phase1.get("route", {})
+        endpoint_min_area = int(route_config["endpoint_min_area_px"])
         cable_count = max(1, int(self.cable_count_var.get()))
         tested = 0
         for image_path, mask_path in pairs:
@@ -3164,6 +3389,7 @@ class PidNetTrainingApp:
             if bgr is None:
                 continue
             mask, multilabel = read_dataset_mask(mask_path, cable_count)
+            bgr, mask = resize_image_and_mask(bgr, mask, evaluation_size)
             probability = self.segmenter_probability(segmenter, bgr, mask=mask, mask_is_multilabel=multilabel)
             target_channels = self.target_masks_by_channel(mask, multilabel)
             for channel in range(OUTPUT_CHANNEL_COUNT):
@@ -3178,36 +3404,84 @@ class PidNetTrainingApp:
                         predicted = cleaned > 0
                     else:
                         predicted = raw
-                    if target.shape != predicted.shape:
-                        resized_target = cv2.resize(
-                            target.astype(np.uint8),
-                            (predicted.shape[1], predicted.shape[0]),
-                            interpolation=cv2.INTER_NEAREST,
-                        ) > 0
-                    else:
-                        resized_target = target
-                    intersection[channel, threshold_index] += int(np.count_nonzero(predicted & resized_target))
-                    union[channel, threshold_index] += int(np.count_nonzero(predicted | resized_target))
+                    target = np.asarray(target, dtype=bool)
+                    intersection[channel, threshold_index] += int(np.count_nonzero(predicted & target))
+                    union[channel, threshold_index] += int(np.count_nonzero(predicted | target))
+            centroid_gate = 0.020 * math.hypot(*evaluation_size)
+            for endpoint_index, channel in enumerate(ENDPOINT_CHANNELS):
+                target_centers = component_centers(
+                    target_channels[channel], endpoint_min_area
+                )
+                for threshold_index, threshold in enumerate(grid):
+                    tp, fp, fn = endpoint_component_counts(
+                        probability[:, :, channel] >= float(threshold),
+                        target_centers,
+                        endpoint_min_area,
+                        centroid_gate,
+                    )
+                    endpoint_tp[endpoint_index, threshold_index] += tp
+                    endpoint_fp[endpoint_index, threshold_index] += fp
+                    endpoint_fn[endpoint_index, threshold_index] += fn
             tested += 1
+            if tested % 10 == 0:
+                self.status_var.set(
+                    f"Calibrating PIDNet at {image_size_text(evaluation_size)}: "
+                    f"{tested}/{len(pairs)} frames (pixel pass)."
+                )
+                self.root.update_idletasks()
         if tested == 0:
             self.status_var.set("Could not read validation frames for calibration.")
             return
         iou = intersection / np.maximum(union, 1)
-        indices = [int(np.argmax(iou[channel] - 1e-9 * np.abs(grid - 0.5))) for channel in range(OUTPUT_CHANNEL_COUNT)]
+        body_index = int(np.argmax(iou[0] - 1e-9 * np.abs(grid - 0.5)))
+        endpoint_f1 = 2.0 * endpoint_tp / np.maximum(
+            2 * endpoint_tp + endpoint_fp + endpoint_fn, 1
+        )
+        endpoint_target_count = endpoint_tp[:, 0] + endpoint_fn[:, 0]
+        if np.any(endpoint_target_count == 0):
+            missing = [
+                str(index + 1)
+                for index, count in enumerate(endpoint_target_count)
+                if count == 0
+            ]
+            self.status_var.set(
+                "Validation calibration has no endpoint observations for cable(s): "
+                + ", ".join(missing)
+            )
+            return
+        indices = [body_index]
+        for endpoint_index, channel in enumerate(ENDPOINT_CHANNELS):
+            selected = max(
+                range(len(grid)),
+                key=lambda index: (
+                    float(endpoint_f1[endpoint_index, index]),
+                    float(iou[channel, index]),
+                    -abs(float(grid[index]) - 0.5),
+                ),
+            )
+            indices.append(int(selected))
         calibrated = [float(grid[index]) for index in indices]
         self.test_threshold_var.set(calibrated[0])
         self.endpoint_threshold_vars[0].set(calibrated[1])
         self.endpoint_threshold_vars[1].set(calibrated[2])
         self.on_threshold_change()
+        self.calibrated_checkpoint_signature = self.checkpoint_signature(
+            Path(self.output_var.get()).expanduser().resolve()
+        )
+        component_text = " ".join(
+            f"e{index + 1}_F1={endpoint_f1[index, indices[index + 1]]:.4f}"
+            for index in range(len(ENDPOINT_CHANNELS))
+        )
         line = (
-            f"Validation calibration ({tested} frames): thresholds "
+            f"Validation calibration ({tested} frames at {image_size_text(evaluation_size)}): thresholds "
             f"{'/'.join(f'{value:.2f}' for value in calibrated)} | IoU "
             f"{'/'.join(f'{iou[channel, indices[channel]]:.4f}' for channel in range(OUTPUT_CHANNEL_COUNT))} "
-            "| not saved yet; click Save Runtime to config.toml\n"
+            f"| endpoint components {component_text}\n"
         )
         self.output_text.insert(tk.END, line)
         self.output_text.see(tk.END)
-        self.status_var.set(line.strip())
+        if self.save_live_cleanup_to_config(self.runtime_checkpoint_path):
+            self.status_var.set(line.strip() + " Saved for collection and offline DDER.")
 
     def clear_prediction(self):
         self.live_test_var.set(False)
@@ -3693,6 +3967,7 @@ class PidNetTrainingApp:
         self.root.destroy()
 
     def close(self):
+        self.restart_camera_after_training = False
         if self.train_process is not None and self.train_process.poll() is None:
             self.train_process.terminate()
         if self.zed is not None:
@@ -3701,6 +3976,13 @@ class PidNetTrainingApp:
         if self.left_image is not None:
             self.left_image.free()
             self.left_image = None
+        if self.right_image is not None:
+            self.right_image.free()
+            self.right_image = None
+        self.latest_left_bgr = None
+        self.latest_right_bgr = None
+        self.latest_bgr = None
+        self.latest_zed_timestamp_ns = None
 
 
 def blank_frame():

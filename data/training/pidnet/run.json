@@ -1,0 +1,272 @@
+{
+  "arguments": {
+    "amp": true,
+    "base_channels": 24,
+    "batch_size": 8,
+    "boundary_weight": 0.2,
+    "cable_count": 2,
+    "channels_last": true,
+    "compile": false,
+    "dataset": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet",
+    "deterministic": false,
+    "device": "cuda",
+    "dice_weight": 1.0,
+    "early_stop": 24,
+    "ema_decay": 0.995,
+    "endpoint_weight": 2.0,
+    "epochs": 80,
+    "evaluate_test": false,
+    "focal_gamma": 2.0,
+    "gpu_augment": true,
+    "grad_clip": 5.0,
+    "imgsz": [
+      1920,
+      1080
+    ],
+    "init_checkpoint": null,
+    "lr": 0.001,
+    "min_delta": 0.0001,
+    "num_workers": 2,
+    "output": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_candidate.pt",
+    "prefetch_factor": 1,
+    "resume": null,
+    "seed": 17,
+    "tf32": true,
+    "verified_only": true,
+    "weight_decay": 0.0001
+  },
+  "best_epoch": 49,
+  "best_metrics": {
+    "body_dice": 0.9312146210480045,
+    "body_iou": 0.8712830839444239,
+    "channel_iou_grid": [
+      [
+        0.7860136299648038,
+        0.8094761249388679,
+        0.822677391316345,
+        0.8320420382080004,
+        0.8391389048919524,
+        0.845107686568317,
+        0.8500023663666576,
+        0.854153724088668,
+        0.8578708877092586,
+        0.8612523037864424,
+        0.864092402573868,
+        0.8665600038279,
+        0.868703935642372,
+        0.870158457641771,
+        0.8711304295794814,
+        0.8712830839444239,
+        0.8696689065484747,
+        0.8646870681738743,
+        0.8497335280230075
+      ],
+      [
+        0.7370974394966416,
+        0.7623399897593446,
+        0.7763476462812946,
+        0.7867914612810739,
+        0.7948920165008493,
+        0.8015706913359739,
+        0.8071160662055676,
+        0.8120131628275087,
+        0.8161172930226048,
+        0.8204229078619658,
+        0.8235277400836927,
+        0.8266860406854394,
+        0.8298543216468364,
+        0.8319287402290493,
+        0.8341312141228565,
+        0.8356036739583795,
+        0.8359783225344122,
+        0.8333044022973758,
+        0.8233950579434668
+      ],
+      [
+        0.7146747941119252,
+        0.7443394496036086,
+        0.7621898819962133,
+        0.7747414487423468,
+        0.7847259450296296,
+        0.7929087491556287,
+        0.799738531019729,
+        0.806254412184388,
+        0.8119840980820587,
+        0.817510863817166,
+        0.8219817952624374,
+        0.8257864186743228,
+        0.8298373253964505,
+        0.833399570781337,
+        0.8358295161924321,
+        0.8380435840062262,
+        0.8383589053902233,
+        0.8363672634781307,
+        0.8235463126494672
+      ]
+    ],
+    "dice": 0.9179834325820989,
+    "endpoint1_component": {
+      "centroid_mae_px": 1.5500017622209097,
+      "f1": 0.9493087557603688,
+      "fn": 11,
+      "fp": 0,
+      "precision": 1.0,
+      "recall": 0.9035087719298246,
+      "tp": 103
+    },
+    "endpoint1_iou": 0.8359783225344122,
+    "endpoint1_quality": 0.8926435391473905,
+    "endpoint2_component": {
+      "centroid_mae_px": 1.9510881532667825,
+      "f1": 0.97,
+      "fn": 6,
+      "fp": 0,
+      "precision": 1.0,
+      "recall": 0.941747572815534,
+      "tp": 97
+    },
+    "endpoint2_iou": 0.8383589053902233,
+    "endpoint2_quality": 0.9041794526951117,
+    "iou": 0.8485401039563532,
+    "score": 0.8873506717220158,
+    "threshold_grid": [
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.39999999999999997,
+      0.44999999999999996,
+      0.49999999999999994,
+      0.5499999999999999,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.7999999999999999,
+      0.85,
+      0.9,
+      0.95
+    ],
+    "thresholds": [
+      0.7999999999999999,
+      0.85,
+      0.85
+    ]
+  },
+  "best_score": 0.8873506717220158,
+  "channel_prevalence": [
+    0.009932480575267758,
+    0.0012210708037650305,
+    0.00031766161952165057
+  ],
+  "cuda": {
+    "capability": [
+      8,
+      9
+    ],
+    "cuda_version": "12.8",
+    "device": "NVIDIA GeForce RTX 4080",
+    "total_memory": 17170956288
+  },
+  "dataset_profiles": {
+    "test": {
+      "both_endpoint_frames": 0,
+      "frame_count": 0,
+      "positive_frames": [
+        0,
+        0,
+        0
+      ],
+      "positive_pixels": [
+        0,
+        0,
+        0
+      ],
+      "prevalence": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "total_pixels": 0
+    },
+    "train": {
+      "both_endpoint_frames": 138,
+      "frame_count": 264,
+      "positive_frames": [
+        264,
+        243,
+        159
+      ],
+      "positive_pixels": [
+        3869758,
+        475737,
+        123763
+      ],
+      "prevalence": [
+        0.009932480575267758,
+        0.0012210708037650305,
+        0.00031766161952165057
+      ],
+      "total_pixels": 389606400
+    },
+    "val": {
+      "both_endpoint_frames": 42,
+      "frame_count": 68,
+      "positive_frames": [
+        68,
+        57,
+        53
+      ],
+      "positive_pixels": [
+        1035791,
+        83429,
+        77609
+      ],
+      "prevalence": [
+        0.01065312952540811,
+        0.0008580688026592944,
+        0.0007982099953923118
+      ],
+      "total_pixels": 97228800
+    }
+  },
+  "dataset_snapshot": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_candidate_dataset.json",
+  "finished_at": "2026-08-05 16:08:21",
+  "focal_alpha": [
+    0.9900675194247323,
+    0.998778929196235,
+    0.9996823383804784
+  ],
+  "locked_test_metrics": null,
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.12.10 (tags/v3.12.10:0cc8128, Apr  8 2025, 12:21:36) [MSC v.1943 64 bit (AMD64)]",
+  "selected_session_counts": {
+    "test": 0,
+    "train": 18,
+    "val": 10
+  },
+  "split_counts": {
+    "test": 0,
+    "train": 264,
+    "val": 68
+  },
+  "started_at": "2026-08-05 15:27:59",
+  "termination": {
+    "best_epoch": 49,
+    "best_score": 0.8873506717220158,
+    "body_iou": 0.8656321701390489,
+    "current_score": 0.8756011442503998,
+    "endpoint1_quality": 0.8917389104143801,
+    "endpoint2_quality": 0.873181736470396,
+    "min_delta": 0.0001,
+    "patience": 24,
+    "plateau_start_epoch": 50,
+    "required_score": 0.8874506717220157,
+    "stopped_epoch": 73,
+    "type": "validation_plateau"
+  },
+  "torch": "2.11.0+cu128"
+}

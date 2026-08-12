@@ -1,0 +1,27 @@
+[paths]
+recording_directory = "data/offline_dder/recordings"
+observation_directory = "data/offline_dder/observations"
+model_directory = "data/offline_dder/models"
+
+[cable]
+length_m = 0.518
+mass_kg = 0.03
+diameter_m = 0.009
+node_count = 24
+
+[optimization]
+device = "cuda"
+optimizer_iterations = 40
+maximum_dt_s = 0.034
+window_frames = 8
+window_stride = 4
+velocity_window_frames = 3
+robust_scale_m = 0.003
+ei_min_n_m2 = 1.0e-7
+ei_max_n_m2 = 1.0e-4
+cb_min_n_m2_s = 1.0e-10
+cb_max_n_m2_s = 2.0e-7
+
+[solver]
+substeps = 8
+constraint_iterations = 8

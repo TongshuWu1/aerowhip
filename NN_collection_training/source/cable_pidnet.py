@@ -265,20 +265,31 @@ class PidNetSegmenter:
         return self._threshold_cache_tensor
 
     def _input_tensor(self, bgr):
-        bgr = np.asarray(bgr, dtype=np.uint8)
-        if bgr.ndim != 3 or bgr.shape[2] < 3:
-            raise ValueError(f"PIDNet input must be an HxWx3 BGR image; got shape {bgr.shape}.")
-        image = torch.from_numpy(np.ascontiguousarray(bgr[:, :, :3])).to(
+        return self._input_tensor_batch(np.asarray(bgr, dtype=np.uint8)[None, ...])
+
+    def _input_tensor_batch(self, bgr_batch):
+        bgr_batch = np.asarray(bgr_batch, dtype=np.uint8)
+        if bgr_batch.ndim != 4 or bgr_batch.shape[3] < 3:
+            raise ValueError(
+                "PIDNet batch input must be NxHxWx3 BGR images; "
+                f"got shape {bgr_batch.shape}."
+            )
+        image = torch.from_numpy(np.ascontiguousarray(bgr_batch[:, :, :, :3])).to(
             self.device,
             non_blocking=True,
         )
-        image = image.permute(2, 0, 1).flip(0).unsqueeze(0).float() / 255.0
+        image = image.permute(0, 3, 1, 2).flip(1).float() / 255.0
         if self.channels_last:
             image = image.contiguous(memory_format=torch.channels_last)
         return (image - self.mean) / self.std
 
     def _forward_logits(self, bgr):
         image = self._input_tensor(bgr)
+        with torch.amp.autocast("cuda", enabled=self.use_amp):
+            return self.model(image, return_boundary=False)["seg"]
+
+    def _forward_logits_batch(self, bgr_batch):
+        image = self._input_tensor_batch(bgr_batch)
         with torch.amp.autocast("cuda", enabled=self.use_amp):
             return self.model(image, return_boundary=False)["seg"]
 
@@ -290,6 +301,15 @@ class PidNetSegmenter:
         logits = self._forward_logits(bgr)
         probability = torch.sigmoid(logits)[0].detach().cpu().numpy()
         return np.ascontiguousarray(np.moveaxis(probability, 0, -1), dtype=np.float32)
+
+    @torch_inference_mode()
+    def probability_maps_batch(self, bgr_batch):
+        """Return NxHxWx3 probabilities from one batched model forward."""
+
+        bgr_batch = np.asarray(bgr_batch, dtype=np.uint8)
+        logits = self._forward_logits_batch(bgr_batch)
+        probability = torch.sigmoid(logits).detach().cpu().numpy()
+        return np.ascontiguousarray(np.moveaxis(probability, 1, -1), dtype=np.float32)
 
     @torch_inference_mode()
     def mask_channels(self, bgr, channels, thresholds):
@@ -311,6 +331,36 @@ class PidNetSegmenter:
         threshold_logits = self._threshold_logits(thresholds, selected.dtype)
         masks = (selected >= threshold_logits).to(torch.uint8).mul_(255).cpu().numpy()
         return [np.ascontiguousarray(mask, dtype=np.uint8) for mask in masks]
+
+    @torch_inference_mode()
+    def mask_channels_batch(self, bgr_batch, channels, thresholds):
+        """Threshold a same-sized BGR image batch with one CUDA forward pass.
+
+        The return value is indexed as ``result[image][channel]``.  It keeps
+        stereo inference on one shared model invocation while retaining the
+        canonical channel thresholds used by the annotation GUI.
+        """
+
+        bgr_batch = np.asarray(bgr_batch, dtype=np.uint8)
+        channels = tuple(int(channel) for channel in channels)
+        thresholds = tuple(float(threshold) for threshold in thresholds)
+        if len(channels) != len(thresholds):
+            raise ValueError("PIDNet channels and thresholds must have the same length.")
+        invalid = [channel for channel in channels if channel < 0 or channel >= self.output_channels]
+        if invalid:
+            raise ValueError(f"PIDNet channel indices out of range: {invalid}")
+        logits = self._forward_logits_batch(bgr_batch)
+        selected = (
+            logits
+            if channels == tuple(range(self.output_channels))
+            else logits[:, list(channels)]
+        )
+        threshold_logits = self._threshold_logits(thresholds, selected.dtype).unsqueeze(0)
+        masks = (selected >= threshold_logits).to(torch.uint8).mul_(255).cpu().numpy()
+        return [
+            [np.ascontiguousarray(mask, dtype=np.uint8) for mask in image_masks]
+            for image_masks in masks
+        ]
 
 
 def resolve_device(device):

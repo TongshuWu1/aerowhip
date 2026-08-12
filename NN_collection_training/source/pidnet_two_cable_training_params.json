@@ -1,8 +1,7 @@
 {
-  "version": 4,
+  "version": 6,
   "dataset": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\datasets\\two_cable_pidnet",
   "output": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\models\\pidnet_two_cable_best.pt",
-  "init_checkpoint": "",
   "epochs": 80,
   "batch_size": 8,
   "imgsz": "1920x1080",
@@ -30,7 +29,8 @@
   "deterministic": false,
   "verified_only": true,
   "evaluate_test": false,
-  "resume_last": false,
+  "capture_stereo": true,
+  "preview_view": "left",
   "test_threshold": 0.85000002,
   "endpoint_thresholds": [
     0.89999998,
