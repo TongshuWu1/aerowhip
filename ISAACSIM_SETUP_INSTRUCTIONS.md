@@ -1,8 +1,22 @@
-# RTX 5090 Windows setup handoff for Codex
+# Isaac Sim and Isaac Lab setup instructions for the RTX 5090 computer
 
-This file is an execution note for Codex on the second computer. The goal is
-to reproduce the project's Isaac drone-cable plant, not to upgrade or redesign
-its physics. Read the complete note before changing the machine.
+## Instruction to Codex on the new computer
+
+Read this entire file before taking action, then carry out the installation and
+verification from beginning to end. You are authorized to inspect the computer,
+clone the project, create the Python environment, install the pinned packages,
+apply the included compatibility patch, and run the tests described below.
+
+Do not redesign or upgrade the project's physics stack. Do not overwrite an
+existing repository or environment without inspecting it first. Ask the user
+only when NVIDIA requires the user to accept the EULA, a driver installation
+requires approval or a reboot, credentials are needed, or a genuine blocker
+cannot be resolved safely. Continue autonomously through ordinary installation
+and troubleshooting steps, and finish by giving the user the complete report
+listed at the end of this file.
+
+The goal is to reproduce the project's Isaac drone-cable plant on the second
+Windows computer with an RTX 5090.
 
 ## Fixed research stack
 

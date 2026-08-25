@@ -37,7 +37,10 @@ identified passive cable in one or 64 cloned environments:
 ```
 
 Its physical assumptions, installation contract, and validation limitations
-are documented in [isaac_whip/README.md](isaac_whip/README.md).
+are documented in [isaac_whip/README.md](isaac_whip/README.md). To reproduce
+the complete RTX 5090 environment on another computer, give that computer's
+Codex agent [ISAACSIM_SETUP_INSTRUCTIONS.md](ISAACSIM_SETUP_INSTRUCTIONS.md)
+and ask it to execute the file from beginning to end.
 
 ## Legacy planar identification prototype
 
