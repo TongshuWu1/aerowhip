@@ -10,7 +10,6 @@ import torch
 from ..shared.dder import DderModel, DderState
 
 from .config import ParticleFilterSettings
-from ..shared.model_artifact import DderArtifact
 
 
 @dataclass(frozen=True, slots=True)
@@ -21,7 +20,7 @@ class ParticleFilterEstimate:
     node_covariance_m2: np.ndarray
     weights: np.ndarray
     ess: float
-    residual_m: float
+    body_residual_px: float
     body_updated: bool
     endpoint_count: int
     prediction_only: bool
@@ -47,32 +46,18 @@ def _student_t_negative_log_likelihood(
     )
 
 
-def _segment_spaced_indices(
-    points_m: np.ndarray,
-    valid: np.ndarray,
-    segment_ids: np.ndarray,
-    spacing_m: float,
-) -> np.ndarray:
-    """Select one observation per DDER segment length along each visible fragment."""
+def _project_camera_points(
+    points_m: torch.Tensor,
+    intrinsics: torch.Tensor,
+) -> tuple[torch.Tensor, torch.Tensor]:
+    """Project camera-frame XYZ to left-image pixels without a host transfer."""
 
-    selected: list[int] = []
-    active = np.asarray(valid, dtype=bool) & np.all(np.isfinite(points_m), axis=1)
-    for segment in np.unique(segment_ids[active]):
-        indices = np.flatnonzero(active & (segment_ids == segment))
-        if len(indices) < 1:
-            continue
-        points = points_m[indices]
-        arc = np.concatenate(
-            ([0.0], np.cumsum(np.linalg.norm(np.diff(points, axis=0), axis=1)))
-        )
-        total = float(arc[-1])
-        targets = (
-            np.asarray((0.5 * total,))
-            if total <= spacing_m
-            else np.arange(0.5 * spacing_m, total, spacing_m)
-        )
-        selected.extend(int(indices[np.argmin(np.abs(arc - target))]) for target in targets)
-    return np.asarray(sorted(set(selected)), dtype=np.int64)
+    depth = points_m[..., 2]
+    valid = torch.isfinite(points_m).all(dim=-1) & (depth > 1.0e-4)
+    safe_depth = torch.where(valid, depth, torch.ones_like(depth))
+    u = intrinsics[0] * points_m[..., 0] / safe_depth + intrinsics[2]
+    v = intrinsics[1] * points_m[..., 1] / safe_depth + intrinsics[3]
+    return torch.stack((u, v), dim=-1), valid
 
 
 class _CudaDderStep:
@@ -99,13 +84,23 @@ class _CudaDderStep:
             with torch.cuda.stream(stream):
                 for _ in range(2):
                     self.output = model.step_runtime(
-                        DderState(self.q, self.v), self.boundary, self.dt, self.constants
+                        DderState(self.q, self.v),
+                        self.boundary,
+                        self.dt,
+                        self.constants,
+                        iterative_damping=True,
                     )
             torch.cuda.current_stream().wait_stream(stream)
             self.graph = torch.cuda.CUDAGraph()
-            with torch.cuda.graph(self.graph):
+            # The runtime uses a fixed-iteration CG solve for the exact SPD
+            # damping system; unlike MAGMA Cholesky, this path is capture-safe.
+            with torch.cuda.graph(self.graph, capture_error_mode="thread_local"):
                 self.output = model.step_runtime(
-                    DderState(self.q, self.v), self.boundary, self.dt, self.constants
+                    DderState(self.q, self.v),
+                    self.boundary,
+                    self.dt,
+                    self.constants,
+                    iterative_damping=True,
                 )
 
     def __call__(
@@ -120,7 +115,11 @@ class _CudaDderStep:
         self.dt.fill_(float(dt_s))
         if self.graph is None:
             return self.model.step_runtime(
-                DderState(self.q, self.v), self.boundary, self.dt, self.constants
+                DderState(self.q, self.v),
+                self.boundary,
+                self.dt,
+                self.constants,
+                iterative_damping=self.device.type == "cuda",
             )
         self.graph.replay()
         assert self.output is not None
@@ -134,11 +133,9 @@ class DderParticleFilter:
         self,
         model: DderModel,
         settings: ParticleFilterSettings,
-        artifact: DderArtifact,
     ) -> None:
         self.model = model
         self.settings = settings
-        self.artifact = artifact
         self.device = torch.device(settings.device)
         if self.device.type == "cuda" and not torch.cuda.is_available():
             raise RuntimeError("DDER particle filter requested CUDA, but CUDA is unavailable.")
@@ -146,12 +143,6 @@ class DderParticleFilter:
             model.parameters.bending_stiffness_n_m2
         ):
             raise ValueError("The fitted DDER is unstable at the configured PF time step.")
-        if model.maximum_stable_bending_damping(settings.maximum_dt_s) < (
-            model.parameters.bending_damping_n_m2_s
-        ):
-            raise ValueError(
-                "The fitted DDER curvature damping is unstable at the configured PF time step."
-            )
         self.generator = torch.Generator(device=self.device).manual_seed(settings.random_seed)
         self.particle_count = settings.particle_count
         self.node_count = model.parameters.node_count
@@ -159,7 +150,10 @@ class DderParticleFilter:
         self.velocities: torch.Tensor | None = None
         self.log_weights: torch.Tensor | None = None
         self.last_timestamp_ns: int | None = None
-        self.stepper: _CudaDderStep | None = None
+        # Capture the fixed-shape transition before a measurement initializes
+        # the posterior.  CUDA-graph warm-up may skip live camera frames, but
+        # those frames must not become an artificial gap in an initialized PF.
+        self.stepper = _CudaDderStep(self.model, self.particle_count, self.device)
 
     @property
     def initialized(self) -> bool:
@@ -251,9 +245,8 @@ class DderParticleFilter:
             (self.particle_count,), -math.log(self.particle_count), device=self.device
         )
         self.last_timestamp_ns = int(timestamp_ns)
-        self.stepper = _CudaDderStep(self.model, self.particle_count, self.device)
         return self._estimate(
-            residual_m=float("nan"), body_updated=False, endpoint_count=2,
+            body_residual_px=float("nan"), body_updated=False, endpoint_count=2,
             prediction_only=False, resampled=False, timing_ms=(0.0, 0.0, 0.0, 0.0),
         )
 
@@ -273,12 +266,11 @@ class DderParticleFilter:
         """
 
         assert self.positions is not None and self.velocities is not None
-        prior_mean = (
-            self.positions[:, (0, -1)]
-            + dt_s * self.velocities[:, (0, -1)]
-        )
+        # A temporarily hidden held endpoint is more defensibly held at its last
+        # position than extrapolated from one noisy image-derived velocity.
+        prior_mean = self.positions[:, (0, -1)]
         prior_sigma = 0.5 * dt_s * dt_s * (
-            self.artifact.endpoint_acceleration_sigma_m_s2
+            self.settings.endpoint_acceleration_sigma_m_s2
         )
         prior_variance = prior_sigma * prior_sigma
         prior_normal = torch.randn(
@@ -397,7 +389,7 @@ class DderParticleFilter:
             endpoints, endpoint_valid, endpoint_sigma_m, dt_s
         )
         for macrostep in range(macrosteps):
-            acceleration = self.artifact.process_acceleration_sigma_m_s2 * torch.randn(
+            acceleration = self.settings.process_acceleration_sigma_m_s2 * torch.randn(
                 self.velocities.shape, generator=self.generator, device=self.device
             )
             acceleration[:, (0, -1)] = 0.0
@@ -413,46 +405,94 @@ class DderParticleFilter:
 
     def _measurement_update(
         self,
-        metric_points: torch.Tensor,
-        selected: torch.Tensor,
-        metric_sigma_m: torch.Tensor,
-        endpoint_valid: torch.Tensor,
+        image_points_xy: torch.Tensor,
+        image_point_valid: torch.Tensor,
+        image_endpoints_xy: torch.Tensor,
+        image_endpoint_valid: torch.Tensor,
+        metric_endpoint_valid: torch.Tensor,
+        intrinsics: torch.Tensor,
         endpoint_log_evidence: torch.Tensor,
     ) -> tuple[bool, int, float]:
         assert self.positions is not None and self.log_weights is not None
         nll = -endpoint_log_evidence
-        body_updated = len(selected) > 0
-        residual_m = float("nan")
+        observed = image_points_xy[image_point_valid]
+        body_updated = len(observed) > 0
+        body_residual_px = float("nan")
         if body_updated:
-            observed = metric_points[selected]
             coordinate = torch.linspace(
-                0.0, self.node_count - 1.0, 2 * self.node_count - 1,
+                0.0,
+                self.node_count - 1.0,
+                8 * (self.node_count - 1) + 1,
                 device=self.device,
             )
             low = torch.floor(coordinate).long()
             high = torch.clamp(low + 1, max=self.node_count - 1)
             fraction = (coordinate - low)[None, :, None]
             curve = (1.0 - fraction) * self.positions[:, low] + fraction * self.positions[:, high]
+            projected, projected_valid = _project_camera_points(curve, intrinsics)
             distance = torch.cdist(
-                observed[None].expand(self.particle_count, -1, -1), curve
+                observed[None].expand(self.particle_count, -1, -1), projected
+            )
+            distance = torch.where(
+                projected_valid[:, None],
+                distance,
+                torch.full_like(distance, 1.0e6),
             ).amin(dim=2)
-            sigma = metric_sigma_m[selected]
-            nll += _student_t_negative_log_likelihood(
-                distance / sigma[None],
-                self.artifact.student_t_degrees_of_freedom,
-            ).sum(dim=1)
+            body_nll = _student_t_negative_log_likelihood(
+                distance / self.settings.body_pixel_sigma_px,
+                self.settings.student_t_degrees_of_freedom,
+            ).mean(dim=1)
+            nll += body_nll
             weights_before = torch.softmax(self.log_weights, dim=0)
-            residual_m = float(
+            body_residual_px = float(
                 torch.sqrt(torch.sum(weights_before * distance.square().mean(dim=1))).cpu()
             )
+        terminal_pixels, terminal_projected = _project_camera_points(
+            self.positions[:, (0, -1)], intrinsics
+        )
+        pixel_only = image_endpoint_valid & ~metric_endpoint_valid
+        endpoint_indices = torch.nonzero(pixel_only, as_tuple=False).squeeze(1)
+        if len(endpoint_indices) == 1:
+            distances = torch.linalg.vector_norm(
+                terminal_pixels - image_endpoints_xy[endpoint_indices[0]], dim=-1
+            )
+            distances = torch.where(
+                terminal_projected,
+                distances,
+                torch.full_like(distances, 1.0e6),
+            )
+            best = distances.amin(dim=1)
+            nll += _student_t_negative_log_likelihood(
+                best / self.settings.endpoint_pixel_sigma_px,
+                self.settings.student_t_degrees_of_freedom,
+            )
+        elif len(endpoint_indices) == 2:
+            measured = image_endpoints_xy[endpoint_indices]
+            pairwise = torch.linalg.vector_norm(
+                terminal_pixels[:, :, None] - measured[None, None], dim=-1
+            )
+            pairwise = torch.where(
+                terminal_projected[:, :, None],
+                pairwise,
+                torch.full_like(pairwise, 1.0e6),
+            )
+            robust = _student_t_negative_log_likelihood(
+                pairwise / self.settings.endpoint_pixel_sigma_px,
+                self.settings.student_t_degrees_of_freedom,
+            )
+            direct = robust[:, 0, 0] + robust[:, 1, 1]
+            reverse = robust[:, 0, 1] + robust[:, 1, 0]
+            nll += -torch.logsumexp(torch.stack((-direct, -reverse), dim=1), dim=1) + math.log(2.0)
+        elif len(endpoint_indices) > 2:
+            raise ValueError("A cable frame can contain at most two image endpoints.")
         # The endpoint proposal is conditioned on the measurement, so its
         # importance correction is the predictive endpoint evidence computed by
         # _sample_endpoint_boundary. This is not a second measurement score.
-        endpoint_count = int(torch.count_nonzero(endpoint_valid))
+        endpoint_count = int(torch.count_nonzero(image_endpoint_valid))
         if body_updated or endpoint_count > 0:
             updated = self.log_weights - nll
             self.log_weights = updated - torch.logsumexp(updated, dim=0)
-        return body_updated, endpoint_count, residual_m
+        return body_updated, endpoint_count, body_residual_px
 
     def _resample_if_needed(self) -> tuple[float, bool]:
         assert self.positions is not None and self.velocities is not None and self.log_weights is not None
@@ -473,7 +513,7 @@ class DderParticleFilter:
     def _estimate(
         self,
         *,
-        residual_m: float,
+        body_residual_px: float,
         body_updated: bool,
         endpoint_count: int,
         prediction_only: bool,
@@ -494,7 +534,7 @@ class DderParticleFilter:
             covariance.detach().cpu().numpy(),
             weights.detach().cpu().numpy(),
             ess,
-            residual_m,
+            body_residual_px,
             body_updated,
             endpoint_count,
             prediction_only,
@@ -506,13 +546,14 @@ class DderParticleFilter:
         self,
         *,
         timestamp_ns: int,
-        metric_points_m: np.ndarray,
-        metric_valid: np.ndarray,
-        segment_ids: np.ndarray,
-        metric_sigma_m: np.ndarray,
         endpoints_m: np.ndarray,
         endpoint_valid: np.ndarray,
         endpoint_sigma_m: np.ndarray,
+        image_points_xy: np.ndarray,
+        image_point_valid: np.ndarray,
+        image_endpoints_xy: np.ndarray,
+        image_endpoint_valid: np.ndarray,
+        left_intrinsics: np.ndarray,
     ) -> ParticleFilterEstimate:
         if not self.initialized or self.last_timestamp_ns is None:
             raise RuntimeError("Initialize the DDER particle filter before update().")
@@ -521,21 +562,34 @@ class DderParticleFilter:
             raise ValueError("PF timestamps must be strictly increasing.")
         if dt > self.settings.maximum_gap_s:
             raise ValueError(f"PF frame gap {dt:.3f}s exceeds the configured maximum.")
-        metric_points = torch.as_tensor(metric_points_m, dtype=torch.float32, device=self.device)
-        selected = torch.as_tensor(
-            _segment_spaced_indices(
-                metric_points_m,
-                metric_valid,
-                segment_ids,
-                self.model.parameters.segment_length_m,
-            ),
-            dtype=torch.long,
+        # Observation contracts deliberately expose read-only NumPy arrays.
+        # torch.tensor makes owned device storage; torch.as_tensor could alias
+        # that read-only memory and emits an undefined-behaviour warning.
+        endpoints = torch.tensor(endpoints_m, dtype=torch.float32, device=self.device)
+        endpoint_mask = torch.tensor(endpoint_valid, dtype=torch.bool, device=self.device)
+        endpoint_sigma = torch.tensor(
+            endpoint_sigma_m, dtype=torch.float32, device=self.device
+        )
+        image_points = torch.tensor(
+            image_points_xy, dtype=torch.float32, device=self.device
+        )
+        image_point_mask = torch.tensor(
+            image_point_valid, dtype=torch.bool, device=self.device
+        )
+        image_endpoints = torch.tensor(
+            image_endpoints_xy, dtype=torch.float32, device=self.device
+        )
+        image_endpoint_mask = torch.tensor(
+            image_endpoint_valid, dtype=torch.bool, device=self.device
+        )
+        k = np.asarray(left_intrinsics, dtype=np.float32)
+        if k.shape != (3, 3):
+            raise ValueError("Left-camera intrinsics must have shape 3x3.")
+        intrinsics = torch.as_tensor(
+            (k[0, 0], k[1, 1], k[0, 2], k[1, 2]),
+            dtype=torch.float32,
             device=self.device,
         )
-        metric_sigma = torch.as_tensor(metric_sigma_m, dtype=torch.float32, device=self.device)
-        endpoints = torch.as_tensor(endpoints_m, dtype=torch.float32, device=self.device)
-        endpoint_mask = torch.as_tensor(endpoint_valid, dtype=torch.bool, device=self.device)
-        endpoint_sigma = torch.as_tensor(endpoint_sigma_m, dtype=torch.float32, device=self.device)
         start = time.perf_counter()
         boundary_done = time.perf_counter()
         endpoint_log_evidence = self._propagate(
@@ -544,11 +598,13 @@ class DderParticleFilter:
         if self.device.type == "cuda":
             torch.cuda.synchronize()
         transition_done = time.perf_counter()
-        body_updated, endpoint_count, residual = self._measurement_update(
-            metric_points,
-            selected,
-            metric_sigma,
+        body_updated, endpoint_count, body_residual_px = self._measurement_update(
+            image_points,
+            image_point_mask,
+            image_endpoints,
+            image_endpoint_mask,
             endpoint_mask,
+            intrinsics,
             endpoint_log_evidence,
         )
         if self.device.type == "cuda":
@@ -557,7 +613,7 @@ class DderParticleFilter:
         # Preserve the weighted posterior in the returned estimate. Resampling
         # prepares only the next frame's particle population.
         estimate = self._estimate(
-            residual_m=residual,
+            body_residual_px=body_residual_px,
             body_updated=body_updated,
             endpoint_count=endpoint_count,
             prediction_only=not body_updated and endpoint_count == 0,
@@ -574,7 +630,7 @@ class DderParticleFilter:
             estimate.node_covariance_m2,
             estimate.weights,
             estimate.ess,
-            estimate.residual_m,
+            estimate.body_residual_px,
             estimate.body_updated,
             estimate.endpoint_count,
             estimate.prediction_only,

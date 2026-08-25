@@ -1,10 +1,14 @@
 # Offline planar identification
 
-Run:
+This earlier image-plane workflow is retained as an internal prototype. It is
+not the public offline-fitting application. For reproducibility, launch it with:
 
 ```powershell
-.\.venv\Scripts\python.exe run_offline.py
+.\.venv\Scripts\python.exe -m research_tools.legacy_rgb_offline
 ```
+
+The supported OptiTrack identification application is
+`run_offline_fitting.py` at the repository root.
 
 ## Physical setup
 

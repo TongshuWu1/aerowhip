@@ -389,11 +389,6 @@ def _fit(
         settings.optimization.maximum_dt_s
     ):
         raise ValueError("Configured EI range exceeds the explicit solver stability limit.")
-    if settings.optimization.cb_max_n_m2_s > model.maximum_stable_bending_damping(
-        settings.optimization.maximum_dt_s
-    ):
-        raise ValueError("Configured Cb range exceeds the explicit solver stability limit.")
-
     raw_ei = torch.tensor(
         _raw_for_value(
             nominal_ei,

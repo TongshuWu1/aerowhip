@@ -95,12 +95,13 @@ small-angle `theta^2` approximation.
 
 ## Time integration
 
-Each frame interval is divided into fixed substeps. Gravity, bending force, and
-curvature-rate damping are advanced with a semi-implicit Euler step. Endpoint
-positions are interpolated over the substeps. The coupled length projection and
-velocity projection then enforce the endpoint and inextensibility constraints.
-The explicit bending and damping updates are checked against conservative
-mass/grid/time-step stability limits.
+Each frame interval is divided into fixed substeps. Gravity and bending force
+use a symplectic Euler update. The exact fixed-geometry Kelvin--Voigt
+curvature-rate operator is advanced by backward Euler, so its physical
+coefficient is not limited by explicit damping stability. Endpoint positions
+are interpolated over the substeps. The coupled length and velocity projections
+then enforce endpoint and inextensibility constraints. The remaining explicit
+elastic update is checked against a conservative mass/grid/time-step limit.
 
 ## Planar RGB measurement
 
@@ -161,7 +162,8 @@ motion capture.
 
 ## Synthetic recovery check
 
-`run_model_check.py` generates a known, exactly inextensible planar trajectory
+The internal `research_tools.model_check` utility generates a known, exactly
+inextensible planar trajectory
 with prescribed `EI` and `Cb`, then calls the same production rollout fitter.
 The generated motion contains a transverse velocity mode, slow endpoint shape
 change, a faster endpoint change, and settling. Non-overlapping windows avoid

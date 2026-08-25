@@ -59,6 +59,7 @@ def skeletonize_body(mask: np.ndarray) -> np.ndarray:
 class _Graph:
     pixels_yx: np.ndarray
     index_image: np.ndarray
+    neighbour_indices: np.ndarray
     y0: int
     x0: int
 
@@ -77,7 +78,16 @@ def _graph(pixels_yx: np.ndarray) -> _Graph:
     x0, x1 = int(pixels[:, 1].min()) - 1, int(pixels[:, 1].max()) + 2
     index = np.full((y1 - y0, x1 - x0), -1, dtype=np.int32)
     index[pixels[:, 0] - y0, pixels[:, 1] - x0] = np.arange(len(pixels))
-    return _Graph(pixels, index, y0, x0)
+    neighbours = np.full((len(pixels), 8), -1, dtype=np.int32)
+    for column, (dy, dx) in enumerate(
+        ((-1, -1), (-1, 0), (-1, 1), (0, -1),
+         (0, 1), (1, -1), (1, 0), (1, 1))
+    ):
+        neighbours[:, column] = index[
+            pixels[:, 0] + dy - y0,
+            pixels[:, 1] + dx - x0,
+        ]
+    return _Graph(pixels, index, neighbours, y0, x0)
 
 
 def _shortest_tree(graph: _Graph, start: int) -> tuple[np.ndarray, np.ndarray]:
@@ -85,21 +95,16 @@ def _shortest_tree(graph: _Graph, start: int) -> tuple[np.ndarray, np.ndarray]:
     predecessor = np.full(len(graph.pixels_yx), -1, dtype=np.int32)
     distance[start] = 0.0
     queue: list[tuple[float, int]] = [(0.0, start)]
-    neighbours = (
-        (-1, -1, math.sqrt(2.0)), (-1, 0, 1.0), (-1, 1, math.sqrt(2.0)),
-        (0, -1, 1.0), (0, 1, 1.0),
-        (1, -1, math.sqrt(2.0)), (1, 0, 1.0), (1, 1, math.sqrt(2.0)),
-    )
+    costs = (math.sqrt(2.0), 1.0, math.sqrt(2.0), 1.0,
+             1.0, math.sqrt(2.0), 1.0, math.sqrt(2.0))
     while queue:
         current_distance, current = heapq.heappop(queue)
         if current_distance != distance[current]:
             continue
-        y, x = graph.pixels_yx[current]
-        for dy, dx, cost in neighbours:
-            ly, lx = int(y + dy) - graph.y0, int(x + dx) - graph.x0
-            if not (0 <= ly < graph.index_image.shape[0] and 0 <= lx < graph.index_image.shape[1]):
-                continue
-            target = int(graph.index_image[ly, lx])
+        for target_value, cost in zip(
+            graph.neighbour_indices[current], costs, strict=True
+        ):
+            target = int(target_value)
             if target < 0:
                 continue
             candidate = current_distance + cost
@@ -316,6 +321,53 @@ def extract_partial_curve(
         endpoint_count, int(body_component_count),
     )
     failure = None if np.any(point_valid) else "No visible cable segment passed the length gate."
+    return ViewObservation(body, endpoints, curve, failure)
+
+
+def extract_skeleton_evidence(
+    body_mask: np.ndarray,
+    endpoint_mask: np.ndarray,
+    body_component_count: int,
+    settings: RouteSettings,
+    *,
+    skeleton: np.ndarray,
+) -> ViewObservation:
+    """Sample visible skeleton pixels when curve order is not required.
+
+    The online posterior uses a one-way observed-point-to-projected-curve
+    likelihood.  It is invariant to observation order, so running the full
+    geodesic graph extraction after PF initialization would add computation
+    without adding information.
+    """
+
+    body = np.asarray(body_mask, dtype=np.uint8)
+    endpoints = np.asarray(endpoint_mask, dtype=np.uint8)
+    skeleton_value = np.asarray(skeleton, dtype=bool)
+    if body.ndim != 2 or endpoints.shape != body.shape or skeleton_value.shape != body.shape:
+        raise ValueError("Body, endpoints and skeleton must be same-sized 2-D arrays.")
+    endpoint_centers, endpoint_valid, endpoint_count = _endpoint_observations(
+        endpoints, settings.endpoint_min_area_px
+    )
+    pixels_yx = np.argwhere(skeleton_value)
+    points = np.full((settings.dense_samples, 2), np.nan, dtype=np.float64)
+    valid = np.zeros(settings.dense_samples, dtype=bool)
+    segment_ids = np.full(settings.dense_samples, -1, dtype=np.int16)
+    if len(pixels_yx) >= settings.minimum_segment_length_px:
+        count = min(settings.dense_samples, len(pixels_yx))
+        indices = np.linspace(0, len(pixels_yx) - 1, count).round().astype(np.int32)
+        points[:count] = pixels_yx[indices, ::-1]
+        valid[:count] = True
+        segment_ids[:count] = 0
+    curve = PartialCurveObservation(
+        points,
+        valid,
+        segment_ids,
+        endpoint_centers,
+        endpoint_valid,
+        endpoint_count,
+        int(body_component_count),
+    )
+    failure = None if np.any(valid) else "No visible cable skeleton passed the length gate."
     return ViewObservation(body, endpoints, curve, failure)
 
 

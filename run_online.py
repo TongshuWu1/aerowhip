@@ -1,6 +1,6 @@
-"""Launch live constrained-rod particle-filter cable tracking."""
+"""Launch the online controller testbed with an independently configured plant."""
 
-from cable_twin.online.app import main
+from drone_mpc.adaptation_testbed_gui import main
 
 
 if __name__ == "__main__":

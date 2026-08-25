@@ -1,0 +1,1139 @@
+{
+  "boundary_condition": {
+    "current_dataset": "two rigid-body pivots plus nine interior markers",
+    "endpoint_material_axis": "calibrated rigid-body local +Y",
+    "endpoint_position": "Motive rigid-body pivot at cable material endpoint",
+    "endpoint_tangent_axis": "calibrated rigid-body local +X",
+    "terminal_orientation_observed": true,
+    "twist_branch": "principal relative angle unwrapped continuously over each take; simulation carries the nearest 2*pi branch"
+  },
+  "created_utc": "2026-08-19T21:40:30.895610+00:00",
+  "endpoint_calibration": {
+    "absorbed_rest_twist_rad": 2.997188334788906,
+    "complete_duration_s": 12.620000000000001,
+    "complete_frame_count": 1263,
+    "correction_matrices": [
+      [
+        [
+          -0.1504365942839243,
+          -0.8636284173502669,
+          0.48115983606835616
+        ],
+        [
+          -0.9851652043944814,
+          0.17160862462095808,
+          2.466392315940078e-06
+        ],
+        [
+          -0.08257330773702865,
+          -0.4740215572110368,
+          -0.8766328833374831
+        ]
+      ],
+      [
+        [
+          0.5753849869739908,
+          0.7903370886816518,
+          -0.21047423362290688
+        ],
+        [
+          0.8160521987155623,
+          -0.5719696722957297,
+          0.08312341995738216
+        ],
+        [
+          -0.054689356701609286,
+          -0.21958592903035795,
+          -0.9740590813885154
+        ]
+      ]
+    ],
+    "endpoint_rigid_body_names": [
+      "endpoint1",
+      "endpoint2"
+    ],
+    "export_rate_hz": 100.0,
+    "method": "static tangent alignment plus relaxed relative-twist zero; right multiplication maps Motive holder frames to cable frames",
+    "position_jitter_rmse_m": 0.002371041956665415,
+    "residual_twist_rms_rad": 0.005305102685240386,
+    "schema": "optitrack_endpoint_frame_calibration_v1",
+    "source": {
+      "path": "optitrack_offline/csv/calibration1_003.csv",
+      "sha256": "4f51d86725ba5cee7f9912c094144883b6edd6539b4c9b31b8a3441c2e3252da",
+      "take_name": "calibration1_003"
+    },
+    "tangent_alignment_rms_rad": 0.009540195684362101
+  },
+  "fit": {
+    "bending_damping_integrator": "backward Euler solve of the exact fixed-geometry Kelvin-Voigt objective corotational curvature-rate operator at every dynamics substep",
+    "best_update": 31,
+    "cb_bounds_n_m2_s": [
+      1e-10,
+      1.5e-05
+    ],
+    "completed_updates": 40,
+    "ei_bounds_n_m2": [
+      1e-08,
+      0.0004
+    ],
+    "elapsed_s": 2517.3643340000126,
+    "gj_bounds_n_m2": [
+      1e-09,
+      0.01
+    ],
+    "initialization_search_history": [
+      {
+        "bending_damping_n_m2_s": 3.872983346207411e-08,
+        "bending_stiffness_n_m2": 2.0000000000000046e-06,
+        "candidate": 1,
+        "subset_objective": 14.386483052758809,
+        "subset_rmse_m": 0.036491285722602,
+        "torsional_stiffness_n_m2": 3.162277660168377e-06
+      },
+      {
+        "bending_damping_n_m2_s": 1.8189202312907952e-06,
+        "bending_stiffness_n_m2": 0.0003895976211519737,
+        "candidate": 2,
+        "subset_objective": 18.726374116227532,
+        "subset_rmse_m": 0.05148210535967774,
+        "torsional_stiffness_n_m2": 5.377305903633944e-09
+      },
+      {
+        "bending_damping_n_m2_s": 2.0752314162070156e-08,
+        "bending_stiffness_n_m2": 1.0587390327075835e-07,
+        "candidate": 3,
+        "subset_objective": 15.095023167079475,
+        "subset_rmse_m": 0.03851115244052518,
+        "torsional_stiffness_n_m2": 0.00014413615926068545
+      },
+      {
+        "bending_damping_n_m2_s": 4.386226723507364e-08,
+        "bending_stiffness_n_m2": 1.6342655083688994e-06,
+        "candidate": 4,
+        "subset_objective": 14.488502863179393,
+        "subset_rmse_m": 0.03676406758290374,
+        "torsional_stiffness_n_m2": 3.1209386089193963e-07
+      },
+      {
+        "bending_damping_n_m2_s": 5.009208348971991e-10,
+        "bending_stiffness_n_m2": 2.525084135936807e-05,
+        "candidate": 5,
+        "subset_objective": 26.96034585406558,
+        "subset_rmse_m": 0.07179286450891877,
+        "torsional_stiffness_n_m2": 0.008356809882930109
+      },
+      {
+        "bending_damping_n_m2_s": 2.879918842408312e-09,
+        "bending_stiffness_n_m2": 3.283531589017431e-06,
+        "candidate": 6,
+        "subset_objective": 14.190258660204563,
+        "subset_rmse_m": 0.03600213370814184,
+        "torsional_stiffness_n_m2": 1.6953643142383428e-06
+      },
+      {
+        "bending_damping_n_m2_s": 4.930502039992541e-06,
+        "bending_stiffness_n_m2": 2.488405809229689e-07,
+        "candidate": 7,
+        "subset_objective": 15.705713420152872,
+        "subset_rmse_m": 0.03971788066934055,
+        "torsional_stiffness_n_m2": 0.0004878520701545984
+      },
+      {
+        "bending_damping_n_m2_s": 3.0831710111581963e-10,
+        "bending_stiffness_n_m2": 1.9173461798477644e-08,
+        "candidate": 8,
+        "subset_objective": 14.99360762897233,
+        "subset_rmse_m": 0.03827793931265141,
+        "torsional_stiffness_n_m2": 3.311370490591806e-08
+      },
+      {
+        "bending_damping_n_m2_s": 5.275720565047225e-07,
+        "bending_stiffness_n_m2": 4.2602875790027837e-05,
+        "candidate": 9,
+        "subset_objective": 11.647189605448494,
+        "subset_rmse_m": 0.029597174680234446,
+        "torsional_stiffness_n_m2": 9.537459396603227e-06
+      },
+      {
+        "bending_damping_n_m2_s": 1.1709501214470184e-10,
+        "bending_stiffness_n_m2": 8.485411835142226e-05,
+        "candidate": 10,
+        "subset_objective": 12.122848994098431,
+        "subset_rmse_m": 0.0315330695711837,
+        "torsional_stiffness_n_m2": 1.0655338903162539e-07
+      },
+      {
+        "bending_damping_n_m2_s": 2.0062576165801e-07,
+        "bending_stiffness_n_m2": 3.298986981861016e-08,
+        "candidate": 11,
+        "subset_objective": 20.654958155559996,
+        "subset_rmse_m": 0.05258595419450027,
+        "torsional_stiffness_n_m2": 0.0028784659918495636
+      },
+      {
+        "bending_damping_n_m2_s": 4.8513822495708655e-09,
+        "bending_stiffness_n_m2": 5.057786773963287e-07,
+        "candidate": 12,
+        "subset_objective": 14.793316041988366,
+        "subset_rmse_m": 0.03768247082294283,
+        "torsional_stiffness_n_m2": 2.083873272035736e-09
+      },
+      {
+        "bending_damping_n_m2_s": 8.31916345949063e-06,
+        "bending_stiffness_n_m2": 5.533568647671673e-06,
+        "candidate": 13,
+        "subset_objective": 11.892428332191596,
+        "subset_rmse_m": 0.029506695466594034,
+        "torsional_stiffness_n_m2": 5.62423757766931e-05
+      },
+      {
+        "bending_damping_n_m2_s": 1.2920560123685898e-07,
+        "bending_stiffness_n_m2": 1.3526141583675101e-05,
+        "candidate": 14,
+        "subset_objective": 12.931942133062288,
+        "subset_rmse_m": 0.03253296144942134,
+        "torsional_stiffness_n_m2": 1.13136690451925e-08
+      },
+      {
+        "bending_damping_n_m2_s": 1.4774108165590026e-09,
+        "bending_stiffness_n_m2": 7.542793677480997e-07,
+        "candidate": 15,
+        "subset_objective": 14.693019147340703,
+        "subset_rmse_m": 0.037410534052821576,
+        "torsional_stiffness_n_m2": 3.2811486093565452e-06
+      },
+      {
+        "bending_damping_n_m2_s": 1.2075373487049345e-06,
+        "bending_stiffness_n_m2": 5.791232403741836e-08,
+        "candidate": 16,
+        "subset_objective": 13.974219698402747,
+        "subset_rmse_m": 0.035096520452565,
+        "torsional_stiffness_n_m2": 6.565118849004064e-07
+      },
+      {
+        "bending_damping_n_m2_s": 1.3799838327463004e-08,
+        "bending_stiffness_n_m2": 0.00017623535018464935,
+        "candidate": 17,
+        "subset_objective": 26.55048254940592,
+        "subset_rmse_m": 0.08000724925548437,
+        "torsional_stiffness_n_m2": 0.00019059855243190314
+      },
+      {
+        "bending_damping_n_m2_s": 3.3023587353490886e-07,
+        "bending_stiffness_n_m2": 0.00013427348976791318,
+        "candidate": 18,
+        "subset_objective": 12.258892111047533,
+        "subset_rmse_m": 0.031677974475512766,
+        "torsional_stiffness_n_m2": 8.935797957016262e-07
+      },
+      {
+        "bending_damping_n_m2_s": 1.9412230951952594e-10,
+        "bending_stiffness_n_m2": 4.435186789324585e-08,
+        "candidate": 19,
+        "subset_objective": 16.757197283967045,
+        "subset_rmse_m": 0.04298569563991258,
+        "torsional_stiffness_n_m2": 0.0004280281668517445
+      },
+      {
+        "bending_damping_n_m2_s": 1.3691699389371702e-05,
+        "bending_stiffness_n_m2": 5.750343270750318e-07,
+        "candidate": 20,
+        "subset_objective": 12.240199965836146,
+        "subset_rmse_m": 0.030272911878539515,
+        "torsional_stiffness_n_m2": 1.4420407179616013e-08
+      },
+      {
+        "bending_damping_n_m2_s": 8.043815976125902e-09,
+        "bending_stiffness_n_m2": 1.036518892511445e-05,
+        "candidate": 21,
+        "subset_objective": 13.159269504750554,
+        "subset_rmse_m": 0.03324073489143198,
+        "torsional_stiffness_n_m2": 6.9410491683972455e-06
+      },
+      {
+        "bending_damping_n_m2_s": 1.1546037581080782e-09,
+        "bending_stiffness_n_m2": 4.047495221533654e-06,
+        "candidate": 22,
+        "subset_objective": 14.087389517925779,
+        "subset_rmse_m": 0.03571762155783956,
+        "torsional_stiffness_n_m2": 1.5799774179563674e-09
+      },
+      {
+        "bending_damping_n_m2_s": 1.0169803713297977e-07,
+        "bending_stiffness_n_m2": 3.718705731887097e-07,
+        "candidate": 23,
+        "subset_objective": 14.499891593994606,
+        "subset_rmse_m": 0.036920187312631955,
+        "torsional_stiffness_n_m2": 2.5845321984740137e-05
+      },
+      {
+        "bending_damping_n_m2_s": 1.0783162418571978e-08,
+        "bending_stiffness_n_m2": 2.411554292221266e-08,
+        "candidate": 24,
+        "subset_objective": 14.963607553229696,
+        "subset_rmse_m": 0.03816911077130037,
+        "torsional_stiffness_n_m2": 8.627152765481199e-08
+      }
+    ],
+    "initializer_candidate_count": 24,
+    "initializer_window_count": 12,
+    "local_identifiability_profile": {
+      "bending_damping_n_m2_s": {
+        "lower_objective": 9.94706472895667,
+        "lower_value": 1.357256127053938e-05,
+        "minimum_relative_objective_change": 2.3910408556549467e-12,
+        "selected_objective": 9.91355108336871,
+        "selected_value": 1.4999999999999987e-05,
+        "upper_objective": 9.913551083345006,
+        "upper_value": 1.5e-05
+      },
+      "bending_stiffness_n_m2": {
+        "lower_objective": 9.926196426241779,
+        "lower_value": 9.18843129654642e-05,
+        "minimum_relative_objective_change": 0.001275561377222713,
+        "selected_objective": 9.91355108336871,
+        "selected_value": 0.00010154787051679222,
+        "upper_objective": 9.947324988995346,
+        "upper_value": 0.00011222775328767026
+      },
+      "torsional_stiffness_n_m2": {
+        "lower_objective": 9.94020551056704,
+        "lower_value": 0.00015449831860417382,
+        "minimum_relative_objective_change": 6.121642275695038e-05,
+        "selected_objective": 9.91355108336871,
+        "selected_value": 0.0001707470486129187,
+        "upper_objective": 9.914157955502851,
+        "upper_value": 0.0001887046724742466
+      }
+    },
+    "offline_constraint_solver": "batched dense exact solve of the symmetric tridiagonal RATTLE multiplier system",
+    "optimizer": "sobol_initialization_then_projected_cuda_batched_adam",
+    "optimizer_batch": "deterministically shuffled batches of clean training windows; the default batch holds every current window concurrently on CUDA; the final model is selected only by full-training evaluation",
+    "optimizer_batch_windows": 64,
+    "optimizer_gradient_clip": 10.0,
+    "optimizer_history": [
+      {
+        "bending_damping_n_m2_s": 5.275720565047225e-07,
+        "bending_stiffness_n_m2": 4.2602875790027837e-05,
+        "bounded_log_coordinate_gradient_norm": 12.325182185151384,
+        "objective": 12.545111695417631,
+        "rmse_m": 0.032287326069753944,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 9.537459396603227e-06,
+        "update": 0
+      },
+      {
+        "bending_damping_n_m2_s": 6.695817512134354e-07,
+        "bending_stiffness_n_m2": 5.265991038235858e-05,
+        "bounded_log_coordinate_gradient_norm": 10.415978647269602,
+        "objective": 12.247746222220599,
+        "rmse_m": 0.03166874977617902,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 1.316535884911967e-05,
+        "update": 1
+      },
+      {
+        "bending_damping_n_m2_s": 8.498516619174217e-07,
+        "bending_stiffness_n_m2": 6.50818083416305e-05,
+        "bounded_log_coordinate_gradient_norm": 7.203975673431746,
+        "objective": 11.991163192963885,
+        "rmse_m": 0.031150187132887766,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 1.8089296128960995e-05,
+        "update": 2
+      },
+      {
+        "bending_damping_n_m2_s": 1.0776086153799587e-06,
+        "bending_stiffness_n_m2": 7.983962682703433e-05,
+        "bounded_log_coordinate_gradient_norm": 5.311765370558774,
+        "objective": 11.799910355822501,
+        "rmse_m": 0.030788492865025396,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 2.4799247187493413e-05,
+        "update": 3
+      },
+      {
+        "bending_damping_n_m2_s": 1.366202115396064e-06,
+        "bending_stiffness_n_m2": 9.50225840497855e-05,
+        "bounded_log_coordinate_gradient_norm": 8.397136562498412,
+        "objective": 11.675941017529986,
+        "rmse_m": 0.030574395523719714,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 3.39652381022337e-05,
+        "update": 4
+      },
+      {
+        "bending_damping_n_m2_s": 1.7318271259285293e-06,
+        "bending_stiffness_n_m2": 0.00010526593388860678,
+        "bounded_log_coordinate_gradient_norm": 12.37571144097855,
+        "objective": 11.54748844286695,
+        "rmse_m": 0.03027755969575418,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 4.6498551869748746e-05,
+        "update": 5
+      },
+      {
+        "bending_damping_n_m2_s": 2.1991077699511917e-06,
+        "bending_stiffness_n_m2": 0.00010875665850006368,
+        "bounded_log_coordinate_gradient_norm": 14.007255412728345,
+        "objective": 11.338273719246441,
+        "rmse_m": 0.02968507265373284,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 6.390143624693706e-05,
+        "update": 6
+      },
+      {
+        "bending_damping_n_m2_s": 2.7973109301491883e-06,
+        "bending_stiffness_n_m2": 0.00010718023945081578,
+        "bounded_log_coordinate_gradient_norm": 13.376336860525022,
+        "objective": 11.048749339151982,
+        "rmse_m": 0.028813515601991264,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 8.813344967366059e-05,
+        "update": 7
+      },
+      {
+        "bending_damping_n_m2_s": 3.5642221881732484e-06,
+        "bending_stiffness_n_m2": 0.00010244608561029655,
+        "bounded_log_coordinate_gradient_norm": 11.683894708839457,
+        "objective": 10.725271013035526,
+        "rmse_m": 0.02781849517270842,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.00012193901693283698,
+        "update": 8
+      },
+      {
+        "bending_damping_n_m2_s": 4.543810227804293e-06,
+        "bending_stiffness_n_m2": 9.60014732986608e-05,
+        "bounded_log_coordinate_gradient_norm": 6.522039716139299,
+        "objective": 10.462093403457246,
+        "rmse_m": 0.027007585714274942,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.0001692143701086834,
+        "update": 9
+      },
+      {
+        "bending_damping_n_m2_s": 5.79120437527407e-06,
+        "bending_stiffness_n_m2": 9.001018687600069e-05,
+        "bounded_log_coordinate_gradient_norm": 16.286821975614956,
+        "objective": 10.444574878705481,
+        "rmse_m": 0.026899385095951127,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.00023136798818022583,
+        "update": 10
+      },
+      {
+        "bending_damping_n_m2_s": 7.389785936869564e-06,
+        "bending_stiffness_n_m2": 8.606488771119113e-05,
+        "bounded_log_coordinate_gradient_norm": 31.543236932563282,
+        "objective": 10.569668958813738,
+        "rmse_m": 0.027253424172445216,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.0002748453263747702,
+        "update": 11
+      },
+      {
+        "bending_damping_n_m2_s": 9.340962747307366e-06,
+        "bending_stiffness_n_m2": 8.388830961726255e-05,
+        "bounded_log_coordinate_gradient_norm": 37.69231237812974,
+        "objective": 10.622099879209012,
+        "rmse_m": 0.027431890596224702,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.0002942018125910375,
+        "update": 12
+      },
+      {
+        "bending_damping_n_m2_s": 1.172454435512856e-05,
+        "bending_stiffness_n_m2": 8.321401538103719e-05,
+        "bounded_log_coordinate_gradient_norm": 34.138437909659196,
+        "objective": 10.53869845991679,
+        "rmse_m": 0.027203221653624446,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.00029206175621980453,
+        "update": 13
+      },
+      {
+        "bending_damping_n_m2_s": 1.4569014759173693e-05,
+        "bending_stiffness_n_m2": 8.376364107503354e-05,
+        "bounded_log_coordinate_gradient_norm": 24.49030078784557,
+        "objective": 10.352180567310704,
+        "rmse_m": 0.02668299095207872,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.0002735463281495553,
+        "update": 14
+      },
+      {
+        "bending_damping_n_m2_s": 1.4999999999999987e-05,
+        "bending_stiffness_n_m2": 8.650241377156163e-05,
+        "bounded_log_coordinate_gradient_norm": 31.4434165826273,
+        "objective": 10.172653349342795,
+        "rmse_m": 0.026215940778180593,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.0002463412206910724,
+        "update": 15
+      },
+      {
+        "bending_damping_n_m2_s": 1.4999999999999987e-05,
+        "bending_stiffness_n_m2": 8.564543121740001e-05,
+        "bounded_log_coordinate_gradient_norm": 76.86309744827518,
+        "objective": 10.066952200728014,
+        "rmse_m": 0.02594111160053641,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.00022059976308812086,
+        "update": 16
+      },
+      {
+        "bending_damping_n_m2_s": 1.4999999999999987e-05,
+        "bending_stiffness_n_m2": 8.797269470353739e-05,
+        "bounded_log_coordinate_gradient_norm": 21.295439743704847,
+        "objective": 9.95473258642414,
+        "rmse_m": 0.025654226860915733,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.00019416218509974703,
+        "update": 17
+      },
+      {
+        "bending_damping_n_m2_s": 1.4999999999999987e-05,
+        "bending_stiffness_n_m2": 9.281542828176987e-05,
+        "bounded_log_coordinate_gradient_norm": 12.592070984401207,
+        "objective": 9.922455648142606,
+        "rmse_m": 0.02561098045323606,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.00017293234069420146,
+        "update": 18
+      },
+      {
+        "bending_damping_n_m2_s": 1.4999999999999987e-05,
+        "bending_stiffness_n_m2": 0.00010014509199077417,
+        "bounded_log_coordinate_gradient_norm": 24.542479107871998,
+        "objective": 9.945679786828997,
+        "rmse_m": 0.025741561350673136,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.00015140661970215697,
+        "update": 19
+      },
+      {
+        "bending_damping_n_m2_s": 1.4999999999999987e-05,
+        "bending_stiffness_n_m2": 0.00010953140805919881,
+        "bounded_log_coordinate_gradient_norm": 661.6008152248868,
+        "objective": 10.001010307630317,
+        "rmse_m": 0.025966894276646363,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.00014099900097349418,
+        "update": 20
+      },
+      {
+        "bending_damping_n_m2_s": 1.4999999999999987e-05,
+        "bending_stiffness_n_m2": 0.0001164049081673921,
+        "bounded_log_coordinate_gradient_norm": 10.498477385801547,
+        "objective": 10.06749255503863,
+        "rmse_m": 0.02619900337591999,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.00013316128429520128,
+        "update": 21
+      },
+      {
+        "bending_damping_n_m2_s": 1.4999999999999987e-05,
+        "bending_stiffness_n_m2": 0.00011964134116241584,
+        "bounded_log_coordinate_gradient_norm": 11.487323686674735,
+        "objective": 10.095299280191885,
+        "rmse_m": 0.026296105713118075,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.00013179196419595517,
+        "update": 22
+      },
+      {
+        "bending_damping_n_m2_s": 1.4999999999999987e-05,
+        "bending_stiffness_n_m2": 0.00011950218316541434,
+        "bounded_log_coordinate_gradient_norm": 820.1764633981805,
+        "objective": 10.07784454749791,
+        "rmse_m": 0.026239640023911565,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.0001360725142747043,
+        "update": 23
+      },
+      {
+        "bending_damping_n_m2_s": 1.4999999999999987e-05,
+        "bending_stiffness_n_m2": 0.00012125566146275086,
+        "bounded_log_coordinate_gradient_norm": 43.88159380481427,
+        "objective": 10.076874810278074,
+        "rmse_m": 0.02623948939036319,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.0001398606490367996,
+        "update": 24
+      },
+      {
+        "bending_damping_n_m2_s": 1.4999999999999987e-05,
+        "bending_stiffness_n_m2": 0.00011990461125489293,
+        "bounded_log_coordinate_gradient_norm": 88.42584990192123,
+        "objective": 10.0504391038378,
+        "rmse_m": 0.026152106144727325,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.00014504551237699053,
+        "update": 25
+      },
+      {
+        "bending_damping_n_m2_s": 1.4999999999999987e-05,
+        "bending_stiffness_n_m2": 0.00011701427317170387,
+        "bounded_log_coordinate_gradient_norm": 53.81819089318555,
+        "objective": 10.019164626902144,
+        "rmse_m": 0.02604626312506731,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.0001486876506023145,
+        "update": 26
+      },
+      {
+        "bending_damping_n_m2_s": 1.4999999999999987e-05,
+        "bending_stiffness_n_m2": 0.00011249613860868477,
+        "bounded_log_coordinate_gradient_norm": 548.3776824578865,
+        "objective": 9.986984255692388,
+        "rmse_m": 0.025931531304984164,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.00015127947133872696,
+        "update": 27
+      },
+      {
+        "bending_damping_n_m2_s": 1.4999999999999987e-05,
+        "bending_stiffness_n_m2": 0.00011084690463610087,
+        "bounded_log_coordinate_gradient_norm": 19.76372374235312,
+        "objective": 9.974787162395952,
+        "rmse_m": 0.025888078501451174,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.00015263665073532955,
+        "update": 28
+      },
+      {
+        "bending_damping_n_m2_s": 1.4999999999999987e-05,
+        "bending_stiffness_n_m2": 0.00010865638326936171,
+        "bounded_log_coordinate_gradient_norm": 70.55493192206394,
+        "objective": 9.944973779501868,
+        "rmse_m": 0.025784759726383163,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.00016194163280780691,
+        "update": 29
+      },
+      {
+        "bending_damping_n_m2_s": 1.4999999999999987e-05,
+        "bending_stiffness_n_m2": 0.00010487335421510002,
+        "bounded_log_coordinate_gradient_norm": 37.41088596647816,
+        "objective": 9.922359586965236,
+        "rmse_m": 0.025694355719546615,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.0001716555122453708,
+        "update": 30
+      },
+      {
+        "bending_damping_n_m2_s": 1.4999999999999987e-05,
+        "bending_stiffness_n_m2": 0.00010154787051679222,
+        "bounded_log_coordinate_gradient_norm": 518.1143886314056,
+        "objective": 9.91355108336871,
+        "rmse_m": 0.025648115830986456,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.0001707470486129187,
+        "update": 31
+      },
+      {
+        "bending_damping_n_m2_s": 1.4999999999999987e-05,
+        "bending_stiffness_n_m2": 9.941754869216663e-05,
+        "bounded_log_coordinate_gradient_norm": 4.145451121395297,
+        "objective": 9.924721799093119,
+        "rmse_m": 0.025671913999782494,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.00016106897481059718,
+        "update": 32
+      },
+      {
+        "bending_damping_n_m2_s": 1.4999999999999987e-05,
+        "bending_stiffness_n_m2": 9.776598397986801e-05,
+        "bounded_log_coordinate_gradient_norm": 136.44863696182523,
+        "objective": 9.946295349049773,
+        "rmse_m": 0.02572733505386333,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.00014986376867651033,
+        "update": 33
+      },
+      {
+        "bending_damping_n_m2_s": 1.4999999999999987e-05,
+        "bending_stiffness_n_m2": 9.730629221614583e-05,
+        "bounded_log_coordinate_gradient_norm": 8.04784001621694,
+        "objective": 9.995626069080565,
+        "rmse_m": 0.025876214578069913,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.00013359721692891136,
+        "update": 34
+      },
+      {
+        "bending_damping_n_m2_s": 1.4999999999999987e-05,
+        "bending_stiffness_n_m2": 9.510241648973957e-05,
+        "bounded_log_coordinate_gradient_norm": 17.232561441797298,
+        "objective": 10.029599994155507,
+        "rmse_m": 0.025964260161688922,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.0001246992171430661,
+        "update": 35
+      },
+      {
+        "bending_damping_n_m2_s": 1.4999999999999987e-05,
+        "bending_stiffness_n_m2": 9.258483848059555e-05,
+        "bounded_log_coordinate_gradient_norm": 103.31366522340934,
+        "objective": 10.061895757558355,
+        "rmse_m": 0.026043363098967442,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.00011743775338896236,
+        "update": 36
+      },
+      {
+        "bending_damping_n_m2_s": 1.4999999999999987e-05,
+        "bending_stiffness_n_m2": 9.3117663022292e-05,
+        "bounded_log_coordinate_gradient_norm": 7.877392936584977,
+        "objective": 10.073765389602706,
+        "rmse_m": 0.026084314918206977,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.00011473902585494437,
+        "update": 37
+      },
+      {
+        "bending_damping_n_m2_s": 1.4999999999999987e-05,
+        "bending_stiffness_n_m2": 9.46213307609616e-05,
+        "bounded_log_coordinate_gradient_norm": 7.157808710322105,
+        "objective": 10.063381124679438,
+        "rmse_m": 0.02606509856390207,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.00011695784681795307,
+        "update": 38
+      },
+      {
+        "bending_damping_n_m2_s": 1.4999999999999987e-05,
+        "bending_stiffness_n_m2": 9.661997427622043e-05,
+        "bounded_log_coordinate_gradient_norm": 20.163494450871692,
+        "objective": 10.035252965841522,
+        "rmse_m": 0.02599372321354827,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.0001233038580254996,
+        "update": 39
+      },
+      {
+        "bending_damping_n_m2_s": 1.4999999999999987e-05,
+        "bending_stiffness_n_m2": 9.806198269373394e-05,
+        "bounded_log_coordinate_gradient_norm": 20.163494450871692,
+        "objective": 9.988756302310914,
+        "rmse_m": 0.02586020701949786,
+        "scope": "full_training_set",
+        "torsional_stiffness_n_m2": 0.0001355276065582161,
+        "update": 40
+      }
+    ],
+    "optimizer_initialization": {
+      "bending_damping_n_m2_s": 3.872983346207417e-08,
+      "bending_stiffness_n_m2": 2e-06,
+      "method": "fixed-seed scrambled Sobol search in bounded logarithmic parameter space; the geometric midpoint is candidate one",
+      "seed_point_method": "cold start at geometric midpoint of fixed logarithmic parameter bounds",
+      "torsional_stiffness_n_m2": 3.1622776601683796e-06
+    },
+    "optimizer_learning_rate": 0.02,
+    "optimizer_maximum_updates": 40,
+    "optimizer_seed": 42,
+    "optimizer_stopping": "fixed accepted-update budget with cooperative user cancellation; no line-search extrapolation",
+    "parameter_bound_status": {
+      "bending_damping_n_m2_s": "upper",
+      "bending_stiffness_n_m2": "interior",
+      "torsional_stiffness_n_m2": "interior"
+    },
+    "parameterization": "dimensionless projected logarithmic EI, GJ and Cb",
+    "robust_scale_m": 0.002,
+    "selected_training_objective": 9.91355108336871,
+    "terminal_twist_tracking": "principal DER twist unwrapped separately over each contiguous valid run; simulation carries the nearest continuous 2*pi branch",
+    "training_initialization_rmse_m": 0.00028730917074980484,
+    "training_rmse_by_take_m": {
+      "Take1_001.csv": 0.01758156658730139,
+      "Take1_002.csv": 0.023389907223705885,
+      "Take1_003.csv": 0.03224824054761415,
+      "Take1_004.csv": 0.023301934255551125,
+      "take2_001.csv": 0.025747648030111193,
+      "take2_003.csv": 0.02725546217371831,
+      "take2_004.csv": 0.02034957032597099,
+      "take2_005.csv": 0.027346881299987386
+    },
+    "training_rollout_rmse_m": 0.025648115830986456,
+    "training_window_count": 61,
+    "training_windows_by_take": {
+      "Take1_001.csv": 3,
+      "Take1_002.csv": 11,
+      "Take1_003.csv": 8,
+      "Take1_004.csv": 6,
+      "take2_001.csv": 4,
+      "take2_003.csv": 13,
+      "take2_004.csv": 8,
+      "take2_005.csv": 8
+    },
+    "validation_initialization_rmse_m": 0.0004330633768634209,
+    "validation_rmse_by_take_m": {
+      "take2_002.csv": 0.03203119587111345
+    },
+    "validation_rollout_rmse_m": 0.03203119587111345,
+    "validation_window_count": 11,
+    "window_frames": 100,
+    "window_stride": 100
+  },
+  "measured": {
+    "bare_cable_mass_kg": 0.007,
+    "diameter_m": 0.0035,
+    "interior_marker_count": 9,
+    "interior_marker_masses_kg": [
+      0.000909091,
+      0.000909091,
+      0.000909091,
+      0.000909091,
+      0.000909091,
+      0.000909091,
+      0.000909091,
+      0.000909091,
+      0.000909091
+    ],
+    "length_m": 0.9610000000000001,
+    "marker_count": 11,
+    "marker_interval_lengths_m": [
+      0.078,
+      0.085,
+      0.1,
+      0.1,
+      0.098,
+      0.1,
+      0.1,
+      0.1,
+      0.1,
+      0.1
+    ],
+    "marker_material_coordinates_m": [
+      0.0,
+      0.078,
+      0.163,
+      0.263,
+      0.363,
+      0.46099999999999997,
+      0.5609999999999999,
+      0.6609999999999999,
+      0.7609999999999999,
+      0.8609999999999999,
+      0.9609999999999999
+    ],
+    "marker_node_indices": [
+      0,
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14,
+      16,
+      18,
+      20
+    ],
+    "node_count": 21,
+    "rest_lengths_m": [
+      0.039,
+      0.039,
+      0.0425,
+      0.0425,
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.049,
+      0.049,
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.05
+    ],
+    "rest_shape": "straight",
+    "rod_material_coordinates_m": [
+      0.0,
+      0.039,
+      0.078,
+      0.1205,
+      0.163,
+      0.21300000000000002,
+      0.263,
+      0.313,
+      0.363,
+      0.412,
+      0.46099999999999997,
+      0.511,
+      0.561,
+      0.6110000000000001,
+      0.6610000000000001,
+      0.7110000000000002,
+      0.7610000000000002,
+      0.8110000000000003,
+      0.8610000000000003,
+      0.9110000000000004,
+      0.9610000000000004
+    ],
+    "rod_segments_per_marker_interval": 2,
+    "torsion": "quasi-static homogeneous DER material twist with continuous 2*pi branch tracking",
+    "total_dynamic_mass_kg": 0.015181819,
+    "vertex_masses_kg": [
+      0.0001420395421436004,
+      0.0002840790842872008,
+      0.0012059172226847035,
+      0.000309573361082206,
+      0.001245979657648283,
+      0.00036420395421436004,
+      0.00127329495421436,
+      0.00036420395421436004,
+      0.0012696529146722165,
+      0.0003569198751300728,
+      0.0012696529146722165,
+      0.00036420395421436004,
+      0.00127329495421436,
+      0.00036420395421436004,
+      0.00127329495421436,
+      0.00036420395421436004,
+      0.00127329495421436,
+      0.00036420395421436004,
+      0.00127329495421436,
+      0.00036420395421436004,
+      0.00018210197710718002
+    ]
+  },
+  "measurement_quality": {
+    "maximum_chord_excess_m": 0.003,
+    "maximum_endpoint_angular_speed_rad_s": 20.0,
+    "maximum_endpoint_speed_m_s": 3.0,
+    "maximum_initialization_rmse_m": 0.002,
+    "maximum_marker_speed_m_s": 3.0,
+    "maximum_rigid_body_error_m": 0.002,
+    "training_rejections": {
+      "Take1_001.csv": {
+        "endpoint_angular_speed": 4,
+        "endpoint_separation": 0,
+        "endpoint_speed": 2,
+        "marker_speed": 2,
+        "overlong_marker_chord": 41,
+        "rigid_body_error": 0
+      },
+      "Take1_002.csv": {
+        "endpoint_angular_speed": 0,
+        "endpoint_separation": 0,
+        "endpoint_speed": 0,
+        "marker_speed": 0,
+        "overlong_marker_chord": 22,
+        "rigid_body_error": 0
+      },
+      "Take1_003.csv": {
+        "endpoint_angular_speed": 2,
+        "endpoint_separation": 0,
+        "endpoint_speed": 0,
+        "marker_speed": 0,
+        "overlong_marker_chord": 46,
+        "rigid_body_error": 0
+      },
+      "Take1_004.csv": {
+        "endpoint_angular_speed": 4,
+        "endpoint_separation": 0,
+        "endpoint_speed": 0,
+        "marker_speed": 5,
+        "overlong_marker_chord": 28,
+        "rigid_body_error": 0
+      },
+      "take2_001.csv": {
+        "endpoint_angular_speed": 18,
+        "endpoint_separation": 0,
+        "endpoint_speed": 37,
+        "marker_speed": 49,
+        "overlong_marker_chord": 188,
+        "rigid_body_error": 0
+      },
+      "take2_003.csv": {
+        "endpoint_angular_speed": 6,
+        "endpoint_separation": 0,
+        "endpoint_speed": 63,
+        "marker_speed": 66,
+        "overlong_marker_chord": 52,
+        "rigid_body_error": 0
+      },
+      "take2_004.csv": {
+        "endpoint_angular_speed": 50,
+        "endpoint_separation": 0,
+        "endpoint_speed": 34,
+        "marker_speed": 34,
+        "overlong_marker_chord": 165,
+        "rigid_body_error": 0
+      },
+      "take2_005.csv": {
+        "endpoint_angular_speed": 73,
+        "endpoint_separation": 0,
+        "endpoint_speed": 45,
+        "marker_speed": 45,
+        "overlong_marker_chord": 182,
+        "rigid_body_error": 0
+      }
+    },
+    "validation_rejections": {
+      "take2_002.csv": {
+        "endpoint_angular_speed": 19,
+        "endpoint_separation": 0,
+        "endpoint_speed": 13,
+        "marker_speed": 13,
+        "overlong_marker_chord": 52,
+        "rigid_body_error": 0
+      }
+    }
+  },
+  "observation": {
+    "coordinate_transform": "Motive Y-up to project Z-up: (x,-z,y)",
+    "latent_node_initialization": "measured-site-conditioned equal-edge circular arcs; measured sites move only when a noisy chord exceeds its material interval",
+    "mapping": "eleven measured material points select marker_node_indices from the refined DER state",
+    "position_filter": "none",
+    "source": "Motive reconstructed labeled marker trajectories",
+    "training_take_weighting": "mean over time and interior markers within each window, mean over windows within each take, then mean over takes",
+    "training_velocity_estimator": "centered local quadratic",
+    "validation_velocity_estimator": "causal local quadratic",
+    "velocity_window_frames": 5
+  },
+  "optimized": {
+    "bending_damping_n_m2_s": 1.4999999999999987e-05,
+    "bending_stiffness_n_m2": 0.00010154787051679222,
+    "torsional_stiffness_n_m2": 0.0001707470486129187
+  },
+  "schema": "optitrack_twist_aware_rod_v5",
+  "solver": {
+    "ambient_drag": "not fitted; external drag is fixed to zero",
+    "constraint_iterations": 4,
+    "gravity_m_s2": [
+      0.0,
+      0.0,
+      -9.80665
+    ],
+    "method": "explicit_elastic_der_forces, implicit_kelvin_voigt_damping, mass_weighted_rattle_projection",
+    "substeps": 3
+  },
+  "sources": [
+    {
+      "capture_rate_hz": 100.0,
+      "endpoint_rigid_body_names": [
+        "endpoint1",
+        "endpoint2"
+      ],
+      "export_rate_hz": 100.0,
+      "path": "optitrack_offline/csv/take2_005.csv",
+      "role": "training",
+      "sha256": "14e0e6e1625780cd2b307942bf3f57bf0d6f3574715b080aae4aa7532b59e920",
+      "take_name": "take2_005"
+    },
+    {
+      "capture_rate_hz": 100.0,
+      "endpoint_rigid_body_names": [
+        "endpoint1",
+        "endpoint2"
+      ],
+      "export_rate_hz": 100.0,
+      "path": "optitrack_offline/csv/take2_004.csv",
+      "role": "training",
+      "sha256": "5e8b223992a216cffb64ace0102c36dd16e9638593052a7d57ea86a0fa6a678e",
+      "take_name": "take2_004"
+    },
+    {
+      "capture_rate_hz": 100.0,
+      "endpoint_rigid_body_names": [
+        "endpoint1",
+        "endpoint2"
+      ],
+      "export_rate_hz": 100.0,
+      "path": "optitrack_offline/csv/take2_003.csv",
+      "role": "training",
+      "sha256": "a817c772492ba62c00aa234417e43d4eaeb4b8dff6d2e26385610268a93286f1",
+      "take_name": "take2_003"
+    },
+    {
+      "capture_rate_hz": 100.0,
+      "endpoint_rigid_body_names": [
+        "endpoint1",
+        "endpoint2"
+      ],
+      "export_rate_hz": 100.0,
+      "path": "optitrack_offline/csv/take2_001.csv",
+      "role": "training",
+      "sha256": "ce1d1f253561139efaff475a5e3037db4f4e510fd1b51ccf685038a90de40213",
+      "take_name": "take2_001"
+    },
+    {
+      "capture_rate_hz": 100.0,
+      "endpoint_rigid_body_names": [
+        "endpoint1",
+        "endpoint2"
+      ],
+      "export_rate_hz": 100.0,
+      "path": "optitrack_offline/csv/Take1_001.csv",
+      "role": "training",
+      "sha256": "411365695b8a2b94cc9a17d0a90a6e847bb80c42cc16fabe947ff7b5866c4c57",
+      "take_name": "Take1_001"
+    },
+    {
+      "capture_rate_hz": 100.0,
+      "endpoint_rigid_body_names": [
+        "endpoint1",
+        "endpoint2"
+      ],
+      "export_rate_hz": 100.0,
+      "path": "optitrack_offline/csv/Take1_002.csv",
+      "role": "training",
+      "sha256": "d842f94333797b77bfa6387d220c30834839de35f97d1e2ba64fa8bad0aebfc5",
+      "take_name": "Take1_002"
+    },
+    {
+      "capture_rate_hz": 100.0,
+      "endpoint_rigid_body_names": [
+        "endpoint1",
+        "endpoint2"
+      ],
+      "export_rate_hz": 100.0,
+      "path": "optitrack_offline/csv/Take1_004.csv",
+      "role": "training",
+      "sha256": "0e3dd23d9a05da41c6b18726dc7e1a4b2bb7b773905fbc73b28522e2e92981c0",
+      "take_name": "Take1_004"
+    },
+    {
+      "capture_rate_hz": 100.0,
+      "endpoint_rigid_body_names": [
+        "endpoint1",
+        "endpoint2"
+      ],
+      "export_rate_hz": 100.0,
+      "path": "optitrack_offline/csv/Take1_003.csv",
+      "role": "training",
+      "sha256": "c42de6b4887c4110430545280fbe6ecf5cb650eca49a976320cd6e01c5562090",
+      "take_name": "Take1_003"
+    },
+    {
+      "capture_rate_hz": 100.0,
+      "endpoint_rigid_body_names": [
+        "endpoint1",
+        "endpoint2"
+      ],
+      "export_rate_hz": 100.0,
+      "path": "optitrack_offline/csv/take2_002.csv",
+      "role": "validation",
+      "sha256": "a06f4b6505f99c588f965475e6e7eb35d095839d08199448272ef63cc3d5723c",
+      "take_name": "take2_002"
+    },
+    {
+      "endpoint_rigid_body_names": [
+        "endpoint1",
+        "endpoint2"
+      ],
+      "path": "optitrack_offline/csv/calibration1_003.csv",
+      "role": "calibration",
+      "sha256": "4f51d86725ba5cee7f9912c094144883b6edd6539b4c9b31b8a3441c2e3252da",
+      "take_name": "calibration1_003"
+    }
+  ]
+}

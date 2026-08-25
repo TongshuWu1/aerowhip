@@ -15,7 +15,7 @@ from .metric_curve import (
     orient_view_to_previous,
 )
 from .pidnet_runtime import PidnetRuntime, PidnetResult
-from .routes import extract_partial_curve, skeletonize_body
+from .routes import extract_partial_curve, extract_skeleton_evidence, skeletonize_body
 
 
 @dataclass(frozen=True, slots=True)
@@ -42,13 +42,21 @@ class CableObserver:
         self.pidnet = pidnet or PidnetRuntime(settings.pidnet_runtime_config)
         self._previous_endpoints_xy: np.ndarray | None = None
 
-    def process(self, frame: StereoFrame) -> CableFrameObservation:
+    def process(
+        self,
+        frame: StereoFrame,
+        *,
+        ordered_route: bool = True,
+    ) -> CableFrameObservation:
         started = time.perf_counter()
         result = self.pidnet.infer(frame.left_bgr)
 
-        route_started = time.perf_counter()
+        skeleton_started = time.perf_counter()
         skeleton = skeletonize_body(result.masks[0])
-        view = extract_partial_curve(
+        skeleton_ms = (time.perf_counter() - skeleton_started) * 1000.0
+        route_started = time.perf_counter()
+        extractor = extract_partial_curve if ordered_route else extract_skeleton_evidence
+        view = extractor(
             result.masks[0],
             result.masks[self.settings.cable_identity],
             result.body_component_count,
@@ -86,6 +94,7 @@ class CableObserver:
             timings_ms={
                 "pidnet_ms": result.inference_ms,
                 "mask_postprocess_ms": result.postprocess_ms,
+                "skeleton_ms": skeleton_ms,
                 "route_ms": route_ms,
                 "depth_lift_ms": depth_lift_ms,
                 "total_ms": total_ms,

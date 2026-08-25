@@ -30,8 +30,9 @@ class PointCloudSnapshot:
     status: str = "ZED point cloud"
     segmentation_rgb: np.ndarray | None = None
     skeleton_graph_rgb: np.ndarray | None = None
+    cable_mask: np.ndarray | None = None
     top_panel_title: str = "RGB + PIDNET SEGMENTATION"
-    bottom_panel_title: str = "SKELETON GRAPH + ORDERED ROUTE"
+    bottom_panel_title: str = "SKELETON + OBSERVATION SAMPLES"
 
 
 def deproject_for_viewer(
@@ -41,6 +42,7 @@ def deproject_for_viewer(
     stride: int,
     depth_min_m: float,
     depth_max_m: float,
+    cable_mask: np.ndarray | None = None,
 ) -> np.ndarray:
     """Return interleaved XYZRGB in OpenGL's right-handed camera frame."""
 
@@ -64,6 +66,12 @@ def deproject_for_viewer(
     vertices[:, 3] = colors[:, 2] / 255.0
     vertices[:, 4] = colors[:, 1] / 255.0
     vertices[:, 5] = colors[:, 0] / 255.0
+    if cable_mask is not None:
+        highlight = np.asarray(cable_mask, dtype=bool)
+        if highlight.shape != frame.depth_m.shape:
+            raise ValueError("Cable highlight mask must match registered depth.")
+        selected = highlight[::stride, ::stride][rows, columns]
+        vertices[selected, 3:6] = np.asarray((1.0, 0.55, 0.05), dtype=np.float32)
     return np.ascontiguousarray(vertices)
 
 
@@ -286,6 +294,7 @@ class _Renderer:
         vertices = deproject_for_viewer(
             snapshot.frame, snapshot.calibration, stride=self.owner.stride,
             depth_min_m=self.owner.depth_min_m, depth_max_m=self.owner.depth_max_m,
+            cable_mask=snapshot.cable_mask,
         )
         self.vertex_count = len(vertices)
         required = max(vertices.nbytes, 1)

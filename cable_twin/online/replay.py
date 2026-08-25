@@ -15,7 +15,7 @@ from ..shared.observation_data import (
     save_trajectory,
 )
 
-from .config import DEFAULT_CONFIG_PATH, load_settings
+from .config import DEFAULT_CONFIG_PATH, load_cable_settings, load_settings
 from .filter import DderParticleFilter, ParticleFilterEstimate
 from ..shared.model_artifact import load_dder_artifact
 
@@ -48,10 +48,18 @@ def run(arguments: argparse.Namespace) -> tuple[Path, Path]:
     sequence = load_observation(arguments.observation)
     artifact = load_dder_artifact(arguments.model)
     settings = load_settings(arguments.config)
+    cable_settings = load_cable_settings(arguments.config)
     if artifact.cable_identity != sequence.cable_identity:
         raise ValueError("DDER model and observation cable identities differ.")
-    model = artifact.make_model(_gravity(sequence))
-    tracker = DderParticleFilter(model, settings, artifact)
+    model = artifact.make_rescaled_bare_model(
+        _gravity(sequence),
+        cable_length_m=cable_settings.length_m,
+        cable_diameter_m=cable_settings.diameter_m,
+        node_count=cable_settings.node_count,
+        substeps=cable_settings.solver_substeps,
+        constraint_iterations=cable_settings.constraint_iterations,
+    )
+    tracker = DderParticleFilter(model, settings)
     metric_sensor_sigma = registered_depth_standard_deviation(
         sequence.metric_points_m,
         sequence.metric_valid,
@@ -59,7 +67,7 @@ def run(arguments: argparse.Namespace) -> tuple[Path, Path]:
         sequence.depth_support,
     )
     metric_sigma = np.sqrt(
-        metric_sensor_sigma**2 + artifact.unresolved_curve_noise_m**2
+        metric_sensor_sigma**2 + settings.metric_curve_noise_m**2
     )
     endpoint_sensor_sigma = registered_depth_standard_deviation(
         sequence.metric_endpoint_points_m,
@@ -68,10 +76,14 @@ def run(arguments: argparse.Namespace) -> tuple[Path, Path]:
         sequence.metric_endpoint_support,
     )
     endpoint_sigma = np.sqrt(
-        endpoint_sensor_sigma**2 + artifact.unresolved_endpoint_noise_m**2
+        endpoint_sensor_sigma**2 + settings.metric_endpoint_noise_m**2
+    )
+    intrinsics = np.asarray(
+        sequence.metadata["source"]["calibration"]["left_intrinsics"],
+        dtype=np.float64,
     )
     frame_count = sequence.frame_count
-    node_count = artifact.node_count
+    node_count = model.parameters.node_count
     estimates: list[ParticleFilterEstimate | None] = []
     initialized_frame = -1
     started = time.perf_counter()
@@ -96,19 +108,20 @@ def run(arguments: argparse.Namespace) -> tuple[Path, Path]:
         else:
             estimate = tracker.update(
                 timestamp_ns=int(sequence.timestamps_ns[frame]),
-                metric_points_m=sequence.metric_points_m[frame],
-                metric_valid=sequence.metric_valid[frame],
-                segment_ids=sequence.route_segment_id[frame],
-                metric_sigma_m=metric_sigma[frame],
                 endpoints_m=sequence.metric_endpoint_points_m[frame],
                 endpoint_valid=sequence.metric_endpoint_valid[frame],
                 endpoint_sigma_m=endpoint_sigma[frame],
+                image_points_xy=sequence.route_xy[frame],
+                image_point_valid=sequence.route_valid[frame],
+                image_endpoints_xy=sequence.endpoint_centers_xy[frame],
+                image_endpoint_valid=sequence.endpoint_valid[frame],
+                left_intrinsics=intrinsics,
             )
         estimates.append(estimate)
         if frame % 30 == 0 or frame + 1 == frame_count:
             print(
                 f"PF frame={frame + 1}/{frame_count} ESS={estimate.ess:.1f} "
-                f"residual={1000.0 * estimate.residual_m:.2f}mm "
+                f"residual={estimate.body_residual_px:.2f}px "
                 f"time={estimate.timing_ms[-1]:.1f}ms",
                 flush=True,
             )
@@ -136,7 +149,7 @@ def run(arguments: argparse.Namespace) -> tuple[Path, Path]:
         covariance[frame] = estimate.node_covariance_m2
         weights[frame] = estimate.weights
         ess[frame] = estimate.ess
-        residual[frame] = estimate.residual_m
+        residual[frame] = estimate.body_residual_px
         body_updated[frame] = estimate.body_updated
         endpoint_count[frame] = estimate.endpoint_count
         prediction_only[frame] = estimate.prediction_only
@@ -152,6 +165,14 @@ def run(arguments: argparse.Namespace) -> tuple[Path, Path]:
         "config": str(Path(arguments.config).expanduser().resolve()),
         "random_seed": settings.random_seed,
         "particle_count": settings.particle_count,
+        "deployment_cable": {
+            "length_m": model.parameters.cable_length_m,
+            "mass_kg": model.parameters.cable_mass_kg,
+            "diameter_m": model.parameters.cable_diameter_m,
+            "node_count": model.parameters.node_count,
+            "substeps": model.parameters.substeps,
+            "constraint_iterations": model.parameters.constraint_iterations,
+        },
         "initialized_frame": initialized_frame,
         "elapsed_s": time.perf_counter() - started,
     }
@@ -166,7 +187,7 @@ def run(arguments: argparse.Namespace) -> tuple[Path, Path]:
         node_covariance_m2=covariance,
         weights=weights,
         ess=ess,
-        visible_curve_residual_m=residual,
+        projected_body_residual_px=residual,
         body_updated=body_updated,
         endpoint_count=endpoint_count,
         prediction_only=prediction_only,

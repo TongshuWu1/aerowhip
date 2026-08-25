@@ -16,6 +16,7 @@ from cable_twin.shared.observation_data import (
 from cable_twin.shared.contracts import (
     POINT_CLOUD_CURVE_METHOD,
     PartialCurveObservation,
+    StereoCalibration,
     StereoFrame,
     ViewObservation,
 )
@@ -25,7 +26,8 @@ from cable_twin.shared.metric_curve import (
     lift_partial_curve_from_registered_depth,
 )
 from cable_twin.shared.saving import ObservationSequenceWriter, validate_observation_archive
-from cable_twin.shared.routes import extract_partial_curve
+from cable_twin.shared.routes import extract_partial_curve, extract_skeleton_evidence
+from cable_twin.shared.pointcloud_viewer import deproject_for_viewer
 
 
 class PointCloudEvidenceTests(unittest.TestCase):
@@ -77,6 +79,28 @@ class PointCloudEvidenceTests(unittest.TestCase):
                 self.assertEqual(data["route_valid"].shape, (1, 24))
                 self.assertEqual(data["metric_endpoint_points_m"].shape, (1, 2, 3))
                 self.assertNotIn("projected_right_xy", data.files)
+
+    def test_pidnet_selected_depth_points_are_highlighted_orange(self) -> None:
+        image = np.zeros((3, 4, 3), dtype=np.uint8)
+        depth = np.ones((3, 4), dtype=np.float32)
+        frame = StereoFrame(0, 0, 1, image, depth)
+        intrinsics = np.asarray(((100.0, 0.0, 1.5), (0.0, 100.0, 1.0), (0.0, 0.0, 1.0)))
+        calibration = StereoCalibration(4, 3, 30.0, intrinsics, intrinsics, 0.12)
+        cable = np.zeros((3, 4), dtype=bool)
+        cable[1, 2] = True
+        vertices = deproject_for_viewer(
+            frame,
+            calibration,
+            stride=1,
+            depth_min_m=0.2,
+            depth_max_m=4.0,
+            cable_mask=cable,
+        )
+        np.testing.assert_allclose(vertices[6, 3:6], (1.0, 0.55, 0.05))
+        highlighted = np.all(
+            np.isclose(vertices[:, 3:6], (1.0, 0.55, 0.05)), axis=1
+        )
+        self.assertEqual(int(np.count_nonzero(highlighted)), 1)
 
     def test_depth_lift_rejects_background_island(self) -> None:
         height, width, samples = 64, 96, 32
@@ -132,6 +156,27 @@ class PointCloudEvidenceTests(unittest.TestCase):
         self.assertLessEqual(ranges[0][1], 45.0)
         self.assertGreaterEqual(ranges[1][0], 54.0)
         self.assertAlmostEqual(ranges[1][1], 95.0, places=6)
+
+    def test_online_skeleton_evidence_is_a_fixed_unordered_sample(self) -> None:
+        body = np.zeros((60, 100), dtype=np.uint8)
+        body[29:32, 10:90] = 255
+        skeleton = np.zeros_like(body, dtype=bool)
+        skeleton[30, 10:90] = True
+        endpoints = np.zeros_like(body)
+        endpoints[27:34, 8:15] = 255
+        endpoints[27:34, 85:92] = 255
+        observation = extract_skeleton_evidence(
+            body,
+            endpoints,
+            body_component_count=1,
+            settings=RouteSettings(2, 24, 4, 10.0),
+            skeleton=skeleton,
+        )
+        curve = observation.curve
+        self.assertEqual(int(np.count_nonzero(curve.point_valid)), 24)
+        self.assertEqual(int(np.count_nonzero(curve.endpoint_valid)), 2)
+        np.testing.assert_allclose(curve.points_xy[curve.point_valid, 1], 30.0)
+        self.assertTrue(np.all(curve.segment_ids[curve.point_valid] == 0))
 
     def test_initializer_uses_smooth_metric_depth_and_fixed_curve_order(self) -> None:
         frames, samples = 8, 64

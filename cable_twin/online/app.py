@@ -13,17 +13,19 @@ import numpy as np
 from ..shared.config import load_settings as load_observation_settings
 from ..shared.diagnostics import diagnostic_panels
 from ..shared.metric_curve import MetricCurveObservation
-from ..shared.model_artifact import DderArtifact, load_dder_artifact
+from ..shared.model_artifact import load_dder_artifact
 from ..shared.observer import CableFrameObservation, CableObserver
 from ..shared.pidnet_runtime import PidnetRuntime
 from ..shared.pointcloud_viewer import AsyncZedPointCloudViewer, PointCloudSnapshot
 from ..shared.zed_source import ZedStereoSource
+from .config import load_cable_settings
 from .config import load_settings as load_filter_settings
+from .config import ParticleFilterSettings
 from .filter import DderParticleFilter, ParticleFilterEstimate
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_MODEL_PATH = PROJECT_ROOT / "data" / "offline_dder" / "models" / "cable1_dder.json"
+DEFAULT_MODEL_PATH = PROJECT_ROOT / "optitrack_offline" / "models" / "cable_model.json"
 
 
 def _measurement_sigma(
@@ -59,7 +61,7 @@ def _measurement_sigma(
 
 def _metric_arrays(
     observed: CableFrameObservation,
-    artifact: DderArtifact,
+    settings: ParticleFilterSettings,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     curve = observed.view.curve
     metric = observed.metric
@@ -77,14 +79,14 @@ def _metric_arrays(
         metric.valid,
         metric.depth_spread_m,
         metric.support,
-        artifact.unresolved_curve_noise_m,
+        settings.metric_curve_noise_m,
     )
     endpoint_sigma = _measurement_sigma(
         metric.endpoint_points_camera_m,
         metric.endpoint_valid,
         metric.endpoint_depth_spread_m,
         metric.endpoint_support,
-        artifact.unresolved_endpoint_noise_m,
+        settings.metric_endpoint_noise_m,
     )
     return (
         metric.points_camera_m,
@@ -130,14 +132,23 @@ def _status(
     )
     if estimate is None:
         return f"WAITING FOR INITIALIZATION | observed {metric_count} | endpoints {endpoint_count}/2 | {fps:.1f} FPS"
-    residual = "prediction" if not math.isfinite(estimate.residual_m) else f"{1000.0 * estimate.residual_m:.1f} mm"
+    residual = (
+        "prediction"
+        if not math.isfinite(estimate.body_residual_px)
+        else f"{estimate.body_residual_px:.1f} px"
+    )
     return (
-        f"PF + DDER | ESS {estimate.ess:.0f}/{particle_count} | "
+        f"PF + CONSTRAINED ROD | ESS {estimate.ess:.0f}/{particle_count} | "
         f"residual {residual} | {fps:.1f} FPS"
     )
 
 
-def run(model_path: str | Path, *, max_frames: int | None = None) -> int:
+def run(
+    model_path: str | Path,
+    *,
+    max_frames: int | None = None,
+    record_svo: str | Path | None = None,
+) -> int:
     artifact = load_dder_artifact(model_path)
     observation_settings = load_observation_settings()
     observation_settings = replace(
@@ -145,10 +156,12 @@ def run(model_path: str | Path, *, max_frames: int | None = None) -> int:
         cable_identity=artifact.cable_identity,
     )
     filter_settings = load_filter_settings()
+    cable_settings = load_cable_settings()
     pidnet = PidnetRuntime(observation_settings.pidnet_runtime_config)
     warmup_ms = pidnet.warm_up(1080, 1920)
     print(
         f"Online model: {artifact.path.name} | cable {artifact.cable_identity} | "
+        f"L={cable_settings.length_m:.3f}m D={1000.0 * cable_settings.diameter_m:.1f}mm | "
         f"PIDNet warm-up {warmup_ms:.1f} ms",
         flush=True,
     )
@@ -156,7 +169,9 @@ def run(model_path: str | Path, *, max_frames: int | None = None) -> int:
     source: ZedStereoSource | None = None
     viewer: AsyncZedPointCloudViewer | None = None
     try:
-        source = ZedStereoSource()
+        source = ZedStereoSource(record_path=record_svo)
+        if source.is_recording:
+            print(f"Lossless SVO2 recording: {source.record_path}", flush=True)
         observer = CableObserver(
             observation_settings,
             source.descriptor.calibration,
@@ -173,7 +188,7 @@ def run(model_path: str | Path, *, max_frames: int | None = None) -> int:
         gravity_samples: list[np.ndarray] = []
         smoothed_fps = 0.0
         processed = 0
-        print("Online PF + DDER tracking ready.", flush=True)
+        print("Online constrained-rod PF ready.", flush=True)
         while not viewer.quit_requested:
             if max_frames is not None and processed >= max_frames:
                 break
@@ -181,7 +196,8 @@ def run(model_path: str | Path, *, max_frames: int | None = None) -> int:
             frame = source.read()
             if frame is None:
                 raise RuntimeError("Live ZED capture ended unexpectedly.")
-            observed = observer.process(frame)
+            ordered_route = tracker is None or not tracker.initialized
+            observed = observer.process(frame, ordered_route=ordered_route)
 
             if frame.gravity_camera_m_s2 is not None:
                 gravity_samples.append(np.asarray(frame.gravity_camera_m_s2, dtype=np.float64))
@@ -189,15 +205,21 @@ def run(model_path: str | Path, *, max_frames: int | None = None) -> int:
                 gravity = _gravity_ready(gravity_samples)
                 if gravity is not None:
                     tracker = DderParticleFilter(
-                        artifact.make_model(gravity),
+                        artifact.make_rescaled_bare_model(
+                            gravity,
+                            cable_length_m=cable_settings.length_m,
+                            cable_diameter_m=cable_settings.diameter_m,
+                            node_count=cable_settings.node_count,
+                            substeps=cable_settings.solver_substeps,
+                            constraint_iterations=cable_settings.constraint_iterations,
+                        ),
                         filter_settings,
-                        artifact,
                     )
 
             estimate = None
             if tracker is not None:
                 points, valid, point_sigma, endpoints, endpoint_sigma = _metric_arrays(
-                    observed, artifact
+                    observed, filter_settings
                 )
                 endpoint_valid = (
                     np.zeros(2, dtype=bool)
@@ -207,13 +229,14 @@ def run(model_path: str | Path, *, max_frames: int | None = None) -> int:
                 if tracker.initialized:
                     estimate = tracker.update(
                         timestamp_ns=frame.timestamp_ns,
-                        metric_points_m=points,
-                        metric_valid=valid,
-                        segment_ids=observed.view.curve.segment_ids,
-                        metric_sigma_m=point_sigma,
                         endpoints_m=endpoints,
                         endpoint_valid=endpoint_valid,
                         endpoint_sigma_m=endpoint_sigma,
+                        image_points_xy=observed.view.curve.points_xy,
+                        image_point_valid=observed.view.curve.point_valid,
+                        image_endpoints_xy=observed.view.curve.endpoint_centers_xy,
+                        image_endpoint_valid=observed.view.curve.endpoint_valid,
+                        left_intrinsics=source.descriptor.calibration.left_intrinsics,
                     )
                 else:
                     try:
@@ -245,7 +268,9 @@ def run(model_path: str | Path, *, max_frames: int | None = None) -> int:
                 PointCloudSnapshot(
                     frame=frame,
                     calibration=source.descriptor.calibration,
-                    observed_curve_camera_m=_visible_segments(observed),
+                    observed_curve_camera_m=(
+                        _visible_segments(observed) if ordered_route else None
+                    ),
                     estimated_centerline_camera_m=(
                         None if estimate is None else estimate.positions_m
                     ),
@@ -257,13 +282,27 @@ def run(model_path: str | Path, *, max_frames: int | None = None) -> int:
                     ),
                     segmentation_rgb=segmentation_rgb,
                     skeleton_graph_rgb=skeleton_rgb,
+                    cable_mask=(
+                        (observed.view.body_mask > 0)
+                        | (observed.view.endpoint_mask > 0)
+                    ),
                 )
             )
             processed += 1
-            if estimate is not None and (processed == 1 or processed % 30 == 0):
+            if processed == 1 or processed % 30 == 0:
+                timing = observed.timings_ms
+                tracking = (
+                    "waiting for metric initialization"
+                    if estimate is None
+                    else f"ESS={estimate.ess:.1f} PF={estimate.timing_ms[-1]:.1f}ms"
+                )
                 print(
-                    f"online frame={frame.source_position} ESS={estimate.ess:.1f} "
-                    f"PF={estimate.timing_ms[-1]:.1f}ms FPS={smoothed_fps:.1f}",
+                    f"online frame={frame.source_position} {tracking} "
+                    f"PIDNet={timing['pidnet_ms']:.1f}ms "
+                    f"skeleton={timing['skeleton_ms']:.1f}ms "
+                    f"route={timing['route_ms']:.1f}ms "
+                    f"depth={timing['depth_lift_ms']:.1f}ms "
+                    f"FPS={smoothed_fps:.1f}",
                     flush=True,
                 )
         return 0
@@ -276,9 +315,15 @@ def run(model_path: str | Path, *, max_frames: int | None = None) -> int:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Run live ZED cable tracking with the identified DDER particle filter."
+        description="Run live ZED cable tracking with the identified constrained-rod PF."
     )
     parser.add_argument("--model", type=Path, default=DEFAULT_MODEL_PATH)
+    parser.add_argument(
+        "--record-svo",
+        type=Path,
+        default=None,
+        help="Optionally record the synchronized live ZED stream as lossless SVO2.",
+    )
     parser.add_argument("--max-frames", type=int, default=None, help=argparse.SUPPRESS)
     return parser
 
@@ -286,7 +331,11 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> None:
     arguments = build_parser().parse_args()
     try:
-        code = run(arguments.model, max_frames=arguments.max_frames)
+        code = run(
+            arguments.model,
+            max_frames=arguments.max_frames,
+            record_svo=arguments.record_svo,
+        )
     except (FileNotFoundError, OSError, RuntimeError, ValueError) as error:
         print(f"ONLINE_TRACKING_FAILED: {error}", flush=True)
         raise SystemExit(1) from None
