@@ -147,10 +147,13 @@ class OptimizerSettings:
     maximum_wall_time_s: float = 1.0
     finite_difference_step: float = 1.0e-3
     replan_interval_s: float = 0.20
+    initial_samples: int = 0
 
     def __post_init__(self) -> None:
         if not 1 <= self.iterations <= 500:
             raise ValueError("IPOPT iterations must be between 1 and 500.")
+        if not 0 <= self.initial_samples <= 4096:
+            raise ValueError("IPOPT initial samples must be between 0 and 4096.")
         if (
             not math.isfinite(self.tolerance)
             or self.tolerance <= 0.0
@@ -1142,6 +1145,64 @@ class _IpoptCastingEvaluation:
             normalized[:, casting_index] = active[:, column]
         return normalized
 
+    def select_seed_impact_times(
+        self,
+        x: np.ndarray,
+    ) -> tuple[np.ndarray, dict[str, np.ndarray]]:
+        """Pair each casting seed with its best physics-frame impact event.
+
+        A seven-dimensional Sobol sample is too sparse if impact time is
+        sampled independently of a rapidly moving cable tip.  The event time
+        is not a control, so it is legitimate and much more informative to
+        scan all rollout frames for each six-dimensional casting seed before
+        asking IPOPT for continuous-time refinement.
+        """
+
+        values = np.asarray(x, dtype=np.float64)
+        if values.ndim != 2 or values.shape[1] != self.variable_count:
+            raise ValueError("IPOPT seed candidates have the wrong shape.")
+        if not self.optimize_impact_time:
+            return values.copy(), {}
+        normalized = self.normalized_actions(values)
+        controls = casting_controls(
+            normalized,
+            self.initial_state,
+            self.problem,
+            self.simulator,
+            self.control_count,
+            self.phase_schedule,
+        )
+        with torch.no_grad():
+            rollout = self.simulator.rollout(
+                self.initial_state,
+                controls,
+                create_graph=False,
+                cancelled=self.cancelled,
+            )
+            terms, impact_frames = variable_impact_rollout_cost_terms(
+                rollout,
+                self.initial_state,
+                self.problem,
+                self.simulator,
+                self.weights,
+                self.previous_acceleration,
+            )
+        first_time = self.simulator.settings.simulation_dt_s
+        horizon = float(rollout.time_s[-1].detach().cpu())
+        impact_times = rollout.time_s[impact_frames]
+        fractions = torch.clamp(
+            (impact_times - first_time) / max(horizon - first_time, 1.0e-12),
+            0.0,
+            1.0,
+        )
+        selected = values.copy()
+        selected[:, -1] = fractions.detach().cpu().numpy()
+        arrays = {
+            name: value.detach().cpu().numpy().copy()
+            for name, value in terms.items()
+        }
+        return selected, arrays
+
     @staticmethod
     def _interpolate(
         values: torch.Tensor,
@@ -1512,6 +1573,46 @@ def optimize_controls(
     )
     x0 = evaluation.initial_guess(warm_start_action)
     evaluation.evaluate(x0)
+    if optimizer_settings.initial_samples > 0 and warm_start_action is None:
+        # Whip dynamics are strongly non-convex in stroke duration and impact
+        # time.  A single slow-motion initial guess can have a useless local
+        # derivative even when a fast feasible cast exists.  A deterministic
+        # low-discrepancy scan supplies IPOPT with a physically meaningful
+        # basin while preserving IPOPT as the constrained local solver.
+        sobol = torch.quasirandom.SobolEngine(
+            dimension=evaluation.variable_count,
+            scramble=True,
+            seed=17,
+        )
+        candidates = sobol.draw(optimizer_settings.initial_samples).to(
+            dtype=torch.float64
+        ).numpy()
+        candidates = np.concatenate((x0[None], candidates), axis=0)
+        candidates, scan_terms = evaluation.select_seed_impact_times(candidates)
+        seed_values = evaluation._evaluate_batch(candidates, record=True)
+        hit_violation = np.sum(
+            np.maximum(seed_values[:, [1, 2, 3, 7, 8]], 0.0) ** 2,
+            axis=1,
+        )
+        safety_violation = np.sum(
+            np.maximum(seed_values[:, [4, 5, 6]], 0.0) ** 2,
+            axis=1,
+        )
+        order = np.lexsort((seed_values[:, 0], hit_violation, safety_violation))
+        x0 = candidates[int(order[0])]
+        feasible_seeds = int(
+            np.count_nonzero((safety_violation == 0.0) & (hit_violation == 0.0))
+        )
+        safe_seeds = int(np.count_nonzero(safety_violation == 0.0))
+        minimum_position_error = float(
+            np.min(scan_terms.get("position_error_m", np.asarray((math.nan,))))
+        )
+        report(
+            f"Deterministic seed scan: {len(candidates)} candidates, "
+            f"safe={safe_seeds}, feasible={feasible_seeds}, "
+            f"minimum sampled tip error={1000.0 * minimum_position_error:.1f}mm, "
+            f"best hit violation={hit_violation[int(order[0])]:.4g}"
+        )
     callback_name = f"mpc_eval_{id(evaluation):x}"
     callback = _IpoptEvaluationCallback(callback_name, evaluation)
     variables = ca.MX.sym("casting", evaluation.variable_count)

@@ -1,15 +1,25 @@
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 import numpy as np
 import torch
 
 from cable_twin.shared.dder import DderState
 from drone_mpc.model import load_cable_model
+from drone_mpc.mppi import (
+    MppiSettings,
+    compute_dder_guidance,
+    evaluate_mppi_rollout,
+    interpolate_control_knots,
+    optimize_mppi,
+    smooth_strike_surrogate,
+)
 from drone_mpc.mpc import (
     casting_controls,
     CastingPhaseSchedule,
@@ -21,11 +31,28 @@ from drone_mpc.mpc import (
     variable_impact_rollout_cost_terms,
 )
 from drone_mpc.reduced import (
+    build_controller_and_truth_models,
     reduce_cable_model,
     stable_controller_model,
     transfer_dder_state,
 )
 from drone_mpc.realtime import RealtimeSettings
+from drone_mpc.receding_mppi import (
+    RecedingMppiSettings,
+    endpoint_conditioned_state,
+    run_receding_horizon_mppi,
+    save_receding_mppi_execution,
+    shift_control_knots,
+)
+from drone_mpc.receding_mppi_gui import (
+    FIXED_OBJECTIVE,
+    SETTINGS_PROFILE_FIELDS,
+    SETTINGS_PROFILE_SCHEMA,
+    TruthModelSettings,
+    model_pair_provenance,
+    normalize_settings_profile,
+    resolve_run_seed,
+)
 from drone_mpc.simulator import (
     DroneCableState,
     SimulationSettings,
@@ -33,9 +60,627 @@ from drone_mpc.simulator import (
     WhipSimulator,
 )
 from optitrack_offline.fitting import MODEL_SCHEMA
+from research_tools.mppi_ablation import (
+    _wilson_interval,
+    build_experiment_specs,
+    resample_knots_in_time,
+)
+from research_tools.mppi_gradient_study import (
+    CONDITIONS as GRADIENT_STUDY_CONDITIONS,
+    build_parser as build_gradient_study_parser,
+)
+from research_tools.mppi_propagation import compute_propagation_diagnostics
 
 
 class DroneMpcTests(unittest.TestCase):
+    def test_settings_profile_requires_every_versioned_field(self) -> None:
+        payload = {
+            "schema": SETTINGS_PROFILE_SCHEMA,
+            "fixed_objective": dict(FIXED_OBJECTIVE),
+            **{
+                section: {field: "1" for field in fields}
+                for section, fields in SETTINGS_PROFILE_FIELDS.items()
+            },
+        }
+        normalized = normalize_settings_profile(payload)
+        self.assertEqual(
+            normalized["plant_truth"], {"ei_scale": "1", "cb_scale": "1"}
+        )
+
+        del payload["controller"]["samples"]
+        with self.assertRaisesRegex(ValueError, "controller.samples"):
+            normalize_settings_profile(payload)
+
+    def test_settings_profile_rejects_an_unknown_schema(self) -> None:
+        with self.assertRaisesRegex(ValueError, "Unsupported"):
+            normalize_settings_profile({"schema": "future_schema"})
+
+    def test_zero_ui_seed_resolves_once_and_positive_seed_is_preserved(self) -> None:
+        with patch(
+            "drone_mpc.receding_mppi_gui.secrets.randbelow", return_value=41
+        ):
+            self.assertEqual(resolve_run_seed(0), 42)
+        self.assertEqual(resolve_run_seed(17), 17)
+        with self.assertRaisesRegex(ValueError, "zero or a positive"):
+            resolve_run_seed(-1)
+
+    def test_shift_control_knots_advances_and_holds_tail(self) -> None:
+        knots = np.asarray(
+            ((0.0, 0.0, 0.0), (1.0, 2.0, 3.0), (2.0, 4.0, 6.0)),
+            dtype=np.float32,
+        )
+        shifted = shift_control_knots(knots, 0.5, 2.0, 20.0)
+        np.testing.assert_allclose(
+            shifted,
+            np.asarray(
+                ((0.5, 1.0, 1.5), (1.5, 3.0, 4.5), (2.0, 4.0, 6.0)),
+                dtype=np.float32,
+            ),
+            atol=1.0e-6,
+        )
+
+    def test_endpoint_observer_does_not_read_true_interior_nodes(self) -> None:
+        simulator = self._simulator()
+        predicted = simulator.initial_state((0.0, 0.0, 1.0))
+        observed = simulator.initial_state((0.1, 0.0, 1.0))
+        positions = observed.cable.positions_m.clone()
+        velocities = observed.cable.velocities_m_s.clone()
+        positions[:, 1:-1, 1] += 0.25
+        velocities[:, 1:-1, 0] -= 0.50
+        hidden_interior_changed = DroneCableState(
+            observed.drone_position_m,
+            observed.drone_velocity_m_s,
+            DderState(positions, velocities),
+        )
+        first = endpoint_conditioned_state(predicted, observed, 0.10)
+        second = endpoint_conditioned_state(
+            predicted, hidden_interior_changed, 0.10
+        )
+        torch.testing.assert_close(first.cable.positions_m, second.cable.positions_m)
+        torch.testing.assert_close(first.cable.velocities_m_s, second.cable.velocities_m_s)
+        torch.testing.assert_close(
+            first.cable.positions_m[:, -1], observed.cable.positions_m[:, -1]
+        )
+
+    def test_receding_mppi_uses_shifted_warm_start_and_current_state(self) -> None:
+        planner = self._simulator()
+        plant = self._simulator()
+        state = plant.initial_state((0.0, 0.0, 1.0))
+        problem = MpcProblem(
+            target_position_m=(0.0, 0.0, 0.40),
+            impact_direction=(0.0, 0.0, -1.0),
+            minimum_impact_speed_m_s=1.0e-9,
+            maximum_tip_error_m=10.0,
+            maximum_impact_angle_deg=89.0,
+            drone_keepout_radius_m=0.01,
+            maximum_drone_excursion_m=10.0,
+            minimum_forward_stroke_m=0.0,
+            minimum_recoil_stroke_m=0.0,
+        )
+        mppi_settings = MppiSettings(
+            iterations=1,
+            samples=4,
+            rollout_batch_size=4,
+            knot_count=2,
+            acceleration_noise_sigma_m_s2=0.1,
+        )
+        execution_settings = RecedingMppiSettings(
+            replan_interval_s=0.02,
+            timeout_s=0.04,
+            feedback_mode="full",
+        )
+        live_updates = []
+        execution = run_receding_horizon_mppi(
+            planner,
+            plant,
+            state,
+            problem,
+            mppi_settings,
+            execution_settings,
+            np.zeros((2, 3), dtype=np.float32),
+            live_update=live_updates.append,
+        )
+        self.assertGreaterEqual(len(execution.updates), 1)
+        self.assertEqual(execution.updates[0].nominal_knots_m_s2.shape, (2, 3))
+        self.assertGreaterEqual(execution.result.frame_count, 3)
+        self.assertGreaterEqual(execution.total_rollouts, 4)
+        self.assertEqual(len(live_updates), len(execution.updates))
+        self.assertEqual(
+            live_updates[-1].realized.frame_count, execution.result.frame_count
+        )
+        self.assertEqual(
+            live_updates[-1].update.index, execution.updates[-1].index
+        )
+
+        with tempfile.TemporaryDirectory() as directory:
+            output = save_receding_mppi_execution(
+                Path(directory) / "execution.npz",
+                execution,
+                problem,
+                mppi_settings,
+                execution_settings,
+                planner.settings,
+                warm_start_source="seed.npz",
+                model_provenance={"matched": True},
+            )
+            with np.load(output) as archive:
+                self.assertIn("cable_positions_m", archive)
+                self.assertEqual(
+                    int(np.asarray(archive["simulation_node_count"]).item()),
+                    planner.snapshot.node_count,
+                )
+                self.assertIn("predicted_cable_positions_m", archive)
+                self.assertIn("optimized_knots_m_s2", archive)
+                self.assertIn("executed_control_counts", archive)
+                self.assertEqual(
+                    str(np.asarray(archive["controller_model_sha256"]).item()),
+                    planner.snapshot.sha256,
+                )
+                self.assertEqual(
+                    str(np.asarray(archive["plant_model_sha256"]).item()),
+                    plant.snapshot.sha256,
+                )
+            metadata = json.loads(output.with_suffix(".json").read_text())
+            self.assertEqual(
+                metadata["schema"], "receding_horizon_dder_mppi_execution_v1"
+            )
+            self.assertEqual(metadata["feedback_mode"], "full")
+            self.assertEqual(
+                metadata["simulation_node_count"], planner.snapshot.node_count
+            )
+            self.assertEqual(metadata["mppi_settings"]["samples"], 4)
+            self.assertEqual(metadata["model_provenance"], {"matched": True})
+
+    def test_public_mppi_can_disable_legacy_workspace_radius(self) -> None:
+        simulator = self._simulator()
+        rollout, initial = self._event_rollout(simulator)
+        rollout.cable_velocities_m_s[:, 1:, -1, 0] = 1.25
+        rollout.drone_positions_m[:, 1:, 0] = 0.40
+        problem = self._problem()
+
+        _, terms, _ = evaluate_mppi_rollout(
+            rollout,
+            initial,
+            problem,
+            simulator,
+            MppiSettings(
+                iterations=1,
+                samples=4,
+                rollout_batch_size=4,
+                knot_count=2,
+                enforce_workspace_limit=False,
+            ),
+        )
+
+        self.assertGreater(
+            float(terms["maximum_drone_excursion_m"][0]),
+            problem.maximum_drone_excursion_m,
+        )
+        self.assertEqual(float(terms["workspace_violation"][0]), 0.0)
+        self.assertTrue(bool(terms["feasible"][0]))
+
+    def test_dder_guidance_is_a_finite_local_descent_direction(self) -> None:
+        simulator = self._simulator()
+        state = simulator.initial_state((0.0, 0.0, 1.0))
+        problem = MpcProblem(
+            target_position_m=(0.20, 0.0, 0.50),
+            impact_direction=(1.0, 0.0, 0.0),
+            minimum_impact_speed_m_s=0.10,
+            maximum_tip_error_m=0.10,
+            maximum_impact_angle_deg=45.0,
+            drone_keepout_radius_m=0.01,
+            maximum_drone_excursion_m=0.25,
+        )
+        settings = MppiSettings(
+            iterations=1,
+            samples=4,
+            rollout_batch_size=2,
+            knot_count=2,
+            gradient_guidance_fraction=0.5,
+        )
+        nominal = torch.zeros((2, 3), dtype=simulator.dtype)
+
+        guidance = compute_dder_guidance(
+            simulator,
+            state,
+            problem,
+            settings,
+            nominal,
+            simulator.settings.control_count,
+        )
+
+        self.assertTrue(guidance.valid, guidance.reason)
+        self.assertTrue(math.isfinite(guidance.gradient_norm))
+        self.assertGreater(guidance.gradient_norm, 0.0)
+        self.assertIsNotNone(guidance.negative_gradient_direction)
+        costs = []
+        for sign in (-1.0, 0.0, 1.0):
+            candidate = nominal + (
+                sign * 1.0e-4 * guidance.negative_gradient_direction
+            )
+            controls = interpolate_control_knots(
+                candidate[None],
+                simulator.settings.control_count,
+                simulator.settings.maximum_acceleration_m_s2,
+            )
+            rollout = simulator.rollout(state, controls, create_graph=False)
+            cost, _ = smooth_strike_surrogate(rollout, problem, settings)
+            costs.append(float(cost[0]))
+        # Moving along -gradient (sign +1 because the helper stores -g_hat)
+        # must improve the differentiable objective locally.
+        self.assertLess(costs[2], costs[1])
+        self.assertGreater(costs[0], costs[1])
+
+    def test_gradient_guided_mppi_records_guidance_without_replacing_sampling(self) -> None:
+        simulator = self._simulator()
+        state = simulator.initial_state((0.0, 0.0, 1.0))
+        problem = MpcProblem(
+            target_position_m=(0.20, 0.0, 0.50),
+            impact_direction=(1.0, 0.0, 0.0),
+            minimum_impact_speed_m_s=0.10,
+            maximum_tip_error_m=0.10,
+            maximum_impact_angle_deg=45.0,
+            drone_keepout_radius_m=0.01,
+            maximum_drone_excursion_m=0.25,
+        )
+
+        plan = optimize_mppi(
+            simulator,
+            state,
+            problem,
+            MppiSettings(
+                iterations=1,
+                samples=6,
+                rollout_batch_size=3,
+                knot_count=2,
+                acceleration_noise_sigma_m_s2=1.0,
+                gradient_guidance_fraction=0.5,
+            ),
+        )
+
+        self.assertEqual(plan.gradient_valid_history, (True,))
+        self.assertEqual(len(plan.gradient_computation_time_s_history), 1)
+        self.assertGreater(plan.gradient_computation_time_s_history[0], 0.0)
+        self.assertTrue(np.isfinite(plan.cost))
+
+    def test_gradient_guidance_fraction_must_leave_standard_samples(self) -> None:
+        with self.assertRaisesRegex(ValueError, "standard-MPPI"):
+            MppiSettings(gradient_guidance_fraction=1.0)
+
+    def test_low_frequency_mppi_interpolation_is_bounded_and_three_dimensional(self) -> None:
+        knots = torch.tensor(
+            (((10.0, 0.0, 0.0), (0.0, -10.0, 0.0), (0.0, 0.0, 10.0)),),
+            dtype=torch.float64,
+        )
+
+        controls = interpolate_control_knots(knots, 11, 3.0)
+
+        self.assertEqual(controls.shape, (1, 11, 3))
+        self.assertLessEqual(
+            float(torch.max(torch.linalg.vector_norm(controls, dim=2))),
+            3.0 * (1.0 + 1.0e-12),
+        )
+        self.assertGreater(float(torch.max(torch.abs(controls[:, :, 1]))), 0.0)
+        self.assertGreater(float(torch.max(torch.abs(controls[:, :, 2]))), 0.0)
+
+    def test_low_frequency_mppi_returns_a_replayable_bounded_plan(self) -> None:
+        simulator = self._simulator()
+        state = simulator.initial_state((0.0, 0.0, 1.0))
+        problem = MpcProblem(
+            target_position_m=(0.0, 0.0, 0.40),
+            impact_direction=(0.0, 0.0, -1.0),
+            minimum_impact_speed_m_s=1.0e-6,
+            maximum_tip_error_m=0.10,
+            maximum_impact_angle_deg=89.0,
+            drone_keepout_radius_m=0.01,
+            maximum_drone_excursion_m=0.25,
+        )
+
+        plan = optimize_mppi(
+            simulator,
+            state,
+            problem,
+            MppiSettings(
+                iterations=2,
+                samples=4,
+                rollout_batch_size=2,
+                knot_count=2,
+                acceleration_noise_sigma_m_s2=1.0,
+            ),
+        )
+
+        self.assertEqual(plan.controls_m_s2.shape[1], 3)
+        self.assertGreaterEqual(plan.controls_m_s2.shape[0], 1)
+        self.assertLessEqual(plan.controls_m_s2.shape[0], 2)
+        self.assertEqual(plan.control_knots_m_s2.shape, (2, 3))
+        self.assertEqual(len(plan.history), 2)
+        self.assertTrue(np.all(np.diff(np.asarray(plan.history)) <= 0.0))
+        self.assertLessEqual(
+            float(np.max(np.linalg.norm(plan.controls_m_s2, axis=1))),
+            simulator.settings.maximum_acceleration_m_s2 * (1.0 + 1.0e-9),
+        )
+        self.assertTrue(np.isfinite(plan.cost))
+
+    def test_mppi_uses_first_geometric_tip_contact_and_bounded_position_cost(self) -> None:
+        simulator = self._simulator()
+        rollout, initial = self._event_rollout(simulator)
+        rollout.cable_positions_m[:, :, :-1, 0] = 1.0
+        rollout.cable_positions_m[0, 1:, -1, 0] = torch.tensor(
+            (0.10, 0.04, 0.00, 0.02), dtype=torch.float64
+        )
+        rollout.cable_velocities_m_s[0, 2, -1, 0] = 1.5
+        problem = MpcProblem(
+            target_position_m=(0.0, 0.0, 0.50),
+            impact_direction=(1.0, 0.0, 0.0),
+            minimum_impact_speed_m_s=1.0,
+            maximum_tip_error_m=0.05,
+            maximum_impact_angle_deg=20.0,
+            drone_keepout_radius_m=0.10,
+            maximum_drone_excursion_m=0.25,
+        )
+        settings = MppiSettings(
+            iterations=1,
+            samples=4,
+            rollout_batch_size=2,
+            knot_count=2,
+            objective_stage="full",
+        )
+
+        cost, terms, impact = evaluate_mppi_rollout(
+            rollout, initial, problem, simulator, settings
+        )
+
+        self.assertEqual(int(impact[0]), 2)
+        self.assertAlmostEqual(float(terms["position_error_m"][0]), 0.04)
+        self.assertTrue(bool(terms["geometric_tip_contact"][0]))
+        self.assertFalse(bool(terms["physical_tip_contact"][0]))
+        self.assertTrue(bool(terms["feasible"][0]))
+        self.assertLessEqual(float(terms["position_cost"][0]), settings.position_weight)
+        self.assertTrue(torch.isfinite(cost[0]))
+
+    def test_fast_tip_three_hundred_mm_from_target_is_not_a_hit(self) -> None:
+        simulator = self._simulator()
+        rollout, initial = self._event_rollout(simulator)
+        rollout.cable_positions_m[:, :, :-1, 0] = 1.0
+        rollout.cable_positions_m[:, :, -1, 0] = 0.30
+        rollout.cable_velocities_m_s[:, :, -1, 0] = 4.0
+        problem = MpcProblem(
+            target_position_m=(0.0, 0.0, 0.50),
+            impact_direction=(1.0, 0.0, 0.0),
+            minimum_impact_speed_m_s=3.5,
+            maximum_tip_error_m=0.05,
+            maximum_impact_angle_deg=35.0,
+            drone_keepout_radius_m=0.10,
+            maximum_drone_excursion_m=0.25,
+        )
+
+        _, terms, _ = evaluate_mppi_rollout(
+            rollout,
+            initial,
+            problem,
+            simulator,
+            MppiSettings(
+                iterations=1,
+                samples=4,
+                rollout_batch_size=2,
+                knot_count=2,
+                objective_stage="full",
+            ),
+        )
+
+        self.assertAlmostEqual(float(terms["position_error_m"][0]), 0.30)
+        self.assertGreater(float(terms["directional_speed_m_s"][0]), 3.5)
+        self.assertFalse(bool(terms["geometric_tip_contact"][0]))
+        self.assertFalse(bool(terms["feasible"][0]))
+
+    def test_gradient_study_defaults_to_three_point_five_m_s_and_matched_controls(self) -> None:
+        arguments = build_gradient_study_parser().parse_args([])
+        conditions = {condition.key: condition for condition in GRADIENT_STUDY_CONDITIONS}
+
+        self.assertEqual(arguments.minimum_impact_speed_m_s, 3.5)
+        self.assertTrue(conditions["D"].primary)
+        self.assertEqual(conditions["C"].initialization, "forward_recoil")
+        self.assertEqual(conditions["D"].initialization, "forward_recoil")
+        self.assertTrue(conditions["C"].guided)
+        self.assertFalse(conditions["D"].guided)
+
+    def test_mppi_diagnostic_stages_change_success_definition_not_physics(self) -> None:
+        simulator = self._simulator()
+        rollout, initial = self._event_rollout(simulator)
+        rollout.cable_positions_m[:, :, :-1, 0] = 1.0
+        rollout.cable_velocities_m_s[:, :, -1, 0] = -2.0
+        problem = MpcProblem(
+            target_position_m=(0.0, 0.0, 0.50),
+            impact_direction=(1.0, 0.0, 0.0),
+            minimum_impact_speed_m_s=1.0,
+            maximum_tip_error_m=0.05,
+            maximum_impact_angle_deg=20.0,
+            drone_keepout_radius_m=0.10,
+            maximum_drone_excursion_m=0.25,
+        )
+
+        _, position_terms, _ = evaluate_mppi_rollout(
+            rollout,
+            initial,
+            problem,
+            simulator,
+            MppiSettings(
+                iterations=1,
+                samples=4,
+                rollout_batch_size=2,
+                knot_count=2,
+                objective_stage="position",
+            ),
+        )
+        _, full_terms, _ = evaluate_mppi_rollout(
+            rollout,
+            initial,
+            problem,
+            simulator,
+            MppiSettings(
+                iterations=1,
+                samples=4,
+                rollout_batch_size=2,
+                knot_count=2,
+                objective_stage="full",
+            ),
+        )
+
+        self.assertTrue(bool(position_terms["feasible"][0]))
+        self.assertFalse(bool(full_terms["feasible"][0]))
+        self.assertEqual(float(position_terms["speed_cost"][0]), 0.0)
+        self.assertEqual(float(position_terms["direction_cost"][0]), 0.0)
+        self.assertGreater(float(full_terms["speed_cost"][0]), 0.0)
+        self.assertGreater(float(full_terms["direction_cost"][0]), 0.0)
+
+    def test_predictive_speed_ablation_is_opt_in(self) -> None:
+        simulator = self._simulator()
+        rollout, initial = self._event_rollout(simulator)
+        rollout.cable_positions_m[:, :, :-1, 0] = 1.0
+        rollout.cable_positions_m[:, 1:, -1, 0] = 0.35
+        rollout.cable_velocities_m_s[:, :, -1] = 0.0
+        problem = MpcProblem(
+            target_position_m=(0.0, 0.0, 0.50),
+            impact_direction=(1.0, 0.0, 0.0),
+            minimum_impact_speed_m_s=2.0,
+            maximum_tip_error_m=0.05,
+            maximum_impact_angle_deg=20.0,
+            drone_keepout_radius_m=0.10,
+            maximum_drone_excursion_m=0.25,
+        )
+
+        base_cost, base_terms, _ = evaluate_mppi_rollout(
+            rollout,
+            initial,
+            problem,
+            simulator,
+            MppiSettings(iterations=1, samples=4, rollout_batch_size=2, knot_count=2),
+        )
+        ablation_cost, ablation_terms, _ = evaluate_mppi_rollout(
+            rollout,
+            initial,
+            problem,
+            simulator,
+            MppiSettings(
+                iterations=1,
+                samples=4,
+                rollout_batch_size=2,
+                knot_count=2,
+                predictive_speed_weight=1.0,
+                predictive_velocity_gate_sigma_m=0.45,
+                predictive_speed_ratio=0.25,
+            ),
+        )
+
+        self.assertEqual(float(base_terms["predictive_speed_cost"][0]), 0.0)
+        self.assertGreater(float(ablation_terms["predictive_speed_cost"][0]), 0.0)
+        self.assertGreater(float(ablation_cost[0]), float(base_cost[0]))
+
+    def test_ablation_knot_resampling_preserves_absolute_time(self) -> None:
+        source = np.asarray(((1.0, 0.0, 0.0), (2.0, 0.0, 0.0), (3.0, 0.0, 0.0)))
+
+        target = resample_knots_in_time(source, 2.0, 1.0, 3)
+
+        np.testing.assert_allclose(target[:, 0], (1.0, 1.5, 2.0))
+        np.testing.assert_allclose(target[:, 1:], 0.0)
+
+    def test_discovery_study_is_paired_at_fixed_two_second_horizon(self) -> None:
+        specifications = build_experiment_specs("initialization")
+
+        self.assertEqual(len(specifications), 6)
+        self.assertTrue(all(spec.horizon_s == 2.0 for spec in specifications))
+        self.assertTrue(all(spec.knot_count == 11 for spec in specifications))
+        self.assertEqual(
+            {spec.initialization for spec in specifications},
+            {
+                "zero",
+                "random",
+                "forward_recoil",
+                "backward_forward",
+                "lateral",
+                "continuation",
+            },
+        )
+
+    def test_wilson_interval_is_finite_at_zero_and_complete_success(self) -> None:
+        zero = _wilson_interval(0, 20)
+        complete = _wilson_interval(20, 20)
+
+        self.assertEqual(zero[0], 0.0)
+        self.assertEqual(complete[0], 1.0)
+        self.assertGreater(zero[2], 0.0)
+        self.assertLess(complete[1], 1.0)
+
+    def test_propagation_diagnostics_resolve_node_energy_and_events(self) -> None:
+        time_s = np.asarray((0.0, 0.1, 0.2))
+        drone_position = np.asarray(((0.0, 0.0, 1.0), (0.1, 0.0, 1.0), (0.05, 0.0, 1.0)))
+        drone_velocity = np.zeros((3, 3))
+        cable_position = np.zeros((3, 4, 3))
+        cable_position[:, :, 2] = np.asarray((1.0, 0.9, 0.8, 0.7))[None]
+        cable_velocity = np.zeros_like(cable_position)
+        cable_velocity[1, 1, 0] = 1.0
+        cable_velocity[2, 3, 0] = 3.0
+
+        diagnostics = compute_propagation_diagnostics(
+            time_s=time_s,
+            drone_positions_m=drone_position,
+            drone_velocities_m_s=drone_velocity,
+            cable_positions_m=cable_position,
+            cable_velocities_m_s=cable_velocity,
+            impact_frame=2,
+            vertex_masses_kg=np.ones(4),
+            rest_lengths_m=np.full(3, 0.1),
+            forward_direction=np.asarray((1.0, 0.0, 0.0)),
+        )
+
+        self.assertEqual(diagnostics.peak_forward_frame, 1)
+        self.assertEqual(diagnostics.peak_tip_speed_frame, 2)
+        self.assertEqual(diagnostics.relative_speed_m_s.shape, (3, 4))
+        self.assertAlmostEqual(diagnostics.distal_energy_fraction_at_impact, 1.0)
+
+    def test_mppi_non_tip_contact_is_checked_strictly_before_tip_impact(self) -> None:
+        simulator = self._simulator()
+        rollout, initial = self._event_rollout(simulator)
+        rollout.cable_positions_m[:, :, :-1, 0] = 1.0
+        rollout.cable_positions_m[0, 1:, -1, 0] = torch.tensor(
+            (0.10, 0.04, 0.00, 0.02), dtype=torch.float64
+        )
+        rollout.cable_velocities_m_s[0, 2, -1, 0] = 1.5
+        # The penultimate material point shares the target region on the tip's
+        # first-contact frame.  This is not an earlier non-tip strike.
+        rollout.cable_positions_m[0, 2, -2, 0] = 0.0
+        problem = MpcProblem(
+            target_position_m=(0.0, 0.0, 0.50),
+            impact_direction=(1.0, 0.0, 0.0),
+            minimum_impact_speed_m_s=1.0,
+            maximum_tip_error_m=0.05,
+            maximum_impact_angle_deg=20.0,
+            drone_keepout_radius_m=0.10,
+            maximum_drone_excursion_m=0.25,
+        )
+        settings = MppiSettings(
+            iterations=1,
+            samples=4,
+            rollout_batch_size=2,
+            knot_count=2,
+            objective_stage="full",
+        )
+
+        _, same_frame_terms, impact = evaluate_mppi_rollout(
+            rollout, initial, problem, simulator, settings
+        )
+        self.assertEqual(int(impact[0]), 2)
+        self.assertEqual(float(same_frame_terms["non_tip_contact_violation"][0]), 0.0)
+        self.assertTrue(bool(same_frame_terms["feasible"][0]))
+
+        # Moving the same non-tip contact one frame earlier must disqualify it.
+        rollout.cable_positions_m[0, 1, -2, 0] = 0.0
+        _, earlier_terms, _ = evaluate_mppi_rollout(
+            rollout, initial, problem, simulator, settings
+        )
+        self.assertGreater(float(earlier_terms["non_tip_contact_violation"][0]), 0.0)
+        self.assertFalse(bool(earlier_terms["feasible"][0]))
+
     def test_casting_primitive_is_a_bounded_two_sweep_control_family(self) -> None:
         base = self._simulator()
         simulator = WhipSimulator(
@@ -293,6 +938,118 @@ class DroneMpcTests(unittest.TestCase):
             controller.model.maximum_stable_bending_stiffness(
                 0.02, pinned_endpoints=(True, False)
             ),
+        )
+
+    def test_truth_model_mismatch_changes_only_ei_and_cb(self) -> None:
+        source = self._simulator().snapshot
+        controller, truth = build_controller_and_truth_models(
+            source,
+            simulation_dt_s=0.01,
+            node_count=6,
+            truth_bending_stiffness_scale=1.4,
+            truth_bending_damping_scale=0.6,
+        )
+
+        self.assertNotEqual(controller.sha256, truth.sha256)
+        self.assertEqual(controller.node_count, truth.node_count)
+        self.assertEqual(
+            controller.rod_material_coordinates_m,
+            truth.rod_material_coordinates_m,
+        )
+        controller_parameters = controller.model.parameters
+        truth_parameters = truth.model.parameters
+        self.assertEqual(
+            controller_parameters.rest_lengths_m, truth_parameters.rest_lengths_m
+        )
+        self.assertEqual(
+            controller_parameters.vertex_masses_kg, truth_parameters.vertex_masses_kg
+        )
+        self.assertEqual(controller_parameters.substeps, truth_parameters.substeps)
+        self.assertEqual(
+            controller_parameters.constraint_iterations,
+            truth_parameters.constraint_iterations,
+        )
+        self.assertEqual(
+            controller_parameters.gravity_camera_m_s2,
+            truth_parameters.gravity_camera_m_s2,
+        )
+        self.assertEqual(
+            truth.bending_stiffness_n_m2,
+            1.4 * controller.bending_stiffness_n_m2,
+        )
+        self.assertEqual(
+            truth.bending_damping_n_m2_s,
+            0.6 * controller.bending_damping_n_m2_s,
+        )
+
+        provenance = model_pair_provenance(
+            source,
+            controller,
+            truth,
+            TruthModelSettings(1.4, 0.6),
+        )
+        self.assertFalse(provenance["matched"])
+        self.assertEqual(
+            provenance["controlled_mismatch"], "EI and Cb only"
+        )
+
+    def test_unit_truth_scales_are_an_exact_matched_model(self) -> None:
+        source = self._simulator().snapshot
+        controller, truth = build_controller_and_truth_models(
+            source,
+            simulation_dt_s=0.01,
+            node_count=source.node_count,
+        )
+
+        self.assertIs(controller, truth)
+        self.assertEqual(controller.sha256, source.sha256)
+
+    def test_receding_mppi_accepts_an_ei_cb_truth_mismatch(self) -> None:
+        baseline = self._simulator()
+        controller_snapshot, plant_snapshot = build_controller_and_truth_models(
+            baseline.snapshot,
+            simulation_dt_s=baseline.settings.simulation_dt_s,
+            node_count=baseline.snapshot.node_count,
+            truth_bending_stiffness_scale=1.2,
+            truth_bending_damping_scale=0.8,
+        )
+        planner = WhipSimulator(controller_snapshot, baseline.settings, device="cpu")
+        plant = WhipSimulator(plant_snapshot, baseline.settings, device="cpu")
+        problem = MpcProblem(
+            target_position_m=(0.0, 0.0, 0.40),
+            impact_direction=(0.0, 0.0, -1.0),
+            minimum_impact_speed_m_s=1.0e-9,
+            maximum_tip_error_m=10.0,
+            maximum_impact_angle_deg=89.0,
+            drone_keepout_radius_m=0.01,
+            maximum_drone_excursion_m=10.0,
+            minimum_forward_stroke_m=0.0,
+            minimum_recoil_stroke_m=0.0,
+        )
+        execution = run_receding_horizon_mppi(
+            planner,
+            plant,
+            plant.initial_state((0.0, 0.0, 1.0)),
+            problem,
+            MppiSettings(
+                iterations=1,
+                samples=4,
+                rollout_batch_size=4,
+                knot_count=2,
+                acceleration_noise_sigma_m_s2=0.1,
+            ),
+            RecedingMppiSettings(
+                replan_interval_s=0.02,
+                timeout_s=0.02,
+                feedback_mode="full",
+            ),
+            np.zeros((2, 3), dtype=np.float32),
+        )
+
+        self.assertEqual(execution.controller_model_sha256, controller_snapshot.sha256)
+        self.assertEqual(execution.plant_model_sha256, plant_snapshot.sha256)
+        self.assertNotEqual(
+            execution.controller_model_sha256, execution.plant_model_sha256
         )
 
     def test_full_state_transfer_preserves_attachment_and_controller_constraints(self) -> None:

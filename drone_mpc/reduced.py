@@ -180,6 +180,83 @@ def stable_controller_model(
     )
 
 
+def build_controller_and_truth_models(
+    source: CableModelSnapshot,
+    *,
+    simulation_dt_s: float,
+    node_count: int,
+    truth_bending_stiffness_scale: float = 1.0,
+    truth_bending_damping_scale: float = 1.0,
+) -> tuple[CableModelSnapshot, CableModelSnapshot]:
+    """Build a nominal fitted model and a parameter-mismatched truth model.
+
+    The two returned models always use the same material grid, mass, geometry,
+    constraint solver, and explicit substep count.  Only EI and Cb may differ.
+    This keeps a truth-model experiment attributable to physical-parameter
+    mismatch instead of quietly mixing in discretization or solver mismatch.
+    """
+
+    if (
+        not math.isfinite(truth_bending_stiffness_scale)
+        or truth_bending_stiffness_scale <= 0.0
+        or not math.isfinite(truth_bending_damping_scale)
+        or truth_bending_damping_scale <= 0.0
+    ):
+        raise ValueError("Truth EI and Cb scales must be finite and positive.")
+
+    constraint_iterations = source.model.parameters.constraint_iterations
+    if node_count == source.node_count:
+        nominal_candidate = source
+    else:
+        nominal_candidate = stable_controller_model(
+            source,
+            simulation_dt_s=simulation_dt_s,
+            node_count=node_count,
+            constraint_iterations=constraint_iterations,
+        )
+    # The fixed nominal controller determines numerical resolution.  Never use
+    # a hidden truth setting to change the controller's integration scheme.
+    controller = nominal_candidate
+    common_substeps = controller.model.parameters.substeps
+    maximum_controller_ei = controller.model.maximum_stable_bending_stiffness(
+        simulation_dt_s,
+        pinned_endpoints=START_PINNED_FREE_END,
+    )
+    if controller.bending_stiffness_n_m2 > maximum_controller_ei:
+        raise ValueError(
+            "The fitted controller model is unstable at the selected physics "
+            f"rate ({common_substeps} fixed substeps at dt={simulation_dt_s:g}s). "
+            "Increase the physics rate."
+        )
+
+    if (
+        truth_bending_stiffness_scale == 1.0
+        and truth_bending_damping_scale == 1.0
+    ):
+        # Matched mode should be exactly identical, including model identity.
+        truth = controller
+    else:
+        truth = reduce_cable_model(
+            source,
+            node_count=node_count,
+            substeps=common_substeps,
+            constraint_iterations=constraint_iterations,
+            bending_stiffness_scale=truth_bending_stiffness_scale,
+            bending_damping_scale=truth_bending_damping_scale,
+        )
+        maximum_truth_ei = truth.model.maximum_stable_bending_stiffness(
+            simulation_dt_s,
+            pinned_endpoints=START_PINNED_FREE_END,
+        )
+        if truth.bending_stiffness_n_m2 > maximum_truth_ei:
+            raise ValueError(
+                "Truth EI is unstable with the fitted controller's fixed solver "
+                f"({common_substeps} substeps at dt={simulation_dt_s:g}s). "
+                "Reduce the truth EI ratio or increase the physics rate."
+            )
+    return controller, truth
+
+
 def transfer_dder_state(
     state: DderState,
     source: CableModelSnapshot,

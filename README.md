@@ -20,12 +20,12 @@ They form one explicit experimental sequence:
    canonical cable-model artifact.
 2. **Goal-conditioned policy learning** trains SAC under that frozen nominal
    model and retains validated-best and latest checkpoints.
-3. **Online testbed** runs the frozen controller against an independently
-   selected or scaled hidden plant.
+3. **Online controller** runs full-state receding-horizon DDER-MPPI with the
+   frozen cable model and a matched, independently constructed simulation plant.
 
-The third application currently emulates OptiTrack with perfectly associated,
-ordered marker positions. It is a simulated hidden-plant testbed, not live
-hardware input, online parameter adaptation, or a force-coupled flight result.
+The third application is the nominal matched-model control baseline. It is not
+yet a live OptiTrack interface, online parameter adaptation experiment, or a
+force-coupled flight result.
 
 The separate Isaac Lab plant runner is an implementation-validation tool, not
 a fourth workflow UI. It provides a 6-DoF force/torque-driven drone with the
@@ -105,28 +105,24 @@ one-pivot/free-tip captures require a fresh fit.
 
 ## Drone whip simulation and MPC
 
-The model-based controller GUI is an internal reproducibility utility:
+The matched-model controller experiment is launched with:
 
 ```powershell
-.\.venv\Scripts\python.exe -m research_tools.mpc_gui
+.\.venv\Scripts\python.exe run_online.py
 ```
 
-It uses the full fitted DER as the simulated plant and an independent
-mass-conserving seven-node DER inside event-time MPC. The plant advances at a
-logical 50 Hz and the UI reports its wall-clock real-time factor; physical
-flight later replaces that software plant with OptiTrack feedback. A valid
-strike must satisfy metric free-tip position,
-world-frame directed tip speed, and direction-cone constraints while the drone
-obeys keepout, excursion, speed, and acceleration limits over the complete
-pre-impact path. A valid whip must contain a forward stroke followed by recoil;
-feasible maneuvers are ranked by directed free-tip kinetic energy, with time,
-effort, and smoothness used only as secondary terms. IPOPT solves a compact
-target-aligned forward-recoil nonlinear program rather than unrelated acceleration
-knots; the default drone excursion is 0.15 m. The 3D UI displays planned
-and executed feasibility, the live drone and cable, predicted paths, target,
-and desired impact direction. The default target is 0.48 m horizontally from
-and exactly 0.20 m below the initial drone, emphasizing lateral energy propagation
-rather than a gravity-assisted pendulum swing. See
+It uses the same full fitted DDER for CUDA-batched MPPI planning and a freshly
+constructed independent plant. MPPI searches smooth 3-D acceleration knots,
+executes only a short prefix, observes the current distributed cable state,
+shifts the previous plan, and replans.
+The event cost is defined only by first tip contact/closest approach, requested
+directed impact speed and cone, soft drone displacement and safety penalties,
+and weak control regularization. It has no reward for whipping, cable energy,
+shape, straightness, or prescribed wind-up/release phases; the maneuver must
+emerge from the cable physics. The UI separates task definition from MPPI
+compute settings and shows the fixed full-impact objective read-only. The old
+solve-once and IPOPT interfaces remain research utilities rather than online
+controls. See
 [drone_mpc/README.md](drone_mpc/README.md) for its assumptions and controls.
 Until the free-tip fit is available, the UI can use the latest two-holder
 `EI`/`Cb` result as an explicitly labelled provisional transfer.
@@ -263,22 +259,46 @@ and miss magnitude remain seed-sensitive. The internal
 it verifies identical models, tasks, demonstrations, settings, and held-out
 target strata before combining logs.
 
-For the non-learning matched-model control baseline, launch:
+For the non-learning predictive-control application, launch:
 
 ```powershell
 .\.venv\Scripts\python.exe run_online.py
 ```
 
-The simulated plant and controller use the same fitted DDER model. The online
-controller solves a fixed `N=20`-step forward/recoil problem, applies only the
-first `M` steps, observes the full state, and replans. The Tkinter UI exposes
-`N`, `M`, IPOPT iteration/tolerance/time limits, batched derivative step,
-regularization, task constraints, and vehicle limits. SAC, model mismatch, and
-adaptation are deliberately excluded from this baseline. No live OptiTrack
-stream is consumed yet. The drone plant is acceleration-tracked rather than
-force-coupled; see
+The controller uses the fitted DDER model. By default the simulated plant uses
+the identical model; the separate `Plant truth` tab can instead scale plant
+`EI` and `Cb` while leaving the controller nominal model unchanged. At every
+update, CUDA-batched MPPI starts from the current distributed cable state,
+shifts the previous solution, optimizes the remaining 3-D acceleration knots,
+executes only a short prefix, and replans. The Tkinter UI separates the strike
+task from controller compute. It exposes prediction horizon, physics/control/
+replanning rates, DDER simulation-node count, samples, MPPI iterations, knot
+count, noise, seed, and vehicle limits. Plant-truth ratios are kept outside the
+controller tab because they define the hidden simulated experiment, not an MPPI
+tuning parameter. Full-state feedback, maximum CUDA batching, and the validated
+strike cost are fixed in the public pipeline rather than mixed into routine controller
+operation. Ratios `1.0, 1.0` are the exact matched-model baseline. For mismatch
+tests, controller and plant retain the same node grid, mass, geometry, timestep,
+and solver configuration; only the two physical parameters change, and both
+model identities are saved. The legacy spherical drone-excursion constraint is
+disabled; drone displacement at impact remains a soft cost. SAC, online
+adaptation, DDER gradients, and IPOPT are deliberately excluded from this
+controller; the optional truth mismatch is fixed for the run. During execution,
+every completed MPC update streams its newly
+realized cable frames to the viewport step by step; after completion, the full
+maneuver can be replayed in wall-clock-synchronized real time. One CUDA batch provides maximum rollout
+parallelism, with presets from 128 low-latency samples to the measured
+2,048-sample throughput knee on the development RTX 4080. No live OptiTrack
+stream is consumed yet. The drone plant is
+acceleration-tracked rather than force-coupled; see
 [drone_mpc/README.md](drone_mpc/README.md) for the measurement, provenance, and
 physics contracts.
+
+The online UI can save and load a versioned JSON settings profile containing
+the model/warm-start inputs, task, controller compute settings, and hidden plant
+truth. Profile loading is all-or-nothing: every required field is validated
+before any visible setting is changed. Profiles are stored by default in
+`data/drone_mpc/settings_profiles/`.
 
 ## Legacy ZED particle-filter prototype
 

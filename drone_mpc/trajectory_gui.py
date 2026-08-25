@@ -30,6 +30,9 @@ DEFAULT_OUTPUT_PATH = Path("data/drone_mpc/whip_trajectory.npz")
 class WhipTrajectoryCanvas(CableCanvas):
     def __init__(self, parent: tk.Misc) -> None:
         super().__init__(parent)
+        self.banner_text = (
+            "OFFLINE WHIP TRAJECTORY  |  EXACT FULL DER PLAYBACK  |  WORLD Z UP"
+        )
         self.result: ReachabilityResult | None = None
         self.frame_index = 0
 
@@ -85,7 +88,7 @@ class WhipTrajectoryCanvas(CableCanvas):
             18,
             16,
             anchor=tk.NW,
-            text="OFFLINE WHIP TRAJECTORY  |  EXACT FULL DER PLAYBACK  |  WORLD Z UP",
+            text=self.banner_text,
             fill="#a9b9c8",
             font=("Segoe UI Semibold", 10),
         )
@@ -194,7 +197,7 @@ class WhipTrajectoryCanvas(CableCanvas):
             82,
             anchor=tk.NW,
             text=(
-                f"drone excursion={result.terms['maximum_drone_excursion_m']:.3f}m   "
+                f"measured max displacement={result.terms['maximum_drone_excursion_m']:.3f}m   "
                 f"forward/recoil={result.terms['maximum_forward_stroke_m']:.3f}/"
                 f"{result.terms['recoil_stroke_m']:.3f}m   "
                 f"drone max speed={result.terms['maximum_drone_speed_m_s']:.2f}m/s"

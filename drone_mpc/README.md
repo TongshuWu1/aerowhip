@@ -1,13 +1,19 @@
 # Drone whip simulation and MPC
 
-The model-based controller GUI is retained as an internal reproducibility
-utility rather than a public project entry point:
+Launch the supported receding-horizon DDER-MPPI controller with:
+
+```powershell
+.\.venv\Scripts\python.exe run_online.py
+```
+
+The older target-aligned IPOPT GUI is retained only as an internal
+reproducibility utility:
 
 ```powershell
 .\.venv\Scripts\python.exe -m research_tools.mpc_gui
 ```
 
-Install the bundled IPOPT interface once in the project environment:
+Install the bundled IPOPT interface only when reproducing that legacy path:
 
 ```powershell
 .\.venv\Scripts\python.exe -m pip install -r drone_mpc\requirements.txt
@@ -53,9 +59,115 @@ is a path constraint in the MPC. Cable reaction does not yet feed back into
 drone acceleration. This approximation must be checked using the measured
 cable/drone mass ratio and flight tracking error before experiments.
 
-## Live matched-model receding-horizon MPC
+## Receding-horizon nominal/truth DDER-MPPI
 
-`run_online.py` launches the non-learning baseline. The simulated plant and MPC
+`run_online.py` launches the full-state receding-horizon controller UI. The
+controller always uses the immutable fitted DDER cable. The independently
+constructed simulated plant uses either that same model or a controlled hidden
+parameter mismatch. This separates nominal prediction from plant truth without
+introducing estimation or adaptation. At each update, MPPI starts from the actual
+current drone and distributed cable state, shifts the previous solution in
+time, samples 3-D acceleration-knot corrections, evaluates complete cable
+trajectories in CUDA batches, executes a short prefix, and replans. It contains
+no casting primitive, IPOPT solve, finite-difference gradient, or DDER-gradient
+guidance.
+
+The research UI intentionally has three separate areas:
+
+1. **Task** defines the initial drone pose, target, requested impact direction
+   and speed, target radius, and cone angle.
+2. **Controller** exposes prediction horizon, physics/control/replanning rates,
+   DDER simulation-node count, samples, MPPI iterations, acceleration-knot
+   count, perturbation scale and decay, temperature, seed, timeout, and vehicle
+   limits. It also verifies the first-solve warm start. Full distributed-state
+   feedback and one CUDA batch are fixed parts of this public pipeline rather
+   than UI tuning choices.
+3. **Plant truth** changes the simulated plant's homogeneous `EI` and `Cb` as
+   ratios of the fitted values. Ratios `1.0, 1.0` reproduce the exact
+   matched-model baseline. These ratios are hidden from MPPI.
+
+`Load profile...` and `Save profile...` use the versioned
+`receding_horizon_dder_mppi_settings_v1` JSON schema. A profile contains model
+and warm-start paths, the complete task definition, all public controller
+settings, and both plant-truth ratios. Loading validates every required field
+before changing the UI, so an invalid or partial file cannot be applied. Both
+dialogs open `data/drone_mpc/settings_profiles/` by default.
+
+The loaded fit remains the immutable source model. `DDER simulation nodes` may
+be set from 6 through the fitted node count (21 for the current artifact). At
+full resolution the exact fitted material grid and masses are retained. At a
+lower resolution, material coordinates are remeshed, source vertex masses are
+conservatively deposited, total mass is checked, homogeneous `EI` and `Cb` are
+unchanged, and the smallest stable explicit substep count is selected. Planner
+and plant always use the same selected material grid, mass, geometry,
+constraint iterations, and explicit substep count. In a mismatch experiment,
+only plant `EI` and `Cb` differ. The selected count, fitted-source hash,
+controller and plant hashes, resolved physical values, and truth ratios are
+saved with every execution. This is a fixed-model robustness experiment, not
+online system identification.
+
+The default balanced preset is 512 samples and one MPPI iteration per update.
+The CUDA rollout batch always equals the sample count, which is the maximum
+valid parallelism within an iteration. Low-latency (128), balanced
+(512), GPU-saturation (2,048), and higher-refinement (2,048 x 2) presets expose
+the latency/coverage tradeoff. On the development RTX 4080, measured throughput
+rose from about 21 rollouts/s at batch 128 to 138 rollouts/s at batch 2,048;
+batch 4,096 reached only about 160 rollouts/s while nearly doubling update
+latency, so 2,048 is the practical throughput knee. Every run
+saves the realized trajectory, each predicted cable trajectory, shifted and
+optimized knots, executed prefixes, settings, model hash, and compute timings to
+`data/drone_mpc/receding_mppi/latest_execution.npz` and its JSON sidecar.
+Random seed `0` requests a fresh nonzero seed on every press of Run. The
+resolved seed—not zero—is logged and saved, so each randomized execution can be
+reproduced later. Any positive seed remains deterministic.
+While the controller is running, each replan publishes its realized plant block
+to the Tk event loop. The viewport deliberately advances those physics frames
+one at a time instead of waiting for the entire maneuver. Once the final live
+frame has been displayed, the same recorded execution becomes available as a
+wall-clock-synchronized 1× replay; replay never reruns or changes the optimization.
+
+The public MPPI path does not enforce the legacy spherical maximum-drone-
+excursion constraint. Drone displacement at impact remains a soft objective,
+while acceleration, speed, ground, altitude, target keepout, and collision
+limits remain safety terms. Maximum excursion is still recorded as a diagnostic.
+
+For each rollout, the candidate event is the first geometric free-tip entry
+into the target region, or the closest-approach frame if no entry occurs. The
+initial cost is exactly the task-level formulation
+
+```math
+J = J_{pos}+J_{speed}+J_{dir}+J_{success}+J_{disp}+J_{safety}+J_u.
+```
+
+Position uses the bounded rational cost, while directed speed and the impact
+cone are proximity gated. A safe valid strike receives the dominant negative
+success cost. Drone displacement is a soft quadratic term. Workspace, target
+keepout, speed, ground/altitude, cable-drone clearance, non-tip target contact,
+and actuator violations are soft safety penalties accumulated only through the
+candidate impact event. There is deliberately no reward for cable kinetic or
+bending energy, cable shape or straightness, wind-up, release timing, or an
+explicitly styled whip. The fitted cable dynamics determine how an action
+reaches the terminal event.
+
+The point-mass drone has no attitude or angular-rate state, so those safety
+terms are explicitly unavailable in this simulator and must be added with the
+6-DoF flight model rather than fabricated here. The public controller always
+uses the complete directed-impact objective. Position-only and position-plus-
+speed modes remain research-tool diagnostics; they are not routine online
+tuning controls or a training curriculum.
+
+The default full-objective matched-model trial at target `(0.48, 0, 1.30)` m
+found a safe strike with 36.4 mm position error, 2.35 m/s directed tip speed,
+and 7.6 degree direction error. The drone stayed at least 0.444 m from the
+target, the nearest non-tip cable section stayed 51.1 mm away, and an
+independently constructed DDER replay matched the planning rollout exactly.
+This is numerical feasibility under a matched model, not a flight or robustness
+claim. The archive is written to
+`data/drone_mpc/perfect_model_mppi_trial.npz` with a JSON provenance sidecar.
+
+## Legacy target-aligned IPOPT receding-horizon controller
+
+The retained legacy controller uses the simulated plant and MPC
 use the same fitted DDER model; hidden parameter mismatch and SAC are not part
 of this experiment. By default the model advances at 100 Hz, controls update at
 50 Hz, the prediction horizon is `N=20` control steps, and `M=5` controls are
@@ -472,11 +584,86 @@ of aerodynamic cable drag/model residuals mean the result tests architecture
 and local mismatch sensitivity, not real-world control accuracy. Held-out
 one-attachment data and ultimately OptiTrack flight provide those tests.
 
+## MPPI whip diagnostics and ablations
+
+The verified far/fast replay can be analyzed without changing its optimizer:
+
+```powershell
+C:\Users\wts28\env_isaaclab\Scripts\python.exe -m research_tools.mppi_propagation
+```
+
+This saves node-by-time relative-speed, relative-kinetic-energy, and DER-curvature
+arrays plus a publication-oriented PNG under `data/drone_mpc/diagnostics`. The
+quantities are diagnostics only; they are not rewards.
+
+Run the checkpointed horizon, initialization, and proximity-gate experiments with:
+
+```powershell
+.\.venv\Scripts\python.exe -m research_tools.mppi_ablation --study all --profile smoke
+```
+
+Use `--profile pilot` for three seeds, `--profile discovery` for the focused 20-seed
+initialization study, and a distinct `--output-dir` for each declared experiment.
+Summary rows never combine different iteration/sample budgets. See
+`docs/MPPI_WHIP_HANDOFF.md` for the definitions and current pilot interpretation.
+
+The focused maneuver-discovery study fixes the horizon at 2.0 s and pairs MPPI seeds
+across zero, random smooth, forward--recoil, backward--forward, lateral, and
+continuation initializations. Its final declared budget is 20 seeds:
+
+```powershell
+.\.venv\Scripts\python.exe -m research_tools.mppi_ablation `
+  --study initialization --profile discovery `
+  --output-dir data/drone_mpc/ablations/mppi_discovery
+```
+
+The completed three-seed pilot found 3/3 success for forward--recoil and continuation
+and 0/3 for the other four families. This supports running the larger paired study but
+is not itself a precise reliability estimate.
+
+### Exact-DDER gradient-guided MPPI study
+
+The gradient study keeps the final task, 2.0 s horizon, 16 three-dimensional
+acceleration knots, DDER physics, real event cost, action bounds, and safety
+logic fixed. A temporal softmin supplies a differentiable approximate impact
+state. Its surrogate contains only target distance, directed tip velocity, and
+velocity-direction alignment. It has no contact identity, success bonus,
+safety term, cable-energy/shape term, or prescribed maneuver phase. Half of
+the samples remain ordinary MPPI; the other half retain the same Gaussian
+noise around a center shifted by the normalized negative gradient. Only the
+unchanged hard cost determines importance weights and the retained plan.
+
+Validate the local direction first:
+
+```powershell
+.\.venv\Scripts\python.exe -m research_tools.mppi_gradient_study `
+  --mode validation --device cuda `
+  --output-dir data/drone_mpc/ablations/dder_gradient_mppi_validation
+```
+
+Run the paired 20-seed comparison with:
+
+```powershell
+.\.venv\Scripts\python.exe -m research_tools.mppi_gradient_study `
+  --mode benchmark --device cuda `
+  --seeds 201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220 `
+  --iterations 15 --samples 256 --batch-size 128 `
+  --gradient-step-sigma-ratio 0.025 `
+  --output-dir data/drone_mpc/ablations/dder_gradient_mppi_benchmark
+```
+
+Conditions A--C are vanilla zero-start, guided zero-start, and guided
+forward--recoil. Condition D (vanilla forward--recoil) is an additional
+attribution control separating the gradient effect from initialization. Every
+condition/seed is checkpointed. Exact reverse-mode differentiation through 200
+physics frames is currently expensive, so gradient and total wall time are
+reported separately rather than hidden in controller runtime.
+
 ## Deferred hidden-model OptiTrack testbed
 
 This adaptation experiment is retained as research code but is not the current
-public online workflow. `run_online.py` now launches the matched-model MPC
-baseline above. A separate public adaptation launcher will be restored only
+public online workflow. `run_online.py` now launches the receding matched-model
+DDER-MPPI baseline above. A separate public adaptation launcher will be restored only
 after that baseline and its real-time measurement interface are validated.
 
 The controller panel loads the nominal cable artifact and the frozen SAC policy.
