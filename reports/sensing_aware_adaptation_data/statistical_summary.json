@@ -1,0 +1,314 @@
+{
+  "schema": "sensing_aware_adaptation_statistics_v1",
+  "prediction_summary": [
+    {
+      "horizon_s": 0.1,
+      "model": "nominal",
+      "position_rmse_m": 0.0001209283212484234
+    },
+    {
+      "horizon_s": 0.1,
+      "model": "adapted",
+      "position_rmse_m": 3.900634242838165e-05
+    },
+    {
+      "horizon_s": 0.1,
+      "model": "oracle",
+      "position_rmse_m": 3.2953943103739225e-08
+    },
+    {
+      "horizon_s": 0.2,
+      "model": "nominal",
+      "position_rmse_m": 0.0002529596380160126
+    },
+    {
+      "horizon_s": 0.2,
+      "model": "adapted",
+      "position_rmse_m": 7.767127591016861e-05
+    },
+    {
+      "horizon_s": 0.2,
+      "model": "oracle",
+      "position_rmse_m": 5.753429047987213e-08
+    },
+    {
+      "horizon_s": 0.3,
+      "model": "nominal",
+      "position_rmse_m": 0.0003822653747241369
+    },
+    {
+      "horizon_s": 0.3,
+      "model": "adapted",
+      "position_rmse_m": 9.075063771295742e-05
+    },
+    {
+      "horizon_s": 0.3,
+      "model": "oracle",
+      "position_rmse_m": 7.71897550222255e-08
+    }
+  ],
+  "control_summary": [
+    {
+      "noise_std_m": 0.0,
+      "mode": "mode_a_exact_controller_state",
+      "model": "fixed_nominal",
+      "success": 9,
+      "total": 10,
+      "wilson_95": [
+        0.5958499732047615,
+        0.9821237869049271
+      ],
+      "target_error_median_m": 0.009498841129243374,
+      "target_error_iqr_m": [
+        0.006951665855012834,
+        0.011110622435808182
+      ]
+    },
+    {
+      "noise_std_m": 0.0,
+      "mode": "mode_a_exact_controller_state",
+      "model": "adapted_after_strike_3",
+      "success": 9,
+      "total": 10,
+      "wilson_95": [
+        0.5958499732047615,
+        0.9821237869049271
+      ],
+      "target_error_median_m": 0.008313730824738741,
+      "target_error_iqr_m": [
+        0.007071675383485854,
+        0.010335800237953663
+      ]
+    },
+    {
+      "noise_std_m": 0.0,
+      "mode": "mode_a_exact_controller_state",
+      "model": "oracle",
+      "success": 9,
+      "total": 10,
+      "wilson_95": [
+        0.5958499732047615,
+        0.9821237869049271
+      ],
+      "target_error_median_m": 0.00812299270182848,
+      "target_error_iqr_m": [
+        0.005971498438157141,
+        0.009389582555741072
+      ]
+    },
+    {
+      "noise_std_m": 0.0,
+      "mode": "mode_b_sensed_controller_state",
+      "model": "fixed_nominal",
+      "success": 9,
+      "total": 10,
+      "wilson_95": [
+        0.5958499732047615,
+        0.9821237869049271
+      ],
+      "target_error_median_m": 0.012890001758933067,
+      "target_error_iqr_m": [
+        0.008232738473452628,
+        0.015158347552642226
+      ]
+    },
+    {
+      "noise_std_m": 0.0,
+      "mode": "mode_b_sensed_controller_state",
+      "model": "adapted_after_strike_3",
+      "success": 8,
+      "total": 10,
+      "wilson_95": [
+        0.49016247153664183,
+        0.9433178485456247
+      ],
+      "target_error_median_m": 0.007882206235080957,
+      "target_error_iqr_m": [
+        0.007258355733938515,
+        0.012156503507867455
+      ]
+    },
+    {
+      "noise_std_m": 0.0,
+      "mode": "mode_b_sensed_controller_state",
+      "model": "oracle",
+      "success": 8,
+      "total": 10,
+      "wilson_95": [
+        0.49016247153664183,
+        0.9433178485456247
+      ],
+      "target_error_median_m": 0.00781985861249268,
+      "target_error_iqr_m": [
+        0.006355934543535113,
+        0.009027456399053335
+      ]
+    },
+    {
+      "noise_std_m": 5e-05,
+      "mode": "mode_a_exact_controller_state",
+      "model": "fixed_nominal",
+      "success": 9,
+      "total": 10,
+      "wilson_95": [
+        0.5958499732047615,
+        0.9821237869049271
+      ],
+      "target_error_median_m": 0.009498841129243374,
+      "target_error_iqr_m": [
+        0.006951665855012834,
+        0.011110622435808182
+      ]
+    },
+    {
+      "noise_std_m": 5e-05,
+      "mode": "mode_a_exact_controller_state",
+      "model": "adapted_after_strike_3",
+      "success": 8,
+      "total": 10,
+      "wilson_95": [
+        0.49016247153664183,
+        0.9433178485456247
+      ],
+      "target_error_median_m": 0.009104393888264894,
+      "target_error_iqr_m": [
+        0.00726917409338057,
+        0.01410695374943316
+      ]
+    },
+    {
+      "noise_std_m": 5e-05,
+      "mode": "mode_a_exact_controller_state",
+      "model": "oracle",
+      "success": 9,
+      "total": 10,
+      "wilson_95": [
+        0.5958499732047615,
+        0.9821237869049271
+      ],
+      "target_error_median_m": 0.00812299270182848,
+      "target_error_iqr_m": [
+        0.005971498438157141,
+        0.009389582555741072
+      ]
+    },
+    {
+      "noise_std_m": 5e-05,
+      "mode": "mode_b_sensed_controller_state",
+      "model": "fixed_nominal",
+      "success": 9,
+      "total": 10,
+      "wilson_95": [
+        0.5958499732047615,
+        0.9821237869049271
+      ],
+      "target_error_median_m": 0.009234735276550055,
+      "target_error_iqr_m": [
+        0.006562045542523265,
+        0.011108983540907502
+      ]
+    },
+    {
+      "noise_std_m": 5e-05,
+      "mode": "mode_b_sensed_controller_state",
+      "model": "adapted_after_strike_3",
+      "success": 8,
+      "total": 10,
+      "wilson_95": [
+        0.49016247153664183,
+        0.9433178485456247
+      ],
+      "target_error_median_m": 0.008457069285213947,
+      "target_error_iqr_m": [
+        0.006195490015670657,
+        0.009541501989588141
+      ]
+    },
+    {
+      "noise_std_m": 5e-05,
+      "mode": "mode_b_sensed_controller_state",
+      "model": "oracle",
+      "success": 7,
+      "total": 10,
+      "wilson_95": [
+        0.39677814746114537,
+        0.8922087325936989
+      ],
+      "target_error_median_m": 0.008457102347165346,
+      "target_error_iqr_m": [
+        0.007690185098908842,
+        0.013541130349040031
+      ]
+    }
+  ],
+  "paired_control_summary": [
+    {
+      "noise_std_m": 0.0,
+      "mode": "mode_a_exact_controller_state",
+      "both_succeed": 9,
+      "adapted_only_repaired": 0,
+      "fixed_only_degraded": 0,
+      "both_fail": 1,
+      "exact_mcnemar_binomial_p": 1.0
+    },
+    {
+      "noise_std_m": 0.0,
+      "mode": "mode_b_sensed_controller_state",
+      "both_succeed": 8,
+      "adapted_only_repaired": 0,
+      "fixed_only_degraded": 1,
+      "both_fail": 1,
+      "exact_mcnemar_binomial_p": 1.0
+    },
+    {
+      "noise_std_m": 5e-05,
+      "mode": "mode_a_exact_controller_state",
+      "both_succeed": 8,
+      "adapted_only_repaired": 0,
+      "fixed_only_degraded": 1,
+      "both_fail": 1,
+      "exact_mcnemar_binomial_p": 1.0
+    },
+    {
+      "noise_std_m": 5e-05,
+      "mode": "mode_b_sensed_controller_state",
+      "both_succeed": 8,
+      "adapted_only_repaired": 0,
+      "fixed_only_degraded": 1,
+      "both_fail": 1,
+      "exact_mcnemar_binomial_p": 1.0
+    }
+  ],
+  "noise_sensitivity": [
+    {
+      "noise_std_m": 0.0,
+      "median_abs_log_ei_error": 0.055777817225625886,
+      "median_abs_log_cb_error": 0.08947718344666641,
+      "median_velocity_rmse_m_s": 0.0002672248144446565
+    },
+    {
+      "noise_std_m": 0.00025,
+      "median_abs_log_ei_error": 0.2027325540540822,
+      "median_abs_log_cb_error": 0.3566749439387324,
+      "median_velocity_rmse_m_s": 0.017868729108564796
+    },
+    {
+      "noise_std_m": 0.0005,
+      "median_abs_log_ei_error": 0.2027325540540822,
+      "median_abs_log_cb_error": 0.3566749439387324,
+      "median_velocity_rmse_m_s": 0.03565041230851468
+    },
+    {
+      "noise_std_m": 0.001,
+      "median_abs_log_ei_error": 0.2027325540540822,
+      "median_abs_log_cb_error": 0.3566749439387324,
+      "median_velocity_rmse_m_s": 0.07069134645808256
+    },
+    {
+      "noise_std_m": 0.002,
+      "median_abs_log_ei_error": 0.2027325540540822,
+      "median_abs_log_cb_error": 0.3566749439387324,
+      "median_velocity_rmse_m_s": 0.13749788838067345
+    }
+  ]
+}

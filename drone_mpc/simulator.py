@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import math
+import os
 from typing import Callable
 
 import numpy as np
@@ -200,6 +201,124 @@ class _RuntimeDderStep:
         return self.output
 
 
+class _RuntimeDderRollout:
+    """Capture a complete fixed-shape rollout as one CUDA graph.
+
+    This preserves the exact production step and chronological operation order;
+    it only removes the 35 Python-side one-step graph launches and inter-step
+    input copies from the authoritative online workload.
+    """
+
+    def __init__(
+        self,
+        model: DderModel,
+        settings: SimulationSettings,
+        batch_size: int,
+        control_count: int,
+        node_count: int,
+        dtype: torch.dtype,
+        device: torch.device,
+    ) -> None:
+        self.model = model
+        self.settings = settings
+        self.device = device
+        self.batch_size = batch_size
+        self.control_count = control_count
+        self.q = torch.zeros(
+            (batch_size, node_count, 3), dtype=dtype, device=device
+        )
+        self.v = torch.zeros_like(self.q)
+        self.drone_position = torch.zeros(
+            (batch_size, 3), dtype=dtype, device=device
+        )
+        self.drone_velocity = torch.zeros_like(self.drone_position)
+        self.controls = torch.zeros(
+            (batch_size, control_count, 3), dtype=dtype, device=device
+        )
+        self.drop = torch.zeros((3,), dtype=dtype, device=device)
+        self.drop[2] = -settings.attachment_drop_m
+        self.constants = model.runtime_constants(self.q)
+        self.output: TensorRollout | None = None
+        self.graph: torch.cuda.CUDAGraph | None = None
+        stream = torch.cuda.Stream()
+        stream.wait_stream(torch.cuda.current_stream())
+        with torch.cuda.stream(stream):
+            for _ in range(2):
+                self.output = self._execute()
+        torch.cuda.current_stream().wait_stream(stream)
+        self.graph = torch.cuda.CUDAGraph()
+        with torch.cuda.graph(self.graph, capture_error_mode="thread_local"):
+            self.output = self._execute()
+
+    def _execute(self) -> TensorRollout:
+        drone_position = self.drone_position
+        drone_velocity = self.drone_velocity
+        cable = DderState(self.q, self.v)
+        drop = self.drop
+        drone_positions = [drone_position]
+        drone_velocities = [drone_velocity]
+        attachments = [drone_position + drop]
+        cable_positions = [cable.positions_m]
+        cable_velocities = [cable.velocities_m_s]
+        dt = self.settings.simulation_dt_s
+        dt_tensor = torch.full(
+            (self.batch_size,), dt, dtype=self.q.dtype, device=self.q.device
+        )
+        total_steps = self.control_count * self.settings.steps_per_control
+        for step_index in range(total_steps):
+            control_index = step_index // self.settings.steps_per_control
+            acceleration = self.controls[:, control_index]
+            next_position = (
+                drone_position
+                + dt * drone_velocity
+                + 0.5 * dt * dt * acceleration
+            )
+            next_velocity = drone_velocity + dt * acceleration
+            next_attachment = next_position + drop
+            cable = self.model.step_runtime(
+                cable,
+                next_attachment[:, None],
+                dt_tensor,
+                self.constants,
+                iterative_damping=True,
+                pinned_endpoints=START_PINNED_FREE_END,
+            )
+            drone_position = next_position
+            drone_velocity = next_velocity
+            drone_positions.append(drone_position)
+            drone_velocities.append(drone_velocity)
+            attachments.append(next_attachment)
+            cable_positions.append(cable.positions_m)
+            cable_velocities.append(cable.velocities_m_s)
+        time = torch.arange(
+            total_steps + 1, dtype=self.q.dtype, device=self.q.device
+        ) * dt
+        return TensorRollout(
+            time_s=time,
+            drone_positions_m=torch.stack(drone_positions, dim=1),
+            drone_velocities_m_s=torch.stack(drone_velocities, dim=1),
+            attachment_positions_m=torch.stack(attachments, dim=1),
+            cable_positions_m=torch.stack(cable_positions, dim=1),
+            cable_velocities_m_s=torch.stack(cable_velocities, dim=1),
+            accelerations_m_s2=self.controls,
+        )
+
+    def __call__(
+        self,
+        initial_state: DroneCableState,
+        controls: torch.Tensor,
+    ) -> TensorRollout:
+        self.q.copy_(initial_state.cable.positions_m)
+        self.v.copy_(initial_state.cable.velocities_m_s)
+        self.drone_position.copy_(initial_state.drone_position_m)
+        self.drone_velocity.copy_(initial_state.drone_velocity_m_s)
+        self.controls.copy_(controls)
+        assert self.graph is not None
+        self.graph.replay()
+        assert self.output is not None
+        return self.output
+
+
 def tensor_rollout_to_result(
     rollout: TensorRollout,
     *,
@@ -259,6 +378,7 @@ class WhipSimulator:
                 "reduce dt or increase the artifact solver substeps."
             )
         self._runtime_steps: dict[int, _RuntimeDderStep] = {}
+        self._runtime_rollouts: dict[tuple[int, int], _RuntimeDderRollout] = {}
 
     @property
     def dtype(self) -> torch.dtype:
@@ -278,6 +398,24 @@ class WhipSimulator:
             )
             self._runtime_steps[batch_size] = step
         return step
+
+    def _runtime_rollout(
+        self, batch_size: int, control_count: int
+    ) -> _RuntimeDderRollout:
+        key = (batch_size, control_count)
+        rollout = self._runtime_rollouts.get(key)
+        if rollout is None:
+            rollout = _RuntimeDderRollout(
+                self.snapshot.model,
+                self.settings,
+                batch_size,
+                control_count,
+                self.snapshot.node_count,
+                self.dtype,
+                self.device,
+            )
+            self._runtime_rollouts[key] = rollout
+        return rollout
 
     def initial_state(
         self,
@@ -354,6 +492,18 @@ class WhipSimulator:
             raise ValueError("Acceleration control exceeds the configured hard limit.")
 
         state = self._repeat_state(initial_state, controls.shape[0])
+        use_full_horizon_graph = (
+            not create_graph
+            and self.device.type == "cuda"
+            and self.snapshot.node_count == 11
+            and self.snapshot.model.parameters.substeps == 1
+            and self.snapshot.model.parameters.constraint_iterations == 4
+            and os.environ.get("CABLE_TWIN_FULL_HORIZON_GRAPH", "1") != "0"
+        )
+        if use_full_horizon_graph:
+            return self._runtime_rollout(
+                controls.shape[0], controls.shape[1]
+            )(state, controls)
         drone_position = state.drone_position_m
         drone_velocity = state.drone_velocity_m_s
         cable = state.cable

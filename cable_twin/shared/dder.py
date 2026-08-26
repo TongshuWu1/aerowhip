@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import math
+import os
 
 import torch
 
@@ -528,6 +529,28 @@ def _implicit_bending_damping_velocity(
             f"boundary_velocity must have shape Bx{boundary_count}x3 for "
             "the selected pinned endpoints."
         )
+    fixed_runtime_damping = (
+        positions.is_cuda
+        and positions.dtype == torch.float32
+        and positions.shape[1] == 11
+        and pinned_endpoints == START_PINNED_FREE_END
+        and endpoint_orientations is None
+        and endpoint_orientation_rates is None
+        and conjugate_gradient_iterations == 60
+        and os.environ.get("CABLE_TWIN_FUSED_FIXED_DAMPING", "1") != "0"
+    )
+    if fixed_runtime_damping:
+        from .cuda_fixed_pcg import fixed_damping_11node_60pcg
+
+        return fixed_damping_11node_60pcg(
+            positions,
+            undamped_velocity,
+            boundary_velocity,
+            rest_lengths,
+            masses,
+            substep_dt,
+            damping,
+        )
     jacobian, affine, weight = _curvature_rate_jacobian_impl(
         positions, rest_lengths, endpoint_orientations, endpoint_orientation_rates
     )
@@ -572,38 +595,54 @@ def _implicit_bending_damping_velocity(
         # need float64 Krylov arithmetic to match the direct SPD solve closely.
         iterative_system = system.to(dtype=torch.float64)
         iterative_rhs = right_hand_side.to(dtype=torch.float64)
-        solution = torch.zeros_like(iterative_rhs)
-        residual = iterative_rhs.clone()
-        diagonal = torch.diagonal(iterative_system, dim1=-2, dim2=-1)
-        preconditioned = residual / diagonal
-        direction = preconditioned.clone()
-        residual_product = torch.sum(
-            residual * preconditioned, dim=-1, keepdim=True
+        fixed_runtime_pcg = (
+            iterative_system.is_cuda
+            and iterative_system.shape[1:] == (30, 30)
+            and conjugate_gradient_iterations == 60
+            and pinned_endpoints == START_PINNED_FREE_END
+            and os.environ.get("CABLE_TWIN_FUSED_FIXED_PCG", "1") != "0"
         )
-        tiny = torch.finfo(iterative_system.dtype).tiny
-        for _ in range(conjugate_gradient_iterations):
-            applied = (iterative_system @ direction[..., None])[..., 0]
-            denominator = torch.sum(
-                direction * applied, dim=-1, keepdim=True
+        if fixed_runtime_pcg:
+            # Exact same assembled A/rhs and fixed float64 PCG recurrence, but
+            # one cooperative CUDA kernel retains all vectors for 60 steps.
+            from .cuda_fixed_pcg import fixed_pcg_30x60
+
+            solution = fixed_pcg_30x60(
+                iterative_system.contiguous(), iterative_rhs.contiguous()
             )
-            alpha = torch.where(
-                torch.abs(denominator) > tiny,
-                residual_product / denominator,
-                torch.zeros_like(denominator),
-            )
-            solution = solution + alpha * direction
-            residual = residual - alpha * applied
+        else:
+            solution = torch.zeros_like(iterative_rhs)
+            residual = iterative_rhs.clone()
+            diagonal = torch.diagonal(iterative_system, dim1=-2, dim2=-1)
             preconditioned = residual / diagonal
-            next_product = torch.sum(
+            direction = preconditioned.clone()
+            residual_product = torch.sum(
                 residual * preconditioned, dim=-1, keepdim=True
             )
-            beta = torch.where(
-                torch.abs(residual_product) > tiny,
-                next_product / residual_product,
-                torch.zeros_like(residual_product),
-            )
-            direction = preconditioned + beta * direction
-            residual_product = next_product
+            tiny = torch.finfo(iterative_system.dtype).tiny
+            for _ in range(conjugate_gradient_iterations):
+                applied = (iterative_system @ direction[..., None])[..., 0]
+                denominator = torch.sum(
+                    direction * applied, dim=-1, keepdim=True
+                )
+                alpha = torch.where(
+                    torch.abs(denominator) > tiny,
+                    residual_product / denominator,
+                    torch.zeros_like(denominator),
+                )
+                solution = solution + alpha * direction
+                residual = residual - alpha * applied
+                preconditioned = residual / diagonal
+                next_product = torch.sum(
+                    residual * preconditioned, dim=-1, keepdim=True
+                )
+                beta = torch.where(
+                    torch.abs(residual_product) > tiny,
+                    next_product / residual_product,
+                    torch.zeros_like(residual_product),
+                )
+                direction = preconditioned + beta * direction
+                residual_product = next_product
         solution = solution.to(dtype=right_hand_side.dtype)
     free_velocity = solution.reshape(batch, free_stop - free_start, 3)
     return _combine_boundary_and_free_values(
@@ -2030,23 +2069,44 @@ class DderModel:
                 boundary,
                 pinned_endpoints,
             )
-            next_q = momentum_project_lengths(
-                predicted_q,
-                constants.rest_lengths_m,
-                constants.masses_kg,
-                boundary,
-                iterations=self.parameters.constraint_iterations,
-                pinned_endpoints=pinned_endpoints,
+            fixed_runtime_projection = (
+                predicted_q.is_cuda
+                and predicted_q.dtype == torch.float32
+                and predicted_q.shape[1] == 11
+                and pinned_endpoints == START_PINNED_FREE_END
+                and self.parameters.constraint_iterations == 4
+                and os.environ.get("CABLE_TWIN_FUSED_FIXED_PROJECTION", "1") != "0"
             )
-            provisional_v = (next_q - q) / substep_dt
-            v = momentum_project_velocities(
-                next_q,
-                provisional_v,
-                constants.masses_kg,
-                boundary_velocity,
-                validate=False,
-                pinned_endpoints=pinned_endpoints,
-            )
+            if fixed_runtime_projection:
+                from .cuda_fixed_pcg import fixed_projection_11node_4plus1
+
+                next_q, v = fixed_projection_11node_4plus1(
+                    predicted_q,
+                    q,
+                    constants.rest_lengths_m,
+                    constants.masses_kg,
+                    boundary,
+                    boundary_velocity,
+                    substep_dt[:, 0, 0],
+                )
+            else:
+                next_q = momentum_project_lengths(
+                    predicted_q,
+                    constants.rest_lengths_m,
+                    constants.masses_kg,
+                    boundary,
+                    iterations=self.parameters.constraint_iterations,
+                    pinned_endpoints=pinned_endpoints,
+                )
+                provisional_v = (next_q - q) / substep_dt
+                v = momentum_project_velocities(
+                    next_q,
+                    provisional_v,
+                    constants.masses_kg,
+                    boundary_velocity,
+                    validate=False,
+                    pinned_endpoints=pinned_endpoints,
+                )
             q = next_q
             if orientations is not None:
                 principal_twist = _endpoint_twist_angle_impl(

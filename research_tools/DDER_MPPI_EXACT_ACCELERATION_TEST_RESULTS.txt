@@ -1,0 +1,21 @@
+DDER-MPPI exact acceleration verification
+Date: 2026-08-26
+
+Command:
+  .venv\Scripts\python.exe -m compileall -q cable_twin drone_mpc research_tools
+
+Result:
+  PASS
+
+Command:
+  .venv\Scripts\python.exe -m unittest discover -s tests -p "test_*.py"
+
+Result:
+  Ran 189 tests in 9.247 s
+  OK
+
+Additional production validations:
+  - Frozen one-step, rollout, candidate-ranking, and MPPI-update validation: PASS
+  - 20 warmed updates for every retained timing stage: COMPLETE
+  - Paired full-state closed-loop conditions/seeds: COMPLETE
+  - Hidden-state full-feedback versus endpoint-only ablation: COMPLETE

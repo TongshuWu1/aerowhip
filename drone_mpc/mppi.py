@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import math
+import os
 import time
 from typing import Callable
 
@@ -399,6 +400,19 @@ def _mppi_event_objective(
     The cable trajectory determines the maneuver.  No cable-shape, energy,
     wind-up, release-time, or manually prescribed whip term appears here.
     """
+
+    fixed_cuda_objective = (
+        rollout.cable_positions_m.is_cuda
+        and rollout.cable_positions_m.dtype == torch.float32
+        and rollout.cable_positions_m.shape[2] == 11
+        and os.environ.get("DRONE_MPPI_FUSED_COST", "1") != "0"
+    )
+    if fixed_cuda_objective:
+        from .cuda_mppi_cost import evaluate_fixed_mppi_cost
+
+        return evaluate_fixed_mppi_cost(
+            rollout, initial_state, problem, simulator, settings
+        )
 
     dtype = rollout.cable_positions_m.dtype
     device = rollout.cable_positions_m.device

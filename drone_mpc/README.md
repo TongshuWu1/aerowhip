@@ -750,6 +750,71 @@ policy adaptation. The next estimator milestone must introduce a
 low-dimensional hidden cable-state belief while retaining the same tip-only
 measurement boundary.
 
+## Distributed-state event-triggered EI/Cb adaptation
+
+The accelerated 11-node DDER--MPPI controller now has a separate adaptation
+layer in `drone_mpc/distributed_adaptation.py`. It estimates only homogeneous
+`EI` and `Cb` in nominal-relative log coordinates. The controller freezes one
+immutable parameter generation for each MPPI solve; the estimator monitors a
+2 s distributed-state FIFO, retains up to eight informative 0.1 s segments,
+and runs a bounded short-horizon fit only after persistent prediction error,
+excitation, and parameter-information gates pass.
+
+The fitting engine batches the current and `+/- EI`, `+/- Cb` hypotheses over
+four fitting segments, solves one 2-by-2 LM update, evaluates four line-search
+steps on two held-out segments, and permits at most two iterations per trigger.
+Accepted parameters are materialized in a new immutable simulator because the
+production CUDA graph captures physical-parameter tensors. The new simulator
+is prewarmed outside MPPI and atomically swapped between solves.
+
+Run the clean causal estimator and the final paired controller study with:
+
+```powershell
+.\.venv\Scripts\python.exe -m research_tools.distributed_adaptation_study --phase estimator --policy-efficiency --adaptation-ablations
+.\.venv\Scripts\python.exe -m research_tools.distributed_adaptation_study --phase control --seeds 11 17 29 31 43 47 59 71 83 97
+.\.venv\Scripts\python.exe -m research_tools.adaptation_identifiability_diagnostics
+.\.venv\Scripts\python.exe -m research_tools.adaptation_mppi_interference
+.\.venv\Scripts\python.exe -m research_tools.validate_adaptation_publication --prewarm-mppi
+```
+
+The complete result and limitations are documented in
+`reports/DISTRIBUTED_DDER_ADAPTATION_REPORT.md`. This first experiment uses
+exact simulated distributed state and isolates only `EI,Cb`; it is not yet a
+noise/dropout/latency or broader model-mismatch result. Between-strike fitting
+is the preferred first physical scheduling mode.
+
+## OptiTrack-compatible synthetic observation study
+
+The sensing boundary is defined in `drone_mpc/cable_observation.py`. A
+`CableObservationSource` emits timestamps, root position, ordered positions
+`c1...c10`, and a validity mask—never simulator velocity or a truth state.
+`CausalCableStateEstimator` converts those observations into the distributed
+state consumed by MPPI and adaptation. The simulator implementation and a
+future Motive implementation are intentionally interchangeable at this
+boundary.
+
+The transparent baseline estimates velocity from past positions only. Its
+production study configuration uses a three-sample first-order fit, retains the
+newest measured position, and projects the velocity onto the known DDER
+inextensibility constraint. Imputed marker values remain flagged and are
+excluded from fitting residuals. Arrival timestamps are enforced so future
+measurements cannot leak into a controller update.
+
+Reproduce the study stages with:
+
+```powershell
+.\.venv\Scripts\python.exe -m research_tools.sensing_aware_adaptation_study --stage zero-noise --output reports\sensing_aware_adaptation_data\zero_noise_causal_velocity.json
+.\.venv\Scripts\python.exe -m research_tools.sensing_aware_adaptation_study --stage noise --output reports\sensing_aware_adaptation_data\representative_noise_sweep_projected.json
+.\.venv\Scripts\python.exe -m research_tools.sensing_aware_adaptation_study --stage fine-noise --output reports\sensing_aware_adaptation_data\fine_noise_detection_boundary.json
+.\.venv\Scripts\python.exe -m research_tools.sensing_aware_adaptation_study --stage mode-b --output reports\sensing_aware_adaptation_data\mode_b_full_sensed_control.json
+.\.venv\Scripts\python.exe -m research_tools.sensing_aware_adaptation_study --stage diagnostics --output reports\sensing_aware_adaptation_data\sensing_diagnostics.json
+.\.venv\Scripts\python.exe -m research_tools.sensing_aware_adaptation_study --stage control-benchmark --output reports\sensing_aware_adaptation_data\representative_paired_control_10seeds.json
+.\.venv\Scripts\python.exe research_tools\render_sensing_adaptation_report.py
+```
+
+The findings and the reason the full nine-condition matrix was deliberately
+not run are documented in `reports/SENSING_AWARE_DDER_ADAPTATION_REPORT.md`.
+
 ## Residual-learning gate
 
 A learned residual is intentionally not trained on the current two-held-end

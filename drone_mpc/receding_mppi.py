@@ -36,6 +36,7 @@ FeedbackMode = Literal["full", "endpoint"]
 ProgressCallback = Callable[[str], None]
 CancellationCallback = Callable[[], bool]
 StateTransform = Callable[[float, DroneCableState], DroneCableState]
+ControllerStateProvider = Callable[[float, DroneCableState], DroneCableState]
 
 
 @dataclass(frozen=True, slots=True)
@@ -357,6 +358,7 @@ def run_receding_horizon_mppi(
     initial_warm_start_knots_m_s2: np.ndarray,
     *,
     state_transform: StateTransform | None = None,
+    controller_state_provider: ControllerStateProvider | None = None,
     progress: ProgressCallback | None = None,
     live_update: LiveUpdateCallback | None = None,
     cancelled: CancellationCallback | None = None,
@@ -387,9 +389,14 @@ def run_receding_horizon_mppi(
     if not math.isclose(ratio, round(ratio), rel_tol=0.0, abs_tol=1.0e-9):
         raise ValueError("Replan interval must be a multiple of the control interval.")
     controls_per_replan = max(1, int(round(ratio)))
-    reference_state = initial_state
+    initial_controller_state = (
+        initial_state
+        if controller_state_provider is None
+        else controller_state_provider(0.0, initial_state)
+    )
+    reference_state = initial_controller_state
     plant_state = initial_state
-    observer_state = initial_state
+    observer_state = initial_controller_state
     accumulated = _initial_rollout(initial_state, plant)
     warm_knots = _bound_numpy_vectors(
         initial_warm_start_knots_m_s2,
@@ -416,7 +423,11 @@ def run_receding_horizon_mppi(
                 plant_state = transformed
                 accumulated = _replace_final_state(accumulated, plant_state, plant)
         if execution_settings.feedback_mode == "full":
-            controller_state = plant_state
+            controller_state = (
+                plant_state
+                if controller_state_provider is None
+                else controller_state_provider(elapsed, plant_state)
+            )
         else:
             controller_state = endpoint_conditioned_state(
                 observer_state,
@@ -484,6 +495,13 @@ def run_receding_horizon_mppi(
             observer_segment = planner.rollout(
                 controller_state, controls.to(planner.device), create_graph=False
             )
+        ingest_rollout = (
+            None
+            if controller_state_provider is None
+            else getattr(controller_state_provider, "ingest_plant_rollout", None)
+        )
+        if ingest_rollout is not None:
+            ingest_rollout(elapsed, plant_segment)
         accumulated = _append_rollout(accumulated, plant_segment, elapsed)
         plant_state = plant_segment.final_state()
         observer_state = observer_segment.final_state()
