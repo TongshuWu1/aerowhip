@@ -91,6 +91,19 @@ class DroneMpcTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "controller.samples"):
             normalize_settings_profile(payload)
 
+    def test_legacy_settings_profile_defaults_between_strike_adaptation_on(self) -> None:
+        payload = {
+            "schema": SETTINGS_PROFILE_SCHEMA,
+            "fixed_objective": dict(FIXED_OBJECTIVE),
+            **{
+                section: {field: "1" for field in fields}
+                for section, fields in SETTINGS_PROFILE_FIELDS.items()
+                if section != "adaptation"
+            },
+        }
+        normalized = normalize_settings_profile(payload)
+        self.assertEqual(normalized["adaptation"], {"enabled": "true"})
+
     def test_settings_profile_rejects_an_unknown_schema(self) -> None:
         with self.assertRaisesRegex(ValueError, "Unsupported"):
             normalize_settings_profile({"schema": "future_schema"})

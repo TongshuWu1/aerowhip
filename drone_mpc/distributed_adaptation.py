@@ -8,7 +8,8 @@ validation.  No fitting operation is on the controller's critical path.
 
 Only the two homogeneous material parameters are adapted.  Geometry, masses,
 gravity, time integration, damping discretization, and constraint projection
-remain those of the supplied 11-node one-attached DDER model.
+remain those of the supplied one-attached DDER model.  Online deployments may
+choose any fixed discretization supported by the identified source artifact.
 """
 
 from __future__ import annotations
@@ -633,8 +634,8 @@ class BatchedMeasuredBoundaryPredictor:
         *,
         device: str | torch.device = "cuda",
     ) -> None:
-        if nominal_model.node_count != 11:
-            raise ValueError("The online adapter is authoritative for the 11-node model.")
+        if nominal_model.node_count < 3:
+            raise ValueError("The online adapter requires at least three DDER nodes.")
         self.nominal_model = nominal_model
         self.device = torch.device(device)
         if self.device.type == "cuda" and not torch.cuda.is_available():

@@ -19,6 +19,34 @@ CancellationCallback = Callable[[], bool]
 
 
 @dataclass(frozen=True, slots=True)
+class RuntimeAcceleration:
+    """Resolved forward-runtime implementation for one cable discretization.
+
+    Every CUDA inference rollout can use the fixed-shape full-horizon graph.
+    The experimentally optimized 11-node topology additionally uses the fused
+    damping and projection kernels.  Keeping these tiers explicit prevents the
+    online UI from silently falling back to the old per-step Python path.
+    """
+
+    captured_full_horizon: bool
+    fused_cost: bool
+    fused_mechanics: bool
+    node_count: int
+
+    @property
+    def tier(self) -> str:
+        if self.fused_mechanics:
+            return "maximum (captured horizon + fused 11-node mechanics)"
+        if self.captured_full_horizon and self.fused_cost:
+            return "captured CUDA (arbitrary-node mechanics + fused cost)"
+        return "reference"
+
+    @property
+    def online_ready(self) -> bool:
+        return self.captured_full_horizon and self.fused_cost
+
+
+@dataclass(frozen=True, slots=True)
 class SimulationSettings:
     """Numerical and low-level closed-loop drone assumptions."""
 
@@ -381,6 +409,44 @@ class WhipSimulator:
         self._runtime_rollouts: dict[tuple[int, int], _RuntimeDderRollout] = {}
 
     @property
+    def runtime_acceleration(self) -> RuntimeAcceleration:
+        captured = (
+            self.device.type == "cuda"
+            and os.environ.get("CABLE_TWIN_FULL_HORIZON_GRAPH", "1") != "0"
+        )
+        fused_cost = (
+            self.device.type == "cuda"
+            and os.environ.get("DRONE_MPPI_FUSED_COST", "1") != "0"
+        )
+        fused_mechanics = (
+            self.device.type == "cuda"
+            and self.snapshot.node_count == 11
+            and self.snapshot.model.parameters.substeps == 1
+            and self.snapshot.model.parameters.constraint_iterations == 4
+            and os.environ.get("CABLE_TWIN_FUSED_FIXED_DAMPING", "1") != "0"
+            and os.environ.get("CABLE_TWIN_FUSED_FIXED_PROJECTION", "1") != "0"
+        )
+        return RuntimeAcceleration(
+            captured_full_horizon=captured,
+            fused_cost=fused_cost,
+            fused_mechanics=fused_mechanics,
+            node_count=self.snapshot.node_count,
+        )
+
+    def require_online_acceleration(self) -> RuntimeAcceleration:
+        """Return the runtime tier or reject an obsolete slow online path."""
+
+        acceleration = self.runtime_acceleration
+        if not acceleration.online_ready:
+            raise RuntimeError(
+                "Online DDER-MPPI requires CUDA full-horizon capture and the "
+                "fused CUDA MPPI cost. Enable CABLE_TWIN_FULL_HORIZON_GRAPH and "
+                "DRONE_MPPI_FUSED_COST, or use the reference simulator only in "
+                "offline numerical tests."
+            )
+        return acceleration
+
+    @property
     def dtype(self) -> torch.dtype:
         # Identification remains float64.  The deployed DDER runtime uses
         # float32 on CUDA, as does the existing particle-filter inference path.
@@ -492,13 +558,14 @@ class WhipSimulator:
             raise ValueError("Acceleration control exceeds the configured hard limit.")
 
         state = self._repeat_state(initial_state, controls.shape[0])
+        # The graph is specialized when it is first constructed, so node
+        # count, substep count, and projection count may be arbitrary fixed
+        # values.  The former 11-node/one-substep/four-projection gates were
+        # historical restrictions from the profiling workload, not CUDA-graph
+        # or DDER requirements.
         use_full_horizon_graph = (
             not create_graph
-            and self.device.type == "cuda"
-            and self.snapshot.node_count == 11
-            and self.snapshot.model.parameters.substeps == 1
-            and self.snapshot.model.parameters.constraint_iterations == 4
-            and os.environ.get("CABLE_TWIN_FULL_HORIZON_GRAPH", "1") != "0"
+            and self.runtime_acceleration.captured_full_horizon
         )
         if use_full_horizon_graph:
             return self._runtime_rollout(

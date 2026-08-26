@@ -1,4 +1,4 @@
-"""Fixed-shape CUDA evaluator for the unchanged MPPI strike objective."""
+"""Arbitrary-node CUDA evaluator for the unchanged MPPI strike objective."""
 
 from __future__ import annotations
 
@@ -57,7 +57,7 @@ extern "C" __device__ __forceinline__ float norm3_values(
     return sqrtf(x * x + y * y + z * z);
 }
 
-extern "C" __global__ void fixed_mppi_cost_11node(
+extern "C" __global__ void fixed_mppi_cost(
     const float* __restrict__ time_s,
     const float* __restrict__ drone_positions,
     const float* __restrict__ drone_velocities,
@@ -415,7 +415,7 @@ class _Kernel:
         self._check_cuda(self.cuda.cuModuleLoadDataEx(ctypes.byref(self.module), ptx, 0, None, None), "cuModuleLoadDataEx")
         self.function = ctypes.c_void_p()
         self._check_cuda(
-            self.cuda.cuModuleGetFunction(ctypes.byref(self.function), self.module, b"fixed_mppi_cost_11node"),
+            self.cuda.cuModuleGetFunction(ctypes.byref(self.function), self.module, b"fixed_mppi_cost"),
             "cuModuleGetFunction",
         )
 
@@ -495,7 +495,7 @@ class _Kernel:
                 self.function, (batch + block - 1) // block, 1, 1,
                 block, 1, 1, 0, stream, arguments, None
             ),
-            "cuLaunchKernel(fixed_mppi_cost_11node)",
+            "cuLaunchKernel(fixed_mppi_cost)",
         )
         diagnostics = {name: output[:, index] for index, name in enumerate(FLOAT_FIELDS)}
         diagnostics.update(
@@ -513,7 +513,7 @@ _lock = threading.Lock()
 _kernel: _Kernel | None = None
 
 
-def evaluate_fixed_mppi_cost(rollout, initial_state, problem, simulator, settings):
+def evaluate_cuda_mppi_cost(rollout, initial_state, problem, simulator, settings):
     global _kernel
     if _kernel is None:
         with _lock:

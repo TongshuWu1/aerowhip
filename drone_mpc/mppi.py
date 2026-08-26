@@ -404,13 +404,12 @@ def _mppi_event_objective(
     fixed_cuda_objective = (
         rollout.cable_positions_m.is_cuda
         and rollout.cable_positions_m.dtype == torch.float32
-        and rollout.cable_positions_m.shape[2] == 11
         and os.environ.get("DRONE_MPPI_FUSED_COST", "1") != "0"
     )
     if fixed_cuda_objective:
-        from .cuda_mppi_cost import evaluate_fixed_mppi_cost
+        from .cuda_mppi_cost import evaluate_cuda_mppi_cost
 
-        return evaluate_fixed_mppi_cost(
+        return evaluate_cuda_mppi_cost(
             rollout, initial_state, problem, simulator, settings
         )
 

@@ -80,7 +80,7 @@ def main() -> None:
     categories = {
         "fixed_damping": category(lambda name: "fixed_damping_11node_60pcg" in name),
         "fixed_projection": category(lambda name: "fixed_projection_11node_4plus1" in name),
-        "fixed_cost": category(lambda name: "fixed_mppi_cost_11node" in name),
+        "fixed_cost": category(lambda name: "fixed_mppi_cost" in name),
     }
     accounted = sum(float(value["self_device_time_us"]) for value in categories.values())
     categories["other"] = {

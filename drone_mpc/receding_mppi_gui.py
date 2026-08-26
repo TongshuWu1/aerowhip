@@ -7,7 +7,7 @@ read-only; this UI is for running the controller, not retuning its objective.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 import json
 import math
@@ -27,6 +27,10 @@ from optitrack_offline.config import DEFAULT_MODEL_PATH
 from .model import CableModelSnapshot, load_cable_model
 from .mpc import MpcProblem
 from .mppi import MppiSettings
+from .online_adaptation import (
+    BetweenStrikeAdaptationResult,
+    BetweenStrikeAdaptationSession,
+)
 from .reduced import build_controller_and_truth_models
 from .receding_mppi import (
     RecedingMppiExecution,
@@ -79,6 +83,7 @@ SETTINGS_PROFILE_FIELDS = {
         "seed",
     ),
     "plant_truth": ("ei_scale", "cb_scale"),
+    "adaptation": ("enabled",),
 }
 
 
@@ -115,6 +120,10 @@ def normalize_settings_profile(payload: object) -> dict[str, dict[str, str]]:
     normalized: dict[str, dict[str, str]] = {}
     for section, fields in SETTINGS_PROFILE_FIELDS.items():
         values = payload.get(section)
+        if section == "adaptation" and values is None:
+            # Profiles saved before online adaptation remain valid and adopt
+            # the new safe default: between-strike adaptation enabled.
+            values = {"enabled": "true"}
         if not isinstance(values, dict):
             raise ValueError(f"Settings profile is missing section '{section}'.")
         normalized[section] = {}
@@ -357,7 +366,9 @@ class RecedingMppiGui:
         self.horizon_var = tk.StringVar(value="2.0")
         self.physics_rate_var = tk.StringVar(value="100")
         self.control_rate_var = tk.StringVar(value="50")
-        self.simulation_nodes_var = tk.StringVar(value="21")
+        # The validated maximum-throughput topology is the default.  Other
+        # fitted resolutions remain available through captured CUDA rollout.
+        self.simulation_nodes_var = tk.StringVar(value="11")
         self.replan_rate_var = tk.StringVar(value="10")
         self.timeout_var = tk.StringVar(value="1.20")
         self.maximum_acceleration_var = tk.StringVar(value="20.0")
@@ -373,9 +384,15 @@ class RecedingMppiGui:
         self.truth_ei_scale_var = tk.StringVar(value="1.0")
         self.truth_cb_scale_var = tk.StringVar(value="1.0")
         self.truth_summary_var = tk.StringVar(value="Load a fitted model first.")
+        self.adaptation_enabled_var = tk.StringVar(value="true")
+        self.adaptation_status_var = tk.StringVar(
+            value="Nominal EI/Cb · generation 0 · no completed strike"
+        )
         self.preset_var = tk.StringVar(value="Balanced GPU: 512 samples × 1")
         self.controller_summary_var = tk.StringVar(value="")
         self.gpu_summary_var = tk.StringVar(value=self._gpu_summary())
+        self.adaptation_session: BetweenStrikeAdaptationSession | None = None
+        self.adaptation_session_key: tuple[object, ...] | None = None
 
         self.status_var = tk.StringVar(
             value="Load the cable model and verify the warm start, then run MPC."
@@ -437,7 +454,7 @@ class RecedingMppiGui:
             foreground="#555555",
         ).pack(anchor=tk.W, pady=(0, 10))
 
-        model = ttk.LabelFrame(outer, text="Frozen cable model", padding=9)
+        model = ttk.LabelFrame(outer, text="Identified nominal cable model", padding=9)
         model.pack(fill=tk.X, pady=(0, 9))
         ttk.Entry(model, textvariable=self.model_path_var).pack(
             side=tk.LEFT, fill=tk.X, expand=True
@@ -481,11 +498,14 @@ class RecedingMppiGui:
         task_tab = ttk.Frame(notebook, padding=10)
         controller_container = ttk.Frame(notebook)
         truth_tab = ttk.Frame(notebook, padding=10)
+        adaptation_tab = ttk.Frame(notebook, padding=10)
         notebook.add(task_tab, text="Task")
         notebook.add(controller_container, text="Controller")
         notebook.add(truth_tab, text="Plant truth")
+        notebook.add(adaptation_tab, text="Adaptation")
         self._build_task_tab(task_tab)
         self._build_truth_tab(truth_tab)
+        self._build_adaptation_tab(adaptation_tab)
 
         controller_canvas = tk.Canvas(
             controller_container,
@@ -739,6 +759,79 @@ class RecedingMppiGui:
             justify=tk.LEFT,
         ).pack(anchor=tk.W, pady=(10, 0))
 
+    def _build_adaptation_tab(self, parent: ttk.Frame) -> None:
+        ttk.Label(
+            parent,
+            text="Between-strike physical adaptation",
+            font=("Segoe UI Semibold", 12),
+        ).pack(anchor=tk.W)
+        ttk.Label(
+            parent,
+            text=(
+                "The active EI/Cb model is frozen during every MPPI strike. After "
+                "the strike, distributed cable motion is checked; an informative "
+                "mismatch is fitted and held-out validated, then a fresh accelerated "
+                "runtime is prewarmed and atomically published for the next strike."
+            ),
+            foreground="#555555",
+            wraplength=410,
+            justify=tk.LEFT,
+        ).pack(anchor=tk.W, pady=(0, 10))
+        ttk.Checkbutton(
+            parent,
+            text="Enable validated between-strike EI/Cb adaptation",
+            variable=self.adaptation_enabled_var,
+            onvalue="true",
+            offvalue="false",
+        ).pack(anchor=tk.W)
+        ttk.Label(
+            parent,
+            text=(
+                "Current simulation mode uses the exact distributed plant state. "
+                "The physical OptiTrack path will use the same adapter only after "
+                "the causal state estimator is validated. Fitting never runs inside "
+                "the 10 Hz planning path."
+            ),
+            foreground="#666666",
+            wraplength=410,
+            justify=tk.LEFT,
+        ).pack(anchor=tk.W, pady=(7, 10))
+        status = ttk.LabelFrame(parent, text="Published controller model", padding=8)
+        status.pack(fill=tk.X)
+        ttk.Label(
+            status,
+            textvariable=self.adaptation_status_var,
+            wraplength=390,
+            justify=tk.LEFT,
+        ).pack(anchor=tk.W)
+        ttk.Button(
+            parent,
+            text="Reset adapted model to fitted EI/Cb",
+            command=self.reset_adaptation,
+        ).pack(anchor=tk.W, pady=(10, 0))
+
+    @staticmethod
+    def _adaptation_enabled(value: str) -> bool:
+        normalized = value.strip().lower()
+        if normalized not in {"true", "false"}:
+            raise ValueError("Adaptation enabled must be 'true' or 'false'.")
+        return normalized == "true"
+
+    def reset_adaptation(self) -> None:
+        if self.running:
+            messagebox.showerror(
+                "Online adaptation",
+                "Stop the current strike before resetting the physical model.",
+                parent=self.root,
+            )
+            return
+        self.adaptation_session = None
+        self.adaptation_session_key = None
+        self.adaptation_status_var.set(
+            "Nominal EI/Cb · generation 0 · no completed strike"
+        )
+        self.status_var.set("Adapted controller model reset to the fitted EI/Cb.")
+
     @staticmethod
     def _entry(
         parent: ttk.Frame, label: str, variable: tk.StringVar, unit: str
@@ -768,6 +861,11 @@ class RecedingMppiGui:
             iterations = int(self.iterations_var.get())
             knots = int(self.knots_var.get())
             simulation_nodes = int(self.simulation_nodes_var.get())
+            acceleration_tier = (
+                "maximum fused 11-node CUDA"
+                if simulation_nodes == 11
+                else "captured arbitrary-node CUDA"
+            )
             physics_steps = round(horizon * physics_rate)
             controls = round(horizon * control_rate)
             apply_controls = control_rate / replan_rate
@@ -776,6 +874,7 @@ class RecedingMppiGui:
                 f"samples run in one CUDA batch per iteration. Horizon: "
                 f"{physics_steps} physics steps, "
                 f"{controls} controls, {knots} knots, {simulation_nodes} DDER nodes. "
+                f"Runtime: {acceleration_tier}. "
                 f"Execute {apply_controls:g} "
                 "control interval(s) before replanning."
             )
@@ -829,9 +928,10 @@ class RecedingMppiGui:
         properties = torch.cuda.get_device_properties(0)
         total_gib = properties.total_memory / (1024.0**3)
         return (
-            f"{properties.name} · {total_gib:.1f} GiB. Measured 2 s / 21-node "
-            "throughput knee: 2,048 concurrent rollouts. The public controller "
-            "always uses one maximally parallel CUDA batch."
+            f"{properties.name} · {total_gib:.1f} GiB. Online runs require captured "
+            "full-horizon CUDA and fused CUDA cost evaluation. Eleven nodes also "
+            "use the validated fused damping/projection kernels; other resolutions "
+            "retain captured arbitrary-node DDER mechanics."
         )
 
     def _profile_variable_map(self) -> dict[str, dict[str, tk.StringVar]]:
@@ -868,6 +968,9 @@ class RecedingMppiGui:
             "plant_truth": {
                 "ei_scale": self.truth_ei_scale_var,
                 "cb_scale": self.truth_cb_scale_var,
+            },
+            "adaptation": {
+                "enabled": self.adaptation_enabled_var,
             },
         }
 
@@ -1135,12 +1238,20 @@ class RecedingMppiGui:
         )
         # Resolve both snapshots here as validation so an unstable hidden truth
         # model is rejected by Run/Profile before a worker thread is launched.
-        build_controller_and_truth_models(
+        controller_snapshot, _plant_snapshot = build_controller_and_truth_models(
             self.snapshot,
             simulation_dt_s=simulation.simulation_dt_s,
             node_count=simulation_node_count,
             truth_bending_stiffness_scale=truth_settings.bending_stiffness_scale,
             truth_bending_damping_scale=truth_settings.bending_damping_scale,
+        )
+        # The normal UI has no slow-path selector.  Reference propagation is
+        # retained only for numerical tests and differentiable fitting.
+        WhipSimulator(
+            controller_snapshot, simulation, device="cuda"
+        ).require_online_acceleration()
+        adaptation_enabled = self._adaptation_enabled(
+            self.adaptation_enabled_var.get()
         )
         return (
             initial,
@@ -1151,6 +1262,7 @@ class RecedingMppiGui:
             warm,
             simulation_node_count,
             truth_settings,
+            adaptation_enabled,
         )
 
     def _append_log(self, message: str) -> None:
@@ -1175,6 +1287,7 @@ class RecedingMppiGui:
                 warm,
                 simulation_node_count,
                 truth_settings,
+                adaptation_enabled,
             ) = self._build_run_configuration()
         except Exception as error:
             messagebox.showerror("Online MPC settings", str(error), parent=self.root)
@@ -1219,7 +1332,7 @@ class RecedingMppiGui:
 
         def worker() -> None:
             try:
-                controller_snapshot, plant_snapshot = (
+                nominal_controller, plant_snapshot = (
                     build_controller_and_truth_models(
                         snapshot,
                         simulation_dt_s=simulation.simulation_dt_s,
@@ -1232,18 +1345,67 @@ class RecedingMppiGui:
                         ),
                     )
                 )
+                session_key = (
+                    nominal_controller.sha256,
+                    simulation,
+                    truth_settings,
+                )
+                if adaptation_enabled:
+                    if (
+                        self.adaptation_session is None
+                        or self.adaptation_session_key != session_key
+                    ):
+                        self.adaptation_session = BetweenStrikeAdaptationSession(
+                            nominal_controller,
+                            simulation,
+                            device="cuda",
+                        )
+                        self.adaptation_session_key = session_key
+                        self.events.put(
+                            (
+                                "log",
+                                "Adaptation session initialized at fitted EI/Cb; "
+                                "future accepted updates apply to the next strike.",
+                            )
+                        )
+                    runtime = self.adaptation_session.runtime()
+                    controller_snapshot = runtime.snapshot
+                    planner = runtime.simulator
+                    active_estimate = runtime.estimate
+                else:
+                    controller_snapshot = nominal_controller
+                    planner = WhipSimulator(
+                        controller_snapshot, simulation, device="cuda"
+                    )
+                    active_estimate = None
+                planner_tier = planner.require_online_acceleration()
                 provenance = model_pair_provenance(
                     snapshot,
                     controller_snapshot,
                     plant_snapshot,
                     truth_settings,
                 )
+                provenance["runtime_acceleration"] = asdict(planner_tier)
+                provenance["adaptation_enabled"] = adaptation_enabled
+                if active_estimate is not None:
+                    provenance["controller_estimate_at_strike_start"] = {
+                        "generation": active_estimate.generation,
+                        "ei_ratio": active_estimate.ei_ratio,
+                        "cb_ratio": active_estimate.cb_ratio,
+                        "source": active_estimate.source,
+                    }
                 self.events.put(
                     (
                         "log",
                         f"DDER resolution: fitted={snapshot.node_count} nodes, "
                         f"simulation={controller_snapshot.node_count} nodes, "
                         f"common substeps={controller_snapshot.model.parameters.substeps}",
+                    )
+                )
+                self.events.put(
+                    (
+                        "log",
+                        f"Accelerated runtime: {planner_tier.tier}",
                     )
                 )
                 self.events.put(
@@ -1259,12 +1421,10 @@ class RecedingMppiGui:
                         f"({truth_settings.bending_damping_scale:g}x)",
                     )
                 )
-                planner = WhipSimulator(
-                    controller_snapshot, simulation, device="cuda"
-                )
                 plant = WhipSimulator(
                     plant_snapshot, simulation, device="cuda"
                 )
+                plant.require_online_acceleration()
                 state = plant.initial_state(initial)
                 execution = run_receding_horizon_mppi(
                     planner,
@@ -1280,6 +1440,41 @@ class RecedingMppiGui:
                     ),
                     cancelled=self.cancel_event.is_set,
                 )
+                if adaptation_enabled:
+                    assert self.adaptation_session is not None
+                    self.events.put(
+                        (
+                            "adaptation_working",
+                            "Strike complete. Monitoring distributed motion and "
+                            "fitting only if mismatch and information gates pass...",
+                        )
+                    )
+                    adaptation_result = self.adaptation_session.process_execution(
+                        execution,
+                        prewarm_batch_size=mppi.samples,
+                        prewarm_control_count=simulation.control_count,
+                    )
+                    estimate_after = self.adaptation_session.estimate
+                    provenance["adaptation_after_strike"] = {
+                        "triggered": adaptation_result.triggered,
+                        "fit_attempted": adaptation_result.fit_attempted,
+                        "accepted": adaptation_result.accepted,
+                        "published": adaptation_result.published,
+                        "reason": adaptation_result.reason,
+                        "generation": estimate_after.generation,
+                        "ei_ratio": estimate_after.ei_ratio,
+                        "cb_ratio": estimate_after.cb_ratio,
+                        "monitoring_wall_time_s": (
+                            adaptation_result.monitoring_wall_time_s
+                        ),
+                        "rebuild_wall_time_s": adaptation_result.rebuild_wall_time_s,
+                    }
+                    self.events.put(
+                        (
+                            "adaptation_result",
+                            (adaptation_result, estimate_after),
+                        )
+                    )
                 output = save_receding_mppi_execution(
                     DEFAULT_OUTPUT_PATH,
                     execution,
@@ -1445,6 +1640,41 @@ class RecedingMppiGui:
             "the worker is preparing the next MPC update."
         )
 
+    def _show_adaptation_result(
+        self,
+        result: BetweenStrikeAdaptationResult,
+        estimate,
+    ) -> None:
+        if result.accepted and result.published:
+            state = "ACCEPTED + PUBLISHED"
+        elif result.fit_attempted:
+            state = "FIT REJECTED"
+        elif result.triggered:
+            state = "WAITING FOR INFORMATIVE DATA"
+        else:
+            state = "NO FIT NEEDED"
+        self.adaptation_status_var.set(
+            f"{state}\n"
+            f"generation {estimate.generation} · EI/fitted={estimate.ei_ratio:.4f} · "
+            f"Cb/fitted={estimate.cb_ratio:.4f}\n"
+            f"reason={result.reason} · candidates={result.candidate_segment_count} · "
+            f"fit/validation={result.fit_segment_count}/{result.validation_segment_count}"
+        )
+        self._append_log(
+            f"Between-strike adaptation: {state.lower()}, {result.reason}; "
+            f"EI ratio={estimate.ei_ratio:.4f}, Cb ratio={estimate.cb_ratio:.4f}, "
+            f"generation={estimate.generation}."
+        )
+        if result.fit_result is not None:
+            fit = result.fit_result
+            self._append_log(
+                "  held-out all-node position RMSE: "
+                f"{1000.0 * fit.all_node_position_rmse_before_m:.3f} -> "
+                f"{1000.0 * fit.all_node_position_rmse_after_m:.3f} mm; "
+                f"fit={fit.timing.total_s:.3f}s, runtime rebuild="
+                f"{result.rebuild_wall_time_s:.3f}s"
+            )
+
     def _complete_after_live_render(self) -> None:
         if self.pending_completion is None:
             return
@@ -1466,6 +1696,12 @@ class RecedingMppiGui:
                 kind, payload = self.events.get_nowait()
                 if kind == "log":
                     self._append_log(str(payload))
+                elif kind == "adaptation_working":
+                    self.status_var.set(str(payload))
+                    self._append_log(str(payload))
+                elif kind == "adaptation_result":
+                    adaptation_result, estimate = payload  # type: ignore[misc]
+                    self._show_adaptation_result(adaptation_result, estimate)
                 elif kind == "live_update":
                     self._show_live_update(payload)  # type: ignore[arg-type]
                 elif kind == "error":
