@@ -27,6 +27,7 @@ from optitrack_offline.config import DEFAULT_MODEL_PATH
 from .model import CableModelSnapshot, load_cable_model
 from .mpc import MpcProblem
 from .mppi import MppiSettings
+from .distributed_adaptation import ParameterEstimate
 from .online_adaptation import (
     BetweenStrikeAdaptationResult,
     BetweenStrikeAdaptationSession,
@@ -170,6 +171,42 @@ class TruthModelSettings:
         values = (self.bending_stiffness_scale, self.bending_damping_scale)
         if not all(math.isfinite(value) and value > 0.0 for value in values):
             raise ValueError("Truth EI and Cb scales must be finite and positive.")
+
+
+@dataclass(frozen=True, slots=True)
+class AdaptationErrorPoint:
+    """One simulation-only parameter-error observation after a strike."""
+
+    strike_index: int
+    ei_absolute_error_percent: float
+    cb_absolute_error_percent: float
+    joint_log_error: float
+
+
+def adaptation_error_point(
+    strike_index: int,
+    estimate: ParameterEstimate,
+    truth_settings: TruthModelSettings,
+) -> AdaptationErrorPoint:
+    """Measure the published model against hidden simulated plant physics."""
+
+    if strike_index < 0:
+        raise ValueError("Strike index cannot be negative.")
+    ei_estimate_to_truth = (
+        estimate.ei_ratio / truth_settings.bending_stiffness_scale
+    )
+    cb_estimate_to_truth = (
+        estimate.cb_ratio / truth_settings.bending_damping_scale
+    )
+    return AdaptationErrorPoint(
+        strike_index=strike_index,
+        ei_absolute_error_percent=100.0 * abs(ei_estimate_to_truth - 1.0),
+        cb_absolute_error_percent=100.0 * abs(cb_estimate_to_truth - 1.0),
+        joint_log_error=math.hypot(
+            math.log(ei_estimate_to_truth),
+            math.log(cb_estimate_to_truth),
+        ),
+    )
 
 
 def model_pair_provenance(
@@ -319,6 +356,178 @@ def live_execution_view(update: RecedingMppiLiveUpdate) -> ExecutionView:
     )
 
 
+class AdaptationErrorCanvas(tk.Canvas):
+    """Compact research plot of EI/Cb error after each completed strike."""
+
+    EI_COLOR = "#1769aa"
+    CB_COLOR = "#b3261e"
+    AXIS_COLOR = "#333333"
+    GRID_COLOR = "#dddddd"
+
+    def __init__(self, parent: tk.Misc) -> None:
+        super().__init__(
+            parent,
+            height=245,
+            background="#ffffff",
+            highlightbackground="#c8c8c8",
+            highlightthickness=1,
+            borderwidth=0,
+        )
+        self._points: tuple[AdaptationErrorPoint, ...] = ()
+        self.bind("<Configure>", lambda _event: self._redraw())
+
+    @property
+    def points(self) -> tuple[AdaptationErrorPoint, ...]:
+        return self._points
+
+    def set_points(self, points: list[AdaptationErrorPoint]) -> None:
+        self._points = tuple(points)
+        self._redraw()
+
+    @staticmethod
+    def _nice_upper_bound(value: float) -> float:
+        raw = max(5.0, 1.12 * value)
+        magnitude = 10.0 ** math.floor(math.log10(raw))
+        normalized = raw / magnitude
+        factor = next(item for item in (1.0, 2.0, 5.0, 10.0) if normalized <= item)
+        return factor * magnitude
+
+    def _redraw(self) -> None:
+        self.delete("all")
+        width = max(self.winfo_width(), 320)
+        height = max(self.winfo_height(), 220)
+        left, right, top, bottom = 55.0, 16.0, 38.0, 40.0
+        plot_width = max(width - left - right, 1.0)
+        plot_height = max(height - top - bottom, 1.0)
+
+        self.create_text(
+            left,
+            15,
+            text="Absolute parameter error vs hidden truth",
+            anchor=tk.W,
+            fill=self.AXIS_COLOR,
+            font=("Segoe UI Semibold", 10),
+        )
+        legend_x = max(left + 195.0, width - 155.0)
+        self.create_line(
+            legend_x, 15, legend_x + 16, 15, fill=self.EI_COLOR, width=2
+        )
+        self.create_oval(
+            legend_x + 5, 12, legend_x + 11, 18,
+            fill=self.EI_COLOR, outline=self.EI_COLOR,
+        )
+        self.create_text(
+            legend_x + 21, 15, text="EI", anchor=tk.W, fill=self.AXIS_COLOR,
+            font=("Segoe UI", 9),
+        )
+        self.create_line(
+            legend_x + 51, 15, legend_x + 67, 15, fill=self.CB_COLOR, width=2
+        )
+        self.create_rectangle(
+            legend_x + 56, 12, legend_x + 62, 18,
+            fill=self.CB_COLOR, outline=self.CB_COLOR,
+        )
+        self.create_text(
+            legend_x + 72, 15, text="Cb", anchor=tk.W, fill=self.AXIS_COLOR,
+            font=("Segoe UI", 9),
+        )
+
+        maximum_error = max(
+            (
+                max(point.ei_absolute_error_percent, point.cb_absolute_error_percent)
+                for point in self._points
+            ),
+            default=0.0,
+        )
+        y_max = self._nice_upper_bound(maximum_error)
+        for tick_index in range(5):
+            value = y_max * tick_index / 4.0
+            y = top + plot_height * (1.0 - tick_index / 4.0)
+            self.create_line(
+                left, y, left + plot_width, y,
+                fill=self.GRID_COLOR, width=1,
+            )
+            self.create_text(
+                left - 7, y, text=f"{value:g}", anchor=tk.E,
+                fill=self.AXIS_COLOR, font=("Segoe UI", 8),
+            )
+        self.create_line(
+            left, top, left, top + plot_height,
+            fill=self.AXIS_COLOR, width=1,
+        )
+        self.create_line(
+            left, top + plot_height, left + plot_width, top + plot_height,
+            fill=self.AXIS_COLOR, width=1,
+        )
+        self.create_text(
+            13,
+            top + plot_height / 2.0,
+            text="error (%)",
+            angle=90,
+            fill=self.AXIS_COLOR,
+            font=("Segoe UI", 9),
+        )
+        self.create_text(
+            left + plot_width / 2.0,
+            height - 10,
+            text="completed strike",
+            fill=self.AXIS_COLOR,
+            font=("Segoe UI", 9),
+        )
+
+        if not self._points:
+            self.create_text(
+                left + plot_width / 2.0,
+                top + plot_height / 2.0,
+                text="Run a strike to begin the convergence history.",
+                fill="#666666",
+                font=("Segoe UI", 9),
+            )
+            return
+
+        largest_strike = max(point.strike_index for point in self._points)
+        x_max = max(largest_strike, 1)
+        x_tick_step = max(1, math.ceil(x_max / 5))
+        x_ticks = list(range(0, x_max + 1, x_tick_step))
+        if x_max not in x_ticks:
+            x_ticks.append(x_max)
+        for strike in x_ticks:
+            x = left + plot_width * strike / x_max
+            self.create_line(
+                x, top + plot_height, x, top + plot_height + 4,
+                fill=self.AXIS_COLOR,
+            )
+            self.create_text(
+                x, top + plot_height + 14, text=str(strike),
+                anchor=tk.N, fill=self.AXIS_COLOR, font=("Segoe UI", 8),
+            )
+
+        def coordinates(attribute: str) -> list[float]:
+            result: list[float] = []
+            for point in self._points:
+                x = left + plot_width * point.strike_index / x_max
+                value = float(getattr(point, attribute))
+                y = top + plot_height * (1.0 - value / y_max)
+                result.extend((x, y))
+            return result
+
+        ei_coordinates = coordinates("ei_absolute_error_percent")
+        cb_coordinates = coordinates("cb_absolute_error_percent")
+        if len(ei_coordinates) >= 4:
+            self.create_line(*ei_coordinates, fill=self.EI_COLOR, width=2)
+            self.create_line(*cb_coordinates, fill=self.CB_COLOR, width=2)
+        for x, y in zip(ei_coordinates[::2], ei_coordinates[1::2]):
+            self.create_oval(
+                x - 3, y - 3, x + 3, y + 3,
+                fill=self.EI_COLOR, outline=self.EI_COLOR,
+            )
+        for x, y in zip(cb_coordinates[::2], cb_coordinates[1::2]):
+            self.create_rectangle(
+                x - 3, y - 3, x + 3, y + 3,
+                fill=self.CB_COLOR, outline=self.CB_COLOR,
+            )
+
+
 class RecedingMppiGui:
     TICK_MS = 20
 
@@ -388,6 +597,14 @@ class RecedingMppiGui:
         self.adaptation_status_var = tk.StringVar(
             value="Nominal EI/Cb · generation 0 · no completed strike"
         )
+        self.adaptation_error_summary_var = tk.StringVar(
+            value="Run a strike to compare the estimate with hidden simulated truth."
+        )
+        self.adaptation_prediction_summary_var = tk.StringVar(
+            value="No held-out prediction comparison yet."
+        )
+        self.adaptation_error_points: list[AdaptationErrorPoint] = []
+        self.adaptation_error_truth: TruthModelSettings | None = None
         self.preset_var = tk.StringVar(value="Balanced GPU: 512 samples × 1")
         self.controller_summary_var = tk.StringVar(value="")
         self.gpu_summary_var = tk.StringVar(value=self._gpu_summary())
@@ -498,14 +715,13 @@ class RecedingMppiGui:
         task_tab = ttk.Frame(notebook, padding=10)
         controller_container = ttk.Frame(notebook)
         truth_tab = ttk.Frame(notebook, padding=10)
-        adaptation_tab = ttk.Frame(notebook, padding=10)
+        adaptation_container = ttk.Frame(notebook)
         notebook.add(task_tab, text="Task")
         notebook.add(controller_container, text="Controller")
         notebook.add(truth_tab, text="Plant truth")
-        notebook.add(adaptation_tab, text="Adaptation")
+        notebook.add(adaptation_container, text="Adaptation")
         self._build_task_tab(task_tab)
         self._build_truth_tab(truth_tab)
-        self._build_adaptation_tab(adaptation_tab)
 
         controller_canvas = tk.Canvas(
             controller_container,
@@ -536,6 +752,38 @@ class RecedingMppiGui:
             ),
         )
         self._build_controller_tab(controller_tab)
+
+        adaptation_scroll_canvas = tk.Canvas(
+            adaptation_container,
+            background="#ffffff",
+            highlightthickness=0,
+            borderwidth=0,
+        )
+        adaptation_scrollbar = ttk.Scrollbar(
+            adaptation_container,
+            orient=tk.VERTICAL,
+            command=adaptation_scroll_canvas.yview,
+        )
+        adaptation_scroll_canvas.configure(yscrollcommand=adaptation_scrollbar.set)
+        adaptation_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        adaptation_scroll_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        adaptation_tab = ttk.Frame(adaptation_scroll_canvas, padding=10)
+        adaptation_window = adaptation_scroll_canvas.create_window(
+            (0, 0), window=adaptation_tab, anchor=tk.NW
+        )
+        adaptation_tab.bind(
+            "<Configure>",
+            lambda _event: adaptation_scroll_canvas.configure(
+                scrollregion=adaptation_scroll_canvas.bbox("all")
+            ),
+        )
+        adaptation_scroll_canvas.bind(
+            "<Configure>",
+            lambda event: adaptation_scroll_canvas.itemconfigure(
+                adaptation_window, width=event.width
+            ),
+        )
+        self._build_adaptation_tab(adaptation_tab)
 
         actions = ttk.LabelFrame(controls, text="Execution", padding=9)
         actions.pack(fill=tk.X, pady=(8, 0))
@@ -804,6 +1052,39 @@ class RecedingMppiGui:
             wraplength=390,
             justify=tk.LEFT,
         ).pack(anchor=tk.W)
+
+        error_frame = ttk.LabelFrame(
+            parent,
+            text="Estimate error versus simulated truth",
+            padding=8,
+        )
+        error_frame.pack(fill=tk.BOTH, expand=True, pady=(10, 0))
+        ttk.Label(
+            error_frame,
+            text=(
+                "Simulation diagnostic only: physical OptiTrack does not reveal "
+                "true EI or Cb. Each point is the controller model published after "
+                "that strike."
+            ),
+            foreground="#666666",
+            wraplength=390,
+            justify=tk.LEFT,
+        ).pack(anchor=tk.W, pady=(0, 6))
+        self.adaptation_error_canvas = AdaptationErrorCanvas(error_frame)
+        self.adaptation_error_canvas.pack(fill=tk.BOTH, expand=True)
+        ttk.Label(
+            error_frame,
+            textvariable=self.adaptation_error_summary_var,
+            wraplength=390,
+            justify=tk.LEFT,
+        ).pack(anchor=tk.W, pady=(6, 0))
+        ttk.Label(
+            error_frame,
+            textvariable=self.adaptation_prediction_summary_var,
+            foreground="#555555",
+            wraplength=390,
+            justify=tk.LEFT,
+        ).pack(anchor=tk.W, pady=(3, 0))
         ttk.Button(
             parent,
             text="Reset adapted model to fitted EI/Cb",
@@ -830,7 +1111,57 @@ class RecedingMppiGui:
         self.adaptation_status_var.set(
             "Nominal EI/Cb · generation 0 · no completed strike"
         )
+        try:
+            truth = TruthModelSettings(
+                float(self.truth_ei_scale_var.get()),
+                float(self.truth_cb_scale_var.get()),
+            )
+        except ValueError:
+            self.adaptation_error_truth = None
+            self.adaptation_error_points = []
+            self.adaptation_error_canvas.set_points([])
+            self.adaptation_error_summary_var.set(
+                "Enter valid positive plant-truth ratios, then run a strike."
+            )
+        else:
+            self._begin_adaptation_error_history(truth, ParameterEstimate())
+        self.adaptation_prediction_summary_var.set(
+            "No held-out prediction comparison yet."
+        )
         self.status_var.set("Adapted controller model reset to the fitted EI/Cb.")
+
+    def _begin_adaptation_error_history(
+        self,
+        truth: TruthModelSettings,
+        estimate: ParameterEstimate,
+    ) -> None:
+        self.adaptation_error_truth = truth
+        self.adaptation_error_points = [
+            adaptation_error_point(0, estimate, truth)
+        ]
+        self.adaptation_error_canvas.set_points(self.adaptation_error_points)
+        self._update_adaptation_error_summary(
+            self.adaptation_error_points[-1], estimate, truth
+        )
+        self.adaptation_prediction_summary_var.set(
+            "No held-out prediction comparison yet."
+        )
+
+    def _update_adaptation_error_summary(
+        self,
+        point: AdaptationErrorPoint,
+        estimate: ParameterEstimate,
+        truth: TruthModelSettings,
+    ) -> None:
+        self.adaptation_error_summary_var.set(
+            f"strike {point.strike_index} · "
+            f"EI error={point.ei_absolute_error_percent:.2f}% · "
+            f"Cb error={point.cb_absolute_error_percent:.2f}% · "
+            f"joint log error={point.joint_log_error:.4f}\n"
+            f"estimate ratios=({estimate.ei_ratio:.4f}, {estimate.cb_ratio:.4f}) · "
+            f"hidden truth=({truth.bending_stiffness_scale:.4f}, "
+            f"{truth.bending_damping_scale:.4f})"
+        )
 
     @staticmethod
     def _entry(
@@ -1363,6 +1694,15 @@ class RecedingMppiGui:
                         self.adaptation_session_key = session_key
                         self.events.put(
                             (
+                                "adaptation_session_started",
+                                (
+                                    truth_settings,
+                                    self.adaptation_session.estimate,
+                                ),
+                            )
+                        )
+                        self.events.put(
+                            (
                                 "log",
                                 "Adaptation session initialized at fitted EI/Cb; "
                                 "future accepted updates apply to the next strike.",
@@ -1472,7 +1812,12 @@ class RecedingMppiGui:
                     self.events.put(
                         (
                             "adaptation_result",
-                            (adaptation_result, estimate_after),
+                            (
+                                adaptation_result,
+                                estimate_after,
+                                truth_settings,
+                                len(self.adaptation_session.history),
+                            ),
                         )
                     )
                 output = save_receding_mppi_execution(
@@ -1643,7 +1988,9 @@ class RecedingMppiGui:
     def _show_adaptation_result(
         self,
         result: BetweenStrikeAdaptationResult,
-        estimate,
+        estimate: ParameterEstimate,
+        truth: TruthModelSettings,
+        strike_index: int,
     ) -> None:
         if result.accepted and result.published:
             state = "ACCEPTED + PUBLISHED"
@@ -1665,14 +2012,33 @@ class RecedingMppiGui:
             f"EI ratio={estimate.ei_ratio:.4f}, Cb ratio={estimate.cb_ratio:.4f}, "
             f"generation={estimate.generation}."
         )
+        if self.adaptation_error_truth != truth or not self.adaptation_error_points:
+            self._begin_adaptation_error_history(truth, ParameterEstimate())
+        point = adaptation_error_point(strike_index, estimate, truth)
+        if self.adaptation_error_points[-1].strike_index == strike_index:
+            self.adaptation_error_points[-1] = point
+        else:
+            self.adaptation_error_points.append(point)
+        self.adaptation_error_canvas.set_points(self.adaptation_error_points)
+        self._update_adaptation_error_summary(point, estimate, truth)
         if result.fit_result is not None:
             fit = result.fit_result
+            self.adaptation_prediction_summary_var.set(
+                "Held-out all-node position RMSE: "
+                f"{1000.0 * fit.all_node_position_rmse_before_m:.3f} → "
+                f"{1000.0 * fit.all_node_position_rmse_after_m:.3f} mm"
+            )
             self._append_log(
                 "  held-out all-node position RMSE: "
                 f"{1000.0 * fit.all_node_position_rmse_before_m:.3f} -> "
                 f"{1000.0 * fit.all_node_position_rmse_after_m:.3f} mm; "
                 f"fit={fit.timing.total_s:.3f}s, runtime rebuild="
                 f"{result.rebuild_wall_time_s:.3f}s"
+            )
+        else:
+            self.adaptation_prediction_summary_var.set(
+                f"No held-out fit evaluated after strike {strike_index} "
+                f"({result.reason})."
             )
 
     def _complete_after_live_render(self) -> None:
@@ -1699,9 +2065,17 @@ class RecedingMppiGui:
                 elif kind == "adaptation_working":
                     self.status_var.set(str(payload))
                     self._append_log(str(payload))
+                elif kind == "adaptation_session_started":
+                    truth, estimate = payload  # type: ignore[misc]
+                    self._begin_adaptation_error_history(truth, estimate)
                 elif kind == "adaptation_result":
-                    adaptation_result, estimate = payload  # type: ignore[misc]
-                    self._show_adaptation_result(adaptation_result, estimate)
+                    adaptation_result, estimate, truth, strike_index = payload  # type: ignore[misc]
+                    self._show_adaptation_result(
+                        adaptation_result,
+                        estimate,
+                        truth,
+                        strike_index,
+                    )
                 elif kind == "live_update":
                     self._show_live_update(payload)  # type: ignore[arg-type]
                 elif kind == "error":

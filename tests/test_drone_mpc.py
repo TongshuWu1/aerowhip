@@ -11,6 +11,7 @@ import numpy as np
 import torch
 
 from cable_twin.shared.dder import DderState
+from drone_mpc.distributed_adaptation import ParameterEstimate
 from drone_mpc.model import load_cable_model
 from drone_mpc.mppi import (
     MppiSettings,
@@ -49,6 +50,7 @@ from drone_mpc.receding_mppi_gui import (
     SETTINGS_PROFILE_FIELDS,
     SETTINGS_PROFILE_SCHEMA,
     TruthModelSettings,
+    adaptation_error_point,
     model_pair_provenance,
     normalize_settings_profile,
     resolve_run_seed,
@@ -73,6 +75,35 @@ from research_tools.mppi_propagation import compute_propagation_diagnostics
 
 
 class DroneMpcTests(unittest.TestCase):
+    def test_adaptation_error_point_compares_ratios_with_hidden_truth(self) -> None:
+        point = adaptation_error_point(
+            1,
+            ParameterEstimate(),
+            TruthModelSettings(0.8, 0.7),
+        )
+        self.assertAlmostEqual(point.ei_absolute_error_percent, 25.0)
+        self.assertAlmostEqual(
+            point.cb_absolute_error_percent,
+            100.0 * abs(1.0 / 0.7 - 1.0),
+        )
+        self.assertAlmostEqual(
+            point.joint_log_error,
+            math.hypot(math.log(1.0 / 0.8), math.log(1.0 / 0.7)),
+        )
+
+    def test_adaptation_error_point_is_zero_at_true_physics(self) -> None:
+        point = adaptation_error_point(
+            3,
+            ParameterEstimate(
+                eta_e=math.log(0.8),
+                eta_c=math.log(0.7),
+            ),
+            TruthModelSettings(0.8, 0.7),
+        )
+        self.assertAlmostEqual(point.ei_absolute_error_percent, 0.0)
+        self.assertAlmostEqual(point.cb_absolute_error_percent, 0.0)
+        self.assertAlmostEqual(point.joint_log_error, 0.0)
+
     def test_settings_profile_requires_every_versioned_field(self) -> None:
         payload = {
             "schema": SETTINGS_PROFILE_SCHEMA,

@@ -45,7 +45,17 @@ The UI adaptation tab controls a persistent
 
 Fitting never runs inside an MPPI update. Changing cable model, node count,
 simulation timing, or simulated truth starts a new adaptation session. The UI
-shows the published generation and EI/Cb ratios.
+shows the published generation and EI/Cb ratios. Its Adaptation tab also plots
+the absolute relative EI and Cb error against the hidden simulated truth after
+every completed strike, beginning with the nominal model at strike zero. A
+separate numeric readout reports the symmetric joint log-parameter error and,
+when fitting is attempted, held-out all-node position RMSE before and after the
+candidate update.
+
+The truth-error plot is deliberately labeled as a simulation diagnostic. A
+physical OptiTrack experiment does not reveal true EI or Cb, so that deployment
+must use held-out prediction residual rather than parameter error as its online
+model-quality signal.
 
 The current UI observation source uses exact distributed state from the
 simulated plant. This validates online orchestration, not physical sensing.
@@ -60,4 +70,3 @@ after a causal cable-state estimator has been validated.
   prewarmed, and published; the first update produced EI=0.868 and Cb=0.849.
 - The fitted runtime remained outside the active strike and became visible only
   at the next solve boundary.
-
