@@ -494,6 +494,18 @@ class RollingDistributedBuffer:
 
         self._recent.clear()
 
+    def start_new_plant_regime(self) -> None:
+        """Discard observations collected under a previous physical plant.
+
+        A normal strike boundary preserves the informative cache because the
+        cable physics are unchanged.  An intentional cable-parameter change is
+        different: old segments must not be combined with motion from the new
+        plant in one identification problem.
+        """
+
+        self._recent.clear()
+        self._cache.clear()
+
     def append(self, observation: DistributedObservation) -> None:
         if self._recent and observation.timestamp_s <= self._recent[-1].timestamp_s:
             raise ValueError("Adaptation observations must arrive in time order.")
@@ -1238,6 +1250,25 @@ class OnlineAdaptationMonitor:
         """Prevent cross-strike segments without resetting trigger state."""
 
         self.buffer.start_new_recording()
+
+    def start_new_plant_regime(self) -> None:
+        """Rearm monitoring for a changed plant without resetting its model.
+
+        Parameter publication and convergence history live outside this
+        monitor.  Only health state and motion data tied to the former plant
+        are cleared.  This lets a persistent controller estimate track a cable
+        change while preventing mixed-regime fitting windows.
+        """
+
+        if self._trigger_in_flight:
+            raise RuntimeError("Cannot change plant regime while a fit is in progress.")
+        self.buffer.start_new_plant_regime()
+        self.ema_error_m2 = 0.0
+        self._ema_initialized = False
+        self._last_health_time_s = -math.inf
+        self._high_since_s = None
+        self._hysteresis_armed = True
+        self._last_trigger_s = -math.inf
 
     def append(self, observation: DistributedObservation) -> HealthDiagnostic | None:
         self.buffer.append(observation)

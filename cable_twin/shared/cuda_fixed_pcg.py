@@ -1,9 +1,10 @@
-"""NVRTC fixed-size CUDA operator for the exact runtime PCG recurrence.
+"""NVRTC fixed-topology CUDA operators for online 11/21/31-node DDER.
 
 The implementation intentionally owns no physics.  It receives the same
-assembled float64 SPD matrix and right-hand side as the reference PyTorch path
-and performs the same zero-initialized, Jacobi-preconditioned, fixed-60 PCG
-recurrence.  Unsupported shapes fall back at the call site.
+state and physical arrays as the reference PyTorch path and performs the same
+curvature Jacobian, float64 zero-initialized Jacobi-PCG recurrence, and
+four-position-plus-one-velocity projection. Unsupported shapes fall back at
+the call site.
 """
 
 from __future__ import annotations
@@ -602,12 +603,124 @@ extern "C" __global__ void fixed_projection_11node_4plus1(
 """
 
 
+SUPPORTED_FIXED_NODE_COUNTS = (11, 21, 31)
+
+
+def _block_threads(node_count: int) -> int:
+    degrees_of_freedom = 3 * (node_count - 1)
+    if degrees_of_freedom <= 32:
+        return 32
+    if degrees_of_freedom <= 64:
+        return 64
+    return 128
+
+
+def _specialized_mechanics_source(node_count: int) -> str:
+    """Generate the same fixed-topology mechanics for a supported mesh.
+
+    The validated 11-node source remains byte-for-byte unchanged. Finer meshes
+    need more than one warp because their free velocity system has 60 or 90
+    scalar degrees of freedom. They therefore use a block-wide reduction while
+    retaining the same Jacobian, damping matrix, fixed PCG recurrence, and
+    four-plus-one projection algorithm.
+    """
+
+    if node_count not in SUPPORTED_FIXED_NODE_COUNTS[1:]:
+        raise ValueError("Specialized mechanics generation supports 21 or 31 nodes.")
+    degrees_of_freedom = 3 * (node_count - 1)
+    residual_count = 3 * (node_count - 2)
+    iterations = 6 * (node_count - 1)
+    threads = _block_threads(node_count)
+    start = _SOURCE.index(
+        'extern "C" __device__ __forceinline__ void skew3'
+    )
+    source = _SOURCE[start:]
+    source = source.replace(
+        "fixed_damping_11node_60pcg",
+        f"fixed_damping_{node_count}node_{iterations}pcg",
+    )
+    source = source.replace(
+        "fixed_projection_11node_4plus1",
+        f"fixed_projection_{node_count}node_4plus1",
+    )
+    source = source.replace("constexpr int N = 11;", f"constexpr int N = {node_count};")
+    source = source.replace(
+        "constexpr int E = 10;", f"constexpr int E = {node_count - 1};"
+    )
+    source = source.replace(
+        "constexpr int D = 30;", f"constexpr int D = {degrees_of_freedom};"
+    )
+    source = source.replace(
+        "constexpr int R = 27;", f"constexpr int R = {residual_count};"
+    )
+    source = source.replace(
+        "constexpr int ITERATIONS = 60;",
+        f"constexpr int ITERATIONS = {iterations};",
+    )
+    source = source.replace(
+        "__shared__ double direction_shared[32];",
+        "__shared__ double direction_shared[D];\n"
+        "    __shared__ double reduction_shared[4];",
+    )
+    source = source.replace("index += 32", f"index += {threads}")
+    source = source.replace("__syncwarp();", "__syncthreads();")
+    source = source.replace(
+        "direction_shared[lane] = direction;",
+        "if (lane < D) direction_shared[lane] = direction;",
+    )
+    source = source.replace("column_node < 10", "column_node < N - 1")
+    source = source.replace(
+        "warp_sum(residual * preconditioned)",
+        "block_sum(residual * preconditioned, reduction_shared)",
+    )
+    source = source.replace(
+        "warp_sum(direction * applied)",
+        "block_sum(direction * applied, reduction_shared)",
+    )
+    block_sum = r"""
+extern "C" __device__ __forceinline__ double block_sum(
+    double value, double* warp_totals
+) {
+    const int lane_in_warp = (int)threadIdx.x & 31;
+    const int warp = (int)threadIdx.x >> 5;
+    value += __shfl_down_sync(0xffffffffu, value, 16);
+    value += __shfl_down_sync(0xffffffffu, value, 8);
+    value += __shfl_down_sync(0xffffffffu, value, 4);
+    value += __shfl_down_sync(0xffffffffu, value, 2);
+    value += __shfl_down_sync(0xffffffffu, value, 1);
+    if (lane_in_warp == 0) warp_totals[warp] = value;
+    __syncthreads();
+    if (warp == 0) {
+        const int warp_count = (int)blockDim.x >> 5;
+        double total = lane_in_warp < warp_count ? warp_totals[lane_in_warp] : 0.0;
+        total += __shfl_down_sync(0xffffffffu, total, 16);
+        total += __shfl_down_sync(0xffffffffu, total, 8);
+        total += __shfl_down_sync(0xffffffffu, total, 4);
+        total += __shfl_down_sync(0xffffffffu, total, 2);
+        total += __shfl_down_sync(0xffffffffu, total, 1);
+        if (lane_in_warp == 0) warp_totals[0] = total;
+    }
+    __syncthreads();
+    return warp_totals[0];
+}
+"""
+    return block_sum + source
+
+
 class _CudaError(RuntimeError):
     pass
 
 
 class _FixedPcgKernel:
-    def __init__(self) -> None:
+    def __init__(self, node_count: int = 11) -> None:
+        if node_count not in SUPPORTED_FIXED_NODE_COUNTS:
+            raise ValueError(
+                f"Fixed mechanics supports node counts {SUPPORTED_FIXED_NODE_COUNTS}."
+            )
+        self.node_count = node_count
+        self.degrees_of_freedom = 3 * (node_count - 1)
+        self.iterations = 6 * (node_count - 1)
+        self._mechanics_threads = _block_threads(node_count)
         cuda_path = Path(os.environ.get("CUDA_PATH", ""))
         if not cuda_path.is_dir():
             raise RuntimeError("CUDA_PATH does not identify a CUDA Toolkit installation.")
@@ -622,7 +735,16 @@ class _FixedPcgKernel:
         self._configure_signatures()
         self._check_cuda(self._cuda.cuInit(0), "cuInit")
         major, minor = torch.cuda.get_device_capability()
-        ptx = self._compile_ptx(f"--gpu-architecture=compute_{major}{minor}")
+        source = (
+            _SOURCE
+            if node_count == 11
+            else _specialized_mechanics_source(node_count)
+        )
+        ptx = self._compile_ptx(
+            f"--gpu-architecture=compute_{major}{minor}",
+            source=source,
+            source_name=f"fixed_mechanics_{node_count}node.cu",
+        )
         self._module = ctypes.c_void_p()
         self._check_cuda(
             self._cuda.cuModuleLoadDataEx(
@@ -634,30 +756,38 @@ class _FixedPcgKernel:
             ),
             "cuModuleLoadDataEx",
         )
-        self._function = ctypes.c_void_p()
-        self._check_cuda(
-            self._cuda.cuModuleGetFunction(
-                ctypes.byref(self._function), self._module, b"fixed_pcg_30x60"
-            ),
-            "cuModuleGetFunction",
+        self._function: ctypes.c_void_p | None = None
+        if node_count == 11:
+            self._function = ctypes.c_void_p()
+            self._check_cuda(
+                self._cuda.cuModuleGetFunction(
+                    ctypes.byref(self._function), self._module, b"fixed_pcg_30x60"
+                ),
+                "cuModuleGetFunction",
+            )
+        damping_name = (
+            f"fixed_damping_{node_count}node_{self.iterations}pcg".encode("ascii")
+        )
+        projection_name = f"fixed_projection_{node_count}node_4plus1".encode(
+            "ascii"
         )
         self._damping_function = ctypes.c_void_p()
         self._check_cuda(
             self._cuda.cuModuleGetFunction(
                 ctypes.byref(self._damping_function),
                 self._module,
-                b"fixed_damping_11node_60pcg",
+                damping_name,
             ),
-            "cuModuleGetFunction(fixed_damping_11node_60pcg)",
+            f"cuModuleGetFunction({damping_name.decode('ascii')})",
         )
         self._projection_function = ctypes.c_void_p()
         self._check_cuda(
             self._cuda.cuModuleGetFunction(
                 ctypes.byref(self._projection_function),
                 self._module,
-                b"fixed_projection_11node_4plus1",
+                projection_name,
             ),
-            "cuModuleGetFunction(fixed_projection_11node_4plus1)",
+            f"cuModuleGetFunction({projection_name.decode('ascii')})",
         )
 
     def _configure_signatures(self) -> None:
@@ -696,13 +826,15 @@ class _FixedPcgKernel:
         detail = message.value.decode("utf-8", "replace") if message.value else str(code)
         raise _CudaError(f"{operation} failed: {detail}")
 
-    def _compile_ptx(self, architecture: str) -> bytes:
+    def _compile_ptx(
+        self, architecture: str, *, source: str, source_name: str
+    ) -> bytes:
         program = ctypes.c_void_p()
         self._check_nvrtc(
             self._nvrtc.nvrtcCreateProgram(
                 ctypes.byref(program),
-                _SOURCE.encode("utf-8"),
-                b"fixed_pcg_30x60.cu",
+                source.encode("utf-8"),
+                source_name.encode("ascii"),
                 0,
                 None,
                 None,
@@ -734,6 +866,8 @@ class _FixedPcgKernel:
             self._nvrtc.nvrtcDestroyProgram(ctypes.byref(program))
 
     def launch(self, system: torch.Tensor, rhs: torch.Tensor) -> torch.Tensor:
+        if self._function is None:
+            raise ValueError("The standalone dense PCG operator is 11-node only.")
         if system.device.type != "cuda" or rhs.device != system.device:
             raise ValueError("Fixed PCG inputs must be CUDA tensors on one device.")
         if system.dtype != torch.float64 or rhs.dtype != torch.float64:
@@ -781,9 +915,11 @@ class _FixedPcgKernel:
         damping: torch.Tensor,
     ) -> torch.Tensor:
         batch = positions.shape[0]
-        expected = (batch, 11, 3)
+        expected = (batch, self.node_count, 3)
         if positions.shape != expected or undamped_velocities.shape != expected:
-            raise ValueError("Fixed damping requires Bx11x3 state tensors.")
+            raise ValueError(
+                f"Fixed damping requires Bx{self.node_count}x3 state tensors."
+            )
         if boundary_velocities.shape != (batch, 1, 3):
             raise ValueError("Fixed damping requires one prescribed root velocity.")
         tensors = (
@@ -797,8 +933,12 @@ class _FixedPcgKernel:
         )
         if any(value.device.type != "cuda" or value.dtype != torch.float32 for value in tensors):
             raise ValueError("Fixed damping preserves the float32 state/float64 PCG runtime path.")
-        if rest_lengths.shape != (10,) or masses.shape != (11,):
-            raise ValueError("Fixed damping requires the fixed 11-node topology.")
+        if rest_lengths.shape != (self.node_count - 1,) or masses.shape != (
+            self.node_count,
+        ):
+            raise ValueError(
+                f"Fixed damping requires the fixed {self.node_count}-node topology."
+            )
         if substep_dt.shape != (batch,) or damping.shape != (batch,):
             raise ValueError("Fixed damping batch scalars have invalid shapes.")
         contiguous = tuple(value.contiguous() for value in tensors)
@@ -816,13 +956,13 @@ class _FixedPcgKernel:
             self._cuda.cuLaunchKernel(
                 self._damping_function,
                 batch, 1, 1,
-                32, 1, 1,
+                self._mechanics_threads, 1, 1,
                 0,
                 stream,
                 arguments,
                 None,
             ),
-            "cuLaunchKernel(fixed_damping_11node_60pcg)",
+            f"cuLaunchKernel(fixed_damping_{self.node_count}node_{self.iterations}pcg)",
         )
         return output
 
@@ -837,9 +977,11 @@ class _FixedPcgKernel:
         substep_dt: torch.Tensor,
     ) -> tuple[torch.Tensor, torch.Tensor]:
         batch = predicted_positions.shape[0]
-        expected = (batch, 11, 3)
+        expected = (batch, self.node_count, 3)
         if predicted_positions.shape != expected or previous_positions.shape != expected:
-            raise ValueError("Fixed projection requires Bx11x3 positions.")
+            raise ValueError(
+                f"Fixed projection requires Bx{self.node_count}x3 positions."
+            )
         if boundary_positions.shape != (batch, 1, 3) or boundary_velocities.shape != (batch, 1, 3):
             raise ValueError("Fixed projection requires one root boundary.")
         tensors = (
@@ -853,7 +995,11 @@ class _FixedPcgKernel:
         )
         if any(value.device.type != "cuda" or value.dtype != torch.float32 for value in tensors):
             raise ValueError("Fixed projection requires float32 CUDA tensors.")
-        if rest_lengths.shape != (10,) or masses.shape != (11,) or substep_dt.shape != (batch,):
+        if (
+            rest_lengths.shape != (self.node_count - 1,)
+            or masses.shape != (self.node_count,)
+            or substep_dt.shape != (batch,)
+        ):
             raise ValueError("Fixed projection topology/scalars are invalid.")
         contiguous = tuple(value.contiguous() for value in tensors)
         output_positions = torch.empty_like(predicted_positions)
@@ -880,24 +1026,56 @@ class _FixedPcgKernel:
                 arguments,
                 None,
             ),
-            "cuLaunchKernel(fixed_projection_11node_4plus1)",
+            f"cuLaunchKernel(fixed_projection_{self.node_count}node_4plus1)",
         )
         return output_positions, output_velocities
 
 
 _lock = threading.Lock()
-_kernel: _FixedPcgKernel | None = None
+_kernels: dict[int, _FixedPcgKernel] = {}
+
+
+def _kernel_for(node_count: int) -> _FixedPcgKernel:
+    if node_count not in SUPPORTED_FIXED_NODE_COUNTS:
+        raise ValueError(
+            f"Fixed mechanics supports node counts {SUPPORTED_FIXED_NODE_COUNTS}."
+        )
+    kernel = _kernels.get(node_count)
+    if kernel is None:
+        with _lock:
+            kernel = _kernels.get(node_count)
+            if kernel is None:
+                kernel = _FixedPcgKernel(node_count)
+                _kernels[node_count] = kernel
+    return kernel
 
 
 def fixed_pcg_30x60(system: torch.Tensor, rhs: torch.Tensor) -> torch.Tensor:
     """Solve B independent 30-DOF systems with the fixed reference recurrence."""
 
-    global _kernel
-    if _kernel is None:
-        with _lock:
-            if _kernel is None:
-                _kernel = _FixedPcgKernel()
-    return _kernel.launch(system, rhs)
+    return _kernel_for(11).launch(system, rhs)
+
+
+def fixed_damping_supported_nodes(
+    positions: torch.Tensor,
+    undamped_velocities: torch.Tensor,
+    boundary_velocities: torch.Tensor,
+    rest_lengths: torch.Tensor,
+    masses: torch.Tensor,
+    substep_dt: torch.Tensor,
+    damping: torch.Tensor,
+) -> torch.Tensor:
+    """Apply the specialized homogeneous-cable damping for 11/21/31 nodes."""
+
+    return _kernel_for(int(positions.shape[1])).launch_damping(
+        positions,
+        undamped_velocities,
+        boundary_velocities,
+        rest_lengths,
+        masses,
+        substep_dt,
+        damping,
+    )
 
 
 def fixed_damping_11node_60pcg(
@@ -911,12 +1089,7 @@ def fixed_damping_11node_60pcg(
 ) -> torch.Tensor:
     """Apply exact one-attached 11-node damping in one cooperative kernel."""
 
-    global _kernel
-    if _kernel is None:
-        with _lock:
-            if _kernel is None:
-                _kernel = _FixedPcgKernel()
-    return _kernel.launch_damping(
+    return fixed_damping_supported_nodes(
         positions,
         undamped_velocities,
         boundary_velocities,
@@ -938,12 +1111,29 @@ def fixed_projection_11node_4plus1(
 ) -> tuple[torch.Tensor, torch.Tensor]:
     """Apply four position and one velocity projection in one CUDA kernel."""
 
-    global _kernel
-    if _kernel is None:
-        with _lock:
-            if _kernel is None:
-                _kernel = _FixedPcgKernel()
-    return _kernel.launch_projection(
+    return fixed_projection_supported_nodes(
+        predicted_positions,
+        previous_positions,
+        rest_lengths,
+        masses,
+        boundary_positions,
+        boundary_velocities,
+        substep_dt,
+    )
+
+
+def fixed_projection_supported_nodes(
+    predicted_positions: torch.Tensor,
+    previous_positions: torch.Tensor,
+    rest_lengths: torch.Tensor,
+    masses: torch.Tensor,
+    boundary_positions: torch.Tensor,
+    boundary_velocities: torch.Tensor,
+    substep_dt: torch.Tensor,
+) -> tuple[torch.Tensor, torch.Tensor]:
+    """Apply four position plus one velocity projection for 11/21/31 nodes."""
+
+    return _kernel_for(int(predicted_positions.shape[1])).launch_projection(
         predicted_positions,
         previous_positions,
         rest_lengths,

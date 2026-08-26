@@ -1,8 +1,8 @@
 # DDER-MPPI cable-strike controller
 
-`run_online.py` is the only supported controller launcher. It runs a
-receding-horizon model-predictive path-integral controller whose prediction
-model is the identified distributed discrete elastic rod.
+`run_online.py` runs the impact/whip receding-horizon model-predictive
+path-integral controller whose prediction model is the identified distributed
+discrete elastic rod.
 
 ```powershell
 .\.venv\Scripts\python.exe run_online.py
@@ -10,6 +10,57 @@ model is the identified distributed discrete elastic rod.
 
 The UI is an exact-state simulation testbed. It does not ingest Motive data or
 send flight commands.
+
+## Continuous figure-eight tracking baseline
+
+`run_figure8_tracking.py` is a separate matched-physics state-information
+experiment:
+
+```powershell
+.\.venv\Scripts\python.exe .\run_figure8_tracking.py
+```
+
+It asks the free material tip to follow a configurable flat figure-eight until
+stopped. The reference is a geometric path, not a time-indexed trajectory: it
+has no loop frequency or requested traversal speed. The minimal MPCC-style
+objective contains running contour error, geometric arc-length progress, a
+normalized free-tip acceleration penalty, weak root-acceleration effort and
+command smoothness, plus the existing safety terms. It contains no prescribed
+tip speed, swing, backtracking, cable-energy, or root-motion reward. The DDER
+physics determines which root motion is useful. The UI defaults to 1,024 MPPI
+samples, two refinement iterations, and 11 acceleration knots. Acceleration
+knots parameterize the root-control trajectory and are independent of the 11
+DDER cable nodes.
+
+When changing the prediction horizon, preserve roughly 0.1 s acceleration-knot
+spacing (for example, 1 s/11 knots or 2 s/21 knots). Keeping only 11 knots over
+a longer horizon coarsens the action trajectory and usually worsens MPPI. The
+GPU cost uses a vectorized arc-length-guided local projection, so predictions
+can advance around the complete loop without per-frame GPU dispatch or crossing
+branch jumps.
+The optional initial swing seed always occupies at most its first one second;
+longer horizons pad the same smooth zero-net seed rather than stretching its
+timing.
+The task retains the authoritative 11-node DDER, accelerated
+CUDA rollout, translational point-mass plant, and stochastic MPPI update, but
+replaces all impact/contact terms with geometric path following plus weak
+control regularization and the existing safety terms. Drone displacement and
+return-to-start do not appear in the objective. The drone is free to lower,
+rise, or move laterally, and MPPI selects that motion through the DDER-predicted
+effect on endpoint contour and geometric progress. The path-objective weights
+are tunable and none is a hard motion constraint.
+
+The observation selector compares `full` distributed cable positions and
+velocities against `endpoint`, which uses only drone/root state and current
+free-tip position/velocity. In endpoint mode the interior is the controller's
+previous DDER prediction corrected smoothly from root to tip by
+`endpoint_conditioned_state`; simulated truth interior nodes are retained only
+for visualization and saved evaluation data. EI and Cb are identical in plant
+and controller, and adaptation is disabled.
+
+The live and final summaries report drone displacement from its start alongside
+tip-tracking error. This quantity is an evaluation diagnostic only; it is not
+part of the optimization objective.
 
 ## Supported architecture
 
@@ -136,6 +187,27 @@ separately from the weighted nominal trajectory.
 
 Gradient guidance is disabled in the public objective. DDER-gradient studies
 remain reproducibility tools and do not run on the online critical path.
+
+## Figure-8 partial-observation experiment
+
+`../run_figure8_tracking.py` is the separate state-information experiment. Its
+third observation mode places a causal DDER moving-history observer in front of
+the unchanged MPPI controller. The observer accepts attachment position and
+velocity, free-tip position, timestamps, and its own recursive prior; it does
+not accept the simulator interior state or future measurements. A 0.30-second
+endpoint history drives a 24-dimensional smooth state correction through
+batched finite-difference GN/LM shooting. `EI` and `Cb` remain fixed and matched
+in this experiment. See
+`../reports/FIGURE8_DDER_HISTORY_OBSERVER_REPORT.md` for the controlled clean and
+hidden-interior-velocity comparison.
+
+The production history replay is now a fixed-shape, full-window CUDA graph.
+Full candidate states stay on the GPU, immutable DDER constants are cached,
+and redundant nominal/final physical evaluations have been removed.  The
+unchanged 16-frame, 24-variable, two-iteration observer measures 24.94 ms mean
+and 26.70 ms p95 on the RTX 4080 after prewarm, compared with 248.5 ms in the
+frozen prototype.  Numerical equivalence and the implementation breakdown are
+documented in `../reports/HISTORY_OBSERVER_ACCELERATION_REPORT.md`.
 
 ## Receding-horizon execution
 

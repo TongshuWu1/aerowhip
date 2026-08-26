@@ -83,6 +83,72 @@ class OnlineAccelerationTests(unittest.TestCase):
         )
 
     @unittest.skipUnless(torch.cuda.is_available(), "CUDA is required")
+    def test_refined_meshes_use_equivalent_specialized_mechanics(self) -> None:
+        simulation = SimulationSettings(
+            horizon_s=0.02,
+            simulation_dt_s=0.01,
+            control_interval_s=0.01,
+            maximum_acceleration_m_s2=20.0,
+        )
+        controls = torch.tensor(
+            [[[1.5, -0.4, 0.2], [-0.8, 0.3, -0.1]]],
+            dtype=torch.float32,
+            device="cuda",
+        )
+        for node_count in (11, 21, 31):
+            model, _ = build_controller_and_truth_models(
+                self.source,
+                simulation_dt_s=simulation.simulation_dt_s,
+                node_count=node_count,
+            )
+            with patch.dict(
+                os.environ,
+                {
+                    "CABLE_TWIN_FULL_HORIZON_GRAPH": "1",
+                    "CABLE_TWIN_FUSED_FIXED_DAMPING": "1",
+                    "CABLE_TWIN_FUSED_FIXED_PROJECTION": "1",
+                },
+            ):
+                accelerated_simulator = WhipSimulator(
+                    model, simulation, device="cuda"
+                )
+                acceleration = accelerated_simulator.require_online_acceleration()
+                self.assertTrue(acceleration.fused_mechanics)
+                accelerated = accelerated_simulator.rollout(
+                    accelerated_simulator.initial_state((0.0, 0.0, 1.5)),
+                    controls,
+                    create_graph=False,
+                )
+                torch.cuda.synchronize()
+            with patch.dict(
+                os.environ,
+                {
+                    "CABLE_TWIN_FULL_HORIZON_GRAPH": "0",
+                    "CABLE_TWIN_FUSED_FIXED_DAMPING": "0",
+                    "CABLE_TWIN_FUSED_FIXED_PROJECTION": "0",
+                },
+            ):
+                reference_simulator = WhipSimulator(model, simulation, device="cuda")
+                reference = reference_simulator.rollout(
+                    reference_simulator.initial_state((0.0, 0.0, 1.5)),
+                    controls,
+                    create_graph=False,
+                )
+                torch.cuda.synchronize()
+            torch.testing.assert_close(
+                accelerated.cable_positions_m,
+                reference.cable_positions_m,
+                rtol=0.0,
+                atol=2.0e-7,
+            )
+            torch.testing.assert_close(
+                accelerated.cable_velocities_m_s,
+                reference.cable_velocities_m_s,
+                rtol=0.0,
+                atol=4.0e-7,
+            )
+
+    @unittest.skipUnless(torch.cuda.is_available(), "CUDA is required")
     def test_fused_mppi_cost_accepts_non_11_node_rollout(self) -> None:
         simulation = SimulationSettings(
             horizon_s=0.10,

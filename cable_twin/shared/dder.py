@@ -532,17 +532,17 @@ def _implicit_bending_damping_velocity(
     fixed_runtime_damping = (
         positions.is_cuda
         and positions.dtype == torch.float32
-        and positions.shape[1] == 11
+        and positions.shape[1] in (11, 21, 31)
         and pinned_endpoints == START_PINNED_FREE_END
         and endpoint_orientations is None
         and endpoint_orientation_rates is None
-        and conjugate_gradient_iterations == 60
+        and conjugate_gradient_iterations == 6 * (positions.shape[1] - 1)
         and os.environ.get("CABLE_TWIN_FUSED_FIXED_DAMPING", "1") != "0"
     )
     if fixed_runtime_damping:
-        from .cuda_fixed_pcg import fixed_damping_11node_60pcg
+        from .cuda_fixed_pcg import fixed_damping_supported_nodes
 
-        return fixed_damping_11node_60pcg(
+        return fixed_damping_supported_nodes(
             positions,
             undamped_velocity,
             boundary_velocity,
@@ -2072,15 +2072,15 @@ class DderModel:
             fixed_runtime_projection = (
                 predicted_q.is_cuda
                 and predicted_q.dtype == torch.float32
-                and predicted_q.shape[1] == 11
+                and predicted_q.shape[1] in (11, 21, 31)
                 and pinned_endpoints == START_PINNED_FREE_END
                 and self.parameters.constraint_iterations == 4
                 and os.environ.get("CABLE_TWIN_FUSED_FIXED_PROJECTION", "1") != "0"
             )
             if fixed_runtime_projection:
-                from .cuda_fixed_pcg import fixed_projection_11node_4plus1
+                from .cuda_fixed_pcg import fixed_projection_supported_nodes
 
-                next_q, v = fixed_projection_11node_4plus1(
+                next_q, v = fixed_projection_supported_nodes(
                     predicted_q,
                     q,
                     constants.rest_lengths_m,

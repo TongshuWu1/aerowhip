@@ -19,9 +19,118 @@ from cable_twin.shared.dder import (
 from .model import CableModelSnapshot
 
 
-REDUCTION_SCHEMA = "mass_conserving_der_reduction_v2"
+REDUCTION_SCHEMA = "mass_conserving_der_remesh_v3"
 STATE_TRANSFER_PROJECTION_ITERATIONS = 32
 MAXIMUM_CONTROLLER_SUBSTEPS = 32
+OBSERVED_MATERIAL_POINT_COUNT = 11
+SUPPORTED_REFINEMENT_FACTORS = (1, 2, 3)
+
+
+def node_count_for_refinement_factor(refinement_factor: int) -> int:
+    """Map the public 11-point observation refinement to a DDER node count."""
+
+    if refinement_factor not in SUPPORTED_REFINEMENT_FACTORS:
+        raise ValueError("DDER refinement factor must be 1, 2, or 3.")
+    return 1 + refinement_factor * (OBSERVED_MATERIAL_POINT_COUNT - 1)
+
+
+def refinement_factor_for_node_count(node_count: int) -> int:
+    """Return the public refinement factor for 11, 21, or 31 nodes."""
+
+    for refinement_factor in SUPPORTED_REFINEMENT_FACTORS:
+        if node_count_for_refinement_factor(refinement_factor) == node_count:
+            return refinement_factor
+    raise ValueError("DDER simulation nodes must be 11, 21, or 31.")
+
+
+def _observed_material_coordinates(source: CableModelSnapshot) -> np.ndarray:
+    coordinates = np.asarray(source.rod_material_coordinates_m, dtype=np.float64)
+    indices = np.asarray(source.marker_node_indices, dtype=np.int64)
+    if len(indices) != OBSERVED_MATERIAL_POINT_COUNT:
+        raise ValueError(
+            "Online refinement requires exactly 11 ordered observed material points."
+        )
+    if np.any(indices < 0) or np.any(indices >= len(coordinates)):
+        raise ValueError("Observed marker indices are outside the fitted DDER grid.")
+    observed = coordinates[indices]
+    if np.any(np.diff(observed) <= 0.0):
+        raise ValueError("Observed cable material coordinates must be strictly ordered.")
+    return observed
+
+
+def _coordinates_for_refinement(
+    source: CableModelSnapshot, refinement_factor: int
+) -> np.ndarray:
+    """Subdivide every measured material interval without moving observations."""
+
+    observed = _observed_material_coordinates(source)
+    coordinates = [float(observed[0])]
+    for start, stop in zip(observed[:-1], observed[1:]):
+        for subdivision in range(1, refinement_factor + 1):
+            coordinates.append(
+                float(start + (stop - start) * subdivision / refinement_factor)
+            )
+    return np.asarray(coordinates, dtype=np.float64)
+
+
+def _lumped_line_masses(
+    coordinates_m: np.ndarray, total_line_mass_kg: float
+) -> np.ndarray:
+    """Consistently lump a uniform line mass onto a nonuniform vertex grid."""
+
+    rest_lengths = np.diff(coordinates_m)
+    weights = np.empty(len(coordinates_m), dtype=np.float64)
+    weights[0] = 0.5 * rest_lengths[0]
+    weights[-1] = 0.5 * rest_lengths[-1]
+    weights[1:-1] = 0.5 * (rest_lengths[:-1] + rest_lengths[1:])
+    return total_line_mass_kg * weights / float(coordinates_m[-1] - coordinates_m[0])
+
+
+def _bare_cable_mass(source: CableModelSnapshot) -> float | None:
+    measured = source.payload.get("measured")
+    if isinstance(measured, dict):
+        value = measured.get("bare_cable_mass_kg")
+        if isinstance(value, (int, float)) and math.isfinite(float(value)):
+            if 0.0 < float(value) <= source.model.parameters.cable_mass_kg:
+                return float(value)
+    return None
+
+
+def _refined_vertex_masses(
+    source: CableModelSnapshot,
+    source_coordinates_m: np.ndarray,
+    source_masses_kg: np.ndarray,
+    target_coordinates_m: np.ndarray,
+) -> np.ndarray:
+    """Refine uniform cable mass while retaining discrete marker masses.
+
+    The fitted vertex masses combine the distributed bare-cable mass and the
+    discrete retroreflective marker masses. Simply interpolating those lumped
+    masses onto a finer grid would incorrectly turn old simulation vertices
+    into physical point masses.
+    """
+
+    bare_mass = _bare_cable_mass(source)
+    if bare_mass is None:
+        raise ValueError(
+            "Refining above the fitted grid requires measured.bare_cable_mass_kg "
+            "in the cable-model artifact."
+        )
+    source_line_masses = _lumped_line_masses(source_coordinates_m, bare_mass)
+    point_masses = source_masses_kg - source_line_masses
+    tolerance = 1.0e-12
+    if np.any(point_masses < -tolerance):
+        raise ValueError(
+            "The fitted vertex masses are inconsistent with the recorded bare "
+            "cable mass; safe refinement is not possible."
+        )
+    point_masses = np.maximum(point_masses, 0.0)
+    target = _lumped_line_masses(target_coordinates_m, bare_mass)
+    target += _project_vertex_masses(
+        source_coordinates_m, point_masses, target_coordinates_m
+    )
+    target[-1] += float(np.sum(source_masses_kg) - np.sum(target))
+    return target
 
 
 def _project_vertex_masses(
@@ -56,10 +165,15 @@ def reduce_cable_model(
     bending_stiffness_scale: float = 1.0,
     bending_damping_scale: float = 1.0,
 ) -> CableModelSnapshot:
-    """Build the coarse controller DER from an immutable full-order plant model."""
+    """Remesh an immutable fitted cable model without changing its material.
 
-    if not 6 <= node_count <= source.node_count:
-        raise ValueError("Reduced DER node count must be between 6 and the fitted count.")
+    Public online resolutions 11/21/31 retain the same eleven observed
+    material sites and subdivide each measured interval by factor 1/2/3.
+    Other counts remain available to offline numerical tests.
+    """
+
+    if node_count < 6:
+        raise ValueError("DDER node count must be at least 6.")
     if substeps < 1 or constraint_iterations < 1:
         raise ValueError("Reduced DER solver counts must be positive.")
     if (
@@ -85,10 +199,19 @@ def reduce_cable_model(
             source.model.parameters.rest_lengths_m, dtype=np.float64
         )
     else:
-        coordinates = np.linspace(0.0, length, node_count, dtype=np.float64)
-        masses = _project_vertex_masses(
-            source_coordinates, source_masses, coordinates
-        )
+        try:
+            refinement_factor = refinement_factor_for_node_count(node_count)
+            coordinates = _coordinates_for_refinement(source, refinement_factor)
+        except ValueError:
+            coordinates = np.linspace(0.0, length, node_count, dtype=np.float64)
+        if node_count > source.node_count:
+            masses = _refined_vertex_masses(
+                source, source_coordinates, source_masses, coordinates
+            )
+        else:
+            masses = _project_vertex_masses(
+                source_coordinates, source_masses, coordinates
+            )
         rest_lengths = np.diff(coordinates)
     if np.any(masses <= 0.0):
         raise ValueError("Physical reduction produced a non-positive vertex mass.")
@@ -122,7 +245,7 @@ def reduce_cable_model(
     )
     effective_sha = hashlib.sha256(identity.encode("utf-8")).hexdigest()
     note = (
-        f"{source.provenance_note}; controller reduction={REDUCTION_SCHEMA}, "
+        f"{source.provenance_note}; controller remesh={REDUCTION_SCHEMA}, "
         f"{source.node_count}->{node_count} nodes, total mass conserved, "
         f"EI scale={bending_stiffness_scale:g}, Cb scale={bending_damping_scale:g}"
     )

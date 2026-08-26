@@ -1,0 +1,52 @@
+{
+  "device": "NVIDIA GeForce RTX 4080",
+  "configuration": {
+    "mppi_horizon_s": 1.0,
+    "mppi_candidates": 1024,
+    "mppi_iterations": 2,
+    "acceleration_knots": 11,
+    "physics_rate_hz": 50.0,
+    "acceleration_control_rate_hz": 50.0,
+    "requested_replanning_rate_hz": 10.0,
+    "observer_correction_rate_hz": 10.0,
+    "observer_history_s": 0.3,
+    "observer_frames": 16
+  },
+  "duration_s": 4.0,
+  "all_updates": 40,
+  "active_warmed_updates": 37,
+  "active_frame_count_histogram": {
+    "16": 13,
+    "17": 24
+  },
+  "observer": {
+    "count": 37,
+    "mean_ms": 21.72412702694183,
+    "median_ms": 22.16019999468699,
+    "p95_ms": 24.370540003292263,
+    "maximum_ms": 24.731799989240244
+  },
+  "mppi": {
+    "count": 37,
+    "mean_ms": 95.69453784167086,
+    "median_ms": 95.6290999893099,
+    "p95_ms": 99.44035999360494,
+    "maximum_ms": 101.86530000646599
+  },
+  "total_sequential": {
+    "count": 37,
+    "mean_ms": 117.70579188895361,
+    "median_ms": 117.92950000381097,
+    "p95_ms": 122.83571999869308,
+    "maximum_ms": 124.79040000471286
+  },
+  "unattributed": {
+    "count": 37,
+    "mean_ms": 0.28712702034091625,
+    "median_ms": 0.2462999545969069,
+    "p95_ms": 0.4896799859125157,
+    "maximum_ms": 0.8374000026378781
+  },
+  "achievable_sequential_rate_hz_from_mean": 8.495758653435027,
+  "achievable_sequential_rate_hz_from_p95": 8.14095443907228
+}

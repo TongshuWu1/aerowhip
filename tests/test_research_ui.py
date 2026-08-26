@@ -38,13 +38,14 @@ class ResearchCatalogTests(unittest.TestCase):
         self.assertEqual(online.required_artifacts, ("cable_model",))
         self.assertNotIn("policy", " ".join(online.inputs).lower())
 
-    def test_root_exposes_exactly_two_public_launchers(self) -> None:
+    def test_root_exposes_the_three_public_research_launchers(self) -> None:
         launchers = {
             path.name for path in catalog.REPOSITORY_DIRECTORY.glob("run*.py")
         }
         self.assertEqual(
             launchers,
             {
+                "run_figure8_tracking.py",
                 "run_offline_fitting.py",
                 "run_online.py",
             },

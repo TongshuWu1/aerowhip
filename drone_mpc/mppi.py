@@ -116,32 +116,35 @@ class MppiSettings:
             raise ValueError("MPPI objective stage must be position, speed, or full.")
         if not math.isfinite(self.noise_decay) or not 0.5 <= self.noise_decay <= 1.0:
             raise ValueError("MPPI noise decay must lie between 0.5 and 1.0.")
-        positive = (
+        positive_scales_and_limits = (
             self.temperature,
             self.acceleration_noise_sigma_m_s2,
             self.position_sigma_m,
             self.velocity_gate_sigma_m,
             self.predictive_velocity_gate_sigma_m,
+            self.ground_clearance_m,
+            self.maximum_altitude_m,
+            self.cable_drone_clearance_m,
+        )
+        nonnegative = (
             self.position_weight,
             self.speed_weight,
             self.direction_weight,
             self.success_cost,
             self.drone_displacement_weight,
             self.safety_weight,
-            self.ground_clearance_m,
-            self.maximum_altitude_m,
-            self.cable_drone_clearance_m,
-        )
-        nonnegative = (
             self.control_effort_weight,
             self.control_smoothness_weight,
             self.predictive_speed_weight,
             self.gradient_guidance_fraction,
         )
-        if any(not math.isfinite(value) or value <= 0.0 for value in positive):
+        if any(
+            not math.isfinite(value) or value <= 0.0
+            for value in positive_scales_and_limits
+        ):
             raise ValueError(
-                "MPPI scales, task weights, safety values, temperature, and noise "
-                "must be positive."
+                "MPPI scales, safety distances, temperature, and noise must be "
+                "finite and positive."
             )
         if any(not math.isfinite(value) or value < 0.0 for value in nonnegative):
             raise ValueError("MPPI objective weights must be finite and non-negative.")
@@ -502,6 +505,9 @@ def _mppi_event_objective(
     continuous_tip_distance = torch.linalg.vector_norm(
         closest_position - target[None, None], dim=2
     )
+    minimum_tip_target_center_distance = torch.min(
+        continuous_tip_distance, dim=1
+    ).values
     closest_interval = torch.argmin(continuous_tip_distance, dim=1)
     selected_interval = torch.where(
         has_contact, first_contact_interval, closest_interval
@@ -517,6 +523,23 @@ def _mppi_event_objective(
         tip_position[rows, impact_frames] - tip_position[rows, selected_interval]
     )
     distance = torch.linalg.vector_norm(event_position - target[None], dim=1)
+    # ``distance`` is necessarily the target radius at first sphere entry, so
+    # it is a contact/event metric rather than a useful measure of strike
+    # placement.  Measure placement against the ideal point on the incoming
+    # face of the target sphere instead.  A perfectly centred strike travelling
+    # along ``direction`` reaches ``target - radius * direction`` first.
+    ideal_impact_position = (
+        target[None]
+        - problem.maximum_tip_error_m * direction[None]
+    )
+    impact_surface_placement_error = torch.linalg.vector_norm(
+        event_position - ideal_impact_position, dim=1
+    )
+    impact_surface_placement_error = torch.where(
+        has_contact,
+        impact_surface_placement_error,
+        torch.full_like(impact_surface_placement_error, torch.inf),
+    )
     velocity = tip_velocity[rows, selected_interval] + selected_fraction[:, None] * (
         tip_velocity[rows, impact_frames] - tip_velocity[rows, selected_interval]
     )
@@ -994,6 +1017,8 @@ def _mppi_event_objective(
         "impact_frame": impact_frames,
         "impact_time_s": event_time,
         "position_error_m": distance,
+        "minimum_tip_target_center_distance_m": minimum_tip_target_center_distance,
+        "impact_surface_placement_error_m": impact_surface_placement_error,
         "directional_speed_m_s": directed_speed,
         "tip_speed_m_s": total_tip_speed,
         "direction_cosine": direction_cosine,

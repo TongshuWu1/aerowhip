@@ -29,7 +29,10 @@ from drone_mpc.model import CableModelSnapshot, load_cable_model
 from drone_mpc.problem import MpcProblem
 import drone_mpc.mppi as mppi_module
 from drone_mpc.mppi import MppiSettings, interpolate_control_knots, optimize_mppi
-from drone_mpc.reduced import build_controller_and_truth_models
+from drone_mpc.reduced import (
+    build_controller_and_truth_models,
+    node_count_for_refinement_factor,
+)
 from drone_mpc.simulator import (
     DroneCableState,
     SimulationSettings,
@@ -115,7 +118,13 @@ def load_workload(profile_path: str | Path) -> Workload:
     horizon = float(controller_settings["horizon_s"])
     physics_rate = float(controller_settings["physics_rate_hz"])
     control_rate = float(controller_settings["control_rate_hz"])
-    node_count = int(controller_settings["simulation_nodes"])
+    if "simulation_refinement_factor" in controller_settings:
+        node_count = node_count_for_refinement_factor(
+            int(controller_settings["simulation_refinement_factor"])
+        )
+    else:
+        # Backward-compatible loading for frozen v1/v2 experiment profiles.
+        node_count = int(controller_settings["simulation_nodes"])
     simulation = SimulationSettings(
         horizon_s=horizon,
         simulation_dt_s=1.0 / physics_rate,

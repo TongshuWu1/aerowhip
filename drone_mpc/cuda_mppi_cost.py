@@ -47,6 +47,8 @@ FLOAT_FIELDS = (
     "non_tip_contact_violation",
     "actuator_violation",
     "mppi_objective",
+    "minimum_tip_target_center_distance_m",
+    "impact_surface_placement_error_m",
 )
 
 
@@ -599,7 +601,18 @@ extern "C" __global__ void fixed_mppi_cost(
     if (objective_stage == 2) task_violation += direction_deficit * direction_deficit;
     const float constraint_violation = task_violation + safety_violation;
 
-    float* out = output + (long long)sample * 35;
+    const float ideal_impact_x = target[0] - target_radius * direction[0];
+    const float ideal_impact_y = target[1] - target_radius * direction[1];
+    const float ideal_impact_z = target[2] - target_radius * direction[2];
+    const float impact_surface_placement_error = has_contact
+        ? norm3_values(
+            tip_x - ideal_impact_x,
+            tip_y - ideal_impact_y,
+            tip_z - ideal_impact_z
+        )
+        : INF;
+
+    float* out = output + (long long)sample * 37;
     out[0] = constraint_violation;
     out[1] = impact_time;
     out[2] = distance;
@@ -635,6 +648,8 @@ extern "C" __global__ void fixed_mppi_cost(
     out[32] = non_tip_violation;
     out[33] = actuator_violation;
     out[34] = total_cost;
+    out[35] = closest_distance;
+    out[36] = impact_surface_placement_error;
     impact_output[sample] = (long long)impact_frame;
     boolean_output[(long long)sample * 3] = (unsigned char)(task_success && safe);
     boolean_output[(long long)sample * 3 + 1] = (unsigned char)has_contact;

@@ -31,6 +31,25 @@ between-strike physical-parameter adapter. Both UIs use a plain, research-first
 Tkinter layout. The small research console is an optional launcher/status view,
 not a third scientific workflow.
 
+The separate first-stage state-information experiment is launched with:
+
+```powershell
+.\.venv\Scripts\python.exe .\run_figure8_tracking.py
+```
+
+It follows a configurable flat figure-eight geometric path with the free cable
+tip, without prescribing loop frequency or speed. The compact UI compares
+matched-physics full distributed-state MPPI
+against the existing instantaneous endpoint-only state conditioner and a
+causal moving-history DDER observer. The observer receives only attachment
+motion and free-tip position history, reconstructs a full distributed state,
+and passes that estimate to unchanged MPPI. It uses the same 11-node
+accelerated DDER and translational acceleration-control plant, and does not run
+impact logic or physical-parameter adaptation. Runs are logged to
+`data/drone_mpc/figure8_tracking/` as CSV, full-truth NPZ, and JSON metadata.
+The controlled hidden-state result is documented in
+[`reports/FIGURE8_DDER_HISTORY_OBSERVER_REPORT.md`](reports/FIGURE8_DDER_HISTORY_OBSERVER_REPORT.md).
+
 ## Offline OptiTrack identification
 
 The canonical experiment has one rigid-body cable attachment and ten ordered
@@ -102,9 +121,9 @@ The public online path requires:
 - batched candidate propagation.
 
 Those paths work for every node count accepted by the loaded artifact. The
-11-node configuration additionally uses the fixed-topology fused DDER mechanics
-operator and is the maximum-throughput path. The UI reports which acceleration
-tier is active and refuses to fall back silently to the slow reference path.
+public refinement factors 1/2/3 additionally use topology-specialized fused
+11/21/31-node DDER mechanics. The UI reports which acceleration tier is active
+and refuses to fall back silently to the slow reference path.
 
 ### Between-strike adaptation
 

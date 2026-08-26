@@ -13,8 +13,6 @@ import torch
 from cable_twin.shared.dder import DderModel, DderState, START_PINNED_FREE_END
 
 from .model import CableModelSnapshot
-
-
 CancellationCallback = Callable[[], bool]
 
 
@@ -23,9 +21,9 @@ class RuntimeAcceleration:
     """Resolved forward-runtime implementation for one cable discretization.
 
     Every CUDA inference rollout can use the fixed-shape full-horizon graph.
-    The experimentally optimized 11-node topology additionally uses the fused
-    damping and projection kernels.  Keeping these tiers explicit prevents the
-    online UI from silently falling back to the old per-step Python path.
+    The supported 11/21/31 homogeneous-cable meshes additionally use
+    topology-specialized damping and projection kernels. Keeping these tiers
+    explicit prevents the UI from silently falling back to the old path.
     """
 
     captured_full_horizon: bool
@@ -36,7 +34,10 @@ class RuntimeAcceleration:
     @property
     def tier(self) -> str:
         if self.fused_mechanics:
-            return "maximum (captured horizon + fused 11-node mechanics)"
+            return (
+                "maximum (captured horizon + fused "
+                f"{self.node_count}-node mechanics)"
+            )
         if self.captured_full_horizon and self.fused_cost:
             return "captured CUDA (arbitrary-node mechanics + fused cost)"
         return "reference"
@@ -378,10 +379,8 @@ class WhipSimulator:
     """A cable driven by an acceleration-controlled drone attachment.
 
     The drone translation is a double integrator whose acceleration is assumed
-    to be tracked by a faster low-level attitude/thrust controller.  Cable force
-    does not feed back into this first-stage drone model; the cable-to-drone mass
-    ratio and tracking error must be checked experimentally before retaining
-    that approximation in flight.
+    to be tracked by a faster low-level attitude/thrust controller. Cable force
+    does not feed back into this first-stage drone model.
     """
 
     def __init__(
@@ -420,8 +419,7 @@ class WhipSimulator:
         )
         fused_mechanics = (
             self.device.type == "cuda"
-            and self.snapshot.node_count == 11
-            and self.snapshot.model.parameters.substeps == 1
+            and self.snapshot.node_count in (11, 21, 31)
             and self.snapshot.model.parameters.constraint_iterations == 4
             and os.environ.get("CABLE_TWIN_FUSED_FIXED_DAMPING", "1") != "0"
             and os.environ.get("CABLE_TWIN_FUSED_FIXED_PROJECTION", "1") != "0"
@@ -498,7 +496,7 @@ class WhipSimulator:
             raise ValueError("Initial drone position must be finite.")
         if not bool(torch.all(torch.isfinite(velocity)).detach().cpu()):
             raise ValueError("Initial drone velocity must be finite.")
-        attachment = position + torch.tensor(
+        attachment = position + torch.as_tensor(
             ((0.0, 0.0, -self.settings.attachment_drop_m),),
             dtype=self.dtype,
             device=self.device,

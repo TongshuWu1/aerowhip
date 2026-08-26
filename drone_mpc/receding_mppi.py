@@ -279,8 +279,8 @@ def _replace_final_state(
     cable_velocities[:, -1] = state.cable.velocities_m_s
     attachments[:, -1] = state.drone_position_m + torch.as_tensor(
         ((0.0, 0.0, -simulator.settings.attachment_drop_m),),
-        dtype=simulator.dtype,
-        device=simulator.device,
+        dtype=rollout.drone_positions_m.dtype,
+        device=rollout.drone_positions_m.device,
     )
     return TensorRollout(
         rollout.time_s,
@@ -346,6 +346,21 @@ def _terminal_reason(terms: dict[str, float], elapsed_s: float, timeout_s: float
     if elapsed_s + 1.0e-9 >= timeout_s:
         return "timeout"
     return None
+
+
+def _strike_accuracy_text(terms: dict[str, float]) -> str:
+    """Describe aiming quality without relabelling target radius as error."""
+
+    if bool(terms.get("geometric_tip_contact", False)):
+        placement = float(terms.get("impact_surface_placement_error_m", math.nan))
+        return f"impact placement={1000.0 * placement:.1f}mm"
+    closest = float(
+        terms.get(
+            "minimum_tip_target_center_distance_m",
+            terms.get("position_error_m", math.nan),
+        )
+    )
+    return f"closest miss={1000.0 * closest:.1f}mm"
 
 
 def run_receding_horizon_mppi(
@@ -574,7 +589,7 @@ def run_receding_horizon_mppi(
             )
         report(
             f"  planned in {planning_wall:.3f}s; execute={segment_duration:.3f}s; "
-            f"realized error={1000.0 * last_terms['position_error_m']:.1f}mm; "
+            f"{_strike_accuracy_text(last_terms)}; "
             f"terminal={terminal_reason or 'continue'}"
         )
 

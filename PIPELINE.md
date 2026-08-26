@@ -67,20 +67,22 @@ reaction is not fed back into the drone point-mass plant.
 
 The DDER uses the identified mass, length, diameter, rest lengths, gravity,
 `EI`, and `Cb`, with the same inextensibility projection and fixed numerical
-settings stored in the model/reduced runtime. A requested controller grid is
-formed by material-coordinate interpolation and mass-conserving reduction. The
-11-marker provenance remains distinct from this simulation grid.
+settings stored in the model/runtime. Eleven observed material points remain
+fixed. Refinement factor 1, 2, or 3 subdivides each measured interval into the
+same number of homogeneous DDER segments, producing 11, 21, or 31 simulation
+nodes. Distributed bare-cable mass is re-lumped on the chosen grid while
+discrete marker masses stay at their measured material coordinates.
 
 ### Acceleration paths
 
 The supported online controller requires CUDA full-horizon graph capture and a
-fused CUDA cost evaluator for every accepted node count. Eleven nodes add a
-specialized fixed-topology mechanics implementation. The application reports:
+fused CUDA cost evaluator. All three public meshes use topology-specialized
+damping and four-plus-one projection kernels. The application reports:
 
 ```text
-captured arbitrary-node CUDA
-or
-maximum fused 11-node CUDA
+maximum (captured horizon + fused 11-node mechanics)
+maximum (captured horizon + fused 21-node mechanics)
+maximum (captured horizon + fused 31-node mechanics)
 ```
 
 It raises an error instead of silently using the reference PyTorch rollout.
@@ -115,7 +117,7 @@ invalidates the strike; simultaneous entry of the final segment and tip is
 allowed. This is continuous geometric event evaluation, not rigid-body impact
 response.
 
-### Fixed objective
+### Versioned, configurable objective
 
 With event distance `d`, directed tip speed `v_parallel`, direction cosine `c`,
 and a proximity gate `g_p(d)`, the public objective contains:
@@ -145,9 +147,14 @@ displacement, physical safety penalties, control effort, and control
 smoothness complete the cost. There is no cable-energy, curvature, shape,
 wind-up, release, reversal, or hard start-centered excursion term.
 
-The one authoritative public objective is `PUBLIC_MPPI_OBJECTIVE` in
-`drone_mpc/mppi.py`. The UI imports it rather than maintaining separate hidden
-defaults.
+`PUBLIC_MPPI_OBJECTIVE` in `drone_mpc/mppi.py` defines the public model-level
+defaults. The online UI exposes the strike weights, distance/gating scales,
+weak predictive-speed shaping, safety weight, displacement weight, and control
+regularization in a dedicated **Objective** tab. Pressing **Run** creates an
+immutable `MppiSettings` snapshot, so a running solve cannot silently change
+objective; settings profiles and execution artifacts store the complete values.
+The validated UI baseline keeps predictive-speed shaping disabled, matching
+what the earlier online GUI actually executed.
 
 ## 4. Between-strike EI/Cb adaptation
 
@@ -170,6 +177,12 @@ cleared so a fit segment cannot span unrelated initial states. Contact-affected
 and unsafe data are excluded; when a precise non-tip event timestamp is absent,
 a non-tip-first execution is conservatively excluded in full.
 
+An intentional plant-truth change is a new physical regime, not a new adaptation
+session. The published EI/Cb estimate, generation history, strike count, and
+parameter-error graph persist. Recent motion, health hysteresis, and the
+informative cache are rearmed/cleared so identification never mixes segments
+recorded under two different truth plants. The plot marks the regime boundary.
+
 Only `EI,Cb` are adapted. The fit uses short distributed-state segments,
 batched central finite differences in log-parameter coordinates, a 2-by-2
 Levenberg-Marquardt/Gauss-Newton update, trust limits, batched line search, and
@@ -185,15 +198,19 @@ The online UI separates:
 
 - **Task:** initial position, target, impact vector/speed/radius/cone;
 - **Controller:** horizon, rates, node count, knots, samples, iterations,
-  noise, seed, acceleration and safety-speed limits, warm start;
+  noise, seed, acceleration and safety-speed limits, full/endpoint feedback,
+  warm start;
+- **Objective:** strike, gating, safety, and control-regularization weights;
 - **Plant truth:** hidden simulation-only `EI,Cb` ratios;
 - **Adaptation:** enable/reset, published generation, parameter error plot,
   and held-out prediction change.
 
-All configuration widgets are locked during a run. Editing the visible model
-path invalidates the loaded snapshot. Saved executions use immutable run
-provenance, not fields edited after completion. Settings profiles are versioned;
-legacy profiles without adaptation retain fixed-model semantics.
+All active-strike configuration is immutable. Most widgets are locked during a
+run; the two plant-truth fields remain editable only to queue the next strike's
+regime. Editing the visible model path invalidates the loaded snapshot. Saved
+executions use immutable run provenance, not fields edited after completion.
+Settings profiles are versioned; legacy profiles without adaptation retain
+fixed-model semantics.
 
 ## 6. Outputs
 

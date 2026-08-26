@@ -1,8 +1,8 @@
-"""Research UI for full-state receding-horizon DDER-MPPI.
+"""Research UI for full- or endpoint-feedback receding-horizon DDER-MPPI.
 
-The window deliberately separates the strike definition from controller
-compute settings.  The validated MPPI task weights and safety logic are shown
-read-only; this UI is for running the controller, not retuning its objective.
+The window separates the strike definition, rollout objective, controller
+compute settings, hidden plant truth, and physical adaptation.  Every run owns
+an immutable snapshot of these values so objective tuning remains reproducible.
 """
 
 from __future__ import annotations
@@ -32,7 +32,12 @@ from .online_adaptation import (
     BetweenStrikeAdaptationResult,
     BetweenStrikeAdaptationSession,
 )
-from .reduced import build_controller_and_truth_models
+from .reduced import (
+    OBSERVED_MATERIAL_POINT_COUNT,
+    build_controller_and_truth_models,
+    node_count_for_refinement_factor,
+    refinement_factor_for_node_count,
+)
 from .receding_mppi import (
     RecedingMppiExecution,
     RecedingMppiLiveUpdate,
@@ -54,7 +59,10 @@ DEFAULT_SETTINGS_PROFILE_DIR = (
     Path(__file__).resolve().parents[1] / "data" / "drone_mpc" / "settings_profiles"
 )
 MAXIMUM_RUN_SEED = 2**31 - 1
-SETTINGS_PROFILE_SCHEMA = "receding_horizon_dder_mppi_settings_v2"
+SETTINGS_PROFILE_SCHEMA = "receding_horizon_dder_mppi_settings_v5"
+PREVIOUS_SETTINGS_PROFILE_SCHEMA = "receding_horizon_dder_mppi_settings_v4"
+LEGACY_FEEDBACK_SETTINGS_PROFILE_SCHEMA = "receding_horizon_dder_mppi_settings_v3"
+LEGACY_NODE_SETTINGS_PROFILE_SCHEMA = "receding_horizon_dder_mppi_settings_v2"
 LEGACY_SETTINGS_PROFILE_SCHEMA = "receding_horizon_dder_mppi_settings_v1"
 
 SETTINGS_PROFILE_FIELDS = {
@@ -67,15 +75,32 @@ SETTINGS_PROFILE_FIELDS = {
         "target_radius_m",
         "direction_half_angle_deg",
     ),
+    "objective": (
+        "objective_stage",
+        "position_sigma_m",
+        "velocity_gate_sigma_m",
+        "position_weight",
+        "speed_weight",
+        "predictive_speed_weight",
+        "predictive_velocity_gate_sigma_m",
+        "predictive_speed_ratio",
+        "direction_weight",
+        "success_cost",
+        "drone_displacement_weight",
+        "safety_weight",
+        "control_effort_weight",
+        "control_smoothness_weight",
+    ),
     "controller": (
         "horizon_s",
         "physics_rate_hz",
         "control_rate_hz",
-        "simulation_nodes",
+        "simulation_refinement_factor",
         "replanning_rate_hz",
         "execution_timeout_s",
         "maximum_acceleration_m_s2",
         "maximum_speed_m_s",
+        "feedback_mode",
         "samples",
         "iterations",
         "acceleration_knots",
@@ -89,9 +114,38 @@ SETTINGS_PROFILE_FIELDS = {
 }
 
 
-FIXED_OBJECTIVE = dict(PUBLIC_MPPI_OBJECTIVE)
+# The v1-v4 UI serialized this dictionary as a fixed objective signature, but
+# the actual runtime explicitly disabled the weak predictive-speed term.  Keep
+# the signature for faithful legacy-profile validation while exposing the
+# effective historical runtime values as the v5 defaults.
+LEGACY_OBJECTIVE_SIGNATURE = dict(PUBLIC_MPPI_OBJECTIVE)
+# v2-v4 saved this displayed value even though the GUI run builder overrode it
+# to zero.  Retain the historical signature solely for validating old files.
+LEGACY_OBJECTIVE_SIGNATURE["predictive_speed_weight"] = 10.0
+DEFAULT_UI_OBJECTIVE: dict[str, float | str] = {
+    "objective_stage": str(PUBLIC_MPPI_OBJECTIVE["objective_stage"]),
+    "position_sigma_m": float(PUBLIC_MPPI_OBJECTIVE["position_sigma_m"]),
+    "velocity_gate_sigma_m": float(PUBLIC_MPPI_OBJECTIVE["velocity_gate_sigma_m"]),
+    "position_weight": float(PUBLIC_MPPI_OBJECTIVE["position_weight"]),
+    "speed_weight": float(PUBLIC_MPPI_OBJECTIVE["speed_weight"]),
+    "predictive_speed_weight": float(PUBLIC_MPPI_OBJECTIVE["predictive_speed_weight"]),
+    "predictive_velocity_gate_sigma_m": 0.45,
+    "predictive_speed_ratio": 0.25,
+    "direction_weight": float(PUBLIC_MPPI_OBJECTIVE["direction_weight"]),
+    "success_cost": float(PUBLIC_MPPI_OBJECTIVE["success_cost"]),
+    "drone_displacement_weight": float(
+        PUBLIC_MPPI_OBJECTIVE["drone_displacement_weight"]
+    ),
+    "safety_weight": float(PUBLIC_MPPI_OBJECTIVE["safety_weight"]),
+    "control_effort_weight": float(
+        PUBLIC_MPPI_OBJECTIVE["control_effort_weight"]
+    ),
+    "control_smoothness_weight": float(
+        PUBLIC_MPPI_OBJECTIVE["control_smoothness_weight"]
+    ),
+}
 LEGACY_FIXED_OBJECTIVE = {
-    key: FIXED_OBJECTIVE[key]
+    key: LEGACY_OBJECTIVE_SIGNATURE[key]
     for key in (
         "objective_stage",
         "position_sigma_m",
@@ -106,6 +160,8 @@ LEGACY_FIXED_OBJECTIVE = {
         "control_smoothness_weight",
     )
 }
+# Version 1 profiles predate the current stronger bounded position term.
+LEGACY_FIXED_OBJECTIVE["position_weight"] = 40.0
 
 
 def normalize_settings_profile(payload: object) -> dict[str, dict[str, str]]:
@@ -114,30 +170,75 @@ def normalize_settings_profile(payload: object) -> dict[str, dict[str, str]]:
     if not isinstance(payload, dict):
         raise ValueError("Settings profile must be a JSON object.")
     schema = payload.get("schema")
-    if schema not in {SETTINGS_PROFILE_SCHEMA, LEGACY_SETTINGS_PROFILE_SCHEMA}:
+    if schema not in {
+        SETTINGS_PROFILE_SCHEMA,
+        PREVIOUS_SETTINGS_PROFILE_SCHEMA,
+        LEGACY_FEEDBACK_SETTINGS_PROFILE_SCHEMA,
+        LEGACY_NODE_SETTINGS_PROFILE_SCHEMA,
+        LEGACY_SETTINGS_PROFILE_SCHEMA,
+    }:
         raise ValueError(
             "Unsupported settings profile schema. Expected "
-            f"'{SETTINGS_PROFILE_SCHEMA}' or '{LEGACY_SETTINGS_PROFILE_SCHEMA}'."
+            f"'{SETTINGS_PROFILE_SCHEMA}', '{PREVIOUS_SETTINGS_PROFILE_SCHEMA}', "
+            f"'{LEGACY_FEEDBACK_SETTINGS_PROFILE_SCHEMA}', "
+            f"'{LEGACY_NODE_SETTINGS_PROFILE_SCHEMA}', or "
+            f"'{LEGACY_SETTINGS_PROFILE_SCHEMA}'."
         )
-    expected_objective = (
-        LEGACY_FIXED_OBJECTIVE
-        if schema == LEGACY_SETTINGS_PROFILE_SCHEMA
-        else FIXED_OBJECTIVE
-    )
-    if payload.get("fixed_objective") != expected_objective:
-        raise ValueError(
-            "The profile's fixed strike objective does not match this controller "
-            "version. Refusing to load a scientifically different experiment."
+    if schema != SETTINGS_PROFILE_SCHEMA:
+        expected_objective = (
+            LEGACY_FIXED_OBJECTIVE
+            if schema == LEGACY_SETTINGS_PROFILE_SCHEMA
+            else LEGACY_OBJECTIVE_SIGNATURE
         )
+        if payload.get("fixed_objective") != expected_objective:
+            raise ValueError(
+                "The legacy profile's fixed strike objective does not match its "
+                "controller version. Refusing to load a scientifically different "
+                "experiment."
+            )
     normalized: dict[str, dict[str, str]] = {}
     for section, fields in SETTINGS_PROFILE_FIELDS.items():
         values = payload.get(section)
+        if section == "objective" and values is None and schema != SETTINGS_PROFILE_SCHEMA:
+            legacy_values = payload.get("fixed_objective")
+            assert isinstance(legacy_values, dict)
+            # Preserve what the v1-v4 UI actually executed.  Although those
+            # profiles serialized the public predictive-speed value, the run
+            # builder overrode it to zero.
+            values = {
+                field: str(
+                    0.0
+                    if field == "predictive_speed_weight"
+                    else DEFAULT_UI_OBJECTIVE[field]
+                    if field in {
+                        "predictive_velocity_gate_sigma_m",
+                        "predictive_speed_ratio",
+                    }
+                    else legacy_values[field]
+                )
+                for field in fields
+            }
         if section == "adaptation" and values is None:
             # A legacy fixed-model experiment must stay fixed-model when it is
             # reopened.  Enabling adaptation would silently change its method.
             values = {"enabled": "false"}
         if not isinstance(values, dict):
             raise ValueError(f"Settings profile is missing section '{section}'.")
+        if section == "controller" and "simulation_refinement_factor" not in values:
+            legacy_nodes = values.get("simulation_nodes")
+            if not isinstance(legacy_nodes, str):
+                raise ValueError(
+                    "Settings profile is missing controller simulation refinement."
+                )
+            values = dict(values)
+            values["simulation_refinement_factor"] = str(
+                refinement_factor_for_node_count(int(legacy_nodes))
+            )
+        if section == "controller" and "feedback_mode" not in values:
+            # Profiles saved before the feedback ablation was exposed used
+            # full distributed state unconditionally.
+            values = dict(values)
+            values["feedback_mode"] = "full"
         normalized[section] = {}
         for field in fields:
             value = values.get(field)
@@ -186,18 +287,23 @@ class TruthModelSettings:
 
 @dataclass(frozen=True, slots=True)
 class AdaptationErrorPoint:
-    """One simulation-only parameter-error observation after a strike."""
+    """One simulation-only error observation or plant-regime transition."""
 
     strike_index: int
     ei_absolute_error_percent: float
     cb_absolute_error_percent: float
     joint_log_error: float
+    truth_ei_ratio: float
+    truth_cb_ratio: float
+    truth_change: bool = False
 
 
 def adaptation_error_point(
     strike_index: int,
     estimate: ParameterEstimate,
     truth_settings: TruthModelSettings,
+    *,
+    truth_change: bool = False,
 ) -> AdaptationErrorPoint:
     """Measure the published model against hidden simulated plant physics."""
 
@@ -217,6 +323,9 @@ def adaptation_error_point(
             math.log(ei_estimate_to_truth),
             math.log(cb_estimate_to_truth),
         ),
+        truth_ei_ratio=truth_settings.bending_stiffness_scale,
+        truth_cb_ratio=truth_settings.bending_damping_scale,
+        truth_change=truth_change,
     )
 
 
@@ -488,12 +597,13 @@ def live_execution_view(update: RecedingMppiLiveUpdate) -> ExecutionView:
 
 
 class AdaptationErrorCanvas(tk.Canvas):
-    """Compact research plot of EI/Cb error after each completed strike."""
+    """EI/Cb error history with explicit plant-truth regime boundaries."""
 
     EI_COLOR = "#1769aa"
     CB_COLOR = "#b3261e"
     AXIS_COLOR = "#333333"
     GRID_COLOR = "#dddddd"
+    TRUTH_CHANGE_COLOR = "#6b6b6b"
 
     def __init__(self, parent: tk.Misc) -> None:
         super().__init__(
@@ -633,6 +743,31 @@ class AdaptationErrorCanvas(tk.Canvas):
                 anchor=tk.N, fill=self.AXIS_COLOR, font=("Segoe UI", 8),
             )
 
+        for point in self._points:
+            if not point.truth_change:
+                continue
+            x = left + plot_width * point.strike_index / x_max
+            self.create_line(
+                x,
+                top,
+                x,
+                top + plot_height,
+                fill=self.TRUTH_CHANGE_COLOR,
+                dash=(4, 3),
+                width=1,
+            )
+            self.create_text(
+                min(x + 4, left + plot_width - 4),
+                top + 3,
+                text=(
+                    f"truth→ EI {point.truth_ei_ratio:g}, "
+                    f"Cb {point.truth_cb_ratio:g}"
+                ),
+                anchor=tk.NW if x < left + 0.65 * plot_width else tk.NE,
+                fill=self.TRUTH_CHANGE_COLOR,
+                font=("Segoe UI", 8),
+            )
+
         def coordinates(attribute: str) -> list[float]:
             result: list[float] = []
             for point in self._points:
@@ -682,6 +817,7 @@ class RecedingMppiGui:
         self.active_mppi: MppiSettings | None = None
         self.active_execution_settings: RecedingMppiSettings | None = None
         self.active_simulation: SimulationSettings | None = None
+        self.active_truth_settings: TruthModelSettings | None = None
         self.active_model_provenance: dict[str, object] = {}
         self.active_warm_start_source = ""
         self.active_warm_start_issues: tuple[str, ...] = ()
@@ -705,16 +841,60 @@ class RecedingMppiGui:
         self.tip_radius_var = tk.StringVar(value="0.05")
         self.angle_var = tk.StringVar(value="35.0")
 
+        self.objective_stage_var = tk.StringVar(
+            value=str(DEFAULT_UI_OBJECTIVE["objective_stage"])
+        )
+        self.position_sigma_var = tk.StringVar(
+            value=str(DEFAULT_UI_OBJECTIVE["position_sigma_m"])
+        )
+        self.velocity_gate_sigma_var = tk.StringVar(
+            value=str(DEFAULT_UI_OBJECTIVE["velocity_gate_sigma_m"])
+        )
+        self.position_weight_var = tk.StringVar(
+            value=str(DEFAULT_UI_OBJECTIVE["position_weight"])
+        )
+        self.speed_weight_var = tk.StringVar(
+            value=str(DEFAULT_UI_OBJECTIVE["speed_weight"])
+        )
+        self.predictive_speed_weight_var = tk.StringVar(
+            value=str(DEFAULT_UI_OBJECTIVE["predictive_speed_weight"])
+        )
+        self.predictive_velocity_gate_sigma_var = tk.StringVar(
+            value=str(DEFAULT_UI_OBJECTIVE["predictive_velocity_gate_sigma_m"])
+        )
+        self.predictive_speed_ratio_var = tk.StringVar(
+            value=str(DEFAULT_UI_OBJECTIVE["predictive_speed_ratio"])
+        )
+        self.direction_weight_var = tk.StringVar(
+            value=str(DEFAULT_UI_OBJECTIVE["direction_weight"])
+        )
+        self.success_cost_var = tk.StringVar(
+            value=str(DEFAULT_UI_OBJECTIVE["success_cost"])
+        )
+        self.drone_displacement_weight_var = tk.StringVar(
+            value=str(DEFAULT_UI_OBJECTIVE["drone_displacement_weight"])
+        )
+        self.safety_weight_var = tk.StringVar(
+            value=str(DEFAULT_UI_OBJECTIVE["safety_weight"])
+        )
+        self.control_effort_weight_var = tk.StringVar(
+            value=str(DEFAULT_UI_OBJECTIVE["control_effort_weight"])
+        )
+        self.control_smoothness_weight_var = tk.StringVar(
+            value=str(DEFAULT_UI_OBJECTIVE["control_smoothness_weight"])
+        )
+
         self.horizon_var = tk.StringVar(value="2.0")
         self.physics_rate_var = tk.StringVar(value="100")
         self.control_rate_var = tk.StringVar(value="50")
-        # The validated maximum-throughput topology is the default.  Other
-        # fitted resolutions remain available through captured CUDA rollout.
-        self.simulation_nodes_var = tk.StringVar(value="11")
+        # Eleven material observations remain fixed. The factor controls only
+        # the homogeneous DDER discretization between those observations.
+        self.simulation_refinement_factor_var = tk.StringVar(value="1")
         self.replan_rate_var = tk.StringVar(value="10")
         self.timeout_var = tk.StringVar(value="1.20")
         self.maximum_acceleration_var = tk.StringVar(value="20.0")
         self.maximum_speed_var = tk.StringVar(value="3.0")
+        self.feedback_mode_var = tk.StringVar(value="full")
 
         self.samples_var = tk.StringVar(value="512")
         self.iterations_var = tk.StringVar(value="1")
@@ -738,11 +918,13 @@ class RecedingMppiGui:
         )
         self.adaptation_error_points: list[AdaptationErrorPoint] = []
         self.adaptation_error_truth: TruthModelSettings | None = None
+        self.truth_parameter_widgets: list[ttk.Entry] = []
         self.preset_var = tk.StringVar(value="Balanced GPU: 512 samples × 1")
         self.controller_summary_var = tk.StringVar(value="")
         self.gpu_summary_var = tk.StringVar(value=self._gpu_summary())
         self.adaptation_session: BetweenStrikeAdaptationSession | None = None
         self.adaptation_session_key: tuple[object, ...] | None = None
+        self.adaptation_session_truth: TruthModelSettings | None = None
 
         self.status_var = tk.StringVar(
             value="Load the cable model and verify the warm start, then run MPC."
@@ -758,8 +940,9 @@ class RecedingMppiGui:
             self.horizon_var,
             self.physics_rate_var,
             self.control_rate_var,
-            self.simulation_nodes_var,
+            self.simulation_refinement_factor_var,
             self.replan_rate_var,
+            self.feedback_mode_var,
             self.samples_var,
             self.iterations_var,
             self.knots_var,
@@ -802,7 +985,7 @@ class RecedingMppiGui:
             self._update_truth_summary()
 
     def _set_configuration_locked(self, locked: bool) -> None:
-        """Freeze experiment inputs so visible provenance cannot drift mid-run."""
+        """Freeze a strike snapshot while allowing next-strike truth edits."""
 
         pending = list(self.root.winfo_children())
         while pending:
@@ -810,6 +993,11 @@ class RecedingMppiGui:
             pending.extend(widget.winfo_children())
             if isinstance(widget, (ttk.Entry, ttk.Combobox, ttk.Checkbutton)):
                 widget.state(["disabled"] if locked else ["!disabled"])
+        if locked:
+            # The active worker owns an immutable truth snapshot.  Operators
+            # may queue the next plant regime while that strike is running.
+            for widget in self.truth_parameter_widgets:
+                widget.state(["!disabled"])
 
     def _configure_style(self) -> None:
         style = ttk.Style(self.root)
@@ -837,7 +1025,8 @@ class RecedingMppiGui:
             outer,
             text=(
                 "Full cable-state prediction, shifted warm start, short-prefix execution, "
-                "and replanning. Controller compute is separated from the fixed strike objective."
+                "and replanning. Task, objective, compute, plant truth, and adaptation "
+                "are separated for reproducible experiments."
             ),
             foreground="#555555",
         ).pack(anchor=tk.W, pady=(0, 10))
@@ -884,15 +1073,47 @@ class RecedingMppiGui:
         notebook = ttk.Notebook(controls)
         notebook.pack(fill=tk.BOTH, expand=True)
         task_tab = ttk.Frame(notebook, padding=10)
+        objective_container = ttk.Frame(notebook)
         controller_container = ttk.Frame(notebook)
         truth_tab = ttk.Frame(notebook, padding=10)
         adaptation_container = ttk.Frame(notebook)
         notebook.add(task_tab, text="Task")
+        notebook.add(objective_container, text="Objective")
         notebook.add(controller_container, text="Controller")
         notebook.add(truth_tab, text="Plant truth")
         notebook.add(adaptation_container, text="Adaptation")
         self._build_task_tab(task_tab)
         self._build_truth_tab(truth_tab)
+
+        objective_canvas = tk.Canvas(
+            objective_container,
+            background="#ffffff",
+            highlightthickness=0,
+            borderwidth=0,
+        )
+        objective_scrollbar = ttk.Scrollbar(
+            objective_container, orient=tk.VERTICAL, command=objective_canvas.yview
+        )
+        objective_canvas.configure(yscrollcommand=objective_scrollbar.set)
+        objective_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        objective_canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        objective_tab = ttk.Frame(objective_canvas, padding=10)
+        objective_window = objective_canvas.create_window(
+            (0, 0), window=objective_tab, anchor=tk.NW
+        )
+        objective_tab.bind(
+            "<Configure>",
+            lambda _event: objective_canvas.configure(
+                scrollregion=objective_canvas.bbox("all")
+            ),
+        )
+        objective_canvas.bind(
+            "<Configure>",
+            lambda event: objective_canvas.itemconfigure(
+                objective_window, width=event.width
+            ),
+        )
+        self._build_objective_tab(objective_tab)
 
         controller_canvas = tk.Canvas(
             controller_container,
@@ -1074,7 +1295,21 @@ class RecedingMppiGui:
         self._entry(prediction, "Prediction horizon", self.horizon_var, "s")
         self._entry(prediction, "Physics rate", self.physics_rate_var, "Hz")
         self._entry(prediction, "Acceleration command rate", self.control_rate_var, "Hz")
-        self._entry(prediction, "DDER simulation nodes", self.simulation_nodes_var, "nodes")
+        refinement_row = ttk.Frame(prediction)
+        refinement_row.pack(fill=tk.X, pady=2)
+        ttk.Label(refinement_row, text="DDER refinement factor", width=25).pack(
+            side=tk.LEFT
+        )
+        ttk.Combobox(
+            refinement_row,
+            textvariable=self.simulation_refinement_factor_var,
+            values=("1", "2", "3"),
+            state="readonly",
+            width=12,
+        ).pack(side=tk.LEFT, fill=tk.X, expand=True)
+        ttk.Label(refinement_row, text="×", width=6).pack(
+            side=tk.LEFT, padx=(5, 0)
+        )
         self._entry(prediction, "Acceleration knots", self.knots_var, "")
 
         budget = ttk.LabelFrame(parent, text="MPPI compute budget", padding=8)
@@ -1095,6 +1330,30 @@ class RecedingMppiGui:
 
         closed_loop = ttk.LabelFrame(parent, text="Closed-loop execution", padding=8)
         closed_loop.pack(fill=tk.X, pady=(8, 0))
+        feedback_row = ttk.Frame(closed_loop)
+        feedback_row.pack(fill=tk.X, pady=2)
+        ttk.Label(feedback_row, text="Cable feedback", width=25).pack(side=tk.LEFT)
+        ttk.Combobox(
+            feedback_row,
+            textvariable=self.feedback_mode_var,
+            values=("full", "endpoint"),
+            state="readonly",
+            width=12,
+        ).pack(side=tk.LEFT, fill=tk.X, expand=True)
+        ttk.Label(feedback_row, text="mode", width=6).pack(
+            side=tk.LEFT, padx=(5, 0)
+        )
+        ttk.Label(
+            closed_loop,
+            text=(
+                "full: observe every distributed node. endpoint: observe only "
+                "the drone/root and free-tip position/velocity; the DDER model "
+                "propagates the hidden interior state."
+            ),
+            foreground="#666666",
+            wraplength=390,
+            justify=tk.LEFT,
+        ).pack(anchor=tk.W, pady=(2, 5))
         self._entry(closed_loop, "Replanning rate", self.replan_rate_var, "Hz")
         self._entry(closed_loop, "Execution timeout", self.timeout_var, "s")
         self._entry(
@@ -1121,27 +1380,138 @@ class RecedingMppiGui:
             justify=tk.LEFT,
         ).pack(anchor=tk.W, pady=(10, 0))
 
-        objective = ttk.LabelFrame(parent, text="Fixed objective and safety", padding=8)
-        objective.pack(fill=tk.X, pady=(8, 0))
+    def _build_objective_tab(self, parent: ttk.Frame) -> None:
         ttk.Label(
-            objective,
+            parent,
+            text="MPPI rollout objective",
+            font=("Segoe UI Semibold", 12),
+        ).pack(anchor=tk.W)
+        ttk.Label(
+            parent,
             text=(
-                "Task weights (position / speed / direction): "
-                f"{FIXED_OBJECTIVE['position_weight']:g} / "
-                f"{FIXED_OBJECTIVE['speed_weight']:g} / "
-                f"{FIXED_OBJECTIVE['direction_weight']:g}; valid-strike bonus "
-                f"{FIXED_OBJECTIVE['success_cost']:g}.\n"
-                "No cable-energy, shape, wind-up, release-phase, or hard drone-"
-                "excursion term. Safety checks include drone keepout/speed, ground, "
-                "altitude, cable–drone clearance, actuator limit, and tip-first target "
-                "ordering. Objective weights are versioned in settings profiles; "
-                "complete task, safety, contact, and model provenance is stored with "
-                "each execution artifact."
+                "MPPI minimizes cost. A larger positive weight makes a penalty "
+                "stronger; the valid-strike bonus is subtracted from cost. Values "
+                "are frozen when Run is pressed and saved with the profile/artifact."
             ),
-            foreground="#444444",
+            foreground="#555555",
             wraplength=410,
             justify=tk.LEFT,
-        ).pack(anchor=tk.W)
+        ).pack(anchor=tk.W, pady=(0, 8))
+
+        stage = ttk.LabelFrame(parent, text="Diagnostic stage", padding=8)
+        stage.pack(fill=tk.X)
+        stage_row = ttk.Frame(stage)
+        stage_row.pack(fill=tk.X, pady=2)
+        ttk.Label(stage_row, text="Objective stage", width=25).pack(side=tk.LEFT)
+        ttk.Combobox(
+            stage_row,
+            textvariable=self.objective_stage_var,
+            values=("position", "speed", "full"),
+            state="readonly",
+            width=14,
+        ).pack(side=tk.LEFT, fill=tk.X, expand=True)
+        ttk.Label(stage_row, text="mode", width=6).pack(
+            side=tk.LEFT, padx=(5, 0)
+        )
+        ttk.Label(
+            stage,
+            text=(
+                "Use full for the actual strike task. Position and speed are "
+                "controller-debugging ablations, not a training curriculum."
+            ),
+            foreground="#666666",
+            wraplength=390,
+            justify=tk.LEFT,
+        ).pack(anchor=tk.W, pady=(3, 0))
+
+        strike = ttk.LabelFrame(parent, text="Strike terms", padding=8)
+        strike.pack(fill=tk.X, pady=(8, 0))
+        self._entry(strike, "Position weight", self.position_weight_var, "cost")
+        self._entry(strike, "Position saturation scale", self.position_sigma_var, "m")
+        self._entry(strike, "Directed-speed weight", self.speed_weight_var, "cost")
+        self._entry(
+            strike,
+            "Near-target gate scale",
+            self.velocity_gate_sigma_var,
+            "m",
+        )
+        self._entry(strike, "Direction weight", self.direction_weight_var, "cost")
+        self._entry(strike, "Valid-strike bonus", self.success_cost_var, "cost")
+
+        shaping = ttk.LabelFrame(parent, text="Weak predictive speed shaping", padding=8)
+        shaping.pack(fill=tk.X, pady=(8, 0))
+        self._entry(
+            shaping,
+            "Predictive speed weight",
+            self.predictive_speed_weight_var,
+            "cost",
+        )
+        self._entry(
+            shaping,
+            "Predictive gate scale",
+            self.predictive_velocity_gate_sigma_var,
+            "m",
+        )
+        self._entry(
+            shaping,
+            "Predictive speed fraction",
+            self.predictive_speed_ratio_var,
+            "ratio",
+        )
+        ttk.Label(
+            shaping,
+            text="Set predictive speed weight to 0 to disable this weak shaping term.",
+            foreground="#666666",
+            wraplength=390,
+            justify=tk.LEFT,
+        ).pack(anchor=tk.W, pady=(3, 0))
+
+        regularization = ttk.LabelFrame(
+            parent, text="Safety and regularization", padding=8
+        )
+        regularization.pack(fill=tk.X, pady=(8, 0))
+        self._entry(
+            regularization,
+            "Drone displacement weight",
+            self.drone_displacement_weight_var,
+            "cost",
+        )
+        self._entry(
+            regularization, "Safety weight", self.safety_weight_var, "cost"
+        )
+        self._entry(
+            regularization,
+            "Control effort weight",
+            self.control_effort_weight_var,
+            "cost",
+        )
+        self._entry(
+            regularization,
+            "Control smoothness weight",
+            self.control_smoothness_weight_var,
+            "cost",
+        )
+        ttk.Label(
+            regularization,
+            text=(
+                "The objective contains no cable-energy, shape, wind-up, release, "
+                "reversal, or hard start-centered excursion term. Safety event "
+                "definitions and tip-first contact ordering remain unchanged."
+            ),
+            foreground="#555555",
+            wraplength=390,
+            justify=tk.LEFT,
+        ).pack(anchor=tk.W, pady=(4, 0))
+
+        ttk.Button(
+            parent,
+            text="Restore validated UI defaults",
+            command=self._restore_objective_defaults,
+        ).pack(fill=tk.X, pady=(10, 0))
+
+    def _restore_objective_defaults(self) -> None:
+        for field, variable in self._objective_variable_map().items():
+            variable.set(str(DEFAULT_UI_OBJECTIVE[field]))
 
     def _build_truth_tab(self, parent: ttk.Frame) -> None:
         ttk.Label(
@@ -1163,22 +1533,29 @@ class RecedingMppiGui:
 
         parameters = ttk.LabelFrame(parent, text="Physical mismatch", padding=8)
         parameters.pack(fill=tk.X)
-        self._entry(
+        self.truth_parameter_widgets.append(self._entry(
             parameters,
             "Truth EI / fitted EI",
             self.truth_ei_scale_var,
             "ratio",
-        )
-        self._entry(
+        ))
+        self.truth_parameter_widgets.append(self._entry(
             parameters,
             "Truth Cb / fitted Cb",
             self.truth_cb_scale_var,
             "ratio",
-        )
+        ))
         ttk.Label(
             parameters,
-            text="Use 1.0 and 1.0 for the matched-model baseline.",
+            text=(
+                "Use 1.0 and 1.0 for the matched-model baseline. Edits made "
+                "during a strike are queued for the next strike; the current "
+                "plant remains frozen. Truth changes retain the learned model "
+                "and convergence graph."
+            ),
             foreground="#666666",
+            wraplength=390,
+            justify=tk.LEFT,
         ).pack(anchor=tk.W, pady=(5, 0))
 
         summary = ttk.LabelFrame(parent, text="Resolved experiment", padding=8)
@@ -1302,6 +1679,7 @@ class RecedingMppiGui:
             return
         self.adaptation_session = None
         self.adaptation_session_key = None
+        self.adaptation_session_truth = None
         self.adaptation_status_var.set(
             "Nominal EI/Cb · generation 0 · no completed strike"
         )
@@ -1339,6 +1717,40 @@ class RecedingMppiGui:
         )
         self.adaptation_prediction_summary_var.set(
             "No held-out prediction comparison yet."
+        )
+
+    def _record_adaptation_truth_change(
+        self,
+        previous: TruthModelSettings,
+        truth: TruthModelSettings,
+        estimate: ParameterEstimate,
+        strike_index: int,
+    ) -> None:
+        """Show an instantaneous plant change without erasing prior errors."""
+
+        if not self.adaptation_error_points:
+            self._begin_adaptation_error_history(previous, estimate)
+        point = adaptation_error_point(
+            strike_index,
+            estimate,
+            truth,
+            truth_change=True,
+        )
+        self.adaptation_error_points.append(point)
+        self.adaptation_error_truth = truth
+        self.adaptation_error_canvas.set_points(self.adaptation_error_points)
+        self._update_adaptation_error_summary(point, estimate, truth)
+        self.adaptation_prediction_summary_var.set(
+            "Plant truth changed; old-regime motion was isolated and the next "
+            "strike will test adaptation from the retained estimate."
+        )
+        self._append_log(
+            "Plant truth changed without resetting adaptation: "
+            f"EI {previous.bending_stiffness_scale:g}x -> "
+            f"{truth.bending_stiffness_scale:g}x, Cb "
+            f"{previous.bending_damping_scale:g}x -> "
+            f"{truth.bending_damping_scale:g}x. Learned generation and graph "
+            "were retained; old motion segments were cleared."
         )
 
     def _update_adaptation_error_summary(
@@ -1385,12 +1797,9 @@ class RecedingMppiGui:
             samples = int(self.samples_var.get())
             iterations = int(self.iterations_var.get())
             knots = int(self.knots_var.get())
-            simulation_nodes = int(self.simulation_nodes_var.get())
-            acceleration_tier = (
-                "maximum fused 11-node CUDA"
-                if simulation_nodes == 11
-                else "captured arbitrary-node CUDA"
-            )
+            refinement_factor = int(self.simulation_refinement_factor_var.get())
+            simulation_nodes = node_count_for_refinement_factor(refinement_factor)
+            acceleration_tier = f"specialized fused {simulation_nodes}-node CUDA"
             physics_steps = round(horizon * physics_rate)
             controls = round(horizon * control_rate)
             apply_controls = control_rate / replan_rate
@@ -1398,7 +1807,9 @@ class RecedingMppiGui:
                 f"Per update: {samples * iterations} DDER rollouts; all {samples} "
                 f"samples run in one CUDA batch per iteration. Horizon: "
                 f"{physics_steps} physics steps, "
-                f"{controls} controls, {knots} knots, {simulation_nodes} DDER nodes. "
+                f"{controls} controls, {knots} knots, 11 observations → "
+                f"{simulation_nodes} DDER nodes (factor {refinement_factor}). "
+                f"Feedback: {self.feedback_mode_var.get()}. "
                 f"Runtime: {acceleration_tier}. "
                 f"Execute {apply_controls:g} "
                 "control interval(s) before replanning."
@@ -1431,6 +1842,15 @@ class RecedingMppiGui:
             f"Cb={fitted_cb:.6g} N m^2 s\n"
             f"Truth plant: EI={fitted_ei * settings.bending_stiffness_scale:.6g} "
             f"N m^2, Cb={fitted_cb * settings.bending_damping_scale:.6g} N m^2 s"
+            + (
+                "\nQUEUED FOR NEXT STRIKE — active strike remains at "
+                f"({self.active_truth_settings.bending_stiffness_scale:g}, "
+                f"{self.active_truth_settings.bending_damping_scale:g})"
+                if self.running
+                and self.active_truth_settings is not None
+                and self.active_truth_settings != settings
+                else ""
+            )
         )
 
     def apply_preset(self) -> None:
@@ -1456,9 +1876,8 @@ class RecedingMppiGui:
         total_gib = properties.total_memory / (1024.0**3)
         return (
             f"{properties.name} · {total_gib:.1f} GiB. Online runs require captured "
-            "full-horizon CUDA and fused CUDA cost evaluation. Eleven nodes also "
-            "use the validated fused damping/projection kernels; other resolutions "
-            "retain captured arbitrary-node DDER mechanics."
+            "full-horizon CUDA and fused CUDA cost evaluation. Refinement factors "
+            "1/2/3 use topology-specialized 11/21/31-node damping and projection."
         )
 
     def _profile_variable_map(self) -> dict[str, dict[str, tk.StringVar]]:
@@ -1475,15 +1894,17 @@ class RecedingMppiGui:
                 "target_radius_m": self.tip_radius_var,
                 "direction_half_angle_deg": self.angle_var,
             },
+            "objective": self._objective_variable_map(),
             "controller": {
                 "horizon_s": self.horizon_var,
                 "physics_rate_hz": self.physics_rate_var,
                 "control_rate_hz": self.control_rate_var,
-                "simulation_nodes": self.simulation_nodes_var,
+                "simulation_refinement_factor": self.simulation_refinement_factor_var,
                 "replanning_rate_hz": self.replan_rate_var,
                 "execution_timeout_s": self.timeout_var,
                 "maximum_acceleration_m_s2": self.maximum_acceleration_var,
                 "maximum_speed_m_s": self.maximum_speed_var,
+                "feedback_mode": self.feedback_mode_var,
                 "samples": self.samples_var,
                 "iterations": self.iterations_var,
                 "acceleration_knots": self.knots_var,
@@ -1499,6 +1920,26 @@ class RecedingMppiGui:
             "adaptation": {
                 "enabled": self.adaptation_enabled_var,
             },
+        }
+
+    def _objective_variable_map(self) -> dict[str, tk.StringVar]:
+        return {
+            "objective_stage": self.objective_stage_var,
+            "position_sigma_m": self.position_sigma_var,
+            "velocity_gate_sigma_m": self.velocity_gate_sigma_var,
+            "position_weight": self.position_weight_var,
+            "speed_weight": self.speed_weight_var,
+            "predictive_speed_weight": self.predictive_speed_weight_var,
+            "predictive_velocity_gate_sigma_m": (
+                self.predictive_velocity_gate_sigma_var
+            ),
+            "predictive_speed_ratio": self.predictive_speed_ratio_var,
+            "direction_weight": self.direction_weight_var,
+            "success_cost": self.success_cost_var,
+            "drone_displacement_weight": self.drone_displacement_weight_var,
+            "safety_weight": self.safety_weight_var,
+            "control_effort_weight": self.control_effort_weight_var,
+            "control_smoothness_weight": self.control_smoothness_weight_var,
         }
 
     def save_settings_profile(self) -> None:
@@ -1533,7 +1974,7 @@ class RecedingMppiGui:
         payload: dict[str, object] = {
             "schema": SETTINGS_PROFILE_SCHEMA,
             "saved_at_utc": datetime.now(timezone.utc).isoformat(),
-            "fixed_objective": dict(FIXED_OBJECTIVE),
+            "objective_defaults": dict(DEFAULT_UI_OBJECTIVE),
         }
         for section, fields in variables.items():
             payload[section] = {
@@ -1586,16 +2027,16 @@ class RecedingMppiGui:
         for section, fields in normalized.items():
             for field, value in fields.items():
                 variables[section][field].set(value)
-        requested_nodes = normalized["controller"]["simulation_nodes"]
+        requested_factor = normalized["controller"]["simulation_refinement_factor"]
         try:
             self.load_model(silent=True)
             if self.snapshot is None:
                 raise ValueError(
                     "The cable model referenced by the profile could not be loaded."
                 )
-            if self.simulation_nodes_var.get() != requested_nodes:
+            if self.simulation_refinement_factor_var.get() != requested_factor:
                 raise ValueError(
-                    "The profile's DDER node count is incompatible with its cable model."
+                    "The profile's DDER refinement factor is incompatible with its cable model."
                 )
             self._build_run_configuration()
         except Exception as error:
@@ -1640,14 +2081,15 @@ class RecedingMppiGui:
             return
         assert self.snapshot is not None
         try:
-            requested_nodes = int(self.simulation_nodes_var.get())
+            node_count_for_refinement_factor(
+                int(self.simulation_refinement_factor_var.get())
+            )
         except ValueError:
-            requested_nodes = self.snapshot.node_count
-        if not 6 <= requested_nodes <= self.snapshot.node_count:
-            self.simulation_nodes_var.set(str(self.snapshot.node_count))
+            self.simulation_refinement_factor_var.set("1")
         provisional = "PROVISIONAL  " if self.snapshot.provisional else ""
         self.model_status_var.set(
-            f"{provisional}{self.snapshot.node_count} nodes  "
+            f"{provisional}{OBSERVED_MATERIAL_POINT_COUNT} observations  "
+            f"(artifact grid {self.snapshot.node_count})  "
             f"EI={self.snapshot.bending_stiffness_n_m2:.3g}  "
             f"Cb={self.snapshot.bending_damping_n_m2_s:.3g}"
         )
@@ -1737,12 +2179,8 @@ class RecedingMppiGui:
                 "The visible cable-model path is not the loaded model. "
                 "Load it before Run."
             )
-        simulation_node_count = int(self.simulation_nodes_var.get())
-        if not 6 <= simulation_node_count <= self.snapshot.node_count:
-            raise ValueError(
-                "DDER simulation nodes must be between 6 and the fitted model "
-                f"resolution ({self.snapshot.node_count})."
-            )
+        refinement_factor = int(self.simulation_refinement_factor_var.get())
+        simulation_node_count = node_count_for_refinement_factor(refinement_factor)
         problem = MpcProblem(
             target_position_m=self._vector(self.target_var.get(), "Target XYZ"),
             impact_direction=self._vector(self.direction_var.get(), "Impact direction"),
@@ -1790,29 +2228,33 @@ class RecedingMppiGui:
             acceleration_noise_sigma_m_s2=float(self.noise_var.get()),
             noise_decay=float(self.noise_decay_var.get()),
             seed=seed,
-            objective_stage=str(FIXED_OBJECTIVE["objective_stage"]),
-            position_sigma_m=float(FIXED_OBJECTIVE["position_sigma_m"]),
-            velocity_gate_sigma_m=float(FIXED_OBJECTIVE["velocity_gate_sigma_m"]),
-            position_weight=float(FIXED_OBJECTIVE["position_weight"]),
-            speed_weight=float(FIXED_OBJECTIVE["speed_weight"]),
-            predictive_speed_weight=0.0,
-            direction_weight=float(FIXED_OBJECTIVE["direction_weight"]),
-            success_cost=float(FIXED_OBJECTIVE["success_cost"]),
-            drone_displacement_weight=float(
-                FIXED_OBJECTIVE["drone_displacement_weight"]
+            objective_stage=self.objective_stage_var.get().strip().lower(),
+            position_sigma_m=float(self.position_sigma_var.get()),
+            velocity_gate_sigma_m=float(self.velocity_gate_sigma_var.get()),
+            position_weight=float(self.position_weight_var.get()),
+            speed_weight=float(self.speed_weight_var.get()),
+            predictive_speed_weight=float(self.predictive_speed_weight_var.get()),
+            predictive_velocity_gate_sigma_m=float(
+                self.predictive_velocity_gate_sigma_var.get()
             ),
-            safety_weight=float(FIXED_OBJECTIVE["safety_weight"]),
+            predictive_speed_ratio=float(self.predictive_speed_ratio_var.get()),
+            direction_weight=float(self.direction_weight_var.get()),
+            success_cost=float(self.success_cost_var.get()),
+            drone_displacement_weight=float(
+                self.drone_displacement_weight_var.get()
+            ),
+            safety_weight=float(self.safety_weight_var.get()),
             enforce_workspace_limit=False,
-            control_effort_weight=float(FIXED_OBJECTIVE["control_effort_weight"]),
+            control_effort_weight=float(self.control_effort_weight_var.get()),
             control_smoothness_weight=float(
-                FIXED_OBJECTIVE["control_smoothness_weight"]
+                self.control_smoothness_weight_var.get()
             ),
             gradient_guidance_fraction=0.0,
         )
         execution_settings = RecedingMppiSettings(
             replan_interval_s=replan_interval,
             timeout_s=float(self.timeout_var.get()),
-            feedback_mode="full",
+            feedback_mode=self.feedback_mode_var.get().strip().lower(),
         )
         warm = load_warm_start_knots(self.warm_start_var.get(), mppi.knot_count)
         truth_settings = TruthModelSettings(
@@ -1878,6 +2320,7 @@ class RecedingMppiGui:
 
         self.active_problem = problem
         self.active_simulation = simulation
+        self.active_truth_settings = truth_settings
         self.active_model_provenance = {}
         self.active_mppi = mppi
         self.active_execution_settings = execution_settings
@@ -1885,6 +2328,7 @@ class RecedingMppiGui:
         self.cancel_event.clear()
         self.running = True
         self._set_configuration_locked(True)
+        self._update_truth_summary()
         self.playing = False
         self.execution = None
         self.view_result = None
@@ -1904,6 +2348,16 @@ class RecedingMppiGui:
         self._append_log(
             f"MPPI run seed: {mppi.seed}"
             + (" (randomized because UI seed is 0)" if requested_seed == 0 else "")
+        )
+        self._append_log(
+            "Objective snapshot: "
+            f"stage={mppi.objective_stage}, position={mppi.position_weight:g}, "
+            f"speed={mppi.speed_weight:g}, direction={mppi.direction_weight:g}, "
+            f"success={mppi.success_cost:g}, predictive-speed="
+            f"{mppi.predictive_speed_weight:g}, displacement="
+            f"{mppi.drone_displacement_weight:g}, safety={mppi.safety_weight:g}, "
+            f"effort={mppi.control_effort_weight:g}, smoothness="
+            f"{mppi.control_smoothness_weight:g}."
         )
         self.run_button.configure(state=tk.DISABLED)
         self.stop_button.configure(state=tk.NORMAL)
@@ -1935,7 +2389,6 @@ class RecedingMppiGui:
                 session_key = (
                     nominal_controller.sha256,
                     simulation,
-                    truth_settings,
                 )
                 if adaptation_enabled:
                     if (
@@ -1948,6 +2401,7 @@ class RecedingMppiGui:
                             device="cuda",
                         )
                         self.adaptation_session_key = session_key
+                        self.adaptation_session_truth = truth_settings
                         self.events.put(
                             (
                                 "adaptation_session_started",
@@ -1962,6 +2416,22 @@ class RecedingMppiGui:
                                 "log",
                                 "Adaptation session initialized at fitted EI/Cb; "
                                 "future accepted updates apply to the next strike.",
+                            )
+                        )
+                    elif self.adaptation_session_truth != truth_settings:
+                        previous_truth = self.adaptation_session_truth
+                        assert previous_truth is not None
+                        self.adaptation_session.start_new_plant_regime()
+                        self.adaptation_session_truth = truth_settings
+                        self.events.put(
+                            (
+                                "adaptation_plant_truth_changed",
+                                (
+                                    previous_truth,
+                                    truth_settings,
+                                    self.adaptation_session.estimate,
+                                    len(self.adaptation_session.history),
+                                ),
                             )
                         )
                     runtime = self.adaptation_session.runtime()
@@ -2195,8 +2665,18 @@ class RecedingMppiGui:
         self.outcome_var.set(
             f"{outcome}  |  feedback={execution.feedback_mode}  |  plant={model_mode}"
         )
+        if bool(terms.get("geometric_tip_contact", False)):
+            accuracy = (
+                "placement error="
+                f"{1000.0 * terms['impact_surface_placement_error_m']:.1f} mm"
+            )
+        else:
+            accuracy = (
+                "closest miss="
+                f"{1000.0 * terms['minimum_tip_target_center_distance_m']:.1f} mm"
+            )
         self.quality_var.set(
-            f"error={1000.0 * terms['position_error_m']:.1f} mm    "
+            f"{accuracy}    "
             f"directed speed={terms['directional_speed_m_s']:.2f} m/s    "
             f"direction error={terms['direction_error_deg']:.1f}°    "
             f"impact={execution.impact_time_s:.2f} s"
@@ -2230,8 +2710,18 @@ class RecedingMppiGui:
         self.outcome_var.set(
             f"LIVE MPC STEP {step}  |  executed to t={view.prediction.time_s[-1]:.2f}s"
         )
+        if bool(terms.get("geometric_tip_contact", False)):
+            accuracy = (
+                "placement error="
+                f"{1000.0 * terms['impact_surface_placement_error_m']:.1f} mm"
+            )
+        else:
+            accuracy = (
+                "closest miss="
+                f"{1000.0 * terms['minimum_tip_target_center_distance_m']:.1f} mm"
+            )
         self.quality_var.set(
-            f"current closest error={1000.0 * terms['position_error_m']:.1f} mm    "
+            f"{accuracy}    "
             f"directed speed={terms['directional_speed_m_s']:.2f} m/s    "
             f"direction error={terms['direction_error_deg']:.1f}°"
         )
@@ -2274,13 +2764,14 @@ class RecedingMppiGui:
             f"EI ratio={estimate.ei_ratio:.4f}, Cb ratio={estimate.cb_ratio:.4f}, "
             f"generation={estimate.generation}."
         )
-        if self.adaptation_error_truth != truth or not self.adaptation_error_points:
+        if not self.adaptation_error_points:
             self._begin_adaptation_error_history(truth, ParameterEstimate())
         point = adaptation_error_point(strike_index, estimate, truth)
         if self.adaptation_error_points[-1].strike_index == strike_index:
             self.adaptation_error_points[-1] = point
         else:
             self.adaptation_error_points.append(point)
+        self.adaptation_error_truth = truth
         self.adaptation_error_canvas.set_points(self.adaptation_error_points)
         self._update_adaptation_error_summary(point, estimate, truth)
         if result.fit_result is not None:
@@ -2309,7 +2800,9 @@ class RecedingMppiGui:
         execution, output, provenance = self.pending_completion
         self.pending_completion = None
         self.running = False
+        self.active_truth_settings = None
         self._set_configuration_locked(False)
+        self._update_truth_summary()
         self._show_complete(execution, output, provenance)
         self.run_button.configure(state=tk.NORMAL)
         self.stop_button.configure(state=tk.DISABLED)
@@ -2331,6 +2824,14 @@ class RecedingMppiGui:
                 elif kind == "adaptation_session_started":
                     truth, estimate = payload  # type: ignore[misc]
                     self._begin_adaptation_error_history(truth, estimate)
+                elif kind == "adaptation_plant_truth_changed":
+                    previous, truth, estimate, strike_index = payload  # type: ignore[misc]
+                    self._record_adaptation_truth_change(
+                        previous,
+                        truth,
+                        estimate,
+                        strike_index,
+                    )
                 elif kind == "adaptation_result":
                     adaptation_result, estimate, truth, strike_index = payload  # type: ignore[misc]
                     self._show_adaptation_result(
@@ -2343,7 +2844,9 @@ class RecedingMppiGui:
                     self._show_live_update(payload)  # type: ignore[arg-type]
                 elif kind == "error":
                     self.running = False
+                    self.active_truth_settings = None
                     self._set_configuration_locked(False)
+                    self._update_truth_summary()
                     self.pending_completion = None
                     self.run_button.configure(state=tk.NORMAL)
                     self.stop_button.configure(state=tk.DISABLED)

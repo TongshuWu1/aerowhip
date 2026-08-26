@@ -137,6 +137,7 @@ class BetweenStrikeAdaptationSession:
         self.runtime_store.snapshot().simulator.require_online_acceleration()
         self.monitor = OnlineAdaptationMonitor(self.fitter.predictor, self.settings)
         self._next_observation_time_s = 0.0
+        self.plant_regime_count = 1
         self.history: list[BetweenStrikeAdaptationResult] = []
 
     @property
@@ -147,6 +148,12 @@ class BetweenStrikeAdaptationSession:
         runtime = self.runtime_store.snapshot()
         runtime.simulator.require_online_acceleration()
         return runtime
+
+    def start_new_plant_regime(self) -> None:
+        """Retain the learned model but isolate data from a changed plant."""
+
+        self.monitor.start_new_plant_regime()
+        self.plant_regime_count += 1
 
     def process_execution(
         self,

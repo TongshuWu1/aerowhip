@@ -131,6 +131,21 @@ class DistributedAdaptationContractTests(unittest.TestCase):
         self.assertEqual(len(buffer.recent), 1)
         self.assertEqual(buffer.cache, cache_before)
 
+    def test_new_plant_regime_clears_old_motion_but_rearms_monitor(self) -> None:
+        monitor = OnlineAdaptationMonitor(_OffsetPredictor(0.01), _monitor_settings())
+        diagnostics = _append_monitor_range(monitor, 0.0, 0.20)
+        self.assertEqual(diagnostics[-1].reason, "fit_candidate")
+        self.assertGreater(len(monitor.buffer.cache), 0)
+        self.assertGreater(monitor.ema_error_m2, 0.0)
+
+        monitor.start_new_plant_regime()
+
+        self.assertEqual(monitor.buffer.recent, ())
+        self.assertEqual(monitor.buffer.cache, ())
+        self.assertEqual(monitor.ema_error_m2, 0.0)
+        restarted = _append_monitor_range(monitor, 0.25, 0.35)
+        self.assertEqual(restarted[-1].reason, "persistence_pending")
+
     def test_segment_selection_preserves_a_held_out_set(self) -> None:
         settings = replace(
             DistributedAdaptationSettings(),

@@ -16,6 +16,7 @@ from drone_mpc.model import load_cable_model
 from drone_mpc.online_adaptation import BetweenStrikeAdaptationResult
 from drone_mpc.mppi import (
     MppiSettings,
+    PUBLIC_MPPI_OBJECTIVE,
     compute_dder_guidance,
     evaluate_mppi_rollout,
     interpolate_control_knots,
@@ -34,7 +35,9 @@ from drone_mpc.mpc import (
 from drone_mpc.problem import MpcProblem
 from drone_mpc.reduced import (
     build_controller_and_truth_models,
+    node_count_for_refinement_factor,
     reduce_cable_model,
+    refinement_factor_for_node_count,
     stable_controller_model,
     transfer_dder_state,
 )
@@ -48,7 +51,6 @@ from drone_mpc.receding_mppi import (
     shift_control_knots,
 )
 from drone_mpc.receding_mppi_gui import (
-    FIXED_OBJECTIVE,
     LEGACY_FIXED_OBJECTIVE,
     LEGACY_SETTINGS_PROFILE_SCHEMA,
     SETTINGS_PROFILE_FIELDS,
@@ -137,6 +139,20 @@ class DroneMpcTests(unittest.TestCase):
             point.joint_log_error,
             math.hypot(math.log(1.0 / 0.8), math.log(1.0 / 0.7)),
         )
+        self.assertEqual(point.truth_ei_ratio, 0.8)
+        self.assertEqual(point.truth_cb_ratio, 0.7)
+        self.assertFalse(point.truth_change)
+
+    def test_adaptation_error_point_records_truth_change_event(self) -> None:
+        point = adaptation_error_point(
+            2,
+            ParameterEstimate(),
+            TruthModelSettings(1.2, 1.3),
+            truth_change=True,
+        )
+        self.assertTrue(point.truth_change)
+        self.assertEqual(point.truth_ei_ratio, 1.2)
+        self.assertEqual(point.truth_cb_ratio, 1.3)
 
     def test_adaptation_error_point_is_zero_at_true_physics(self) -> None:
         point = adaptation_error_point(
@@ -154,16 +170,17 @@ class DroneMpcTests(unittest.TestCase):
     def test_settings_profile_requires_every_versioned_field(self) -> None:
         payload = {
             "schema": SETTINGS_PROFILE_SCHEMA,
-            "fixed_objective": dict(FIXED_OBJECTIVE),
             **{
                 section: {field: "1" for field in fields}
                 for section, fields in SETTINGS_PROFILE_FIELDS.items()
             },
         }
+        payload["controller"]["feedback_mode"] = "full"
         normalized = normalize_settings_profile(payload)
         self.assertEqual(
             normalized["plant_truth"], {"ei_scale": "1", "cb_scale": "1"}
         )
+        self.assertEqual(normalized["controller"]["feedback_mode"], "full")
 
         del payload["controller"]["samples"]
         with self.assertRaisesRegex(ValueError, "controller.samples"):
@@ -176,16 +193,41 @@ class DroneMpcTests(unittest.TestCase):
             **{
                 section: {field: "1" for field in fields}
                 for section, fields in SETTINGS_PROFILE_FIELDS.items()
-                if section != "adaptation"
+                if section not in {"adaptation", "objective"}
             },
         }
         normalized = normalize_settings_profile(payload)
         self.assertEqual(normalized["adaptation"], {"enabled": "false"})
 
-    def test_mppi_defaults_use_the_public_fixed_objective(self) -> None:
+    def test_settings_profile_preserves_endpoint_feedback(self) -> None:
+        payload = {
+            "schema": SETTINGS_PROFILE_SCHEMA,
+            **{
+                section: {field: "1" for field in fields}
+                for section, fields in SETTINGS_PROFILE_FIELDS.items()
+            },
+        }
+        payload["controller"]["feedback_mode"] = "endpoint"
+        normalized = normalize_settings_profile(payload)
+        self.assertEqual(normalized["controller"]["feedback_mode"], "endpoint")
+
+    def test_mppi_defaults_use_the_public_objective(self) -> None:
         settings = MppiSettings()
-        for name, expected in FIXED_OBJECTIVE.items():
+        for name, expected in PUBLIC_MPPI_OBJECTIVE.items():
             self.assertEqual(getattr(settings, name), expected)
+
+    def test_objective_terms_can_be_disabled_with_zero_weight(self) -> None:
+        settings = MppiSettings(
+            position_weight=0.0,
+            speed_weight=0.0,
+            direction_weight=0.0,
+            success_cost=0.0,
+            drone_displacement_weight=0.0,
+            safety_weight=0.0,
+        )
+        self.assertEqual(settings.position_weight, 0.0)
+        with self.assertRaisesRegex(ValueError, "non-negative"):
+            MppiSettings(position_weight=-1.0)
 
     def test_settings_profile_rejects_an_unknown_schema(self) -> None:
         with self.assertRaisesRegex(ValueError, "Unsupported"):
@@ -531,6 +573,12 @@ class DroneMpcTests(unittest.TestCase):
 
         self.assertEqual(int(impact[0]), 2)
         self.assertAlmostEqual(float(terms["position_error_m"][0]), 0.05)
+        self.assertAlmostEqual(
+            float(terms["minimum_tip_target_center_distance_m"][0]), 0.0
+        )
+        self.assertAlmostEqual(
+            float(terms["impact_surface_placement_error_m"][0]), 0.10
+        )
         self.assertAlmostEqual(float(terms["impact_time_s"][0]), 0.0183333333)
         self.assertTrue(bool(terms["geometric_tip_contact"][0]))
         self.assertFalse(bool(terms["physical_tip_contact"][0]))
@@ -569,6 +617,12 @@ class DroneMpcTests(unittest.TestCase):
         )
 
         self.assertAlmostEqual(float(terms["position_error_m"][0]), 0.30)
+        self.assertAlmostEqual(
+            float(terms["minimum_tip_target_center_distance_m"][0]), 0.30
+        )
+        self.assertTrue(
+            math.isinf(float(terms["impact_surface_placement_error_m"][0]))
+        )
         self.assertGreater(float(terms["directional_speed_m_s"][0]), 3.5)
         self.assertFalse(bool(terms["geometric_tip_contact"][0]))
         self.assertFalse(bool(terms["feasible"][0]))
@@ -615,6 +669,12 @@ class DroneMpcTests(unittest.TestCase):
         self.assertEqual(int(impact[0]), 1)
         self.assertAlmostEqual(float(terms["impact_time_s"][0]), 0.004, places=9)
         self.assertAlmostEqual(float(terms["position_error_m"][0]), 0.02, places=9)
+        self.assertAlmostEqual(
+            float(terms["minimum_tip_target_center_distance_m"][0]), 0.0, places=9
+        )
+        self.assertAlmostEqual(
+            float(terms["impact_surface_placement_error_m"][0]), 0.0, places=9
+        )
         self.assertAlmostEqual(float(terms["minimum_drone_clearance_m"][0]), 0.60)
         self.assertEqual(float(terms["keepout_violation"][0]), 0.0)
         self.assertTrue(bool(terms["geometric_tip_contact"][0]))
@@ -1361,6 +1421,46 @@ class DroneMpcTests(unittest.TestCase):
             controller.model.parameters.vertex_masses_kg,
             source.model.parameters.vertex_masses_kg,
         )
+
+    def test_observation_refinement_preserves_sites_and_dynamic_mass(self) -> None:
+        source = self._simulator().snapshot
+        source_coordinates = np.asarray(source.rod_material_coordinates_m)
+        observed_coordinates = source_coordinates[
+            np.asarray(source.marker_node_indices, dtype=np.int64)
+        ]
+        total_mass = sum(source.model.parameters.vertex_masses_kg)
+
+        for factor, node_count in ((1, 11), (2, 21), (3, 31)):
+            self.assertEqual(node_count_for_refinement_factor(factor), node_count)
+            self.assertEqual(refinement_factor_for_node_count(node_count), factor)
+            refined = reduce_cable_model(source, node_count=node_count)
+            self.assertEqual(refined.node_count, node_count)
+            self.assertEqual(
+                refined.marker_node_indices,
+                tuple(range(0, node_count, factor)),
+            )
+            refined_coordinates = np.asarray(refined.rod_material_coordinates_m)
+            np.testing.assert_allclose(
+                refined_coordinates[list(refined.marker_node_indices)],
+                observed_coordinates,
+                rtol=0.0,
+                atol=1.0e-15,
+            )
+            self.assertAlmostEqual(
+                sum(refined.model.parameters.vertex_masses_kg),
+                total_mass,
+                places=12,
+            )
+            for interval in range(10):
+                start = interval * factor
+                stop = start + factor
+                local_lengths = np.diff(refined_coordinates[start : stop + 1])
+                np.testing.assert_allclose(
+                    local_lengths,
+                    np.full(factor, local_lengths[0]),
+                    rtol=0.0,
+                    atol=1.0e-15,
+                )
 
     def test_controller_uses_the_minimum_stable_substep_count(self) -> None:
         source = self._simulator().snapshot
