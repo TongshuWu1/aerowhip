@@ -195,11 +195,10 @@ accuracy. The next scientific validation is a matched root-motion replay
 against held-out OptiTrack trajectories, with error reported at common material
 coordinates.
 
-## Policy compatibility
+## Controller compatibility
 
-Existing SAC checkpoints are intentionally not loaded. They were trained with
-a point-mass acceleration action, prescribed attachment motion, and a different
-state transition. This plant exposes a 6-DoF force/torque-driven aircraft and
-passive cable reaction. Its action space, observations, dynamics, and therefore
-learned value function have changed; the nominal policy must be retrained only
-after the plant passes the validation workflow above.
+The current DDER-MPPI controller assumes a point-mass acceleration action and
+prescribed attachment motion. This plant exposes a 6-DoF force/torque-driven
+aircraft with passive cable reaction, so it is not a drop-in controller plant.
+Integrate it only after the validation workflow above and after defining the
+low-level force/torque tracking interface explicitly.

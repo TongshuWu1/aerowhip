@@ -21,7 +21,7 @@ import numpy as np
 import torch
 
 from drone_mpc.model import load_cable_model
-from drone_mpc.mpc import MpcProblem
+from drone_mpc.problem import MpcProblem
 from drone_mpc.mppi import (
     MppiPlan,
     compute_dder_guidance,

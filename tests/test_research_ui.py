@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import FrozenInstanceError
-import hashlib
 import json
 from pathlib import Path
 import subprocess
@@ -17,19 +16,29 @@ from research_ui import app
 
 class ResearchCatalogTests(unittest.TestCase):
     def test_workflow_catalog_is_ordered_unique_and_immutable(self) -> None:
-        self.assertEqual(len(catalog.WORKFLOWS), 3)
+        self.assertEqual(len(catalog.WORKFLOWS), 2)
         identifiers = [workflow.workflow_id for workflow in catalog.WORKFLOWS]
-        self.assertEqual(identifiers, ["identify", "policy", "online"])
+        self.assertEqual(identifiers, ["identify", "online"])
         self.assertEqual(
             [workflow.stage for workflow in catalog.WORKFLOWS],
-            [1, 2, 3],
+            [1, 2],
         )
         self.assertTrue(all(workflow.primary for workflow in catalog.WORKFLOWS))
 
         with self.assertRaises(FrozenInstanceError):
             catalog.WORKFLOWS[0].title = "changed"  # type: ignore[misc]
 
-    def test_root_exposes_exactly_three_public_launchers(self) -> None:
+    def test_catalog_describes_current_mppi_branch_not_legacy_cem(self) -> None:
+        online = catalog.workflow_by_id("online")
+        description = f"{online.objective} {online.method}".lower()
+        self.assertIn("mppi", description)
+        self.assertIn("adaptation", description)
+        self.assertNotIn("cem", description)
+        self.assertNotIn("two-phase", description)
+        self.assertEqual(online.required_artifacts, ("cable_model",))
+        self.assertNotIn("policy", " ".join(online.inputs).lower())
+
+    def test_root_exposes_exactly_two_public_launchers(self) -> None:
         launchers = {
             path.name for path in catalog.REPOSITORY_DIRECTORY.glob("run*.py")
         }
@@ -37,7 +46,6 @@ class ResearchCatalogTests(unittest.TestCase):
             launchers,
             {
                 "run_offline_fitting.py",
-                "run_sac_training.py",
                 "run_online.py",
             },
         )
@@ -91,18 +99,6 @@ class ResearchCatalogTests(unittest.TestCase):
                 json.dumps({"schema": "test_cable_model_v1", "optimized": {"EI": 1.0}}),
                 encoding="utf-8",
             )
-            policy = root / "policy.pt"
-            policy.write_bytes(b"policy-checkpoint")
-            policy.with_suffix(".json").write_text(
-                json.dumps(
-                    {
-                        "schema": "test_sac_policy_v1",
-                        "source_model_sha256": hashlib.sha256(model.read_bytes()).hexdigest(),
-                    }
-                ),
-                encoding="utf-8",
-            )
-
             trial_directory = root / "trials"
             trial_directory.mkdir()
             (trial_directory / "trial.npz").write_bytes(b"trial")
@@ -110,8 +106,7 @@ class ResearchCatalogTests(unittest.TestCase):
             artifact_paths = {
                 "optitrack_csv": ("OptiTrack CSV collection", csv_directory),
                 "cable_model": ("Nominal cable model", model),
-                "sac_policy": ("Selected SAC policy", policy),
-                "adaptation_trials": ("Adaptation trials", trial_directory),
+                "online_results": ("DDER-MPPI experiment results", trial_directory),
             }
             with (
                 mock.patch.object(catalog, "REPOSITORY_DIRECTORY", root),
@@ -125,58 +120,18 @@ class ResearchCatalogTests(unittest.TestCase):
                 [
                     "optitrack_csv",
                     "cable_model",
-                    "sac_policy",
-                    "adaptation_trials",
+                    "online_results",
                 ],
             )
             self.assertEqual(by_id["optitrack_csv"].item_count, 1)
             self.assertEqual(by_id["cable_model"].schema, "test_cable_model_v1")
             self.assertEqual(
                 by_id["cable_model"].sha256,
-                hashlib.sha256(model.read_bytes()).hexdigest(),
+                catalog._sha256_file(model),
             )
-            self.assertEqual(by_id["sac_policy"].kind, "file")
-            self.assertEqual(by_id["sac_policy"].schema, "test_sac_policy_v1")
-            self.assertEqual(by_id["sac_policy"].compatibility, "compatible")
-            self.assertEqual(by_id["sac_policy"].status_label, "COMPATIBLE")
+            self.assertEqual(by_id["online_results"].kind, "directory")
             self.assertTrue(all(status.exists for status in statuses))
             self.assertTrue(all(status.sha256 for status in statuses))
-
-    def test_policy_sidecar_mismatch_is_reported_without_loading_torch(self) -> None:
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            model = root / "model.json"
-            model.write_text(
-                json.dumps({"schema": "test_cable_model_v1"}),
-                encoding="utf-8",
-            )
-            policy = root / "policy.pt"
-            policy.write_bytes(b"policy-checkpoint")
-            policy.with_suffix(".json").write_text(
-                json.dumps(
-                    {
-                        "schema": "test_sac_policy_v1",
-                        "source_model_sha256": "0" * 64,
-                    }
-                ),
-                encoding="utf-8",
-            )
-            artifact_paths = {
-                "optitrack_csv": ("OptiTrack CSV collection", root / "csv"),
-                "cable_model": ("Nominal cable model", model),
-                "sac_policy": ("Selected SAC policy", policy),
-                "adaptation_trials": ("Adaptation trials", root / "trials"),
-            }
-            with (
-                mock.patch.object(catalog, "REPOSITORY_DIRECTORY", root),
-                mock.patch.object(catalog, "_ARTIFACT_PATHS", artifact_paths),
-            ):
-                statuses = catalog.inspect_artifacts()
-            policy_status = next(
-                status for status in statuses if status.artifact_id == "sac_policy"
-            )
-            self.assertEqual(policy_status.compatibility, "mismatch")
-            self.assertEqual(policy_status.status_label, "MISMATCH")
 
     def test_artifact_status_never_equates_existence_with_scientific_readiness(self) -> None:
         common = {
@@ -195,13 +150,13 @@ class ResearchCatalogTests(unittest.TestCase):
             **common,
         )
         available = catalog.ArtifactStatus(
-            artifact_id="sac_policy",
+            artifact_id="online_results",
             exists=True,
             schema=None,
             **common,
         )
         missing = catalog.ArtifactStatus(
-            artifact_id="sac_policy",
+            artifact_id="online_results",
             exists=False,
             schema=None,
             **common,
@@ -218,8 +173,7 @@ class ResearchCatalogTests(unittest.TestCase):
             artifact_paths = {
                 "optitrack_csv": ("OptiTrack CSV collection", root / "missing_csv"),
                 "cable_model": ("Nominal cable model", invalid_model),
-                "sac_policy": ("Selected SAC policy", root / "missing.pt"),
-                "adaptation_trials": ("Adaptation trials", root / "missing_trials"),
+                "online_results": ("DDER-MPPI experiment results", root / "missing_trials"),
             }
             with (
                 mock.patch.object(catalog, "REPOSITORY_DIRECTORY", root),
@@ -232,8 +186,7 @@ class ResearchCatalogTests(unittest.TestCase):
             self.assertTrue(by_id["cable_model"].exists)
             for artifact_id in (
                 "optitrack_csv",
-                "sac_policy",
-                "adaptation_trials",
+                "online_results",
             ):
                 self.assertFalse(by_id[artifact_id].exists)
                 self.assertIsNone(by_id[artifact_id].sha256)
@@ -259,7 +212,7 @@ class ResearchLauncherProcessTests(unittest.TestCase):
     def test_app_import_does_not_load_cuda_or_domain_backends(self) -> None:
         statement = (
             "import sys; import research_ui.app; "
-            "blocked=('torch','cv2','pyzed','drone_mpc.adaptation_testbed'); "
+            "blocked=('torch','cv2','pyzed'); "
             "loaded=[name for name in blocked if name in sys.modules]; "
             "raise SystemExit('unexpected imports: '+','.join(loaded) if loaded else 0)"
         )
@@ -409,7 +362,6 @@ class ResearchLauncherProcessTests(unittest.TestCase):
             selected_workflow_id="online",
             artifacts={
                 "cable_model": SimpleNamespace(exists=True, label="Nominal cable model"),
-                "sac_policy": SimpleNamespace(exists=False, label="Selected SAC policy"),
             },
             running={},
             readiness_var=readiness,
@@ -425,7 +377,6 @@ class ResearchLauncherProcessTests(unittest.TestCase):
         button.reset_mock()
         process = mock.Mock(pid=4321)
         process.poll.return_value = None
-        console.artifacts["sac_policy"].exists = True
         console.running["online"] = SimpleNamespace(process=process)
         app.ResearchConsole._update_readiness(console)  # type: ignore[arg-type]
         readiness.set.assert_called_with("Running (PID 4321)")
@@ -433,12 +384,12 @@ class ResearchLauncherProcessTests(unittest.TestCase):
 
         readiness.reset_mock()
         button.reset_mock()
-        console.running = {"policy": SimpleNamespace(process=process)}
+        console.running = {"identify": SimpleNamespace(process=process)}
         app.ResearchConsole._update_readiness(console)  # type: ignore[arg-type]
         self.assertIn("one heavy workflow at a time", readiness.set.call_args.args[0])
         self.assertEqual(button.configure.call_args.kwargs["state"], app.tk.DISABLED)
 
-    def test_online_mpc_readiness_does_not_require_a_sac_policy(self) -> None:
+    def test_online_mpc_readiness_requires_only_the_cable_model(self) -> None:
         readiness = mock.Mock()
         button = mock.Mock()
         console = SimpleNamespace(
@@ -448,11 +399,6 @@ class ResearchLauncherProcessTests(unittest.TestCase):
                     exists=True,
                     label="Nominal cable model",
                     status_label="AVAILABLE",
-                ),
-                "sac_policy": SimpleNamespace(
-                    exists=True,
-                    label="Selected SAC policy",
-                    compatibility="mismatch",
                 ),
             },
             running={},
@@ -531,7 +477,7 @@ class ResearchLauncherProcessTests(unittest.TestCase):
         process.poll.return_value = None
         console = SimpleNamespace(
             selected_workflow_id="online",
-            running={"policy": SimpleNamespace(process=process)},
+            running={"identify": SimpleNamespace(process=process)},
             root=mock.Mock(),
         )
         with (

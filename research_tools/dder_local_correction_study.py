@@ -24,7 +24,7 @@ import torch.nn.functional as functional
 
 from cable_twin.shared.dder import DderState
 from drone_mpc.model import load_cable_model
-from drone_mpc.mpc import MpcProblem
+from drone_mpc.problem import MpcProblem
 from drone_mpc.mppi import (
     evaluate_mppi_rollout,
     interpolate_control_knots,

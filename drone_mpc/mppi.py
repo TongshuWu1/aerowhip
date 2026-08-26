@@ -19,7 +19,7 @@ import numpy as np
 import torch
 import torch.nn.functional as functional
 
-from .mpc import MpcProblem
+from .problem import MpcProblem
 from .simulator import (
     DroneCableState,
     SimulationResult,
@@ -30,6 +30,27 @@ from .simulator import (
 
 ProgressCallback = Callable[[str], None]
 CancellationCallback = Callable[[], bool]
+
+
+# One authoritative objective for the supported receding-horizon application.
+# Historical studies that need another objective must pass their values
+# explicitly rather than inheriting an accidental set of class defaults.
+PUBLIC_MPPI_OBJECTIVE: dict[str, float | str | bool] = {
+    "objective_stage": "full",
+    "position_sigma_m": 0.18,
+    "velocity_gate_sigma_m": 0.12,
+    "position_weight": 40.0,
+    "speed_weight": 25.0,
+    "predictive_speed_weight": 0.0,
+    "direction_weight": 20.0,
+    "success_cost": 600.0,
+    "drone_displacement_weight": 2.0,
+    "safety_weight": 180.0,
+    "enforce_workspace_limit": False,
+    "control_effort_weight": 1.0e-5,
+    "control_smoothness_weight": 1.0e-5,
+    "gradient_guidance_fraction": 0.0,
+}
 
 
 @dataclass(frozen=True, slots=True)
@@ -45,25 +66,39 @@ class MppiSettings:
     noise_decay: float = 0.92
     seed: int = 17
     objective_stage: str = "full"
-    position_sigma_m: float = 0.25
-    velocity_gate_sigma_m: float = 0.15
-    position_weight: float = 10.0
-    speed_weight: float = 2.0
-    predictive_speed_weight: float = 0.0
+    position_sigma_m: float = float(PUBLIC_MPPI_OBJECTIVE["position_sigma_m"])
+    velocity_gate_sigma_m: float = float(
+        PUBLIC_MPPI_OBJECTIVE["velocity_gate_sigma_m"]
+    )
+    position_weight: float = float(PUBLIC_MPPI_OBJECTIVE["position_weight"])
+    speed_weight: float = float(PUBLIC_MPPI_OBJECTIVE["speed_weight"])
+    predictive_speed_weight: float = float(
+        PUBLIC_MPPI_OBJECTIVE["predictive_speed_weight"]
+    )
     predictive_velocity_gate_sigma_m: float = 0.45
     predictive_speed_ratio: float = 0.25
-    direction_weight: float = 10.0
-    success_cost: float = 100.0
-    drone_displacement_weight: float = 2.0
-    safety_weight: float = 100.0
-    enforce_workspace_limit: bool = True
-    control_effort_weight: float = 1.0e-5
-    control_smoothness_weight: float = 1.0e-5
+    direction_weight: float = float(PUBLIC_MPPI_OBJECTIVE["direction_weight"])
+    success_cost: float = float(PUBLIC_MPPI_OBJECTIVE["success_cost"])
+    drone_displacement_weight: float = float(
+        PUBLIC_MPPI_OBJECTIVE["drone_displacement_weight"]
+    )
+    safety_weight: float = float(PUBLIC_MPPI_OBJECTIVE["safety_weight"])
+    enforce_workspace_limit: bool = bool(
+        PUBLIC_MPPI_OBJECTIVE["enforce_workspace_limit"]
+    )
+    control_effort_weight: float = float(
+        PUBLIC_MPPI_OBJECTIVE["control_effort_weight"]
+    )
+    control_smoothness_weight: float = float(
+        PUBLIC_MPPI_OBJECTIVE["control_smoothness_weight"]
+    )
     ground_height_m: float = 0.0
     ground_clearance_m: float = 0.03
     maximum_altitude_m: float = 3.0
     cable_drone_clearance_m: float = 0.05
-    gradient_guidance_fraction: float = 0.0
+    gradient_guidance_fraction: float = float(
+        PUBLIC_MPPI_OBJECTIVE["gradient_guidance_fraction"]
+    )
     gradient_step_sigma_ratio: float = 0.025
     smooth_softmin_temperature_m: float = 0.05
     gradient_norm_epsilon: float = 1.0e-9
@@ -399,6 +434,11 @@ def _mppi_event_objective(
 
     The cable trajectory determines the maneuver.  No cable-shape, energy,
     wind-up, release-time, or manually prescribed whip term appears here.
+
+    Contact is evaluated on the piecewise-linear trajectory between stored
+    physics frames.  ``impact_frame`` remains the upper bracketing frame for
+    compatibility with the controller, while the event time, position, and
+    velocity are interpolated at the continuous entry event.
     """
 
     fixed_cuda_objective = (
@@ -419,19 +459,70 @@ def _mppi_event_objective(
     target = torch.as_tensor(problem.target_position_m, dtype=dtype, device=device)
     direction = torch.as_tensor(problem.impact_direction, dtype=dtype, device=device)
 
-    tip_position = rollout.cable_positions_m[:, 1:, -1]
-    tip_velocity = rollout.cable_velocities_m_s[:, 1:, -1]
-    tip_distance = torch.linalg.vector_norm(tip_position - target[None, None], dim=2)
-    geometric_contact = tip_distance <= problem.maximum_tip_error_m
-    has_contact = torch.any(geometric_contact, dim=1)
-    first_contact = torch.argmax(geometric_contact.to(torch.int64), dim=1)
-    closest = torch.argmin(tip_distance, dim=1)
-    selected_column = torch.where(has_contact, first_contact, closest)
-    rows = torch.arange(batch, device=device)
-    impact_frames = selected_column + 1
+    tip_position = rollout.cable_positions_m[:, :, -1]
+    tip_velocity = rollout.cable_velocities_m_s[:, :, -1]
+    tip_start = tip_position[:, :-1]
+    tip_step = tip_position[:, 1:] - tip_start
+    relative_start = tip_start - target[None, None]
+    quadratic_a = torch.sum(tip_step.square(), dim=2)
+    quadratic_b = torch.sum(relative_start * tip_step, dim=2)
+    quadratic_c = (
+        torch.sum(relative_start.square(), dim=2)
+        - problem.maximum_tip_error_m**2
+    )
+    discriminant = quadratic_b.square() - quadratic_a * quadratic_c
+    nondegenerate = quadratic_a > torch.finfo(dtype).eps
+    entry_fraction = (
+        -quadratic_b - torch.sqrt(torch.clamp(discriminant, min=0.0))
+    ) / torch.clamp(quadratic_a, min=torch.finfo(dtype).eps)
+    starts_inside = quadratic_c <= 0.0
+    swept_contact = starts_inside | (
+        nondegenerate
+        & (discriminant >= 0.0)
+        & (entry_fraction >= 0.0)
+        & (entry_fraction <= 1.0)
+    )
+    entry_fraction = torch.where(
+        starts_inside,
+        torch.zeros_like(entry_fraction),
+        torch.clamp(entry_fraction, 0.0, 1.0),
+    )
+    has_contact = torch.any(swept_contact, dim=1)
+    first_contact_interval = torch.argmax(swept_contact.to(torch.int64), dim=1)
 
-    distance = tip_distance[rows, selected_column]
-    velocity = tip_velocity[rows, selected_column]
+    closest_fraction = torch.clamp(
+        -quadratic_b / torch.clamp(quadratic_a, min=torch.finfo(dtype).eps),
+        0.0,
+        1.0,
+    )
+    closest_fraction = torch.where(
+        nondegenerate, closest_fraction, torch.zeros_like(closest_fraction)
+    )
+    closest_position = tip_start + closest_fraction[:, :, None] * tip_step
+    continuous_tip_distance = torch.linalg.vector_norm(
+        closest_position - target[None, None], dim=2
+    )
+    closest_interval = torch.argmin(continuous_tip_distance, dim=1)
+    selected_interval = torch.where(
+        has_contact, first_contact_interval, closest_interval
+    )
+    rows = torch.arange(batch, device=device)
+    selected_fraction = torch.where(
+        has_contact,
+        entry_fraction[rows, selected_interval],
+        closest_fraction[rows, selected_interval],
+    )
+    impact_frames = selected_interval + 1
+    event_position = tip_position[rows, selected_interval] + selected_fraction[:, None] * (
+        tip_position[rows, impact_frames] - tip_position[rows, selected_interval]
+    )
+    distance = torch.linalg.vector_norm(event_position - target[None], dim=1)
+    velocity = tip_velocity[rows, selected_interval] + selected_fraction[:, None] * (
+        tip_velocity[rows, impact_frames] - tip_velocity[rows, selected_interval]
+    )
+    event_time = rollout.time_s[selected_interval] + selected_fraction * (
+        rollout.time_s[impact_frames] - rollout.time_s[selected_interval]
+    )
     total_tip_speed = torch.linalg.vector_norm(velocity, dim=1)
     directed_speed = torch.sum(velocity * direction[None], dim=1)
     direction_cosine = directed_speed / torch.clamp(total_tip_speed, min=1.0e-9)
@@ -472,7 +563,26 @@ def _mppi_event_objective(
     initial_drone = initial_state.drone_position_m
     if initial_drone.shape[0] == 1:
         initial_drone = initial_drone.expand(batch, -1)
-    event_drone = rollout.drone_positions_m[rows, impact_frames]
+    event_drone = rollout.drone_positions_m[rows, selected_interval] + selected_fraction[:, None] * (
+        rollout.drone_positions_m[rows, impact_frames]
+        - rollout.drone_positions_m[rows, selected_interval]
+    )
+    event_drone_velocity = (
+        rollout.drone_velocities_m_s[rows, selected_interval]
+        + selected_fraction[:, None]
+        * (
+            rollout.drone_velocities_m_s[rows, impact_frames]
+            - rollout.drone_velocities_m_s[rows, selected_interval]
+        )
+    )
+    event_cable = (
+        rollout.cable_positions_m[rows, selected_interval]
+        + selected_fraction[:, None, None]
+        * (
+            rollout.cable_positions_m[rows, impact_frames]
+            - rollout.cable_positions_m[rows, selected_interval]
+        )
+    )
     drone_displacement = torch.linalg.vector_norm(event_drone - initial_drone, dim=1)
     displacement_cost = settings.drone_displacement_weight * drone_displacement.square()
 
@@ -481,7 +591,10 @@ def _mppi_event_objective(
     )
     maximum_drone_excursion = torch.cummax(
         all_drone_displacement, dim=1
-    ).values[rows, impact_frames]
+    ).values[rows, selected_interval]
+    maximum_drone_excursion = torch.maximum(
+        maximum_drone_excursion, drone_displacement
+    )
     if settings.enforce_workspace_limit:
         workspace_violation = (
             torch.relu(maximum_drone_excursion - problem.maximum_drone_excursion_m)
@@ -494,15 +607,23 @@ def _mppi_event_objective(
     )
     minimum_drone_clearance = torch.cummin(
         drone_target_distance, dim=1
-    ).values[rows, impact_frames]
+    ).values[rows, selected_interval]
+    minimum_drone_clearance = torch.minimum(
+        minimum_drone_clearance,
+        torch.linalg.vector_norm(event_drone - target[None], dim=1),
+    )
     keepout_violation = (
         torch.relu(problem.drone_keepout_radius_m - minimum_drone_clearance)
         / problem.drone_keepout_radius_m
     ).square()
     drone_speed = torch.linalg.vector_norm(rollout.drone_velocities_m_s, dim=2)
     maximum_drone_speed = torch.cummax(drone_speed, dim=1).values[
-        rows, impact_frames
+        rows, selected_interval
     ]
+    maximum_drone_speed = torch.maximum(
+        maximum_drone_speed,
+        torch.linalg.vector_norm(event_drone_velocity, dim=1),
+    )
     speed_limit_violation = (
         torch.relu(maximum_drone_speed - simulator.settings.maximum_speed_m_s)
         / simulator.settings.maximum_speed_m_s
@@ -514,7 +635,11 @@ def _mppi_event_objective(
     )
     minimum_scene_height = torch.cummin(
         scene_height_by_frame, dim=1
-    ).values[rows, impact_frames]
+    ).values[rows, selected_interval]
+    event_scene_height = torch.minimum(
+        event_drone[:, 2], torch.amin(event_cable[:, :, 2], dim=1)
+    )
+    minimum_scene_height = torch.minimum(minimum_scene_height, event_scene_height)
     ground_violation = (
         torch.relu(
             settings.ground_height_m + settings.ground_clearance_m
@@ -524,7 +649,10 @@ def _mppi_event_objective(
     ).square()
     maximum_drone_altitude = torch.cummax(
         rollout.drone_positions_m[:, :, 2], dim=1
-    ).values[rows, impact_frames]
+    ).values[rows, selected_interval]
+    maximum_drone_altitude = torch.maximum(
+        maximum_drone_altitude, event_drone[:, 2]
+    )
     altitude_violation = (
         torch.relu(maximum_drone_altitude - settings.maximum_altitude_m)
         / settings.maximum_altitude_m
@@ -537,7 +665,16 @@ def _mppi_event_objective(
     cable_drone_clearance_by_frame = torch.amin(cable_drone_distance, dim=2)
     minimum_cable_drone_clearance = torch.cummin(
         cable_drone_clearance_by_frame, dim=1
-    ).values[rows, impact_frames]
+    ).values[rows, selected_interval]
+    event_cable_drone_clearance = torch.amin(
+        torch.linalg.vector_norm(
+            event_cable[:, 1:] - event_drone[:, None], dim=2
+        ),
+        dim=1,
+    )
+    minimum_cable_drone_clearance = torch.minimum(
+        minimum_cable_drone_clearance, event_cable_drone_clearance
+    )
     cable_drone_violation = (
         torch.relu(
             settings.cable_drone_clearance_m - minimum_cable_drone_clearance
@@ -545,36 +682,223 @@ def _mppi_event_objective(
         / settings.cable_drone_clearance_m
     ).square()
 
-    non_tip_target_distance = torch.linalg.vector_norm(
-        rollout.cable_positions_m[:, 1:, :-1] - target[None, None, None], dim=3
+    # Non-tip contact uses the complete piecewise-linear cable, rather than
+    # only its material vertices.  Between physics frames, each cable segment
+    # is treated as a bilinear moving segment.  Conservative advancement uses
+    # the maximum endpoint displacement as a Lipschitz bound, so a segment
+    # cannot tunnel through the target sphere between samples.  Its reported
+    # entry time is numerical (64 iterations, one-micrometre tolerance), not an
+    # analytic rigid-body CCD solution.
+    cable_a = rollout.cable_positions_m[:, :, :-1]
+    cable_b = rollout.cable_positions_m[:, :, 1:]
+    segment_vector = cable_b - cable_a
+    target_from_a = target[None, None, None] - cable_a
+    segment_denominator = torch.sum(segment_vector.square(), dim=3)
+    spatial_fraction = torch.clamp(
+        torch.sum(target_from_a * segment_vector, dim=3)
+        / torch.clamp(segment_denominator, min=torch.finfo(dtype).eps),
+        0.0,
+        1.0,
     )
-    non_tip_clearance_by_frame = torch.amin(non_tip_target_distance, dim=2)
-    # ``non_tip_target_distance`` starts at physics frame one.  A non-tip
-    # section is disqualifying only when it enters the target *before* the tip;
-    # the adjacent material point may naturally share the geometric target
-    # region on the selected tip-impact frame.  Prepending infinity makes
-    # column ``m`` contain the prefix minimum over columns ``[0, m)``.
-    non_tip_prefix_before_event = torch.cat(
-        (
-            torch.full(
-                (batch, 1),
-                torch.inf,
-                dtype=dtype,
-                device=device,
-            ),
-            torch.cummin(non_tip_clearance_by_frame, dim=1).values,
+    spatial_fraction = torch.where(
+        segment_denominator > torch.finfo(dtype).eps,
+        spatial_fraction,
+        torch.zeros_like(spatial_fraction),
+    )
+    segment_closest = cable_a + spatial_fraction[:, :, :, None] * segment_vector
+    segment_distance_by_frame = torch.linalg.vector_norm(
+        segment_closest - target[None, None, None], dim=3
+    )
+
+    moving_a0 = cable_a[:, :-1]
+    moving_b0 = cable_b[:, :-1]
+    moving_da = cable_a[:, 1:] - moving_a0
+    moving_db = cable_b[:, 1:] - moving_b0
+    speed_bound = torch.maximum(
+        torch.linalg.vector_norm(moving_da, dim=3),
+        torch.linalg.vector_norm(moving_db, dim=3),
+    )
+
+    # Conservative advancement can converge slowly when a slowly moving
+    # endpoint is the contact feature but the opposite endpoint moves much
+    # faster (the latter sets the global Lipschitz bound).  Endpoint motion is
+    # linear, so solve those two point/sphere sweeps analytically and retain
+    # the earlier result.  Conservative advancement remains responsible for
+    # contacts in the segment interior.
+    endpoint_start = torch.stack((moving_a0, moving_b0), dim=3)
+    endpoint_step = torch.stack((moving_da, moving_db), dim=3)
+    endpoint_relative = endpoint_start - target[None, None, None, None]
+    endpoint_a = torch.sum(endpoint_step.square(), dim=4)
+    endpoint_b = torch.sum(endpoint_relative * endpoint_step, dim=4)
+    endpoint_c = (
+        torch.sum(endpoint_relative.square(), dim=4)
+        - problem.maximum_tip_error_m**2
+    )
+    endpoint_discriminant = endpoint_b.square() - endpoint_a * endpoint_c
+    endpoint_nondegenerate = endpoint_a > torch.finfo(dtype).eps
+    endpoint_entry = (
+        -endpoint_b
+        - torch.sqrt(torch.clamp(endpoint_discriminant, min=0.0))
+    ) / torch.clamp(endpoint_a, min=torch.finfo(dtype).eps)
+    endpoint_starts_inside = endpoint_c <= 0.0
+    endpoint_hit = endpoint_starts_inside | (
+        endpoint_nondegenerate
+        & (endpoint_discriminant >= 0.0)
+        & (endpoint_entry >= 0.0)
+        & (endpoint_entry <= 1.0)
+    )
+    endpoint_entry = torch.where(
+        endpoint_starts_inside,
+        torch.zeros_like(endpoint_entry),
+        torch.clamp(endpoint_entry, 0.0, 1.0),
+    )
+    analytic_endpoint_hit = torch.any(endpoint_hit, dim=3)
+    analytic_endpoint_entry = torch.amin(
+        torch.where(endpoint_hit, endpoint_entry, torch.inf), dim=3
+    )
+    endpoint_closest_fraction = torch.clamp(
+        -endpoint_b / torch.clamp(endpoint_a, min=torch.finfo(dtype).eps),
+        0.0,
+        1.0,
+    )
+    endpoint_closest_fraction = torch.where(
+        endpoint_nondegenerate,
+        endpoint_closest_fraction,
+        torch.zeros_like(endpoint_closest_fraction),
+    )
+    endpoint_closest_position = (
+        endpoint_start
+        + endpoint_closest_fraction[:, :, :, :, None] * endpoint_step
+    )
+    endpoint_minimum_distance = torch.amin(
+        torch.linalg.vector_norm(
+            endpoint_closest_position
+            - target[None, None, None, None],
+            dim=4,
         ),
-        dim=1,
+        dim=3,
     )
-    minimum_non_tip_target_distance = non_tip_prefix_before_event[
-        rows, selected_column
-    ]
-    non_tip_contact_violation = (
+    sweep_fraction = torch.zeros_like(speed_bound)
+    sweep_hit = torch.zeros_like(speed_bound, dtype=torch.bool)
+    sweep_hit_fraction = torch.full_like(speed_bound, torch.inf)
+    sweep_minimum_distance = endpoint_minimum_distance
+    contact_tolerance = 1.0e-6
+    for _ in range(64):
+        moving_a = moving_a0 + sweep_fraction[:, :, :, None] * moving_da
+        moving_b = moving_b0 + sweep_fraction[:, :, :, None] * moving_db
+        moving_edge = moving_b - moving_a
+        moving_denominator = torch.sum(moving_edge.square(), dim=3)
+        moving_fraction = torch.clamp(
+            torch.sum((target[None, None, None] - moving_a) * moving_edge, dim=3)
+            / torch.clamp(moving_denominator, min=torch.finfo(dtype).eps),
+            0.0,
+            1.0,
+        )
+        moving_fraction = torch.where(
+            moving_denominator > torch.finfo(dtype).eps,
+            moving_fraction,
+            torch.zeros_like(moving_fraction),
+        )
+        moving_closest = moving_a + moving_fraction[:, :, :, None] * moving_edge
+        moving_distance = torch.linalg.vector_norm(
+            moving_closest - target[None, None, None], dim=3
+        )
+        sweep_minimum_distance = torch.minimum(
+            sweep_minimum_distance, moving_distance
+        )
+        newly_hit = (~sweep_hit) & (
+            moving_distance <= problem.maximum_tip_error_m + contact_tolerance
+        )
+        sweep_hit_fraction = torch.where(
+            newly_hit, sweep_fraction, sweep_hit_fraction
+        )
+        sweep_hit = sweep_hit | newly_hit
+        active = (~sweep_hit) & (sweep_fraction < 1.0)
+        safe_step = (
+            (moving_distance - problem.maximum_tip_error_m)
+            / torch.clamp(speed_bound, min=torch.finfo(dtype).eps)
+        )
+        safe_step = torch.where(
+            speed_bound > torch.finfo(dtype).eps,
+            torch.clamp(safe_step, min=0.0),
+            torch.ones_like(safe_step),
+        )
+        next_fraction = torch.clamp(sweep_fraction + safe_step, max=1.0)
+        sweep_fraction = torch.where(active, next_fraction, sweep_fraction)
+
+    moving_a = moving_a0 + sweep_fraction[:, :, :, None] * moving_da
+    moving_b = moving_b0 + sweep_fraction[:, :, :, None] * moving_db
+    moving_edge = moving_b - moving_a
+    moving_denominator = torch.sum(moving_edge.square(), dim=3)
+    moving_fraction = torch.clamp(
+        torch.sum((target[None, None, None] - moving_a) * moving_edge, dim=3)
+        / torch.clamp(moving_denominator, min=torch.finfo(dtype).eps),
+        0.0,
+        1.0,
+    )
+    moving_closest = moving_a + moving_fraction[:, :, :, None] * moving_edge
+    moving_distance = torch.linalg.vector_norm(
+        moving_closest - target[None, None, None], dim=3
+    )
+    sweep_minimum_distance = torch.minimum(sweep_minimum_distance, moving_distance)
+    newly_hit = (~sweep_hit) & (
+        moving_distance <= problem.maximum_tip_error_m + contact_tolerance
+    )
+    sweep_hit_fraction = torch.where(newly_hit, sweep_fraction, sweep_hit_fraction)
+    sweep_hit = sweep_hit | newly_hit
+    sweep_hit_fraction = torch.minimum(
+        sweep_hit_fraction, analytic_endpoint_entry
+    )
+    sweep_hit = sweep_hit | analytic_endpoint_hit
+
+    interval_index = torch.arange(
+        rollout.frame_count - 1, dtype=dtype, device=device
+    )[None, :, None]
+    non_tip_event_key = interval_index + sweep_hit_fraction
+    earliest_non_tip_key = torch.amin(
+        torch.where(sweep_hit, non_tip_event_key, torch.inf), dim=(1, 2)
+    )
+    tip_event_key = selected_interval.to(dtype) + selected_fraction
+    # The final segment contains the free tip.  Contact at the same continuous
+    # instant as tip entry is therefore allowed; only strictly earlier contact
+    # is a non-tip-first failure.
+    non_tip_contact_before_tip = earliest_non_tip_key < tip_event_key - 1.0e-5
+
+    frame_time = rollout.time_s[None, :, None]
+    strictly_before_event = frame_time < event_time[:, None, None] - 1.0e-9
+    minimum_non_tip_target_distance = torch.amin(
+        torch.where(strictly_before_event, segment_distance_by_frame, torch.inf),
+        dim=(1, 2),
+    )
+    completed_before_event = interval_index < selected_interval[:, None, None]
+    minimum_swept_non_tip_distance = torch.amin(
+        torch.where(completed_before_event, sweep_minimum_distance, torch.inf),
+        dim=(1, 2),
+    )
+    minimum_non_tip_target_distance = torch.minimum(
+        minimum_non_tip_target_distance, minimum_swept_non_tip_distance
+    )
+    minimum_non_tip_target_distance = torch.where(
+        non_tip_contact_before_tip,
+        torch.minimum(
+            minimum_non_tip_target_distance,
+            torch.full_like(
+                minimum_non_tip_target_distance, problem.maximum_tip_error_m
+            ),
+        ),
+        minimum_non_tip_target_distance,
+    )
+    penetration_violation = (
         torch.relu(
             problem.maximum_tip_error_m - minimum_non_tip_target_distance
         )
         / problem.maximum_tip_error_m
     ).square()
+    non_tip_contact_violation = torch.where(
+        non_tip_contact_before_tip,
+        torch.maximum(penetration_violation, torch.ones_like(penetration_violation)),
+        penetration_violation,
+    )
 
     acceleration = rollout.accelerations_m_s2
     acceleration_norm = torch.linalg.vector_norm(acceleration, dim=2)
@@ -668,7 +992,7 @@ def _mppi_event_objective(
         "feasible": task_success & safe,
         "constraint_violation": task_violation + safety_violation,
         "impact_frame": impact_frames,
-        "impact_time_s": rollout.time_s[impact_frames],
+        "impact_time_s": event_time,
         "position_error_m": distance,
         "directional_speed_m_s": directed_speed,
         "tip_speed_m_s": total_tip_speed,
@@ -997,7 +1321,7 @@ def optimize_mppi(
         smooth_surrogate_cost_history=tuple(surrogate_history),
         gradient_norm_history=tuple(gradient_norm_history),
         gradient_computation_time_s_history=tuple(gradient_time_history),
-        impact_time_s=float(best_rollout.time_s[impact_frame].detach().cpu()),
+        impact_time_s=terms["impact_time_s"],
         feasible=bool(final_terms["feasible"][0].detach().cpu()),
         constraint_violation=terms["constraint_violation"],
     )

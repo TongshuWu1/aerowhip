@@ -126,11 +126,23 @@ def reduce_cable_model(
         f"{source.node_count}->{node_count} nodes, total mass conserved, "
         f"EI scale={bending_stiffness_scale:g}, Cb scale={bending_damping_scale:g}"
     )
+    # Preserve the observation provenance of the source artifact.  A reduced
+    # simulation grid is not a new set of physical OptiTrack markers: map each
+    # original marker to its nearest reduced material node instead of falsely
+    # claiming that every reduced node is a measured marker.  State transfer
+    # itself continues to use material-coordinate interpolation below.
+    source_marker_coordinates = source_coordinates[
+        np.asarray(source.marker_node_indices, dtype=np.int64)
+    ]
+    reduced_marker_indices = tuple(
+        int(np.argmin(np.abs(coordinates - marker_coordinate)))
+        for marker_coordinate in source_marker_coordinates
+    )
     return CableModelSnapshot(
         source_path=source.source_path,
         sha256=effective_sha,
         model=model,
-        marker_node_indices=tuple(range(node_count)),
+        marker_node_indices=reduced_marker_indices,
         rod_material_coordinates_m=tuple(float(value) for value in coordinates),
         bending_stiffness_n_m2=controller_ei,
         bending_damping_n_m2_s=controller_cb,

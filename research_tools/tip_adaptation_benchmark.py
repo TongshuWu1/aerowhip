@@ -356,7 +356,7 @@ def main() -> None:
                 "full online moving-horizon cable-state estimation",
                 "real-flight adaptation",
                 "physical parameter validation",
-                "SAC policy adaptation",
+                "learned-policy adaptation",
             ],
         },
         "source_model": {

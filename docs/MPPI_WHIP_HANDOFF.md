@@ -51,9 +51,12 @@ small enough for batched full-cable simulation without prescribing a casting pha
 For each sampled rollout, let \(\mathbf p_{\mathrm{tip},k}\) and
 \(\mathbf v_{\mathrm{tip},k}\) be the free-tip position and velocity.
 
-1. If the tip enters the geometric target sphere, use its **first** entry frame.
-2. Otherwise, use the frame of closest tip–target approach.
-3. All task and path diagnostics are evaluated up to this selected event.
+1. If the swept tip path enters the geometric target sphere, use its **first**
+   continuous entry time between physics frames.
+2. Otherwise, use the continuous closest point over every piecewise-linear
+   tip interval.
+3. Interpolate tip position/velocity, drone position, and event time at the
+   selected event. The stored integer frame is only its upper bracket.
 
 The current simulator has no rigid target-contact engine, so “contact” means entry into
 the target sphere. `physical_tip_contact` therefore remains false even for a valid
@@ -140,7 +143,7 @@ cable dynamics and the terminal directed-impact task.
 
 The safety term is a weighted sum of normalized squared violations for:
 
-- drone workspace excursion;
+- optional drone workspace excursion (disabled in the public objective);
 - drone–target keepout;
 - drone speed;
 - ground and altitude limits;
@@ -148,10 +151,11 @@ The safety term is a weighted sum of normalized squared violations for:
 - actuator acceleration;
 - a non-tip cable section entering the target before the free tip.
 
-The non-tip check must be **strictly before** the selected tip-impact frame. The
-penultimate DDER node is allowed to share the geometric target region on the same frame
-as tip impact. Including the impact frame incorrectly rejects valid strikes whenever
-the target radius approaches the DDER node spacing.
+The non-tip check is performed on complete cable segments with conservative
+between-frame collision detection and must be **strictly before** the selected
+continuous tip event. The final cable segment may enter simultaneously with its
+tip. Treating that simultaneous event as non-tip-first incorrectly rejects valid
+strikes whenever target radius approaches the DDER node spacing.
 
 ## 6. MPPI configuration for the final refinement
 

@@ -25,8 +25,8 @@ import torch
 from optitrack_offline.config import DEFAULT_MODEL_PATH
 
 from .model import CableModelSnapshot, load_cable_model
-from .mpc import MpcProblem
-from .mppi import MppiSettings
+from .problem import MpcProblem
+from .mppi import MppiSettings, PUBLIC_MPPI_OBJECTIVE
 from .distributed_adaptation import ParameterEstimate
 from .online_adaptation import (
     BetweenStrikeAdaptationResult,
@@ -41,7 +41,7 @@ from .receding_mppi import (
     save_receding_mppi_execution,
 )
 from .simulator import SimulationResult, SimulationSettings, WhipSimulator
-from .trajectory_gui import WhipTrajectoryCanvas
+from .trajectory_canvas import WhipTrajectoryCanvas
 
 
 DEFAULT_WARM_START_PATH = Path(
@@ -54,7 +54,8 @@ DEFAULT_SETTINGS_PROFILE_DIR = (
     Path(__file__).resolve().parents[1] / "data" / "drone_mpc" / "settings_profiles"
 )
 MAXIMUM_RUN_SEED = 2**31 - 1
-SETTINGS_PROFILE_SCHEMA = "receding_horizon_dder_mppi_settings_v1"
+SETTINGS_PROFILE_SCHEMA = "receding_horizon_dder_mppi_settings_v2"
+LEGACY_SETTINGS_PROFILE_SCHEMA = "receding_horizon_dder_mppi_settings_v1"
 
 SETTINGS_PROFILE_FIELDS = {
     "inputs": ("model_path", "warm_start_path"),
@@ -88,18 +89,22 @@ SETTINGS_PROFILE_FIELDS = {
 }
 
 
-FIXED_OBJECTIVE = {
-    "objective_stage": "full",
-    "position_sigma_m": 0.18,
-    "velocity_gate_sigma_m": 0.12,
-    "position_weight": 40.0,
-    "speed_weight": 25.0,
-    "direction_weight": 20.0,
-    "success_cost": 600.0,
-    "drone_displacement_weight": 2.0,
-    "safety_weight": 180.0,
-    "control_effort_weight": 1.0e-5,
-    "control_smoothness_weight": 1.0e-5,
+FIXED_OBJECTIVE = dict(PUBLIC_MPPI_OBJECTIVE)
+LEGACY_FIXED_OBJECTIVE = {
+    key: FIXED_OBJECTIVE[key]
+    for key in (
+        "objective_stage",
+        "position_sigma_m",
+        "velocity_gate_sigma_m",
+        "position_weight",
+        "speed_weight",
+        "direction_weight",
+        "success_cost",
+        "drone_displacement_weight",
+        "safety_weight",
+        "control_effort_weight",
+        "control_smoothness_weight",
+    )
 }
 
 
@@ -108,12 +113,18 @@ def normalize_settings_profile(payload: object) -> dict[str, dict[str, str]]:
 
     if not isinstance(payload, dict):
         raise ValueError("Settings profile must be a JSON object.")
-    if payload.get("schema") != SETTINGS_PROFILE_SCHEMA:
+    schema = payload.get("schema")
+    if schema not in {SETTINGS_PROFILE_SCHEMA, LEGACY_SETTINGS_PROFILE_SCHEMA}:
         raise ValueError(
             "Unsupported settings profile schema. Expected "
-            f"'{SETTINGS_PROFILE_SCHEMA}'."
+            f"'{SETTINGS_PROFILE_SCHEMA}' or '{LEGACY_SETTINGS_PROFILE_SCHEMA}'."
         )
-    if payload.get("fixed_objective") != FIXED_OBJECTIVE:
+    expected_objective = (
+        LEGACY_FIXED_OBJECTIVE
+        if schema == LEGACY_SETTINGS_PROFILE_SCHEMA
+        else FIXED_OBJECTIVE
+    )
+    if payload.get("fixed_objective") != expected_objective:
         raise ValueError(
             "The profile's fixed strike objective does not match this controller "
             "version. Refusing to load a scientifically different experiment."
@@ -122,9 +133,9 @@ def normalize_settings_profile(payload: object) -> dict[str, dict[str, str]]:
     for section, fields in SETTINGS_PROFILE_FIELDS.items():
         values = payload.get(section)
         if section == "adaptation" and values is None:
-            # Profiles saved before online adaptation remain valid and adopt
-            # the new safe default: between-strike adaptation enabled.
-            values = {"enabled": "true"}
+            # A legacy fixed-model experiment must stay fixed-model when it is
+            # reopened.  Enabling adaptation would silently change its method.
+            values = {"enabled": "false"}
         if not isinstance(values, dict):
             raise ValueError(f"Settings profile is missing section '{section}'.")
         normalized[section] = {}
@@ -209,6 +220,34 @@ def adaptation_error_point(
     )
 
 
+def adaptation_status_label(result: BetweenStrikeAdaptationResult) -> str:
+    """Translate adaptation gate outcomes into unambiguous operator states."""
+
+    if result.accepted and result.published:
+        return "ACCEPTED + PUBLISHED"
+    if result.reason.startswith("information_rejected:"):
+        return "INFORMATION GATE BLOCKED"
+    if result.fit_attempted:
+        if result.reason == "held_out_validation_rejected":
+            return "HELD-OUT VALIDATION REJECTED"
+        return "FIT REJECTED"
+    reason_states = {
+        "insufficient_health_history": "COLLECTING HEALTH HISTORY",
+        "healthy": "MODEL HEALTHY",
+        "persistence_pending": "PERSISTENCE PENDING",
+        "cooldown": "COOLDOWN ACTIVE",
+        "insufficient_excitation": "EXCITATION GATE BLOCKED",
+        "fit_in_progress": "FIT IN PROGRESS",
+        "hysteresis_disarmed": "TRIGGER DISARMED",
+        "waiting_for_informative_segments": "WAITING FOR INFORMATIVE DATA",
+    }
+    if result.reason in reason_states:
+        return reason_states[result.reason]
+    if result.triggered:
+        return "ADAPTATION TRIGGERED"
+    return "ADAPTATION IDLE"
+
+
 def model_pair_provenance(
     source: CableModelSnapshot,
     controller: CableModelSnapshot,
@@ -291,6 +330,98 @@ def load_warm_start_knots(path: str | Path, knot_count: int) -> np.ndarray:
     if not np.all(np.isfinite(knots)):
         raise ValueError("Warm-start knots contain NaN or infinity.")
     return _resample_knots(knots, knot_count)
+
+
+def load_warm_start_metadata(path: str | Path) -> dict[str, object]:
+    """Load a warm start's JSON sidecar without requiring a particular schema."""
+
+    source = Path(path).expanduser().resolve()
+    metadata_path = source if source.suffix.lower() == ".json" else source.with_suffix(".json")
+    if not metadata_path.is_file():
+        return {}
+    payload = json.loads(metadata_path.read_text(encoding="utf-8"))
+    return payload if isinstance(payload, dict) else {}
+
+
+def warm_start_compatibility_issues(
+    metadata: dict[str, object],
+    *,
+    source_model_sha256: str,
+    target_position_m: np.ndarray,
+    impact_direction: np.ndarray,
+    minimum_impact_speed_m_s: float,
+    target_radius_m: float,
+    maximum_impact_angle_deg: float,
+    horizon_s: float,
+    control_interval_s: float,
+    maximum_acceleration_m_s2: float,
+) -> tuple[str, ...]:
+    """Return provenance differences for a target-specific world-frame seed.
+
+    A mismatch is a warning rather than a hard error: MPPI may deliberately use
+    a seed from a nearby task, but that choice must be visible to the operator.
+    """
+
+    if not metadata:
+        return ("no JSON sidecar provenance",)
+    issues: list[str] = []
+    provenance = metadata.get("model_provenance")
+    recorded_model = None
+    if isinstance(provenance, dict):
+        recorded_model = provenance.get("source_fitted_model_sha256")
+    if recorded_model is None:
+        recorded_model = metadata.get("model_sha256")
+    if isinstance(recorded_model, str) and recorded_model != source_model_sha256:
+        issues.append("source model differs")
+    elif not isinstance(recorded_model, str):
+        issues.append("model hash unavailable")
+
+    problem = metadata.get("problem")
+    if isinstance(problem, dict):
+        vector_fields = (
+            ("target_position_m", target_position_m, "target"),
+            ("impact_direction", impact_direction, "impact direction"),
+        )
+        for key, current, label in vector_fields:
+            recorded = np.asarray(problem.get(key, ()), dtype=np.float64)
+            if recorded.shape != (3,) or not np.allclose(recorded, current, atol=1.0e-6, rtol=0.0):
+                issues.append(f"{label} differs")
+        scalar_fields = (
+            ("minimum_impact_speed_m_s", minimum_impact_speed_m_s, "speed requirement"),
+            ("maximum_tip_error_m", target_radius_m, "target radius"),
+            ("maximum_impact_angle_deg", maximum_impact_angle_deg, "direction cone"),
+        )
+        for key, current, label in scalar_fields:
+            try:
+                recorded = float(problem[key])
+            except (KeyError, TypeError, ValueError):
+                issues.append(f"{label} unavailable")
+            else:
+                if not math.isclose(recorded, current, abs_tol=1.0e-6, rel_tol=0.0):
+                    issues.append(f"{label} differs")
+    else:
+        issues.append("task provenance unavailable")
+
+    settings = metadata.get("simulation_settings")
+    if not isinstance(settings, dict):
+        settings = metadata.get("settings")
+    if isinstance(settings, dict):
+        scalar_fields = (
+            ("horizon_s", horizon_s, "horizon"),
+            ("control_interval_s", control_interval_s, "control rate"),
+            ("maximum_acceleration_m_s2", maximum_acceleration_m_s2, "acceleration limit"),
+        )
+        for key, current, label in scalar_fields:
+            try:
+                recorded = float(settings[key])
+            except (KeyError, TypeError, ValueError):
+                issues.append(f"{label} unavailable")
+            else:
+                if not math.isclose(recorded, current, abs_tol=1.0e-6, rel_tol=0.0):
+                    issues.append(f"{label} differs")
+    else:
+        issues.append("timing/limit provenance unavailable")
+    return tuple(issues)
 
 
 def simulation_view(
@@ -552,6 +683,8 @@ class RecedingMppiGui:
         self.active_execution_settings: RecedingMppiSettings | None = None
         self.active_simulation: SimulationSettings | None = None
         self.active_model_provenance: dict[str, object] = {}
+        self.active_warm_start_source = ""
+        self.active_warm_start_issues: tuple[str, ...] = ()
         self.events: queue.Queue[tuple[str, object]] = queue.Queue()
         self.cancel_event = threading.Event()
         self.running = False
@@ -620,6 +753,7 @@ class RecedingMppiGui:
         self.timeline_var = tk.DoubleVar(value=0.0)
 
         self._build()
+        self.model_path_var.trace_add("write", self._model_path_changed)
         for variable in (
             self.horizon_var,
             self.physics_rate_var,
@@ -631,6 +765,19 @@ class RecedingMppiGui:
             self.knots_var,
         ):
             variable.trace_add("write", lambda *_args: self._update_controller_summary())
+        for variable in (
+            self.warm_start_var,
+            self.target_var,
+            self.direction_var,
+            self.minimum_speed_var,
+            self.tip_radius_var,
+            self.angle_var,
+            self.horizon_var,
+            self.control_rate_var,
+            self.knots_var,
+            self.maximum_acceleration_var,
+        ):
+            variable.trace_add("write", lambda *_args: self.check_warm_start(silent=True))
         for variable in (self.truth_ei_scale_var, self.truth_cb_scale_var):
             variable.trace_add("write", lambda *_args: self._update_truth_summary())
         self._update_controller_summary()
@@ -639,6 +786,30 @@ class RecedingMppiGui:
         self.root.after(self.TICK_MS, self._tick)
         self.load_model(silent=True)
         self.check_warm_start(silent=True)
+
+    def _model_path_changed(self, *_args: object) -> None:
+        """Invalidate a loaded snapshot when the visible path is edited."""
+
+        if self.snapshot is None:
+            return
+        try:
+            visible = Path(self.model_path_var.get()).expanduser().resolve()
+        except OSError:
+            visible = None
+        if visible != self.snapshot.source_path:
+            self.snapshot = None
+            self.model_status_var.set("Path changed — load this model before running")
+            self._update_truth_summary()
+
+    def _set_configuration_locked(self, locked: bool) -> None:
+        """Freeze experiment inputs so visible provenance cannot drift mid-run."""
+
+        pending = list(self.root.winfo_children())
+        while pending:
+            widget = pending.pop()
+            pending.extend(widget.winfo_children())
+            if isinstance(widget, (ttk.Entry, ttk.Combobox, ttk.Checkbutton)):
+                widget.state(["disabled"] if locked else ["!disabled"])
 
     def _configure_style(self) -> None:
         style = ttk.Style(self.root)
@@ -872,7 +1043,7 @@ class RecedingMppiGui:
         ttk.Label(
             note,
             text=(
-                "First geometric tip entry into the target sphere, sufficient directed "
+                "First swept tip entry into the target sphere, sufficient directed "
                 "speed, impact inside the direction cone, tip-first ordering, and no "
                 "safety violation."
             ),
@@ -929,7 +1100,7 @@ class RecedingMppiGui:
         self._entry(
             closed_loop, "Maximum acceleration", self.maximum_acceleration_var, "m/s²"
         )
-        self._entry(closed_loop, "Maximum drone speed", self.maximum_speed_var, "m/s")
+        self._entry(closed_loop, "Safety speed limit", self.maximum_speed_var, "m/s")
 
         warm = ttk.LabelFrame(parent, text="First-solve warm start", padding=8)
         warm.pack(fill=tk.X, pady=(8, 0))
@@ -950,6 +1121,28 @@ class RecedingMppiGui:
             justify=tk.LEFT,
         ).pack(anchor=tk.W, pady=(10, 0))
 
+        objective = ttk.LabelFrame(parent, text="Fixed objective and safety", padding=8)
+        objective.pack(fill=tk.X, pady=(8, 0))
+        ttk.Label(
+            objective,
+            text=(
+                "Task weights (position / speed / direction): "
+                f"{FIXED_OBJECTIVE['position_weight']:g} / "
+                f"{FIXED_OBJECTIVE['speed_weight']:g} / "
+                f"{FIXED_OBJECTIVE['direction_weight']:g}; valid-strike bonus "
+                f"{FIXED_OBJECTIVE['success_cost']:g}.\n"
+                "No cable-energy, shape, wind-up, release-phase, or hard drone-"
+                "excursion term. Safety checks include drone keepout/speed, ground, "
+                "altitude, cable–drone clearance, actuator limit, and tip-first target "
+                "ordering. Objective weights are versioned in settings profiles; "
+                "complete task, safety, contact, and model provenance is stored with "
+                "each execution artifact."
+            ),
+            foreground="#444444",
+            wraplength=410,
+            justify=tk.LEFT,
+        ).pack(anchor=tk.W)
+
     def _build_truth_tab(self, parent: ttk.Frame) -> None:
         ttk.Label(
             parent,
@@ -959,8 +1152,9 @@ class RecedingMppiGui:
         ttk.Label(
             parent,
             text=(
-                "The MPPI controller always predicts with the fitted cable model. "
-                "These ratios change only the plant used to execute the controls."
+                "The controller starts from the fitted model and, when enabled, uses "
+                "the latest held-out-validated EI/Cb generation on later strikes. "
+                "These hidden ratios change only the simulated plant."
             ),
             foreground="#555555",
             wraplength=410,
@@ -1010,7 +1204,7 @@ class RecedingMppiGui:
     def _build_adaptation_tab(self, parent: ttk.Frame) -> None:
         ttk.Label(
             parent,
-            text="Between-strike physical adaptation",
+            text="Between-strike EI/Cb adaptation (simulation)",
             font=("Segoe UI Semibold", 12),
         ).pack(anchor=tk.W)
         ttk.Label(
@@ -1027,7 +1221,7 @@ class RecedingMppiGui:
         ).pack(anchor=tk.W, pady=(0, 10))
         ttk.Checkbutton(
             parent,
-            text="Enable validated between-strike EI/Cb adaptation",
+            text="Enable exact-state simulation adaptation between strikes",
             variable=self.adaptation_enabled_var,
             onvalue="true",
             offvalue="false",
@@ -1240,6 +1434,8 @@ class RecedingMppiGui:
         )
 
     def apply_preset(self) -> None:
+        if self.running:
+            return
         label = self.preset_var.get()
         if label.startswith("Low"):
             samples, iterations = 128, 1
@@ -1420,6 +1616,8 @@ class RecedingMppiGui:
         self.profile_status_var.set(f"Loaded {Path(path).name}")
 
     def browse_model(self) -> None:
+        if self.running:
+            return
         path = filedialog.askopenfilename(
             parent=self.root,
             title="Select cable model",
@@ -1427,6 +1625,7 @@ class RecedingMppiGui:
         )
         if path:
             self.model_path_var.set(path)
+            self.load_model()
 
     def load_model(self, *, silent: bool = False) -> None:
         if self.running:
@@ -1453,8 +1652,11 @@ class RecedingMppiGui:
             f"Cb={self.snapshot.bending_damping_n_m2_s:.3g}"
         )
         self._update_truth_summary()
+        self.check_warm_start(silent=True)
 
     def browse_warm_start(self) -> None:
+        if self.running:
+            return
         path = filedialog.askopenfilename(
             parent=self.root,
             title="Select MPPI warm start",
@@ -1469,22 +1671,72 @@ class RecedingMppiGui:
             self.check_warm_start()
 
     def check_warm_start(self, *, silent: bool = False) -> None:
+        if self.running:
+            return
         try:
             knots = load_warm_start_knots(
                 self.warm_start_var.get(), int(self.knots_var.get())
             )
+            issues = self._current_warm_start_issues()
         except Exception as error:
             self.warm_status_var.set("Invalid")
             if not silent:
                 messagebox.showerror("Warm start", str(error), parent=self.root)
             return
         peak = float(np.max(np.linalg.vector_norm(knots, axis=1)))
-        self.warm_status_var.set(f"{len(knots)} knots, peak {peak:.1f} m/s²")
+        if issues:
+            detail = "; ".join(issues)
+            self.warm_status_var.set(
+                f"{len(knots)} knots, peak {peak:.1f} m/s² · WARNING: {detail}"
+            )
+            if not silent:
+                messagebox.showwarning(
+                    "Warm-start provenance warning",
+                    "The trajectory can still be used as an exploratory MPPI seed, "
+                    f"but its recorded experiment differs: {detail}.",
+                    parent=self.root,
+                )
+        else:
+            self.warm_status_var.set(
+                f"{len(knots)} knots, peak {peak:.1f} m/s² · provenance compatible"
+            )
+
+    def _current_warm_start_issues(self) -> tuple[str, ...]:
+        if self.snapshot is None:
+            return ("load the cable model to verify its hash",)
+        direction = np.asarray(
+            self._vector(self.direction_var.get(), "Impact direction"),
+            dtype=np.float64,
+        )
+        direction_norm = float(np.linalg.norm(direction))
+        if direction_norm <= 1.0e-9:
+            raise ValueError("Impact direction cannot be zero.")
+        return warm_start_compatibility_issues(
+            load_warm_start_metadata(self.warm_start_var.get()),
+            source_model_sha256=self.snapshot.sha256,
+            target_position_m=np.asarray(
+                self._vector(self.target_var.get(), "Target XYZ"),
+                dtype=np.float64,
+            ),
+            impact_direction=direction / direction_norm,
+            minimum_impact_speed_m_s=float(self.minimum_speed_var.get()),
+            target_radius_m=float(self.tip_radius_var.get()),
+            maximum_impact_angle_deg=float(self.angle_var.get()),
+            horizon_s=float(self.horizon_var.get()),
+            control_interval_s=1.0 / float(self.control_rate_var.get()),
+            maximum_acceleration_m_s2=float(self.maximum_acceleration_var.get()),
+        )
 
     def _build_run_configuration(self):
         initial = self._vector(self.initial_var.get(), "Initial drone XYZ")
         if self.snapshot is None:
             raise ValueError("Load a cable model first.")
+        visible_model = Path(self.model_path_var.get()).expanduser().resolve()
+        if visible_model != self.snapshot.source_path:
+            raise ValueError(
+                "The visible cable-model path is not the loaded model. "
+                "Load it before Run."
+            )
         simulation_node_count = int(self.simulation_nodes_var.get())
         if not 6 <= simulation_node_count <= self.snapshot.node_count:
             raise ValueError(
@@ -1629,8 +1881,10 @@ class RecedingMppiGui:
         self.active_model_provenance = {}
         self.active_mppi = mppi
         self.active_execution_settings = execution_settings
+        self.active_warm_start_issues = self._current_warm_start_issues()
         self.cancel_event.clear()
         self.running = True
+        self._set_configuration_locked(True)
         self.playing = False
         self.execution = None
         self.view_result = None
@@ -1660,6 +1914,8 @@ class RecedingMppiGui:
         )
         snapshot = self.snapshot
         warm_source = self.warm_start_var.get()
+        self.active_warm_start_source = warm_source
+        warm_start_issues = self.active_warm_start_issues
 
         def worker() -> None:
             try:
@@ -1727,6 +1983,10 @@ class RecedingMppiGui:
                 )
                 provenance["runtime_acceleration"] = asdict(planner_tier)
                 provenance["adaptation_enabled"] = adaptation_enabled
+                provenance["warm_start_compatibility"] = {
+                    "compatible": not warm_start_issues,
+                    "warnings": list(warm_start_issues),
+                }
                 if active_estimate is not None:
                     provenance["controller_estimate_at_strike_start"] = {
                         "generation": active_estimate.generation,
@@ -1896,7 +2156,7 @@ class RecedingMppiGui:
             self.active_mppi,  # type: ignore[arg-type]
             self.active_execution_settings,  # type: ignore[arg-type]
             self.active_simulation,  # type: ignore[arg-type]
-            warm_start_source=self.warm_start_var.get(),
+            warm_start_source=self.active_warm_start_source,
             model_provenance=self.active_model_provenance,
         )
         self.status_var.set(f"Saved {output}")
@@ -1992,20 +2252,22 @@ class RecedingMppiGui:
         truth: TruthModelSettings,
         strike_index: int,
     ) -> None:
-        if result.accepted and result.published:
-            state = "ACCEPTED + PUBLISHED"
-        elif result.fit_attempted:
-            state = "FIT REJECTED"
-        elif result.triggered:
-            state = "WAITING FOR INFORMATIVE DATA"
-        else:
-            state = "NO FIT NEEDED"
+        state = adaptation_status_label(result)
+        health = result.health_diagnostic
+        health_line = ""
+        if health is not None:
+            health_line = (
+                f"\nhealth EMA={health.ema_error_m2:.3g} m² · "
+                f"excitation={health.excitation.score:.3g} · "
+                f"monitor={health.reason}"
+            )
         self.adaptation_status_var.set(
             f"{state}\n"
             f"generation {estimate.generation} · EI/fitted={estimate.ei_ratio:.4f} · "
             f"Cb/fitted={estimate.cb_ratio:.4f}\n"
             f"reason={result.reason} · candidates={result.candidate_segment_count} · "
             f"fit/validation={result.fit_segment_count}/{result.validation_segment_count}"
+            f"{health_line}"
         )
         self._append_log(
             f"Between-strike adaptation: {state.lower()}, {result.reason}; "
@@ -2047,6 +2309,7 @@ class RecedingMppiGui:
         execution, output, provenance = self.pending_completion
         self.pending_completion = None
         self.running = False
+        self._set_configuration_locked(False)
         self._show_complete(execution, output, provenance)
         self.run_button.configure(state=tk.NORMAL)
         self.stop_button.configure(state=tk.DISABLED)
@@ -2080,6 +2343,7 @@ class RecedingMppiGui:
                     self._show_live_update(payload)  # type: ignore[arg-type]
                 elif kind == "error":
                     self.running = False
+                    self._set_configuration_locked(False)
                     self.pending_completion = None
                     self.run_button.configure(state=tk.NORMAL)
                     self.stop_button.configure(state=tk.DISABLED)

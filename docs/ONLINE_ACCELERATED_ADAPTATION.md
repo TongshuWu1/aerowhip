@@ -24,9 +24,11 @@ per-step runtime at 6, 11, 15, and 21 nodes. Maximum position and velocity
 differences were exactly zero for the deterministic test trajectories. The
 arbitrary-node fused cost was also checked against the PyTorch reference.
 
-For the saved `11node_tru_phys.json` workload (11 nodes, 0.7 s horizon, 50 Hz,
-2,048 samples, two MPPI iterations), the production optimizer measured a
-median warmed update of 80.5 ms on the current RTX 4080 system.
+For the frozen benchmark workload documented in the acceleration report
+(11 nodes, 0.7 s horizon, 50 Hz, 2,048 samples, two MPPI iterations), the
+production optimizer measured a median warmed update of 80.5 ms on the current
+RTX 4080 system. A mutable user settings filename is not the benchmark identity;
+reproduction also requires its normalized configuration and model hash.
 
 ## Online adaptation semantics
 
@@ -64,7 +66,8 @@ after a causal cable-state estimator has been validated.
 
 ## Regression evidence
 
-- Complete repository suite: 202 tests passed.
+- The complete repository regression suite passes; use the test command in the
+  root README rather than treating a changing test count as provenance.
 - Matched simulated plant: no trigger, no fit, no parameter drift.
 - Simulated truth ratios EI=0.8 and Cb=0.7: one first-strike fit was accepted,
   prewarmed, and published; the first update produced EI=0.868 and Cb=0.849.

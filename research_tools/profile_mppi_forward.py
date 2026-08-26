@@ -26,7 +26,7 @@ import torch
 import cable_twin.shared.dder as dder
 from cable_twin.shared.dder import DderState, START_PINNED_FREE_END
 from drone_mpc.model import CableModelSnapshot, load_cable_model
-from drone_mpc.mpc import MpcProblem
+from drone_mpc.problem import MpcProblem
 import drone_mpc.mppi as mppi_module
 from drone_mpc.mppi import MppiSettings, interpolate_control_knots, optimize_mppi
 from drone_mpc.reduced import build_controller_and_truth_models

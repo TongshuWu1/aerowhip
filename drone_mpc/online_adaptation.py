@@ -8,7 +8,7 @@ an accepted fit is rebuilt and prewarmed before the next strike can use it.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import time
 
 import numpy as np
@@ -19,6 +19,7 @@ from .distributed_adaptation import (
     DistributedFitResult,
     DistributedObservation,
     DistributedParameterFitter,
+    HealthDiagnostic,
     OnlineAdaptationMonitor,
     ParameterEstimate,
     PublishedControllerRuntime,
@@ -44,6 +45,7 @@ class BetweenStrikeAdaptationResult:
     validation_segment_count: int
     monitoring_wall_time_s: float
     rebuild_wall_time_s: float
+    health_diagnostic: HealthDiagnostic | None = None
 
     @property
     def accepted(self) -> bool:
@@ -67,6 +69,9 @@ def observations_from_execution(
         return ()
     action_count = len(result.accelerations_m_s2)
     geometric_contact = bool(execution.cost_terms.get("geometric_tip_contact", 0.0))
+    non_tip_contact = float(
+        execution.cost_terms.get("non_tip_contact_violation", 0.0)
+    ) > 0.0
     impact_frame = int(
         np.argmin(np.abs(np.asarray(result.time_s) - execution.impact_time_s))
     )
@@ -97,7 +102,10 @@ def observations_from_execution(
                 drone_state=drone_state,
                 executed_action_m_s2=action,
                 active_estimate=estimate,
-                contact=geometric_contact and frame >= impact_frame,
+                # Without a separately recorded non-tip contact timestamp, a
+                # non-tip-first trial is conservatively excluded in full.  It
+                # must never contaminate physical-parameter residuals.
+                contact=non_tip_contact or (geometric_contact and frame >= impact_frame),
                 safety_violation=(
                     execution.terminal_reason == "safety_violation"
                     and frame == result.frame_count - 1
@@ -127,6 +135,8 @@ class BetweenStrikeAdaptationSession:
             nominal, simulation, device=device
         )
         self.runtime_store.snapshot().simulator.require_online_acceleration()
+        self.monitor = OnlineAdaptationMonitor(self.fitter.predictor, self.settings)
+        self._next_observation_time_s = 0.0
         self.history: list[BetweenStrikeAdaptationResult] = []
 
     @property
@@ -149,32 +159,56 @@ class BetweenStrikeAdaptationSession:
 
         started = time.perf_counter()
         current = self.estimate
-        observations = observations_from_execution(
+        local_observations = observations_from_execution(
             execution, self.simulation, current
         )
-        monitor = OnlineAdaptationMonitor(self.fitter.predictor, self.settings)
+        # UI strikes are separate recordings whose local clocks restart at
+        # zero.  Keep one monotonic session clock so health hysteresis,
+        # cooldown, and the informative cache genuinely persist, but clear the
+        # recent FIFO boundary so no fitting segment spans two initial states.
+        self.monitor.start_new_recording()
+        observations = tuple(
+            replace(
+                observation,
+                timestamp_s=self._next_observation_time_s + observation.timestamp_s,
+            )
+            for observation in local_observations
+        )
+        if observations:
+            self._next_observation_time_s = (
+                observations[-1].timestamp_s + self.simulation.simulation_dt_s
+            )
         trigger = None
+        latest_diagnostic = None
         for observation in observations:
-            diagnostic = monitor.append(observation)
-            if diagnostic is not None and diagnostic.reason == "fit_candidate":
-                trigger = diagnostic
-        candidates = monitor.buffer.candidate_segments()
+            diagnostic = self.monitor.append(observation)
+            if diagnostic is not None:
+                latest_diagnostic = diagnostic
+                if diagnostic.reason == "fit_candidate":
+                    trigger = diagnostic
+        candidates = self.monitor.buffer.candidate_segments()
         fitting, validation = select_informative_segments(candidates, self.settings)
         monitoring_s = time.perf_counter() - started
 
         if trigger is None:
+            reason = (
+                latest_diagnostic.reason
+                if latest_diagnostic is not None
+                else "insufficient_health_history"
+            )
             outcome = BetweenStrikeAdaptationResult(
                 False,
                 False,
                 None,
                 False,
-                "healthy_or_not_persistent",
+                reason,
                 len(observations),
                 len(candidates),
                 len(fitting),
                 len(validation),
                 monitoring_s,
                 0.0,
+                latest_diagnostic,
             )
             self.history.append(outcome)
             return outcome
@@ -191,14 +225,20 @@ class BetweenStrikeAdaptationSession:
                 len(validation),
                 monitoring_s,
                 0.0,
+                trigger,
             )
             self.history.append(outcome)
             return outcome
-        if not monitor.claim_trigger(trigger):
+        if not self.monitor.claim_trigger(trigger):
             raise RuntimeError("A selected adaptation trigger could not be claimed.")
 
-        fit_result = self.fitter.fit(fitting, validation, current)
+        try:
+            fit_result = self.fitter.fit(fitting, validation, current)
+        except Exception:
+            self.monitor.complete_fit(published=False)
+            raise
         if not fit_result.accepted:
+            self.monitor.complete_fit(published=False)
             outcome = BetweenStrikeAdaptationResult(
                 True,
                 True,
@@ -211,22 +251,30 @@ class BetweenStrikeAdaptationSession:
                 len(validation),
                 monitoring_s,
                 0.0,
+                trigger,
             )
             self.history.append(outcome)
             return outcome
 
         candidate = fit_result.candidate_estimate
-        runtime = self.runtime_store.prepare(
-            candidate,
-            prewarm_batches=(
-                (prewarm_batch_size, prewarm_control_count),
-                (1, prewarm_control_count),
-            ),
-        )
-        runtime.simulator.require_online_acceleration()
-        published = self.runtime_store.publish(runtime)
-        if not published:
-            raise RuntimeError("Accepted adaptation runtime was not atomically published.")
+        try:
+            runtime = self.runtime_store.prepare(
+                candidate,
+                prewarm_batches=(
+                    (prewarm_batch_size, prewarm_control_count),
+                    (1, prewarm_control_count),
+                ),
+            )
+            runtime.simulator.require_online_acceleration()
+            published = self.runtime_store.publish(runtime)
+            if not published:
+                raise RuntimeError(
+                    "Accepted adaptation runtime was not atomically published."
+                )
+        except Exception:
+            self.monitor.complete_fit(published=False)
+            raise
+        self.monitor.complete_fit(published=True)
         outcome = BetweenStrikeAdaptationResult(
             True,
             True,
@@ -239,6 +287,7 @@ class BetweenStrikeAdaptationSession:
             len(validation),
             monitoring_s,
             runtime.rebuild_wall_time_s,
+            trigger,
         )
         self.history.append(outcome)
         return outcome

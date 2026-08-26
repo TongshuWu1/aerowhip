@@ -57,6 +57,131 @@ extern "C" __device__ __forceinline__ float norm3_values(
     return sqrtf(x * x + y * y + z * z);
 }
 
+extern "C" __device__ __forceinline__ float point_segment_distance(
+    float tx, float ty, float tz,
+    float ax, float ay, float az,
+    float bx, float by, float bz
+) {
+    const float ex = bx - ax;
+    const float ey = by - ay;
+    const float ez = bz - az;
+    const float denominator = ex * ex + ey * ey + ez * ez;
+    float fraction = denominator > 1.0e-20f
+        ? ((tx - ax) * ex + (ty - ay) * ey + (tz - az) * ez) / denominator
+        : 0.0f;
+    fraction = fminf(1.0f, fmaxf(0.0f, fraction));
+    return norm3_values(
+        ax + fraction * ex - tx,
+        ay + fraction * ey - ty,
+        az + fraction * ez - tz
+    );
+}
+
+extern "C" __device__ __forceinline__ float swept_point_sphere_entry(
+    float tx, float ty, float tz, float radius,
+    float p0x, float p0y, float p0z,
+    float p1x, float p1y, float p1z,
+    float* minimum_distance_out
+) {
+    const float mx = p0x - tx;
+    const float my = p0y - ty;
+    const float mz = p0z - tz;
+    const float sx = p1x - p0x;
+    const float sy = p1y - p0y;
+    const float sz = p1z - p0z;
+    const float a = sx * sx + sy * sy + sz * sz;
+    const float b = mx * sx + my * sy + mz * sz;
+    const float c = mx * mx + my * my + mz * mz - radius * radius;
+    const float closest_fraction = a > 1.0e-20f
+        ? fminf(1.0f, fmaxf(0.0f, -b / a)) : 0.0f;
+    *minimum_distance_out = norm3_values(
+        mx + closest_fraction * sx,
+        my + closest_fraction * sy,
+        mz + closest_fraction * sz
+    );
+    if (c <= 0.0f) return 0.0f;
+    if (a <= 1.0e-20f) return 3.402823466e+38f;
+    const float discriminant = b * b - a * c;
+    if (discriminant < 0.0f) return 3.402823466e+38f;
+    const float entry = (-b - sqrtf(discriminant)) / a;
+    return entry >= 0.0f && entry <= 1.0f
+        ? entry : 3.402823466e+38f;
+}
+
+// Piecewise-linear endpoint motion makes the cable edge a bilinear moving
+// segment.  Conservative advancement uses the largest endpoint displacement
+// as a Lipschitz bound, preventing temporal tunnelling through the sphere.
+// The returned entry fraction is numerical (64 iterations, 1 um tolerance),
+// not an analytic rigid-body CCD root.
+extern "C" __device__ __forceinline__ float moving_segment_contact_fraction(
+    float tx, float ty, float tz, float radius,
+    float a0x, float a0y, float a0z,
+    float b0x, float b0y, float b0z,
+    float a1x, float a1y, float a1z,
+    float b1x, float b1y, float b1z,
+    float* minimum_distance_out
+) {
+    const float dax = a1x - a0x;
+    const float day = a1y - a0y;
+    const float daz = a1z - a0z;
+    const float dbx = b1x - b0x;
+    const float dby = b1y - b0y;
+    const float dbz = b1z - b0z;
+    const float speed_bound = fmaxf(
+        norm3_values(dax, day, daz), norm3_values(dbx, dby, dbz)
+    );
+    float endpoint_a_minimum = 3.402823466e+38f;
+    float endpoint_b_minimum = 3.402823466e+38f;
+    const float endpoint_a_entry = swept_point_sphere_entry(
+        tx, ty, tz, radius,
+        a0x, a0y, a0z, a1x, a1y, a1z,
+        &endpoint_a_minimum
+    );
+    const float endpoint_b_entry = swept_point_sphere_entry(
+        tx, ty, tz, radius,
+        b0x, b0y, b0z, b1x, b1y, b1z,
+        &endpoint_b_minimum
+    );
+    const float endpoint_entry = fminf(endpoint_a_entry, endpoint_b_entry);
+    float fraction = 0.0f;
+    float minimum_distance = fminf(endpoint_a_minimum, endpoint_b_minimum);
+    for (int iteration = 0; iteration < 64; ++iteration) {
+        const float ax = a0x + fraction * dax;
+        const float ay = a0y + fraction * day;
+        const float az = a0z + fraction * daz;
+        const float bx = b0x + fraction * dbx;
+        const float by = b0y + fraction * dby;
+        const float bz = b0z + fraction * dbz;
+        const float distance = point_segment_distance(
+            tx, ty, tz, ax, ay, az, bx, by, bz
+        );
+        minimum_distance = fminf(minimum_distance, distance);
+        if (distance <= radius + 1.0e-6f) {
+            *minimum_distance_out = minimum_distance;
+            return fminf(fraction, endpoint_entry);
+        }
+        if (fraction >= 1.0f) break;
+        float step = speed_bound > 1.0e-20f
+            ? fmaxf(0.0f, (distance - radius) / speed_bound)
+            : 1.0f;
+        fraction = fminf(1.0f, fraction + step);
+    }
+    const float ax = a0x + fraction * dax;
+    const float ay = a0y + fraction * day;
+    const float az = a0z + fraction * daz;
+    const float bx = b0x + fraction * dbx;
+    const float by = b0y + fraction * dby;
+    const float bz = b0z + fraction * dbz;
+    const float final_distance = point_segment_distance(
+        tx, ty, tz, ax, ay, az, bx, by, bz
+    );
+    minimum_distance = fminf(minimum_distance, final_distance);
+    *minimum_distance_out = minimum_distance;
+    const float interior_entry = final_distance <= radius + 1.0e-6f
+        ? fraction : 3.402823466e+38f;
+    return fminf(interior_entry, endpoint_entry);
+}
+
 extern "C" __global__ void fixed_mppi_cost(
     const float* __restrict__ time_s,
     const float* __restrict__ drone_positions,
@@ -112,33 +237,81 @@ extern "C" __global__ void fixed_mppi_cost(
     const long long acceleration_base = (long long)sample * controls * 3;
 
     bool has_contact = false;
-    int first_contact_frame = 1;
-    int closest_frame = 1;
+    int impact_interval = 0;
+    float impact_fraction = 0.0f;
+    int closest_interval = 0;
+    float closest_fraction = 0.0f;
     float closest_distance = INF;
-    for (int frame = 1; frame < frames; ++frame) {
-        const long long tip = cable_base + ((long long)frame * nodes + nodes - 1) * 3;
-        const float dx = cable_positions[tip] - target[0];
-        const float dy = cable_positions[tip + 1] - target[1];
-        const float dz = cable_positions[tip + 2] - target[2];
+    for (int interval = 0; interval < frames - 1; ++interval) {
+        const long long tip0 = cable_base
+            + ((long long)interval * nodes + nodes - 1) * 3;
+        const long long tip1 = tip0 + (long long)nodes * 3;
+        const float mx = cable_positions[tip0] - target[0];
+        const float my = cable_positions[tip0 + 1] - target[1];
+        const float mz = cable_positions[tip0 + 2] - target[2];
+        const float sx = cable_positions[tip1] - cable_positions[tip0];
+        const float sy = cable_positions[tip1 + 1] - cable_positions[tip0 + 1];
+        const float sz = cable_positions[tip1 + 2] - cable_positions[tip0 + 2];
+        const float a = sx * sx + sy * sy + sz * sz;
+        const float b = mx * sx + my * sy + mz * sz;
+        const float c = mx * mx + my * my + mz * mz
+            - target_radius * target_radius;
+        const float candidate_fraction = a > 1.0e-20f
+            ? fminf(1.0f, fmaxf(0.0f, -b / a))
+            : 0.0f;
+        const float dx = mx + candidate_fraction * sx;
+        const float dy = my + candidate_fraction * sy;
+        const float dz = mz + candidate_fraction * sz;
         const float distance = norm3_values(dx, dy, dz);
         if (distance < closest_distance) {
             closest_distance = distance;
-            closest_frame = frame;
+            closest_interval = interval;
+            closest_fraction = candidate_fraction;
         }
-        if (!has_contact && distance <= target_radius) {
-            has_contact = true;
-            first_contact_frame = frame;
+        if (!has_contact) {
+            if (c <= 0.0f) {
+                has_contact = true;
+                impact_interval = interval;
+                impact_fraction = 0.0f;
+            } else if (a > 1.0e-20f) {
+                const float discriminant = b * b - a * c;
+                if (discriminant >= 0.0f) {
+                    const float entry = (-b - sqrtf(discriminant)) / a;
+                    if (entry >= 0.0f && entry <= 1.0f) {
+                        has_contact = true;
+                        impact_interval = interval;
+                        impact_fraction = entry;
+                    }
+                }
+            }
         }
     }
-    const int impact_frame = has_contact ? first_contact_frame : closest_frame;
-    const long long tip = cable_base + ((long long)impact_frame * nodes + nodes - 1) * 3;
-    const float tip_dx = cable_positions[tip] - target[0];
-    const float tip_dy = cable_positions[tip + 1] - target[1];
-    const float tip_dz = cable_positions[tip + 2] - target[2];
+    if (!has_contact) {
+        impact_interval = closest_interval;
+        impact_fraction = closest_fraction;
+    }
+    const int impact_frame = impact_interval + 1;
+    const long long tip0 = cable_base
+        + ((long long)impact_interval * nodes + nodes - 1) * 3;
+    const long long tip1 = tip0 + (long long)nodes * 3;
+    const float tip_x = cable_positions[tip0]
+        + impact_fraction * (cable_positions[tip1] - cable_positions[tip0]);
+    const float tip_y = cable_positions[tip0 + 1]
+        + impact_fraction * (cable_positions[tip1 + 1] - cable_positions[tip0 + 1]);
+    const float tip_z = cable_positions[tip0 + 2]
+        + impact_fraction * (cable_positions[tip1 + 2] - cable_positions[tip0 + 2]);
+    const float tip_dx = tip_x - target[0];
+    const float tip_dy = tip_y - target[1];
+    const float tip_dz = tip_z - target[2];
     const float distance = norm3_values(tip_dx, tip_dy, tip_dz);
-    const float vx = cable_velocities[tip];
-    const float vy = cable_velocities[tip + 1];
-    const float vz = cable_velocities[tip + 2];
+    const float vx = cable_velocities[tip0]
+        + impact_fraction * (cable_velocities[tip1] - cable_velocities[tip0]);
+    const float vy = cable_velocities[tip0 + 1]
+        + impact_fraction * (cable_velocities[tip1 + 1] - cable_velocities[tip0 + 1]);
+    const float vz = cable_velocities[tip0 + 2]
+        + impact_fraction * (cable_velocities[tip1 + 2] - cable_velocities[tip0 + 2]);
+    const float impact_time = time_s[impact_interval]
+        + impact_fraction * (time_s[impact_frame] - time_s[impact_interval]);
     const float total_tip_speed = norm3_values(vx, vy, vz);
     const float directed_speed = vx * direction[0] + vy * direction[1] + vz * direction[2];
     float direction_cosine = directed_speed / fmaxf(total_tip_speed, 1.0e-9f);
@@ -149,13 +322,33 @@ extern "C" __global__ void fixed_mppi_cost(
     const float initial_x = initial_drone[initial_index * 3];
     const float initial_y = initial_drone[initial_index * 3 + 1];
     const float initial_z = initial_drone[initial_index * 3 + 2];
+    const long long impact_drone0 = drone_base + (long long)impact_interval * 3;
+    const long long impact_drone1 = impact_drone0 + 3;
+    const float event_drone_x = drone_positions[impact_drone0]
+        + impact_fraction * (drone_positions[impact_drone1]
+            - drone_positions[impact_drone0]);
+    const float event_drone_y = drone_positions[impact_drone0 + 1]
+        + impact_fraction * (drone_positions[impact_drone1 + 1]
+            - drone_positions[impact_drone0 + 1]);
+    const float event_drone_z = drone_positions[impact_drone0 + 2]
+        + impact_fraction * (drone_positions[impact_drone1 + 2]
+            - drone_positions[impact_drone0 + 2]);
+    const float event_drone_vx = drone_velocities[impact_drone0]
+        + impact_fraction * (drone_velocities[impact_drone1]
+            - drone_velocities[impact_drone0]);
+    const float event_drone_vy = drone_velocities[impact_drone0 + 1]
+        + impact_fraction * (drone_velocities[impact_drone1 + 1]
+            - drone_velocities[impact_drone0 + 1]);
+    const float event_drone_vz = drone_velocities[impact_drone0 + 2]
+        + impact_fraction * (drone_velocities[impact_drone1 + 2]
+            - drone_velocities[impact_drone0 + 2]);
     float maximum_drone_excursion = 0.0f;
     float minimum_drone_clearance = INF;
     float maximum_drone_speed = 0.0f;
     float minimum_scene_height = INF;
     float maximum_drone_altitude = -INF;
     float minimum_cable_drone_clearance = INF;
-    for (int frame = 0; frame <= impact_frame; ++frame) {
+    for (int frame = 0; frame <= impact_interval; ++frame) {
         const long long drone = drone_base + (long long)frame * 3;
         const float px = drone_positions[drone];
         const float py = drone_positions[drone + 1];
@@ -193,26 +386,105 @@ extern "C" __global__ void fixed_mppi_cost(
             }
         }
     }
-    const long long impact_drone = drone_base + (long long)impact_frame * 3;
-    const float drone_displacement = norm3_values(
-        drone_positions[impact_drone] - initial_x,
-        drone_positions[impact_drone + 1] - initial_y,
-        drone_positions[impact_drone + 2] - initial_z
+    maximum_drone_excursion = fmaxf(
+        maximum_drone_excursion,
+        norm3_values(
+            event_drone_x - initial_x,
+            event_drone_y - initial_y,
+            event_drone_z - initial_z
+        )
     );
-
-    float minimum_non_tip_distance = INF;
-    for (int frame = 1; frame < impact_frame; ++frame) {
-        for (int node = 0; node < nodes - 1; ++node) {
-            const long long q = cable_base + ((long long)frame * nodes + node) * 3;
-            minimum_non_tip_distance = fminf(
-                minimum_non_tip_distance,
+    minimum_drone_clearance = fminf(
+        minimum_drone_clearance,
+        norm3_values(
+            event_drone_x - target[0],
+            event_drone_y - target[1],
+            event_drone_z - target[2]
+        )
+    );
+    maximum_drone_speed = fmaxf(
+        maximum_drone_speed,
+        norm3_values(event_drone_vx, event_drone_vy, event_drone_vz)
+    );
+    minimum_scene_height = fminf(minimum_scene_height, event_drone_z);
+    maximum_drone_altitude = fmaxf(maximum_drone_altitude, event_drone_z);
+    for (int node = 0; node < nodes; ++node) {
+        const long long q0 = cable_base
+            + ((long long)impact_interval * nodes + node) * 3;
+        const long long q1 = q0 + (long long)nodes * 3;
+        const float event_x = cable_positions[q0]
+            + impact_fraction * (cable_positions[q1] - cable_positions[q0]);
+        const float event_y = cable_positions[q0 + 1]
+            + impact_fraction * (cable_positions[q1 + 1] - cable_positions[q0 + 1]);
+        const float event_z = cable_positions[q0 + 2]
+            + impact_fraction * (cable_positions[q1 + 2] - cable_positions[q0 + 2]);
+        minimum_scene_height = fminf(minimum_scene_height, event_z);
+        if (node > 0) {
+            minimum_cable_drone_clearance = fminf(
+                minimum_cable_drone_clearance,
                 norm3_values(
-                    cable_positions[q] - target[0],
-                    cable_positions[q + 1] - target[1],
-                    cable_positions[q + 2] - target[2]
+                    event_x - event_drone_x,
+                    event_y - event_drone_y,
+                    event_z - event_drone_z
                 )
             );
         }
+    }
+    const float drone_displacement = norm3_values(
+        event_drone_x - initial_x,
+        event_drone_y - initial_y,
+        event_drone_z - initial_z
+    );
+
+    float minimum_non_tip_distance = INF;
+    for (int frame = 0; frame < frames; ++frame) {
+        if (time_s[frame] >= impact_time - 1.0e-9f) continue;
+        for (int edge = 0; edge < nodes - 1; ++edge) {
+            const long long q = cable_base + ((long long)frame * nodes + edge) * 3;
+            const long long q1 = q + 3;
+            minimum_non_tip_distance = fminf(
+                minimum_non_tip_distance,
+                point_segment_distance(
+                    target[0], target[1], target[2],
+                    cable_positions[q], cable_positions[q + 1], cable_positions[q + 2],
+                    cable_positions[q1], cable_positions[q1 + 1], cable_positions[q1 + 2]
+                )
+            );
+        }
+    }
+    float earliest_non_tip_key = INF;
+    for (int interval = 0; interval <= impact_interval; ++interval) {
+        for (int edge = 0; edge < nodes - 1; ++edge) {
+            const long long a0 = cable_base + ((long long)interval * nodes + edge) * 3;
+            const long long b0 = a0 + 3;
+            const long long a1 = a0 + (long long)nodes * 3;
+            const long long b1 = a1 + 3;
+            float swept_minimum_distance = INF;
+            const float fraction = moving_segment_contact_fraction(
+                target[0], target[1], target[2], target_radius,
+                cable_positions[a0], cable_positions[a0 + 1], cable_positions[a0 + 2],
+                cable_positions[b0], cable_positions[b0 + 1], cable_positions[b0 + 2],
+                cable_positions[a1], cable_positions[a1 + 1], cable_positions[a1 + 2],
+                cable_positions[b1], cable_positions[b1 + 1], cable_positions[b1 + 2],
+                &swept_minimum_distance
+            );
+            if (interval < impact_interval) {
+                minimum_non_tip_distance = fminf(
+                    minimum_non_tip_distance, swept_minimum_distance
+                );
+            }
+            if (fraction < INF) {
+                earliest_non_tip_key = fminf(
+                    earliest_non_tip_key, (float)interval + fraction
+                );
+            }
+        }
+    }
+    const float tip_event_key = (float)impact_interval + impact_fraction;
+    const bool non_tip_contact_before = earliest_non_tip_key
+        < tip_event_key - 1.0e-5f;
+    if (non_tip_contact_before) {
+        minimum_non_tip_distance = fminf(minimum_non_tip_distance, target_radius);
     }
 
     int event_control = (impact_frame - 1) / steps_per_control;
@@ -287,10 +559,13 @@ extern "C" __global__ void fixed_mppi_cost(
         fmaxf(0.0f, cable_drone_clearance_limit - minimum_cable_drone_clearance)
             / cable_drone_clearance_limit, 2.0f
     );
-    const float non_tip_violation = powf(
+    const float non_tip_penetration = powf(
         fmaxf(0.0f, target_radius - minimum_non_tip_distance) / target_radius,
         2.0f
     );
+    const float non_tip_violation = non_tip_contact_before
+        ? fmaxf(1.0f, non_tip_penetration)
+        : non_tip_penetration;
     const float actuator_violation = powf(
         fmaxf(0.0f, maximum_acceleration - maximum_acceleration_limit)
             / maximum_acceleration_limit, 2.0f
@@ -326,7 +601,7 @@ extern "C" __global__ void fixed_mppi_cost(
 
     float* out = output + (long long)sample * 35;
     out[0] = constraint_violation;
-    out[1] = time_s[impact_frame];
+    out[1] = impact_time;
     out[2] = distance;
     out[3] = directed_speed;
     out[4] = total_tip_speed;

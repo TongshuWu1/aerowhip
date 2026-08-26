@@ -86,29 +86,24 @@ WORKFLOWS = (
         script_name="run_offline_fitting.py",
     ),
     WorkflowDefinition(
-        workflow_id="policy",
-        stage=2,
-        title="Goal-conditioned policy learning",
-        short_title="SAC training",
-        objective="Train and select a fast multi-target policy under the frozen nominal cable model.",
-        method=(
-            "Goal-conditioned SAC with future achieved-goal relabeling and "
-            "fixed deterministic validation targets."
-        ),
-        inputs=("Nominal cable model",),
-        output="Validated-best and latest SAC policy checkpoints plus training history",
-        script_name="run_sac_training.py",
-        required_artifacts=("cable_model",),
-    ),
-    WorkflowDefinition(
         workflow_id="online",
-        stage=3,
+        stage=2,
         title="Online receding-horizon MPC",
         short_title="Online MPC",
-        objective="Establish a non-learning matched-model control baseline for the two-phase whip task.",
-        method="Full-state feedback, fitted DDER dynamics, batched CEM, and fixed-N solve/apply/replan execution.",
+        objective=(
+            "Evaluate receding-horizon cable-strike control and simulation-only "
+            "between-strike EI/Cb adaptation."
+        ),
+        method=(
+            "Exact distributed-state feedback, accelerated DDER propagation, "
+            "CUDA-batched MPPI, short-prefix execution, shifted warm starts, and "
+            "optional held-out-validated EI/Cb publication between strikes."
+        ),
         inputs=("Nominal cable model", "Whip target and impact direction"),
-        output="Replayable matched-model MPC trial with timing, prediction, command, and hit diagnostics",
+        output=(
+            "Replayable MPPI trial with timing, distributed trajectory, contact, "
+            "model-generation, and adaptation diagnostics"
+        ),
         script_name="run_online.py",
         required_artifacts=("cable_model",),
     ),
@@ -124,13 +119,9 @@ _ARTIFACT_PATHS = {
         "Nominal cable model",
         REPOSITORY_DIRECTORY / "optitrack_offline" / "models" / "cable_model.json",
     ),
-    "sac_policy": (
-        "Selected SAC policy",
-        REPOSITORY_DIRECTORY / "data" / "drone_mpc" / "sac_policy.pt",
-    ),
-    "adaptation_trials": (
-        "Hidden-model evaluation trials",
-        REPOSITORY_DIRECTORY / "data" / "drone_mpc" / "testbed",
+    "online_results": (
+        "DDER-MPPI experiment results",
+        REPOSITORY_DIRECTORY / "data" / "drone_mpc" / "receding_mppi",
     ),
 }
 
@@ -202,14 +193,6 @@ def _schema(path: Path) -> str | None:
     return str(value) if value is not None else "schema missing"
 
 
-def _json_mapping(path: Path) -> dict[str, object] | None:
-    try:
-        payload = json.loads(path.read_text(encoding="utf-8"))
-    except (OSError, UnicodeError, json.JSONDecodeError):
-        return None
-    return payload if isinstance(payload, dict) else None
-
-
 def _time_text(timestamp: float | None) -> str:
     if timestamp is None:
         return "--"
@@ -247,40 +230,7 @@ def _status_for_path(artifact_id: str, label: str, path: Path) -> ArtifactStatus
 
 
 def inspect_artifacts() -> tuple[ArtifactStatus, ...]:
-    statuses = [
+    return tuple(
         _status_for_path(artifact_id, label, path)
         for artifact_id, (label, path) in _ARTIFACT_PATHS.items()
-    ]
-
-    by_id = {status.artifact_id: status for status in statuses}
-    model_status = by_id.get("cable_model")
-    policy_status = by_id.get("sac_policy")
-    policy_sidecar = (
-        _json_mapping(policy_status.path.with_suffix(".json"))
-        if policy_status is not None and policy_status.exists
-        else None
     )
-    if policy_status is not None and policy_sidecar is not None:
-        source_hash = policy_sidecar.get("source_model_sha256")
-        compatibility = None
-        if isinstance(source_hash, str) and model_status is not None and model_status.sha256:
-            compatibility = "compatible" if source_hash == model_status.sha256 else "mismatch"
-        policy_schema = policy_sidecar.get("schema")
-        policy_status = ArtifactStatus(
-            artifact_id=policy_status.artifact_id,
-            label=policy_status.label,
-            path=policy_status.path,
-            exists=policy_status.exists,
-            kind=policy_status.kind,
-            item_count=policy_status.item_count,
-            size_bytes=policy_status.size_bytes,
-            modified_text=policy_status.modified_text,
-            sha256=policy_status.sha256,
-            schema=str(policy_schema) if policy_schema is not None else policy_status.schema,
-            compatibility=compatibility,
-        )
-        statuses = [
-            policy_status if status.artifact_id == "sac_policy" else status
-            for status in statuses
-        ]
-    return tuple(statuses)

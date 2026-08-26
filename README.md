@@ -1,331 +1,192 @@
 # Cable Twin
 
-One shared differentiable constrained elastic-rod model with separate offline
-and online workflows. The canonical OptiTrack experiment prescribes one
-attachment position and predicts a mechanically free distal end.
+Research software for identifying a flexible cable from OptiTrack data and
+using the identified distributed discrete elastic-rod model inside
+receding-horizon MPPI control.
+
+The supported workflow is deliberately narrow:
+
+```text
+OptiTrack takes
+    -> offline one-attachment/free-tip EI,Cb identification
+    -> accelerated full-state DDER-MPPI simulation
+    -> optional EI,Cb adaptation between strikes
+```
+
+MPPI is the project's model-predictive controller. There is no learned-policy
+stage in the supported codebase.
 
 ## Public applications
 
-The project has three supported workflow applications:
+There are two public desktop applications:
 
 ```powershell
 .\.venv\Scripts\python.exe run_offline_fitting.py
-.\.venv\Scripts\python.exe run_sac_training.py
 .\.venv\Scripts\python.exe run_online.py
 ```
 
-They form one explicit experimental sequence:
+`run_offline_fitting.py` reviews and fits OptiTrack recordings.
+`run_online.py` runs the accelerated simulation controller and the optional
+between-strike physical-parameter adapter. Both UIs use a plain, research-first
+Tkinter layout. The small research console is an optional launcher/status view,
+not a third scientific workflow.
 
-1. **Physical model identification** reviews OptiTrack takes and publishes the
-   canonical cable-model artifact.
-2. **Goal-conditioned policy learning** trains SAC under that frozen nominal
-   model and retains validated-best and latest checkpoints.
-3. **Online controller** runs full-state receding-horizon DDER-MPPI with the
-   frozen cable model and a matched, independently constructed simulation plant.
+## Offline OptiTrack identification
 
-The third application is the nominal matched-model control baseline. It is not
-yet a live OptiTrack interface, online parameter adaptation experiment, or a
-force-coupled flight result.
+The canonical experiment has one rigid-body cable attachment and ten ordered
+material markers `c1...c10`; `c10` is the free tip. Motive exports positions at
+approximately 100 Hz. The attachment position is prescribed. Its orientation,
+the attachment tangent, all flexible-node positions, and the distal endpoint
+are prediction targets rather than additional boundary constraints.
 
-The separate Isaac Lab plant runner is an implementation-validation tool, not
-a fourth workflow UI. It provides a 6-DoF force/torque-driven drone with the
-identified passive cable in one or 64 cloned environments:
+The fitter estimates one homogeneous bending stiffness `EI` and one
+Kelvin-Voigt curvature-rate damping parameter `Cb` from all Training takes.
+Validation takes remain held out. Fitting uses fixed 100-frame rollouts, which
+are approximately one second only for 100 Hz recordings. The UI exposes take
+roles, a clearly mutating **Audit and exclude unusable takes** action, model
+geometry/mass, optimizer settings, fit progress, and validation playback.
+
+For the straight circular/isotropic free-tip baseline, quasistatic material
+twist is eliminated by the free material-frame boundary condition. This does
+not mean the physical cable has zero torsional stiffness; it means `GJ` is not
+identifiable or needed in this reduced centerline experiment.
+
+The fitted artifact is:
+
+```text
+optitrack_offline/models/cable_model.json
+```
+
+See [optitrack_offline/README.md](optitrack_offline/README.md) for the capture,
+CSV, filtering, fitting, and held-out validation contracts.
+
+## Online DDER-MPPI
+
+Launch the controller with:
+
+```powershell
+.\.venv\Scripts\python.exe run_online.py
+```
+
+At each MPC update the controller:
+
+1. starts from the current drone state and complete distributed cable state;
+2. shifts the previous acceleration-knot plan;
+3. samples bounded three-dimensional knot perturbations;
+4. propagates every candidate through the full DDER cable model on CUDA;
+5. evaluates the fixed impact and safety objective;
+6. performs the MPPI importance-weighted update;
+7. executes only the next short control prefix; and
+8. replans from the newly realized cable state.
+
+The free-tip target event is evaluated continuously between physics frames.
+Tip entry into the target sphere and continuous closest approach are analytic
+for the piecewise-linear tip path. Non-tip target contact checks the complete
+cable segments and uses conservative continuous collision detection between
+frames. A valid strike requires tip-first entry, the requested directed speed,
+the requested direction cone, and no safety violation.
+
+The objective contains target position, directed speed, impact direction, a
+large valid-strike bonus, soft drone displacement, safety penalties, and weak
+control effort/smoothness. It contains no cable-energy reward, prescribed
+shape, wind-up phase, release phase, reversal reward, or hard maximum drone
+excursion. The UI displays the fixed objective and safety contract read-only;
+task and compute controls remain separate.
+
+### Accelerated runtime
+
+The public online path requires:
+
+- CUDA full-horizon DDER graph capture;
+- the fused CUDA MPPI event/cost evaluator; and
+- batched candidate propagation.
+
+Those paths work for every node count accepted by the loaded artifact. The
+11-node configuration additionally uses the fixed-topology fused DDER mechanics
+operator and is the maximum-throughput path. The UI reports which acceleration
+tier is active and refuses to fall back silently to the slow reference path.
+
+### Between-strike adaptation
+
+The simulation UI can use hidden plant ratios for `EI` and `Cb`. The controller
+does not receive those ratios. During a strike the controller model is frozen.
+After the strike, a persistent monitor retains recent history, informative
+segments, hysteresis, and cooldown state. If mismatch and information gates
+justify a fit, short distributed-state segments are fitted and held-out
+validated. An accepted model is rebuilt, prewarmed, and atomically published
+for the next strike.
+
+The Adaptation tab plots the published `EI` and `Cb` error against simulated
+truth after every strike and reports held-out all-node prediction RMSE. That
+truth comparison is a simulation diagnostic only; a physical experiment will
+not know the true parameters.
+
+Settings profiles are stored under:
+
+```text
+data/drone_mpc/settings_profiles/
+```
+
+Profiles are versioned. Older profiles that do not contain an adaptation field
+retain their original fixed-model behavior; adaptation is not silently enabled.
+
+## Current scientific boundary
+
+The online application is currently a simulation testbed, not a flight stack:
+
+- cable feedback is exact distributed simulator state;
+- hidden truth mismatch changes only `EI` and `Cb`;
+- the drone is an acceleration-tracked point mass;
+- cable reaction force does not alter the drone dynamics;
+- no live Motive stream, state estimator, radio, or flight command is used;
+- the tracked model may still be the explicitly labelled provisional transfer
+  from the older two-holder fit until the final one-attachment dataset is fit.
+
+The sensing-aware synthetic study and actual OptiTrack integration remain
+separate validation stages. Arbitrary simulation-node counts must not be
+mistaken for arbitrary physical marker counts: the physical observation
+contract remains the ordered 11-material-point experiment.
+
+## Isaac plant validation
+
+The separate Isaac Lab runner is a plant-implementation validation tool, not a
+public workflow UI:
 
 ```powershell
 .\run_isaac_whip.bat --num-envs 1 --mode hover
 .\run_isaac_whip.bat --num-envs 64 --mode excite
 ```
 
-Its physical assumptions, installation contract, and validation limitations
-are documented in [isaac_whip/README.md](isaac_whip/README.md). To reproduce
-the complete RTX 5090 environment on another computer, give that computer's
-Codex agent [ISAACSIM_SETUP_INSTRUCTIONS.md](ISAACSIM_SETUP_INSTRUCTIONS.md)
-and ask it to execute the file from beginning to end.
+It provides a 6-DoF force/torque-driven drone and passive cable for simulator
+checks. See [isaac_whip/README.md](isaac_whip/README.md) and
+[ISAACSIM_SETUP_INSTRUCTIONS.md](ISAACSIM_SETUP_INSTRUCTIONS.md).
 
-## Legacy planar identification prototype
+## Verification
 
-This earlier image-plane workflow is retained as an internal prototype under
-`research_tools.legacy_rgb_offline`; it is not a public project entry point.
+Run the complete CPU regression suite with:
 
-The offline workflow uses 2D PIDNet curves, not depth or a point cloud. Keep the
-camera fixed, move the fully visible cable approximately parallel to the image
-plane, and record one or more endpoint-driven motions. One constant metric scale
-per recording is obtained from the known cable length; the resulting trajectories
-identify the shared bending parameters `EI` and `Cb`.
+```powershell
+.\.venv\Scripts\python.exe -m unittest discover -s tests
+```
 
-One model is published per cable:
+CUDA-specific acceleration/contact tests skip when no compatible CUDA device is
+available. Supported launchers can also be imported without CasADi; CasADi/IPOPT
+is retained only by explicitly legacy research utilities.
+
+## Code organization
 
 ```text
-data/offline_dder/models/cable1_dder.json
+optitrack_offline/  CSV parsing, take review, EI/Cb fitting, validation UI
+drone_mpc/          DDER plant, MPPI, receding controller, adaptation, online UI
+cable_twin/         shared DDER/perception code and retained earlier prototypes
+research_tools/     reproducibility, profiling, and ablation scripts
+research_ui/        optional two-stage launcher/status console
+isaac_whip/         separate Isaac Lab plant validation
+reports/            generated research and engineering reports
+docs/               current method handoffs and codebase map
+tests/              regression and numerical-contract tests
 ```
 
-See [PIPELINE.md](PIPELINE.md) and
-[cable_twin/offline/CABLE_MODEL.md](cable_twin/offline/CABLE_MODEL.md).
-
-The compact internal parameter-recovery check is:
-
-```powershell
-.\.venv\Scripts\python.exe -m research_tools.model_check
-```
-
-It saves `data/offline_dder/synthetic_recovery.json`. This uses known synthetic
-parameters to check the implementation; it is not experimental validation.
-
-## OptiTrack offline identification
-
-Review labeled Motive CSV takes and jointly fit cable material parameters with:
-
-```powershell
-.\.venv\Scripts\python.exe run_offline_fitting.py
-```
-
-The application assigns dynamic takes to Training or held-out Validation and
-fits one homogeneous bending stiffness `EI` and curvature-rate damping `Cb`.
-Each new 100 Hz Motive CSV contains one rigid body whose pivot is at the cable
-attachment and ten ordered markers `c1...c10`; `c10` is on the free tip. The
-measured pivot position is prescribed, while its orientation, the attachment
-tangent, and every flexible-node position remain unprescribed. The free-tip
-trajectory is a prediction target, not a second boundary.
-
-For the naturally straight circular/isotropic baseline, quasistatic torsion is
-analytically eliminated by the free material-frame boundary condition. This is
-not an assumption that the physical cable has `GJ = 0`; `GJ` is absent from
-the reduced centerline problem. One-second rollouts are fitted with bounded
-global initialization followed by projected CUDA-batched Adam, and
-full-Training evaluations select the artifact. Validation reports
-attachment-only open-loop prediction and periodic full-cable position
-observations. See
-[optitrack_offline/README.md](optitrack_offline/README.md) for the definitive
-capture and validation contract.
-
-The earlier two-holder `c1...c9` takes and twist-aware
-`EI`/`GJ`/`Cb` artifact are incompatible with the new boundary condition.
-They cannot initialize, train, or validate the free-tip model; new
-one-pivot/free-tip captures require a fresh fit.
-
-## Drone whip simulation and MPC
-
-The matched-model controller experiment is launched with:
-
-```powershell
-.\.venv\Scripts\python.exe run_online.py
-```
-
-It uses the same full fitted DDER for CUDA-batched MPPI planning and a freshly
-constructed independent plant. MPPI searches smooth 3-D acceleration knots,
-executes only a short prefix, observes the current distributed cable state,
-shifts the previous plan, and replans.
-The event cost is defined only by first tip contact/closest approach, requested
-directed impact speed and cone, soft drone displacement and safety penalties,
-and weak control regularization. It has no reward for whipping, cable energy,
-shape, straightness, or prescribed wind-up/release phases; the maneuver must
-emerge from the cable physics. The UI separates task definition from MPPI
-compute settings and shows the fixed full-impact objective read-only. The old
-solve-once and IPOPT interfaces remain research utilities rather than online
-controls. See
-[drone_mpc/README.md](drone_mpc/README.md) for its assumptions and controls.
-Until the free-tip fit is available, the UI can use the latest two-holder
-`EI`/`Cb` result as an explicitly labelled provisional transfer.
-
-Run the fixed-seed full-plant controller check with:
-
-```powershell
-.\.venv\Scripts\python.exe -m research_tools.controller_benchmark
-```
-
-It saves compact JSON studies of 7/11/15/21-node controller resolution and
-controlled `±30%` `EI`/`Cb` mismatch under identical task, seed, and state
-feedback. A separate recorded planning margin tightens the internal predicted
-hit tolerance; executed success retains the original physical tolerance.
-
-The fixed-target control milestone is one offline-optimized, physically
-verified whip. Run:
-
-```powershell
-.\.venv\Scripts\python.exe -m research_tools.whip_optimizer
-```
-
-The optimizer searches a smooth forward/recoil motion using a mass-conserving
-7-node rod, then refines and verifies it on the exact 21-node fitted rod. Only
-the exact-model result is reported. This single-trajectory milestone established
-the simulator/controller contract used by the multi-goal demonstration and SAC
-stages below.
-
-Train the goal-conditioned closed-loop policy with SAC and future-goal HER:
-
-```powershell
-.\.venv\Scripts\python.exe run_sac_training.py
-```
-
-The active trainer stores both real transitions and coherently relabeled
-episode prefixes in one uniform replay buffer. Future achieved cable-tip
-position and velocity define the hindsight goals. Rewards, termination, and
-target-dependent safety are recomputed after relabeling. It does not load MPC
-demonstrations, pretrain the actor, switch scripted motion phases, or use a
-curriculum. Earlier MPC demonstration artifacts remain historical experiments,
-not inputs to this baseline.
-
-The nominal actor receives the complete simulated DER state, drone state,
-target, required impact direction and speed, remaining time, and previous
-command in a target-aligned frame. It outputs one bounded 3-D acceleration
-every 20 ms. Training uses CUDA-vectorized DDER rollouts at 100 Hz on a 15-node grid
-selected by a matched 7/11/15/21-node reachability audit. Twin-critic SAC
-optimizes the four-second task. A valid impact can occur at any physics frame.
-The dominant learning event is first contact with the physical target at the
-requested velocity; a bounded tip-to-target potential, small time/effort costs,
-and safety costs provide secondary shaping.
-
-Contact is detected by sweeping the cable tip between physics frames against a
-metric target sphere. Success requires that first contact to satisfy the
-requested directed speed and velocity cone. Cable extension is intentionally
-not a separate success condition: target position and impact velocity are the
-task definition.
-
-The ground-up UI baseline initially fixes the target at 0.80 m horizontal
-distance and 0.10 m below the initial drone, with a radial horizontal impact
-vector. This isolates whether the learner can discover a whip before target
-ranges are broadened. The worker still accepts distance, height, azimuth, and
-impact-vector ranges for the subsequent multi-goal experiment. State and
-actions use a target-aligned frame while the cable and control remain fully
-three-dimensional.
-
-There is no start-centered excursion limit. Successful impacts receive a
-secondary squared penalty on drone displacement from the episode start and the
-drone must respect target keepout, but neither is a hard bound on maximum path
-excursion. Therefore "beyond initial cable reach" is a geometric reporting
-category, not by itself proof of whipping or of reach beyond a bounded drone
-workspace. That stronger paper claim requires a separate evaluation with a
-hard workspace constraint.
-
-The learning algorithm uses a squashed stochastic actor, two critics and target
-critics, automatic entropy-temperature tuning, running observation statistics,
-and uniform batches from the combined real/HER replay. There is no behavior
-cloning, demonstration replay, guided action prior, or curriculum.
-
-Periodic deterministic validation uses fixed seed `seed + 1000` to choose the
-deployable checkpoint. Its primary rank is the arithmetic mean of success in
-the within- and beyond-initial-reach strata; aggregate success, lower position
-error, higher directed speed, and lower impact drone displacement are ordered
-tie-breakers. After training, that retained checkpoint is tested with the
-separate fixed seed `seed + 10000`; both seeds and all metrics are stored in the
-JSON log.
-For a multi-training-seed experiment, `--checkpoint-validation-seed` and
-`--final-test-seed` freeze those target sets independently of network and
-replay randomness.
-
-For interactive training, use the dedicated dashboard:
-
-```powershell
-.\.venv\Scripts\python.exe run_sac_training.py
-```
-
-It runs SAC in a separate CUDA process and plots deterministic success, tip
-error, directed impact speed, unsafe-episode rate, and drone displacement at
-impact. It keeps validated-best and latest-policy artifacts distinct. The
-optional endless mode trains until `Stop safely` is pressed; stopping saves the
-latest policy and incremental JSON history without overwriting the best policy.
-There is deliberately no Resume button because the saved policy does not
-contain replay, optimizer, environment, or RNG state.
-
-For historical context, an earlier prior-replay experiment held the model,
-task, SAC settings, validation seed, and 256-goal final test fixed while
-expanding the prior from four to twelve demonstrations:
-
-| Verified prior | Prior transitions | Selected transition | Overall success | Within reach | Beyond reach | Mean minimum error | Directed speed |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| 4 demonstrations | 28 | 340,096 | 36.3% | 55.3% | 4.2% | 244.6 mm | 2.00 m/s |
-| 12 demonstrations | 79 | 180,096 | 59.8% | 55.9% | 66.3% | 154.4 mm | 3.80 m/s |
-
-The twelve-demo policy also increased mean drone displacement at impact from
-0.448 m to 0.673 m. These are nominal simulation results, not a flight
-controller or proof of whipping under a bounded vehicle workspace. This is a
-paired single-seed comparison of the complete demonstration-set intervention:
-the overlapping demonstrations were re-optimized as well as eight goals being
-added, so it does not isolate demonstration count alone.
-
-Repeating the twelve-demo run with training seeds 42, 43, and 44 while fixing
-checkpoint targets to seed 1042 and all 256 final targets to seed 10042 gave:
-
-| Training seed | Overall | Within reach | Beyond reach |
-|---:|---:|---:|---:|
-| 42 | 59.8% | 55.9% | 66.3% |
-| 43 | 59.0% | 59.0% | 58.9% |
-| 44 | 48.0% | 34.8% | 70.5% |
-| Mean +/- sample SD | **55.6 +/- 6.6%** | **49.9 +/- 13.2%** | **65.3 +/- 5.9%** |
-
-The far-target behavior repeats across all three seeds, but near-target success
-and miss magnitude remain seed-sensitive. The internal
-`research_tools.sac_multiseed` utility writes the machine-readable aggregate;
-it verifies identical models, tasks, demonstrations, settings, and held-out
-target strata before combining logs.
-
-For the non-learning predictive-control application, launch:
-
-```powershell
-.\.venv\Scripts\python.exe run_online.py
-```
-
-The controller uses the fitted DDER model. By default the simulated plant uses
-the identical model; the separate `Plant truth` tab can instead scale plant
-`EI` and `Cb` while leaving the controller nominal model unchanged. At every
-update, CUDA-batched MPPI starts from the current distributed cable state,
-shifts the previous solution, optimizes the remaining 3-D acceleration knots,
-executes only a short prefix, and replans. The Tkinter UI separates the strike
-task from controller compute. It exposes prediction horizon, physics/control/
-replanning rates, DDER simulation-node count, samples, MPPI iterations, knot
-count, noise, seed, and vehicle limits. Plant-truth ratios are kept outside the
-controller tab because they define the hidden simulated experiment, not an MPPI
-tuning parameter. Full-state feedback, maximum CUDA batching, and the validated
-strike cost are fixed in the public pipeline rather than mixed into routine controller
-operation. Ratios `1.0, 1.0` are the exact matched-model baseline. For mismatch
-tests, controller and plant retain the same node grid, mass, geometry, timestep,
-and solver configuration; only the two physical parameters change, and both
-model identities are saved. The legacy spherical drone-excursion constraint is
-disabled; drone displacement at impact remains a soft cost. SAC, online
-adaptation, DDER gradients, and IPOPT are deliberately excluded from this
-controller; the optional truth mismatch is fixed for the run. During execution,
-every completed MPC update streams its newly
-realized cable frames to the viewport step by step; after completion, the full
-maneuver can be replayed in wall-clock-synchronized real time. One CUDA batch provides maximum rollout
-parallelism, with presets from 128 low-latency samples to the measured
-2,048-sample throughput knee on the development RTX 4080. No live OptiTrack
-stream is consumed yet. The drone plant is
-acceleration-tracked rather than force-coupled; see
-[drone_mpc/README.md](drone_mpc/README.md) for the measurement, provenance, and
-physics contracts.
-
-The online UI can save and load a versioned JSON settings profile containing
-the model/warm-start inputs, task, controller compute settings, and hidden plant
-truth. Profile loading is all-or-nothing: every required field is validated
-before any visible setting is changed. Profiles are stored by default in
-`data/drone_mpc/settings_profiles/`.
-
-## Legacy ZED particle-filter prototype
-
-After a compatible free-tip artifact is fitted, the online PF can transfer its
-homogeneous `EI` and `Cb` to a cable of the same construction. Cable length,
-mass, marker masses, and discretization remain experiment-specific and are not
-silently reused. The image-only online path uses the same reduced centerline
-model and does not consume a legacy `GJ` estimate.
-
-PIDNet supplies the visible 2D route and endpoints, the ZED supplies registered
-depth for metric initialization and visible endpoint translations, and the
-fitted constrained rod advances every 3D particle. The recurring body
-likelihood projects each particle into the image instead of reconstructing a
-noisy depth centerline. The ZED viewport highlights PIDNet-selected point-cloud
-samples orange and the MAP reconstructed centerline green. See
-[cable_twin/online/README.md](cable_twin/online/README.md).
-
-This prototype is retained internally as `research_tools.legacy_zed_online`; it is
-not the public `run_online.py` application.
-
-## Layout
-
-```text
-cable_twin/
-  shared/   PIDNet, route geometry, constrained rod dynamics, model artifact
-  offline/  image-plane 2D extraction, EI/Cb fitting, review UI
-  online/   live 3D particle filter and replay
-optitrack_offline/  one-pivot/free-tip review, EI/Cb fit, held-out validation
-drone_mpc/          identified-cable simulation and drone trajectory MPC
-```
+The authoritative active/research/legacy module map is in
+[docs/CODEBASE_MAP.md](docs/CODEBASE_MAP.md). The detailed method is in
+[PIPELINE.md](PIPELINE.md).

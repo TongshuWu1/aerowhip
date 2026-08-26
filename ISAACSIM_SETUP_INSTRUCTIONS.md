@@ -57,10 +57,8 @@ Official references:
    prompt and ask the user to accept or reject it.
 4. Do not copy the primary RTX 4080 computer's D3D12 workaround by default.
    Test the RTX 5090 with Isaac Lab's default Vulkan configuration first.
-5. Do not commit generated USD, run reports, OptiTrack CSVs, videos, or policy
-   checkpoints. They are intentionally ignored.
-6. Do not load old SAC checkpoints into this new plant. Their action space and
-   transition model are incompatible.
+5. Do not commit generated USD, run reports, OptiTrack CSVs, or videos. They
+   are intentionally ignored.
 
 ## 1. Inspect the second computer
 
@@ -157,9 +155,10 @@ git -C $lab apply $starlettePatch
 git -C $lab diff -- source/isaaclab/setup.py
 ```
 
-Install Isaac Lab without third-party RL frameworks because this project has
-its own SAC implementation. Use `activate.bat` through `cmd.exe` to ensure the
-batch installer sees the virtual environment:
+Install Isaac Lab without third-party RL frameworks because the current project
+uses model-predictive control rather than an Isaac Lab learning framework. Use
+`activate.bat` through `cmd.exe` to ensure the batch installer sees the virtual
+environment:
 
 ```powershell
 $installCommand = "call `"$isaacEnv\Scripts\activate.bat`" && cd /d `"$lab`" && call isaaclab.bat -i none"

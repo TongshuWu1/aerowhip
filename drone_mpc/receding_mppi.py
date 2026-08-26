@@ -20,7 +20,7 @@ import torch
 
 from cable_twin.shared.dder import DderState
 
-from .mpc import MpcProblem
+from .problem import MpcProblem
 from .mppi import MppiPlan, MppiSettings, evaluate_mppi_rollout, optimize_mppi
 from .simulator import (
     DroneCableState,
@@ -568,9 +568,7 @@ def run_receding_horizon_mppi(
                     realized=live_result,
                     realized_cost=last_cost,
                     realized_cost_terms=dict(last_terms),
-                    realized_impact_time_s=float(
-                        accumulated.time_s[last_impact_frame].detach().cpu()
-                    ),
+                    realized_impact_time_s=last_terms["impact_time_s"],
                     terminal_reason=terminal_reason,
                 )
             )
@@ -595,7 +593,7 @@ def run_receding_horizon_mppi(
         updates=tuple(updates),
         cost=last_cost,
         cost_terms=last_terms,
-        impact_time_s=float(accumulated.time_s[last_impact_frame].detach().cpu()),
+        impact_time_s=last_terms["impact_time_s"],
         feasible=bool(last_terms["feasible"]),
         terminal_reason=terminal_reason,
         total_rollouts=sum(update.rollout_count for update in updates),
@@ -692,7 +690,7 @@ def replay_open_loop(
         updates=(),
         cost=last_cost,
         cost_terms=last_terms,
-        impact_time_s=float(accumulated.time_s[last_impact_frame].detach().cpu()),
+        impact_time_s=last_terms["impact_time_s"],
         feasible=bool(last_terms["feasible"]),
         terminal_reason=terminal_reason,
         total_rollouts=0,
@@ -780,7 +778,7 @@ def save_receding_mppi_execution(
         )
     np.savez_compressed(output, **arrays)
     metadata = {
-        "schema": "receding_horizon_dder_mppi_execution_v1",
+        "schema": "receding_horizon_dder_mppi_execution_v2",
         "model_sha256": result.model_sha256,
         "controller_model_sha256": (
             execution.controller_model_sha256 or result.model_sha256

@@ -1,1 +1,6 @@
-casadi>=3.7,<3.8
+# Supported DDER-MPPI and offline-identification runtime.
+numpy>=1.26,<3
+torch>=2.5
+
+# CasADi is intentionally not an active-runtime dependency. Install
+# `casadi>=3.7,<3.8` separately only to reproduce the legacy IPOPT utilities.

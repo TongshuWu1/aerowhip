@@ -283,8 +283,9 @@ class ResearchConsole:
         tk.Label(
             boundary_text,
             text=(
-                "Full ordered marker-position feedback with perfect association; "
-                "online adaptation is not enabled; the plant is acceleration-tracked and not force-coupled."
+                "SIMULATION TESTBED — exact distributed cable state; optional "
+                "between-strike EI/Cb adaptation; no live Motive stream or flight "
+                "commands; the plant is acceleration-tracked and not force-coupled."
             ),
             background="#f5f6f7",
             foreground="#242424",
@@ -301,7 +302,10 @@ class ResearchConsole:
         ).pack(side=tk.LEFT)
         ttk.Label(
             workflow_heading,
-            text="Select a stage to review its method and launch its dedicated tool.",
+            text=(
+                "Identification publishes the physical model used by the "
+                "DDER–MPPI controller and its between-strike adapter."
+            ),
             style="Muted.TLabel",
         ).pack(side=tk.LEFT, padx=(12, 0))
 

@@ -583,7 +583,7 @@ class OptitrackOfflineGui:
         self.unused_button.pack(side=tk.LEFT, padx=(6, 0))
         self.audit_button = ttk.Button(
             parent,
-            text="Check usable windows",
+            text="Audit and exclude unusable takes",
             command=self.start_take_audit,
         )
         self.audit_button.pack(fill=tk.X, pady=(8, 0))
@@ -664,7 +664,7 @@ class OptitrackOfflineGui:
         ttk.Label(
             panel,
             text=(
-                "Fixed 1 s rollouts; strict measurement preflight; "
+                "Fixed 100-frame rollouts (~1 s at 100 Hz); strict preflight; "
                 "every clean window is used"
             ),
             style="Panel.TLabel",
@@ -788,13 +788,27 @@ class OptitrackOfflineGui:
         CSV_DIRECTORY.mkdir(parents=True, exist_ok=True)
         added: list[Path] = []
         try:
+            # Validate the complete selection and every destination before
+            # copying anything.  A collision in the last selected file must
+            # not leave a partially imported experiment.
+            plans: list[tuple[Path, Path]] = []
+            destination_names: set[str] = set()
             for value in selected:
                 source = Path(value).resolve()
                 load_motive_cable_csv(source)
                 destination = (CSV_DIRECTORY / source.name).resolve()
+                if destination.name.lower() in destination_names:
+                    raise FileExistsError(
+                        f"More than one selected take is named {destination.name}."
+                    )
+                destination_names.add(destination.name.lower())
+                if source != destination and destination.exists():
+                    raise FileExistsError(
+                        f"A take named {destination.name} already exists."
+                    )
+                plans.append((source, destination))
+            for source, destination in plans:
                 if source != destination:
-                    if destination.exists():
-                        raise FileExistsError(f"A take named {destination.name} already exists.")
                     shutil.copy2(source, destination)
                 added.append(destination)
         except (OSError, ValueError) as error:
@@ -1144,7 +1158,7 @@ class OptitrackOfflineGui:
         self._clear_log()
         self.fit_status.set("Checking all takes...")
         self._append_log(
-            "Strict preflight: measurement integrity, one-second continuity, "
+            "Strict preflight: measurement integrity, 100-frame continuity, "
             "physical feasibility, and marker-conditioned initialization."
         )
         self._append_log(

@@ -22,7 +22,7 @@ import torch
 import cable_twin.shared.dder as dder
 from cable_twin.shared.dder import DderState, START_PINNED_FREE_END
 from drone_mpc.model import load_cable_model
-from drone_mpc.mpc import MpcProblem
+from drone_mpc.problem import MpcProblem
 from drone_mpc.mppi import interpolate_control_knots, smooth_strike_surrogate
 from drone_mpc.perfect_model import PerfectMpcSettings
 from drone_mpc.simulator import DroneCableState, TensorRollout, WhipSimulator

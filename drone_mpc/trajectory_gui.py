@@ -15,7 +15,7 @@ from optitrack_offline.config import DEFAULT_MODEL_PATH
 from optitrack_offline.viewer import CableCanvas
 
 from .model import CableModelSnapshot, load_cable_model
-from .mpc import MpcProblem
+from .problem import MpcProblem
 from .oracle import (
     ReachabilityResult,
     ReachabilitySettings,

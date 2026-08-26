@@ -484,6 +484,16 @@ class RollingDistributedBuffer:
     def cache(self) -> tuple[AdaptationSegment, ...]:
         return tuple(self._cache)
 
+    def start_new_recording(self) -> None:
+        """End one discontinuous trial while retaining informative history.
+
+        Separate strikes can restart from unrelated initial states.  Recent
+        frames therefore cannot form one segment across that boundary, while
+        the bounded informative cache is deliberately session-persistent.
+        """
+
+        self._recent.clear()
+
     def append(self, observation: DistributedObservation) -> None:
         if self._recent and observation.timestamp_s <= self._recent[-1].timestamp_s:
             raise ValueError("Adaptation observations must arrive in time order.")
@@ -1216,11 +1226,18 @@ class OnlineAdaptationMonitor:
         self.settings = settings
         self.buffer = RollingDistributedBuffer(settings)
         self.ema_error_m2 = 0.0
+        self._ema_initialized = False
         self._last_health_time_s = -math.inf
         self._high_since_s: float | None = None
         self._hysteresis_armed = True
         self._last_trigger_s = -math.inf
+        self._trigger_in_flight = False
         self.diagnostics: list[HealthDiagnostic] = []
+
+    def start_new_recording(self) -> None:
+        """Prevent cross-strike segments without resetting trigger state."""
+
+        self.buffer.start_new_recording()
 
     def append(self, observation: DistributedObservation) -> HealthDiagnostic | None:
         self.buffer.append(observation)
@@ -1248,8 +1265,9 @@ class OnlineAdaptationMonitor:
             - segment.cable_positions_m[-1, 1:]
         )
         error = float(np.mean(final_error[final_mask] ** 2))
-        if not self.diagnostics:
+        if not self._ema_initialized:
             self.ema_error_m2 = error
+            self._ema_initialized = True
         else:
             alpha = self.settings.health_ema_alpha
             self.ema_error_m2 = alpha * self.ema_error_m2 + (1.0 - alpha) * error
@@ -1263,15 +1281,20 @@ class OnlineAdaptationMonitor:
         else:
             self._high_since_s = None
         persistent = (
-            self._hysteresis_armed
-            and self._high_since_s is not None
+            self._high_since_s is not None
             and observation.timestamp_s - self._high_since_s >= self.settings.persistence_s
         )
         excitation = excitation_diagnostic(
             observation, recent[-2] if len(recent) > 1 else None, self.settings
         )
-        if not persistent:
-            reason = "healthy_or_not_persistent"
+        if self.ema_error_m2 <= self.settings.error_high_m2:
+            reason = "healthy"
+        elif not persistent:
+            reason = "persistence_pending"
+        elif self._trigger_in_flight:
+            reason = "fit_in_progress"
+        elif not self._hysteresis_armed:
+            reason = "hysteresis_disarmed"
         elif observation.timestamp_s - self._last_trigger_s < self.settings.cooldown_s:
             reason = "cooldown"
         elif excitation.score < self.settings.minimum_excitation:
@@ -1292,11 +1315,33 @@ class OnlineAdaptationMonitor:
         return diagnostic
 
     def claim_trigger(self, diagnostic: HealthDiagnostic) -> bool:
-        if diagnostic.reason != "fit_candidate":
+        if diagnostic.reason != "fit_candidate" or self._trigger_in_flight:
             return False
         self._last_trigger_s = diagnostic.timestamp_s
         self._hysteresis_armed = False
+        self._trigger_in_flight = True
         return True
+
+    def complete_fit(self, *, published: bool) -> None:
+        """Release one claimed trigger after rejection or atomic publication.
+
+        Cooldown time and the informative cache intentionally survive both
+        outcomes.  A rejected fit may therefore be retried with later data
+        once cooldown expires, without requiring the still-mismatched model to
+        cross the low hysteresis threshold first.  Publication additionally
+        clears the health baseline accumulated under the old parameter
+        generation; the first health prediction for the new generation starts
+        a fresh EMA and persistence interval.
+        """
+
+        if not self._trigger_in_flight:
+            raise RuntimeError("No claimed adaptation trigger is awaiting completion.")
+        self._trigger_in_flight = False
+        self._hysteresis_armed = True
+        if published:
+            self.ema_error_m2 = 0.0
+            self._ema_initialized = False
+            self._high_since_s = None
 
 
 class AsynchronousDistributedAdapter:
