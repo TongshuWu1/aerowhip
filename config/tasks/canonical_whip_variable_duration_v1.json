@@ -1,0 +1,77 @@
+{
+  "schema": "variable_duration_whip_task_v1",
+  "task_id": "canonical_whip_variable_duration_v1",
+  "model_freeze": "MODEL_FREEZE_REMEASURED_GEOMETRY_PRE_MPPI",
+  "initial_state": {
+    "uav_position_m": [0.0, 0.0, 1.5],
+    "uav_velocity_m_s": [0.0, 0.0, 0.0],
+    "yaw_rad": 0.0,
+    "hover_preroll_s": 0.5
+  },
+  "target": {
+    "position_m": [1.0, 0.0, 1.4],
+    "desired_impact_direction": [1.0, 0.0, 0.0],
+    "success_radius_m": 0.05,
+    "minimum_directed_tip_speed_m_s": 4.0,
+    "maximum_impact_direction_error_deg": 30.0,
+    "non_tip_cost_clearance_m": 0.075
+  },
+  "constraints": {
+    "maximum_uav_displacement_m": 0.5,
+    "maximum_uav_speed_m_s": 3.0,
+    "maximum_command_acceleration_m_s2": 20.0
+  },
+  "cem": {
+    "duration_min_s": 0.45,
+    "duration_max_initial_s": 1.2,
+    "duration_max_extended_s": 1.5,
+    "acceleration_knots": 16,
+    "population": 8192,
+    "logical_chunk_size": 2048,
+    "elite_fraction": 0.05,
+    "maximum_iterations": 30,
+    "initial_duration_mean_s": 0.85,
+    "initial_acceleration_std_m_s2": 4.0,
+    "initial_duration_std_s": 0.18,
+    "old_distribution_weight": 0.3,
+    "elite_distribution_weight": 0.7,
+    "acceleration_std_floor_m_s2": 0.25,
+    "duration_std_floor_s": 0.01,
+    "covariance": "full",
+    "covariance_jitter": 1e-8,
+    "maximum_seed_count": 6,
+    "seeds": [42, 43, 44, 45, 46, 47],
+    "strong_tip_error_m": 0.015,
+    "strong_directed_speed_m_s": 4.5,
+    "strong_direction_error_deg": 20.0,
+    "strong_uav_displacement_m": 0.48,
+    "strong_uav_speed_m_s": 2.9,
+    "strong_stale_iterations": 3,
+    "hard_stop_s": 14400.0,
+    "fixed_uav_evaluation_batch_size": 2048
+  },
+  "cost_weights": {
+    "event_position": 4.0,
+    "event_speed_deficiency": 1.0,
+    "event_direction_deficiency": 1.0,
+    "event_non_tip_proximity": 0.25,
+    "command_effort": 0.02,
+    "command_smoothness": 0.05,
+    "final_uav_speed": 0.0,
+    "uav_displacement_violation": 1.0,
+    "uav_speed_violation": 1.0,
+    "success_bonus": 0.0,
+    "invalid_cost": 1000000000.0
+  },
+  "initial_nominal": {
+    "source": "config/tasks/canonical_whip_v1.json structured forward-recoil nominal resampled in normalized time",
+    "source_task": "config/tasks/canonical_whip_v1.json"
+  },
+  "artifact_policy": {
+    "authorization": "SIMULATION_ONLY",
+    "real_flight_authorized": false,
+    "protected_take_id": "fig8vertical_002",
+    "protected_test_evaluation_allowed": false,
+    "email_delivery": "NOT_AVAILABLE_IN_LOCAL_ENVIRONMENT"
+  }
+}

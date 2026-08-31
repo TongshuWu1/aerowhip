@@ -1,0 +1,49 @@
+{
+  "schema": "amortized_cem_diffusion_existing_data_viability_v1",
+  "model_freeze": "MODEL_FREEZE_REMEASURED_GEOMETRY_PRE_MPPI",
+  "seed": 42,
+  "partial_7a_artifact": "data/policy_training/amortized_cem_diffusion_nominal_v1/2026-08-30T141019.803847Z",
+  "milestone_6a_artifact": "data/planning/production_cem_benchmark_v1/2026-08-30T072758.266436Z",
+  "state_bank_artifact": "data/policy_training/oneshot_sac_nominal_v1/2026-08-29T192059.907360Z",
+  "task_config": "config/tasks/canonical_whip_variable_duration_tuned_reward_v1.json",
+  "production_contract_config": "config/planning/production_cem_benchmark_v1.json",
+  "internal_development_fraction": 0.20,
+  "diffusion": {
+    "training_steps": 100,
+    "sampling_steps": 25,
+    "candidates": 32,
+    "ddim_eta": 0.0,
+    "learning_rate": 0.0002,
+    "weight_decay": 0.000001,
+    "batch_size": 1024,
+    "gradient_clip": 1.0,
+    "ema_decay": 0.999,
+    "maximum_updates": 50000,
+    "validation_interval": 500,
+    "minimum_updates": 5000,
+    "plateau_updates": 5000
+  },
+  "scorer": {
+    "learning_rate": 0.0003,
+    "weight_decay": 0.000001,
+    "batch_size": 4096,
+    "maximum_updates": 30000,
+    "validation_interval": 500,
+    "minimum_updates": 5000,
+    "plateau_updates": 4000,
+    "positive_weight_cap": 20.0
+  },
+  "learning_curve_fractions": [0.25, 0.50, 0.75, 1.00],
+  "latency_warmup_queries": 100,
+  "latency_measured_queries": 1000,
+  "prohibitions": {
+    "new_cem_solves": true,
+    "sac": true,
+    "aggregation": true,
+    "architecture_change": true,
+    "theta_randomization": true,
+    "final_test": true,
+    "protected_test": "fig8vertical_002",
+    "hardware": true
+  }
+}

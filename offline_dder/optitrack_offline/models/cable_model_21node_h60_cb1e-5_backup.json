@@ -1,0 +1,202 @@
+{
+  "created_utc": "2026-08-13T06:41:48.730903+00:00",
+  "fit": {
+    "candidate_count": 149,
+    "cb_bounds_n_m2_s": [
+      1e-10,
+      1e-05
+    ],
+    "coarse_best_cb_n_m2_s": 9.999999999999997e-06,
+    "coarse_best_ei_n_m2": 9.999999999999997e-06,
+    "coarse_best_objective": 6.829632088526562,
+    "coarse_grid_steps_per_axis": 7,
+    "coarse_window_count": 64,
+    "ei_bounds_n_m2": [
+      1e-08,
+      0.01
+    ],
+    "elapsed_s": 559.6401435000007,
+    "optimizer": "deterministic_parallel_coarse_to_fine_log_grid",
+    "refinement_grid_steps_per_axis": 5,
+    "robust_scale_m": 0.002,
+    "search_refinement_levels": 3,
+    "selected_full_objective": 6.436935549643114,
+    "training_initialization_rmse_m": 0.0006331802317858311,
+    "training_rollout_rmse_m": 0.019621550942708513,
+    "training_window_count": 220,
+    "validation_initialization_rmse_m": 0.0005048631576643803,
+    "validation_rollout_rmse_m": 0.02765025414133604,
+    "validation_window_count": 46,
+    "window_frames": 60,
+    "window_stride": 60
+  },
+  "measured": {
+    "added_mass_per_marker_kg": 0.0009090909090909093,
+    "bare_cable_mass_kg": 0.007,
+    "diameter_m": 0.0035,
+    "length_m": 0.9610000000000001,
+    "marker_count": 11,
+    "marker_interval_lengths_m": [
+      0.078,
+      0.085,
+      0.1,
+      0.1,
+      0.098,
+      0.1,
+      0.1,
+      0.1,
+      0.1,
+      0.1
+    ],
+    "marker_material_coordinates_m": [
+      0.0,
+      0.078,
+      0.163,
+      0.263,
+      0.363,
+      0.46099999999999997,
+      0.5609999999999999,
+      0.6609999999999999,
+      0.7609999999999999,
+      0.8609999999999999,
+      0.9609999999999999
+    ],
+    "marker_node_indices": [
+      0,
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14,
+      16,
+      18,
+      20
+    ],
+    "rest_shape": "straight",
+    "rod_node_count": 21,
+    "rod_rest_lengths_m": [
+      0.039,
+      0.039,
+      0.0425,
+      0.0425,
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.049,
+      0.049,
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.05
+    ],
+    "rod_segments_per_marker_interval": 2,
+    "rod_vertex_masses_kg": [
+      0.0010511304512345098,
+      0.0002840790842872008,
+      0.0012059171317756127,
+      0.000309573361082206,
+      0.0012459795667391924,
+      0.00036420395421436004,
+      0.0012732948633052694,
+      0.00036420395421436004,
+      0.0012696528237631257,
+      0.0003569198751300728,
+      0.0012696528237631257,
+      0.00036420395421436004,
+      0.0012732948633052694,
+      0.00036420395421436004,
+      0.0012732948633052694,
+      0.00036420395421436004,
+      0.0012732948633052694,
+      0.00036420395421436004,
+      0.0012732948633052694,
+      0.00036420395421436004,
+      0.0010911928861980892
+    ],
+    "torsion": "omitted",
+    "total_instrumented_mass_kg": 0.017
+  },
+  "observation": {
+    "coordinate_transform": "Motive Y-up to project Z-up: (x,-z,y)",
+    "mapping": "marker centres observed at fixed latent-rod material vertices",
+    "observed_rod_node_indices": [
+      0,
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14,
+      16,
+      18,
+      20
+    ],
+    "position_filter": "none",
+    "source": "Motive reconstructed labeled marker trajectories",
+    "velocity_estimator": "local quadratic",
+    "velocity_window_frames": 5
+  },
+  "optimized": {
+    "bending_damping_n_m2_s": 9.999999999999997e-06,
+    "bending_stiffness_n_m2": 3.651741272548376e-05
+  },
+  "schema": "optitrack_latent_torsion_free_rod_v2",
+  "solver": {
+    "constraint_iterations": 16,
+    "gravity_m_s2": [
+      0.0,
+      0.0,
+      -9.80665
+    ],
+    "method": "explicit_der_forces_with_mass_weighted_rattle_projection",
+    "substeps": 24
+  },
+  "sources": [
+    {
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\optitrack_offline\\csv\\Take 1_001.csv",
+      "role": "training",
+      "sha256": "f4276e395349b9ef98c2eab39ded89ad31ff5199aabbe051872118612a012827",
+      "take_name": "Take 1_001"
+    },
+    {
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\optitrack_offline\\csv\\Take 1_002.csv",
+      "role": "training",
+      "sha256": "0226cf38f0dc4289196c061fa5d2610e416b020efe95d5ef16aef8d9c1fb936b",
+      "take_name": "Take 1_002"
+    },
+    {
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\optitrack_offline\\csv\\Take 1_003.csv",
+      "role": "training",
+      "sha256": "f0268701ac9422ff3f60e92fd10020f58a3216f12d6d1051b508f4698082190e",
+      "take_name": "Take 1_003"
+    },
+    {
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\optitrack_offline\\csv\\Take 1_004.csv",
+      "role": "training",
+      "sha256": "2d58d8a21a0c73dcf57d783ca1adc57eaab9269174ddefa7cd036ad441407731",
+      "take_name": "Take 1_004"
+    },
+    {
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\optitrack_offline\\csv\\Take 2_001.csv",
+      "role": "training",
+      "sha256": "bc015116c1db7c53beb30131dfccf6618eb033dc4f55cf099979986d284b72aa",
+      "take_name": "Take 2_001"
+    },
+    {
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\optitrack_offline\\csv\\Take 2_005.csv",
+      "role": "validation",
+      "sha256": "f87833b02f846b340980a447f09f5893b799f5cc09f7ca7c40142ba2a874ebe4",
+      "take_name": "Take 2_005"
+    }
+  ]
+}

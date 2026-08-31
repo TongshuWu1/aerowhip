@@ -1,0 +1,69 @@
+{
+  "schema": "amortized_cem_nominal_pilot_v1",
+  "run_id": "amortized_cem_nominal_pilot_v1",
+  "model_freeze": "MODEL_FREEZE_REMEASURED_GEOMETRY_PRE_MPPI",
+  "task_config": "config/tasks/canonical_whip_variable_duration_tuned_reward_v1.json",
+  "canonical_teacher_artifact": "data/planning_results/canonical_whip_variable_duration_tuned_reward_v1/2026-08-29T160423.856049Z",
+  "state_bank_artifact": "data/policy_training/oneshot_sac_nominal_v1/2026-08-29T192059.907360Z",
+  "seed": 42,
+  "context_dimension": 83,
+  "action_dimension": 49,
+  "physics": "NOMINAL_ONLY",
+  "time_contract": {
+    "maneuver_duration_min_s": 0.45,
+    "maneuver_duration_max_s": 1.20,
+    "evaluation_time_s": 1.50,
+    "after_maneuver": "terminal FullState hold: final position, zero velocity, zero acceleration"
+  },
+  "dataset_pilot": {
+    "training_state_count": 16,
+    "validation_state_count": 8,
+    "test_state_count": 8,
+    "targets_per_state": 2,
+    "include_canonical_training_context": true,
+    "target_offset_half_width_m": [0.035, 0.035, 0.020],
+    "split_state_overlap_allowed": false,
+    "teacher_labels_required_to_pass_batch_one_replay": true
+  },
+  "teacher_cem": {
+    "population": 2048,
+    "elite_fraction": 0.05,
+    "maximum_iterations": 15,
+    "minimum_iterations_after_success": 3,
+    "initial_acceleration_std_m_s2": 1.0,
+    "initial_duration_std_s": 0.025,
+    "acceleration_std_floor_m_s2": 0.15,
+    "duration_std_floor_s": 0.005,
+    "old_distribution_weight": 0.30,
+    "elite_distribution_weight": 0.70,
+    "duration_max_s": 1.20,
+    "evaluation_time_s": 1.50,
+    "warm_start_family": "canonical tuned CEM seed 46",
+    "cross_split_solution_warm_start": false
+  },
+  "supervised_actor": {
+    "hidden": [256, 256, 256],
+    "activation": "SiLU",
+    "output": "tanh normalized complete maneuver",
+    "learning_rate": 0.0003,
+    "weight_decay": 0.00001,
+    "batch_size": 32,
+    "maximum_epochs": 5000,
+    "patience_epochs": 500,
+    "loss": "normalized acceleration MSE + normalized duration MSE"
+  },
+  "success_policy": {
+    "primary_metric": "held-out production-simulator scientific hard success rate",
+    "pilot_pass_minimum_test_success_rate": 0.50,
+    "action_mse_is_primary": false
+  },
+  "artifact_policy": {
+    "simulation_only": true,
+    "real_flight_authorized": false,
+    "protected_test_id": "fig8vertical_002",
+    "protected_test_evaluation_allowed": false,
+    "sac_used": false,
+    "cem_used_online": false,
+    "theta_randomization": false
+  }
+}

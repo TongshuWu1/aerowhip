@@ -1,0 +1,95 @@
+{
+  "attachment_offset_body_m": [
+    0.0,
+    0.0,
+    -0.055
+  ],
+  "attachment_tangent_body": [
+    0.0,
+    0.0,
+    -1.0
+  ],
+  "cable": {
+    "bare_cable_mass_kg": 0.007,
+    "constraint_iterations": 4,
+    "diameter_m": 0.0035,
+    "gravity_m_s2": [
+      0.0,
+      0.0,
+      -9.80665
+    ],
+    "marker_interval_lengths_m": [
+      0.063,
+      0.087,
+      0.1,
+      0.1,
+      0.1,
+      0.1,
+      0.1,
+      0.1025,
+      0.1,
+      0.1
+    ],
+    "moving_marker_masses_kg": [
+      0.000909091,
+      0.000909091,
+      0.000909091,
+      0.000909091,
+      0.000909091,
+      0.000909091,
+      0.000909091,
+      0.000909091,
+      0.000909091,
+      0.000909091
+    ],
+    "segments_per_marker_interval": [
+      2,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "substeps": 3
+  },
+  "debug_trajectories": {
+    "aggressive_amplitude_m": 0.28,
+    "aggressive_frequency_hz": 1.15,
+    "attitude_amplitude_deg": 10.0,
+    "attitude_frequency_hz": 0.5,
+    "sinusoidal_amplitude_m": 0.15,
+    "sinusoidal_frequency_hz": 0.6
+  },
+  "parameters": {
+    "cable": {
+      "Cb": 0.0027704569956681496,
+      "EI": 9.225797579462985e-05
+    },
+    "uav": {
+      "K_R": 69.18419375930429,
+      "K_omega": 11.456583174321011,
+      "K_p": 4.020097778647703,
+      "K_v": 12.05728865003419,
+      "k_a": 0.7327301468333923
+    }
+  },
+  "simulation": {
+    "device": "auto",
+    "dt_s": 0.01,
+    "initial_uav_orientation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "initial_uav_position_m": [
+      0.0,
+      0.0,
+      1.25
+    ]
+  }
+}

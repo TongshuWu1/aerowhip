@@ -1,0 +1,73 @@
+{
+  "schema": "amortized_cem_diffusion_nominal_v1",
+  "run_id": "amortized_cem_diffusion_nominal_v1",
+  "model_freeze": "MODEL_FREEZE_REMEASURED_GEOMETRY_PRE_MPPI",
+  "task_config": "config/tasks/canonical_whip_variable_duration_tuned_reward_v1.json",
+  "production_cem_config": "config/planning/production_cem_benchmark_v1.json",
+  "state_bank_artifact": "data/policy_training/oneshot_sac_nominal_v1/2026-08-29T192059.907360Z",
+  "fixed_numerical_batch_size": 2048,
+  "seed": 42,
+  "teacher": {
+    "train_states": 256,
+    "validation_states": 64,
+    "test_states": 64,
+    "targets_per_state": 2,
+    "maximum_seeds_per_context": 3,
+    "base_seed": 700000,
+    "population_rows_per_context": 512,
+    "authoritative_top_n": 32
+  },
+  "target_domain_local_m": {
+    "x": [0.85, 1.05],
+    "y": [-0.15, 0.15],
+    "z": [-0.12, 0.02]
+  },
+  "diffusion": {
+    "training_steps": 100,
+    "sampling_steps": 25,
+    "candidates": 32,
+    "ddim_eta": 0.0,
+    "learning_rate": 0.0002,
+    "weight_decay": 0.000001,
+    "batch_size": 1024,
+    "gradient_clip": 1.0,
+    "ema_decay": 0.999,
+    "maximum_updates": 100000,
+    "validation_interval": 1000,
+    "minimum_updates": 20000,
+    "plateau_updates": 10000
+  },
+  "scorer": {
+    "learning_rate": 0.0003,
+    "weight_decay": 0.000001,
+    "batch_size": 4096,
+    "maximum_updates": 50000,
+    "validation_interval": 1000,
+    "minimum_updates": 10000,
+    "plateau_updates": 8000,
+    "positive_weight_cap": 20.0
+  },
+  "aggregation": {
+    "maximum_rounds": 3,
+    "fresh_contexts_per_round": 1024,
+    "maximum_cem_queries_per_round": 128,
+    "early_stop_validation_success": 0.90,
+    "early_stop_oracle_success": 0.95,
+    "required_consecutive_rounds": 2
+  },
+  "acceptance": {
+    "heldout_selected_success": 0.90,
+    "heldout_feasibility": 0.95,
+    "oracle_best_of_32": 0.95,
+    "target_conditioning_success": 0.85,
+    "state_conditioning_success": 0.85
+  },
+  "prohibitions": {
+    "sac": true,
+    "online_cem": true,
+    "online_simulator": true,
+    "theta_randomization": true,
+    "protected_test": "fig8vertical_002",
+    "hardware": true
+  }
+}

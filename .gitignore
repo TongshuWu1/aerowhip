@@ -22,3 +22,11 @@ optitrack_offline/models/*
 !optitrack_offline/models/cable_model.json
 optitrack_offline/take_roles.json
 optitrack_offline/validation_results/
+offline_dder/optitrack_offline/csv/
+offline_dder/optitrack_offline/diagnostics/
+offline_dder/optitrack_offline/validation_results/
+/data/**
+!/data/README.md
+/legacy/current_baseline_2026-08-27/
+/reports/**/*.json
+/reports/**/*.png

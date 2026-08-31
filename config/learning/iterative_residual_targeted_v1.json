@@ -1,0 +1,46 @@
+{
+  "schema": "iterative_residual_targeted_v1",
+  "model_freeze": "MODEL_FREEZE_REMEASURED_GEOMETRY_PRE_MPPI",
+  "milestone_6a_artifact": "data/planning/production_cem_benchmark_v1/2026-08-30T072758.266436Z",
+  "milestone_7b_artifact": "data/policy_training/structured_cem_residual_policy_v1/2026-08-30T205614.302632Z",
+  "milestone_7c_artifact": "data/policy_training/cem_teacher_robustness_audit_v1/2026-08-30T213030.839170Z",
+  "source_irp_artifact": "data/policy_training/iterative_residual_policy_v1/2026-08-31T020938.224872Z",
+  "production_contract_config": "config/planning/production_cem_benchmark_v1.json",
+  "task_config": "config/tasks/canonical_whip_variable_duration_tuned_reward_v1.json",
+  "state_bank_artifact": "data/policy_training/oneshot_sac_nominal_v1/2026-08-29T192059.907360Z",
+  "seed": 42,
+  "targeted_data": {
+    "training_failed_contexts": 64,
+    "development_failed_contexts": 24,
+    "candidates_per_context": 256,
+    "coordinate_rms_scales": [0.04, 0.02, 0.01, 0.005, 0.0025],
+    "trajectory_stride_steps": 10
+  },
+  "fine_tuning": {
+    "hidden_dimension": 384,
+    "learning_rate": 0.0001,
+    "weight_decay": 0.000001,
+    "batch_size": 2048,
+    "maximum_updates": 4000,
+    "minimum_updates": 1000,
+    "validation_interval": 200,
+    "patience_updates": 1200,
+    "gradient_clip": 1.0,
+    "original_data_fraction": 0.5
+  },
+  "residual_search": {
+    "basis_rank": 13,
+    "candidate_count": 1024,
+    "maximum_iterations": 5,
+    "coordinate_rms_scales": [0.02, 0.01, 0.005, 0.0025]
+  },
+  "prohibitions": {
+    "new_cem_solves": true,
+    "sac": true,
+    "diffusion": true,
+    "final_test": true,
+    "protected_test": "fig8vertical_002",
+    "theta_randomization": true,
+    "hardware": true
+  }
+}

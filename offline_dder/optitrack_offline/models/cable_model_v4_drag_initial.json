@@ -1,0 +1,677 @@
+{
+  "boundary_condition": {
+    "current_dataset": "two rigid-body pivots plus nine interior markers",
+    "endpoint_material_axis": "calibrated rigid-body local +Y",
+    "endpoint_position": "Motive rigid-body pivot at cable material endpoint",
+    "endpoint_tangent_axis": "calibrated rigid-body local +X",
+    "terminal_orientation_observed": true,
+    "twist_branch": "principal relative angle unwrapped continuously over each take; simulation carries the nearest 2*pi branch"
+  },
+  "created_utc": "2026-08-18T18:28:59.302700+00:00",
+  "endpoint_calibration": {
+    "absorbed_rest_twist_rad": 2.997188334788906,
+    "complete_duration_s": 12.620000000000001,
+    "complete_frame_count": 1263,
+    "correction_matrices": [
+      [
+        [
+          -0.1504365942839243,
+          -0.8636284173502669,
+          0.48115983606835616
+        ],
+        [
+          -0.9851652043944814,
+          0.17160862462095808,
+          2.466392315940078e-06
+        ],
+        [
+          -0.08257330773702865,
+          -0.4740215572110368,
+          -0.8766328833374831
+        ]
+      ],
+      [
+        [
+          0.5753849869739908,
+          0.7903370886816518,
+          -0.21047423362290688
+        ],
+        [
+          0.8160521987155623,
+          -0.5719696722957297,
+          0.08312341995738216
+        ],
+        [
+          -0.054689356701609286,
+          -0.21958592903035795,
+          -0.9740590813885154
+        ]
+      ]
+    ],
+    "endpoint_rigid_body_names": [
+      "endpoint1",
+      "endpoint2"
+    ],
+    "export_rate_hz": 100.0,
+    "method": "static tangent alignment plus relaxed relative-twist zero; right multiplication maps Motive holder frames to cable frames",
+    "position_jitter_rmse_m": 0.002371041956665415,
+    "residual_twist_rms_rad": 0.005305102685240386,
+    "schema": "optitrack_endpoint_frame_calibration_v1",
+    "source": {
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\optitrack_offline\\csv\\calibration1_003.csv",
+      "sha256": "4f51d86725ba5cee7f9912c094144883b6edd6539b4c9b31b8a3441c2e3252da",
+      "take_name": "calibration1_003"
+    },
+    "tangent_alignment_rms_rad": 0.009540195684362101
+  },
+  "fit": {
+    "ambient_drag_ablation": {
+      "method": "same selected EI, GJ and Cb; only ambient drag is set to zero",
+      "no_drag_training_objective": 10.779449621347013,
+      "no_drag_training_rmse_m": 0.028924916310070204,
+      "no_drag_validation_rmse_m": 0.03318279675817466,
+      "selected_drag_training_rmse_m": 0.028126338995252152,
+      "selected_drag_validation_rmse_m": 0.03246703217895211
+    },
+    "bending_damping_integrator": "backward Euler solve of the exact fixed-geometry Kelvin-Voigt objective corotational curvature-rate operator at every dynamics substep",
+    "best_iteration": 5,
+    "cb_bounds_n_m2_s": [
+      1e-10,
+      1.5e-05
+    ],
+    "completed_iterations": 13,
+    "ei_bounds_n_m2": [
+      1e-08,
+      0.0004
+    ],
+    "elapsed_s": 1003.6402654999983,
+    "external_drag_bounds_s_inv": [
+      0.05,
+      5.0
+    ],
+    "gj_bounds_n_m2": [
+      1e-09,
+      0.01
+    ],
+    "local_identifiability_profile": {
+      "bending_damping_n_m2_s": {
+        "lower_objective": 10.655353277146396,
+        "lower_value": 1.2748533997767082e-05,
+        "minimum_relative_objective_change": 0.0014145917632235128,
+        "selected_objective": 10.596425219677839,
+        "selected_value": 1.4089309022430852e-05,
+        "upper_objective": 10.581435603842468,
+        "upper_value": 1.5e-05
+      },
+      "bending_stiffness_n_m2": {
+        "lower_objective": 10.599946542841655,
+        "lower_value": 8.664501795216224e-05,
+        "minimum_relative_objective_change": 0.0003323123686351803,
+        "selected_objective": 10.596425219677839,
+        "selected_value": 9.575755403687212e-05,
+        "upper_objective": 10.621428196071035,
+        "upper_value": 0.00010582846390760842
+      },
+      "external_drag_s_inv": {
+        "lower_objective": 10.601054450156788,
+        "lower_value": 0.4382814626834864,
+        "minimum_relative_objective_change": 0.0004368671870917988,
+        "selected_objective": 10.596425219677839,
+        "selected_value": 0.4843759264894464,
+        "upper_objective": 10.61340841451078,
+        "upper_value": 0.5353181873720839
+      },
+      "torsional_stiffness_n_m2": {
+        "lower_objective": 10.658293396042414,
+        "lower_value": 9.974923122572986e-05,
+        "minimum_relative_objective_change": 0.0003791166466249565,
+        "selected_objective": 10.596425219677839,
+        "selected_value": 0.00011023994945107993,
+        "upper_objective": 10.600442500873335,
+        "upper_value": 0.000121833986143463
+      }
+    },
+    "offline_constraint_solver": "batched dense exact solve of the symmetric tridiagonal RATTLE multiplier system",
+    "optimizer": "adam_differentiated_through_complete_der_rollouts",
+    "optimizer_batch": "all training windows with equal total weight per take",
+    "optimizer_early_stop": "8 iterations without 1e-4 relative Training-objective improvement",
+    "optimizer_gradient_clip_norm": 10.0,
+    "optimizer_history": [
+      {
+        "bending_damping_n_m2_s": 1.3962861437505782e-05,
+        "bending_stiffness_n_m2": 9.403414661199402e-05,
+        "external_drag_s_inv": 0.5,
+        "iteration": 1,
+        "log_parameter_gradient_norm": 12.145766841116718,
+        "objective": 10.608535021747663,
+        "rmse_m": 0.02824195340373427,
+        "torsional_stiffness_n_m2": 0.00011438242255903323
+      },
+      {
+        "bending_damping_n_m2_s": 1.382392864586454e-05,
+        "bending_stiffness_n_m2": 9.497920549594108e-05,
+        "external_drag_s_inv": 0.4950249168880885,
+        "iteration": 2,
+        "log_parameter_gradient_norm": 103.04017869252743,
+        "objective": 10.61714878588235,
+        "rmse_m": 0.028211420407276703,
+        "torsional_stiffness_n_m2": 0.00011324429844156144
+      },
+      {
+        "bending_damping_n_m2_s": 1.3903044869367674e-05,
+        "bending_stiffness_n_m2": 9.502709209851002e-05,
+        "external_drag_s_inv": 0.4911225012430524,
+        "iteration": 3,
+        "log_parameter_gradient_norm": 7.042315606626556,
+        "objective": 10.602642678185246,
+        "rmse_m": 0.028135584630448237,
+        "torsional_stiffness_n_m2": 0.00011211640732321664
+      },
+      {
+        "bending_damping_n_m2_s": 1.4008209647055948e-05,
+        "bending_stiffness_n_m2": 9.529630265936878e-05,
+        "external_drag_s_inv": 0.487775641775811,
+        "iteration": 4,
+        "log_parameter_gradient_norm": 7.828948934286499,
+        "objective": 10.602396390033975,
+        "rmse_m": 0.02814211341764759,
+        "torsional_stiffness_n_m2": 0.00011121333373648401
+      },
+      {
+        "bending_damping_n_m2_s": 1.4089309022430852e-05,
+        "bending_stiffness_n_m2": 9.575755403687212e-05,
+        "external_drag_s_inv": 0.4843759264894464,
+        "iteration": 5,
+        "log_parameter_gradient_norm": 17.956986758418463,
+        "objective": 10.596425219677839,
+        "rmse_m": 0.028126338995252152,
+        "torsional_stiffness_n_m2": 0.00011023994945107993
+      },
+      {
+        "bending_damping_n_m2_s": 1.4125414604353563e-05,
+        "bending_stiffness_n_m2": 9.634661669861027e-05,
+        "external_drag_s_inv": 0.48158519850401843,
+        "iteration": 6,
+        "log_parameter_gradient_norm": 675.3066016340522,
+        "objective": 10.651004522250908,
+        "rmse_m": 0.028380712720672975,
+        "torsional_stiffness_n_m2": 0.00010923499991645026
+      },
+      {
+        "bending_damping_n_m2_s": 1.413384346562025e-05,
+        "bending_stiffness_n_m2": 9.704688558026844e-05,
+        "external_drag_s_inv": 0.4789823433692088,
+        "iteration": 7,
+        "log_parameter_gradient_norm": 653.6377539999587,
+        "objective": 10.608085114236463,
+        "rmse_m": 0.028187360908547288,
+        "torsional_stiffness_n_m2": 0.00010852649694945375
+      },
+      {
+        "bending_damping_n_m2_s": 1.417410615492407e-05,
+        "bending_stiffness_n_m2": 9.742344700640692e-05,
+        "external_drag_s_inv": 0.47667611993046527,
+        "iteration": 8,
+        "log_parameter_gradient_norm": 1069.654278678986,
+        "objective": 10.624341244001794,
+        "rmse_m": 0.028246838077826582,
+        "torsional_stiffness_n_m2": 0.00010820229583622434
+      },
+      {
+        "bending_damping_n_m2_s": 1.4242228185636058e-05,
+        "bending_stiffness_n_m2": 9.756544530121325e-05,
+        "external_drag_s_inv": 0.47466389980475837,
+        "iteration": 9,
+        "log_parameter_gradient_norm": 47.067477007113084,
+        "objective": 10.598034754856492,
+        "rmse_m": 0.028136458548387887,
+        "torsional_stiffness_n_m2": 0.00010801938758545577
+      },
+      {
+        "bending_damping_n_m2_s": 1.4276197278379557e-05,
+        "bending_stiffness_n_m2": 9.786846363842886e-05,
+        "external_drag_s_inv": 0.4732013020130231,
+        "iteration": 10,
+        "log_parameter_gradient_norm": 66979.42937158766,
+        "objective": 10.616047908142207,
+        "rmse_m": 0.028231827711212527,
+        "torsional_stiffness_n_m2": 0.00010795903928585989
+      },
+      {
+        "bending_damping_n_m2_s": 1.4339308841635103e-05,
+        "bending_stiffness_n_m2": 9.801871529253222e-05,
+        "external_drag_s_inv": 0.4718743981018234,
+        "iteration": 11,
+        "log_parameter_gradient_norm": 6573.089823591371,
+        "objective": 10.603153479415788,
+        "rmse_m": 0.028134339671535277,
+        "torsional_stiffness_n_m2": 0.00010794567220452696
+      },
+      {
+        "bending_damping_n_m2_s": 1.4370253783417544e-05,
+        "bending_stiffness_n_m2": 9.830020215643352e-05,
+        "external_drag_s_inv": 0.4710895774130207,
+        "iteration": 12,
+        "log_parameter_gradient_norm": 96.84976049239346,
+        "objective": 10.648627495585934,
+        "rmse_m": 0.028376525385362294,
+        "torsional_stiffness_n_m2": 0.0001080654333523926
+      },
+      {
+        "bending_damping_n_m2_s": 1.4373037933450244e-05,
+        "bending_stiffness_n_m2": 9.839571275015064e-05,
+        "external_drag_s_inv": 0.4699289669539024,
+        "iteration": 13,
+        "log_parameter_gradient_norm": 159.7338588611742,
+        "objective": 10.649986823377512,
+        "rmse_m": 0.02839685394642125,
+        "torsional_stiffness_n_m2": 0.00010824941300391019
+      }
+    ],
+    "optimizer_initialization": {
+      "bending_damping_n_m2_s": 1.3962861437505782e-05,
+      "bending_stiffness_n_m2": 9.403414661199402e-05,
+      "external_drag_s_inv": 0.5,
+      "method": "compatible prior fitted model",
+      "source_model_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\optitrack_offline\\models\\cable_model.json",
+      "source_model_sha256": "7abad05c91ea70942d5e2e3a234c4af823adf3c4b491fa850048532bf4615a5e",
+      "torsional_stiffness_n_m2": 0.00011438242255903323
+    },
+    "optimizer_iterations": 20,
+    "optimizer_learning_rate": 0.01,
+    "parameter_bound_status": {
+      "bending_damping_n_m2_s": "interior",
+      "bending_stiffness_n_m2": "interior",
+      "external_drag_s_inv": "interior",
+      "torsional_stiffness_n_m2": "interior"
+    },
+    "parameterization": "projected logarithmic EI, GJ, Cb and ambient drag",
+    "robust_scale_m": 0.002,
+    "selected_training_objective": 10.596425219677839,
+    "terminal_twist_tracking": "principal DER twist unwrapped separately over each contiguous valid run; simulation carries the nearest continuous 2*pi branch",
+    "training_initialization_rmse_m": 0.0003437505121986494,
+    "training_rmse_by_take_m": {
+      "Take1_001.csv": 0.018284542113053925,
+      "Take1_002.csv": 0.02782496111289883,
+      "Take1_003.csv": 0.030788860486402506,
+      "Take1_004.csv": 0.022525923220549693,
+      "take2_001.csv": 0.032544581546543466,
+      "take2_003.csv": 0.030109806181902517,
+      "take2_004.csv": 0.029950536808629427,
+      "take2_005.csv": 0.030033624531892292
+    },
+    "training_rollout_rmse_m": 0.028126338995252152,
+    "training_window_count": 104,
+    "training_windows_by_take": {
+      "Take1_001.csv": 4,
+      "Take1_002.csv": 13,
+      "Take1_003.csv": 11,
+      "Take1_004.csv": 9,
+      "take2_001.csv": 13,
+      "take2_003.csv": 23,
+      "take2_004.csv": 15,
+      "take2_005.csv": 16
+    },
+    "validation_initialization_rmse_m": 0.0003652123949191416,
+    "validation_rmse_by_take_m": {
+      "take2_002.csv": 0.03246703217895211
+    },
+    "validation_rollout_rmse_m": 0.03246703217895211,
+    "validation_window_count": 21,
+    "window_frames": 100,
+    "window_stride": 100
+  },
+  "measured": {
+    "bare_cable_mass_kg": 0.007,
+    "diameter_m": 0.0035,
+    "interior_marker_count": 9,
+    "interior_marker_masses_kg": [
+      0.000909091,
+      0.000909091,
+      0.000909091,
+      0.000909091,
+      0.000909091,
+      0.000909091,
+      0.000909091,
+      0.000909091,
+      0.000909091
+    ],
+    "length_m": 0.9610000000000001,
+    "marker_count": 11,
+    "marker_interval_lengths_m": [
+      0.078,
+      0.085,
+      0.1,
+      0.1,
+      0.098,
+      0.1,
+      0.1,
+      0.1,
+      0.1,
+      0.1
+    ],
+    "marker_material_coordinates_m": [
+      0.0,
+      0.078,
+      0.163,
+      0.263,
+      0.363,
+      0.46099999999999997,
+      0.5609999999999999,
+      0.6609999999999999,
+      0.7609999999999999,
+      0.8609999999999999,
+      0.9609999999999999
+    ],
+    "marker_node_indices": [
+      0,
+      2,
+      4,
+      6,
+      8,
+      10,
+      12,
+      14,
+      16,
+      18,
+      20
+    ],
+    "node_count": 21,
+    "rest_lengths_m": [
+      0.039,
+      0.039,
+      0.0425,
+      0.0425,
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.049,
+      0.049,
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.05
+    ],
+    "rest_shape": "straight",
+    "rod_material_coordinates_m": [
+      0.0,
+      0.039,
+      0.078,
+      0.1205,
+      0.163,
+      0.21300000000000002,
+      0.263,
+      0.313,
+      0.363,
+      0.412,
+      0.46099999999999997,
+      0.511,
+      0.561,
+      0.6110000000000001,
+      0.6610000000000001,
+      0.7110000000000002,
+      0.7610000000000002,
+      0.8110000000000003,
+      0.8610000000000003,
+      0.9110000000000004,
+      0.9610000000000004
+    ],
+    "rod_segments_per_marker_interval": 2,
+    "torsion": "quasi-static homogeneous DER material twist with continuous 2*pi branch tracking",
+    "total_dynamic_mass_kg": 0.015181819,
+    "vertex_masses_kg": [
+      0.0001420395421436004,
+      0.0002840790842872008,
+      0.0012059172226847035,
+      0.000309573361082206,
+      0.001245979657648283,
+      0.00036420395421436004,
+      0.00127329495421436,
+      0.00036420395421436004,
+      0.0012696529146722165,
+      0.0003569198751300728,
+      0.0012696529146722165,
+      0.00036420395421436004,
+      0.00127329495421436,
+      0.00036420395421436004,
+      0.00127329495421436,
+      0.00036420395421436004,
+      0.00127329495421436,
+      0.00036420395421436004,
+      0.00127329495421436,
+      0.00036420395421436004,
+      0.00018210197710718002
+    ]
+  },
+  "measurement_quality": {
+    "maximum_chord_excess_m": 0.005,
+    "maximum_endpoint_angular_speed_rad_s": 35.0,
+    "maximum_endpoint_speed_m_s": 5.0,
+    "maximum_initialization_rmse_m": 0.005,
+    "maximum_marker_speed_m_s": 5.0,
+    "maximum_rigid_body_error_m": 0.005,
+    "training_rejections": {
+      "Take1_001.csv": {
+        "endpoint_angular_speed": 2,
+        "endpoint_speed": 2,
+        "marker_speed": 2,
+        "overlong_marker_chord": 7,
+        "rigid_body_error": 0
+      },
+      "Take1_002.csv": {
+        "endpoint_angular_speed": 0,
+        "endpoint_speed": 0,
+        "marker_speed": 0,
+        "overlong_marker_chord": 5,
+        "rigid_body_error": 0
+      },
+      "Take1_003.csv": {
+        "endpoint_angular_speed": 2,
+        "endpoint_speed": 0,
+        "marker_speed": 0,
+        "overlong_marker_chord": 5,
+        "rigid_body_error": 0
+      },
+      "Take1_004.csv": {
+        "endpoint_angular_speed": 2,
+        "endpoint_speed": 0,
+        "marker_speed": 2,
+        "overlong_marker_chord": 9,
+        "rigid_body_error": 0
+      },
+      "take2_001.csv": {
+        "endpoint_angular_speed": 8,
+        "endpoint_speed": 11,
+        "marker_speed": 11,
+        "overlong_marker_chord": 75,
+        "rigid_body_error": 0
+      },
+      "take2_003.csv": {
+        "endpoint_angular_speed": 6,
+        "endpoint_speed": 0,
+        "marker_speed": 0,
+        "overlong_marker_chord": 7,
+        "rigid_body_error": 0
+      },
+      "take2_004.csv": {
+        "endpoint_angular_speed": 4,
+        "endpoint_speed": 12,
+        "marker_speed": 12,
+        "overlong_marker_chord": 138,
+        "rigid_body_error": 0
+      },
+      "take2_005.csv": {
+        "endpoint_angular_speed": 30,
+        "endpoint_speed": 10,
+        "marker_speed": 10,
+        "overlong_marker_chord": 147,
+        "rigid_body_error": 0
+      }
+    },
+    "validation_rejections": {
+      "take2_002.csv": {
+        "endpoint_angular_speed": 15,
+        "endpoint_speed": 4,
+        "marker_speed": 4,
+        "overlong_marker_chord": 3,
+        "rigid_body_error": 0
+      }
+    }
+  },
+  "observation": {
+    "coordinate_transform": "Motive Y-up to project Z-up: (x,-z,y)",
+    "latent_node_initialization": "measured-site-conditioned equal-edge circular arcs; measured sites move only when a noisy chord exceeds its material interval",
+    "mapping": "eleven measured material points select marker_node_indices from the refined DER state",
+    "position_filter": "none",
+    "source": "Motive reconstructed labeled marker trajectories",
+    "training_take_weighting": "mean over time and interior markers within each window, mean over windows within each take, then mean over takes",
+    "training_velocity_estimator": "centered local quadratic",
+    "validation_velocity_estimator": "causal local quadratic",
+    "velocity_window_frames": 5
+  },
+  "optimized": {
+    "bending_damping_n_m2_s": 1.4089309022430852e-05,
+    "bending_stiffness_n_m2": 9.575755403687212e-05,
+    "external_drag_s_inv": 0.4843759264894464,
+    "torsional_stiffness_n_m2": 0.00011023994945107993
+  },
+  "schema": "optitrack_twist_aware_rod_v4",
+  "solver": {
+    "ambient_drag": "single homogeneous mass-proportional linear velocity drag, integrated exactly over each substep",
+    "constraint_iterations": 8,
+    "gravity_m_s2": [
+      0.0,
+      0.0,
+      -9.80665
+    ],
+    "method": "explicit_elastic_der_forces, implicit_kelvin_voigt_damping, mass_weighted_rattle_projection",
+    "substeps": 3
+  },
+  "sources": [
+    {
+      "capture_rate_hz": 100.0,
+      "endpoint_rigid_body_names": [
+        "endpoint1",
+        "endpoint2"
+      ],
+      "export_rate_hz": 100.0,
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\optitrack_offline\\csv\\Take1_001.csv",
+      "role": "training",
+      "sha256": "411365695b8a2b94cc9a17d0a90a6e847bb80c42cc16fabe947ff7b5866c4c57",
+      "take_name": "Take1_001"
+    },
+    {
+      "capture_rate_hz": 100.0,
+      "endpoint_rigid_body_names": [
+        "endpoint1",
+        "endpoint2"
+      ],
+      "export_rate_hz": 100.0,
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\optitrack_offline\\csv\\Take1_002.csv",
+      "role": "training",
+      "sha256": "d842f94333797b77bfa6387d220c30834839de35f97d1e2ba64fa8bad0aebfc5",
+      "take_name": "Take1_002"
+    },
+    {
+      "capture_rate_hz": 100.0,
+      "endpoint_rigid_body_names": [
+        "endpoint1",
+        "endpoint2"
+      ],
+      "export_rate_hz": 100.0,
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\optitrack_offline\\csv\\Take1_003.csv",
+      "role": "training",
+      "sha256": "c42de6b4887c4110430545280fbe6ecf5cb650eca49a976320cd6e01c5562090",
+      "take_name": "Take1_003"
+    },
+    {
+      "capture_rate_hz": 100.0,
+      "endpoint_rigid_body_names": [
+        "endpoint1",
+        "endpoint2"
+      ],
+      "export_rate_hz": 100.0,
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\optitrack_offline\\csv\\Take1_004.csv",
+      "role": "training",
+      "sha256": "0e3dd23d9a05da41c6b18726dc7e1a4b2bb7b773905fbc73b28522e2e92981c0",
+      "take_name": "Take1_004"
+    },
+    {
+      "capture_rate_hz": 100.0,
+      "endpoint_rigid_body_names": [
+        "endpoint1",
+        "endpoint2"
+      ],
+      "export_rate_hz": 100.0,
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\optitrack_offline\\csv\\take2_001.csv",
+      "role": "training",
+      "sha256": "ce1d1f253561139efaff475a5e3037db4f4e510fd1b51ccf685038a90de40213",
+      "take_name": "take2_001"
+    },
+    {
+      "capture_rate_hz": 100.0,
+      "endpoint_rigid_body_names": [
+        "endpoint1",
+        "endpoint2"
+      ],
+      "export_rate_hz": 100.0,
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\optitrack_offline\\csv\\take2_003.csv",
+      "role": "training",
+      "sha256": "a817c772492ba62c00aa234417e43d4eaeb4b8dff6d2e26385610268a93286f1",
+      "take_name": "take2_003"
+    },
+    {
+      "capture_rate_hz": 100.0,
+      "endpoint_rigid_body_names": [
+        "endpoint1",
+        "endpoint2"
+      ],
+      "export_rate_hz": 100.0,
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\optitrack_offline\\csv\\take2_004.csv",
+      "role": "training",
+      "sha256": "5e8b223992a216cffb64ace0102c36dd16e9638593052a7d57ea86a0fa6a678e",
+      "take_name": "take2_004"
+    },
+    {
+      "capture_rate_hz": 100.0,
+      "endpoint_rigid_body_names": [
+        "endpoint1",
+        "endpoint2"
+      ],
+      "export_rate_hz": 100.0,
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\optitrack_offline\\csv\\take2_005.csv",
+      "role": "training",
+      "sha256": "14e0e6e1625780cd2b307942bf3f57bf0d6f3574715b080aae4aa7532b59e920",
+      "take_name": "take2_005"
+    },
+    {
+      "capture_rate_hz": 100.0,
+      "endpoint_rigid_body_names": [
+        "endpoint1",
+        "endpoint2"
+      ],
+      "export_rate_hz": 100.0,
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\optitrack_offline\\csv\\take2_002.csv",
+      "role": "validation",
+      "sha256": "a06f4b6505f99c588f965475e6e7eb35d095839d08199448272ef63cc3d5723c",
+      "take_name": "take2_002"
+    },
+    {
+      "endpoint_rigid_body_names": [
+        "endpoint1",
+        "endpoint2"
+      ],
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\optitrack_offline\\csv\\calibration1_003.csv",
+      "role": "calibration",
+      "sha256": "4f51d86725ba5cee7f9912c094144883b6edd6539b4c9b31b8a3441c2e3252da",
+      "take_name": "calibration1_003"
+    }
+  ]
+}

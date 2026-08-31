@@ -1,0 +1,74 @@
+{
+  "schema": "canonical_whip_task_v1",
+  "task_id": "canonical_whip_v1",
+  "model_freeze": "MODEL_FREEZE_REMEASURED_GEOMETRY_PRE_MPPI",
+  "initial_state": {
+    "uav_position_m": [0.0, 0.0, 1.5],
+    "uav_velocity_m_s": [0.0, 0.0, 0.0],
+    "yaw_rad": 0.0,
+    "hover_preroll_s": 0.5
+  },
+  "target": {
+    "position_m": [1.0, 0.0, 1.4],
+    "desired_impact_direction": [1.0, 0.0, 0.0],
+    "success_radius_m": 0.05,
+    "minimum_directed_tip_speed_m_s": 4.0,
+    "maximum_impact_direction_error_deg": 30.0,
+    "impact_time_window_s": [0.3, 0.7],
+    "non_tip_cost_clearance_m": 0.075
+  },
+  "constraints": {
+    "maximum_uav_displacement_m": 0.5,
+    "maximum_uav_speed_m_s": 3.0,
+    "maximum_command_acceleration_m_s2": 20.0
+  },
+  "planning": {
+    "horizon_s": 0.7,
+    "acceleration_knots": 11,
+    "samples": 2048,
+    "maximum_iterations": 4,
+    "perturbation_sigma_m_s2": 2.5,
+    "temperature_lambda": 1.0,
+    "adaptive_ess_target_fraction": 0.02,
+    "fixed_uav_evaluation_batch_size": 2048,
+    "random_seed": 42,
+    "success_polishing_iterations": 1,
+    "hard_stop_s": 300.0
+  },
+  "cost_weights": {
+    "event_position": 4.0,
+    "event_speed_deficiency": 2.0,
+    "event_direction_deficiency": 1.0,
+    "event_non_tip_proximity": 4.0,
+    "command_effort": 0.02,
+    "command_smoothness": 0.05,
+    "final_uav_speed": 0.1,
+    "uav_displacement_violation": 10.0,
+    "uav_speed_violation": 10.0,
+    "success_bonus": 20.0,
+    "invalid_cost": 1000000000.0
+  },
+  "initial_nominal": {
+    "source": "milestone4a_authoritative_fallback_after_legacy_contract_audit",
+    "times_s": [0.0, 0.07, 0.14, 0.21, 0.28, 0.35, 0.42, 0.49, 0.56, 0.63, 0.7],
+    "acceleration_knots_m_s2": [
+      [0.0, 0.0, 0.0],
+      [6.0, 0.0, 0.0],
+      [8.0, 0.0, 0.0],
+      [8.0, 0.0, 0.0],
+      [4.0, 0.0, 0.0],
+      [-4.0, 0.0, 0.0],
+      [-10.0, 0.0, 0.0],
+      [-10.0, 0.0, 0.0],
+      [-6.0, 0.0, 0.0],
+      [-2.0, 0.0, 0.0],
+      [0.0, 0.0, 0.0]
+    ]
+  },
+  "artifact_policy": {
+    "authorization": "SIMULATION_ONLY",
+    "real_flight_authorized": false,
+    "protected_take_id": "fig8vertical_002",
+    "protected_test_evaluation_allowed": false
+  }
+}

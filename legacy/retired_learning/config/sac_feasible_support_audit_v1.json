@@ -1,0 +1,36 @@
+{
+  "schema": "sac_feasible_support_audit_v1",
+  "model_freeze": "MODEL_FREEZE_REMEASURED_GEOMETRY_PRE_MPPI",
+  "task_config": "config/tasks/canonical_whip_variable_duration_tuned_reward_v1.json",
+  "source_5b4_artifact": "data/policy_training/sac_canonical_spectral_entropy_v1/2026-08-30T015034.715379Z",
+  "source_5b2_artifact": "data/policy_training/rl_reward_audit_sac_pilot_v1/2026-08-29T234658.751179Z",
+  "reward_profile": "rl_whip_reward_v2",
+  "duration_s": 1.20,
+  "fixed_uav_evaluation_batch_size": 2048,
+  "selection": {
+    "source_checkpoint": "checkpoints/latest.pt",
+    "sample_count": 2048,
+    "seed": 5504,
+    "actions_per_group": 3,
+    "historical_replay_actions_expected": false
+  },
+  "support_grid": {
+    "base_seed": 5510,
+    "samples_per_cell": 1024,
+    "bandwidths": [4, 8, 16],
+    "scales": [0.05, 0.10, 0.20, 0.35, 0.50],
+    "base_std_formula": "1/sqrt(1+(f/4)^2)",
+    "centers": ["ZERO", "5B4_LEVEL1_SAC"]
+  },
+  "support_classification": {
+    "minimum_feasible_rate": 0.10,
+    "minimum_feasible_progress_0_25_rate": 0.01
+  },
+  "artifact_policy": {
+    "learning_performed": false,
+    "production_model_modification_allowed": false,
+    "real_flight_authorized": false,
+    "protected_test_evaluation_allowed": false,
+    "cem_training_data_allowed": false
+  }
+}

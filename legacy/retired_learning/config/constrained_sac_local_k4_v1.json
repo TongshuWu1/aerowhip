@@ -1,0 +1,84 @@
+{
+  "schema": "constrained_sac_local_k4_v1",
+  "run_id": "constrained_sac_local_k4_v1",
+  "model_freeze": "MODEL_FREEZE_REMEASURED_GEOMETRY_PRE_MPPI",
+  "task_config": "config/tasks/canonical_whip_variable_duration_tuned_reward_v1.json",
+  "source_5b5_artifact": "data/policy_training/sac_feasible_support_audit_v1/2026-08-30T024237.077405Z",
+  "source_5b2_artifact": "data/policy_training/rl_reward_audit_sac_pilot_v1/2026-08-29T234658.751179Z",
+  "seed": 42,
+  "context_dimension": 83,
+  "external_action_dimension": 49,
+  "context_distribution": "SINGLE_CANONICAL",
+  "fixed_duration_s": 1.20,
+  "reward": {
+    "profile": "rl_whip_reward_v2",
+    "weights_unchanged": true
+  },
+  "failed_rollout_evaluation": {
+    "execution_contract": "HARD_SAFETY_FAILURE_QUARANTINE",
+    "reward_contract": "RL_V2_HARD_SAFETY_PREFIX",
+    "displacement_limit_m": 0.50,
+    "speed_limit_m_s": 3.0,
+    "command_acceleration_limit_m_s2": 20.0
+  },
+  "local_spectral_policy": {
+    "center": "5B4_LEVEL1_SAC",
+    "active_frequencies": [0, 1, 2, 3],
+    "active_stochastic_dimensions": 12,
+    "initial_scale": 0.05,
+    "minimum_scale": 0.005,
+    "maximum_scale": 0.10,
+    "frequency_profile": "1/sqrt(1+(f/4)^2)",
+    "inactive_frequencies_fixed": true
+  },
+  "entropy_calibration": {
+    "sample_count": 100000,
+    "batch_size": 4096,
+    "target": "NEGATIVE_MEAN_LOG_PI_AT_INITIALIZATION"
+  },
+  "constraint": {
+    "cost_target": 0.20,
+    "initial_lambda": 1.0,
+    "maximum_lambda": 100.0,
+    "lambda_learning_rate": 0.0003
+  },
+  "sac": {
+    "actor_learning_rate": 0.0003,
+    "reward_critic_learning_rate": 0.0003,
+    "safety_critic_learning_rate": 0.0003,
+    "alpha_learning_rate": 0.0003,
+    "minibatch_size": 4096,
+    "collection_batch_size": 2048,
+    "replay_capacity": 1000000,
+    "initial_collection_episodes": 20480,
+    "updates_per_collection": 8,
+    "gradient_clip_norm": 10.0,
+    "reward_critic_loss": "SmoothL1",
+    "safety_critic_loss": "BCEWithLogits",
+    "alpha_explore": 0.0
+  },
+  "validation": {
+    "evaluation_interval_episodes": 10240,
+    "level4_minimum_directed_speed_m_s": 1.0,
+    "support_loss_feasible_rate": 0.20,
+    "support_loss_consecutive_evaluations": 4
+  },
+  "initial_support_gate": {
+    "reference_feasible_rate": 0.5107421875,
+    "reference_feasible_progress_0_25_rate": 0.19140625,
+    "maximum_feasible_rate_difference": 0.10,
+    "maximum_joint_rate_difference": 0.07,
+    "maximum_feasible_progress_0_50_rate": 0.02
+  },
+  "budget": {
+    "maximum_collected_episodes": 500000,
+    "maximum_wall_clock_s": 2700
+  },
+  "artifact_policy": {
+    "authorization": "SIMULATION_ONLY",
+    "real_flight_authorized": false,
+    "protected_test_evaluation_allowed": false,
+    "cem_training_data_allowed": false,
+    "production_model_modification_allowed": false
+  }
+}
