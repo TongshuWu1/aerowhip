@@ -1,0 +1,15 @@
+{
+  "acceleration": "analytic time derivative of velocity",
+  "active_maneuver_duration_s": [
+    0.45,
+    1.8
+  ],
+  "evaluation_duration_s": 2.4,
+  "hold_position": "p_T + 0.5*Delta_settle*v_T + Delta_settle^2*a_T/12",
+  "position": "analytic integral of settle velocity from p_T",
+  "schema": "smooth_terminal_settle_v1",
+  "settle_acceleration_clipped": false,
+  "settle_duration_s": 0.3,
+  "settle_included_in_command_acceleration_gate": true,
+  "velocity": "h00(s)*v_T + h10(s)*Delta_settle*a_T"
+}

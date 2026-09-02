@@ -6,6 +6,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
     QGroupBox,
     QHeaderView,
+    QHBoxLayout,
     QLabel,
     QTableWidget,
     QTableWidgetItem,
@@ -14,6 +15,7 @@ from PySide6.QtWidgets import (
 )
 
 from fitting.production_status import get_dataset_role_summary
+from .theme import MetricCard
 
 
 class DataPage(QWidget):
@@ -23,20 +25,28 @@ class DataPage(QWidget):
         self.setStyleSheet("#dataPage { background: #f8fafc; }")
         layout = QVBoxLayout(self)
         layout.setContentsMargins(20, 16, 20, 18)
-        title = QLabel("Data")
-        title.setObjectName("pageTitle")
-        title.setStyleSheet("font-size: 22px; font-weight: 700; color: white;")
-        layout.addWidget(title)
-        subtitle = QLabel("Accepted physical takes and their fixed scientific roles")
-        subtitle.setObjectName("headerStatus")
-        subtitle.setStyleSheet("color: #cbd5e1;")
-        layout.addWidget(subtitle)
+        layout.setSpacing(10)
+        summary = QHBoxLayout()
+        summary.setSpacing(9)
+        self.takes_card = MetricCard("Accepted takes")
+        self.episodes_card = MetricCard("Physical episodes")
+        self.duration_card = MetricCard("Recorded duration")
+        self.protected_card = MetricCard("Protected data")
+        for card in (
+            self.takes_card,
+            self.episodes_card,
+            self.duration_card,
+            self.protected_card,
+        ):
+            summary.addWidget(card, 1)
+        layout.addLayout(summary)
         self.table = QTableWidget(0, 4, self)
         self.table.setObjectName("take_role_table")
         self.table.setHorizontalHeaderLabels(("Take", "Role", "Duration", "Status"))
         self.table.verticalHeader().setVisible(False)
         self.table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
         self.table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+        self.table.setAlternatingRowColors(True)
         self.table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.ResizeToContents)
         self.table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents)
         self.table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents)
@@ -59,6 +69,13 @@ class DataPage(QWidget):
 
     def refresh(self) -> None:
         rows = get_dataset_role_summary()
+        episodes = sum(int(row["physical_episode_count"]) for row in rows)
+        duration = sum(float(row["physical_duration_s"]) for row in rows)
+        protected = sum(str(row["role"]) == "Protected Test" for row in rows)
+        self.takes_card.set_metric(str(len(rows)), "immutable take IDs")
+        self.episodes_card.set_metric(str(episodes), "causally segmented")
+        self.duration_card.set_metric(f"{duration:.1f} s", "physical observation")
+        self.protected_card.set_metric(str(protected), "never evaluated")
         self.table.setRowCount(len(rows))
         for row_index, row in enumerate(rows):
             role = str(row["role"])

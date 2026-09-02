@@ -1,0 +1,144 @@
+{
+  "schema": "ppo_open_loop_compiler_audit_v1",
+  "model_freeze": "MODEL_FREEZE_REMEASURED_GEOMETRY_PRE_MPPI",
+  "ppo_run_root": "data/policy_training/whip_ppo_directional_displacement15_v1/2026-08-31T104735.951178Z",
+  "ppo_config": "config/learning/whip_ppo_once_directional_d15_v1.json",
+  "ppo_checkpoint": "data/policy_training/whip_ppo_directional_displacement15_v1/2026-08-31T104735.951178Z/checkpoints/latest.pt",
+  "checkpoint_expected_episodes": 1001472,
+  "state_bank_root": "data/policy_training/oneshot_sac_nominal_v1/2026-08-29T192059.907360Z",
+  "state_bank_count": 512,
+  "target": "canonical_only",
+  "theta_context": "nominal_only",
+  "training": "NONE",
+  "compiler": {
+    "actor_queries": 100,
+    "physics_steps": 1000,
+    "control_dt_s": 0.1,
+    "physics_dt_s": 0.01,
+    "recorded_command_fields": [
+      "position_m",
+      "velocity_m_s",
+      "acceleration_m_s2",
+      "orientation_xyzw",
+      "angular_velocity_body_rad_s"
+    ],
+    "exact_replay_maximum_absolute_tolerance": 1e-06
+  },
+  "wrong_initial_state_control": {
+    "pairing": "nearest state-distance stratum, deterministic cyclic neighbor",
+    "strata": 8
+  },
+  "cable_parameter_sweeps": [
+    {
+      "name": "EI_0p80",
+      "EI_scale": 0.8,
+      "Cb_scale": 1.0
+    },
+    {
+      "name": "EI_0p90",
+      "EI_scale": 0.9,
+      "Cb_scale": 1.0
+    },
+    {
+      "name": "EI_1p10",
+      "EI_scale": 1.1,
+      "Cb_scale": 1.0
+    },
+    {
+      "name": "EI_1p20",
+      "EI_scale": 1.2,
+      "Cb_scale": 1.0
+    },
+    {
+      "name": "Cb_0p80",
+      "EI_scale": 1.0,
+      "Cb_scale": 0.8
+    },
+    {
+      "name": "Cb_0p90",
+      "EI_scale": 1.0,
+      "Cb_scale": 0.9
+    },
+    {
+      "name": "Cb_1p10",
+      "EI_scale": 1.0,
+      "Cb_scale": 1.1
+    },
+    {
+      "name": "Cb_1p20",
+      "EI_scale": 1.0,
+      "Cb_scale": 1.2
+    },
+    {
+      "name": "EI_Cb_0p80",
+      "EI_scale": 0.8,
+      "Cb_scale": 0.8
+    },
+    {
+      "name": "EI_Cb_1p20",
+      "EI_scale": 1.2,
+      "Cb_scale": 1.2
+    }
+  ],
+  "post_planning_disturbances": [
+    {
+      "name": "uav_lateral_velocity_0p15",
+      "physics_step": 150,
+      "uav_velocity_delta_world_m_s": [
+        0.0,
+        0.15,
+        0.0
+      ],
+      "cable_velocity_delta_world_m_s": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "cable_node_start": 11
+    },
+    {
+      "name": "distal_cable_lateral_velocity_0p25",
+      "physics_step": 150,
+      "uav_velocity_delta_world_m_s": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "cable_velocity_delta_world_m_s": [
+        0.0,
+        0.25,
+        0.0
+      ],
+      "cable_node_start": 8
+    },
+    {
+      "name": "combined_lateral_impulse",
+      "physics_step": 150,
+      "uav_velocity_delta_world_m_s": [
+        0.0,
+        0.1,
+        0.0
+      ],
+      "cable_velocity_delta_world_m_s": [
+        0.0,
+        0.2,
+        0.0
+      ],
+      "cable_node_start": 8
+    }
+  ],
+  "latency": {
+    "optimized_batch_one_warmup": 1,
+    "optimized_batch_one_repeats": 10,
+    "fixed_2048_warmup": 1,
+    "fixed_2048_repeats": 5
+  },
+  "prohibitions": {
+    "training": true,
+    "cem": true,
+    "target_generalization": true,
+    "theta_conditioning_training": true,
+    "protected_test": "fig8vertical_002",
+    "hardware": true
+  }
+}

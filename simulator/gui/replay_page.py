@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
+import json
+import os
 from pathlib import Path
+import subprocess
+import sys
 
 import numpy as np
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
@@ -10,6 +14,8 @@ from matplotlib.figure import Figure
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtWidgets import (
     QComboBox,
+    QFrame,
+    QGroupBox,
     QHBoxLayout,
     QLabel,
     QMessageBox,
@@ -21,6 +27,65 @@ from PySide6.QtWidgets import (
 
 from fitting.production_status import get_active_model_freeze
 from planning.results import PlanningResult, latest_planning_result, load_planning_result, load_replay_arrays
+from simulator.production import PROJECT_ROOT
+from .theme import MetricCard, set_status_badge
+
+
+PPO_SIMULATION_OUTPUT = PROJECT_ROOT / "data" / "ppo_simulation" / "current"
+PPO_CHECKPOINT = PROJECT_ROOT / "results" / "ppo" / "checkpoints" / "terminal.pt"
+PPO_CURATED_ARTIFACT = PROJECT_ROOT / "results" / "ppo" / "data"
+PPO_TRAINING_ROOT = PROJECT_ROOT / "data" / "policy_training"
+CEM_REFERENCE_TASK_ID = "canonical_whip_variable_duration_tuned_reward_v1"
+
+
+def _read_json(path: Path) -> dict[str, object] | None:
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (FileNotFoundError, json.JSONDecodeError, OSError):
+        return None
+
+
+def latest_ppo_policy_source() -> tuple[Path, Path, Path, int] | None:
+    """Return artifact, config, checkpoint, and episode count for the newest whip PPO."""
+
+    candidates: list[tuple[float, Path, Path, Path, int]] = []
+    if PPO_TRAINING_ROOT.is_dir():
+        for checkpoint in PPO_TRAINING_ROOT.glob("whip_ppo*/**/checkpoints/latest.pt"):
+            artifact = checkpoint.parent.parent
+            config = artifact / "config.json"
+            snapshot = _read_json(config)
+            if (
+                snapshot is None
+                or snapshot.get("comparison_environment") != "task_whip_once_v1"
+            ):
+                continue
+            status = _read_json(artifact / "status.json") or {}
+            episodes = int(
+                status.get(
+                    "latest_durable_checkpoint_episodes",
+                    status.get("episodes", 0),
+                )
+            )
+            candidates.append(
+                (checkpoint.stat().st_mtime, artifact, config, checkpoint, episodes)
+            )
+    curated_checkpoint = PPO_CURATED_ARTIFACT / "terminal.pt"
+    curated_config = PPO_CURATED_ARTIFACT / "config.json"
+    if curated_checkpoint.is_file() and curated_config.is_file():
+        status = _read_json(PPO_CURATED_ARTIFACT / "status.json") or {}
+        candidates.append(
+            (
+                curated_checkpoint.stat().st_mtime,
+                PPO_CURATED_ARTIFACT,
+                curated_config,
+                curated_checkpoint,
+                int(status.get("episodes", 0)),
+            )
+        )
+    if not candidates:
+        return None
+    _, artifact, config, checkpoint, episodes = max(candidates, key=lambda row: row[0])
+    return artifact, config, checkpoint, episodes
 
 
 class ReplayCanvas(FigureCanvasQTAgg):
@@ -38,7 +103,7 @@ class ReplayCanvas(FigureCanvasQTAgg):
         self.axis.text2D(
             0.5,
             0.5,
-            "Load a saved deterministic MPPI replay",
+            "Run the frozen PPO controller",
             transform=self.axis.transAxes,
             ha="center",
             va="center",
@@ -108,37 +173,86 @@ class SimulatorReplayPage(QWidget):
         self._timer = QTimer(self)
         self._timer.setInterval(33)
         self._timer.timeout.connect(self._advance)
+        self._ppo_process: subprocess.Popen[bytes] | None = None
+        self._ppo_timer = QTimer(self)
+        self._ppo_timer.setInterval(500)
+        self._ppo_timer.timeout.connect(self._poll_ppo_simulation)
         self._build_ui()
+        self._refresh_policy_source()
+        self._load_existing_ppo_result()
 
     def _build_ui(self) -> None:
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(18, 14, 18, 16)
+        layout.setContentsMargins(20, 16, 20, 18)
+        layout.setSpacing(10)
         status = get_active_model_freeze()
-        header = QHBoxLayout()
-        title = QLabel("Simulator & Replay")
-        title.setObjectName("pageTitle")
-        title.setStyleSheet("font-size: 22px; font-weight: 700; color: white;")
-        header.addWidget(title)
-        header.addStretch(1)
-        self.model_status = QLabel(
-            "Active model: PR + 12-node DDER    •    "
-            f"Model integrity: {status['model_integrity']}    •    "
-            f"Ready for MPPI: {'Yes' if status['ready_for_mppi'] else 'No'}"
+        controller = QFrame()
+        controller.setObjectName("toolbarCard")
+        controller_layout = QHBoxLayout(controller)
+        controller_layout.setContentsMargins(14, 10, 12, 10)
+        controller_text = QVBoxLayout()
+        controller_text.setSpacing(1)
+        controller_label = QLabel("LATEST LEARNED POLICY")
+        controller_label.setStyleSheet(
+            "color: #64748b; font-size: 8pt; font-weight: 800; letter-spacing: 0.8px;"
         )
-        self.model_status.setObjectName("headerStatus")
-        self.model_status.setStyleSheet("color: #cbd5e1; font-weight: 600;")
-        header.addWidget(self.model_status)
-        layout.addLayout(header)
+        self.policy_description = QLabel(
+            "Locating newest durable PPO checkpoint  •  deterministic 10 Hz feedback"
+        )
+        self.policy_description.setStyleSheet("font-weight: 650; color: #334155;")
+        self.model_status = QLabel(
+            f"Model integrity {status['model_integrity']}  •  production UAV + residual + 12-node DDER"
+        )
+        self.model_status.setStyleSheet("color: #64748b; font-size: 8.5pt;")
+        controller_text.addWidget(controller_label)
+        controller_text.addWidget(self.policy_description)
+        controller_text.addWidget(self.model_status)
+        controller_layout.addLayout(controller_text)
+        controller_layout.addStretch(1)
+        self.ppo_status = QLabel("READY")
+        set_status_badge(self.ppo_status, "READY", "neutral")
+        controller_layout.addWidget(self.ppo_status)
+        self.run_ppo_button = QPushButton("RUN LATEST PPO")
+        self.run_ppo_button.setObjectName("runPpoSimulationButton")
+        self.run_ppo_button.setProperty("role", "primary")
+        self.run_ppo_button.setStyleSheet(
+            "background: #2563eb; color: white; border: none; font-weight: 800;"
+        )
+        self.run_ppo_button.clicked.connect(self.run_ppo_simulation)
+        controller_layout.addWidget(self.run_ppo_button)
+        layout.addWidget(controller)
+
+        metrics = QHBoxLayout()
+        metrics.setSpacing(9)
+        self.result_card = MetricCard("Result", "—", "No replay loaded")
+        self.tip_error_card = MetricCard("Tip error", "—", "target entry")
+        self.directed_speed_card = MetricCard("Directed speed", "—", "along target vector")
+        self.direction_card = MetricCard("Direction", "—", "impact error")
+        self.displacement_card = MetricCard("UAV excursion", "—", "maximum from start")
+        self.hit_time_card = MetricCard("Strike time", "—", "first tip entry")
+        for card in (
+            self.result_card,
+            self.tip_error_card,
+            self.directed_speed_card,
+            self.direction_card,
+            self.displacement_card,
+            self.hit_time_card,
+        ):
+            metrics.addWidget(card, 1)
+        layout.addLayout(metrics)
 
         self.canvas = ReplayCanvas(self)
         layout.addWidget(self.canvas, 1)
-        controls = QHBoxLayout()
+        control_frame = QFrame()
+        control_frame.setObjectName("toolbarCard")
+        controls = QHBoxLayout(control_frame)
+        controls.setContentsMargins(10, 8, 10, 8)
         self.play_button = QPushButton("Play")
         self.play_button.clicked.connect(self.toggle_play)
         reset = QPushButton("Reset")
         reset.clicked.connect(lambda: self.timeline.setValue(0))
-        load = QPushButton("Load latest plan")
-        load.clicked.connect(self.load_latest_plan)
+        load = QPushButton("Load CEM reference")
+        load.clicked.connect(self.load_cem_reference)
         self.timeline = QSlider(Qt.Orientation.Horizontal)
         self.timeline.setRange(0, 0)
         self.timeline.valueChanged.connect(self._frame_changed)
@@ -151,17 +265,58 @@ class SimulatorReplayPage(QWidget):
         controls.addWidget(self.timeline, 1)
         controls.addWidget(QLabel("Playback"))
         controls.addWidget(self.speed)
-        layout.addLayout(controls)
+        layout.addWidget(control_frame)
         self.loaded_label = QLabel("No replay loaded")
         self.loaded_label.setStyleSheet("color: #64748b;")
         layout.addWidget(self.loaded_label)
 
-    def load_latest_plan(self) -> None:
-        result = latest_planning_result("canonical_whip_v1")
+    def _refresh_policy_source(self) -> tuple[Path, Path, Path, int] | None:
+        source = latest_ppo_policy_source()
+        if source is None:
+            self.policy_description.setText("No durable PPO checkpoint found")
+            self.run_ppo_button.setEnabled(False)
+            return None
+        artifact, _, checkpoint, episodes = source
+        episode_label = f"{episodes:,} episodes" if episodes > 0 else "episode count unavailable"
+        self.policy_description.setText(
+            f"Newest durable checkpoint  •  {episode_label}  •  deterministic 10 Hz feedback  •  7 s"
+        )
+        self.policy_description.setToolTip(
+            f"Artifact: {artifact}\nCheckpoint: {checkpoint}"
+        )
+        self.run_ppo_button.setEnabled(True)
+        return source
+
+    def _load_existing_ppo_result(self) -> None:
+        status = _read_json(PPO_SIMULATION_OUTPUT / "status.json")
+        if status is not None and status.get("status") == "COMPLETE":
+            try:
+                self.load_result(PPO_SIMULATION_OUTPUT)
+                success = bool(status.get("success"))
+                set_status_badge(
+                    self.ppo_status, "PASS" if success else "FAIL", "success" if success else "danger"
+                )
+            except (FileNotFoundError, KeyError, ValueError, json.JSONDecodeError):
+                pass
+
+    def load_cem_reference(self) -> None:
+        # The production reference is the Milestone-6A variable-duration CEM
+        # replay.  ``canonical_whip_v1`` is a retained 0.70-s legacy MPPI
+        # artifact and must not be presented as the CEM reference.
+        result = latest_planning_result(CEM_REFERENCE_TASK_ID)
         if result is None:
-            QMessageBox.information(self, "No plan", "No completed planning result is available.")
+            QMessageBox.information(
+                self,
+                "CEM reference unavailable",
+                "The saved 2.40-s production CEM reference replay is unavailable.",
+            )
             return
         self.load_result(result)
+
+    def load_latest_plan(self) -> None:
+        """Compatibility alias for the retained planning-replay tests."""
+
+        self.load_cem_reference()
 
     def load_result(self, result_or_directory: PlanningResult | str | Path) -> None:
         result = (
@@ -177,13 +332,140 @@ class SimulatorReplayPage(QWidget):
         self.timeline.setRange(0, len(arrays["time_s"]) - 1)
         self.timeline.setValue(0)
         self.canvas.set_replay(result, arrays)
-        self.loaded_label.setText(
-            f"{result.task_label} • {result.status} • deterministic replay • {result.directory.name}"
+        controller = result.metrics.get(
+            "controller", result.metrics.get("optimizer", "saved replay")
         )
+        summary = f"{result.task_label} • {result.status} • {controller}"
+        if controller == "PPO_10_HZ_CLOSED_LOOP":
+            summary += (
+                f" • tip {1000.0 * float(result.metrics['first_entry_tip_distance_m']):.1f} mm"
+                f" • directed {float(result.metrics['first_entry_directed_speed_m_s']):.2f} m/s"
+                f" • direction {float(result.metrics['first_entry_direction_error_deg']):.1f} deg"
+                f" • UAV displacement {float(result.metrics['maximum_uav_displacement_m']):.2f} m"
+            )
+        self.loaded_label.setText(summary)
+        success = bool(result.success)
+        self.result_card.set_metric("PASS" if success else "FAIL", str(controller))
+        self.result_card.value_label.setStyleSheet(
+            "color: " + ("#15803d;" if success else "#b91c1c;")
+            + " font-size: 17pt; font-weight: 800;"
+        )
+        tip_error = result.metrics.get(
+            "first_entry_tip_distance_m",
+            result.metrics.get("reported_event_tip_position_error_m"),
+        )
+        directed = result.metrics.get(
+            "first_entry_directed_speed_m_s",
+            result.metrics.get("reported_event_directed_tip_speed_m_s"),
+        )
+        direction_error = result.metrics.get(
+            "first_entry_direction_error_deg",
+            result.metrics.get("reported_event_direction_error_deg"),
+        )
+        displacement = result.metrics.get("maximum_uav_displacement_m")
+        hit_time = result.metrics.get("hit_time_s", result.metrics.get("first_entry_time_s"))
+        self.tip_error_card.set_metric(
+            "—" if tip_error is None else f"{1000.0 * float(tip_error):.1f} mm",
+            "≤ 50 mm task threshold",
+        )
+        self.directed_speed_card.set_metric(
+            "—" if directed is None else f"{float(directed):.2f} m/s",
+            "≥ 4 m/s task threshold",
+        )
+        self.direction_card.set_metric(
+            "—" if direction_error is None else f"{float(direction_error):.1f}°",
+            "≤ 30° task threshold",
+        )
+        self.displacement_card.set_metric(
+            "—" if displacement is None else f"{float(displacement):.2f} m",
+            "continuous cost; no hard gate",
+        )
+        self.hit_time_card.set_metric(
+            "—" if hit_time is None else f"{float(hit_time):.2f} s",
+            "single attempt",
+        )
+
+    def run_ppo_simulation(self) -> None:
+        if self._ppo_process is not None and self._ppo_process.poll() is None:
+            return
+        source = self._refresh_policy_source()
+        if source is None:
+            QMessageBox.warning(
+                self,
+                "PPO checkpoint missing",
+                "No durable learned PPO checkpoint was found.",
+            )
+            return
+        _, config_path, checkpoint_path, checkpoint_episodes = source
+        PPO_SIMULATION_OUTPUT.mkdir(parents=True, exist_ok=True)
+        (PPO_SIMULATION_OUTPUT / "status.json").write_text(
+            json.dumps(
+                {
+                    "status": "LAUNCHING",
+                    "controller": "PPO_10_HZ_CLOSED_LOOP",
+                    "checkpoint": str(checkpoint_path),
+                    "checkpoint_episodes": checkpoint_episodes,
+                    "authorization": "SIMULATION_ONLY",
+                },
+                indent=2,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        flags = 0
+        if os.name == "nt":
+            flags = subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.CREATE_NO_WINDOW
+        self._ppo_process = subprocess.Popen(
+            [
+                sys.executable,
+                str(PROJECT_ROOT / "run_ppo_simulation.py"),
+                "--config",
+                str(config_path),
+                "--checkpoint",
+                str(checkpoint_path),
+                "--output",
+                str(PPO_SIMULATION_OUTPUT),
+            ],
+            cwd=PROJECT_ROOT,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            creationflags=flags,
+            close_fds=True,
+        )
+        self.run_ppo_button.setEnabled(False)
+        set_status_badge(self.ppo_status, "RUNNING", "info")
+        self._ppo_timer.start()
+
+    def _poll_ppo_simulation(self) -> None:
+        status = _read_json(PPO_SIMULATION_OUTPUT / "status.json")
+        state = "RUNNING" if status is None else str(status.get("status", "RUNNING"))
+        if state in {"LAUNCHING", "RUNNING"}:
+            set_status_badge(self.ppo_status, state, "info")
+            return
+        self._ppo_timer.stop()
+        self.run_ppo_button.setEnabled(True)
+        if state == "COMPLETE":
+            success = bool(status and status.get("success"))
+            set_status_badge(
+                self.ppo_status, "PASS" if success else "FAIL", "success" if success else "danger"
+            )
+            try:
+                self.load_result(PPO_SIMULATION_OUTPUT)
+                self.timeline.setValue(0)
+                self.toggle_play()
+            except (FileNotFoundError, KeyError, ValueError, json.JSONDecodeError) as error:
+                QMessageBox.warning(self, "PPO replay error", str(error))
+            return
+        set_status_badge(self.ppo_status, "ERROR", "danger")
+        message = "PPO simulation failed."
+        if status is not None and status.get("error"):
+            message += f"\n\n{status['error']}"
+        QMessageBox.warning(self, "PPO simulation failed", message)
 
     def toggle_play(self) -> None:
         if self.current_arrays is None:
-            self.load_latest_plan()
+            self._load_existing_ppo_result()
         if self.current_arrays is None:
             return
         if self._timer.isActive():
@@ -197,7 +479,11 @@ class SimulatorReplayPage(QWidget):
 
     def _advance(self) -> None:
         speed = {"0.25×": 0.25, "0.5×": 0.5, "1×": 1.0, "2×": 2.0}[self.speed.currentText()]
-        increment = max(1, int(round(speed)))
+        assert self.current_arrays is not None
+        times = self.current_arrays["time_s"]
+        dt_s = float(times[1] - times[0]) if len(times) > 1 else 0.01
+        real_time_increment = (self._timer.interval() / 1000.0) / max(dt_s, 1.0e-6)
+        increment = max(1, int(round(speed * real_time_increment)))
         value = self.timeline.value() + increment
         if value > self.timeline.maximum():
             self._timer.stop()
@@ -210,3 +496,4 @@ class SimulatorReplayPage(QWidget):
 
     def stop(self) -> None:
         self._timer.stop()
+        self._ppo_timer.stop()

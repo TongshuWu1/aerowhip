@@ -1,0 +1,22 @@
+{
+  "freeze_name": "PPO_WHIP_DIRECTIONAL_BOOTSTRAP_512_V1",
+  "source_artifact": "data/policy_training/whip_ppo_success_bootstrap_terminal_v1/2026-09-01T193604.125175Z",
+  "model_freeze": "MODEL_FREEZE_REMEASURED_GEOMETRY_PRE_MPPI",
+  "selected_checkpoint_episodes": 174080,
+  "selected_mild_validation_successes": 63,
+  "selected_mild_validation_contexts": 64,
+  "authoritative_state_bank_successes": 488,
+  "authoritative_state_bank_contexts": 512,
+  "authoritative_state_bank_success_rate": 0.953125,
+  "canonical_success": true,
+  "canonical_entry_time_s": 2.1599998474121094,
+  "canonical_directed_speed_m_s": 10.978221893310547,
+  "canonical_direction_error_deg": 9.228842735290527,
+  "canonical_maximum_uav_displacement_m": 1.2576154470443726,
+  "best_validation_checkpoint_sha256": "9B14726AE3A4581A2CC0C7E345233B1F931E0407E9BBF16A43578A2D450B6B7B",
+  "config_sha256": "1FC80D05931FEE0A8AEFDFADB7A3FF49981AFAF24080B5E1D20D3D19E45ACE5E",
+  "audit_summary_sha256": "3093BC4A5629DD6D8187BD78C12D1D410D3451F11D20202DC25A75BFB69F906B",
+  "canonical_replay_sha256": "6FC61F82EC28AF254D04BAB3E9C92A28BC683E6CD0C9340D34050E0D68748D67",
+  "protected_test_evaluated": false,
+  "hardware_executed": false
+}

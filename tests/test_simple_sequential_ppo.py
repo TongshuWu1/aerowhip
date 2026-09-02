@@ -9,7 +9,57 @@ from learning.simple_ppo import (
     SimplePPOAgent,
     generalized_advantage_estimate,
 )
-from learning.ppo_validation import rolling_success_rate
+from learning.ppo_validation import (
+    TRAINING_SUCCESS_ROLLING_WINDOW_EPISODES,
+    rolling_episode_mean,
+    rolling_success_rate,
+)
+from run_simple_ppo import DEFAULT_CONFIG, _build_agent, _load_config
+
+
+def test_selected_target_aligned_sagittal_policy_is_fresh_and_batch_aligned() -> None:
+    config = _load_config(DEFAULT_CONFIG)
+    assert config["episode_duration_s"] == 7.0
+    assert config["episode_duration_s"] / config["control_dt_s"] == 70
+    assert config["episode_duration_s"] / config["physics_dt_s"] == 700
+    assert config["requested_episodes"] == 1_000_000
+    assert config["initialization"]["uses_previous_policy_checkpoint"] is False
+    assert "policy_checkpoint" not in config["initialization"]
+    assert config["action"]["mode"] == "target_aligned_sagittal_3d"
+    assert config["action"]["dimensions"] == 3
+    assert config["action"]["lateral_acceleration_available"] is False
+    assert config["reported_success"]["episode_continues_after_success"] is False
+    assert config["reported_success"]["successful_transition_is_terminal"] is True
+    assert config["validation"]["episodes"] == 64
+    assert config["validation"]["fixed_numerical_batch_size"] == 2048
+    assert config["reward"]["objective_type"] == "single_scalar_reward_maximization"
+    assert config["reward"]["progress_weight"] == 20.0
+    assert config["reward"]["maximum_displacement_weight"] == 0.0
+    assert config["reward"]["terminal_displacement_weight"] == 40.0
+    assert config["reward"]["displacement_integral_weight"] == 2.0
+    assert config["reward"]["displacement_cost_scale_m"] == 0.35
+    assert config["reward"]["time_to_success_weight_per_s"] == 1.0
+    assert config["reward"]["directed_speed_near_target_weight"] == 0.0
+    assert config["reward"]["direction_near_target_weight"] == 0.0
+    assert config["reward"]["strike_quality_improvement_weight"] == 60.0
+    assert config["reward"]["directed_speed_reward_cap_m_s"] == 4.0
+    assert config["reward"]["success_bonus"] == 100.0
+    assert config["reward"]["directed_speed_shaping_reference"] == "attachment_relative"
+    assert config["reward"]["success_compactness_bonus"] == 0.0
+    assert config["reward"]["success_compactness_scale_m"] == 0.25
+    assert config["reward"]["uav_speed_integral_weight"] == 0.0
+    assert config["reward"]["acceleration_effort_weight"] == 0.0
+    assert config["reward"]["body_rate_effort_weight"] == 0.0
+    assert config["reward"]["action_smoothness_weight"] == 0.0
+    assert config["reward"]["non_tip_first_penalty"] == 25.0
+    assert (
+        config["validation"]["every_episodes"] % config["collection_batch"] == 0
+    )
+    assert config["validation"]["maximum_distance_quantile"] == 1.0
+
+    agent = _build_agent(config, torch.device("cpu"))
+    assert agent.policy.log_std.shape == (3,)
+    assert agent.policy.mean_network[-1].out_features == 3
 
 
 def test_bounded_policy_has_finite_actions_and_consistent_log_probabilities() -> None:
@@ -78,7 +128,19 @@ def test_ppo_update_is_finite_and_changes_policy_parameters() -> None:
 
 
 def test_training_success_rolling_rate_uses_episode_counts() -> None:
+    assert TRAINING_SUCCESS_ROLLING_WINDOW_EPISODES == 5_000
     episodes = torch.tensor([2_048, 4_096, 6_144, 8_192]).numpy()
     successes = torch.tensor([0, 1, 1, 3]).numpy()
     rolling = rolling_success_rate(episodes, successes, window_episodes=4_096)
     assert rolling.tolist() == [0.0, 1.0 / 4_096.0, 1.0 / 4_096.0, 2.0 / 4_096.0]
+
+
+def test_training_reward_rolling_mean_uses_episode_counts() -> None:
+    episodes = torch.tensor([2_048, 4_096, 6_144]).numpy()
+    batch_means = torch.tensor([10.0, 20.0, 30.0]).numpy()
+    rolling = rolling_episode_mean(
+        episodes,
+        batch_means,
+        window_episodes=4_096,
+    )
+    assert rolling.tolist() == [10.0, 15.0, 25.0]

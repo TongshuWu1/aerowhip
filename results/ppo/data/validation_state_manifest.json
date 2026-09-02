@@ -1,0 +1,37 @@
+{
+  "schema": "simple_ppo_fixed_mild_state_validation_v1",
+  "state_bank_root": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\policy_training\\oneshot_sac_nominal_v1\\2026-08-29T192059.907360Z",
+  "selection": "seeded sample from states at or below the configured state-distance quantile",
+  "selection_seed": 742,
+  "state_indices": [
+    362,
+    44,
+    253,
+    383,
+    334,
+    218,
+    123,
+    86,
+    305,
+    391
+  ],
+  "state_distances": [
+    0.1746234893798828,
+    0.12848447263240814,
+    0.14316953718662262,
+    0.12449172139167786,
+    0.10970482230186462,
+    0.16903746128082275,
+    0.16389240324497223,
+    0.11432900279760361,
+    0.09679727256298065,
+    0.18302936851978302
+  ],
+  "state_distance_quantile": 0.25,
+  "state_distance_threshold": 0.20802968740463257,
+  "validation_episodes": 10,
+  "target": "canonical fixed target",
+  "policy": "deterministic tanh(mean)",
+  "model": "MODEL_FREEZE_REMEASURED_GEOMETRY_PRE_MPPI",
+  "physics": "production UAV + causal residual + 12-node DDER"
+}

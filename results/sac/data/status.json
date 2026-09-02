@@ -1,0 +1,15 @@
+{
+  "status": "STOPPED_BY_USER",
+  "pid": 52016,
+  "episodes": 1206272,
+  "target_episodes": 3000000,
+  "successes": 106,
+  "success_rate": 8.787404499151104e-05,
+  "episodes_per_second": 110.94829137593275,
+  "elapsed_s": 10872.380142500042,
+  "last_batch_success_rate": 0.0,
+  "numerical_failure_rate": 0.0,
+  "stopped_utc": "2026-08-31T01:45:28.4248286Z",
+  "stop_reason": "Success rate collapsed and no longer justified continued compute.",
+  "latest_checkpoint_episodes": 1126400
+}

@@ -5,10 +5,19 @@ import math
 import torch
 
 from learning.sequential_sac_env import (
+    ATTACHMENT_RELATIVE_SPEED_SHAPING,
+    TARGET_ALIGNED_SAGITTAL_ACTION_MODE,
+    decode_target_aligned_sagittal_action,
+    direction_gate_quality,
     diagnostic_scientific_whip_success,
     SimpleRewardWeights,
     simple_dense_reward,
     simple_endpoint_success,
+    sequential_action_dimension,
+    shaping_tip_velocity,
+    soft_near_target_strike_components,
+    smooth_success_compactness,
+    smooth_displacement_cost,
     strike_quality,
     task_whip_success,
 )
@@ -39,6 +48,40 @@ def test_simple_endpoint_success_uses_position_speed_and_direction() -> None:
             direction,
         )[0]
     )
+
+
+def test_target_aligned_sagittal_action_has_no_lateral_acceleration() -> None:
+    action = torch.tensor([[0.6, -0.8, 0.5], [2.0, 0.0, -1.0]])
+    direction = torch.tensor([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]])
+    acceleration, body_rate = decode_target_aligned_sagittal_action(
+        action,
+        direction,
+        maximum_acceleration_m_s2=10.0,
+        maximum_body_rate_rad_s=4.0,
+    )
+    assert sequential_action_dimension(TARGET_ALIGNED_SAGITTAL_ACTION_MODE) == 3
+    assert torch.allclose(acceleration[0], torch.tensor([6.0, 0.0, -8.0]))
+    assert torch.allclose(acceleration[1], torch.tensor([0.0, 10.0, 0.0]))
+    assert torch.allclose(body_rate[:, [0, 2]], torch.zeros(2, 2))
+    assert torch.allclose(body_rate[:, 1], torch.tensor([2.0, -4.0]))
+
+
+def test_attachment_relative_speed_shaping_rejects_rigid_translation() -> None:
+    tip_velocity = torch.tensor([[5.0, 2.0, 0.0]])
+    attachment_velocity = torch.tensor([[5.0, 2.0, 0.0]])
+    relative = shaping_tip_velocity(
+        tip_velocity,
+        attachment_velocity,
+        mode=ATTACHMENT_RELATIVE_SPEED_SHAPING,
+    )
+    assert torch.equal(relative, torch.zeros_like(relative))
+    shared_translation = torch.tensor([[3.0, -4.0, 1.0]])
+    translated = shaping_tip_velocity(
+        tip_velocity + shared_translation,
+        attachment_velocity + shared_translation,
+        mode=ATTACHMENT_RELATIVE_SPEED_SHAPING,
+    )
+    assert torch.equal(translated, relative)
 
 
 def test_simple_reward_rewards_progress_and_penalizes_displacement() -> None:
@@ -104,6 +147,78 @@ def test_strike_quality_strongly_rejects_sideways_target_entry() -> None:
     )
     assert float(quality[0]) > float(quality[1]) > float(quality[2])
     assert float(quality[2] / quality[0]) < 0.05
+
+
+def test_soft_strike_components_center_direction_credit_on_scientific_gate() -> None:
+    speed_quality, direction_quality = soft_near_target_strike_components(
+        torch.tensor([0.0, 0.0, 0.0]),
+        torch.tensor([0.0, 7.0, 4.0]),
+        torch.tensor([0.0, 0.0, 4.0]),
+        torch.tensor([0.0, 0.0, 1.0]),
+        proximity_scale_m=0.15,
+        target_directed_speed_m_s=4.0,
+    )
+    assert torch.allclose(speed_quality[:2], torch.zeros(2), atol=1.0e-6)
+    assert float(speed_quality[2]) > 0.9
+    assert float(direction_quality[0]) == 0.0
+    assert float(direction_quality[1]) < 0.01
+    assert float(direction_quality[2]) > 0.9
+
+
+def test_direction_gate_quality_rejects_observed_sideways_strike() -> None:
+    quality = direction_gate_quality(
+        torch.tensor(
+            [
+                1.0,
+                math.cos(math.radians(30.0)),
+                math.cos(math.radians(78.0)),
+            ]
+        )
+    )
+    assert float(quality[0]) > 0.99
+    assert 0.65 < float(quality[1]) < 0.75
+    assert float(quality[2]) < 0.025
+
+
+def test_speed_shaping_is_flat_above_configured_reward_cap() -> None:
+    directed_speed = torch.tensor([4.0, 7.0, 10.0])
+    strict = strike_quality(
+        torch.zeros(3),
+        directed_speed,
+        torch.ones(3),
+        proximity_scale_m=0.15,
+        target_directed_speed_m_s=4.0,
+        speed_reward_cap_m_s=4.0,
+    )
+    soft_speed, _ = soft_near_target_strike_components(
+        torch.zeros(3),
+        directed_speed,
+        directed_speed,
+        torch.ones(3),
+        proximity_scale_m=0.15,
+        target_directed_speed_m_s=4.0,
+        speed_reward_cap_m_s=4.0,
+    )
+    assert torch.allclose(strict, strict[:1].expand_as(strict), atol=1.0e-6)
+    assert torch.allclose(
+        soft_speed, soft_speed[:1].expand_as(soft_speed), atol=1.0e-6
+    )
+
+
+def test_success_compactness_is_smooth_and_never_a_hard_gate() -> None:
+    preference = smooth_success_compactness(
+        torch.tensor([0.0, 0.5, 1.0]), scale_m=0.5
+    )
+    assert float(preference[0]) == 1.0
+    assert float(preference[0]) > float(preference[1]) > float(preference[2]) > 0.0
+
+
+def test_displacement_cost_is_zero_at_origin_and_increases_smoothly() -> None:
+    cost = smooth_displacement_cost(
+        torch.tensor([0.0, 0.25, 0.5]), scale_m=0.35
+    )
+    assert float(cost[0]) == 0.0
+    assert float(cost[0]) < float(cost[1]) < float(cost[2])
 
 
 def test_actor_and_replay_implement_standard_sequential_sac_contract() -> None:

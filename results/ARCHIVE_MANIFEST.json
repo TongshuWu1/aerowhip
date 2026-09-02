@@ -1,0 +1,38 @@
+{
+  "schema": "repository_cleanup_archive_manifest_v1",
+  "date": "2026-08-31",
+  "archive_root": "C:/Users/wts28/Documents/PHD/particle_filter_cable_project_archive_2026-08-31",
+  "cleanup_policy": "recoverable move; no historical artifact permanently deleted or overwritten",
+  "repository_size_before_excluding_git_and_venv_gb": 3.13,
+  "repository_size_after_excluding_git_and_venv_mb": 200.83,
+  "archive_size_gb": 2.94,
+  "archived_run_roots": [
+    "data/policy_training",
+    "data/planning",
+    "data/planning_results"
+  ],
+  "archived_source_and_report_roots": [
+    "legacy",
+    "reports",
+    "offline_dder"
+  ],
+  "retained_result_families": [
+    "PPO",
+    "SAC",
+    "CEM"
+  ],
+  "retained_core_data": [
+    "raw takes",
+    "processed experimental evidence",
+    "fit results",
+    "active model assets",
+    "shared context normalizer",
+    "physically propagated training and validation state banks"
+  ],
+  "verification": {
+    "pytest_passed": 77,
+    "pytest_failed": 0,
+    "production_cem_warm_start_verified": true,
+    "curated_gui_replay_verified": true
+  }
+}

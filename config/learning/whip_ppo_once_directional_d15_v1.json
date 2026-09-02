@@ -7,7 +7,7 @@
   "reward_mode": "whip_potential",
   "simulator_config": "config/default.json",
   "task_config": "config/tasks/canonical_whip_v1.json",
-  "context_normalizer": "data/policy_training/oneshot_sac_nominal_v1/2026-08-29T192059.907360Z/context_normalizer.json",
+  "context_normalizer": "results/common/context_normalizer.json",
   "initialization": {
     "type": "random_policy_value_and_optimizer",
     "uses_previous_policy_checkpoint": false
@@ -84,7 +84,7 @@
     "enabled": true,
     "every_episodes": 2048,
     "episodes": 10,
-    "state_bank_root": "data/policy_training/oneshot_sac_nominal_v1/2026-08-29T192059.907360Z",
+    "state_bank_root": "results/common",
     "state_selection_seed": 742,
     "maximum_distance_quantile": 0.25,
     "policy": "deterministic"

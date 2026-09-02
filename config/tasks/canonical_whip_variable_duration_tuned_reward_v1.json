@@ -84,7 +84,7 @@
   "initial_nominal": {
     "source": "deterministic successful result from direction-weight tuning, refined with an interior 20-degree direction shaping target",
     "source_task": "config/tasks/canonical_whip_variable_duration_tuned_reward_v1.json",
-    "artifact": "data/planning_results/canonical_whip_variable_duration_tuned_reward_v1/2026-08-29T153444.863451Z/best_acceleration_knots.json",
+    "artifact": "results/cem/reference/tuned_reward_initial_nominal_knots.json",
     "sha256": "89af9033ec557800b01b03aac37f3b1433784550bc3dd7c7346adf68eb69a711"
   },
   "artifact_policy": {

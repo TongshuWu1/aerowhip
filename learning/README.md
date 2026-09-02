@@ -1,28 +1,20 @@
-# Active one-shot interfaces
+# Current learning package
 
-No policy learner is currently active. This package now contains only the
-stable interfaces shared by production planning and diagnostics:
+This package contains the retained learned-control paths and shared production
+context/action interfaces:
 
-- `policy_context.py`: root-centered, yaw-aligned 83-D context.
-- `policy_action.py`: canonical normalized 49-D action and production codec.
-- `one_shot_env.py`: open-loop batch evaluation helper.
-- `state_bank.py` and `context_sampling.py`: physically propagated state and
-  context construction.
-- `cem_teacher_support.py`: read-only loading of verified Milestone-6A CEM
-  teachers and the fixed production environment contract.
-- `action_robustness.py`: deterministic perturbation banks used by the current
-  teacher-manifold robustness audit.
+- `sequential_sac_env.py`: full-model sequential whip environment used by both
+  PPO and the stopped SAC baseline.
+- `simple_ppo.py`: selected PPO actor/value implementation.
+- `ppo_validation.py`: deterministic state-bank validation and plots.
+- `ppo_trajectory_compiler.py`: zero-training feedback/open-loop audit tools.
+- `simple_sac.py`: retained pure-SAC negative baseline.
+- `normalization.py`, `policy_context.py`, `policy_action.py`, `state_bank.py`,
+  and `context_sampling.py`: shared production data contracts used by PPO/CEM.
 
-SAC, deterministic imitation, diffusion/scorer, and residual-policy branches
-are retired. Their source, configs, and tests are preserved under
-`legacy/retired_learning/`; they are not imported by this package or the GUI.
-Their immutable result artifacts remain under `data/policy_training/`.
+Figure-eight SAC, one-shot SAC helpers, diffusion/amortization, flick, and
+iterative-residual branches are historical and are not part of the active
+package. Their source and full artifacts are recoverable from the dated sibling
+archive.
 
-The current diagnostic entry point is:
-
-```powershell
-.\.venv\Scripts\python.exe run_milestone7c.py --analyze-existing data/policy_training/cem_teacher_robustness_audit_v1/2026-08-30T213030.839170Z
-```
-
-That command only re-analyzes saved physics outcomes. It does not train a
-policy or run CEM.
+Current evidence and checkpoints are organized under [`results/`](../results/README.md).

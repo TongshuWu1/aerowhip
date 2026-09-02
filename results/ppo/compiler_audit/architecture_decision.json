@@ -1,0 +1,25 @@
+{
+  "schema": "ppo_feedback_dependence_architecture_decision_v1",
+  "preferred_architecture": "TEN_HZ_CLOSED_LOOP_PPO",
+  "exact_replay_pass": true,
+  "decision_rule": {
+    "optimized_compilation_p95_max_s": 1.0,
+    "mean_mismatch_feedback_advantage_max": 0.1,
+    "worst_mismatch_feedback_advantage_max": 0.2,
+    "mean_disturbance_feedback_advantage_max": 0.1
+  },
+  "optimized_compilation_p95_s": 12.362428230018121,
+  "mean_mismatch_feedback_advantage": 0.1861328125,
+  "worst_mismatch_feedback_advantage": 0.251953125,
+  "mean_disturbance_feedback_advantage": 0.17447916666666666,
+  "failed_criteria": [
+    "optimized compilation p95 12.362 s exceeds 1.0 s",
+    "mean mismatch feedback advantage 18.61 pp exceeds 10 pp",
+    "worst mismatch feedback advantage 25.20 pp exceeds 20 pp",
+    "mean disturbance feedback advantage 17.45 pp exceeds 10 pp"
+  ],
+  "reason": "optimized compilation p95 12.362 s exceeds 1.0 s; mean mismatch feedback advantage 18.61 pp exceeds 10 pp; worst mismatch feedback advantage 25.20 pp exceeds 20 pp; mean disturbance feedback advantage 17.45 pp exceeds 10 pp",
+  "training_performed": false,
+  "protected_test_evaluated": false,
+  "hardware_executed": false
+}

@@ -4,7 +4,7 @@
   "model_freeze": "MODEL_FREEZE_REMEASURED_GEOMETRY_PRE_MPPI",
   "simulator_config": "config/default.json",
   "task_config": "config/tasks/canonical_whip_v1.json",
-  "context_normalizer": "data/policy_training/oneshot_sac_nominal_v1/2026-08-29T192059.907360Z/context_normalizer.json",
+  "context_normalizer": "results/common/context_normalizer.json",
   "seed": 42,
   "total_episodes": 3000000,
   "collection_batch": 2048,

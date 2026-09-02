@@ -81,7 +81,11 @@ def _load_config(path: Path) -> dict[str, Any]:
 
 
 def _build_environment(
-    config: dict[str, Any], *, batch_size: int
+    config: dict[str, Any],
+    *,
+    batch_size: int,
+    record_fullstate_commands: bool = False,
+    record_state_trajectory: bool = False,
 ) -> tuple[SequentialWhipEnvironment, torch.device]:
     settings = SimulatorSettings.load(ROOT / config["simulator_config"])
     task = load_canonical_whip_task(ROOT / config["task_config"])
@@ -125,6 +129,9 @@ def _build_environment(
             maximum_displacement=float(
                 reward_config.get("maximum_displacement_weight", 0.0)
             ),
+            terminal_displacement=float(
+                reward_config.get("terminal_displacement_weight", 0.0)
+            ),
             displacement_integral=float(
                 reward_config.get("displacement_integral_weight", 0.0)
             ),
@@ -140,9 +147,35 @@ def _build_environment(
             action_smoothness=float(
                 reward_config.get("action_smoothness_weight", 0.0)
             ),
+            time_to_success=float(
+                reward_config.get("time_to_success_weight_per_s", 0.0)
+            ),
+            directed_speed_reward_cap_m_s=float(
+                reward_config.get("directed_speed_reward_cap_m_s", float("inf"))
+            ),
+            success_compactness_bonus=float(
+                reward_config.get("success_compactness_bonus", 0.0)
+            ),
+            success_compactness_scale_m=float(
+                reward_config.get("success_compactness_scale_m", 0.5)
+            ),
+            displacement_cost_scale_m=float(
+                reward_config.get("displacement_cost_scale_m", 0.0)
+            ),
+        ),
+        action_mode=str(action_config.get("mode", "full_6d")),
+        directed_speed_shaping_reference=str(
+            reward_config.get("directed_speed_shaping_reference", "world_tip")
         ),
         success_mode=str(config.get("success_mode", "simple_endpoint")),
         reward_mode=str(config.get("reward_mode", "legacy_dense")),
+        terminate_on_success=not bool(
+            config.get("reported_success", {}).get(
+                "episode_continues_after_success", True
+            )
+        ),
+        record_fullstate_commands=record_fullstate_commands,
+        record_state_trajectory=record_state_trajectory,
     )
     return environment, simulator.device
 

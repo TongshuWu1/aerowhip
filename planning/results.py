@@ -16,7 +16,7 @@ import numpy as np
 from simulator.production import PROJECT_ROOT
 
 
-PLANNING_RESULTS_ROOT = PROJECT_ROOT / "data" / "planning_results"
+PLANNING_RESULTS_ROOT = PROJECT_ROOT / "results" / "cem" / "replays"
 SUPPORTED_TASKS = {
     "canonical_whip_v1": "Single Target Whip",
     "figure8_endpoint_whip_v1": "Figure-8 Endpoint Whip",

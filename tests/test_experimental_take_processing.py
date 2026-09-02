@@ -150,8 +150,19 @@ def test_production_gui_has_training_status_page() -> None:
     application = QApplication.instance() or QApplication([])
     window = main_module.SimulatorMainWindow(SETTINGS)
     assert [window.main_tabs.tabText(index) for index in range(window.main_tabs.count())] == [
-        "Simulator", "Data", "Model", "Planning", "Training"
+        "Run & Replay",
+        "PPO Training",
+        "Production Model",
+        "Experimental Data",
+        "Planning Archive",
     ]
+    assert window.main_tabs.tabBar().isHidden()
+    assert len(window.navigation_buttons) == 5
+    assert window.navigation_buttons[0].isChecked()
+    assert window.shell_page_title.text() == "Run & Replay"
+    window.main_tabs.setCurrentIndex(1)
+    assert window.navigation_buttons[1].isChecked()
+    assert window.shell_page_title.text() == "PPO Training"
     assert window.data_page.table.rowCount() >= 1
     protected = [
         window.data_page.table.item(row, 3).text()
@@ -162,8 +173,50 @@ def test_production_gui_has_training_status_page() -> None:
     assert "Verified / Frozen" in window.planning_page.model_label.text()
     assert window.planning_page.result_status.text() in {"PASS", "FAIL"}
     assert window.training_page.start_button.text() == "START NEW PPO RUN"
+    assert window.training_page.save_config_button.text() == "SAVE CONFIG"
+    assert window.training_page.load_config_button.text() == "LOAD CONFIG"
+    assert window.training_page.timer.interval() == 500
+    assert window.training_page.configuration_group.isCheckable()
+    assert window.training_page.initialization_mode_input.currentData() == "fresh"
+    assert (
+        window.training_page.action_mode_input.currentData()
+        == "target_aligned_sagittal_3d"
+    )
+    assert (
+        window.training_page.speed_reference_input.currentData()
+        == "attachment_relative"
+    )
+    launch_config = window.training_page._configuration_from_controls()
+    assert launch_config["action"]["mode"] == "target_aligned_sagittal_3d"
+    assert launch_config["action"]["dimensions"] == 3
+    assert launch_config["action"]["lateral_acceleration_available"] is False
+    assert (
+        launch_config["reward"]["directed_speed_shaping_reference"]
+        == "attachment_relative"
+    )
+    assert window.training_page.initialization_mode_input.findData("fresh") >= 0
+    assert window.training_page.episode_budget_input.value() == 1_000_000
+    assert window.training_page.episode_horizon_input.value() == 7.0
+    assert window.training_page.rolling_window_input.value() == 5_000
+    assert window.training_page.terminal_displacement_weight_input.value() == 40.0
+    assert window.training_page.displacement_integral_weight_input.value() == 2.0
+    assert window.training_page.learning_rate_input.value() == 0.0003
+    assert window.training_page.update_epochs_input.value() == 4
+    assert "rolling 5,000" in window.training_page.training_card.detail_label.text()
+    assert window.training_page.run_validation_button.text() == "RUN CURRENT POLICY"
+    assert window.training_page.validation_count_input.value() == 20
+    assert (
+        window.training_page.run_validation_button.objectName()
+        == "runCurrentPolicyValidationButton"
+    )
     assert window.training_page.curves.training_axis.get_ylabel() == "Training success (%)"
+    assert window.training_page.curves.reward_axis.get_ylabel() == "Mean episodic reward"
     assert window.training_page.curves.validation_axis.get_ylabel() == "Validation success (%)"
+    assert window.training_page.curves.tabs.count() == 3
+    assert [
+        window.training_page.curves.tabs.tabText(index)
+        for index in range(window.training_page.curves.tabs.count())
+    ] == ["TRAINING SUCCESS", "EPISODE REWARD", "VALIDATION"]
     window.simulator_page.load_latest_plan()
     assert window.simulator_page.current_result is not None
     assert not hasattr(window, "takes_widget")

@@ -1,0 +1,404 @@
+{
+  "cem_primary_planner": "SUPPORTED",
+  "context_count": 256,
+  "duration_s": {
+    "count": 252,
+    "maximum": 1.2769442796707153,
+    "mean": 1.1128305532629528,
+    "median": 1.1113040447235107,
+    "p90": 1.1549246907234192,
+    "p95": 1.1777807533740996
+  },
+  "duration_upper_bound_active_count": 0,
+  "duration_upper_bound_active_fraction": 0.0,
+  "first_seed_authoritative_success_count": 251,
+  "first_seed_authoritative_success_rate": 0.98046875,
+  "first_seed_miss_contexts": [
+    "D_EDGE_044",
+    "C_JOINT_059",
+    "D_EDGE_062",
+    "C_JOINT_063",
+    "D_EDGE_063"
+  ],
+  "groups": {
+    "A_TARGET": {
+      "count": 64,
+      "first_seed_success_count": 64,
+      "first_seed_success_rate": 1.0,
+      "restart_success_count": 64,
+      "restart_success_rate": 1.0,
+      "runtime_s": {
+        "count": 64,
+        "maximum": 42.39548890001606,
+        "mean": 34.872646931256895,
+        "median": 33.84819435002282,
+        "p90": 41.173410410020736,
+        "p95": 41.530467700000735
+      },
+      "successful_directed_speed_m_s": {
+        "count": 64,
+        "maximum": 4.755270004272461,
+        "mean": 4.403669103980064,
+        "median": 4.393511056900024,
+        "p90": 4.532130861282349,
+        "p95": 4.562782430648804
+      },
+      "successful_direction_error_deg": {
+        "count": 64,
+        "maximum": 29.976354598999023,
+        "mean": 24.599267095327377,
+        "median": 24.476696014404297,
+        "p90": 27.917104911804202,
+        "p95": 28.588937091827393
+      },
+      "successful_duration_s": {
+        "count": 64,
+        "maximum": 1.1625640392303467,
+        "mean": 1.1057058051228523,
+        "median": 1.1085054874420166,
+        "p90": 1.1400306582450868,
+        "p95": 1.1507714629173278
+      },
+      "successful_tip_error_m": {
+        "count": 64,
+        "maximum": 0.045730289071798325,
+        "mean": 0.027907441195566207,
+        "median": 0.0281292125582695,
+        "p90": 0.03788829445838929,
+        "p95": 0.04215882197022438
+      }
+    },
+    "B_STATE": {
+      "count": 64,
+      "first_seed_success_count": 64,
+      "first_seed_success_rate": 1.0,
+      "restart_success_count": 64,
+      "restart_success_rate": 1.0,
+      "runtime_s": {
+        "count": 64,
+        "maximum": 49.85752079996746,
+        "mean": 35.19999059999827,
+        "median": 33.80021449999185,
+        "p90": 41.19286192999571,
+        "p95": 42.21258823504031
+      },
+      "successful_directed_speed_m_s": {
+        "count": 64,
+        "maximum": 5.266075134277344,
+        "mean": 4.387555226683617,
+        "median": 4.3717827796936035,
+        "p90": 4.5284699440002445,
+        "p95": 4.609533143043518
+      },
+      "successful_direction_error_deg": {
+        "count": 64,
+        "maximum": 29.442747116088867,
+        "mean": 25.066419899463654,
+        "median": 25.21242332458496,
+        "p90": 27.668582916259766,
+        "p95": 29.066146850585938
+      },
+      "successful_duration_s": {
+        "count": 64,
+        "maximum": 1.1768243312835693,
+        "mean": 1.1102712079882622,
+        "median": 1.1105505228042603,
+        "p90": 1.138969933986664,
+        "p95": 1.144517195224762
+      },
+      "successful_tip_error_m": {
+        "count": 64,
+        "maximum": 0.04942040890455246,
+        "mean": 0.03115173069818411,
+        "median": 0.03251669742166996,
+        "p90": 0.043489592522382735,
+        "p95": 0.04561698753386735
+      }
+    },
+    "C_JOINT": {
+      "count": 64,
+      "first_seed_success_count": 62,
+      "first_seed_success_rate": 0.96875,
+      "restart_success_count": 62,
+      "restart_success_rate": 0.96875,
+      "runtime_s": {
+        "count": 64,
+        "maximum": 473.9820283000008,
+        "mean": 63.83865952812539,
+        "median": 41.79191999998875,
+        "p90": 91.16115750001049,
+        "p95": 123.30560558502899
+      },
+      "successful_directed_speed_m_s": {
+        "count": 62,
+        "maximum": 4.721800804138184,
+        "mean": 4.323656828172745,
+        "median": 4.310258865356445,
+        "p90": 4.523329353332519,
+        "p95": 4.595860815048217
+      },
+      "successful_direction_error_deg": {
+        "count": 62,
+        "maximum": 29.983482360839844,
+        "mean": 26.374488399874778,
+        "median": 26.504263877868652,
+        "p90": 29.531329917907716,
+        "p95": 29.672371196746827
+      },
+      "successful_duration_s": {
+        "count": 62,
+        "maximum": 1.2769442796707153,
+        "mean": 1.11941239910741,
+        "median": 1.1140037178993225,
+        "p90": 1.16382839679718,
+        "p95": 1.1971091866493224
+      },
+      "successful_tip_error_m": {
+        "count": 62,
+        "maximum": 0.04995258152484894,
+        "mean": 0.032057457810057505,
+        "median": 0.03234872780740261,
+        "p90": 0.04578070342540741,
+        "p95": 0.04760040491819381
+      }
+    },
+    "D_EDGE": {
+      "count": 64,
+      "first_seed_success_count": 61,
+      "first_seed_success_rate": 0.953125,
+      "restart_success_count": 62,
+      "restart_success_rate": 0.96875,
+      "runtime_s": {
+        "count": 64,
+        "maximum": 473.56023290002486,
+        "mean": 79.42455551562307,
+        "median": 57.735658399993554,
+        "p90": 117.77457628002158,
+        "p95": 140.40151270000487
+      },
+      "successful_directed_speed_m_s": {
+        "count": 62,
+        "maximum": 4.9040913581848145,
+        "mean": 4.301615415080901,
+        "median": 4.29706883430481,
+        "p90": 4.508236074447632,
+        "p95": 4.5416062593460085
+      },
+      "successful_direction_error_deg": {
+        "count": 62,
+        "maximum": 29.98476219177246,
+        "mean": 26.84749178732595,
+        "median": 27.481882095336914,
+        "p90": 29.40145950317383,
+        "p95": 29.746575832366943
+      },
+      "successful_duration_s": {
+        "count": 62,
+        "maximum": 1.231958270072937,
+        "mean": 1.116245190943441,
+        "median": 1.1186555624008179,
+        "p90": 1.1780786514282227,
+        "p95": 1.185228031873703
+      },
+      "successful_tip_error_m": {
+        "count": 62,
+        "maximum": 0.04955875128507614,
+        "mean": 0.03580561974236081,
+        "median": 0.036115458235144615,
+        "p90": 0.045688684657216073,
+        "p95": 0.048663812875747677
+      }
+    }
+  },
+  "hit_minus_maneuver_s": {
+    "count": 252,
+    "maximum": 0.1400226354598999,
+    "mean": -0.012632127792116195,
+    "median": -0.015276432037353516,
+    "p90": 0.018573510646820068,
+    "p95": 0.07672024369239802
+  },
+  "hit_segments": {
+    "ACTIVE": {
+      "count": 187,
+      "fraction": 0.7420634920634921
+    },
+    "HOLD": {
+      "count": 0,
+      "fraction": 0.0
+    },
+    "SETTLE": {
+      "count": 65,
+      "fraction": 0.25793650793650796
+    }
+  },
+  "hit_time_s": {
+    "count": 252,
+    "maximum": 1.2200000286102295,
+    "mean": 1.1001984254708366,
+    "median": 1.100000023841858,
+    "p90": 1.1489999771118165,
+    "p95": 1.1699999570846558
+  },
+  "iterations_per_context": {
+    "count": 256,
+    "maximum": 60.0,
+    "mean": 6.50390625,
+    "median": 4.0,
+    "p90": 9.5,
+    "p95": 13.25
+  },
+  "population_pass_authoritative_fail_count": 0,
+  "replay_difference_summary": {
+    "directed_speed_m_s": {
+      "maximum": 0.0,
+      "mean": 0.0,
+      "median": 0.0,
+      "p95": 0.0
+    },
+    "direction_error_deg": {
+      "maximum": 0.0,
+      "mean": 0.0,
+      "median": 0.0,
+      "p95": 0.0
+    },
+    "tip_distance_m": {
+      "maximum": 0.0,
+      "mean": 0.0,
+      "median": 0.0,
+      "p95": 0.0
+    },
+    "uav_displacement_m": {
+      "maximum": 0.0,
+      "mean": 0.0,
+      "median": 0.0,
+      "p95": 0.0
+    },
+    "uav_speed_m_s": {
+      "maximum": 0.0,
+      "mean": 0.0,
+      "median": 0.0,
+      "p95": 0.0
+    }
+  },
+  "restart_authoritative_success_count": 252,
+  "restart_authoritative_success_rate": 0.984375,
+  "robustness_margins": {
+    "command_acceleration_m_s2": {
+      "median": 4.82694149017334,
+      "p05": 3.458644390106201
+    },
+    "directed_speed_m_s": {
+      "median": 0.3531498908996582,
+      "p05": 0.11181659698486328
+    },
+    "direction_deg": {
+      "median": 4.033787727355957,
+      "p05": 0.49464330673217777
+    },
+    "tip_m": {
+      "median": 0.017927645891904834,
+      "p05": 0.0037702489644289047
+    },
+    "uav_displacement_m": {
+      "median": 0.012177914381027222,
+      "p05": 0.0008932784199714661
+    },
+    "uav_speed_m_s": {
+      "median": 0.7690112590789795,
+      "p05": 0.41128891706466675
+    }
+  },
+  "rollouts_per_context": {
+    "count": 256,
+    "maximum": 247776.0,
+    "mean": 26881.25,
+    "median": 16544.0,
+    "p90": 39248.0,
+    "p95": 54728.0
+  },
+  "runtime_s": {
+    "count": 256,
+    "maximum": 473.9820283000008,
+    "mean": 53.33396314375091,
+    "median": 34.607336800021585,
+    "p90": 76.37119805000839,
+    "p95": 105.46264882502146
+  },
+  "successful_metrics": {
+    "directed_speed_m_s": {
+      "count": 252,
+      "maximum": 5.266075134277344,
+      "mean": 4.354782683508737,
+      "median": 4.353149890899658,
+      "p90": 4.525447273254395,
+      "p95": 4.577246761322021
+    },
+    "direction_error_deg": {
+      "count": 252,
+      "maximum": 29.98476219177246,
+      "mean": 25.707804520924885,
+      "median": 25.966212272644043,
+      "p90": 29.090900039672853,
+      "p95": 29.50535669326782
+    },
+    "tip_error_m": {
+      "count": 252,
+      "maximum": 0.04995258152484894,
+      "mean": 0.03169562622797602,
+      "median": 0.03207235410809517,
+      "p90": 0.04473732225596905,
+      "p95": 0.046229751035571094
+    }
+  },
+  "unsolved_contexts": [
+    {
+      "attempt_count": 3,
+      "attempt_seeds": [
+        602380,
+        602381,
+        602382
+      ],
+      "context_id": "C_JOINT_059",
+      "group": "C_JOINT",
+      "iterations": 60,
+      "planning_runtime_s": 473.9820283000008
+    },
+    {
+      "attempt_count": 3,
+      "attempt_seeds": [
+        602510,
+        602511,
+        602512
+      ],
+      "context_id": "D_EDGE_062",
+      "group": "D_EDGE",
+      "iterations": 60,
+      "planning_runtime_s": 473.2769617999438
+    },
+    {
+      "attempt_count": 3,
+      "attempt_seeds": [
+        602540,
+        602541,
+        602542
+      ],
+      "context_id": "C_JOINT_063",
+      "group": "C_JOINT",
+      "iterations": 60,
+      "planning_runtime_s": 473.9495740000275
+    },
+    {
+      "attempt_count": 3,
+      "attempt_seeds": [
+        602550,
+        602551,
+        602552
+      ],
+      "context_id": "D_EDGE_063",
+      "group": "D_EDGE",
+      "iterations": 60,
+      "planning_runtime_s": 473.56023290002486
+    }
+  ]
+}

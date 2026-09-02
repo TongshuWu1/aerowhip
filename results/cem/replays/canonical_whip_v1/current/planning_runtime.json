@@ -1,0 +1,16 @@
+{
+  "candidate_rollouts_evaluated": 8192,
+  "cuda_version": "12.8",
+  "device": "NVIDIA GeForce RTX 4080",
+  "effective_rollouts_per_s": 2964.692688717537,
+  "final_replay_s": 0.7303001999971457,
+  "iteration_runtime_s": [
+    0.6646084999665618,
+    0.7380074000102468,
+    0.671769000007771,
+    0.6805102999787778
+  ],
+  "peak_cuda_memory_mb": 26.62158203125,
+  "torch_version": "2.11.0+cu128",
+  "total_mppi_solve_s": 2.7631869000033475
+}

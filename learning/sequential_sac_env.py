@@ -1,9 +1,10 @@
-"""Ten-second sequential whip environment shared by the SAC/PPO baselines."""
+"""Variable-horizon sequential whip environment shared by SAC/PPO baselines."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 import math
+from typing import Callable
 
 import torch
 
@@ -11,8 +12,14 @@ from planning.rollout import clone_state_batch
 from planning.task import CanonicalWhipTask
 from simulator.cable.dder import DderState
 from simulator.simulator import CoupledSimulator
+from simulator.parameters import SimulatorParameters
 from simulator.state import SimulatorState
-from simulator.uav.state import FullStateCommand, ResidualHistoryState, UAVState
+from simulator.uav.state import (
+    FullStateCommand,
+    FullStateCommandSequence,
+    ResidualHistoryState,
+    UAVState,
+)
 
 from .normalization import FixedContextNormalizer
 from .policy_context import POLICY_CONTEXT_DIM, build_policy_context
@@ -21,6 +28,85 @@ from .policy_context import POLICY_CONTEXT_DIM, build_policy_context
 SEQUENTIAL_WHIP_OBSERVATION_DIM = POLICY_CONTEXT_DIM + 1
 # Compatibility for the retired SAC runner and its historical checkpoints.
 SEQUENTIAL_SAC_OBSERVATION_DIM = SEQUENTIAL_WHIP_OBSERVATION_DIM
+
+FULL_6D_ACTION_MODE = "full_6d"
+TARGET_ALIGNED_SAGITTAL_ACTION_MODE = "target_aligned_sagittal_3d"
+WORLD_TIP_SPEED_SHAPING = "world_tip"
+ATTACHMENT_RELATIVE_SPEED_SHAPING = "attachment_relative"
+
+
+def sequential_action_dimension(action_mode: str) -> int:
+    """Return the policy output width for one supported action contract."""
+
+    dimensions = {
+        FULL_6D_ACTION_MODE: 6,
+        TARGET_ALIGNED_SAGITTAL_ACTION_MODE: 3,
+    }
+    try:
+        return dimensions[str(action_mode)]
+    except KeyError as error:
+        raise ValueError(f"Unsupported sequential-whip action mode: {action_mode}") from error
+
+
+def decode_target_aligned_sagittal_action(
+    normalized_action: torch.Tensor,
+    desired_direction_world: torch.Tensor,
+    *,
+    maximum_acceleration_m_s2: float,
+    maximum_body_rate_rad_s: float,
+) -> tuple[torch.Tensor, torch.Tensor]:
+    """Decode [along-target acceleration, vertical acceleration, pitch rate]."""
+
+    if normalized_action.ndim != 2 or normalized_action.shape[-1] != 3:
+        raise ValueError("Target-aligned sagittal action must have shape Bx3.")
+    direction = torch.as_tensor(
+        desired_direction_world,
+        dtype=normalized_action.dtype,
+        device=normalized_action.device,
+    )
+    if direction.shape != (normalized_action.shape[0], 3):
+        raise ValueError("Desired direction must have shape Bx3.")
+    forward = direction.clone()
+    forward[:, 2] = 0.0
+    forward_norm = torch.linalg.vector_norm(forward, dim=-1, keepdim=True)
+    if not bool((forward_norm > torch.finfo(forward.dtype).eps).all()):
+        raise ValueError("Target-aligned sagittal control requires a horizontal direction.")
+    forward = forward / forward_norm
+
+    sagittal_acceleration = normalized_action[:, :2]
+    acceleration_norm = torch.linalg.vector_norm(
+        sagittal_acceleration, dim=-1, keepdim=True
+    )
+    sagittal_acceleration = sagittal_acceleration / torch.maximum(
+        acceleration_norm, torch.ones_like(acceleration_norm)
+    )
+    vertical = torch.tensor(
+        (0.0, 0.0, 1.0),
+        dtype=normalized_action.dtype,
+        device=normalized_action.device,
+    ).view(1, 3)
+    acceleration_world = float(maximum_acceleration_m_s2) * (
+        sagittal_acceleration[:, :1] * forward
+        + sagittal_acceleration[:, 1:2] * vertical
+    )
+    body_rate = torch.zeros_like(acceleration_world)
+    body_rate[:, 1] = float(maximum_body_rate_rad_s) * normalized_action[:, 2]
+    return acceleration_world, body_rate
+
+
+def shaping_tip_velocity(
+    tip_velocity_world_m_s: torch.Tensor,
+    attachment_velocity_world_m_s: torch.Tensor,
+    *,
+    mode: str,
+) -> torch.Tensor:
+    """Select the velocity used only by dense reward shaping."""
+
+    if mode == WORLD_TIP_SPEED_SHAPING:
+        return tip_velocity_world_m_s
+    if mode == ATTACHMENT_RELATIVE_SPEED_SHAPING:
+        return tip_velocity_world_m_s - attachment_velocity_world_m_s
+    raise ValueError(f"Unsupported directed-speed shaping reference: {mode}")
 
 
 @dataclass(frozen=True, slots=True)
@@ -35,11 +121,17 @@ class SimpleRewardWeights:
     non_tip_first: float = 0.0
     strike_quality_improvement: float = 0.0
     maximum_displacement: float = 0.0
+    terminal_displacement: float = 0.0
     displacement_integral: float = 0.0
     uav_speed_integral: float = 0.0
     acceleration_effort: float = 0.0
     body_rate_effort: float = 0.0
     action_smoothness: float = 0.0
+    time_to_success: float = 0.0
+    directed_speed_reward_cap_m_s: float = math.inf
+    success_compactness_bonus: float = 0.0
+    success_compactness_scale_m: float = 0.5
+    displacement_cost_scale_m: float = 0.0
 
 
 @dataclass(frozen=True, slots=True)
@@ -134,31 +226,167 @@ def strike_quality(
     proximity_scale_m: float,
     target_directed_speed_m_s: float,
     maximum_direction_error_deg: float = 30.0,
+    speed_reward_cap_m_s: float = math.inf,
 ) -> torch.Tensor:
     """Bounded soft conjunction of proximity, speed, and strike alignment."""
 
     proximity = torch.exp(-0.5 * torch.square(distance_m / proximity_scale_m))
+    speed_width = max(0.25 * target_directed_speed_m_s, 1.0e-6)
     speed = torch.sigmoid(
-        (directed_speed_m_s - target_directed_speed_m_s)
-        / max(0.25 * target_directed_speed_m_s, 1.0e-6)
+        (directed_speed_m_s - target_directed_speed_m_s) / speed_width
     )
-    # The former (cosine + 1) / 2 map still awarded 64.6% direction credit at
-    # 73 degrees.  Centering a smooth score on the scientific direction limit
-    # retains gradients but makes a fast sideways target entry unattractive.
+    if math.isfinite(speed_reward_cap_m_s):
+        baseline = torch.sigmoid(
+            torch.as_tensor(
+                -target_directed_speed_m_s / speed_width,
+                dtype=speed.dtype,
+                device=speed.device,
+            )
+        )
+        at_cap = torch.sigmoid(
+            torch.as_tensor(
+                (speed_reward_cap_m_s - target_directed_speed_m_s)
+                / speed_width,
+                dtype=speed.dtype,
+                device=speed.device,
+            )
+        )
+        speed = ((speed - baseline) / (at_cap - baseline).clamp_min(
+            torch.finfo(speed.dtype).eps
+        )).clamp(0.0, 1.0)
+    direction = direction_gate_quality(
+        direction_cosine,
+        maximum_direction_error_deg=maximum_direction_error_deg,
+    )
+    return proximity * speed * direction
+
+
+def direction_gate_quality(
+    direction_cosine: torch.Tensor,
+    *,
+    maximum_direction_error_deg: float = 30.0,
+    width: float = 0.15,
+) -> torch.Tensor:
+    """Smooth alignment quality centered on the actual scientific angle gate.
+
+    The historical ``(cosine + 1) / 2`` score assigned roughly 60% credit to
+    the observed 78-degree sideways strike.  This normalized sigmoid retains a
+    gradient outside the gate while making that behavior low reward.
+    """
+
     direction_threshold = math.cos(math.radians(maximum_direction_error_deg))
-    direction_width = 0.15
     direction = torch.sigmoid(
-        (direction_cosine - direction_threshold) / direction_width
+        (direction_cosine - direction_threshold) / max(width, 1.0e-6)
     )
     perfect_alignment = torch.sigmoid(
         torch.as_tensor(
-            (1.0 - direction_threshold) / direction_width,
+            (1.0 - direction_threshold) / max(width, 1.0e-6),
             dtype=direction.dtype,
             device=direction.device,
         )
     )
-    direction = (direction / perfect_alignment).clamp(0.0, 1.0)
-    return proximity * speed * direction
+    return (direction / perfect_alignment).clamp(0.0, 1.0)
+
+
+def soft_near_target_strike_components(
+    distance_m: torch.Tensor,
+    tip_speed_m_s: torch.Tensor,
+    directed_speed_m_s: torch.Tensor,
+    direction_cosine: torch.Tensor,
+    *,
+    proximity_scale_m: float,
+    target_directed_speed_m_s: float,
+    speed_reward_cap_m_s: float = math.inf,
+    maximum_direction_error_deg: float = 30.0,
+) -> tuple[torch.Tensor, torch.Tensor]:
+    """Return bounded speed/alignment potentials with pre-success gradients."""
+
+    proximity = torch.exp(
+        -0.5 * torch.square(distance_m / max(proximity_scale_m, 1.0e-6))
+    )
+    speed_width = max(0.25 * target_directed_speed_m_s, 1.0e-6)
+    speed_midpoint = 0.25 * target_directed_speed_m_s
+    speed_baseline = torch.sigmoid(
+        torch.as_tensor(
+            -speed_midpoint / speed_width,
+            dtype=directed_speed_m_s.dtype,
+            device=directed_speed_m_s.device,
+        )
+    )
+    speed_score = (
+        (
+            torch.sigmoid(
+                (directed_speed_m_s - speed_midpoint) / speed_width
+            )
+            - speed_baseline
+        )
+        / (1.0 - speed_baseline).clamp_min(
+            torch.finfo(speed_baseline.dtype).eps
+        )
+    ).clamp(0.0, 1.0)
+    if math.isfinite(speed_reward_cap_m_s):
+        cap_score = (
+            torch.sigmoid(
+                torch.as_tensor(
+                    (speed_reward_cap_m_s - speed_midpoint) / speed_width,
+                    dtype=directed_speed_m_s.dtype,
+                    device=directed_speed_m_s.device,
+                )
+            )
+            - speed_baseline
+        ) / (1.0 - speed_baseline).clamp_min(
+            torch.finfo(speed_baseline.dtype).eps
+        )
+        speed_score = (speed_score / cap_score.clamp_min(
+            torch.finfo(speed_score.dtype).eps
+        )).clamp(0.0, 1.0)
+
+    motion_width = max(0.125 * target_directed_speed_m_s, 1.0e-6)
+    motion_midpoint = 0.25 * target_directed_speed_m_s
+    motion_baseline = torch.sigmoid(
+        torch.as_tensor(
+            -motion_midpoint / motion_width,
+            dtype=tip_speed_m_s.dtype,
+            device=tip_speed_m_s.device,
+        )
+    )
+    motion_score = (
+        (
+            torch.sigmoid((tip_speed_m_s - motion_midpoint) / motion_width)
+            - motion_baseline
+        )
+        / (1.0 - motion_baseline).clamp_min(
+            torch.finfo(motion_baseline.dtype).eps
+        )
+    ).clamp(0.0, 1.0)
+    alignment_score = direction_gate_quality(
+        direction_cosine,
+        maximum_direction_error_deg=maximum_direction_error_deg,
+    )
+    return (
+        proximity * speed_score,
+        proximity * motion_score * alignment_score,
+    )
+
+
+def smooth_success_compactness(
+    maximum_displacement_m: torch.Tensor, *, scale_m: float
+) -> torch.Tensor:
+    """Smooth [0,1] preference for compact successful maneuvers."""
+
+    return torch.exp(
+        -0.5 * torch.square(maximum_displacement_m / max(scale_m, 1.0e-6))
+    )
+
+
+def smooth_displacement_cost(
+    displacement_m: torch.Tensor, *, scale_m: float
+) -> torch.Tensor:
+    """Smooth non-negative displacement cost with zero cost at the origin."""
+
+    return torch.log1p(
+        torch.square(displacement_m / max(scale_m, 1.0e-6))
+    )
 
 
 def simple_dense_reward(
@@ -260,8 +488,15 @@ class SequentialWhipEnvironment:
         maximum_body_rate_rad_s: float = 4.0,
         observation_clip: float = 10.0,
         reward_weights: SimpleRewardWeights = SimpleRewardWeights(),
+        action_mode: str = FULL_6D_ACTION_MODE,
+        directed_speed_shaping_reference: str = WORLD_TIP_SPEED_SHAPING,
         success_mode: str = "simple_endpoint",
         reward_mode: str = "legacy_dense",
+        terminate_on_success: bool = False,
+        rollout_parameters: SimulatorParameters | None = None,
+        record_fullstate_commands: bool = False,
+        record_state_trajectory: bool = False,
+        state_postprocessor: Callable[[int, SimulatorState], SimulatorState] | None = None,
     ) -> None:
         ratio = control_dt_s / simulator.dt_s
         if abs(ratio - round(ratio)) > 1.0e-9:
@@ -280,12 +515,44 @@ class SequentialWhipEnvironment:
         self.maximum_body_rate_rad_s = float(maximum_body_rate_rad_s)
         self.observation_clip = float(observation_clip)
         self.reward_weights = reward_weights
+        self.action_mode = str(action_mode)
+        self.action_dimension = sequential_action_dimension(self.action_mode)
+        if directed_speed_shaping_reference not in {
+            WORLD_TIP_SPEED_SHAPING,
+            ATTACHMENT_RELATIVE_SPEED_SHAPING,
+        }:
+            raise ValueError(
+                "Unsupported directed-speed shaping reference: "
+                f"{directed_speed_shaping_reference}"
+            )
+        self.directed_speed_shaping_reference = str(
+            directed_speed_shaping_reference
+        )
+        self.body_rate_effort_axis_count = (
+            3 if self.action_mode == FULL_6D_ACTION_MODE else 1
+        )
+        self.displacement_cost_scale_m = (
+            float(reward_weights.displacement_cost_scale_m)
+            if reward_weights.displacement_cost_scale_m > 0.0
+            else float(task.maximum_uav_displacement_m)
+        )
+        # These options are diagnostic execution controls.  Defaults preserve
+        # the training path exactly.  In particular, build_policy_context still
+        # reads the nominal simulator parameters even when propagation uses a
+        # mismatch override, so the frozen PPO is not given theta' implicitly.
+        self.rollout_parameters = (
+            simulator.parameters if rollout_parameters is None else rollout_parameters
+        )
+        self.record_fullstate_commands = bool(record_fullstate_commands)
+        self.record_state_trajectory = bool(record_state_trajectory)
+        self.state_postprocessor = state_postprocessor
         if success_mode not in {"simple_endpoint", "task_whip_once"}:
             raise ValueError(f"Unsupported sequential-whip success mode: {success_mode}")
         if reward_mode not in {"legacy_dense", "whip_potential"}:
             raise ValueError(f"Unsupported sequential-whip reward mode: {reward_mode}")
         self.success_mode = success_mode
         self.reward_mode = reward_mode
+        self.terminate_on_success = bool(terminate_on_success)
         self._initial_state = clone_state_batch(initial_state, batch_size)
         self._target = torch.tensor(
             task.target_position_m, dtype=simulator.dtype, device=simulator.device
@@ -332,8 +599,14 @@ class SequentialWhipEnvironment:
         self.episode_maximum_command_acceleration = torch.zeros_like(self.episode_reward)
         self.episode_minimum_tip_distance = torch.full_like(self.episode_reward, torch.inf)
         self.episode_best_strike_quality = torch.zeros_like(self.episode_reward)
+        self.episode_best_directed_speed_quality = torch.zeros_like(
+            self.episode_reward
+        )
+        self.episode_best_direction_quality = torch.zeros_like(self.episode_reward)
         self.previous_normalized_action = torch.zeros(
-            (batch_size, 6), dtype=simulator.dtype, device=simulator.device
+            (batch_size, self.action_dimension),
+            dtype=simulator.dtype,
+            device=simulator.device,
         )
         self.episode_success_tip_distance = torch.full_like(self.episode_reward, torch.nan)
         self.episode_success_tip_speed = torch.full_like(self.episode_reward, torch.nan)
@@ -341,6 +614,122 @@ class SequentialWhipEnvironment:
         self.episode_success_direction_error_deg = torch.full_like(
             self.episode_reward, torch.nan
         )
+        self._command_recording: dict[str, torch.Tensor] | None = None
+        self._state_recording: dict[str, torch.Tensor] | None = None
+        self._allocate_recordings()
+
+    @property
+    def physics_step_count(self) -> int:
+        return self.control_step_count * self.physics_steps_per_control
+
+    def _allocate_recordings(self) -> None:
+        if self.record_fullstate_commands:
+            vector_shape = (self.physics_step_count, self.batch_size, 3)
+            self._command_recording = {
+                "position_m": torch.empty(
+                    vector_shape, dtype=self.simulator.dtype, device=self.simulator.device
+                ),
+                "velocity_m_s": torch.empty(
+                    vector_shape, dtype=self.simulator.dtype, device=self.simulator.device
+                ),
+                "acceleration_m_s2": torch.empty(
+                    vector_shape, dtype=self.simulator.dtype, device=self.simulator.device
+                ),
+                "orientation_xyzw": torch.empty(
+                    (self.physics_step_count, self.batch_size, 4),
+                    dtype=self.simulator.dtype,
+                    device=self.simulator.device,
+                ),
+                "angular_velocity_body_rad_s": torch.empty(
+                    vector_shape, dtype=self.simulator.dtype, device=self.simulator.device
+                ),
+            }
+        if self.record_state_trajectory:
+            step_shape = (self.physics_step_count + 1, self.batch_size)
+            self._state_recording = {
+                "uav_position_m": torch.empty(
+                    (*step_shape, 3), dtype=self.simulator.dtype, device=self.simulator.device
+                ),
+                "uav_velocity_m_s": torch.empty(
+                    (*step_shape, 3), dtype=self.simulator.dtype, device=self.simulator.device
+                ),
+                "uav_orientation_xyzw": torch.empty(
+                    (*step_shape, 4), dtype=self.simulator.dtype, device=self.simulator.device
+                ),
+                "uav_angular_velocity_world_rad_s": torch.empty(
+                    (*step_shape, 3), dtype=self.simulator.dtype, device=self.simulator.device
+                ),
+                "residual_acceleration_m_s2": torch.empty(
+                    (*step_shape, 3), dtype=self.simulator.dtype, device=self.simulator.device
+                ),
+                "cable_positions_m": torch.empty(
+                    (*step_shape, 12, 3),
+                    dtype=self.simulator.dtype,
+                    device=self.simulator.device,
+                ),
+                "cable_velocities_m_s": torch.empty(
+                    (*step_shape, 12, 3),
+                    dtype=self.simulator.dtype,
+                    device=self.simulator.device,
+                ),
+            }
+
+    def _record_state(self, index: int) -> None:
+        if self._state_recording is None:
+            return
+        self._state_recording["uav_position_m"][index].copy_(
+            self.state.uav.position_m
+        )
+        self._state_recording["uav_velocity_m_s"][index].copy_(
+            self.state.uav.velocity_m_s
+        )
+        self._state_recording["uav_orientation_xyzw"][index].copy_(
+            self.state.uav.orientation_xyzw
+        )
+        self._state_recording["uav_angular_velocity_world_rad_s"][index].copy_(
+            self.state.uav.angular_velocity_world_rad_s
+        )
+        residual_acceleration = self.state.uav.residual_acceleration_m_s2
+        if residual_acceleration is None:
+            self._state_recording["residual_acceleration_m_s2"][index].zero_()
+        else:
+            self._state_recording["residual_acceleration_m_s2"][index].copy_(
+                residual_acceleration
+            )
+        self._state_recording["cable_positions_m"][index].copy_(
+            self.state.cable.positions_m
+        )
+        self._state_recording["cable_velocities_m_s"][index].copy_(
+            self.state.cable.velocities_m_s
+        )
+
+    def recorded_command_sequence(self, *, clone: bool = True) -> FullStateCommandSequence:
+        if self._command_recording is None:
+            raise RuntimeError("FullState command recording was not enabled.")
+        if self.control_index != self.control_step_count:
+            raise RuntimeError("The PPO episode is incomplete; no compiled trajectory is ready.")
+
+        def value(name: str) -> torch.Tensor:
+            tensor = self._command_recording[name]
+            return tensor.clone() if clone else tensor
+
+        return FullStateCommandSequence(
+            value("position_m"),
+            value("velocity_m_s"),
+            value("acceleration_m_s2"),
+            value("orientation_xyzw"),
+            value("angular_velocity_body_rad_s"),
+        )
+
+    def recorded_state_trajectory(self, *, clone: bool = True) -> dict[str, torch.Tensor]:
+        if self._state_recording is None:
+            raise RuntimeError("State-trajectory recording was not enabled.")
+        if self.control_index != self.control_step_count:
+            raise RuntimeError("The PPO episode is incomplete; no state trajectory is ready.")
+        return {
+            name: tensor.clone() if clone else tensor
+            for name, tensor in self._state_recording.items()
+        }
 
     def _observation(self) -> tuple[torch.Tensor, object]:
         context = build_policy_context(
@@ -385,39 +774,74 @@ class SequentialWhipEnvironment:
         )
         self.episode_minimum_tip_distance.copy_(initial_distance)
         self.episode_best_strike_quality.zero_()
+        self.episode_best_directed_speed_quality.zero_()
+        self.episode_best_direction_quality.zero_()
         self.previous_normalized_action.zero_()
         self.episode_success_tip_distance.fill_(torch.nan)
         self.episode_success_tip_speed.fill_(torch.nan)
         self.episode_success_directed_speed.fill_(torch.nan)
         self.episode_success_direction_error_deg.fill_(torch.nan)
+        self._record_state(0)
         observation, _ = self._observation()
         return observation
 
     def _decode_action(self, normalized_action: torch.Tensor, frame: object) -> tuple[torch.Tensor, torch.Tensor]:
         action = normalized_action.to(dtype=self.simulator.dtype, device=self.simulator.device)
-        local_acceleration = action[:, :3]
-        norm = torch.linalg.vector_norm(local_acceleration, dim=-1, keepdim=True)
-        local_acceleration = local_acceleration / torch.maximum(norm, torch.ones_like(norm))
-        local_acceleration = self.maximum_acceleration_m_s2 * local_acceleration
-        acceleration_world = frame.vectors_to_world(local_acceleration)
-        body_rate = self.maximum_body_rate_rad_s * action[:, 3:6]
-        acceleration_world = torch.where(self.failed[:, None], torch.zeros_like(acceleration_world), acceleration_world)
-        body_rate = torch.where(self.failed[:, None], torch.zeros_like(body_rate), body_rate)
+        if self.action_mode == TARGET_ALIGNED_SAGITTAL_ACTION_MODE:
+            acceleration_world, body_rate = decode_target_aligned_sagittal_action(
+                action,
+                self._direction,
+                maximum_acceleration_m_s2=self.maximum_acceleration_m_s2,
+                maximum_body_rate_rad_s=self.maximum_body_rate_rad_s,
+            )
+        else:
+            local_acceleration = action[:, :3]
+            norm = torch.linalg.vector_norm(local_acceleration, dim=-1, keepdim=True)
+            local_acceleration = local_acceleration / torch.maximum(
+                norm, torch.ones_like(norm)
+            )
+            local_acceleration = self.maximum_acceleration_m_s2 * local_acceleration
+            acceleration_world = frame.vectors_to_world(local_acceleration)
+            body_rate = self.maximum_body_rate_rad_s * action[:, 3:6]
+        inactive = self.failed | (
+            self.episode_success
+            if self.terminate_on_success
+            else torch.zeros_like(self.episode_success)
+        )
+        acceleration_world = torch.where(
+            inactive[:, None], torch.zeros_like(acceleration_world), acceleration_world
+        )
+        body_rate = torch.where(
+            inactive[:, None], torch.zeros_like(body_rate), body_rate
+        )
         return acceleration_world, body_rate
 
     @torch.no_grad()
     def step(self, normalized_action: torch.Tensor) -> ControlStepResult:
-        if normalized_action.shape != (self.batch_size, 6):
-            raise ValueError("Sequential SAC action must have shape Bx6.")
+        expected_shape = (self.batch_size, self.action_dimension)
+        if normalized_action.shape != expected_shape:
+            raise ValueError(
+                f"Sequential whip action must have shape {expected_shape}."
+            )
         observation_before, context = self._observation()
         del observation_before
         failed_before = self.failed.clone()
+        success_before = self.episode_success.clone()
+        inactive_before = failed_before | (
+            success_before
+            if self.terminate_on_success
+            else torch.zeros_like(success_before)
+        )
         acceleration_world, body_rate = self._decode_action(normalized_action, context.frame)
         normalized_action = normalized_action.to(
             dtype=self.simulator.dtype, device=self.simulator.device
         )
         previous_episode_minimum_distance = self.episode_minimum_tip_distance.clone()
         previous_episode_best_strike = self.episode_best_strike_quality.clone()
+        previous_episode_best_directed_speed = (
+            self.episode_best_directed_speed_quality.clone()
+        )
+        previous_episode_best_direction = self.episode_best_direction_quality.clone()
         previous_episode_maximum_displacement = (
             self.episode_maximum_displacement.clone()
         )
@@ -450,29 +874,68 @@ class SequentialWhipEnvironment:
         best_proximity_speed = torch.full_like(previous_distance, -torch.inf)
         best_proximity_direction = torch.full_like(previous_distance, -torch.inf)
         interval_best_strike_quality = torch.zeros_like(previous_distance)
+        interval_best_directed_speed_quality = torch.zeros_like(previous_distance)
+        interval_best_direction_quality = torch.zeros_like(previous_distance)
         interval_endpoint_success = torch.zeros_like(self.failed)
         interval_scientific_event = torch.zeros_like(self.failed)
         interval_non_tip_first = torch.zeros_like(self.failed)
         new_numerical_failure = torch.zeros_like(self.failed)
+        interval_terminated = (
+            success_before.clone()
+            if self.terminate_on_success
+            else torch.zeros_like(success_before)
+        )
 
         for physics_substep in range(self.physics_steps_per_control):
             # Re-anchor p/v at the current measured state.  The action is direct
             # acceleration plus body rates, not position-trajectory tracking.
+            active = ~(self.failed | interval_terminated)
             command = FullStateCommand(
                 self.state.uav.position_m,
                 self.state.uav.velocity_m_s,
-                acceleration_world,
+                torch.where(
+                    active[:, None], acceleration_world, torch.zeros_like(acceleration_world)
+                ),
                 orientation_command,
-                body_rate,
+                torch.where(active[:, None], body_rate, torch.zeros_like(body_rate)),
             )
+            physics_step = (
+                self.control_index * self.physics_steps_per_control
+                + physics_substep
+                + 1
+            )
+            if self._command_recording is not None:
+                record_index = physics_step - 1
+                self._command_recording["position_m"][record_index].copy_(
+                    command.position_m
+                )
+                self._command_recording["velocity_m_s"][record_index].copy_(
+                    command.velocity_m_s
+                )
+                self._command_recording["acceleration_m_s2"][record_index].copy_(
+                    command.acceleration_m_s2
+                )
+                self._command_recording["orientation_xyzw"][record_index].copy_(
+                    command.orientation_xyzw
+                )
+                self._command_recording["angular_velocity_body_rad_s"][record_index].copy_(
+                    command.angular_velocity_body_rad_s
+                )
+            state_before_propagation = self.state
             propagated = self.simulator._propagate(
-                self.state, command, self.simulator.parameters, create_graph=False
+                self.state, command, self.rollout_parameters, create_graph=False
             )
+            if self.state_postprocessor is not None:
+                propagated = self.state_postprocessor(physics_step, propagated)
             finite = _row_finite(propagated)
-            newly_invalid = (~finite) & (~self.failed)
+            newly_invalid = (~finite) & active
             new_numerical_failure |= newly_invalid
-            self.failed |= ~finite
+            self.failed |= newly_invalid
+            propagated = _replace_rows(
+                propagated, state_before_propagation, interval_terminated
+            )
             self.state = _replace_rows(propagated, self._initial_state, self.failed)
+            self._record_state(physics_step)
 
             tip_position = self.state.cable.positions_m[:, -1]
             tip_velocity = self.state.cable.velocities_m_s[:, -1]
@@ -482,19 +945,48 @@ class SequentialWhipEnvironment:
             direction_cosine = directed_speed / speed.clamp_min(
                 torch.finfo(speed.dtype).eps
             )
+            if (
+                self.directed_speed_shaping_reference
+                == ATTACHMENT_RELATIVE_SPEED_SHAPING
+            ):
+                attachment_velocity = self.simulator.root_boundary.evaluate(
+                    self.state.uav,
+                    self.simulator.cable_configuration.rest_lengths_m[0],
+                ).attachment_velocity_analytic_m_s
+            else:
+                attachment_velocity = torch.zeros_like(tip_velocity)
+            reward_tip_velocity = shaping_tip_velocity(
+                tip_velocity,
+                attachment_velocity,
+                mode=self.directed_speed_shaping_reference,
+            )
+            reward_tip_speed = torch.linalg.vector_norm(
+                reward_tip_velocity, dim=-1
+            )
+            reward_directed_speed = (
+                reward_tip_velocity * self._direction
+            ).sum(dim=-1)
+            reward_direction_cosine = reward_directed_speed / reward_tip_speed.clamp_min(
+                torch.finfo(reward_tip_speed.dtype).eps
+            )
             direction_error = torch.rad2deg(
                 torch.acos(direction_cosine.clamp(-1.0, 1.0))
             )
             proximity = torch.exp(-torch.square(distance / self.reward_weights.proximity_scale_m))
-            eligible = ~self.failed
+            eligible = ~(self.failed | interval_terminated)
             best_proximity_speed = torch.where(
                 eligible,
-                torch.maximum(best_proximity_speed, proximity * directed_speed),
+                torch.maximum(
+                    best_proximity_speed, proximity * reward_directed_speed
+                ),
                 best_proximity_speed,
             )
             best_proximity_direction = torch.where(
                 eligible,
-                torch.maximum(best_proximity_direction, proximity * direction_cosine),
+                torch.maximum(
+                    best_proximity_direction,
+                    proximity * reward_direction_cosine,
+                ),
                 best_proximity_direction,
             )
             minimum_distance = torch.where(
@@ -516,11 +1008,9 @@ class SequentialWhipEnvironment:
             )
             interval_displacement_integral += torch.where(
                 eligible,
-                torch.log1p(
-                    torch.square(
-                        displacement
-                        / max(self.task.maximum_uav_displacement_m, 1.0e-6)
-                    )
+                smooth_displacement_cost(
+                    displacement,
+                    scale_m=self.displacement_cost_scale_m,
                 )
                 * self.simulator.dt_s,
                 torch.zeros_like(displacement),
@@ -541,8 +1031,8 @@ class SequentialWhipEnvironment:
                     interval_best_strike_quality,
                     strike_quality(
                         distance,
-                        directed_speed,
-                        direction_cosine,
+                        reward_directed_speed,
+                        reward_direction_cosine,
                         proximity_scale_m=self.reward_weights.proximity_scale_m,
                         target_directed_speed_m_s=(
                             self.task.minimum_directed_speed_m_s
@@ -550,9 +1040,42 @@ class SequentialWhipEnvironment:
                         maximum_direction_error_deg=(
                             self.task.maximum_direction_error_deg
                         ),
+                        speed_reward_cap_m_s=(
+                            self.reward_weights.directed_speed_reward_cap_m_s
+                        ),
                     ),
                 ),
                 interval_best_strike_quality,
+            )
+            soft_speed_quality, soft_direction_quality = (
+                soft_near_target_strike_components(
+                    distance,
+                    reward_tip_speed,
+                    reward_directed_speed,
+                    reward_direction_cosine,
+                    proximity_scale_m=self.reward_weights.proximity_scale_m,
+                    target_directed_speed_m_s=(
+                        self.task.minimum_directed_speed_m_s
+                    ),
+                    speed_reward_cap_m_s=(
+                        self.reward_weights.directed_speed_reward_cap_m_s
+                    ),
+                    maximum_direction_error_deg=(
+                        self.task.maximum_direction_error_deg
+                    ),
+                )
+            )
+            interval_best_directed_speed_quality = torch.where(
+                eligible,
+                torch.maximum(
+                    interval_best_directed_speed_quality, soft_speed_quality
+                ),
+                interval_best_directed_speed_quality,
+            )
+            interval_best_direction_quality = torch.where(
+                eligible,
+                torch.maximum(interval_best_direction_quality, soft_direction_quality),
+                interval_best_direction_quality,
             )
             point_endpoint_success = eligible & simple_endpoint_success(
                 tip_position,
@@ -578,11 +1101,6 @@ class SequentialWhipEnvironment:
                 eligible
                 & (self.episode_first_entry_marker == 0)
                 & (candidate_marker <= 10)
-            )
-            physics_step = (
-                self.control_index * self.physics_steps_per_control
-                + physics_substep
-                + 1
             )
             entry_step = torch.full_like(
                 self.episode_first_entry_physics_step, physics_step
@@ -642,6 +1160,13 @@ class SequentialWhipEnvironment:
             )
             interval_endpoint_success |= point_endpoint_success
             interval_scientific_event |= point_task_event
+            if self.terminate_on_success:
+                terminal_event = (
+                    point_task_event
+                    if self.success_mode == "task_whip_once"
+                    else point_endpoint_success
+                )
+                interval_terminated |= terminal_event
 
         current_distance = torch.linalg.vector_norm(
             self.state.cable.positions_m[:, -1] - self._target, dim=-1
@@ -669,10 +1194,20 @@ class SequentialWhipEnvironment:
         self.episode_best_strike_quality = torch.maximum(
             self.episode_best_strike_quality, interval_best_strike_quality
         )
+        self.episode_best_directed_speed_quality = torch.maximum(
+            self.episode_best_directed_speed_quality,
+            interval_best_directed_speed_quality,
+        )
+        self.episode_best_direction_quality = torch.maximum(
+            self.episode_best_direction_quality, interval_best_direction_quality
+        )
         self.episode_minimum_tip_distance = torch.minimum(
             self.episode_minimum_tip_distance, minimum_distance
         )
         horizon_done = self.control_index + 1 >= self.control_step_count
+        pre_success_time_increment = (
+            (~self.episode_success).to(previous_distance.dtype) * self.control_dt_s
+        )
         if self.success_mode == "task_whip_once":
             task_success = task_whip_success(
                 endpoint_event_found=self.episode_scientific_event,
@@ -695,8 +1230,13 @@ class SequentialWhipEnvironment:
                     self.task.maximum_command_acceleration_m_s2
                 ),
             )
+            record_scientific_result = torch.full_like(
+                scientific_success, horizon_done
+            )
+            if self.terminate_on_success:
+                record_scientific_result |= newly_successful
             self.episode_scientific_success = torch.where(
-                torch.full_like(scientific_success, horizon_done),
+                record_scientific_result,
                 scientific_success,
                 self.episode_scientific_success,
             )
@@ -725,40 +1265,68 @@ class SequentialWhipEnvironment:
             strike_improvement = (
                 self.episode_best_strike_quality - previous_episode_best_strike
             ).clamp_min(0.0)
+            directed_speed_improvement = (
+                self.episode_best_directed_speed_quality
+                - previous_episode_best_directed_speed
+            ).clamp_min(0.0)
+            direction_improvement = (
+                self.episode_best_direction_quality - previous_episode_best_direction
+            ).clamp_min(0.0)
             maximum_displacement_increase = (
-                torch.log1p(
-                    torch.square(
-                        self.episode_maximum_displacement
-                        / max(self.task.maximum_uav_displacement_m, 1.0e-6)
-                    )
+                smooth_displacement_cost(
+                    self.episode_maximum_displacement,
+                    scale_m=self.displacement_cost_scale_m,
                 )
-                - torch.log1p(
-                    torch.square(
-                        previous_episode_maximum_displacement
-                        / max(self.task.maximum_uav_displacement_m, 1.0e-6)
-                    )
+                - smooth_displacement_cost(
+                    previous_episode_maximum_displacement,
+                    scale_m=self.displacement_cost_scale_m,
                 )
             ).clamp_min(0.0)
+            terminal_now = torch.full_like(newly_successful, horizon_done)
+            if self.terminate_on_success:
+                terminal_now |= newly_successful
+            terminal_displacement = torch.linalg.vector_norm(
+                self.state.uav.position_m - initial_position, dim=-1
+            )
+            terminal_displacement_cost = smooth_displacement_cost(
+                terminal_displacement,
+                scale_m=self.displacement_cost_scale_m,
+            ) * terminal_now.to(previous_distance.dtype)
             acceleration_effort = (
                 torch.linalg.vector_norm(acceleration_world, dim=-1)
                 / max(self.maximum_acceleration_m_s2, 1.0e-6)
             ).square() * self.control_dt_s
             body_rate_effort = (
                 torch.linalg.vector_norm(body_rate, dim=-1)
-                / max(self.maximum_body_rate_rad_s * math.sqrt(3.0), 1.0e-6)
+                / max(
+                    self.maximum_body_rate_rad_s
+                    * math.sqrt(float(self.body_rate_effort_axis_count)),
+                    1.0e-6,
+                )
             ).square() * self.control_dt_s
             smoothness = torch.mean(
                 (normalized_action - self.previous_normalized_action).square(), dim=-1
             )
             reward = (
                 self.reward_weights.progress * progress_improvement
+                + self.reward_weights.directed_speed_near_target
+                * directed_speed_improvement
+                + self.reward_weights.direction_near_target * direction_improvement
                 + self.reward_weights.strike_quality_improvement * strike_improvement
                 + self.reward_weights.success_bonus
+                * newly_successful.to(previous_distance.dtype)
+                + self.reward_weights.success_compactness_bonus
+                * smooth_success_compactness(
+                    self.episode_maximum_displacement,
+                    scale_m=self.reward_weights.success_compactness_scale_m,
+                )
                 * newly_successful.to(previous_distance.dtype)
                 - self.reward_weights.non_tip_first
                 * interval_non_tip_first.to(previous_distance.dtype)
                 - self.reward_weights.maximum_displacement
                 * maximum_displacement_increase
+                - self.reward_weights.terminal_displacement
+                * terminal_displacement_cost
                 - self.reward_weights.displacement_integral
                 * interval_displacement_integral
                 - self.reward_weights.uav_speed_integral
@@ -766,21 +1334,31 @@ class SequentialWhipEnvironment:
                 - self.reward_weights.acceleration_effort * acceleration_effort
                 - self.reward_weights.body_rate_effort * body_rate_effort
                 - self.reward_weights.action_smoothness * smoothness
+                - self.reward_weights.time_to_success * pre_success_time_increment
                 - self.reward_weights.numerical_failure
                 * new_numerical_failure.to(previous_distance.dtype)
             )
-        reward = torch.where(failed_before, torch.zeros_like(reward), reward)
+        reward = torch.where(inactive_before, torch.zeros_like(reward), reward)
         self.episode_reward += reward
         self.previous_normalized_action.copy_(normalized_action)
         self.control_index += 1
         horizon_done = self.control_index >= self.control_step_count
-        done = new_numerical_failure | torch.full_like(self.failed, horizon_done)
+        success_terminal = (
+            self.episode_success
+            if self.terminate_on_success
+            else torch.zeros_like(self.episode_success)
+        )
+        done = (
+            new_numerical_failure
+            | success_terminal
+            | torch.full_like(self.failed, horizon_done)
+        )
         next_observation, _ = self._observation()
         return ControlStepResult(
             next_observation=next_observation,
             reward=reward[:, None].float(),
             done=done[:, None].float(),
-            include_transition=~failed_before,
+            include_transition=~inactive_before,
             newly_successful=newly_successful,
             final_tip_distance_m=current_distance,
             minimum_tip_distance_m=minimum_distance,

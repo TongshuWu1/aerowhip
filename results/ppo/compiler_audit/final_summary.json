@@ -1,0 +1,60 @@
+{
+  "new_training_episodes": 0,
+  "new_cem_solves": 0,
+  "state_bank_contexts": 512,
+  "exact_replay": "PASS",
+  "nominal_feedback_success_rate": 0.916015625,
+  "nominal_compiled_success_rate": 0.916015625,
+  "wrong_state_success_rate": 0.154296875,
+  "compilation_latency": {
+    "optimized_logical_batch_one": {
+      "logical_batch_size": 1,
+      "fixed_uav_residual_evaluation_batch_size": 1,
+      "actor_queries": 100,
+      "production_physics_steps": 1000,
+      "queries": 10,
+      "mean_ms": 12185.144780029077,
+      "median_ms": 12170.984150026925,
+      "p90_ms": 12339.99906006502,
+      "p95_ms": 12362.428230018122,
+      "maximum_ms": 12384.857399971224
+    },
+    "fixed_2048_residual_contract": {
+      "logical_batch_size": 1,
+      "fixed_uav_residual_evaluation_batch_size": 2048,
+      "actor_queries": 100,
+      "production_physics_steps": 1000,
+      "queries": 5,
+      "mean_ms": 12868.148479959927,
+      "median_ms": 12825.972400023602,
+      "p90_ms": 12981.669299933128,
+      "p95_ms": 12995.738299936056,
+      "maximum_ms": 13009.807299938984
+    }
+  },
+  "decision": {
+    "schema": "ppo_feedback_dependence_architecture_decision_v1",
+    "preferred_architecture": "TEN_HZ_CLOSED_LOOP_PPO",
+    "exact_replay_pass": true,
+    "decision_rule": {
+      "optimized_compilation_p95_max_s": 1.0,
+      "mean_mismatch_feedback_advantage_max": 0.1,
+      "worst_mismatch_feedback_advantage_max": 0.2,
+      "mean_disturbance_feedback_advantage_max": 0.1
+    },
+    "optimized_compilation_p95_s": 12.362428230018121,
+    "mean_mismatch_feedback_advantage": 0.1861328125,
+    "worst_mismatch_feedback_advantage": 0.251953125,
+    "mean_disturbance_feedback_advantage": 0.17447916666666666,
+    "failed_criteria": [
+      "optimized compilation p95 12.362 s exceeds 1.0 s",
+      "mean mismatch feedback advantage 18.61 pp exceeds 10 pp",
+      "worst mismatch feedback advantage 25.20 pp exceeds 20 pp",
+      "mean disturbance feedback advantage 17.45 pp exceeds 10 pp"
+    ],
+    "reason": "optimized compilation p95 12.362 s exceeds 1.0 s; mean mismatch feedback advantage 18.61 pp exceeds 10 pp; worst mismatch feedback advantage 25.20 pp exceeds 20 pp; mean disturbance feedback advantage 17.45 pp exceeds 10 pp",
+    "training_performed": false,
+    "protected_test_evaluated": false,
+    "hardware_executed": false
+  }
+}

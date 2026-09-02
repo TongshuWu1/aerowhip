@@ -1,0 +1,91 @@
+{
+  "angular_velocity_convention": "yaw-aligned local frame, rad/s",
+  "batch_axis": 0,
+  "dimension": 83,
+  "fields": [
+    {
+      "encoding": "linear",
+      "name": "uav_velocity_local_m_s",
+      "shape": [
+        3
+      ],
+      "start": 0,
+      "stop": 3
+    },
+    {
+      "encoding": "canonical_xyzw",
+      "name": "uav_orientation_local_xyzw",
+      "shape": [
+        4
+      ],
+      "start": 3,
+      "stop": 7
+    },
+    {
+      "encoding": "linear",
+      "name": "uav_angular_velocity_local_rad_s",
+      "shape": [
+        3
+      ],
+      "start": 7,
+      "stop": 10
+    },
+    {
+      "encoding": "flattened_c1_to_c10",
+      "name": "cable_positions_local_m",
+      "shape": [
+        10,
+        3
+      ],
+      "start": 10,
+      "stop": 40
+    },
+    {
+      "encoding": "flattened_c1_to_c10",
+      "name": "cable_velocities_local_m_s",
+      "shape": [
+        10,
+        3
+      ],
+      "start": 40,
+      "stop": 70
+    },
+    {
+      "encoding": "linear",
+      "name": "target_position_local_m",
+      "shape": [
+        3
+      ],
+      "start": 70,
+      "stop": 73
+    },
+    {
+      "encoding": "unit_vector",
+      "name": "target_direction_local",
+      "shape": [
+        3
+      ],
+      "start": 73,
+      "stop": 76
+    },
+    {
+      "encoding": "Kp,Kv,ka,KR,Komega,logEI,logCb",
+      "name": "physics_learning_features",
+      "shape": [
+        7
+      ],
+      "start": 76,
+      "stop": 83
+    }
+  ],
+  "physics_feature_order": [
+    "K_p",
+    "K_v",
+    "k_a",
+    "K_R",
+    "K_omega",
+    "log_EI",
+    "log_Cb"
+  ],
+  "quaternion_convention": "xyzw active body-to-local; sign canonicalized"
+}

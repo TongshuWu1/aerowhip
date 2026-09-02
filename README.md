@@ -1,138 +1,98 @@
 # Aerial Cable Research Simulator
 
-This repository contains one frozen aerial-cable simulator, one production
-open-loop CEM reference planner, and an experimental sequential PPO whip
-learner. There is no promoted or hardware-ready neural policy.
+This repository contains the frozen aerial-cable simulator, the selected
+closed-loop PPO whip controller, the stopped pure-SAC baseline, and the
+production CEM reference planner.
 
-## Current scientific status
+## Current decision
 
-- Model: `MODEL_FREEZE_REMEASURED_GEOMETRY_PRE_MPPI`.
-- Production predictor: attitude-coupled UAV physics + causal 100-ms UAV
-  residual + 12-node DDER cable.
-- Planner: variable-duration production CEM over one normalized 49-D action.
-- Benchmark: 251/256 first-seed and 252/256 with at most three seeds; zero
-  population-to-authoritative replay flips.
-- Important limitation: the saved successful actions are locally knife-edge.
-  At normalized acceleration noise sigma 0.005, scientific-success survival is
-  20.87% for IID noise and 10.31% for smooth noise.
-- Direct policy learning history: SAC, deterministic regression, and
-  diffusion/scorer did not establish a deployment policy. A from-scratch
-  sequential PPO run has now completed 1,001,472 episodes with 9.99%
-  cumulative success, 74.14% success over the final 10,240 episodes, and 10/10
-  deterministic successes on a fixed mildly varied validation set. This is a
-  canonical-target simulation result, not yet a general or hardware-ready
-  policy.
-- The Figure-8 SAC experiment was stopped and is not an active path.
-- Iterative residual pilot: using only existing perturbation data, learned
-  correction increased state-disjoint development success from 16.22% to
-  43.24% after at most five corrections. This is partial evidence for
-  outcome-guided refinement, not a one-query or hardware-ready controller.
-- Targeted continuation: 22,528 additional simulator responses were collected
-  around failed initializer actions with trajectory features. Training success
-  increased, but state-disjoint development fell to 37.84%; that checkpoint is
-  not promoted. Joint/edge contexts showed very sparse local success support.
-
-The selected residual checkpoint remains the earlier 43.24% model. More
-gradient steps or nominal CEM winners are not justified. Any next method must
-first address sparse correction support for joint/edge state-target contexts.
-
-See [PROJECT_GOALS_METHODS_AND_RESULTS.md](PROJECT_GOALS_METHODS_AND_RESULTS.md)
-for the complete project goal, method history, negative results, contributions,
-and the final PPO reward/result.
-
-## Active pipeline
+The selected learned architecture is **10 Hz closed-loop PPO**:
 
 ```text
-physical takes
-  -> deterministic preprocessing / PhysicalEpisode
-  -> decomposed identification (UAV physics, EI/Cb, causal residual)
-  -> explicitly selected model freeze
-
-physically propagated initial state + target + nominal theta
-  -> root-centered, yaw-aligned 83-D PolicyContext
-  -> production CEM proposes normalized complete action [49]
-  -> one production decoder
-  -> 16 acceleration knots + T_maneuver in [0.45, 1.80] s
-  -> ACTIVE command
-  -> 0.30-s analytic smooth SETTLE
-  -> stationary HOLD to T_evaluation = 2.40 s
-  -> fixed numerical batch contract 2048
-  -> UAV physics + residual + 12-node DDER rollout
-  -> unchanged scientific hard gates
-  -> authoritative top-32 replay and final selection
-
-saved verified CEM actions
-  -> deterministic perturbation banks
-  -> same production decoder and authoritative simulator
-  -> local success-survival / hard-gate-margin audit
-
-saved perturbation actions + observed physical outcomes
-  -> learned delta-outcome model
-  -> compact 13-D correction proposals around a full 49-D action
-  -> neural hard-gate ranking (no simulator/CEM candidate search)
-  -> execute one correction and observe again, up to five iterations
+measured UAV + cable state
+  -> normalized 83-D state/goal/physics context
+  -> PPO query every 0.1 s
+  -> acceleration + body-rate command
+  -> full UAV/residual/12-node-DDER propagation
 ```
 
-There is no online CEM, scorer, replay buffer, or hardware execution in the
-GUI. The Planning page is a read-only saved-result viewer. The Training page
-can launch, cooperatively stop/resume, and plot the isolated PPO experiment;
-it does not expose a policy for hardware execution.
+The terminal PPO checkpoint achieved 469/512 = **91.60%** deterministic
+success on the nominal physically propagated state-bank audit. Compiling the
+same controller into an open-loop command reproduces nominal simulation
+exactly, but takes about 12.17 s and loses substantial robustness under model
+mismatch and post-start disturbances. Continuous PPO feedback is therefore the
+current choice.
+
+Production CEM remains the strongest offline reference: 98.05% first-seed and
+98.44% up-to-three-seed success over 256 contexts, with 34.61 s median planning
+time. Pure SAC is retained as a negative baseline: 106 successes in 1,206,272
+episodes before it was stopped.
+
+The concise evidence bundle is in [`results/`](results/README.md):
+
+- [`results/ppo/`](results/ppo/README.md): checkpoints, plots, logs, compiler
+  audit, and full PPO reports.
+- [`results/sac/`](results/sac/README.md): stopped checkpoint, plots, and logs.
+- [`results/cem/`](results/cem/README.md): benchmark rows, authoritative
+  actions, plots, and report.
+- [`results/common/`](results/common/): shared context normalizer and state
+  banks used by current configurations.
+
+See [PROJECT_GOALS_METHODS_AND_RESULTS.md](PROJECT_GOALS_METHODS_AND_RESULTS.md)
+for the research goal, task definitions, method history, contributions, and
+limitations.
+
+## Frozen scientific model
+
+- Freeze: `MODEL_FREEZE_REMEASURED_GEOMETRY_PRE_MPPI`.
+- CUDA float32, PCG32 cable damping.
+- Attitude-coupled UAV model plus causal 100 ms learned residual.
+- Twelve-node DDER cable, three DDER substeps, four position projections.
+- Protected `fig8vertical_002` is not evaluated.
+- No hardware execution is authorized by this repository state.
 
 ## Active entry points
 
 ```powershell
-# GUI: simulator, data, identification, planning replays, and PPO monitoring
+# GUI and simulation inspection
 .\.venv\Scripts\python.exe run_simulator.py
 
-# Current directional task-whip PPO (also launchable from the Training page)
-.\.venv\Scripts\python.exe run_simple_ppo.py --train --config config/learning/whip_ppo_once_directional_d15_v1.json
+# The Simulator tab runs the frozen PPO checkpoint with one button.
+# Headless equivalent:
+.\.venv\Scripts\python.exe run_ppo_simulation.py
 
-# Unattended balanced/compact/strike reward comparison + final audit
-.\.venv\Scripts\python.exe run_whip_ppo_reward_study.py
+# Selected pure-PPO training configuration (expensive)
+.\.venv\Scripts\python.exe run_simple_ppo.py --train
 
-# Identification/refit workflow (expensive; do not run for a GUI check)
-.\.venv\Scripts\python.exe run_milestone3c.py
+# Retained pure-SAC baseline (normally do not resume)
+.\.venv\Scripts\python.exe run_simple_sac.py --train
 
-# Production CEM benchmark (expensive; saved result already exists)
+# Zero-training PPO feedback/open-loop compiler audit
+.\.venv\Scripts\python.exe run_ppo_open_loop_compiler_audit.py
+
+# Production CEM benchmark (expensive; curated result already exists)
 .\.venv\Scripts\python.exe run_milestone6a.py
 
-# Current saved-teacher robustness diagnostic
-.\.venv\Scripts\python.exe run_milestone7c.py --analyze-existing data/policy_training/cem_teacher_robustness_audit_v1/2026-08-30T213030.839170Z
+# Identification/refit workflow (expensive and not part of controller work)
+.\.venv\Scripts\python.exe run_milestone3c.py
 
-# Existing-data iterative residual pilot (no new CEM)
-.\.venv\Scripts\python.exe run_iterative_residual_policy.py
-
-# Separate simple Figure-8 SAC (one-million-episode config)
-.\.venv\Scripts\python.exe run_figure8_sac.py
+# Rebuild the curated results bundle from available historical run trees
+.\.venv\Scripts\python.exe tools\curate_current_results.py
 ```
 
-## Production numerical contract
+## Repository organization
 
-- CUDA float32.
-- PCG32 cable damping backend.
-- Three DDER substeps and four position projections.
-- Fixed UAV/residual numerical evaluation shape 2048.
-- Normalized action `[49]`: 16x3 acceleration knots plus maneuver duration.
-- Scientific gates: tip error <= 50 mm, directed speed >= 4 m/s, direction
-  error <= 30 degrees, c10 first, UAV displacement <= 0.50 m, UAV speed <=
-  3 m/s, command acceleration <= 20 m/s^2, finite full rollout.
+- `simulator/`: coupled UAV, residual, DDER cable, and GUI.
+- `fitting/`: model identification and validation.
+- `planning/`: current CEM, rollout, action codec, metrics, and replay tools.
+- `learning/`: current PPO/SAC control environments, networks, state/context
+  interfaces, validation, and trajectory compiler.
+- `config/`: current model, task, PPO, SAC, compiler, and CEM configs.
+- `results/`: curated current evidence and checkpoints.
+- `data/`: raw/processed measurements and active model assets only; historical
+  policy/planning runs live in the dated sibling archive.
+- `tests/`: regression coverage for retained code paths.
 
-## Repository boundary
-
-- `simulator/`: active coupled simulator and GUI.
-- `fitting/`: active identification and validation code.
-- `planning/`: active production command, rollout, metric, selection,
-  model-freeze, result, and replay contracts.
-- `learning/`: stable context/action interfaces, robustness diagnostics, the
-  stopped simple-SAC baseline, and the IRP-style delta-outcome diagnostic.
-- `data/`: immutable raw/processed evidence, model freezes, planning outputs,
-  and historical policy artifacts.
-- `legacy/retired_learning/`: source snapshots of retired policy branches.
-- `legacy/retired_planning/`: superseded MPPI and pre-production CEM code.
-- `reports/archive/`: historical milestone reports.
-
-The root retains only current model/planner/diagnostic reports. See
-`PROJECT_ACTIVE_PIPELINE_AND_ZOMBIE_CLEANUP_REPORT.md` for the complete audit.
-
-`fig8vertical_002` remains protected and was not evaluated. Real hardware was
-not executed.
+Historical milestone reports, retired learners, obsolete runners, and complete
+run trees were moved—not deleted—to the dated sibling archive during repository
+cleanup.

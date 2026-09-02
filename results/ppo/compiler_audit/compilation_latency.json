@@ -1,0 +1,26 @@
+{
+  "optimized_logical_batch_one": {
+    "logical_batch_size": 1,
+    "fixed_uav_residual_evaluation_batch_size": 1,
+    "actor_queries": 100,
+    "production_physics_steps": 1000,
+    "queries": 10,
+    "mean_ms": 12185.144780029077,
+    "median_ms": 12170.984150026925,
+    "p90_ms": 12339.99906006502,
+    "p95_ms": 12362.428230018122,
+    "maximum_ms": 12384.857399971224
+  },
+  "fixed_2048_residual_contract": {
+    "logical_batch_size": 1,
+    "fixed_uav_residual_evaluation_batch_size": 2048,
+    "actor_queries": 100,
+    "production_physics_steps": 1000,
+    "queries": 5,
+    "mean_ms": 12868.148479959927,
+    "median_ms": 12825.972400023602,
+    "p90_ms": 12981.669299933128,
+    "p95_ms": 12995.738299936056,
+    "maximum_ms": 13009.807299938984
+  }
+}

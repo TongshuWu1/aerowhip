@@ -1,0 +1,132 @@
+{
+  "artifact_policy": {
+    "authorization": "SIMULATION_ONLY",
+    "email_delivery": "NOT_AVAILABLE_IN_LOCAL_ENVIRONMENT",
+    "protected_take_id": "fig8vertical_002",
+    "protected_test_evaluation_allowed": false,
+    "real_flight_authorized": false
+  },
+  "cem": {
+    "acceleration_knots": 16,
+    "acceleration_std_floor_m_s2": 0.25,
+    "covariance": "full",
+    "covariance_jitter": 1e-08,
+    "duration_max_extended_s": 1.5,
+    "duration_max_initial_s": 1.2,
+    "duration_min_s": 0.45,
+    "duration_std_floor_s": 0.01,
+    "elite_distribution_weight": 0.7,
+    "elite_fraction": 0.05,
+    "fixed_uav_evaluation_batch_size": 2048,
+    "hard_stop_s": 14400.0,
+    "initial_acceleration_std_m_s2": 1.5,
+    "initial_duration_mean_s": 1.0947308020795823,
+    "initial_duration_std_s": 0.03,
+    "logical_chunk_size": 2048,
+    "maximum_iterations": 40,
+    "maximum_seed_count": 6,
+    "old_distribution_weight": 0.3,
+    "population": 8192,
+    "seeds": [
+      42,
+      43,
+      44,
+      45,
+      46,
+      47
+    ],
+    "strong_directed_speed_m_s": 4.5,
+    "strong_direction_error_deg": 20.0,
+    "strong_stale_iterations": 3,
+    "strong_tip_error_m": 0.015,
+    "strong_uav_displacement_m": 0.48,
+    "strong_uav_speed_m_s": 2.9
+  },
+  "constraints": {
+    "maximum_command_acceleration_m_s2": 20.0,
+    "maximum_uav_displacement_m": 0.5,
+    "maximum_uav_speed_m_s": 3.0
+  },
+  "cost_weights": {
+    "command_effort": 0.02,
+    "command_smoothness": 0.05,
+    "event_direction_deficiency": 1.0,
+    "event_non_tip_proximity": 0.25,
+    "event_position": 4.0,
+    "event_speed_deficiency": 1.0,
+    "final_uav_speed": 0.0,
+    "invalid_cost": 1000000000.0,
+    "success_bonus": 0.0,
+    "uav_displacement_violation": 1.0,
+    "uav_speed_violation": 1.0
+  },
+  "initial_nominal": {
+    "artifact": "results/cem/reference/tuned_reward_initial_nominal_knots.json",
+    "sha256": "89af9033ec557800b01b03aac37f3b1433784550bc3dd7c7346adf68eb69a711",
+    "source": "deterministic successful result from direction-weight tuning, refined with an interior 20-degree direction shaping target",
+    "source_task": "config/tasks/canonical_whip_variable_duration_tuned_reward_v1.json"
+  },
+  "initial_state": {
+    "hover_preroll_s": 0.5,
+    "uav_position_m": [
+      0.0,
+      0.0,
+      1.5
+    ],
+    "uav_velocity_m_s": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "yaw_rad": 0.0
+  },
+  "legacy_run_online_objective": {
+    "control_effort_weight": 1e-05,
+    "control_smoothness_weight": 1e-05,
+    "directed_speed_shaping_m_s": 4.5,
+    "direction_shaping_error_deg": 20.0,
+    "direction_weight": 600.0,
+    "drone_displacement_weight": 2.0,
+    "position_sigma_m": 0.18,
+    "position_weight": 40.0,
+    "predictive_speed_ratio": 0.25,
+    "predictive_speed_weight": 10.0,
+    "predictive_velocity_gate_sigma_m": 0.45,
+    "profile": "legacy_run_online_strike_margin_tuned_v4",
+    "safety_weight": 180.0,
+    "speed_weight": 25.0,
+    "success_cost": 600.0,
+    "velocity_gate_sigma_m": 0.12
+  },
+  "model_freeze": "MODEL_FREEZE_REMEASURED_GEOMETRY_PRE_MPPI",
+  "production_replay_contract": {
+    "action": "normalized_49d",
+    "active_maneuver_duration_s": 1.1128687858581543,
+    "command_segments": [
+      "ACTIVE",
+      "SETTLE",
+      "HOLD"
+    ],
+    "evaluation_duration_s": 2.4,
+    "fixed_numerical_batch_size": 2048,
+    "settle_duration_s": 0.3
+  },
+  "schema": "variable_duration_whip_task_v1",
+  "target": {
+    "desired_impact_direction": [
+      1.0,
+      0.0,
+      0.0
+    ],
+    "maximum_impact_direction_error_deg": 30.0,
+    "minimum_directed_tip_speed_m_s": 4.0,
+    "non_tip_cost_clearance_m": 0.075,
+    "position_m": [
+      1.0,
+      0.0,
+      1.4
+    ],
+    "success_radius_m": 0.05
+  },
+  "task_id": "canonical_whip_variable_duration_tuned_reward_v1"
+}

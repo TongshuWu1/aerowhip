@@ -20,11 +20,13 @@ The project now has two important simulation results:
    median planning time is 34.61 s, which makes it an excellent offline
    optimizer and reference but too slow for state-fresh online deployment.
 2. A sequential PPO policy trained completely from random initialization for
-   1,001,472 episodes reached a 74.14% trailing training success rate over the
-   final 10,240 episodes and 10/10 deterministic validation successes on ten
-   fixed mildly varied initial states. This is the first strong from-scratch
-   neural result in the project. It is still a canonical-target simulation
-   experiment, not a general target policy and not a hardware-ready result.
+   1,001,472 episodes reached 469/512 = 91.60% deterministic success on a
+   physically propagated nominal state-bank audit. It is the first strong
+   from-scratch neural result in the project. A zero-training compiler audit
+   showed that continuous 10 Hz feedback materially outperforms precompiled
+   open loop under EI/Cb mismatch and post-start disturbances, so closed-loop
+   PPO is now the selected learned architecture. It is still a canonical-target
+   simulation result, not a general target policy or hardware-ready result.
 
 Many unsuccessful branches were scientifically useful. They showed that the
 successful open-loop action manifold is narrow, direct high-dimensional SAC
@@ -414,12 +416,16 @@ offline reference:
   -> ACTIVE / smooth SETTLE / HOLD
   -> authoritative scientific evaluation
 
-current neural experiment:
-  normalized current state + remaining-step fraction
-  -> sequential PPO policy
+selected learned controller:
+  measured current UAV/cable state + canonical target + remaining-step fraction
+  -> sequential PPO query every 0.1 s
   -> acceleration xyz + body rates
-  -> full 10-s production simulation
-  -> first-entry whip task and fixed-state validation
+  -> full production UAV/residual/DDER dynamics
+  -> continuous state feedback throughout the single 10-s attempt
+
+retained baselines:
+  production CEM -> high-quality offline reference
+  pure SAC -> stopped negative learning baseline
 ```
 
 ## 11. Recommended next scientific step
@@ -450,15 +456,14 @@ or reward.
 - `experimental_data/`: data contracts and deterministic preprocessing code.
 - `config/`: versioned model, task, planning, and learning configurations.
 - `tests/`: numerical, physics, planning, learning, and GUI regression tests.
-- `legacy/retired_learning/`: inactive learning source retained for provenance.
-- `legacy/retired_planning/`: superseded planning source retained for
-  provenance.
-- `reports/archive/`: historical milestone reports.
+- `results/`: curated PPO, SAC, and CEM plots, logs, checkpoints, reports, and
+  shared state/context inputs.
 
-Generated datasets, checkpoints, videos, and run artifacts are intentionally
-kept outside the source commit. Git history preserves removed legacy files, and
-the compact retired-source directories preserve the scientifically relevant
-inactive implementations without keeping duplicate multi-gigabyte snapshots.
+Raw/processed measurements and active model assets remain under `data/`.
+Complete historical run trees, milestone reports, and retired source are kept
+in the dated sibling archive
+`particle_filter_cable_project_archive_2026-08-31`; they were moved rather than
+destroyed. Git history also preserves tracked retired files.
 
 ## 13. Safety and data boundaries
 
@@ -468,4 +473,3 @@ inactive implementations without keeping duplicate multi-gigabyte snapshots.
 - Real hardware: not executed.
 - Radio connection or motor arming: not performed.
 - All reported policy results: simulation only.
-

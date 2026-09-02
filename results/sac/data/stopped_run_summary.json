@@ -1,0 +1,20 @@
+{
+  "schema": "simple_sequential_sac_stopped_run_summary_v1",
+  "episodes_completed": 1206272,
+  "target_episodes": 3000000,
+  "completion_fraction": 0.40209066666666665,
+  "successes": 106,
+  "final_success_rate": 8.787404499151104e-05,
+  "peak_cumulative_success_rate": 0.000732421875,
+  "last_success_containing_batch_episode": 1093632,
+  "episodes_without_a_new_success_at_stop": 112640,
+  "final_episodes_per_second": 110.94829137593275,
+  "final_alpha": 0.0036069846246391535,
+  "final_median_minimum_tip_distance_m": 0.03571661189198494,
+  "final_mean_maximum_uav_displacement_m": 1.4601753950119019,
+  "numerical_failure_rate": 0.0,
+  "figures": [
+    "figures/01_success_and_throughput.png",
+    "figures/02_learning_diagnostics.png"
+  ]
+}

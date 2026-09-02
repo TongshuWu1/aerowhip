@@ -3,8 +3,8 @@
   "run_id": "production_cem_benchmark_v1",
   "model_freeze": "MODEL_FREEZE_REMEASURED_GEOMETRY_PRE_MPPI",
   "task_config": "config/tasks/canonical_whip_variable_duration_tuned_reward_v1.json",
-  "historical_canonical_artifact": "data/planning_results/canonical_whip_variable_duration_tuned_reward_v1/2026-08-29T160423.856049Z",
-  "state_bank_artifact": "data/policy_training/oneshot_sac_nominal_v1/2026-08-29T192059.907360Z",
+  "historical_canonical_artifact": "results/cem/reference",
+  "state_bank_artifact": "results/common",
   "fixed_numerical_batch_size": 2048,
   "seed": 42,
   "times": {

@@ -21,7 +21,7 @@ from simulator.production import build_production_simulator
 
 
 ROOT = Path(__file__).resolve().parents[1]
-TRAINING_SUCCESS_ROLLING_WINDOW_EPISODES = 10_240
+TRAINING_SUCCESS_ROLLING_WINDOW_EPISODES = 5_000
 
 
 def _atomic_json(path: Path, payload: dict[str, Any]) -> None:
@@ -66,16 +66,38 @@ def _state_distances(bank: InitialStateBank, canonical: InitialStateBank) -> tor
 
 
 class FixedMildStateValidationPanel:
-    """Ten reproducible, physically propagated mild initial-state variations."""
+    """Reproducible, physically propagated mild initial-state variations."""
 
-    def __init__(self, config: dict[str, Any]) -> None:
+    def __init__(
+        self,
+        config: dict[str, Any],
+        *,
+        count_override: int | None = None,
+        fixed_evaluation_batch_size: int | None = None,
+    ) -> None:
         validation = config["validation"]
-        count = int(validation["episodes"])
+        count = (
+            int(validation["episodes"])
+            if count_override is None
+            else int(count_override)
+        )
+        if count < 1:
+            raise ValueError("Validation episode count must be positive.")
         seed = int(validation["state_selection_seed"])
         settings = SimulatorSettings.load(ROOT / config["simulator_config"])
         task = load_canonical_whip_task(ROOT / config["task_config"])
         simulator = build_production_simulator(settings)
-        simulator.uav_model.set_fixed_evaluation_batch_size(count)
+        numerical_batch = (
+            int(validation.get("fixed_numerical_batch_size", 2048))
+            if fixed_evaluation_batch_size is None
+            else int(fixed_evaluation_batch_size)
+        )
+        if numerical_batch < count:
+            raise ValueError(
+                "The fixed numerical validation batch cannot be smaller than "
+                "the logical validation count."
+            )
+        simulator.uav_model.set_fixed_evaluation_batch_size(numerical_batch)
         base = hover_preroll(simulator, task)
         canonical = initial_state_bank_from_state(
             base,
@@ -128,6 +150,9 @@ class FixedMildStateValidationPanel:
                 maximum_displacement=float(
                     reward.get("maximum_displacement_weight", 0.0)
                 ),
+                terminal_displacement=float(
+                    reward.get("terminal_displacement_weight", 0.0)
+                ),
                 displacement_integral=float(
                     reward.get("displacement_integral_weight", 0.0)
                 ),
@@ -143,9 +168,33 @@ class FixedMildStateValidationPanel:
                 action_smoothness=float(
                     reward.get("action_smoothness_weight", 0.0)
                 ),
+                time_to_success=float(
+                    reward.get("time_to_success_weight_per_s", 0.0)
+                ),
+                directed_speed_reward_cap_m_s=float(
+                    reward.get("directed_speed_reward_cap_m_s", float("inf"))
+                ),
+                success_compactness_bonus=float(
+                    reward.get("success_compactness_bonus", 0.0)
+                ),
+                success_compactness_scale_m=float(
+                    reward.get("success_compactness_scale_m", 0.5)
+                ),
+                displacement_cost_scale_m=float(
+                    reward.get("displacement_cost_scale_m", 0.0)
+                ),
+            ),
+            action_mode=str(config["action"].get("mode", "full_6d")),
+            directed_speed_shaping_reference=str(
+                reward.get("directed_speed_shaping_reference", "world_tip")
             ),
             success_mode=str(config.get("success_mode", "simple_endpoint")),
             reward_mode=str(config.get("reward_mode", "legacy_dense")),
+            terminate_on_success=not bool(
+                config.get("reported_success", {}).get(
+                    "episode_continues_after_success", True
+                )
+            ),
         )
         self.manifest = {
             "schema": "simple_ppo_fixed_mild_state_validation_v1",
@@ -159,6 +208,7 @@ class FixedMildStateValidationPanel:
             "state_distance_quantile": float(validation["maximum_distance_quantile"]),
             "state_distance_threshold": float(threshold),
             "validation_episodes": count,
+            "fixed_uav_residual_evaluation_batch_size": numerical_batch,
             "target": "canonical fixed target",
             "policy": "deterministic tanh(mean)",
             "model": "MODEL_FREEZE_REMEASURED_GEOMETRY_PRE_MPPI",
@@ -272,18 +322,70 @@ VALIDATION_FIELDS = (
     "tip_first_count",
     "mean_maximum_uav_speed_m_s",
     "mean_maximum_command_acceleration_m_s2",
+    "successful_first_entry_time_s_median",
+    "successful_tip_distance_m_median",
+    "successful_directed_speed_m_s_median",
+    "successful_direction_error_deg_median",
 )
+
+MANUAL_VALIDATION_FIELDS = (
+    "request_id",
+    "completed_utc",
+    "checkpoint_path",
+    *VALIDATION_FIELDS,
+)
+
+
+def _flatten_validation_result(result: dict[str, Any]) -> dict[str, Any]:
+    flattened = dict(result)
+    for summary_name in (
+        "successful_first_entry_time_s",
+        "successful_tip_distance_m",
+        "successful_directed_speed_m_s",
+        "successful_direction_error_deg",
+    ):
+        summary = result.get(summary_name, {})
+        flattened[f"{summary_name}_median"] = summary.get("median")
+    return flattened
 
 
 def append_validation_result(artifact: Path, result: dict[str, Any]) -> None:
     history = artifact / "validation_history.csv"
     exists = history.exists()
+    flattened = _flatten_validation_result(result)
+    fields = VALIDATION_FIELDS
+    if exists:
+        with history.open(newline="", encoding="utf-8") as stream:
+            existing_fields = next(csv.reader(stream), [])
+        if existing_fields:
+            # Resuming an older artifact must preserve its existing CSV schema.
+            fields = tuple(existing_fields)
     with history.open("a", newline="", encoding="utf-8") as stream:
-        writer = csv.DictWriter(stream, fieldnames=VALIDATION_FIELDS)
+        writer = csv.DictWriter(stream, fieldnames=fields)
         if not exists:
             writer.writeheader()
-        writer.writerow({name: result[name] for name in VALIDATION_FIELDS})
+        writer.writerow({name: flattened.get(name) for name in fields})
     _atomic_json(artifact / "validation_latest.json", result)
+
+
+def append_manual_validation_result(artifact: Path, result: dict[str, Any]) -> None:
+    """Persist one user-requested current-policy validation without touching scheduled history."""
+
+    history = artifact / "manual_validation_history.csv"
+    exists = history.exists()
+    flattened = _flatten_validation_result(result)
+    fields = MANUAL_VALIDATION_FIELDS
+    if exists:
+        with history.open(newline="", encoding="utf-8") as stream:
+            existing_fields = next(csv.reader(stream), [])
+        if existing_fields:
+            fields = tuple(existing_fields)
+    with history.open("a", newline="", encoding="utf-8") as stream:
+        writer = csv.DictWriter(stream, fieldnames=fields)
+        if not exists:
+            writer.writeheader()
+        writer.writerow({name: flattened.get(name) for name in fields})
+    _atomic_json(artifact / "manual_validation_latest.json", result)
 
 
 def rolling_success_rate(
@@ -311,6 +413,47 @@ def rolling_success_rate(
     return rolling
 
 
+def rolling_episode_mean(
+    episodes: np.ndarray,
+    batch_means: np.ndarray,
+    *,
+    window_episodes: int = TRAINING_SUCCESS_ROLLING_WINDOW_EPISODES,
+) -> np.ndarray:
+    """Return a trailing episode-weighted mean from per-batch metric means.
+
+    Each logged value summarizes the episodes since the preceding cumulative
+    episode count. Boundary batches are weighted by their overlap with the
+    requested trailing window, so changing PPO collection size does not change
+    the interpretation of the curve.
+    """
+
+    episodes = np.asarray(episodes, dtype=np.float64)
+    means = np.asarray(batch_means, dtype=np.float64)
+    if episodes.ndim != 1 or means.shape != episodes.shape:
+        raise ValueError("episodes and batch_means must be matching vectors")
+    if window_episodes <= 0:
+        raise ValueError("window_episodes must be positive")
+    if episodes.size == 0:
+        return np.asarray([], dtype=np.float64)
+    if np.any(np.diff(episodes) <= 0.0) or episodes[0] <= 0.0:
+        raise ValueError("episodes must be strictly increasing and positive")
+
+    batch_starts = np.concatenate(([0.0], episodes[:-1]))
+    rolling = np.empty_like(means)
+    for index, episode_end in enumerate(episodes):
+        window_start = max(0.0, episode_end - float(window_episodes))
+        overlap = np.maximum(
+            0.0,
+            np.minimum(episodes[: index + 1], episode_end)
+            - np.maximum(batch_starts[: index + 1], window_start),
+        )
+        denominator = float(np.sum(overlap))
+        rolling[index] = float(
+            np.sum(overlap * means[: index + 1]) / max(denominator, 1.0)
+        )
+    return rolling
+
+
 def write_training_plots(artifact: Path) -> None:
     """Write separate and combined training/validation success plots."""
 
@@ -329,7 +472,19 @@ def write_training_plots(artifact: Path) -> None:
     episodes = np.asarray([float(row["episodes"]) for row in training])
     successes = np.asarray([float(row["successes"]) for row in training])
     total = 100.0 * np.asarray([float(row["total_success_rate"]) for row in training])
-    rolling = 100.0 * rolling_success_rate(episodes, successes)
+    if "rolling_success_rate" in training[0]:
+        rolling = 100.0 * np.asarray(
+            [float(row["rolling_success_rate"]) for row in training]
+        )
+        rolling_window_episodes = int(float(training[-1]["rolling_window_episodes"]))
+    elif "rolling_5000_success_rate" in training[0]:
+        rolling = 100.0 * np.asarray(
+            [float(row["rolling_5000_success_rate"]) for row in training]
+        )
+        rolling_window_episodes = 5_000
+    else:
+        rolling = 100.0 * rolling_success_rate(episodes, successes)
+        rolling_window_episodes = TRAINING_SUCCESS_ROLLING_WINDOW_EPISODES
     endpoint_total = None
     endpoint_batch = None
     if "total_endpoint_success_rate" in training[0]:
@@ -338,14 +493,6 @@ def write_training_plots(artifact: Path) -> None:
         )
         endpoint_batch = 100.0 * np.asarray(
             [float(row["batch_endpoint_success_rate"]) for row in training]
-        )
-    legacy_total = None
-    if "total_legacy_scientific_success_rate" in training[0]:
-        legacy_total = 100.0 * np.asarray(
-            [
-                float(row["total_legacy_scientific_success_rate"])
-                for row in training
-            ]
         )
 
     def save(figure: Any, filename: str) -> None:
@@ -359,7 +506,7 @@ def write_training_plots(artifact: Path) -> None:
     axis.plot(
         episodes,
         rolling,
-        label="rolling 10,240 episodes",
+        label=f"rolling {rolling_window_episodes:,} episodes",
         linewidth=1.8,
     )
     if endpoint_total is not None and endpoint_batch is not None:
@@ -370,19 +517,47 @@ def write_training_plots(artifact: Path) -> None:
             linewidth=1.5,
             linestyle="--",
         )
-    if legacy_total is not None:
-        axis.plot(
-            episodes,
-            legacy_total,
-            label="legacy numerical-gate diagnostic",
-            linewidth=1.2,
-            linestyle=":",
-        )
     axis.set(xlabel="Training episodes", ylabel="Training success rate (%)", ylim=(-2, 102))
     axis.grid(True, alpha=0.25)
     axis.legend(loc="best")
     figure.tight_layout()
     save(figure, "training_success_vs_episodes.png")
+
+    if "mean_episode_reward" in training[0] and all(
+        row.get("mean_episode_reward", "") != "" for row in training
+    ):
+        batch_reward = np.asarray(
+            [float(row["mean_episode_reward"]) for row in training]
+        )
+        rolling_reward = rolling_episode_mean(
+            episodes,
+            batch_reward,
+            window_episodes=rolling_window_episodes,
+        )
+        figure, axis = plt.subplots(figsize=(8.5, 4.8))
+        axis.plot(
+            episodes,
+            batch_reward,
+            color="#94a3b8",
+            linewidth=1.0,
+            alpha=0.55,
+            label="batch mean episodic reward",
+        )
+        axis.plot(
+            episodes,
+            rolling_reward,
+            color="#d97706",
+            linewidth=2.0,
+            label=f"rolling {rolling_window_episodes:,} episodes",
+        )
+        axis.set(
+            xlabel="Training episodes",
+            ylabel="Mean episodic reward",
+        )
+        axis.grid(True, alpha=0.25)
+        axis.legend(loc="best")
+        figure.tight_layout()
+        save(figure, "training_reward_vs_episodes.png")
 
     validation_path = artifact / "validation_history.csv"
     if not validation_path.exists():
@@ -402,16 +577,51 @@ def write_training_plots(artifact: Path) -> None:
         validation_endpoint_rate = 100.0 * np.asarray(
             [float(row["validation_endpoint_success_rate"]) for row in validation]
         )
-    validation_legacy_rate = None
-    if "validation_legacy_scientific_success_rate" in validation[0]:
-        validation_legacy_rate = 100.0 * np.asarray(
-            [
-                float(row["validation_legacy_scientific_success_rate"])
-                for row in validation
-            ]
+    manual_validation: list[dict[str, str]] = []
+    manual_path = artifact / "manual_validation_history.csv"
+    if manual_path.exists():
+        with manual_path.open(newline="", encoding="utf-8") as stream:
+            manual_validation = list(csv.DictReader(stream))
+    manual_episodes = np.asarray([], dtype=np.float64)
+    manual_rate = np.asarray([], dtype=np.float64)
+    manual_yerr: np.ndarray | None = None
+    if manual_validation:
+        manual_episodes = np.asarray(
+            [float(row["checkpoint_episodes"]) for row in manual_validation]
+        )
+        manual_successes = np.asarray(
+            [float(row["validation_successes"]) for row in manual_validation]
+        )
+        manual_counts = np.asarray(
+            [float(row["validation_episodes"]) for row in manual_validation]
+        )
+        proportion = manual_successes / np.maximum(manual_counts, 1.0)
+        z = 1.959963984540054
+        denominator = 1.0 + z * z / manual_counts
+        center = (proportion + z * z / (2.0 * manual_counts)) / denominator
+        radius = (
+            z
+            * np.sqrt(
+                proportion * (1.0 - proportion) / manual_counts
+                + z * z / (4.0 * manual_counts * manual_counts)
+            )
+            / denominator
+        )
+        manual_rate = 100.0 * proportion
+        low = 100.0 * np.maximum(0.0, center - radius)
+        high = 100.0 * np.minimum(1.0, center + radius)
+        manual_yerr = np.maximum(
+            0.0,
+            np.vstack((manual_rate - low, high - manual_rate)),
         )
     figure, axis = plt.subplots(figsize=(8.5, 4.8))
-    axis.plot(validation_episodes, validation_rate, "o-", linewidth=2.0)
+    axis.plot(
+        validation_episodes,
+        validation_rate,
+        "o-",
+        linewidth=2.0,
+        label="scheduled fixed-state validation",
+    )
     if validation_endpoint_rate is not None:
         axis.plot(
             validation_episodes,
@@ -420,19 +630,20 @@ def write_training_plots(artifact: Path) -> None:
             linewidth=1.5,
             label="endpoint-only",
         )
-    if validation_legacy_rate is not None:
-        axis.plot(
-            validation_episodes,
-            validation_legacy_rate,
-            "o:",
-            linewidth=1.5,
-            label="legacy numerical-gate diagnostic",
+    if manual_validation and manual_yerr is not None:
+        axis.errorbar(
+            manual_episodes,
+            manual_rate,
+            yerr=manual_yerr,
+            fmt="s",
+            color="#f59e0b",
+            capsize=3,
+            label="manual current-policy check (95% Wilson CI)",
         )
-    if validation_endpoint_rate is not None or validation_legacy_rate is not None:
-        axis.legend(loc="best")
+    axis.legend(loc="best")
     axis.set(
         xlabel="Training episodes at validation checkpoint",
-        ylabel="Validation success rate (%) (10 rollouts)",
+        ylabel="Validation task success rate (%)",
         ylim=(-2, 102),
     )
     axis.grid(True, alpha=0.25)
@@ -455,14 +666,6 @@ def write_training_plots(artifact: Path) -> None:
             linewidth=1.5,
             linestyle="--",
         )
-    if legacy_total is not None:
-        axes[0].plot(
-            episodes,
-            legacy_total,
-            label="legacy numerical-gate diagnostic",
-            linewidth=1.2,
-            linestyle=":",
-        )
     axes[0].set(ylabel="Training success rate (%)", ylim=(-2, 102))
     axes[0].grid(True, alpha=0.25)
     axes[0].legend(loc="best")
@@ -474,6 +677,17 @@ def write_training_plots(artifact: Path) -> None:
             "o--",
             linewidth=1.5,
             label="endpoint-only",
+        )
+        axes[1].legend(loc="best")
+    if manual_validation and manual_yerr is not None:
+        axes[1].errorbar(
+            manual_episodes,
+            manual_rate,
+            yerr=manual_yerr,
+            fmt="s",
+            color="#f59e0b",
+            capsize=3,
+            label="manual current-policy check (95% Wilson CI)",
         )
         axes[1].legend(loc="best")
     axes[1].set(

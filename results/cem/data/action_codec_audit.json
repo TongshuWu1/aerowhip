@@ -1,0 +1,18 @@
+{
+  "candidate_decoded_before_physics": true,
+  "canonical_representation": "normalized_complete_action[49]",
+  "duration_physical_range_s": [
+    0.45,
+    1.8
+  ],
+  "duration_redecode_max_abs_s": 2.220446049250313e-16,
+  "effective_encode_roundtrip_max_abs": 0.0,
+  "historical_roundtrip_max_abs": 0.0,
+  "maximum_decoded_knot_norm_m_s2": 20.000000000000007,
+  "pass": true,
+  "physical_knot_redecode_max_abs_m_s2": 7.105427357601002e-15,
+  "population_and_deployment_decoder_identical": true,
+  "raw_to_effective_max_absolute_change": 6.404997194467107,
+  "sample_count": 256,
+  "schema": "authoritative_normalized_action_codec_audit_v1"
+}
