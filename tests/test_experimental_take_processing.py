@@ -164,11 +164,20 @@ def test_production_gui_has_training_status_page() -> None:
     assert window.navigation_buttons[1].isChecked()
     assert window.shell_page_title.text() == "PPO Training"
     assert window.data_page.table.rowCount() >= 1
+    assert window.data_page.tabs.count() == 2
+    assert window.data_page.tabs.tabText(1) == "Trim & PyVista replay"
+    assert window.data_page.workspace is None
     protected = [
         window.data_page.table.item(row, 3).text()
         for row in range(window.data_page.table.rowCount())
     ]
     assert "PROTECTED — NOT EVALUATED" in protected
+    window.data_page.tabs.setCurrentIndex(1)
+    assert window.data_page.workspace is not None
+    assert all(
+        take.role != "untouched_test"
+        for take in window.data_page.workspace.dataset.takes
+    )
     assert window.model_page.ready_label.text() == "MODEL READY"
     assert "Verified / Frozen" in window.planning_page.model_label.text()
     assert window.planning_page.result_status.text() in {"PASS", "FAIL"}
@@ -177,31 +186,40 @@ def test_production_gui_has_training_status_page() -> None:
     assert window.training_page.load_config_button.text() == "LOAD CONFIG"
     assert window.training_page.timer.interval() == 500
     assert window.training_page.configuration_group.isCheckable()
-    assert window.training_page.initialization_mode_input.currentData() == "fresh"
+    assert window.training_page.initialization_mode_input.currentData() == "continue"
     assert (
         window.training_page.action_mode_input.currentData()
         == "target_aligned_sagittal_3d"
     )
+    assert window.training_page.training_state_mode_input.currentData() == "mixed_state_bank"
+    assert window.training_page.canonical_fraction_input.value() == 25.0
+    assert window.training_page.early_stopping_input.isChecked()
     assert (
         window.training_page.speed_reference_input.currentData()
         == "attachment_relative"
     )
     launch_config = window.training_page._configuration_from_controls()
+    assert launch_config["initialization"]["uses_previous_policy_checkpoint"] is True
     assert launch_config["action"]["mode"] == "target_aligned_sagittal_3d"
     assert launch_config["action"]["dimensions"] == 3
     assert launch_config["action"]["lateral_acceleration_available"] is False
+    assert launch_config["training_initial_states"]["mode"] == "mixed_state_bank"
+    assert launch_config["training_initial_states"]["canonical_fraction"] == 0.25
+    assert launch_config["validation"]["episodes"] == 512
+    assert launch_config["early_stopping"]["enabled"] is True
     assert (
         launch_config["reward"]["directed_speed_shaping_reference"]
         == "attachment_relative"
     )
     assert window.training_page.initialization_mode_input.findData("fresh") >= 0
-    assert window.training_page.episode_budget_input.value() == 1_000_000
+    assert window.training_page.episode_budget_input.value() == 50_000
     assert window.training_page.episode_horizon_input.value() == 7.0
     assert window.training_page.rolling_window_input.value() == 5_000
-    assert window.training_page.terminal_displacement_weight_input.value() == 40.0
-    assert window.training_page.displacement_integral_weight_input.value() == 2.0
-    assert window.training_page.learning_rate_input.value() == 0.0003
-    assert window.training_page.update_epochs_input.value() == 4
+    assert window.training_page.terminal_displacement_weight_input.value() == 45.0
+    assert window.training_page.terminal_displacement_success_only_input.isChecked()
+    assert window.training_page.displacement_integral_weight_input.value() == 0.0
+    assert window.training_page.learning_rate_input.value() == 0.00002
+    assert window.training_page.update_epochs_input.value() == 2
     assert "rolling 5,000" in window.training_page.training_card.detail_label.text()
     assert window.training_page.run_validation_button.text() == "RUN CURRENT POLICY"
     assert window.training_page.validation_count_input.value() == 20
@@ -223,6 +241,17 @@ def test_production_gui_has_training_status_page() -> None:
     assert not hasattr(window, "fit_widget")
     window.close()
     application.processEvents()
+
+
+def test_interactive_dataset_workspace_excludes_protected_take_arrays() -> None:
+    from fitting.dataset import load_dataset
+
+    dataset = load_dataset(include_untouched_test=False)
+    assert all(take.role != "untouched_test" for take in dataset.takes)
+    assert any(
+        decision.get("role") == "untouched_test"
+        for decision in dataset.manifest.get("takes", {}).values()
+    )
 
 
 def test_exclude_only_segment_preserves_unannotated_data() -> None:

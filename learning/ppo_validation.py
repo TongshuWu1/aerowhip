@@ -153,6 +153,9 @@ class FixedMildStateValidationPanel:
                 terminal_displacement=float(
                     reward.get("terminal_displacement_weight", 0.0)
                 ),
+                terminal_displacement_success_only=bool(
+                    reward.get("terminal_displacement_success_only", False)
+                ),
                 displacement_integral=float(
                     reward.get("displacement_integral_weight", 0.0)
                 ),
@@ -249,6 +252,16 @@ class FixedMildStateValidationPanel:
             "mean_maximum_uav_displacement_m": float(
                 self.environment.episode_maximum_displacement.mean().cpu()
             ),
+            "mean_terminal_uav_displacement_m": float(
+                torch.nanmean(
+                    self.environment.episode_terminal_displacement
+                ).cpu()
+            ),
+            "median_terminal_uav_displacement_m": float(
+                torch.nanmedian(
+                    self.environment.episode_terminal_displacement
+                ).cpu()
+            ),
             "numerical_failures": int(self.environment.failed.sum().cpu()),
             "tip_first_count": int(
                 (self.environment.episode_first_entry_marker == 10).sum().cpu()
@@ -318,6 +331,8 @@ VALIDATION_FIELDS = (
     "validation_legacy_scientific_success_rate",
     "median_minimum_tip_distance_m",
     "mean_maximum_uav_displacement_m",
+    "mean_terminal_uav_displacement_m",
+    "median_terminal_uav_displacement_m",
     "numerical_failures",
     "tip_first_count",
     "mean_maximum_uav_speed_m_s",

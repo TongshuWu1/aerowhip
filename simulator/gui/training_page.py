@@ -17,6 +17,7 @@ import numpy as np
 from PySide6.QtCore import QTimer, QUrl
 from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import (
+    QCheckBox,
     QFormLayout,
     QDoubleSpinBox,
     QFileDialog,
@@ -43,13 +44,13 @@ CONFIG_PATH = (
     PROJECT_ROOT
     / "config"
     / "learning"
-    / "whip_ppo_target_aligned_sagittal_v1.json"
+    / "whip_ppo_success_conditioned_return_finetune_v1.json"
 )
 ACTIVE_RUN_ROOT = (
     PROJECT_ROOT
     / "data"
     / "policy_training"
-    / "whip_ppo_target_aligned_sagittal_v1"
+    / "whip_ppo_success_conditioned_return_finetune_v1"
 )
 CURATED_RUN = PROJECT_ROOT / "results" / "ppo" / "data"
 ACTIVE_STATUSES = {"STARTING", "RESUMING", "RUNNING"}
@@ -388,6 +389,10 @@ class TrainingPage(QWidget):
         ppo_defaults = base_config.get("ppo", {})
         validation_defaults = base_config.get("validation", {})
         logging_defaults = base_config.get("logging", {})
+        initial_state_defaults = base_config.get(
+            "training_initial_states", {"mode": "canonical"}
+        )
+        early_stopping_defaults = base_config.get("early_stopping", {})
 
         toolbar = QFrame()
         toolbar.setObjectName("toolbarCard")
@@ -540,6 +545,37 @@ class TrainingPage(QWidget):
             "vertical acceleration, and pitch rate. Changing action width requires fresh training."
         )
         self.config_inputs.append(self.action_mode_input)
+        self.training_state_mode_input = QComboBox()
+        self.training_state_mode_input.setObjectName("ppoTrainingStateModeInput")
+        self.training_state_mode_input.addItem(
+            "Mixed physical TRAIN bank", "mixed_state_bank"
+        )
+        self.training_state_mode_input.addItem("Canonical state only", "canonical")
+        training_state_mode = str(
+            initial_state_defaults.get("mode", "canonical")
+        )
+        training_state_index = self.training_state_mode_input.findData(
+            training_state_mode
+        )
+        self.training_state_mode_input.setCurrentIndex(max(training_state_index, 0))
+        self.training_state_mode_input.setToolTip(
+            "Mixed mode samples only the existing physically propagated TRAIN bank; "
+            "the disjoint VALIDATION bank is never used for gradients."
+        )
+        self.config_inputs.append(self.training_state_mode_input)
+        self.canonical_fraction_input = decimal_input(
+            100.0 * float(initial_state_defaults.get("canonical_fraction", 0.0)),
+            0.0,
+            100.0,
+            5.0,
+            1,
+            " %",
+        )
+        self.canonical_fraction_input.setObjectName("ppoCanonicalFractionInput")
+        self.canonical_fraction_input.setToolTip(
+            "Exact fraction of each 2,048-episode training batch initialized from "
+            "the settled canonical state; remaining rows come from the TRAIN bank."
+        )
         self.episode_budget_input = integer_input(
             int(base_config.get("requested_episodes", 1_000_000)),
             2_048,
@@ -577,13 +613,43 @@ class TrainingPage(QWidget):
         )
         self.rolling_window_input.setObjectName("ppoRollingSuccessWindowInput")
         self.seed_input = integer_input(int(base_config.get("seed", 444)), 0, 2_147_483_647)
+        self.early_stopping_input = QCheckBox("Use held-out validation early stopping")
+        self.early_stopping_input.setChecked(
+            bool(early_stopping_defaults.get("enabled", False))
+        )
+        self.early_stopping_input.setToolTip(
+            "Stops after the configured number of scheduled validation checks without "
+            "improvement. The best deterministic validation checkpoint is retained."
+        )
+        self.config_inputs.append(self.early_stopping_input)
+        self.early_stopping_minimum_input = integer_input(
+            int(early_stopping_defaults.get("minimum_episodes", 250_000)),
+            0,
+            20_000_000,
+            2_048,
+        )
+        self.early_stopping_patience_input = integer_input(
+            int(
+                early_stopping_defaults.get(
+                    "validation_patience_evaluations", 30
+                )
+            ),
+            1,
+            500,
+            1,
+        )
         run_form.addRow("Initialization", self.initialization_mode_input)
         run_form.addRow("Policy action", self.action_mode_input)
+        run_form.addRow("Training states", self.training_state_mode_input)
+        run_form.addRow("Canonical fraction", self.canonical_fraction_input)
         run_form.addRow("Training episodes", self.episode_budget_input)
         run_form.addRow("Timeout", self.episode_horizon_input)
         run_form.addRow("Validate every", self.validation_interval_input)
         run_form.addRow("Validation trials", self.scheduled_validation_count_input)
         run_form.addRow("Success rolling window", self.rolling_window_input)
+        run_form.addRow(self.early_stopping_input)
+        run_form.addRow("Early-stop minimum", self.early_stopping_minimum_input)
+        run_form.addRow("Validation patience", self.early_stopping_patience_input)
         run_form.addRow("Seed", self.seed_input)
         configuration_layout.addWidget(run_group, 1)
 
@@ -674,6 +740,17 @@ class TrainingPage(QWidget):
             1.0,
             2,
         )
+        self.terminal_displacement_success_only_input = QCheckBox(
+            "Charge only after a successful strike"
+        )
+        self.terminal_displacement_success_only_input.setChecked(
+            bool(reward_defaults.get("terminal_displacement_success_only", False))
+        )
+        self.terminal_displacement_success_only_input.setToolTip(
+            "Prevents failed timeouts from favoring a stationary policy. Compactness "
+            "becomes a secondary preference among successful strikes."
+        )
+        self.config_inputs.append(self.terminal_displacement_success_only_input)
         self.displacement_integral_weight_input = decimal_input(
             float(reward_defaults.get("displacement_integral_weight", 3.0)),
             0.0,
@@ -719,6 +796,9 @@ class TrainingPage(QWidget):
             3,
         )
         motion_reward_form.addRow("Terminal displacement (-)", self.terminal_displacement_weight_input)
+        motion_reward_form.addRow(
+            "Terminal charge scope", self.terminal_displacement_success_only_input
+        )
         motion_reward_form.addRow("Displacement integral (-)", self.displacement_integral_weight_input)
         motion_reward_form.addRow("Displacement scale", self.displacement_scale_input)
         motion_reward_form.addRow("Time deduction (-)", self.time_cost_input)
@@ -889,6 +969,24 @@ class TrainingPage(QWidget):
         config["requested_episodes"] = int(self.episode_budget_input.value())
         config["episode_duration_s"] = float(self.episode_horizon_input.value())
         config["seed"] = int(self.seed_input.value())
+        initial_states = config.setdefault("training_initial_states", {})
+        initial_states["mode"] = str(self.training_state_mode_input.currentData())
+        initial_states["canonical_fraction"] = (
+            float(self.canonical_fraction_input.value()) / 100.0
+        )
+        initial_states["seed"] = int(self.seed_input.value()) + 1_000
+        if initial_states["mode"] == "mixed_state_bank":
+            default_initial_states = (
+                (_read_json(CONFIG_PATH) or {}).get("training_initial_states", {})
+            )
+            for key in (
+                "training_bank",
+                "training_bank_manifest",
+                "validation_bank",
+                "validation_bank_manifest",
+            ):
+                if key not in initial_states and key in default_initial_states:
+                    initial_states[key] = default_initial_states[key]
         action_mode = str(self.action_mode_input.currentData())
         action = config["action"]
         action["mode"] = action_mode
@@ -933,6 +1031,22 @@ class TrainingPage(QWidget):
         config["logging"]["training_success_rolling_window_episodes"] = int(
             self.rolling_window_input.value()
         )
+        early_stopping = config.setdefault("early_stopping", {})
+        early_stopping.update(
+            {
+                "enabled": bool(self.early_stopping_input.isChecked()),
+                "minimum_episodes": int(
+                    self.early_stopping_minimum_input.value()
+                ),
+                "validation_patience_evaluations": int(
+                    self.early_stopping_patience_input.value()
+                ),
+            }
+        )
+        early_stopping.setdefault(
+            "selection_metric",
+            "validation_success_rate_then_lower_mean_uav_displacement",
+        )
         reward = config["reward"]
         reward.update(
             {
@@ -955,6 +1069,9 @@ class TrainingPage(QWidget):
                 "maximum_displacement_weight": 0.0,
                 "terminal_displacement_weight": float(
                     self.terminal_displacement_weight_input.value()
+                ),
+                "terminal_displacement_success_only": bool(
+                    self.terminal_displacement_success_only_input.isChecked()
                 ),
                 "displacement_integral_weight": float(
                     self.displacement_integral_weight_input.value()
@@ -1016,6 +1133,15 @@ class TrainingPage(QWidget):
         self.episode_budget_input.setValue(int(config.get("requested_episodes", 1_000_000)))
         self.episode_horizon_input.setValue(float(config.get("episode_duration_s", 7.0)))
         self.seed_input.setValue(int(config.get("seed", 444)))
+        initial_states = config.get("training_initial_states", {})
+        training_state_mode = str(initial_states.get("mode", "canonical"))
+        training_state_index = self.training_state_mode_input.findData(
+            training_state_mode
+        )
+        self.training_state_mode_input.setCurrentIndex(max(training_state_index, 0))
+        self.canonical_fraction_input.setValue(
+            100.0 * float(initial_states.get("canonical_fraction", 0.0))
+        )
         validation = config.get("validation", {})
         self.validation_interval_input.setValue(
             int(validation.get("every_episodes", 10_240))
@@ -1029,6 +1155,16 @@ class TrainingPage(QWidget):
                     "training_success_rolling_window_episodes", 5_000
                 )
             )
+        )
+        early_stopping = config.get("early_stopping", {})
+        self.early_stopping_input.setChecked(
+            bool(early_stopping.get("enabled", False))
+        )
+        self.early_stopping_minimum_input.setValue(
+            int(early_stopping.get("minimum_episodes", 250_000))
+        )
+        self.early_stopping_patience_input.setValue(
+            int(early_stopping.get("validation_patience_evaluations", 30))
         )
         reward = config.get("reward", {})
         speed_reference = str(
@@ -1055,6 +1191,9 @@ class TrainingPage(QWidget):
         for control, key in reward_controls:
             if key in reward:
                 control.setValue(float(reward[key]))
+        self.terminal_displacement_success_only_input.setChecked(
+            bool(reward.get("terminal_displacement_success_only", False))
+        )
         ppo = config.get("ppo", {})
         ppo_controls = (
             (self.learning_rate_input, "learning_rate"),
@@ -1211,7 +1350,7 @@ class TrainingPage(QWidget):
             "info"
             if active
             else "success"
-            if state == "COMPLETE"
+            if state in {"COMPLETE", "EARLY_STOPPED_VALIDATION"}
             else "danger"
             if state == "FAILED"
             else "neutral"
@@ -1253,9 +1392,21 @@ class TrainingPage(QWidget):
                 f"at {int(validation['checkpoint_episodes']):,} episodes",
             )
             displacement = float(validation.get("mean_maximum_uav_displacement_m", 0.0))
+            terminal_displacement = validation.get(
+                "mean_terminal_uav_displacement_m"
+            )
+            displacement_detail = (
+                "mean maximum over "
+                f"{int(validation.get('validation_episodes', 0)):,} states"
+                if terminal_displacement is None
+                else (
+                    f"terminal mean {float(terminal_displacement):.3f} m • "
+                    f"{int(validation.get('validation_episodes', 0)):,} states"
+                )
+            )
             self.displacement_card.set_metric(
                 f"{displacement:.3f} m",
-                "mean maximum over 64 states",
+                displacement_detail,
             )
         self.start_button.setEnabled(not active)
         self.stop_button.setEnabled(active)

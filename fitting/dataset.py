@@ -103,6 +103,8 @@ def load_manifest(path: str | Path = DEFAULT_MANIFEST) -> dict[str, object]:
 def load_dataset(
     processed_root: str | Path = DEFAULT_PROCESSED_ROOT,
     manifest_path: str | Path = DEFAULT_MANIFEST,
+    *,
+    include_untouched_test: bool = True,
 ) -> Dataset:
     root = Path(processed_root)
     manifest = load_manifest(manifest_path)
@@ -112,6 +114,12 @@ def load_dataset(
     if not root.exists():
         return Dataset((), manifest)
     for folder in sorted(item for item in root.iterdir() if item.is_dir()):
+        decision = decisions.get(folder.name, {})
+        role = str(decision.get("role", "ignore"))
+        if role not in DATASET_ROLES:
+            raise ValueError(f"Invalid whole-take role {role!r} for {folder.name}.")
+        if role == "untouched_test" and not include_untouched_test:
+            continue
         paths = [folder / name for name in ("take.npz", "metadata.json", "sync_report.json")]
         if not all(path.exists() for path in paths):
             continue
@@ -122,10 +130,6 @@ def load_dataset(
             raise ValueError(f"{folder.name} processed take is missing arrays: {sorted(missing)}")
         metadata = json.loads(paths[1].read_text(encoding="utf-8"))
         sync = json.loads(paths[2].read_text(encoding="utf-8"))
-        decision = decisions.get(folder.name, {})
-        role = str(decision.get("role", "ignore"))
-        if role not in DATASET_ROLES:
-            raise ValueError(f"Invalid whole-take role {role!r} for {folder.name}.")
         takes.append(
             ProcessedTake(
                 take_id=folder.name,

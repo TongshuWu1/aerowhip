@@ -14,7 +14,12 @@ from learning.ppo_validation import (
     rolling_episode_mean,
     rolling_success_rate,
 )
+from learning.ppo_initial_states import MixedPPOInitialStateSampler
+from learning.state_bank import InitialStateBank
 from run_simple_ppo import DEFAULT_CONFIG, _build_agent, _load_config
+
+
+ROOT = DEFAULT_CONFIG.parents[2]
 
 
 def test_selected_target_aligned_sagittal_policy_is_fresh_and_batch_aligned() -> None:
@@ -30,8 +35,13 @@ def test_selected_target_aligned_sagittal_policy_is_fresh_and_batch_aligned() ->
     assert config["action"]["lateral_acceleration_available"] is False
     assert config["reported_success"]["episode_continues_after_success"] is False
     assert config["reported_success"]["successful_transition_is_terminal"] is True
-    assert config["validation"]["episodes"] == 64
+    assert config["training_initial_states"]["mode"] == "mixed_state_bank"
+    assert config["training_initial_states"]["canonical_fraction"] == 0.25
+    assert config["validation"]["episodes"] == 512
     assert config["validation"]["fixed_numerical_batch_size"] == 2048
+    assert config["early_stopping"]["enabled"] is True
+    assert config["early_stopping"]["minimum_episodes"] == 250_000
+    assert config["early_stopping"]["validation_patience_evaluations"] == 30
     assert config["reward"]["objective_type"] == "single_scalar_reward_maximization"
     assert config["reward"]["progress_weight"] == 20.0
     assert config["reward"]["maximum_displacement_weight"] == 0.0
@@ -60,6 +70,100 @@ def test_selected_target_aligned_sagittal_policy_is_fresh_and_batch_aligned() ->
     agent = _build_agent(config, torch.device("cpu"))
     assert agent.policy.log_std.shape == (3,)
     assert agent.policy.mean_network[-1].out_features == 3
+
+
+def test_mixed_initial_state_sampler_is_disjoint_balanced_and_resumable() -> None:
+    training_path = ROOT / "results" / "common" / "training_state_bank.npz"
+    training_manifest = (
+        ROOT / "results" / "common" / "training_state_bank_manifest.json"
+    )
+    validation_path = ROOT / "results" / "common" / "validation_state_bank.npz"
+    validation_manifest = (
+        ROOT / "results" / "common" / "validation_state_bank_manifest.json"
+    )
+    training = InitialStateBank.load(training_path, training_manifest)
+    canonical = training.select(torch.tensor([0]), device="cpu").state
+    sampler = MixedPPOInitialStateSampler.create(
+        training_bank_path=training_path,
+        training_manifest_path=training_manifest,
+        validation_bank_path=validation_path,
+        validation_manifest_path=validation_manifest,
+        canonical_state=canonical,
+        command_yaw_world_rad=0.0,
+        batch_size=16,
+        canonical_fraction=0.25,
+        seed=91,
+    )
+    assert sampler.manifest["training_bank_count"] == 4_096
+    assert sampler.manifest["validation_bank_count"] == 512
+    assert sampler.manifest["exact_state_overlap_count"] == 0
+    assert sampler.canonical_count == 4
+
+    generator_state = sampler.get_state()
+    first = sampler.sample(device="cpu")
+    sampler.set_state(generator_state)
+    replay = sampler.sample(device="cpu")
+    assert torch.equal(first.source_indices, replay.source_indices)
+    assert int((first.source_indices == len(training)).sum()) == 4
+    varied = first.source_indices[first.source_indices != len(training)]
+    assert varied.unique().numel() == 12
+    assert torch.equal(
+        first.state.cable.positions_m,
+        replay.state.cable.positions_m,
+    )
+
+
+def test_displacement_return_finetune_warm_starts_with_compact_selection() -> None:
+    config = _load_config(
+        ROOT / "config" / "learning" / "whip_ppo_displacement_return_finetune_v1.json"
+    )
+    assert config["initialization"]["uses_previous_policy_checkpoint"] is True
+    assert config["initialization"]["source_validation_success_rate"] == 0.94921875
+    assert config["reward"]["terminal_displacement_weight"] == 80.0
+    assert config["reward"]["displacement_integral_weight"] == 4.0
+    assert config["ppo"]["learning_rate"] == 0.0001
+    assert config["early_stopping"]["minimum_validation_success_rate"] == 0.90
+    assert (
+        config["early_stopping"]["selection_metric"]
+        == "lower_mean_uav_displacement_subject_to_success_floor"
+    )
+
+
+def test_gradual_displacement_return_changes_only_terminal_cost() -> None:
+    config = _load_config(
+        ROOT / "config" / "learning" / "whip_ppo_displacement_return_gradual_v1.json"
+    )
+    assert config["initialization"]["uses_previous_policy_checkpoint"] is True
+    assert config["initialization"]["source_validation_success_rate"] == 0.94921875
+    assert config["requested_episodes"] == 500_000
+    assert config["reward"]["terminal_displacement_weight"] == 50.0
+    assert config["reward"]["displacement_integral_weight"] == 2.0
+    assert config["ppo"]["learning_rate"] == 0.0001
+    assert config["early_stopping"]["minimum_validation_success_rate"] == 0.90
+    assert config["early_stopping"]["minimum_episodes"] == 500_000
+    assert (
+        config["early_stopping"]["selection_metric"]
+        == "lower_mean_uav_displacement_subject_to_success_floor"
+    )
+
+
+def test_success_conditioned_return_finetune_is_guarded() -> None:
+    config = _load_config(
+        ROOT
+        / "config"
+        / "learning"
+        / "whip_ppo_success_conditioned_return_finetune_v1.json"
+    )
+    assert config["initialization"]["load_value_network"] is True
+    assert config["requested_episodes"] == 50_000
+    assert config["reward"]["terminal_displacement_weight"] == 45.0
+    assert config["reward"]["terminal_displacement_success_only"] is True
+    assert config["reward"]["displacement_integral_weight"] == 0.0
+    assert config["reward"]["body_rate_effort_weight"] == 0.0
+    assert config["ppo"]["learning_rate"] == 0.00002
+    assert config["early_stopping"]["minimum_validation_success_rate"] == 0.90
+    assert config["early_stopping"]["abort_below_validation_success_rate"] == 0.80
+    assert config["early_stopping"]["abort_below_patience_evaluations"] == 2
 
 
 def test_bounded_policy_has_finite_actions_and_consistent_log_probabilities() -> None:

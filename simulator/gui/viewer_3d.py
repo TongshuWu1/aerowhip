@@ -140,6 +140,9 @@ class CableViewer3D(QWidget):
         self.visual_cable_radius_scale = float(visual_cable_radius_scale)
         self._show_commanded = False
         self._show_body_frame = False
+        self._show_trajectories = True
+        self._show_command_vectors = True
+        self._replay_overlays_ready = False
         self._follow_uav = False
         self._last_uav_position: np.ndarray | None = None
         self.last_update_ms = 0.0
@@ -161,6 +164,7 @@ class CableViewer3D(QWidget):
         )
         self._build_marker_pipeline()
         self._build_attachment_actor()
+        self._build_replay_overlays()
         self._configure_lighting()
         self.set_camera_preset("Perspective")
 
@@ -338,6 +342,193 @@ class CableViewer3D(QWidget):
             smooth_shading=True,
             pickable=False,
         )
+
+    def _line_pipeline(
+        self,
+        *,
+        color: tuple[float, float, float],
+        width: float,
+    ) -> tuple[vtkPoints, vtkPolyData, vtkActor]:
+        """Create one persistent polyline actor for replay-only overlays."""
+
+        points = vtkPoints()
+        points.SetData(numpy_to_vtk(np.zeros((2, 3)), deep=True))
+        line = vtkPolyLine()
+        line.GetPointIds().SetNumberOfIds(2)
+        line.GetPointIds().SetId(0, 0)
+        line.GetPointIds().SetId(1, 1)
+        cells = vtkCellArray()
+        cells.InsertNextCell(line)
+        polydata = vtkPolyData()
+        polydata.SetPoints(points)
+        polydata.SetLines(cells)
+        mapper = vtkPolyDataMapper()
+        mapper.SetInputData(polydata)
+        actor = vtkActor()
+        actor.SetMapper(mapper)
+        actor.GetProperty().SetColor(*color)
+        actor.GetProperty().SetLineWidth(width)
+        actor.SetVisibility(False)
+        self.plotter.renderer.AddActor(actor)
+        return points, polydata, actor
+
+    def _build_replay_overlays(self) -> None:
+        """Build target, trajectory, and command-vector overlays once."""
+
+        self._target_actor = self.plotter.add_mesh(
+            pv.Sphere(radius=0.025, theta_resolution=24, phi_resolution=18),
+            color="#22c55e",
+            opacity=0.58,
+            smooth_shading=True,
+            pickable=False,
+        )
+        self._target_actor.SetVisibility(False)
+        self._desired_direction = self._line_pipeline(
+            color=(0.09, 0.64, 0.30), width=4.0
+        )
+        self._actual_path = self._line_pipeline(
+            color=(0.15, 0.21, 0.28), width=2.2
+        )
+        self._command_path = self._line_pipeline(
+            color=(0.95, 0.57, 0.10), width=2.2
+        )
+        self._tip_path = self._line_pipeline(
+            color=(0.93, 0.31, 0.12), width=2.0
+        )
+        self._actual_velocity_vector = self._line_pipeline(
+            color=(0.15, 0.47, 0.78), width=3.2
+        )
+        self._command_velocity_vector = self._line_pipeline(
+            color=(0.95, 0.57, 0.10), width=3.2
+        )
+        self._command_acceleration_vector = self._line_pipeline(
+            color=(0.63, 0.28, 0.86), width=3.2
+        )
+
+    @staticmethod
+    def _set_polyline(
+        pipeline: tuple[vtkPoints, vtkPolyData, vtkActor],
+        values: np.ndarray | None,
+        *,
+        visible: bool,
+    ) -> None:
+        points, polydata, actor = pipeline
+        if values is None:
+            actor.SetVisibility(False)
+            return
+        array = np.asarray(values, dtype=np.float64).reshape(-1, 3)
+        if len(array) < 2 or not np.isfinite(array).all():
+            actor.SetVisibility(False)
+            return
+        CableViewer3D._replace_vtk_points(points, array)
+        line = vtkPolyLine()
+        line.GetPointIds().SetNumberOfIds(len(array))
+        for index in range(len(array)):
+            line.GetPointIds().SetId(index, index)
+        cells = vtkCellArray()
+        cells.InsertNextCell(line)
+        polydata.SetLines(cells)
+        polydata.Modified()
+        actor.SetVisibility(visible)
+
+    def set_replay_overlays(
+        self,
+        *,
+        target_position_m: np.ndarray,
+        desired_direction: np.ndarray,
+        uav_path_m: np.ndarray,
+        command_path_m: np.ndarray | None,
+        tip_path_m: np.ndarray,
+    ) -> None:
+        """Install complete replay paths without rebuilding the VTK scene."""
+
+        target = np.asarray(target_position_m, dtype=np.float64).reshape(3)
+        direction = np.asarray(desired_direction, dtype=np.float64).reshape(3)
+        norm = float(np.linalg.norm(direction))
+        if norm > 1.0e-12:
+            direction = direction / norm
+        self._target_actor.SetPosition(*target)
+        self._target_actor.SetVisibility(True)
+        self._set_polyline(
+            self._desired_direction,
+            np.stack((target, target + 0.20 * direction)),
+            visible=True,
+        )
+        self._set_polyline(
+            self._actual_path, uav_path_m, visible=self._show_trajectories
+        )
+        self._set_polyline(
+            self._command_path, command_path_m, visible=self._show_trajectories
+        )
+        self._set_polyline(
+            self._tip_path, tip_path_m, visible=self._show_trajectories
+        )
+        self._replay_overlays_ready = True
+        self.plotter.render()
+
+    def update_replay_vectors(
+        self,
+        *,
+        uav_position_m: np.ndarray,
+        actual_velocity_m_s: np.ndarray | None,
+        command_position_m: np.ndarray | None,
+        command_velocity_m_s: np.ndarray | None,
+        command_acceleration_m_s2: np.ndarray | None,
+        render: bool = True,
+    ) -> None:
+        """Update compact, scaled state/command vectors for the current frame."""
+
+        def vector_line(
+            origin: np.ndarray | None,
+            vector: np.ndarray | None,
+            scale: float,
+        ) -> np.ndarray | None:
+            if origin is None or vector is None:
+                return None
+            start = np.asarray(origin, dtype=np.float64).reshape(3)
+            value = np.asarray(vector, dtype=np.float64).reshape(3)
+            if not np.isfinite(start).all() or not np.isfinite(value).all():
+                return None
+            return np.stack((start, start + scale * value))
+
+        visible = self._show_command_vectors
+        self._set_polyline(
+            self._actual_velocity_vector,
+            vector_line(np.asarray(uav_position_m), actual_velocity_m_s, 0.08),
+            visible=visible,
+        )
+        self._set_polyline(
+            self._command_velocity_vector,
+            vector_line(command_position_m, command_velocity_m_s, 0.08),
+            visible=visible,
+        )
+        self._set_polyline(
+            self._command_acceleration_vector,
+            vector_line(command_position_m, command_acceleration_m_s2, 0.018),
+            visible=visible,
+        )
+        if render:
+            self.plotter.render()
+
+    def set_show_trajectories(self, enabled: bool) -> None:
+        self._show_trajectories = bool(enabled)
+        for pipeline in (self._actual_path, self._command_path, self._tip_path):
+            pipeline[2].SetVisibility(
+                self._show_trajectories and self._replay_overlays_ready
+            )
+        self.plotter.render()
+
+    def set_show_command_vectors(self, enabled: bool) -> None:
+        self._show_command_vectors = bool(enabled)
+        for pipeline in (
+            self._actual_velocity_vector,
+            self._command_velocity_vector,
+            self._command_acceleration_vector,
+        ):
+            pipeline[2].SetVisibility(
+                self._show_command_vectors and self._replay_overlays_ready
+            )
+        self.plotter.render()
 
     def _configure_lighting(self) -> None:
         self.plotter.remove_all_lights()

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+import os
 import sys
 
 import numpy as np
@@ -10,7 +11,7 @@ from PySide6.QtCore import QProcess, Qt, QTimer
 from PySide6.QtGui import QColor, QPainter
 from PySide6.QtWidgets import (
     QComboBox, QDoubleSpinBox, QGroupBox, QHBoxLayout, QHeaderView, QLabel,
-    QPushButton, QSlider, QSplitter, QTableWidget, QTableWidgetItem, QVBoxLayout,
+    QPushButton, QSlider, QSplitter, QTabWidget, QTableWidget, QTableWidgetItem, QVBoxLayout,
     QWidget,
 )
 
@@ -30,6 +31,27 @@ ROLE_LABELS = {
     "untouched_test": "Untouched Test",
     "ignore": "Ignore",
 }
+
+
+class _OffscreenViewer(QWidget):
+    """Avoid Win32 OpenGL creation under the Qt offscreen test platform."""
+
+    def __init__(self, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        layout = QVBoxLayout(self)
+        label = QLabel("PyVista measured-take replay is enabled in the desktop UI.")
+        label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        label.setStyleSheet("color: #64748b; background: #eef2f7;")
+        layout.addWidget(label)
+
+    def set_show_commanded_pose(self, _enabled: bool) -> None:
+        pass
+
+    def update_measured_sites(self, *args: object, **kwargs: object) -> float:
+        return 0.0
+
+    def close(self) -> None:
+        super().close()
 
 
 class TakeTimeline(QWidget):
@@ -158,31 +180,46 @@ class TakesDatasetWidget(QWidget):
         detail = QWidget(); detail_layout = QVBoxLayout(detail); detail_layout.setContentsMargins(0, 8, 0, 0)
         self.take_summary = QLabel("Select a take"); self.take_summary.setWordWrap(True); self.take_summary.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
         self.take_summary.setStyleSheet("padding: 9px; border: 1px solid #d0d5dd; border-radius: 4px;"); detail_layout.addWidget(self.take_summary)
-        self.timeline = TakeTimeline(); detail_layout.addWidget(self.timeline)
+        detail_tabs = QTabWidget(); detail_tabs.setDocumentMode(True); detail_layout.addWidget(detail_tabs, 1)
+        trim_tab = QWidget(); trim_layout = QVBoxLayout(trim_tab); trim_layout.setContentsMargins(8, 8, 8, 8)
+        self.timeline = TakeTimeline(); trim_layout.addWidget(self.timeline)
         annotation = QGroupBox("Secondary Use / Exclude mask inside the Motive trim"); annotation_layout = QHBoxLayout(annotation)
         self.start_spin = QDoubleSpinBox(); self.start_spin.setDecimals(3); self.end_spin = QDoubleSpinBox(); self.end_spin.setDecimals(3)
         self.segment_mode = QComboBox(); self.segment_mode.addItems(("Use", "Exclude"))
-        add = QPushButton("Add interval"); add.clicked.connect(self._add_interval); clear = QPushButton("Clear intervals"); clear.clicked.connect(self._clear_intervals)
+        self.add_interval_button = QPushButton("Add interval"); self.add_interval_button.clicked.connect(self._add_interval)
+        self.clear_intervals_button = QPushButton("Clear intervals"); self.clear_intervals_button.clicked.connect(self._clear_intervals)
+        self.start_from_cursor_button = QPushButton("Start ← cursor"); self.start_from_cursor_button.clicked.connect(self._set_start_from_cursor)
+        self.end_from_cursor_button = QPushButton("End ← cursor"); self.end_from_cursor_button.clicked.connect(self._set_end_from_cursor)
         for label, widget in (("Start [s]", self.start_spin), ("End [s]", self.end_spin), ("Mode", self.segment_mode)):
             annotation_layout.addWidget(QLabel(label)); annotation_layout.addWidget(widget)
-        annotation_layout.addWidget(add); annotation_layout.addWidget(clear); annotation_layout.addStretch(1); detail_layout.addWidget(annotation)
+        annotation_layout.addWidget(self.start_from_cursor_button); annotation_layout.addWidget(self.end_from_cursor_button)
+        annotation_layout.addWidget(self.add_interval_button); annotation_layout.addWidget(self.clear_intervals_button); annotation_layout.addStretch(1); trim_layout.addWidget(annotation)
         episode_breaks = QGroupBox("Physical discontinuities (Episode Break only)")
         episode_break_layout = QHBoxLayout(episode_breaks)
         self.break_spin = QDoubleSpinBox(); self.break_spin.setDecimals(3)
-        add_break = QPushButton("Add Episode Break"); add_break.clicked.connect(self._add_episode_break)
-        clear_breaks = QPushButton("Clear Episode Breaks"); clear_breaks.clicked.connect(self._clear_episode_breaks)
+        self.add_break_button = QPushButton("Add Episode Break"); self.add_break_button.clicked.connect(self._add_episode_break)
+        self.clear_breaks_button = QPushButton("Clear Episode Breaks"); self.clear_breaks_button.clicked.connect(self._clear_episode_breaks)
         episode_break_layout.addWidget(QLabel("Break time [s]")); episode_break_layout.addWidget(self.break_spin)
-        episode_break_layout.addWidget(add_break); episode_break_layout.addWidget(clear_breaks); episode_break_layout.addStretch(1)
-        detail_layout.addWidget(episode_breaks)
-        playback_row = QHBoxLayout(); controls = QVBoxLayout(); control_buttons = QHBoxLayout()
+        episode_break_layout.addWidget(self.add_break_button); episode_break_layout.addWidget(self.clear_breaks_button); episode_break_layout.addStretch(1)
+        trim_layout.addWidget(episode_breaks); trim_layout.addStretch(1)
+        detail_tabs.addTab(trim_tab, "Trim / masks / episodes")
+
+        replay_tab = QWidget(); replay_layout = QVBoxLayout(replay_tab); replay_layout.setContentsMargins(8, 8, 8, 8)
+        controls = QVBoxLayout(); control_buttons = QHBoxLayout()
         self.play_button = QPushButton("Play"); self.play_button.clicked.connect(self._toggle_play); reset = QPushButton("Reset"); reset.clicked.connect(self._reset_playback)
         self.speed_combo = QComboBox(); self.speed_combo.addItems(("0.25×", "0.5×", "1×", "2×")); self.speed_combo.setCurrentText("1×")
+        backend = QLabel("PYVISTA / VTK · measured state + commanded UAV ghost"); backend.setStyleSheet("color: #2563eb; font-size: 8pt; font-weight: 800;")
+        control_buttons.addWidget(backend)
         control_buttons.addWidget(self.play_button); control_buttons.addWidget(reset); control_buttons.addWidget(QLabel("Speed")); control_buttons.addWidget(self.speed_combo); control_buttons.addStretch(1)
         controls.addLayout(control_buttons); self.slider = QSlider(Qt.Orientation.Horizontal); self.slider.valueChanged.connect(self._slider_changed); controls.addWidget(self.slider)
-        self.playback_status = QLabel(""); self.playback_status.setWordWrap(True); controls.addWidget(self.playback_status); playback_row.addLayout(controls, 0)
-        self.viewer = CableViewer3D(self, marker_node_indices=tuple(range(1, 11)), node_count=11, cable_length_m=self.settings.cable_configuration.length_m, cable_diameter_m=self.settings.cable_configuration.diameter_m, initial_uav_position_m=self.settings.initial_uav_position_m)
-        self.viewer.set_show_commanded_pose(True); playback_row.addWidget(self.viewer, 1); detail_layout.addLayout(playback_row, 1)
-        split.addWidget(detail); split.setSizes((250, 570))
+        self.playback_status = QLabel(""); self.playback_status.setWordWrap(True); controls.addWidget(self.playback_status); replay_layout.addLayout(controls)
+        if os.environ.get("QT_QPA_PLATFORM", "").lower() == "offscreen":
+            self.viewer = _OffscreenViewer(self)
+        else:
+            self.viewer = CableViewer3D(self, marker_node_indices=tuple(range(1, 11)), node_count=11, cable_length_m=self.settings.cable_configuration.length_m, cable_diameter_m=self.settings.cable_configuration.diameter_m, initial_uav_position_m=self.settings.initial_uav_position_m)
+        self.viewer.set_show_commanded_pose(True); replay_layout.addWidget(self.viewer, 1)
+        detail_tabs.addTab(replay_tab, "Measured 3D replay")
+        split.addWidget(detail); split.setSizes((230, 500))
 
     def _physical_episodes(self, take: ProcessedTake) -> tuple[object, ...]:
         episodes, _ = build_physical_episodes(take, self.config)
@@ -190,20 +227,27 @@ class TakesDatasetWidget(QWidget):
 
     def refresh(self) -> None:
         current = None if self.selected is None else self.selected.take_id
-        self.dataset = load_dataset(); self.table.setRowCount(len(self.dataset.takes))
-        self.message.setText("Processed data only. External command = position / velocity / acceleration / yaw. Untouched Test is protected from fitting, normalization and checkpoint selection.")
+        self.dataset = load_dataset(include_untouched_test=False); self.table.setRowCount(len(self.dataset.takes))
+        self.message.setText("Processed non-protected data only. External command = position / velocity / acceleration / yaw. The Untouched Test is listed in the inventory but is not loaded into this workspace.")
         for row, take in enumerate(self.dataset.takes):
             quality, command, episodes = take.sync_report["quality"], take.sync_report["commands"], self._physical_episodes(take)
             values = (take.take_id, f"{take.duration_s:.2f} s", f"{100*float(command['command_coverage_fraction']):.1f}%", f"{100*float(quality['uav_valid_fraction']):.1f}%", f"{100*float(quality['cable_valid_fraction']):.1f}%", str(len(episodes)), str(take.metadata["quality_status"]))
             self.table.setItem(row, 0, QTableWidgetItem(values[0]))
             role = QComboBox(); role.addItems(tuple(ROLE_LABELS.values())); role.setCurrentText(ROLE_LABELS[take.role])
-            if take.role == "untouched_test": role.setStyleSheet("font-weight: 650; color: #b42318;")
+            if take.role == "untouched_test":
+                role.setStyleSheet("font-weight: 650; color: #b42318;")
+                role.setEnabled(False)
+                role.setToolTip("Protected ownership is immutable in the GUI.")
             role.currentTextChanged.connect(lambda text, take_id=take.take_id: self._set_role(take_id, text)); self.table.setCellWidget(row, 1, role)
             for column, value in enumerate(values[1:], start=2): self.table.setItem(row, column, QTableWidgetItem(value))
             if take.take_id == current: self.table.selectRow(row)
         if current is None and self.dataset.takes: self.table.selectRow(0)
 
     def _set_role(self, take_id: str, label: str) -> None:
+        existing = next((take for take in self.dataset.takes if take.take_id == take_id), None)
+        if existing is not None and existing.role == "untouched_test":
+            self.message.setText(f"{take_id} is protected and cannot be reassigned.")
+            return
         role = next(key for key, value in ROLE_LABELS.items() if value == label)
         manifest = load_manifest(); decision = manifest.setdefault("takes", {}).setdefault(take_id, {})
         decision.update({"role": role, "enabled": role != "ignore"}); decision.setdefault("note", ""); decision.setdefault("segments", []); decision.setdefault("episode_breaks_s", [])
@@ -217,6 +261,20 @@ class TakesDatasetWidget(QWidget):
         self.timeline.set_take(self.selected, tuple((float(item.time_s[0]), float(item.time_s[-1])) for item in episodes))
         self.start_spin.setRange(0.0, self.selected.duration_s); self.end_spin.setRange(0.0, self.selected.duration_s); self.end_spin.setValue(self.selected.duration_s)
         self.break_spin.setRange(0.0, self.selected.duration_s)
+        editable = self.selected.role != "untouched_test"
+        for widget in (
+            self.start_spin,
+            self.end_spin,
+            self.segment_mode,
+            self.add_interval_button,
+            self.clear_intervals_button,
+            self.start_from_cursor_button,
+            self.end_from_cursor_button,
+            self.break_spin,
+            self.add_break_button,
+            self.clear_breaks_button,
+        ):
+            widget.setEnabled(editable)
         self.slider.setRange(0, self.selected.frame_count - 1); self.frame_index = 0; self.slider.setValue(0)
         metadata, sync, quality = self.selected.metadata, self.selected.sync_report, self.selected.sync_report["quality"]
         self.take_summary.setText(
@@ -229,6 +287,9 @@ class TakesDatasetWidget(QWidget):
 
     def _write_segments(self, segments: list[dict[str, object]]) -> None:
         if self.selected is None: return
+        if self.selected.role == "untouched_test":
+            self.message.setText("Protected take: trim/mask metadata was not changed.")
+            return
         manifest = load_manifest(); decision = manifest.setdefault("takes", {}).setdefault(self.selected.take_id, {})
         decision.setdefault("role", "ignore"); decision.setdefault("enabled", False); decision.setdefault("note", ""); decision.setdefault("episode_breaks_s", []); decision["segments"] = segments
         atomic_json(DEFAULT_MANIFEST, manifest); self.refresh()
@@ -239,10 +300,21 @@ class TakesDatasetWidget(QWidget):
         if end <= start: self.message.setText("Segment end must be later than start."); return
         segments = list(self.selected.segments); segments.append({"start_s": start, "end_s": end, "use": self.segment_mode.currentText() == "Use", "note": ""}); self._write_segments(segments)
 
+    def _set_start_from_cursor(self) -> None:
+        if self.selected is not None:
+            self.start_spin.setValue(float(self.selected.arrays["time_s"][self.frame_index]))
+
+    def _set_end_from_cursor(self) -> None:
+        if self.selected is not None:
+            self.end_spin.setValue(float(self.selected.arrays["time_s"][self.frame_index]))
+
     def _clear_intervals(self) -> None: self._write_segments([])
 
     def _write_episode_breaks(self, values: list[float]) -> None:
         if self.selected is None: return
+        if self.selected.role == "untouched_test":
+            self.message.setText("Protected take: episode metadata was not changed.")
+            return
         manifest = load_manifest(); decision = manifest.setdefault("takes", {}).setdefault(self.selected.take_id, {})
         decision.setdefault("role", "ignore"); decision.setdefault("enabled", False); decision.setdefault("note", ""); decision.setdefault("segments", [])
         decision["episode_breaks_s"] = sorted(set(float(value) for value in values))

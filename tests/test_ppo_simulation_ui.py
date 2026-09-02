@@ -48,6 +48,10 @@ def test_simulator_page_is_a_simple_frozen_ppo_runner() -> None:
     assert DEFAULT_CHECKPOINT.is_file()
     assert page.run_ppo_button.text() == "RUN LATEST PPO"
     assert page.run_ppo_button.objectName() == "runPpoSimulationButton"
+    assert page.canvas.backend_name == "MATPLOTLIB TEST FALLBACK"
+    assert page.show_command.isChecked()
+    assert page.show_paths.isChecked()
+    assert page.show_vectors.isChecked()
     source = latest_ppo_policy_source()
     assert source is not None
     assert source[2].is_file()
@@ -62,3 +66,15 @@ def test_simulator_page_is_a_simple_frozen_ppo_runner() -> None:
     page.stop()
     page.close()
     application.processEvents()
+
+
+def test_replay_command_orientation_uses_saved_yaw_when_quaternion_is_absent() -> None:
+    from simulator.gui.replay_page import ProductionReplayView
+
+    arrays = {"yaw_cmd_rad": np.asarray([np.pi / 2.0])}
+    quaternion = ProductionReplayView._command_orientation_at(arrays, 0)
+    np.testing.assert_allclose(
+        quaternion,
+        (0.0, 0.0, np.sqrt(0.5), np.sqrt(0.5)),
+        atol=1.0e-12,
+    )

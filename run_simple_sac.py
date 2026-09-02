@@ -132,6 +132,9 @@ def _build_environment(
             terminal_displacement=float(
                 reward_config.get("terminal_displacement_weight", 0.0)
             ),
+            terminal_displacement_success_only=bool(
+                reward_config.get("terminal_displacement_success_only", False)
+            ),
             displacement_integral=float(
                 reward_config.get("displacement_integral_weight", 0.0)
             ),

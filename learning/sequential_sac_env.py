@@ -122,6 +122,7 @@ class SimpleRewardWeights:
     strike_quality_improvement: float = 0.0
     maximum_displacement: float = 0.0
     terminal_displacement: float = 0.0
+    terminal_displacement_success_only: bool = False
     displacement_integral: float = 0.0
     uav_speed_integral: float = 0.0
     acceleration_effort: float = 0.0
@@ -389,6 +390,21 @@ def smooth_displacement_cost(
     )
 
 
+def terminal_displacement_charge_mask(
+    terminal_now: torch.Tensor,
+    newly_successful: torch.Tensor,
+    *,
+    success_only: bool,
+) -> torch.Tensor:
+    """Choose whether terminal compactness is charged on all endings or successes."""
+
+    if terminal_now.dtype != torch.bool or newly_successful.dtype != torch.bool:
+        raise TypeError("Terminal displacement masks must be boolean tensors.")
+    if terminal_now.shape != newly_successful.shape:
+        raise ValueError("Terminal and success masks must have identical shapes.")
+    return newly_successful if success_only else terminal_now
+
+
 def simple_dense_reward(
     previous_distance_m: torch.Tensor,
     current_distance_m: torch.Tensor,
@@ -554,6 +570,12 @@ class SequentialWhipEnvironment:
         self.reward_mode = reward_mode
         self.terminate_on_success = bool(terminate_on_success)
         self._initial_state = clone_state_batch(initial_state, batch_size)
+        self._initial_yaw_command = torch.full(
+            (batch_size,),
+            task.initial_yaw_rad,
+            dtype=simulator.dtype,
+            device=simulator.device,
+        )
         self._target = torch.tensor(
             task.target_position_m, dtype=simulator.dtype, device=simulator.device
         ).view(1, 3).expand(batch_size, -1)
@@ -564,9 +586,7 @@ class SequentialWhipEnvironment:
         ).view(1, 3).expand(batch_size, -1)
         self.state = self._initial_state
         self.control_index = 0
-        self.yaw_command = torch.full(
-            (batch_size,), task.initial_yaw_rad, dtype=simulator.dtype, device=simulator.device
-        )
+        self.yaw_command = self._initial_yaw_command.clone()
         self.failed = torch.zeros(batch_size, dtype=torch.bool, device=simulator.device)
         self.episode_success = torch.zeros_like(self.failed)
         self.episode_endpoint_success = torch.zeros_like(self.failed)
@@ -595,6 +615,9 @@ class SequentialWhipEnvironment:
         )
         self.episode_reward = torch.zeros(batch_size, dtype=simulator.dtype, device=simulator.device)
         self.episode_maximum_displacement = torch.zeros_like(self.episode_reward)
+        self.episode_terminal_displacement = torch.full_like(
+            self.episode_reward, torch.nan
+        )
         self.episode_maximum_uav_speed = torch.zeros_like(self.episode_reward)
         self.episode_maximum_command_acceleration = torch.zeros_like(self.episode_reward)
         self.episode_minimum_tip_distance = torch.full_like(self.episode_reward, torch.inf)
@@ -749,10 +772,38 @@ class SequentialWhipEnvironment:
         )
         return torch.cat((normalized, remaining), dim=-1), context
 
+    def set_episode_initial_state(
+        self,
+        initial_state: SimulatorState,
+        *,
+        command_yaw_world_rad: torch.Tensor | float | None = None,
+    ) -> None:
+        """Install one complete causal batch for the next episode reset."""
+
+        if initial_state.uav.batch_size != self.batch_size:
+            raise ValueError(
+                "Episode initial-state batch must match the environment batch size."
+            )
+        self._initial_state = clone_state_batch(initial_state, self.batch_size)
+        yaw = torch.as_tensor(
+            self.task.initial_yaw_rad
+            if command_yaw_world_rad is None
+            else command_yaw_world_rad,
+            dtype=self.simulator.dtype,
+            device=self.simulator.device,
+        )
+        if yaw.ndim == 0:
+            yaw = yaw.expand(self.batch_size)
+        if yaw.shape != (self.batch_size,) or not bool(torch.isfinite(yaw).all()):
+            raise ValueError(
+                "Episode initial command yaw must be finite with one value per row."
+            )
+        self._initial_yaw_command = yaw.clone()
+
     def reset(self) -> torch.Tensor:
         self.state = clone_state_batch(self._initial_state, self.batch_size)
         self.control_index = 0
-        self.yaw_command.fill_(self.task.initial_yaw_rad)
+        self.yaw_command.copy_(self._initial_yaw_command)
         self.failed.zero_()
         self.episode_success.zero_()
         self.episode_endpoint_success.zero_()
@@ -767,6 +818,7 @@ class SequentialWhipEnvironment:
         self.episode_first_entry_direction_error_deg.fill_(torch.nan)
         self.episode_reward.zero_()
         self.episode_maximum_displacement.zero_()
+        self.episode_terminal_displacement.fill_(torch.nan)
         self.episode_maximum_uav_speed.zero_()
         self.episode_maximum_command_acceleration.zero_()
         initial_distance = torch.linalg.vector_norm(
@@ -1291,7 +1343,23 @@ class SequentialWhipEnvironment:
             terminal_displacement_cost = smooth_displacement_cost(
                 terminal_displacement,
                 scale_m=self.displacement_cost_scale_m,
-            ) * terminal_now.to(previous_distance.dtype)
+            ) * terminal_displacement_charge_mask(
+                terminal_now,
+                newly_successful,
+                success_only=(
+                    self.reward_weights.terminal_displacement_success_only
+                ),
+            ).to(previous_distance.dtype)
+            first_terminal = (
+                terminal_now
+                & torch.isnan(self.episode_terminal_displacement)
+                & (~inactive_before)
+            )
+            self.episode_terminal_displacement = torch.where(
+                first_terminal,
+                terminal_displacement,
+                self.episode_terminal_displacement,
+            )
             acceleration_effort = (
                 torch.linalg.vector_norm(acceleration_world, dim=-1)
                 / max(self.maximum_acceleration_m_s2, 1.0e-6)

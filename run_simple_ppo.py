@@ -33,6 +33,8 @@ from learning.ppo_validation import (
 )
 from learning.simple_ppo import PPORollout, SimplePPOAgent
 from learning.ppo_publication import export_ppo_publication_figures
+from learning.ppo_initial_states import MixedPPOInitialStateSampler
+from learning.sequential_sac_env import SequentialWhipEnvironment
 from run_simple_sac import _build_environment
 
 
@@ -41,7 +43,7 @@ DEFAULT_CONFIG = (
     ROOT
     / "config"
     / "learning"
-    / "whip_ppo_target_aligned_sagittal_v1.json"
+    / "whip_ppo_state_bank_generalization_v1.json"
 )
 
 
@@ -226,6 +228,13 @@ def _load_config(path: Path) -> dict[str, Any]:
             raise ValueError(
                 "Terminal displacement weight must be finite and non-negative."
             )
+        terminal_success_only = config["reward"].get(
+            "terminal_displacement_success_only", False
+        )
+        if not isinstance(terminal_success_only, bool):
+            raise ValueError(
+                "terminal_displacement_success_only must be a JSON boolean."
+            )
         shaping_reference = str(
             config["reward"].get("directed_speed_shaping_reference", "world_tip")
         )
@@ -251,7 +260,107 @@ def _load_config(path: Path) -> dict[str, Any]:
     )
     if rolling_window <= 0:
         raise ValueError("Training-success rolling window must be positive.")
+    early_stopping = config.get("early_stopping", {})
+    if bool(early_stopping.get("enabled", False)):
+        if int(early_stopping.get("minimum_episodes", 0)) < 0:
+            raise ValueError("Early-stopping minimum episodes cannot be negative.")
+        if int(early_stopping.get("validation_patience_evaluations", 0)) < 1:
+            raise ValueError(
+                "Validation early stopping requires positive evaluation patience."
+            )
+        selection_metric = str(
+            early_stopping.get(
+                "selection_metric",
+                "validation_success_rate_then_lower_mean_uav_displacement",
+            )
+        )
+        if selection_metric not in {
+            "validation_success_rate_then_lower_mean_uav_displacement",
+            "lower_mean_uav_displacement_subject_to_success_floor",
+        }:
+            raise ValueError("Unsupported validation checkpoint-selection metric.")
+        if selection_metric == "lower_mean_uav_displacement_subject_to_success_floor":
+            success_floor = float(
+                early_stopping.get("minimum_validation_success_rate", 0.0)
+            )
+            if not 0.0 <= success_floor <= 1.0:
+                raise ValueError("Validation success floor must lie in [0,1].")
+        degradation_floor = early_stopping.get(
+            "abort_below_validation_success_rate"
+        )
+        if degradation_floor is not None:
+            degradation_floor = float(degradation_floor)
+            if not 0.0 <= degradation_floor <= 1.0:
+                raise ValueError(
+                    "Validation degradation-abort floor must lie in [0,1]."
+                )
+            if int(
+                early_stopping.get(
+                    "abort_below_patience_evaluations", 1
+                )
+            ) <= 0:
+                raise ValueError(
+                    "Validation degradation-abort patience must be positive."
+                )
+    initial_states = config.get("training_initial_states", {"mode": "canonical"})
+    initial_state_mode = str(initial_states.get("mode", "canonical"))
+    if initial_state_mode not in {"canonical", "mixed_state_bank"}:
+        raise ValueError("Unsupported PPO training initial-state mode.")
+    if initial_state_mode == "mixed_state_bank":
+        required = (
+            "training_bank",
+            "training_bank_manifest",
+            "validation_bank",
+            "validation_bank_manifest",
+            "canonical_fraction",
+            "seed",
+        )
+        missing = [name for name in required if name not in initial_states]
+        if missing:
+            raise ValueError(
+                f"Mixed PPO initial-state configuration is missing: {missing}"
+            )
+        canonical_fraction = float(initial_states["canonical_fraction"])
+        if not 0.0 <= canonical_fraction <= 1.0:
+            raise ValueError("Canonical initial-state fraction must lie in [0,1].")
+        if Path(str(initial_states["training_bank"])) == Path(
+            str(initial_states["validation_bank"])
+        ):
+            raise ValueError("Training and validation state-bank paths must differ.")
     return config
+
+
+def _build_initial_state_sampler(
+    config: dict[str, Any],
+    environment: SequentialWhipEnvironment,
+) -> MixedPPOInitialStateSampler | None:
+    source = config.get("training_initial_states", {"mode": "canonical"})
+    if str(source.get("mode", "canonical")) == "canonical":
+        return None
+    return MixedPPOInitialStateSampler.create(
+        training_bank_path=ROOT / str(source["training_bank"]),
+        training_manifest_path=ROOT / str(source["training_bank_manifest"]),
+        validation_bank_path=ROOT / str(source["validation_bank"]),
+        validation_manifest_path=ROOT / str(source["validation_bank_manifest"]),
+        canonical_state=environment.state,
+        command_yaw_world_rad=environment.task.initial_yaw_rad,
+        batch_size=environment.batch_size,
+        canonical_fraction=float(source["canonical_fraction"]),
+        seed=int(source["seed"]),
+    )
+
+
+def _reset_training_environment(
+    environment: SequentialWhipEnvironment,
+    sampler: MixedPPOInitialStateSampler | None,
+) -> torch.Tensor:
+    if sampler is not None:
+        selected = sampler.sample(device=environment.simulator.device)
+        environment.set_episode_initial_state(
+            selected.state,
+            command_yaw_world_rad=selected.command_yaw_world_rad,
+        )
+    return environment.reset()
 
 
 def _build_agent(config: dict[str, Any], device: torch.device) -> SimplePPOAgent:
@@ -277,6 +386,7 @@ def preflight(config: dict[str, Any]) -> None:
 
     torch.manual_seed(int(config["seed"]))
     environment, device = _build_environment(config, batch_size=4)
+    initial_state_sampler = _build_initial_state_sampler(config, environment)
     agent = _build_agent(config, device)
     initialization_checkpoint = config.get("initialization", {}).get(
         "policy_checkpoint"
@@ -288,7 +398,11 @@ def preflight(config: dict[str, Any]) -> None:
             weights_only=False,
         )
         agent.policy.load_state_dict(source_checkpoint["policy"])
-    observation = environment.reset()
+        if bool(
+            config.get("initialization", {}).get("load_value_network", False)
+        ):
+            agent.value.load_state_dict(source_checkpoint["value"])
+    observation = _reset_training_environment(environment, initial_state_sampler)
     rollout = PPORollout.allocate(
         environment.control_step_count,
         4,
@@ -344,6 +458,7 @@ def _save_checkpoint(
     elapsed_s: float,
     update_generator: torch.Generator,
     rolling_success_window: deque[int],
+    initial_state_sampler: MixedPPOInitialStateSampler | None,
 ) -> None:
     payload = agent.checkpoint()
     payload.update(
@@ -358,6 +473,11 @@ def _save_checkpoint(
             "numpy_rng_state": np.random.get_state(),
             "python_rng_state": random.getstate(),
             "update_generator_state": update_generator.get_state(),
+            "initial_state_generator_state": (
+                None
+                if initial_state_sampler is None
+                else initial_state_sampler.get_state()
+            ),
             "rolling_success_window": torch.tensor(
                 list(rolling_success_window), dtype=torch.uint8
             ),
@@ -377,8 +497,9 @@ def _consider_best_validation(
     artifact: Path,
     agent: SimplePPOAgent,
     result: dict[str, Any],
+    config: dict[str, Any],
 ) -> bool:
-    """Persist by task success first, then compactness."""
+    """Persist using the configured validation success/compactness contract."""
 
     metadata_path = artifact / "best_validation.json"
     previous = (
@@ -386,10 +507,27 @@ def _consider_best_validation(
         if metadata_path.exists()
         else None
     )
+    early_stopping = config.get("early_stopping", {})
+    selection_metric = str(
+        early_stopping.get(
+            "selection_metric",
+            "validation_success_rate_then_lower_mean_uav_displacement",
+        )
+    )
+
     def validation_rank(row: dict[str, Any]) -> tuple[float, float, float]:
+        success = float(row["validation_success_rate"])
+        displacement = float(row["mean_maximum_uav_displacement_m"])
+        if selection_metric == "lower_mean_uav_displacement_subject_to_success_floor":
+            floor = float(early_stopping["minimum_validation_success_rate"])
+            return (
+                float(success >= floor),
+                -displacement if success >= floor else success,
+                success if success >= floor else -displacement,
+            )
         return (
-            float(row["validation_success_rate"]),
-            -float(row["mean_maximum_uav_displacement_m"]),
+            success,
+            -displacement,
             float(row["validation_legacy_scientific_success_rate"]),
         )
 
@@ -437,6 +575,7 @@ def train(
         ROOT / "learning" / "simple_ppo.py",
         ROOT / "learning" / "sequential_sac_env.py",
         ROOT / "learning" / "ppo_validation.py",
+        ROOT / "learning" / "ppo_initial_states.py",
         ROOT / "run_simple_sac.py",
         config_path,
         ROOT / config["simulator_config"],
@@ -448,6 +587,19 @@ def train(
     initialization_checkpoint = initialization.get("policy_checkpoint")
     if initialization_checkpoint:
         source_paths.append(ROOT / str(initialization_checkpoint))
+    initial_state_config = config.get(
+        "training_initial_states", {"mode": "canonical"}
+    )
+    if str(initial_state_config.get("mode", "canonical")) == "mixed_state_bank":
+        source_paths.extend(
+            ROOT / str(initial_state_config[name])
+            for name in (
+                "training_bank",
+                "training_bank_manifest",
+                "validation_bank",
+                "validation_bank_manifest",
+            )
+        )
     if not resume:
         _write_json(
             artifact / "source_hash_manifest.json",
@@ -479,9 +631,21 @@ def train(
         shaping_reference = str(
             config["reward"].get("directed_speed_shaping_reference", "world_tip")
         )
+        initial_state_description = (
+            "Training uses the canonical settled initial state. "
+            if str(initial_state_config.get("mode", "canonical")) == "canonical"
+            else (
+                "Every training batch is sampled from the existing physically "
+                "propagated TRAIN state bank with "
+                f"{100.0 * float(initial_state_config['canonical_fraction']):g}% "
+                "canonical rows; the validation state bank is disjoint and never "
+                "used for gradients. "
+            )
+        )
         (artifact / "RUN_CONTRACT.md").write_text(
             contract_title
-            + "Training uses the canonical settled initial state. Every "
+            + initial_state_description
+            + "Every "
             + f"{validation_every:,} episodes, "
             f"the deterministic policy is evaluated on the same {validation_episodes} held-out, physically varied, "
             "physically propagated initial states. Training and validation both use "
@@ -500,6 +664,12 @@ def train(
     environment, device = _build_environment(config, batch_size=collection_batch)
     if device.type != "cuda":
         raise RuntimeError("PPO training requires CUDA.")
+    initial_state_sampler = _build_initial_state_sampler(config, environment)
+    if initial_state_sampler is not None and not resume:
+        _write_json(
+            artifact / "training_initial_state_manifest.json",
+            initial_state_sampler.manifest,
+        )
     agent = _build_agent(config, device)
     if not resume and initialization_checkpoint:
         source_checkpoint = torch.load(
@@ -508,6 +678,8 @@ def train(
             weights_only=False,
         )
         agent.policy.load_state_dict(source_checkpoint["policy"])
+        if bool(initialization.get("load_value_network", False)):
+            agent.value.load_state_dict(source_checkpoint["value"])
     ppo = config["ppo"]
     rollout = PPORollout.allocate(
         environment.control_step_count,
@@ -578,6 +750,11 @@ def train(
             random.setstate(checkpoint["python_rng_state"])
         if "update_generator_state" in checkpoint:
             update_generator.set_state(checkpoint["update_generator_state"].cpu())
+        saved_initial_state_generator = checkpoint.get(
+            "initial_state_generator_state"
+        )
+        if initial_state_sampler is not None and saved_initial_state_generator is not None:
+            initial_state_sampler.set_state(saved_initial_state_generator)
     started = time.perf_counter() - elapsed_before_resume
     next_checkpoint = (episodes // checkpoint_interval + 1) * checkpoint_interval
     next_validation = (episodes // validation_interval + 1) * validation_interval
@@ -601,6 +778,7 @@ def train(
         "mean_episode_reward",
         "median_minimum_tip_distance_m",
         "mean_maximum_uav_displacement_m",
+        "mean_terminal_uav_displacement_m",
         "numerical_failure_rate",
         "gradient_updates",
         "valid_transitions",
@@ -654,6 +832,9 @@ def train(
             "episodes_per_second": 0.0,
         },
     )
+    early_stopping_triggered = False
+    early_stopping_reason: str | None = None
+    consecutive_degraded_validations = 0
 
     try:
         log_mode = "a" if resume else "w"
@@ -667,10 +848,14 @@ def train(
                     agent, checkpoint_episodes=0
                 )
                 append_validation_result(artifact, initial_validation)
-                _consider_best_validation(artifact, agent, initial_validation)
+                _consider_best_validation(
+                    artifact, agent, initial_validation, config
+                )
                 write_training_plots(artifact)
             while episodes < requested_episodes:
-                observation = environment.reset()
+                observation = _reset_training_environment(
+                    environment, initial_state_sampler
+                )
                 for step in range(environment.control_step_count):
                     action, log_probability, value = agent.act(observation)
                     result = environment.step(action)
@@ -739,6 +924,11 @@ def train(
                     "mean_maximum_uav_displacement_m": float(
                         environment.episode_maximum_displacement.mean().cpu()
                     ),
+                    "mean_terminal_uav_displacement_m": float(
+                        torch.nanmean(
+                            environment.episode_terminal_displacement
+                        ).cpu()
+                    ),
                     "numerical_failure_rate": float(environment.failed.float().mean().cpu()),
                     "gradient_updates": agent.gradient_updates,
                     "valid_transitions": metrics.valid_transitions,
@@ -774,6 +964,12 @@ def train(
                         "median_minimum_tip_distance_m": row[
                             "median_minimum_tip_distance_m"
                         ],
+                        "mean_maximum_uav_displacement_m": row[
+                            "mean_maximum_uav_displacement_m"
+                        ],
+                        "mean_terminal_uav_displacement_m": row[
+                            "mean_terminal_uav_displacement_m"
+                        ],
                     },
                 )
                 print(
@@ -797,6 +993,7 @@ def train(
                         elapsed_s=elapsed,
                         update_generator=update_generator,
                         rolling_success_window=rolling_success_window,
+                        initial_state_sampler=initial_state_sampler,
                     )
                     while next_checkpoint <= episodes:
                         next_checkpoint += checkpoint_interval
@@ -808,7 +1005,9 @@ def train(
                         agent, checkpoint_episodes=episodes
                     )
                     append_validation_result(artifact, validation_result)
-                    _consider_best_validation(artifact, agent, validation_result)
+                    validation_improved = _consider_best_validation(
+                        artifact, agent, validation_result, config
+                    )
                     write_training_plots(artifact)
                     print(
                         f"validation_episodes={episodes} "
@@ -818,6 +1017,54 @@ def train(
                     )
                     while next_validation <= episodes:
                         next_validation += validation_interval
+                    early_stopping = config.get("early_stopping", {})
+                    degradation_floor = early_stopping.get(
+                        "abort_below_validation_success_rate"
+                    )
+                    if degradation_floor is not None:
+                        if float(validation_result["validation_success_rate"]) < float(
+                            degradation_floor
+                        ):
+                            consecutive_degraded_validations += 1
+                        else:
+                            consecutive_degraded_validations = 0
+                        degradation_patience = int(
+                            early_stopping.get(
+                                "abort_below_patience_evaluations", 1
+                            )
+                        )
+                        if (
+                            consecutive_degraded_validations
+                            >= degradation_patience
+                        ):
+                            early_stopping_triggered = True
+                            early_stopping_reason = (
+                                "Validation safety stop: success remained below "
+                                f"{100.0 * float(degradation_floor):.1f}% for "
+                                f"{consecutive_degraded_validations} consecutive "
+                                "scheduled evaluations."
+                            )
+                    if (
+                        bool(early_stopping.get("enabled", False))
+                        and episodes
+                        >= int(early_stopping.get("minimum_episodes", 0))
+                        and not validation_improved
+                    ):
+                        best = _read_json(artifact / "best_validation.json") or {}
+                        best_episodes = int(best.get("checkpoint_episodes", 0))
+                        patience = int(
+                            early_stopping["validation_patience_evaluations"]
+                        )
+                        if (
+                            not early_stopping_triggered
+                            and episodes - best_episodes
+                            >= patience * validation_interval
+                        ):
+                            early_stopping_triggered = True
+                            early_stopping_reason = (
+                                f"No validation improvement for {patience} scheduled "
+                                f"evaluations after best checkpoint at {best_episodes:,} episodes."
+                            )
                 _service_manual_validation_request(
                     artifact,
                     config,
@@ -836,6 +1083,7 @@ def train(
                         elapsed_s=elapsed,
                         update_generator=update_generator,
                         rolling_success_window=rolling_success_window,
+                        initial_state_sampler=initial_state_sampler,
                     )
                     write_training_plots(artifact)
                     summary = {
@@ -858,6 +1106,8 @@ def train(
                     _write_json(artifact / "stopped_run_summary.json", summary)
                     print(json.dumps(summary, indent=2), flush=True)
                     return
+                if early_stopping_triggered:
+                    break
     except BaseException as error:
         elapsed = time.perf_counter() - started
         _write_json(
@@ -885,6 +1135,7 @@ def train(
                 elapsed_s=elapsed,
                 update_generator=update_generator,
                 rolling_success_window=rolling_success_window,
+                initial_state_sampler=initial_state_sampler,
             )
         write_training_plots(artifact)
         raise
@@ -900,13 +1151,17 @@ def train(
         elapsed_s=elapsed,
         update_generator=update_generator,
         rolling_success_window=rolling_success_window,
+        initial_state_sampler=initial_state_sampler,
     )
     write_training_plots(artifact)
     summary = {
-        "status": "COMPLETE",
+        "status": (
+            "EARLY_STOPPED_VALIDATION" if early_stopping_triggered else "COMPLETE"
+        ),
         "episodes": episodes,
         "requested_episodes": requested_episodes,
-        "batch_aligned_overshoot": episodes - requested_episodes,
+        "batch_aligned_overshoot": max(0, episodes - requested_episodes),
+        "episodes_remaining": max(0, requested_episodes - episodes),
         "successes": successes,
         "endpoint_successes": endpoint_successes,
         "legacy_scientific_successes": legacy_scientific_successes,
@@ -917,6 +1172,7 @@ def train(
         "rolling_window_episodes": rolling_window_episodes,
         "episodes_per_second": episodes / elapsed,
         "elapsed_s": elapsed,
+        "early_stopping_reason": early_stopping_reason,
     }
     _write_json(artifact / "status.json", summary)
     _write_json(artifact / "final_summary.json", summary)

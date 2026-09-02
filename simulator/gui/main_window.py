@@ -139,8 +139,8 @@ class SimulatorMainWindow(QMainWindow):
         self.main_tabs.setDocumentMode(True)
         content_layout.addWidget(self.main_tabs, 1)
         shell_layout.addWidget(content, 1)
-        self.simulator_page = SimulatorReplayPage(self)
-        self.data_page = DataPage(self)
+        self.simulator_page = SimulatorReplayPage(self, settings=settings)
+        self.data_page = DataPage(settings, self)
         self.model_page = ModelPage(settings, self)
         self.planning_page = PlanningPage(self)
         self.training_page = TrainingPage(self)
@@ -174,5 +174,6 @@ class SimulatorMainWindow(QMainWindow):
         self.main_tabs.setCurrentWidget(self.simulator_page)
 
     def closeEvent(self, event: QCloseEvent) -> None:  # noqa: N802
-        self.simulator_page.stop()
+        self.simulator_page.close()
+        self.data_page.close()
         super().closeEvent(event)

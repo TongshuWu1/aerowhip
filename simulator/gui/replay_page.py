@@ -13,6 +13,7 @@ from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 from PySide6.QtCore import Qt, QTimer
 from PySide6.QtWidgets import (
+    QCheckBox,
     QComboBox,
     QFrame,
     QGroupBox,
@@ -28,7 +29,9 @@ from PySide6.QtWidgets import (
 from fitting.production_status import get_active_model_freeze
 from planning.results import PlanningResult, latest_planning_result, load_planning_result, load_replay_arrays
 from simulator.production import PROJECT_ROOT
+from simulator.parameters import SimulatorSettings
 from .theme import MetricCard, set_status_badge
+from .viewer_3d import CableViewer3D
 
 
 PPO_SIMULATION_OUTPUT = PROJECT_ROOT / "data" / "ppo_simulation" / "current"
@@ -163,9 +166,200 @@ class ReplayCanvas(FigureCanvasQTAgg):
         self.draw_idle()
 
 
-class SimulatorReplayPage(QWidget):
-    def __init__(self, parent: QWidget | None = None) -> None:
+class ProductionReplayView(QWidget):
+    """PyVista replay viewport with a lightweight offscreen test fallback."""
+
+    def __init__(
+        self,
+        settings: SimulatorSettings,
+        parent: QWidget | None = None,
+    ) -> None:
         super().__init__(parent)
+        self.settings = settings
+        self.arrays: dict[str, np.ndarray] | None = None
+        self.result: PlanningResult | None = None
+        layout = QVBoxLayout(self)
+        layout.setContentsMargins(0, 0, 0, 0)
+        # VTK cannot create a Win32 OpenGL surface under Qt's offscreen test
+        # plugin. The real desktop UI always uses the PyVista renderer.
+        self.uses_pyvista = os.environ.get("QT_QPA_PLATFORM", "").lower() != "offscreen"
+        if self.uses_pyvista:
+            cable = settings.cable_configuration
+            self.viewer: CableViewer3D | ReplayCanvas = CableViewer3D(
+                self,
+                marker_node_indices=cable.marker_node_indices,
+                node_count=cable.node_count,
+                cable_length_m=cable.length_m,
+                cable_diameter_m=cable.diameter_m,
+                initial_uav_position_m=settings.initial_uav_position_m,
+            )
+            self.viewer.set_show_commanded_pose(True)
+        else:
+            self.viewer = ReplayCanvas(self)
+        layout.addWidget(self.viewer, 1)
+
+    @property
+    def backend_name(self) -> str:
+        return "PYVISTA / VTK" if self.uses_pyvista else "MATPLOTLIB TEST FALLBACK"
+
+    @staticmethod
+    def _value_at(
+        arrays: dict[str, np.ndarray],
+        names: tuple[str, ...],
+        index: int,
+    ) -> np.ndarray | None:
+        for name in names:
+            if name in arrays:
+                return np.asarray(arrays[name][index])
+        return None
+
+    @staticmethod
+    def _orientation_at(arrays: dict[str, np.ndarray], index: int) -> np.ndarray:
+        value = ProductionReplayView._value_at(
+            arrays, ("uav_orientation_xyzw",), index
+        )
+        return (
+            np.asarray((0.0, 0.0, 0.0, 1.0), dtype=np.float64)
+            if value is None
+            else np.asarray(value, dtype=np.float64)
+        )
+
+    @staticmethod
+    def _command_orientation_at(
+        arrays: dict[str, np.ndarray], index: int
+    ) -> np.ndarray:
+        value = ProductionReplayView._value_at(
+            arrays,
+            ("q_cmd_xyzw", "command_orientation_xyzw"),
+            index,
+        )
+        if value is not None:
+            return np.asarray(value, dtype=np.float64)
+        yaw = ProductionReplayView._value_at(
+            arrays, ("yaw_cmd_rad", "command_yaw_rad"), index
+        )
+        yaw_value = 0.0 if yaw is None else float(np.asarray(yaw).reshape(()))
+        return np.asarray(
+            (0.0, 0.0, np.sin(0.5 * yaw_value), np.cos(0.5 * yaw_value)),
+            dtype=np.float64,
+        )
+
+    def set_replay(self, result: PlanningResult, arrays: dict[str, np.ndarray]) -> None:
+        self.result = result
+        self.arrays = arrays
+        if not self.uses_pyvista:
+            assert isinstance(self.viewer, ReplayCanvas)
+            self.viewer.set_replay(result, arrays)
+            return
+        assert isinstance(self.viewer, CableViewer3D)
+        target = np.asarray(result.task_config["target"]["position_m"], dtype=float)
+        direction = np.asarray(
+            result.task_config["target"]["desired_impact_direction"], dtype=float
+        )
+        command_path = self._value_series(arrays, ("p_cmd_m", "command_position_m"))
+        self.viewer.set_replay_overlays(
+            target_position_m=target,
+            desired_direction=direction,
+            uav_path_m=np.asarray(arrays["uav_position_m"]),
+            command_path_m=command_path,
+            tip_path_m=np.asarray(arrays["cable_position_m"])[:, -1],
+        )
+        self.show_frame(0)
+
+    @staticmethod
+    def _value_series(
+        arrays: dict[str, np.ndarray], names: tuple[str, ...]
+    ) -> np.ndarray | None:
+        for name in names:
+            if name in arrays:
+                return np.asarray(arrays[name])
+        return None
+
+    def show_frame(self, index: int) -> None:
+        if self.arrays is None or self.result is None:
+            return
+        if not self.uses_pyvista:
+            assert isinstance(self.viewer, ReplayCanvas)
+            self.viewer.show_frame(index)
+            return
+        assert isinstance(self.viewer, CableViewer3D)
+        arrays = self.arrays
+        index = max(0, min(index, len(arrays["time_s"]) - 1))
+        cable = np.asarray(arrays["cable_position_m"][index])
+        uav_position = np.asarray(arrays["uav_position_m"][index])
+        command_position = self._value_at(
+            arrays, ("p_cmd_m", "command_position_m"), index
+        )
+        self.viewer.update_replay_vectors(
+            uav_position_m=uav_position,
+            actual_velocity_m_s=self._value_at(
+                arrays, ("uav_velocity_m_s",), index
+            ),
+            command_position_m=command_position,
+            command_velocity_m_s=self._value_at(
+                arrays, ("v_cmd_m_s", "command_velocity_m_s"), index
+            ),
+            command_acceleration_m_s2=self._value_at(
+                arrays, ("a_cmd_m_s2", "command_acceleration_m_s2"), index
+            ),
+            render=False,
+        )
+        self.viewer.update_state(
+            cable,
+            uav_position_m=uav_position,
+            uav_orientation_xyzw=self._orientation_at(arrays, index),
+            attachment_position_m=cable[0],
+            commanded_uav_position_m=command_position,
+            commanded_uav_orientation_xyzw=(
+                None
+                if command_position is None
+                else self._command_orientation_at(arrays, index)
+            ),
+        )
+
+    def set_camera_preset(self, name: str) -> None:
+        if self.uses_pyvista:
+            assert isinstance(self.viewer, CableViewer3D)
+            self.viewer.set_camera_preset(name)
+
+    def set_show_commanded_pose(self, enabled: bool) -> None:
+        if self.uses_pyvista:
+            assert isinstance(self.viewer, CableViewer3D)
+            self.viewer.set_show_commanded_pose(enabled)
+
+    def set_show_body_frame(self, enabled: bool) -> None:
+        if self.uses_pyvista:
+            assert isinstance(self.viewer, CableViewer3D)
+            self.viewer.set_show_body_frame(enabled)
+
+    def set_show_trajectories(self, enabled: bool) -> None:
+        if self.uses_pyvista:
+            assert isinstance(self.viewer, CableViewer3D)
+            self.viewer.set_show_trajectories(enabled)
+
+    def set_show_command_vectors(self, enabled: bool) -> None:
+        if self.uses_pyvista:
+            assert isinstance(self.viewer, CableViewer3D)
+            self.viewer.set_show_command_vectors(enabled)
+
+    def close(self) -> None:
+        if self.uses_pyvista:
+            assert isinstance(self.viewer, CableViewer3D)
+            self.viewer.close()
+        super().close()
+
+
+class SimulatorReplayPage(QWidget):
+    def __init__(
+        self,
+        parent: QWidget | None = None,
+        *,
+        settings: SimulatorSettings | None = None,
+    ) -> None:
+        super().__init__(parent)
+        self.settings = settings or SimulatorSettings.load(
+            PROJECT_ROOT / "config" / "default.json"
+        )
         self.setObjectName("simulatorReplayPage")
         self.setStyleSheet("#simulatorReplayPage { background: #f8fafc; }")
         self.current_result: PlanningResult | None = None
@@ -241,7 +435,49 @@ class SimulatorReplayPage(QWidget):
             metrics.addWidget(card, 1)
         layout.addLayout(metrics)
 
-        self.canvas = ReplayCanvas(self)
+        view_toolbar = QFrame()
+        view_toolbar.setObjectName("toolbarCard")
+        view_controls = QHBoxLayout(view_toolbar)
+        view_controls.setContentsMargins(11, 6, 11, 6)
+        self.render_backend_label = QLabel("PYVISTA / VTK")
+        self.render_backend_label.setStyleSheet(
+            "color: #2563eb; font-size: 8pt; font-weight: 800;"
+        )
+        view_controls.addWidget(self.render_backend_label)
+        view_controls.addWidget(QLabel("Camera"))
+        self.camera = QComboBox()
+        self.camera.addItems(("Perspective", "Front", "Side", "Top", "Follow UAV"))
+        view_controls.addWidget(self.camera)
+        self.show_command = QCheckBox("Command ghost")
+        self.show_command.setChecked(True)
+        self.show_paths = QCheckBox("Trajectories")
+        self.show_paths.setChecked(True)
+        self.show_vectors = QCheckBox("Velocity / acceleration")
+        self.show_vectors.setChecked(True)
+        self.show_body_axes = QCheckBox("Body axes")
+        for control in (
+            self.show_command,
+            self.show_paths,
+            self.show_vectors,
+            self.show_body_axes,
+        ):
+            view_controls.addWidget(control)
+        view_controls.addStretch(1)
+        legend = QLabel(
+            "● actual UAV   ● command   ● cable tip   ● target   "
+            "— velocity   — acceleration"
+        )
+        legend.setStyleSheet("color: #64748b; font-size: 8pt;")
+        view_controls.addWidget(legend)
+        layout.addWidget(view_toolbar)
+
+        self.canvas = ProductionReplayView(self.settings, self)
+        self.render_backend_label.setText(self.canvas.backend_name)
+        self.camera.currentTextChanged.connect(self.canvas.set_camera_preset)
+        self.show_command.toggled.connect(self.canvas.set_show_commanded_pose)
+        self.show_paths.toggled.connect(self.canvas.set_show_trajectories)
+        self.show_vectors.toggled.connect(self.canvas.set_show_command_vectors)
+        self.show_body_axes.toggled.connect(self.canvas.set_show_body_frame)
         layout.addWidget(self.canvas, 1)
         control_frame = QFrame()
         control_frame.setObjectName("toolbarCard")
@@ -269,6 +505,12 @@ class SimulatorReplayPage(QWidget):
         self.loaded_label = QLabel("No replay loaded")
         self.loaded_label.setStyleSheet("color: #64748b;")
         layout.addWidget(self.loaded_label)
+        self.frame_status = QLabel("State and FullState command telemetry will appear here.")
+        self.frame_status.setStyleSheet(
+            "color: #475569; background: white; border: 1px solid #e2e8f0; "
+            "border-radius: 6px; padding: 5px 9px; font-family: Consolas; font-size: 8.5pt;"
+        )
+        layout.addWidget(self.frame_status)
 
     def _refresh_policy_source(self) -> tuple[Path, Path, Path, int] | None:
         source = latest_ppo_policy_source()
@@ -332,6 +574,7 @@ class SimulatorReplayPage(QWidget):
         self.timeline.setRange(0, len(arrays["time_s"]) - 1)
         self.timeline.setValue(0)
         self.canvas.set_replay(result, arrays)
+        self._frame_changed(0)
         controller = result.metrics.get(
             "controller", result.metrics.get("optimizer", "saved replay")
         )
@@ -493,7 +736,33 @@ class SimulatorReplayPage(QWidget):
 
     def _frame_changed(self, value: int) -> None:
         self.canvas.show_frame(value)
+        if self.current_arrays is None:
+            return
+        arrays = self.current_arrays
+        index = max(0, min(int(value), len(arrays["time_s"]) - 1))
+
+        def vector(names: tuple[str, ...]) -> np.ndarray | None:
+            return ProductionReplayView._value_at(arrays, names, index)
+
+        def rendered(value_: np.ndarray | None, unit: str) -> str:
+            if value_ is None:
+                return "—"
+            row = np.asarray(value_, dtype=float).reshape(-1)
+            return "[" + ", ".join(f"{entry:+.2f}" for entry in row) + f"] {unit}"
+
+        self.frame_status.setText(
+            f"t={float(arrays['time_s'][index]):.3f} s   "
+            f"UAV p={rendered(vector(('uav_position_m',)), 'm')}   "
+            f"p_cmd={rendered(vector(('p_cmd_m', 'command_position_m')), 'm')}   "
+            f"v_cmd={rendered(vector(('v_cmd_m_s', 'command_velocity_m_s')), 'm/s')}   "
+            f"a_cmd={rendered(vector(('a_cmd_m_s2', 'command_acceleration_m_s2')), 'm/s²')}"
+        )
 
     def stop(self) -> None:
         self._timer.stop()
         self._ppo_timer.stop()
+
+    def close(self) -> None:
+        self.stop()
+        self.canvas.close()
+        super().close()

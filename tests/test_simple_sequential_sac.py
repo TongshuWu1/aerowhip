@@ -18,6 +18,7 @@ from learning.sequential_sac_env import (
     soft_near_target_strike_components,
     smooth_success_compactness,
     smooth_displacement_cost,
+    terminal_displacement_charge_mask,
     strike_quality,
     task_whip_success,
 )
@@ -107,6 +108,23 @@ def test_simple_reward_rewards_progress_and_penalizes_displacement() -> None:
         weights,
     )
     assert float(good) > float(displaced)
+
+
+def test_success_only_terminal_displacement_never_charges_failed_timeout() -> None:
+    terminal = torch.tensor([True, True, False])
+    successful = torch.tensor([False, True, False])
+    assert torch.equal(
+        terminal_displacement_charge_mask(
+            terminal, successful, success_only=True
+        ),
+        torch.tensor([False, True, False]),
+    )
+    assert torch.equal(
+        terminal_displacement_charge_mask(
+            terminal, successful, success_only=False
+        ),
+        terminal,
+    )
 
 
 def test_complete_scientific_success_requires_tip_first_and_all_safety_gates() -> None:
