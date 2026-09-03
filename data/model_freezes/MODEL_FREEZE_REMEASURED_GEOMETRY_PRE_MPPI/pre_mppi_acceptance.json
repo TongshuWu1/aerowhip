@@ -1,0 +1,31 @@
+{
+  "failure_reason": "none",
+  "fatal_failures": [],
+  "finite_rollouts": true,
+  "initialization_ineligible_episodes": [],
+  "measurement_reset_after_initialization": false,
+  "observed": {
+    "distributed_marker_rmse_m": 0.0553701481669017,
+    "tip_rmse_m": 0.08255495456810795,
+    "uav_orientation_rmse_deg": 4.013818584253169,
+    "uav_position_rmse_m": 0.026967493474418996
+  },
+  "pass": true,
+  "physics_only_evaluated": false,
+  "protected_test_predictively_evaluated": false,
+  "resulting_active_status": "MODEL_FROZEN_FOR_MPPI",
+  "schema": "milestone3c4_pre_mppi_acceptance_v1",
+  "task_horizon_s": 0.7,
+  "threshold_checks": {
+    "distributed_marker_rmse_m": true,
+    "tip_rmse_m": true,
+    "uav_orientation_rmse_deg": true,
+    "uav_position_rmse_m": true
+  },
+  "thresholds": {
+    "distributed_marker_rmse_m": 0.15,
+    "tip_rmse_m": 0.125,
+    "uav_orientation_rmse_deg": 20.0,
+    "uav_position_rmse_m": 0.05
+  }
+}

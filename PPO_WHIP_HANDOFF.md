@@ -216,6 +216,10 @@ the newest timestamped run.
 
 ## 9. Reproduction commands
 
+For a fresh clone or RTX 5090 workstation, complete
+[`PORTABLE_WORKSTATION_SETUP.md`](PORTABLE_WORKSTATION_SETUP.md) first. The
+committed `.run/` configurations are the preferred PyCharm entry points.
+
 From PowerShell in the repository root:
 
 ```powershell
@@ -226,19 +230,25 @@ From PowerShell in the repository root:
 Preflight a configuration:
 
 ```powershell
-.\.venv\Scripts\python.exe run_simple_ppo.py --preflight --config config\learning\whip_ppo_dense_return_release_100_continuation_v1.json
+.\.venv\Scripts\python.exe verify_workstation.py
+.\.venv\Scripts\python.exe run_simple_ppo.py --preflight --config config\learning\whip_ppo_portable_continuation_v1.json
 ```
 
 Start a new configured run:
 
 ```powershell
-.\.venv\Scripts\python.exe run_simple_ppo.py --train --config config\learning\whip_ppo_dense_return_release_100_continuation_v1.json
+.\.venv\Scripts\python.exe run_simple_ppo.py --train --config config\learning\whip_ppo_portable_continuation_v1.json
 ```
 
 Do not resume completed failed progress-reference runs. Timestamped raw runs live
 under `data/policy_training` and are intentionally excluded from Git. The
 selected checkpoints, compact logs, plots, and manifests are tracked under
 `results/ppo` for portability.
+
+The immutable production model freeze and the small fit summaries required by
+the simulator are also tracked explicitly. Historical experiment configs are
+retained as provenance and may reference archived timestamped parent runs; use
+`whip_ppo_portable_continuation_v1.json` for new work on another computer.
 
 ## 10. Recommended next step
 

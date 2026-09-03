@@ -27,6 +27,20 @@ offline_dder/optitrack_offline/diagnostics/
 offline_dder/optitrack_offline/validation_results/
 /data/**
 !/data/README.md
+# Minimal immutable production assets required by a fresh clone. Raw takes,
+# generated runs, and protected physical data remain ignored.
+!/data/model_freezes/
+!/data/model_freezes/MODEL_FREEZE_DECOMPOSED_PRETEST/
+!/data/model_freezes/MODEL_FREEZE_DECOMPOSED_PRETEST/**
+!/data/model_freezes/MODEL_FREEZE_REMEASURED_GEOMETRY_PRE_MPPI/
+!/data/model_freezes/MODEL_FREEZE_REMEASURED_GEOMETRY_PRE_MPPI/**
+!/data/fit_results_remeasured_geometry/
+!/data/fit_results_remeasured_geometry/2026-08-29T020130.426074+0000_f9fcdad8/
+!/data/fit_results_remeasured_geometry/2026-08-29T020130.426074+0000_f9fcdad8/**
+!/data/fit_results_decomposed/
+!/data/fit_results_decomposed/2026-08-28T200529.563705+0000_e828f6b1/
+!/data/fit_results_decomposed/2026-08-28T200529.563705+0000_e828f6b1/comparison_summary.json
+!/data/fit_results_decomposed/2026-08-28T200529.563705+0000_e828f6b1/residual_fit.json
 /legacy/current_baseline_2026-08-27/
 /reports/**/*.json
 /reports/**/*.png

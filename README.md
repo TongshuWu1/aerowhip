@@ -16,8 +16,8 @@ measured UAV + cable state
   -> full UAV/residual/12-node-DDER propagation
 ```
 
-The terminal PPO checkpoint achieved 469/512 = **91.60%** deterministic
-success on the nominal physically propagated state-bank audit. Compiling the
+The selected D50 terminal PPO checkpoint achieved 480/512 = **93.75%**
+deterministic success on the nominal physically propagated state-bank audit. Compiling the
 same controller into an open-loop command reproduces nominal simulation
 exactly, but takes about 12.17 s and loses substantial robustness under model
 mismatch and post-start disturbances. Continuous PPO feedback is therefore the
@@ -53,6 +53,11 @@ limitations.
 
 ## Active entry points
 
+For a new RTX 5090 workstation, follow
+[`PORTABLE_WORKSTATION_SETUP.md`](PORTABLE_WORKSTATION_SETUP.md). PyCharm run
+configurations are committed under `.run/`; after selecting the project `.venv`
+interpreter, choose **01 Workstation Preflight** and press Run.
+
 ```powershell
 # GUI and simulation inspection
 .\.venv\Scripts\python.exe run_simulator.py
@@ -61,7 +66,7 @@ limitations.
 # Headless equivalent:
 .\.venv\Scripts\python.exe run_ppo_simulation.py
 
-# Selected pure-PPO training configuration (expensive)
+# Portable selected-policy continuation (expensive; plain Run performs preflight only)
 .\.venv\Scripts\python.exe run_simple_ppo.py --train
 
 # Retained pure-SAC baseline (normally do not resume)

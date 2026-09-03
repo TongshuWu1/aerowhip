@@ -1,0 +1,203 @@
+{
+  "Cb": 0.0027704569956681496,
+  "EI": 9.225797579462985e-05,
+  "boundary": "measured Motive UAV pose through production rigid clamp",
+  "label": "conditional_task_horizon_validation",
+  "lead_time_semantics": "elapsed time from each episode's single initialization",
+  "per_take": {
+    "fig8_003": {
+      "distributed_marker_rmse_m": 0.03956368001356176,
+      "episode_count": 2,
+      "episodes": [
+        {
+          "duration_s": 1.0,
+          "initialization_rmse_m": 0.003455571597442031,
+          "lead_time": {
+            "0.1": {
+              "distributed_marker_rmse_m": 0.012351329401754053,
+              "tip_error_m": 0.014067233964370231
+            },
+            "0.25": {
+              "distributed_marker_rmse_m": 0.01934402780028114,
+              "tip_error_m": 0.015712757022602625
+            },
+            "0.5": {
+              "distributed_marker_rmse_m": 0.03028923726019133,
+              "tip_error_m": 0.02315574280887053
+            },
+            "0.7": {
+              "distributed_marker_rmse_m": 0.044383799245488596,
+              "tip_error_m": 0.06639283409357716
+            },
+            "1.0": {
+              "distributed_marker_rmse_m": 0.0543957831685558,
+              "tip_error_m": 0.07843895651502275
+            }
+          },
+          "terminal_tip_error_m": 0.07843895651502275,
+          "view_id": "fig8_003__episode_000__task_horizon_prefix"
+        },
+        {
+          "duration_s": 1.0,
+          "initialization_rmse_m": 0.002571221673861146,
+          "lead_time": {
+            "0.1": {
+              "distributed_marker_rmse_m": 0.00878282622117044,
+              "tip_error_m": 0.004153308035887094
+            },
+            "0.25": {
+              "distributed_marker_rmse_m": 0.02599355206578155,
+              "tip_error_m": 0.007098887949561552
+            },
+            "0.5": {
+              "distributed_marker_rmse_m": 0.047308706027044095,
+              "tip_error_m": 0.05804842865970975
+            },
+            "0.7": {
+              "distributed_marker_rmse_m": 0.05695051682744172,
+              "tip_error_m": 0.10024759181678536
+            },
+            "1.0": {
+              "distributed_marker_rmse_m": 0.045755384086523916,
+              "tip_error_m": 0.04655672841656526
+            }
+          },
+          "terminal_tip_error_m": 0.04655672841656526,
+          "view_id": "fig8_003__episode_001__task_horizon_prefix"
+        }
+      ],
+      "lead_time": {
+        "0.1": {
+          "distributed_marker_rmse_m": 0.010716654665097526,
+          "episode_count": 2,
+          "tip_rmse_m": 0.010371524455192103
+        },
+        "0.25": {
+          "distributed_marker_rmse_m": 0.02291130900379271,
+          "episode_count": 2,
+          "tip_rmse_m": 0.012191901889610545
+        },
+        "0.5": {
+          "distributed_marker_rmse_m": 0.03972122581037399,
+          "episode_count": 2,
+          "tip_rmse_m": 0.04419167622353768
+        },
+        "0.7": {
+          "distributed_marker_rmse_m": 0.051055278876804486,
+          "episode_count": 2,
+          "tip_rmse_m": 0.08502231496507864
+        },
+        "1.0": {
+          "distributed_marker_rmse_m": 0.050261597663752516,
+          "episode_count": 2,
+          "tip_rmse_m": 0.06449883278021179
+        }
+      },
+      "marker_observation_count": 2020,
+      "role": "validation",
+      "terminal_tip_rmse_m": 0.06449883278021179,
+      "tip_rmse_m": 0.05562748584418943
+    },
+    "osc_003": {
+      "distributed_marker_rmse_m": 0.02664845444685235,
+      "episode_count": 1,
+      "episodes": [
+        {
+          "duration_s": 1.0,
+          "initialization_rmse_m": 0.002463599434122443,
+          "lead_time": {
+            "0.1": {
+              "distributed_marker_rmse_m": 0.00785180214037573,
+              "tip_error_m": 0.010631861030615225
+            },
+            "0.25": {
+              "distributed_marker_rmse_m": 0.010395552246841817,
+              "tip_error_m": 0.014674071393744038
+            },
+            "0.5": {
+              "distributed_marker_rmse_m": 0.02165068055704236,
+              "tip_error_m": 0.020054748425653076
+            },
+            "0.7": {
+              "distributed_marker_rmse_m": 0.035822042584108364,
+              "tip_error_m": 0.05484546683822186
+            },
+            "1.0": {
+              "distributed_marker_rmse_m": 0.046110714906034564,
+              "tip_error_m": 0.07039604587935379
+            }
+          },
+          "terminal_tip_error_m": 0.07039604587935379,
+          "view_id": "osc_003__episode_000__task_horizon_prefix"
+        }
+      ],
+      "lead_time": {
+        "0.1": {
+          "distributed_marker_rmse_m": 0.00785180214037573,
+          "episode_count": 1,
+          "tip_rmse_m": 0.010631861030615225
+        },
+        "0.25": {
+          "distributed_marker_rmse_m": 0.010395552246841817,
+          "episode_count": 1,
+          "tip_rmse_m": 0.014674071393744038
+        },
+        "0.5": {
+          "distributed_marker_rmse_m": 0.02165068055704236,
+          "episode_count": 1,
+          "tip_rmse_m": 0.020054748425653076
+        },
+        "0.7": {
+          "distributed_marker_rmse_m": 0.035822042584108364,
+          "episode_count": 1,
+          "tip_rmse_m": 0.05484546683822186
+        },
+        "1.0": {
+          "distributed_marker_rmse_m": 0.046110714906034564,
+          "episode_count": 1,
+          "tip_rmse_m": 0.07039604587935379
+        }
+      },
+      "marker_observation_count": 1010,
+      "role": "validation",
+      "terminal_tip_rmse_m": 0.07039604587935379,
+      "tip_rmse_m": 0.0407984377559985
+    }
+  },
+  "schema": "decomposed_conditional_cable_metrics_v1",
+  "training": {},
+  "validation": {
+    "distributed_marker_rmse_m": 0.033729993333985936,
+    "episode_count": 3,
+    "lead_time": {
+      "0.1": {
+        "distributed_marker_rmse_m": 0.00939408015887041,
+        "take_count": 2,
+        "tip_rmse_m": 0.010502499428682739
+      },
+      "0.25": {
+        "distributed_marker_rmse_m": 0.017790384857895723,
+        "take_count": 2,
+        "tip_rmse_m": 0.013490197236411821
+      },
+      "0.5": {
+        "distributed_marker_rmse_m": 0.03198849596700205,
+        "take_count": 2,
+        "tip_rmse_m": 0.03431542788500691
+      },
+      "0.7": {
+        "distributed_marker_rmse_m": 0.04410136186154545,
+        "take_count": 2,
+        "tip_rmse_m": 0.07154306142011092
+      },
+      "1.0": {
+        "distributed_marker_rmse_m": 0.04823083157513734,
+        "take_count": 2,
+        "tip_rmse_m": 0.06751186082999715
+      }
+    },
+    "take_count": 2,
+    "terminal_tip_rmse_m": 0.06751186082999715,
+    "tip_rmse_m": 0.048779758633451534
+  }
+}

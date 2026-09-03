@@ -22,6 +22,8 @@ curated here.
 
 See [`PPO_WHIP_HANDOFF.md`](../../PPO_WHIP_HANDOFF.md) for the current research
 contract, exact results, implementation map, and recommended next step.
+For a new CUDA workstation or PyCharm setup, see
+[`PORTABLE_WORKSTATION_SETUP.md`](../../PORTABLE_WORKSTATION_SETUP.md).
 
 ## Earlier retained PPO baseline
 

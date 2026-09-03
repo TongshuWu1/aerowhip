@@ -1,0 +1,109 @@
+{
+  "attachment_offset_body_m": [
+    0.0,
+    0.0,
+    -0.055
+  ],
+  "attachment_reference_audit": {
+    "alternate_pose_origin_or_hidden_translation_found": false,
+    "attachment_equation": "p_connector = p_rigid_body + R(q) d_attachment_body",
+    "conclusion": "The simulator origin is the Motive rigid-body reference from which the physical offset was measured.",
+    "motive_position_semantics": "rigid-body reference position",
+    "motive_rigid_body_label": "cf_7",
+    "result": "PASS",
+    "simulator_pose_source": "processed uav_position_m/uav_orientation_xyzw from the same Motive rigid body",
+    "source_coordinate_space": "Motive Global, meters, right-handed Z-up",
+    "source_to_simulator_rotation": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "source_to_simulator_translation_m": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "attachment_tangent_body": [
+    0.0,
+    0.0,
+    -1.0
+  ],
+  "clamp_support_split_m": [
+    0.0315,
+    0.0315
+  ],
+  "connector_to_c1_m": 0.063,
+  "edge_count": 11,
+  "geometry_version": "remeasured_0p9525m_12node_v1",
+  "marker_interval_lengths_m": [
+    0.063,
+    0.087,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1025,
+    0.1,
+    0.1
+  ],
+  "marker_labels": [
+    "c1",
+    "c2",
+    "c3",
+    "c4",
+    "c5",
+    "c6",
+    "c7",
+    "c8",
+    "c9",
+    "c10"
+  ],
+  "marker_node_indices": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "node_count": 12,
+  "rest_length_sum_m": 0.9525,
+  "rest_lengths_m": [
+    0.0315,
+    0.0315,
+    0.087,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1025,
+    0.1,
+    0.1
+  ],
+  "schema": "milestone3c4_updated_geometry_manifest_v1",
+  "topology": {
+    "free_tip_node": 11,
+    "node_0": "connector/root, prescribed",
+    "node_1": "artificial clamp-support node, prescribed",
+    "nodes_2_to_11": "c1...c10, dynamic/observed"
+  }
+}

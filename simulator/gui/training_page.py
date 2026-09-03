@@ -44,13 +44,13 @@ CONFIG_PATH = (
     PROJECT_ROOT
     / "config"
     / "learning"
-    / "whip_ppo_dense_return_release_100_continuation_v1.json"
+    / "whip_ppo_portable_continuation_v1.json"
 )
 ACTIVE_RUN_ROOT = (
     PROJECT_ROOT
     / "data"
     / "policy_training"
-    / "whip_ppo_dense_return_release_100_continuation_v1"
+    / "whip_ppo_portable_continuation_v1"
 )
 CURATED_RUN = PROJECT_ROOT / "results" / "ppo" / "data"
 ACTIVE_STATUSES = {"STARTING", "RESUMING", "RUNNING"}

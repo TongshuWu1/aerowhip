@@ -22,14 +22,15 @@ from run_simple_ppo import DEFAULT_CONFIG, _build_agent, _load_config
 ROOT = DEFAULT_CONFIG.parents[2]
 
 
-def test_selected_target_aligned_sagittal_policy_is_fresh_and_batch_aligned() -> None:
+def test_selected_target_aligned_sagittal_policy_is_portable_and_batch_aligned() -> None:
     config = _load_config(DEFAULT_CONFIG)
     assert config["episode_duration_s"] == 7.0
     assert config["episode_duration_s"] / config["control_dt_s"] == 70
     assert config["episode_duration_s"] / config["physics_dt_s"] == 700
-    assert config["requested_episodes"] == 1_000_000
-    assert config["initialization"]["uses_previous_policy_checkpoint"] is False
-    assert "policy_checkpoint" not in config["initialization"]
+    assert config["requested_episodes"] == 500_000
+    assert config["initialization"]["uses_previous_policy_checkpoint"] is True
+    initialization_checkpoint = ROOT / config["initialization"]["policy_checkpoint"]
+    assert initialization_checkpoint.is_file()
     assert config["action"]["mode"] == "target_aligned_sagittal_3d"
     assert config["action"]["dimensions"] == 3
     assert config["action"]["lateral_acceleration_available"] is False
@@ -40,13 +41,13 @@ def test_selected_target_aligned_sagittal_policy_is_fresh_and_batch_aligned() ->
     assert config["validation"]["episodes"] == 512
     assert config["validation"]["fixed_numerical_batch_size"] == 2048
     assert config["early_stopping"]["enabled"] is True
-    assert config["early_stopping"]["minimum_episodes"] == 250_000
-    assert config["early_stopping"]["validation_patience_evaluations"] == 30
+    assert config["early_stopping"]["minimum_episodes"] == 500_000
+    assert config["early_stopping"]["validation_patience_evaluations"] == 10
     assert config["reward"]["objective_type"] == "single_scalar_reward_maximization"
     assert config["reward"]["progress_weight"] == 20.0
     assert config["reward"]["maximum_displacement_weight"] == 0.0
-    assert config["reward"]["terminal_displacement_weight"] == 40.0
-    assert config["reward"]["displacement_integral_weight"] == 2.0
+    assert config["reward"]["terminal_displacement_weight"] == 50.0
+    assert config["reward"]["displacement_integral_weight"] == 0.0
     assert config["reward"]["displacement_cost_scale_m"] == 0.35
     assert config["reward"]["time_to_success_weight_per_s"] == 1.0
     assert config["reward"]["directed_speed_near_target_weight"] == 0.0
@@ -54,6 +55,10 @@ def test_selected_target_aligned_sagittal_policy_is_fresh_and_batch_aligned() ->
     assert config["reward"]["strike_quality_improvement_weight"] == 60.0
     assert config["reward"]["directed_speed_reward_cap_m_s"] == 4.0
     assert config["reward"]["success_bonus"] == 100.0
+    assert config["reward"]["success_forward_return_bonus_weight"] == 50.0
+    assert config["reward"]["success_release_bonus_weight"] == 25.0
+    assert config["reward"]["return_release_improvement_weight"] == 0.0
+    assert config["reward"]["success_release_at_strike"] is False
     assert config["reward"]["directed_speed_shaping_reference"] == "attachment_relative"
     assert config["reward"]["success_compactness_bonus"] == 0.0
     assert config["reward"]["success_compactness_scale_m"] == 0.25

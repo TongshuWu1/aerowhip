@@ -43,7 +43,7 @@ DEFAULT_CONFIG = (
     ROOT
     / "config"
     / "learning"
-    / "whip_ppo_state_bank_generalization_v1.json"
+    / "whip_ppo_portable_continuation_v1.json"
 )
 
 
@@ -1258,11 +1258,15 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
     parser.add_argument("--artifact-directory", type=Path)
-    group = parser.add_mutually_exclusive_group(required=True)
+    group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument("--preflight", action="store_true")
     group.add_argument("--train", action="store_true")
     group.add_argument("--resume", action="store_true")
     arguments = parser.parse_args()
+    if not arguments.preflight and not arguments.train and not arguments.resume:
+        # A plain PyCharm Run is intentionally a safe production preflight,
+        # never an accidental 500k-episode training launch.
+        arguments.preflight = True
     if arguments.resume:
         if arguments.artifact_directory is None:
             parser.error("--resume requires --artifact-directory")

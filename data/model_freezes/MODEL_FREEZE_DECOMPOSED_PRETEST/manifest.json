@@ -1,0 +1,49 @@
+{
+  "artifact_hashes": {
+    "dataset_snapshot.json": "30f55790e3fc88f9ac92ff652beed4167ff02133bb810dc8b7f408a11f9124db",
+    "episode_manifest.json": "b08d3a8e5348244532818533c25be9e99da91b4dcbec32c984c9a3b30d11ff3f",
+    "freeze_protocol.json": "1dc3b79ecf0ae29bf238d6fd8386f5b40b7cae87bf59abfa90ced48a4f7e079f",
+    "physical_parameters.json": "eff349d55714e62d5b54a56f44c23b7993db0f51cfe9d938203d1c5cbf6e356a",
+    "residual_normalization.json": "9d21c08f51a72a3e92efcb04122e9150e3892fcad16ff92c2ba87991a4ef2beb",
+    "residual_weights.pt": "f39b9e63c90f550bd07b6c9c2f91aec23469762aee9df6abc391334a5c75a18c",
+    "source_manifest.json": "b2ebaac1a0dcf7ddbacc21d802fbfebf871ee13ccb3b8dd9805a58b7c2058b1d",
+    "verification.json": "aa66f84fe0af9e027c832254e46bda68e97a56127bcab6b57b4862941bf66a23"
+  },
+  "artifact_manifest_sha256": "784fd0fe93281ce688ac5e4fd2f0d11ef6bcc759a4e46a137e8b3ab65d7e7a1a",
+  "created_utc": "2026-08-28T21:23:17.886189+00:00",
+  "fit_directory": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\fit_results_decomposed\\2026-08-28T200529.563705+0000_e828f6b1",
+  "methodology": "decomposed_full_episode_id_v1",
+  "model_version": "aerial_cable_attitude_coupled_v1",
+  "protected_take_id": "fig8vertical_002",
+  "protected_test_predictively_evaluated": false,
+  "residual_eligibility_rule": "PhysicalEpisode.residual_eligible_start_index",
+  "schema": "decomposed_pretest_freeze_v1",
+  "source": {
+    "aggregate_source_sha256": "d34f1550d0d1e271ceb99298660d6028d18b5e23bcaead2fd0f917f96efc8d8f",
+    "files": {
+      "config/default.json": "e976eb498f506c5670b87a26439f86ad5cd566874df6cfe8e28916f247623ae3",
+      "fitting/config.py": "7630f05c4b80723372ffa4fc28c64b286bd4cd1dbdb33b7bd569fd82786819c9",
+      "fitting/decomposed.py": "d9d791b3469bddfed96d6dfd7f47a23db6f2ff28edbcf93d66d7de31d226612a",
+      "fitting/default_fit.json": "a484642a3ad0e61b9d77eb21cdbeb00ce5e37486c883c2525fc6071bc80c299d",
+      "fitting/episodes.py": "2955d3c0e1201fa8234f15bc0c9915db4158e69c4747cf3cbe7c50d266d782af",
+      "fitting/initialization.py": "f361533f9f7a7b3b5f0f6916a736a6e8694d32822b7f119f89bb40b45a9edff4",
+      "run_milestone3c.py": "dac1aae1e8415dbae6c0f709cf28004bfa7c25a7bc153109dea9143411ccc095",
+      "simulator/cable/cuda_fixed_pcg.py": "0914c8067309e06ead47c5c85f305f46fe9866e5cfa4b0fa3eaf96758e17b5fd",
+      "simulator/cable/dder.py": "3e3f18c6ab9e512f2c3c068f88cfcf950db2354ce378c8c7758dbdb40e06775d",
+      "simulator/coupling/attachment.py": "2ec33209eacbd551f01605eec6e854b8d45a54dade6bb3fccfae9db3a5591c75",
+      "simulator/coupling/root_boundary.py": "7b326089a49585f18c323d03501d12352fa154a2c91b318d3f7ef18e6b215672",
+      "simulator/parameters.py": "6521373c1b89205c512f6859ecb37032b5f454d2f02551a47d484322d94e57ba",
+      "simulator/simulator.py": "409ba74483a3d9f2799198359e639fd403db760395b8fda27b66a9357c2a81ae",
+      "simulator/uav/model.py": "8f22de3f97a684204f56afed1bce0ecc6803deaa84f111132cadedaa841cf193",
+      "simulator/uav/residual.py": "f52fe21c9220a1f792d218891244d0ef5fac6521c77606df4da7ad505b30a84e"
+    },
+    "git_commit": "cbdb59b4f05472506599b6f7e08be08e05541ff3",
+    "working_tree_dirty": true,
+    "working_tree_status_sha256": "a7c21767c5c79a8ebcb4c9b575d83992050254eed3cdd0ce9340e01f04dbbf67"
+  },
+  "validation_protocol": {
+    "end_to_end_residual_comparison": "same suffix for P and PR",
+    "physics_only": "complete original PhysicalEpisodes",
+    "residual_comparison": "same causal residual suffix for U and UR"
+  }
+}

@@ -230,8 +230,8 @@ def test_production_gui_has_training_status_page() -> None:
     assert window.training_page.displacement_integral_weight_input.value() == 0.0
     assert window.training_page.forward_return_bonus_input.value() == 50.0
     assert window.training_page.release_bonus_input.value() == 25.0
-    assert window.training_page.return_release_improvement_input.value() == 100.0
-    assert window.training_page.release_at_strike_input.isChecked()
+    assert window.training_page.return_release_improvement_input.value() == 0.0
+    assert not window.training_page.release_at_strike_input.isChecked()
     assert window.training_page.learning_rate_input.value() == 0.00002
     assert window.training_page.update_epochs_input.value() == 2
     assert "rolling 5,000" in window.training_page.training_card.detail_label.text()

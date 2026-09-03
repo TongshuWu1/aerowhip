@@ -1,0 +1,12 @@
+{
+  "cable_measurement_reset_after_initialization": false,
+  "conditional_validation_measured_boundary": true,
+  "end_to_end_measured_boundary": false,
+  "measured_boundary_uses_production_root_boundary": true,
+  "protected_test_predictively_evaluated": false,
+  "residual_state_after_initialization": "simulated_only",
+  "same_dder_implementation_subsystem_and_end_to_end": true,
+  "same_residual_implementation_subsystem_and_end_to_end": true,
+  "schema": "milestone3c_verification_v1",
+  "uav_step_is_common_coupled_simulator_model": true
+}

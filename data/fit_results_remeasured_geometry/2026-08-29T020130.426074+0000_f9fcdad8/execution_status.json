@@ -1,0 +1,54 @@
+{
+  "completed_utc": "2026-08-29T02:05:52.534403+00:00",
+  "elapsed_s": 262.12342580000404,
+  "fit_directory": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\fit_results_remeasured_geometry\\2026-08-29T020130.426074+0000_f9fcdad8",
+  "freeze_created": true,
+  "physics_only_evaluated": false,
+  "pre_mppi_pass": true,
+  "protected_test_predictively_evaluated": false,
+  "report": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\MILESTONE3C4_REMEASURED_GEOMETRY_PRE_MPPI_REPORT.md",
+  "schema": "milestone3c4_execution_status_v1",
+  "stages": {
+    "conditional_validation": {
+      "status": "complete"
+    },
+    "ei_cb_fit": {
+      "Cb": 0.0027704569956681496,
+      "EI": 9.225797579462985e-05,
+      "runtime_s": 254.79604560002917,
+      "status": "complete"
+    },
+    "geometry_mass_audit": {
+      "status": "complete"
+    },
+    "pr_end_to_end_validation": {
+      "status": "complete"
+    },
+    "pre_mppi_freeze": {
+      "artifact_manifest_sha256": "ee2f06de0d80329eb906ad6ae74035fda17badcb225b9da629bb524eb65379a5",
+      "freeze": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\model_freezes\\MODEL_FREEZE_REMEASURED_GEOMETRY_PRE_MPPI",
+      "status": "complete"
+    },
+    "preflight": {
+      "backend": {
+        "damping_backend": "pcg32_experimental",
+        "device": "cuda",
+        "dtype": "torch.float32",
+        "node_count": 12,
+        "pinned_start_nodes": 2,
+        "position_projection_iterations": 4,
+        "production_fused_forward_active": true,
+        "projection_backend": "fixed_projection_supported_nodes",
+        "substeps": 3
+      },
+      "status": "complete",
+      "training_episodes": 21,
+      "validation_eligible_prefixes": 3
+    }
+  },
+  "started_utc": "2026-08-29T02:01:30.430085+00:00",
+  "status": "complete",
+  "uav_physics_refitted": false,
+  "uav_residual_retrained": false,
+  "wall_clock_limit_s": 1200.0
+}

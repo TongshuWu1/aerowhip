@@ -37,6 +37,33 @@ def _resolve(relative: str) -> Path:
     return result
 
 
+def resolve_portable_artifact_reference(reference: str | Path) -> Path:
+    """Resolve a frozen legacy path after the repository moves computers.
+
+    Freeze manifests intentionally retain the absolute source path that existed
+    when they were created.  If that path no longer exists, recover the same
+    repository-relative ``data/...`` suffix.  This changes only path resolution;
+    immutable artifact contents and hashes remain untouched.
+    """
+
+    source = Path(reference).expanduser()
+    if source.exists():
+        return source.resolve()
+    parts = source.parts
+    data_index = next(
+        (index for index, part in enumerate(parts) if part.casefold() == "data"),
+        None,
+    )
+    if data_index is not None:
+        candidate = (PROJECT_ROOT / Path(*parts[data_index:])).resolve()
+        if PROJECT_ROOT in candidate.parents and candidate.exists():
+            return candidate
+    raise FileNotFoundError(
+        f"Frozen artifact is unavailable on this workstation: {reference}. "
+        "Run verify_workstation.py and confirm the portable model assets were cloned."
+    )
+
+
 def active_model_paths(
     manifest: dict[str, Any] | None = None,
 ) -> dict[str, Path]:

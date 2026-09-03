@@ -26,9 +26,22 @@ from run_simple_sac import _build_environment
 
 ROOT = Path(__file__).resolve().parent
 DEFAULT_CONFIG = (
-    ROOT / "config/learning/whip_ppo_momentum_compact_terminal_d25_i3_v1.json"
+    ROOT
+    / "results"
+    / "ppo"
+    / "policies"
+    / "PPO_WHIP_FORWARD_REVERSE_RELEASE_D50_V1"
+    / "config.json"
 )
-DEFAULT_CHECKPOINT = ROOT / "results/ppo/checkpoints/terminal.pt"
+DEFAULT_CHECKPOINT = (
+    ROOT
+    / "results"
+    / "ppo"
+    / "policies"
+    / "PPO_WHIP_FORWARD_REVERSE_RELEASE_D50_V1"
+    / "checkpoints"
+    / "terminal.pt"
+)
 DEFAULT_OUTPUT = ROOT / "data/ppo_simulation/current"
 
 

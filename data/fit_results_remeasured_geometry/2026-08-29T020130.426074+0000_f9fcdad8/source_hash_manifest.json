@@ -1,0 +1,25 @@
+{
+  "aggregate_source_sha256": "56ab1d50590f668f8aaf29a8390793b320d46ebb8cbcc60b1627acad47e811df",
+  "files": {
+    "config/default.json": "ec8c97ef6ef02b9c2586b6cea75574bf7df984d1c3f41b9946a6e14e09a1227a",
+    "fitting/config.py": "39102f65aca9bb581f48244357f95f8456a3b65a0d70fca269cfafb84fbccd82",
+    "fitting/decomposed.py": "63834e1bcd5e7fc526f6237687aef884c11a7a81299917e840659b29a508c405",
+    "fitting/default_fit.json": "1f9c99f481949e6059e96f6b95812f4446fa88b5d0d84322c533f36636a36000",
+    "fitting/episodes.py": "ccd29f02449a2159f7cf6e87d9eb26260a7a6ffdfbf0ee5ef1abe83d7310cd0c",
+    "fitting/initialization.py": "af490f05de2d0319c6630ad77bcc6007fe30451ea2fc66bff6631644eae8e4c2",
+    "fitting/production_status.py": "4650debda9190c5e64830907aa24028d707ae16c4e070e91c6a1db1a7d9fe5f4",
+    "run_milestone3c.py": "6251c4e3e7133dd7338703be674165c7dd9ac1221be6758a84e05c3959102bf2",
+    "simulator/cable/cuda_fixed_pcg.py": "4cf85d89b0f01922207880b3e64d150194f565788b74fefbba6e916b1f6ee635",
+    "simulator/cable/dder.py": "94b12120d7e2358bda428159103bed658ae08916ac910c01ec53da823892f87f",
+    "simulator/coupling/attachment.py": "2ec33209eacbd551f01605eec6e854b8d45a54dade6bb3fccfae9db3a5591c75",
+    "simulator/coupling/root_boundary.py": "7b326089a49585f18c323d03501d12352fa154a2c91b318d3f7ef18e6b215672",
+    "simulator/parameters.py": "1f51bc7abd19938748bc565c8036ec3dd67d826d0b61e3dff1f9db9716eefc9a",
+    "simulator/production.py": "e4e1f57a0a2e85ea8d8f511bc4fa3b57028c31f85f4b9dff29afd647337e618c",
+    "simulator/simulator.py": "4c45da52d7ce3f0c1cfbbbd7e71c786f8640121539ca8dfa66ba97b79e580dc4",
+    "simulator/uav/model.py": "14e9bef09cfcf840dda96ca9dc8b28a156703bcad07a1beb661c9e437d3dd8d0",
+    "simulator/uav/residual.py": "f52fe21c9220a1f792d218891244d0ef5fac6521c77606df4da7ad505b30a84e"
+  },
+  "git_commit": "cbdb59b4f05472506599b6f7e08be08e05541ff3",
+  "working_tree_dirty": true,
+  "working_tree_status_sha256": "1d77e85d04ce36d5a4efb70f9a2454044ee605f62ccc259ba7bc88a6ab02ecbb"
+}

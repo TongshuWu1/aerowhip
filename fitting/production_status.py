@@ -13,6 +13,7 @@ from simulator.production import (
     PROJECT_ROOT,
     active_model_paths,
     load_active_model_manifest,
+    resolve_portable_artifact_reference,
     verify_active_geometry,
     verify_active_parameters,
 )
@@ -40,7 +41,10 @@ def get_active_model_summary(settings: SimulatorSettings) -> dict[str, Any]:
     verify_active_parameters(settings, manifest)
     freeze = active_model_paths(manifest)["uav_residual_freeze"]
     freeze_manifest = _json(freeze / "manifest.json")
-    residual_fit = _json(Path(freeze_manifest["fit_directory"]) / "residual_fit.json")
+    residual_fit = _json(
+        resolve_portable_artifact_reference(freeze_manifest["fit_directory"])
+        / "residual_fit.json"
+    )
     cable = settings.cable_configuration
     return {
         "uav_model": "Attitude-coupled effective FullState model",
@@ -129,7 +133,7 @@ def get_latest_fit_summary(settings: SimulatorSettings) -> dict[str, Any]:
     paths = active_model_paths(manifest)
     freeze = paths["uav_residual_freeze"]
     freeze_manifest = _json(freeze / "manifest.json")
-    fit = Path(freeze_manifest["fit_directory"])
+    fit = resolve_portable_artifact_reference(freeze_manifest["fit_directory"])
     comparison = _json(fit / "comparison_summary.json")
     physical = _json(freeze / "physical_parameters.json")
     residual = comparison["residual_fit"]

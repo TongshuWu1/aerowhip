@@ -1,0 +1,16 @@
+{
+  "Cb": 7.823235936713272e-07,
+  "EI": 0.00040000000000000013,
+  "K_R": 69.18419375930429,
+  "K_omega": 11.456583174321011,
+  "K_p": 4.020097778647703,
+  "K_v": 12.05728865003419,
+  "k_a": 0.7327301468333923,
+  "methodology": "decomposed_full_episode_id_v1",
+  "model_version": "aerial_cable_attitude_coupled_v1",
+  "provenance": {
+    "EI_Cb": "fitted conditional on measured Motive UAV boundary",
+    "uav": "fitted from FullState command to measured UAV motion"
+  },
+  "schema": "decomposed_physical_parameters_v1"
+}

@@ -1,0 +1,382 @@
+{
+  "conditional_validation_prefix_s": 1.0,
+  "methodology": "continuous_physical_episode_v1",
+  "milestone": "3C.4",
+  "pr_validation_prefix_s": 1.0,
+  "protected_test_predictively_evaluated": false,
+  "residual_validation_coverage": {
+    "eligibility_rule": "PhysicalEpisode.residual_eligible_start_index",
+    "excluded_duration_s": 0.29999999999998295,
+    "exclusions": [
+      {
+        "episode_id": "fig8_003__episode_000",
+        "excluded_duration_s": 0.10000000000000142,
+        "reason": "causal_history_prefix"
+      },
+      {
+        "episode_id": "fig8_003__episode_001",
+        "excluded_duration_s": 0.09999999999999432,
+        "reason": "causal_history_prefix"
+      },
+      {
+        "episode_id": "osc_003__episode_000",
+        "excluded_duration_s": 0.09999999999999964,
+        "reason": "causal_history_prefix"
+      }
+    ],
+    "fixed_warmup_hard_coded": false,
+    "physical_duration_s": 71.91,
+    "physical_episode_count": 3,
+    "residual_eligible_duration_s": 71.61000000000001,
+    "residual_eligible_suffix_count": 3,
+    "schema": "causal_residual_coverage_v1"
+  },
+  "schema": "physical_episode_manifest_v1",
+  "takes": {
+    "fig8_001": {
+      "episode_count": 1,
+      "episodes": [
+        {
+          "cable_observation_count": 40500,
+          "duration_s": 40.489999999999995,
+          "end_index": 4284,
+          "end_s": 42.839999999999996,
+          "episode_id": "fig8_001__episode_000",
+          "residual_eligible_start_index": 245,
+          "start_index": 235,
+          "start_s": 2.3500000000000005,
+          "step_count": 4049,
+          "uav_observation_count": 4050
+        }
+      ],
+      "rejected_fragments": [],
+      "role": "training",
+      "total_duration_s": 40.489999999999995
+    },
+    "fig8_002": {
+      "episode_count": 3,
+      "episodes": [
+        {
+          "cable_observation_count": 7210,
+          "duration_s": 7.200000000000001,
+          "end_index": 936,
+          "end_s": 9.360000000000001,
+          "episode_id": "fig8_002__episode_000",
+          "residual_eligible_start_index": 226,
+          "start_index": 216,
+          "start_s": 2.16,
+          "step_count": 720,
+          "uav_observation_count": 721
+        },
+        {
+          "cable_observation_count": 16250,
+          "duration_s": 16.240000000000002,
+          "end_index": 2561,
+          "end_s": 25.61,
+          "episode_id": "fig8_002__episode_001",
+          "residual_eligible_start_index": 947,
+          "start_index": 937,
+          "start_s": 9.37,
+          "step_count": 1624,
+          "uav_observation_count": 1625
+        },
+        {
+          "cable_observation_count": 4410,
+          "duration_s": 4.399999999999999,
+          "end_index": 3002,
+          "end_s": 30.019999999999996,
+          "episode_id": "fig8_002__episode_002",
+          "residual_eligible_start_index": 2572,
+          "start_index": 2562,
+          "start_s": 25.619999999999997,
+          "step_count": 440,
+          "uav_observation_count": 441
+        }
+      ],
+      "rejected_fragments": [],
+      "role": "training",
+      "total_duration_s": 27.840000000000003
+    },
+    "fig8_003": {
+      "episode_count": 2,
+      "episodes": [
+        {
+          "cable_observation_count": 54456,
+          "duration_s": 55.330000000000005,
+          "end_index": 5620,
+          "end_s": 56.2,
+          "episode_id": "fig8_003__episode_000",
+          "residual_eligible_start_index": 97,
+          "start_index": 87,
+          "start_s": 0.8699999999999992,
+          "step_count": 5533,
+          "uav_observation_count": 5534
+        },
+        {
+          "cable_observation_count": 1090,
+          "duration_s": 1.0799999999999983,
+          "end_index": 5729,
+          "end_s": 57.290000000000006,
+          "episode_id": "fig8_003__episode_001",
+          "residual_eligible_start_index": 5631,
+          "start_index": 5621,
+          "start_s": 56.21000000000001,
+          "step_count": 108,
+          "uav_observation_count": 109
+        }
+      ],
+      "rejected_fragments": [],
+      "role": "validation",
+      "total_duration_s": 56.410000000000004
+    },
+    "fig8vertical_001": {
+      "episode_count": 10,
+      "episodes": [
+        {
+          "cable_observation_count": 11260,
+          "duration_s": 11.25,
+          "end_index": 1346,
+          "end_s": 13.459999999999999,
+          "episode_id": "fig8vertical_001__episode_000",
+          "residual_eligible_start_index": 231,
+          "start_index": 221,
+          "start_s": 2.209999999999999,
+          "step_count": 1125,
+          "uav_observation_count": 1126
+        },
+        {
+          "cable_observation_count": 1220,
+          "duration_s": 1.2100000000000009,
+          "end_index": 1468,
+          "end_s": 14.680000000000001,
+          "episode_id": "fig8vertical_001__episode_001",
+          "residual_eligible_start_index": 1357,
+          "start_index": 1347,
+          "start_s": 13.47,
+          "step_count": 121,
+          "uav_observation_count": 122
+        },
+        {
+          "cable_observation_count": 5940,
+          "duration_s": 5.929999999999998,
+          "end_index": 2062,
+          "end_s": 20.619999999999997,
+          "episode_id": "fig8vertical_001__episode_002",
+          "residual_eligible_start_index": 1479,
+          "start_index": 1469,
+          "start_s": 14.69,
+          "step_count": 593,
+          "uav_observation_count": 594
+        },
+        {
+          "cable_observation_count": 3190,
+          "duration_s": 3.1799999999999926,
+          "end_index": 2381,
+          "end_s": 23.809999999999995,
+          "episode_id": "fig8vertical_001__episode_003",
+          "residual_eligible_start_index": 2073,
+          "start_index": 2063,
+          "start_s": 20.630000000000003,
+          "step_count": 318,
+          "uav_observation_count": 319
+        },
+        {
+          "cable_observation_count": 18930,
+          "duration_s": 18.919999999999995,
+          "end_index": 4274,
+          "end_s": 42.739999999999995,
+          "episode_id": "fig8vertical_001__episode_004",
+          "residual_eligible_start_index": 2392,
+          "start_index": 2382,
+          "start_s": 23.82,
+          "step_count": 1892,
+          "uav_observation_count": 1893
+        },
+        {
+          "cable_observation_count": 20,
+          "duration_s": 0.00999999999999801,
+          "end_index": 4276,
+          "end_s": 42.76,
+          "episode_id": "fig8vertical_001__episode_005",
+          "residual_eligible_start_index": null,
+          "start_index": 4275,
+          "start_s": 42.75,
+          "step_count": 1,
+          "uav_observation_count": 2
+        },
+        {
+          "cable_observation_count": 20,
+          "duration_s": 0.010000000000005116,
+          "end_index": 4278,
+          "end_s": 42.78,
+          "episode_id": "fig8vertical_001__episode_006",
+          "residual_eligible_start_index": null,
+          "start_index": 4277,
+          "start_s": 42.769999999999996,
+          "step_count": 1,
+          "uav_observation_count": 2
+        },
+        {
+          "cable_observation_count": 20,
+          "duration_s": 0.00999999999999801,
+          "end_index": 4280,
+          "end_s": 42.8,
+          "episode_id": "fig8vertical_001__episode_007",
+          "residual_eligible_start_index": null,
+          "start_index": 4279,
+          "start_s": 42.79,
+          "step_count": 1,
+          "uav_observation_count": 2
+        },
+        {
+          "cable_observation_count": 9580,
+          "duration_s": 9.57,
+          "end_index": 5238,
+          "end_s": 52.379999999999995,
+          "episode_id": "fig8vertical_001__episode_008",
+          "residual_eligible_start_index": 4291,
+          "start_index": 4281,
+          "start_s": 42.809999999999995,
+          "step_count": 957,
+          "uav_observation_count": 958
+        },
+        {
+          "cable_observation_count": 17360,
+          "duration_s": 17.35,
+          "end_index": 6975,
+          "end_s": 69.75,
+          "episode_id": "fig8vertical_001__episode_009",
+          "residual_eligible_start_index": 5250,
+          "start_index": 5240,
+          "start_s": 52.4,
+          "step_count": 1735,
+          "uav_observation_count": 1736
+        }
+      ],
+      "rejected_fragments": [],
+      "role": "training",
+      "total_duration_s": 67.43999999999998
+    },
+    "osc_001": {
+      "episode_count": 2,
+      "episodes": [
+        {
+          "cable_observation_count": 14616,
+          "duration_s": 14.610000000000001,
+          "end_index": 1531,
+          "end_s": 15.31,
+          "episode_id": "osc_001__episode_000",
+          "residual_eligible_start_index": 80,
+          "start_index": 70,
+          "start_s": 0.6999999999999993,
+          "step_count": 1461,
+          "uav_observation_count": 1462
+        },
+        {
+          "cable_observation_count": 3260,
+          "duration_s": 3.2500000000000018,
+          "end_index": 1857,
+          "end_s": 18.57,
+          "episode_id": "osc_001__episode_001",
+          "residual_eligible_start_index": 1542,
+          "start_index": 1532,
+          "start_s": 15.319999999999999,
+          "step_count": 325,
+          "uav_observation_count": 326
+        }
+      ],
+      "rejected_fragments": [],
+      "role": "training",
+      "total_duration_s": 17.860000000000003
+    },
+    "osc_002": {
+      "episode_count": 5,
+      "episodes": [
+        {
+          "cable_observation_count": 5450,
+          "duration_s": 5.4399999999999995,
+          "end_index": 685,
+          "end_s": 6.85,
+          "episode_id": "osc_002__episode_000",
+          "residual_eligible_start_index": 151,
+          "start_index": 141,
+          "start_s": 1.4100000000000001,
+          "step_count": 544,
+          "uav_observation_count": 545
+        },
+        {
+          "cable_observation_count": 50,
+          "duration_s": 0.03999999999999915,
+          "end_index": 690,
+          "end_s": 6.9,
+          "episode_id": "osc_002__episode_001",
+          "residual_eligible_start_index": null,
+          "start_index": 686,
+          "start_s": 6.860000000000001,
+          "step_count": 4,
+          "uav_observation_count": 5
+        },
+        {
+          "cable_observation_count": 20,
+          "duration_s": 0.00999999999999801,
+          "end_index": 692,
+          "end_s": 6.92,
+          "episode_id": "osc_002__episode_002",
+          "residual_eligible_start_index": null,
+          "start_index": 691,
+          "start_s": 6.910000000000002,
+          "step_count": 1,
+          "uav_observation_count": 2
+        },
+        {
+          "cable_observation_count": 1680,
+          "duration_s": 1.6699999999999982,
+          "end_index": 869,
+          "end_s": 8.69,
+          "episode_id": "osc_002__episode_003",
+          "residual_eligible_start_index": 712,
+          "start_index": 702,
+          "start_s": 7.020000000000001,
+          "step_count": 167,
+          "uav_observation_count": 168
+        },
+        {
+          "cable_observation_count": 27260,
+          "duration_s": 27.249999999999993,
+          "end_index": 3595,
+          "end_s": 35.949999999999996,
+          "episode_id": "osc_002__episode_004",
+          "residual_eligible_start_index": 880,
+          "start_index": 870,
+          "start_s": 8.700000000000001,
+          "step_count": 2725,
+          "uav_observation_count": 2726
+        }
+      ],
+      "rejected_fragments": [],
+      "role": "training",
+      "total_duration_s": 34.40999999999999
+    },
+    "osc_003": {
+      "episode_count": 1,
+      "episodes": [
+        {
+          "cable_observation_count": 15510,
+          "duration_s": 15.499999999999998,
+          "end_index": 1772,
+          "end_s": 17.72,
+          "episode_id": "osc_003__episode_000",
+          "residual_eligible_start_index": 232,
+          "start_index": 222,
+          "start_s": 2.2200000000000006,
+          "step_count": 1550,
+          "uav_observation_count": 1551
+        }
+      ],
+      "rejected_fragments": [],
+      "role": "validation",
+      "total_duration_s": 15.499999999999998
+    }
+  },
+  "training_fit_uses_complete_physical_episodes": true
+}
