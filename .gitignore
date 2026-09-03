@@ -32,10 +32,8 @@ offline_dder/optitrack_offline/validation_results/
 !/data/dataset_manifest.json
 !/data/raw_takes/
 !/data/raw_takes/**
-/data/raw_takes/fig8vertical_002/
 !/data/processed_takes/
 !/data/processed_takes/**
-/data/processed_takes/fig8vertical_002/
 # Minimal immutable production assets required by a fresh clone. Raw takes,
 # generated runs, and protected physical data otherwise remain ignored.
 !/data/model_freezes/
