@@ -1,0 +1,214 @@
+{
+  "cable_label_mapping": {
+    "c1": "cable:c1",
+    "c10": "cable:c10",
+    "c2": "cable:c2",
+    "c3": "cable:c3",
+    "c4": "cable:c4",
+    "c5": "cable:c5",
+    "c6": "cable:c6",
+    "c7": "cable:c7",
+    "c8": "cable:c8",
+    "c9": "cable:c9"
+  },
+  "command_angular_rate_frame": "body",
+  "command_angular_rate_units": "radians_per_second",
+  "command_semantics": {
+    "angular_velocity_current_data": "identically_zero_not_independently_excited",
+    "angular_velocity_frame": "body",
+    "angular_velocity_source": "msg.twist.angular copied without conversion",
+    "angular_velocity_units": "radians_per_second",
+    "api_function": "cmdFullState(position, velocity, acceleration, yaw, omega)",
+    "controller_configuration": "default",
+    "default_topic": "/<tracking.drone_name>/cmd_full_state",
+    "estimator_configuration": "Kalman",
+    "externally_commanded": [
+      "position_world_m",
+      "velocity_world_mps",
+      "acceleration_world_mps2",
+      "yaw_rad"
+    ],
+    "externally_not_commanded": [
+      "roll",
+      "pitch",
+      "nonzero_angular_velocity_for_current_takes"
+    ],
+    "firmware": "stock_unmodified_exact_version_not_archived",
+    "firmware_controller": "Mellinger",
+    "fit_ready": true,
+    "logger_source": "experimental_data/source_audit/experiment_logger.py",
+    "logger_source_sha256": "f27cdcd9b34c15f5ef5b63a4dfb6ecb4586af4ff9e77be92cb776cc5e82c1b95",
+    "motion_capture": "vendor_tracking",
+    "processed_angular_velocity_policy": "raw body-frame rad/s preserved; verified identically zero in all current takes",
+    "quaternion_meaning": "yaw-derived representation only; not an independently commanded full roll/pitch/yaw attitude",
+    "quaternion_storage": "msg.pose.orientation copied as xyzw",
+    "robot_type": "bolt_3in_2s",
+    "ros_message_type": "crazyflie_interfaces.msg.FullState",
+    "status": "resolved_effective_cmdFullState_contract",
+    "yaw_source": "external cmdFullState yaw command; logger also preserves its yaw-derived quaternion representation",
+    "yaw_units": "radians"
+  },
+  "coordinate_transform": {
+    "rotation": [
+      [
+        1.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        1.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        1.0
+      ]
+    ],
+    "simulator_world": "right-handed Z-up SI world",
+    "source_world": "Motive Global, meters, right-handed Z-up",
+    "status": "resolved_from_logger_motive_pose_agreement",
+    "translation_m": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "duration_s": 30.339999999999996,
+  "fit_ready": true,
+  "frames": 3035,
+  "logger_command_coverage_within_take": 0.9172981878088962,
+  "logger_first_synchronized_time_s": 0.12000000000000455,
+  "logger_last_synchronized_time_s": 53.06000000000006,
+  "logger_post_history_excluded_s": 13.23000000000006,
+  "logger_pre_history_available_s": 9.369999999999996,
+  "logger_source": "experiment_fig8_002.csv",
+  "motive": {
+    "capture_frame_rate_hz": 100.0,
+    "coordinate_space": "Global",
+    "export_frame_rate_hz": 100.0,
+    "length_units": "Meters",
+    "original_metadata": {
+      "Capture Frame Rate": "100.000000",
+      "Capture Start Time": "14 Jan 1970 09:04:36 -0500",
+      "Coordinate Space": "Global",
+      "Export Frame Rate": "100.000000",
+      "Format Version": "1.22",
+      "Length Units": "Meters",
+      "Rotation Type": "Quaternion",
+      "Take Name": "fig8_002",
+      "Total Exported Frames": "3035",
+      "Total Frames in Take": "4946"
+    },
+    "rotation_type": "Quaternion",
+    "take_name": "fig8_002"
+  },
+  "motive_end_time_s": 39.83,
+  "motive_field_mapping": {
+    "cable_position_columns_xyz": {
+      "cable:c1": [
+        877,
+        878,
+        879
+      ],
+      "cable:c10": [
+        880,
+        881,
+        882
+      ],
+      "cable:c2": [
+        883,
+        884,
+        885
+      ],
+      "cable:c3": [
+        886,
+        887,
+        888
+      ],
+      "cable:c4": [
+        889,
+        890,
+        891
+      ],
+      "cable:c5": [
+        892,
+        893,
+        894
+      ],
+      "cable:c6": [
+        895,
+        896,
+        897
+      ],
+      "cable:c7": [
+        898,
+        899,
+        900
+      ],
+      "cable:c8": [
+        901,
+        902,
+        903
+      ],
+      "cable:c9": [
+        904,
+        905,
+        906
+      ]
+    },
+    "ignored_unlabeled_columns": 852,
+    "rotation_type": "Quaternion",
+    "uav_label": "cf_7",
+    "uav_position_columns": [
+      6,
+      7,
+      8
+    ],
+    "uav_quaternion_columns_xyzw": [
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  "motive_start_time_s": 9.49,
+  "processed_command_fields": {
+    "a_cmd_mps2": "command_acceleration_mps2",
+    "omega_cmd_body_rad_s_provenance": "command_angular_velocity",
+    "p_cmd_m": "command_position_m",
+    "q_cmd_xyzw_provenance": "command_orientation_xyzw",
+    "v_cmd_mps": "command_velocity_mps",
+    "yaw_cmd_rad": "command_yaw"
+  },
+  "processed_take_sha256": "d742a704475b6c2e428755d80bde9b9ecdfb9a6f0c48b7c91c9614548e777355",
+  "processing_config_schema": "aerial_cable_processing_config_v1",
+  "processing_config_sha256": "56bdc1c4c1fad01bceb3c57fc361ec2d032f4c993e1dfccbf3339527f9ca75df",
+  "processing_fingerprint": "73e1bc23a97a55197301a34d2a1c37d9c2adeed49bf40d0bd2b8e332c3cb3996",
+  "processing_software_version": "milestone3_v1",
+  "processing_timestamp_utc": "2026-08-28T01:49:15.709561+00:00",
+  "processor_source_sha256": {
+    "io.py": "62c7ad24da430700f2c6987915949ee5d58ca748ec8eb70e29173d05e493b896",
+    "logger.py": "61c71cc9530c96bcd0b9def101fdb067a14c819f1e627fbf31deb16aef3d7454",
+    "motive.py": "3c330e9dd04374efede6baff6209e61d8dd815e61b614db9cba68b3e571c69f0",
+    "processing.py": "ffaf8f73e0427bac09ac1e31367ba32063b57c452a39758e6c31b0b29c1b17b8",
+    "quality.py": "f2b2416c91d2ff6ad83afa5dfc3d90a4a0ceb31ca59e3200fcf6f5cd660c7f9e",
+    "sync.py": "3334dfd7babcb1c46a82c211c10cb3f8d20251689138cb80f74cf39fca8a3e90"
+  },
+  "quality_status": "READY",
+  "quaternion_convention": "Motive header X,Y,Z,W; normalized sign-continuous active body-to-world",
+  "schema": "aerial_cable_take_v1",
+  "scientific_timeline_source": "motive_manual_trim",
+  "source_files": {
+    "logger": "experiment_fig8_002.csv",
+    "motive": "fig8_002.csv"
+  },
+  "source_sha256": {
+    "experiment_fig8_002.csv": "5ccda8ad1db9f83e2f48a8165a4396778cbc6847cf7824e3eb204f0a87a00921",
+    "fig8_002.csv": "18e48b38c8c8734d1c3e3386500f8452de7f8e840a1a009621d4cfde7e41ff60"
+  },
+  "take_id": "fig8_002",
+  "uav_rigid_body_label": "cf_7",
+  "warnings": []
+}

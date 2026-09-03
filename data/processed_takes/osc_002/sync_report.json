@@ -1,0 +1,229 @@
+{
+  "commands": {
+    "availability": "logger cmd_valid at matched NatNet/Motive frame",
+    "command_coverage_fraction": 0.9481950950675118,
+    "command_event_rate_hz": 29.9714572405477,
+    "duplicate_value_conflicts": 0,
+    "first_command_take_time_s": 10.688012218474796,
+    "last_command_take_time_s": 45.02067718505805,
+    "raw_command_diagnostics_no_unit_inference": {
+      "command_omega_raw_absolute_max": 0.0,
+      "command_quaternion_xy_norm_max": 0.0,
+      "command_quaternion_xy_norm_median": 0.0,
+      "command_yaw_raw_max": -0.002910731561875177,
+      "command_yaw_raw_min": -0.002910731561875177,
+      "horizontal_acceleration_max": 1.0711994470720307
+    },
+    "reconstruction": "zero_order_hold_latest_unique_valid_cmd_ros_time",
+    "unique_command_count": 1030
+  },
+  "coordinate_audit": {
+    "configured_transform": "identity",
+    "interpretation": "logger and Motive positions already share the same global metric frame",
+    "matched_pose_count": 3616,
+    "orientation_absolute_dot_median": 0.9999983540523756,
+    "orientation_absolute_dot_minimum": 0.9999113290371509,
+    "position_max_m": 0.007469714417528091,
+    "position_rms_m": 0.0033452350156078993
+  },
+  "frames": {
+    "logger_count": 5059,
+    "logger_frame_resets": [
+      {
+        "frame_after": 0,
+        "frame_before": 251714,
+        "motive_time_after_s": 2517.15,
+        "motive_time_before_s": 2517.14,
+        "row_before": 40
+      }
+    ],
+    "logger_missing_frame_runs": [
+      {
+        "after_frame": 251690,
+        "before_frame": 251692,
+        "count": 1
+      },
+      {
+        "after_frame": 1612,
+        "before_frame": 1614,
+        "count": 1
+      },
+      {
+        "after_frame": 1617,
+        "before_frame": 1619,
+        "count": 1
+      },
+      {
+        "after_frame": 1619,
+        "before_frame": 1630,
+        "count": 10
+      },
+      {
+        "after_frame": 1796,
+        "before_frame": 1798,
+        "count": 1
+      },
+      {
+        "after_frame": 4773,
+        "before_frame": 4781,
+        "count": 7
+      }
+    ],
+    "logger_only_count": 1443,
+    "logger_only_frame_ranges": [
+      {
+        "count": 928,
+        "first": 0,
+        "last": 927
+      },
+      {
+        "count": 217,
+        "first": 4557,
+        "last": 4773
+      },
+      {
+        "count": 257,
+        "first": 4781,
+        "last": 5037
+      },
+      {
+        "count": 18,
+        "first": 251673,
+        "last": 251690
+      },
+      {
+        "count": 23,
+        "first": 251692,
+        "last": 251714
+      }
+    ],
+    "matched_count": 3616,
+    "motive_count": 3629,
+    "motive_match_fraction": 0.9964177459355195,
+    "motive_missing_frame_runs": [],
+    "motive_only_count": 13,
+    "motive_only_frames": [
+      1613,
+      1618,
+      1620,
+      1621,
+      1622,
+      1623,
+      1624,
+      1625,
+      1626,
+      1627,
+      1628,
+      1629,
+      1797
+    ]
+  },
+  "logger_motive_to_take": {
+    "maximum_residual_s": 7.105427357601002e-13,
+    "offset": -2517.1500000000024,
+    "rejected_count": 0,
+    "rms_residual_s": 5.081061865515597e-13,
+    "sample_count": 3616,
+    "slope": 1.0000000000000007
+  },
+  "missing_marker_samples": {
+    "c1": 0,
+    "c10": 0,
+    "c2": 0,
+    "c3": 0,
+    "c4": 0,
+    "c5": 0,
+    "c6": 0,
+    "c7": 0,
+    "c8": 0,
+    "c9": 0
+  },
+  "missing_uav_samples": 0,
+  "processing_errors": [],
+  "quality": {
+    "automatic_problem_regions": [
+      {
+        "end_s": 1.4000000000000004,
+        "reason": "command_invalid",
+        "start_s": 0.0
+      },
+      {
+        "end_s": 6.85,
+        "reason": "command_invalid",
+        "start_s": 6.85
+      },
+      {
+        "end_s": 6.9,
+        "reason": "command_invalid",
+        "start_s": 6.9
+      },
+      {
+        "end_s": 7.01,
+        "reason": "command_invalid",
+        "start_s": 6.92
+      },
+      {
+        "end_s": 8.69,
+        "reason": "command_invalid",
+        "start_s": 8.69
+      },
+      {
+        "end_s": 35.94,
+        "reason": "command_stale",
+        "start_s": 35.85
+      },
+      {
+        "end_s": 36.28,
+        "reason": "command_invalid",
+        "start_s": 35.949999999999996
+      }
+    ],
+    "cable_valid_fraction": 1.0,
+    "flagged_frame_counts": {
+      "quality_command_invalid": 188,
+      "quality_command_stale": 10,
+      "quality_geometry_invalid": 0,
+      "quality_marker_dropout": 0,
+      "quality_marker_jump": 0,
+      "quality_uav_invalid": 0,
+      "quality_uav_jump": 0
+    },
+    "long_dropout_intervals": [],
+    "marker_valid_fraction": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "maximum_measured_interval_error_m": 0.007477663326228387,
+    "uav_valid_fraction": 1.0
+  },
+  "ros_to_logger_motive": {
+    "maximum_residual_s": 0.003044033050628059,
+    "offset": -1787881144.617412,
+    "rejected_count": 21,
+    "rms_residual_s": 0.0007898458433891072,
+    "sample_count": 5038,
+    "slope": 0.9999762260394883
+  },
+  "schema": "aerial_cable_sync_report_v1",
+  "scientific_timeline": {
+    "duration_s": 36.28,
+    "logger_first_synchronized_time_s": -0.4200000000005275,
+    "logger_last_synchronized_time_s": 50.369999999999436,
+    "logger_post_history_excluded_s": 4.809999999999434,
+    "logger_pre_history_available_s": 9.700000000000527,
+    "motive_end_time_s": 45.56,
+    "motive_start_time_s": 9.28,
+    "scientific_samples_are_motive_frames_only": true,
+    "source": "motive_manual_trim"
+  },
+  "take_id": "osc_002",
+  "warnings": []
+}

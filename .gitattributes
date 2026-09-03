@@ -6,3 +6,8 @@
 data/model_freezes/** -text
 data/fit_results_decomposed/** -text
 data/fit_results_remeasured_geometry/** -text
+
+# Non-protected OptiTrack evidence required to reproduce data processing and
+# model training on another workstation.
+data/raw_takes/**/*.csv filter=lfs diff=lfs merge=lfs -text
+data/processed_takes/**/*.npz filter=lfs diff=lfs merge=lfs -text

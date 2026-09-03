@@ -1,0 +1,154 @@
+{
+  "commands": {
+    "availability": "logger cmd_valid at matched NatNet/Motive frame",
+    "command_coverage_fraction": 0.9451575262543758,
+    "command_event_rate_hz": 29.999965283969022,
+    "duplicate_value_conflicts": 0,
+    "first_command_take_time_s": 8.735376291274974,
+    "last_command_take_time_s": 49.735423736572216,
+    "raw_command_diagnostics_no_unit_inference": {
+      "command_omega_raw_absolute_max": 0.0,
+      "command_quaternion_xy_norm_max": 0.0,
+      "command_quaternion_xy_norm_median": 0.0,
+      "command_yaw_raw_max": -0.0022193666205121993,
+      "command_yaw_raw_min": -0.0022193666205121993,
+      "horizontal_acceleration_max": 1.9972072431920256
+    },
+    "reconstruction": "zero_order_hold_latest_unique_valid_cmd_ros_time",
+    "unique_command_count": 1231
+  },
+  "coordinate_audit": {
+    "configured_transform": "identity",
+    "interpretation": "logger and Motive positions already share the same global metric frame",
+    "matched_pose_count": 4284,
+    "orientation_absolute_dot_median": 0.9999992949304705,
+    "orientation_absolute_dot_minimum": 0.9999575035100052,
+    "position_max_m": 0.004601474106245829,
+    "position_rms_m": 0.0017073611297499615
+  },
+  "frames": {
+    "logger_count": 5993,
+    "logger_frame_resets": [
+      {
+        "frame_after": 0,
+        "frame_before": 26381,
+        "motive_time_after_s": 263.82,
+        "motive_time_before_s": 263.81,
+        "row_before": 387
+      }
+    ],
+    "logger_missing_frame_runs": [
+      {
+        "after_frame": 673,
+        "before_frame": 675,
+        "count": 1
+      }
+    ],
+    "logger_only_count": 1709,
+    "logger_only_frame_ranges": [
+      {
+        "count": 639,
+        "first": 0,
+        "last": 638
+      },
+      {
+        "count": 682,
+        "first": 4924,
+        "last": 5605
+      },
+      {
+        "count": 388,
+        "first": 25994,
+        "last": 26381
+      }
+    ],
+    "matched_count": 4284,
+    "motive_count": 4285,
+    "motive_match_fraction": 0.9997666277712952,
+    "motive_missing_frame_runs": [],
+    "motive_only_count": 1,
+    "motive_only_frames": [
+      674
+    ]
+  },
+  "logger_motive_to_take": {
+    "maximum_residual_s": 7.283063041541027e-14,
+    "offset": -263.8200000000001,
+    "rejected_count": 0,
+    "rms_residual_s": 4.6401737721925173e-14,
+    "sample_count": 4284,
+    "slope": 1.0000000000000002
+  },
+  "missing_marker_samples": {
+    "c1": 0,
+    "c10": 0,
+    "c2": 0,
+    "c3": 0,
+    "c4": 0,
+    "c5": 0,
+    "c6": 0,
+    "c7": 0,
+    "c8": 0,
+    "c9": 0
+  },
+  "missing_uav_samples": 0,
+  "processing_errors": [],
+  "quality": {
+    "automatic_problem_regions": [
+      {
+        "end_s": 2.3400000000000007,
+        "reason": "command_invalid",
+        "start_s": 0.0
+      }
+    ],
+    "cable_valid_fraction": 1.0,
+    "flagged_frame_counts": {
+      "quality_command_invalid": 235,
+      "quality_command_stale": 0,
+      "quality_geometry_invalid": 0,
+      "quality_marker_dropout": 0,
+      "quality_marker_jump": 0,
+      "quality_uav_invalid": 0,
+      "quality_uav_jump": 0
+    },
+    "long_dropout_intervals": [],
+    "marker_valid_fraction": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "maximum_measured_interval_error_m": 0.009077249641943369,
+    "uav_valid_fraction": 1.0
+  },
+  "ros_to_logger_motive": {
+    "maximum_residual_s": 0.0006967163085960237,
+    "offset": -1787875624.6488922,
+    "rejected_count": 658,
+    "rms_residual_s": 0.00015225672448320878,
+    "sample_count": 5335,
+    "slope": 0.9999978364309975
+  },
+  "schema": "aerial_cable_sync_report_v1",
+  "scientific_timeline": {
+    "duration_s": 42.839999999999996,
+    "logger_first_synchronized_time_s": -3.8800000000000523,
+    "logger_last_synchronized_time_s": 56.049999999999955,
+    "logger_post_history_excluded_s": 6.819999999999958,
+    "logger_pre_history_available_s": 10.270000000000053,
+    "motive_end_time_s": 49.23,
+    "motive_start_time_s": 6.39,
+    "scientific_samples_are_motive_frames_only": true,
+    "source": "motive_manual_trim"
+  },
+  "take_id": "fig8_001",
+  "warnings": [
+    "Fitting disabled: the logger mapping is audited, but the FullState publisher, Crazyflie controller/estimator configuration, and cmd_omega frame remain unavailable."
+  ]
+}

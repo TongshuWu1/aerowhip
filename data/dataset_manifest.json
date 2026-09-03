@@ -1,0 +1,61 @@
+{
+  "schema": "aerial_cable_dataset_manifest_v1",
+  "takes": {
+    "fig8_001": {
+      "enabled": true,
+      "note": "Milestone 3A whole-take training role; assigned before parameter fitting.",
+      "role": "training",
+      "segments": [],
+      "episode_breaks_s": []
+    },
+    "fig8_002": {
+      "enabled": true,
+      "note": "Milestone 3A whole-take training role; assigned before parameter fitting.",
+      "role": "training",
+      "segments": [],
+      "episode_breaks_s": []
+    },
+    "fig8_003": {
+      "enabled": true,
+      "note": "Milestone 3A held-out complete-take validation role; never used for parameter fitting.",
+      "role": "validation",
+      "segments": [],
+      "episode_breaks_s": []
+    },
+    "fig8vertical_001": {
+      "enabled": true,
+      "note": "Milestone 3B complete-take Training role; frozen before long-horizon fitting.",
+      "role": "training",
+      "segments": [],
+      "episode_breaks_s": []
+    },
+    "fig8vertical_002": {
+      "enabled": true,
+      "note": "Milestone 3B protected predictive test; no evaluation authorized in this milestone.",
+      "role": "untouched_test",
+      "segments": [],
+      "episode_breaks_s": []
+    },
+    "osc_001": {
+      "enabled": true,
+      "note": "Milestone 3A whole-take training role; assigned before parameter fitting.",
+      "role": "training",
+      "segments": [],
+      "episode_breaks_s": []
+    },
+    "osc_002": {
+      "enabled": true,
+      "note": "Milestone 3B complete-take Training role; frozen before long-horizon fitting.",
+      "role": "training",
+      "segments": [],
+      "episode_breaks_s": []
+    },
+    "osc_003": {
+      "enabled": true,
+      "note": "Milestone 3B provisional long-horizon validation role; excluded from fitting.",
+      "role": "validation",
+      "segments": [],
+      "episode_breaks_s": []
+    }
+  }
+}
