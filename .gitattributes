@@ -1,2 +1,8 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# Frozen scientific artifacts are byte-addressed by SHA-256 manifests. Keep
+# their committed bytes unchanged on Windows even when core.autocrlf=true.
+data/model_freezes/** -text
+data/fit_results_decomposed/** -text
+data/fit_results_remeasured_geometry/** -text

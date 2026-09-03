@@ -100,6 +100,13 @@ def test_requirements_cannot_replace_cuda_pytorch_wheel() -> None:
     assert "torch" not in package_names
 
 
+def test_hashed_scientific_artifacts_disable_line_ending_conversion() -> None:
+    attributes = (PROJECT_ROOT / ".gitattributes").read_text(encoding="utf-8")
+    assert "data/model_freezes/** -text" in attributes
+    assert "data/fit_results_decomposed/** -text" in attributes
+    assert "data/fit_results_remeasured_geometry/** -text" in attributes
+
+
 def test_selected_freeze_manifest_checkpoint_matches_portable_file() -> None:
     manifest = json.loads((SELECTED / "freeze_manifest.json").read_text(encoding="utf-8"))
     assert manifest["selected_checkpoint"] == "checkpoints/terminal.pt"
