@@ -10,6 +10,10 @@ from learning.sequential_sac_env import (
     decode_target_aligned_sagittal_action,
     direction_gate_quality,
     diagnostic_scientific_whip_success,
+    forward_release_quality,
+    forward_return_quality,
+    return_release_strike_quality,
+    progress_shaping_distance,
     SimpleRewardWeights,
     simple_dense_reward,
     simple_endpoint_success,
@@ -85,6 +89,47 @@ def test_attachment_relative_speed_shaping_rejects_rigid_translation() -> None:
     assert torch.equal(translated, relative)
 
 
+def test_attachment_compensated_progress_rejects_rigid_translation_credit() -> None:
+    tip = torch.tensor([[0.0, 0.0, -1.0]])
+    attachment = torch.zeros(1, 3)
+    target = torch.tensor([[1.0, 0.0, 0.0]])
+    initial_attachment = attachment.clone()
+    baseline = progress_shaping_distance(
+        tip,
+        attachment,
+        target,
+        initial_attachment,
+        mode="attachment_compensated_tip",
+    )
+    translation = torch.tensor([[0.5, 0.0, 0.0]])
+    translated = progress_shaping_distance(
+        tip + translation,
+        attachment + translation,
+        target,
+        initial_attachment,
+        mode="attachment_compensated_tip",
+    )
+    world = progress_shaping_distance(
+        tip + translation,
+        attachment + translation,
+        target,
+        initial_attachment,
+        mode="world_tip",
+    )
+    assert torch.equal(translated, baseline)
+    assert not torch.equal(world, baseline)
+
+    blended = progress_shaping_distance(
+        tip + translation,
+        attachment + translation,
+        target,
+        initial_attachment,
+        mode="blended_world_attachment",
+        attachment_compensation_fraction=0.5,
+    )
+    assert torch.allclose(blended, 0.5 * (translated + world))
+
+
 def test_simple_reward_rewards_progress_and_penalizes_displacement() -> None:
     weights = SimpleRewardWeights()
     good = simple_dense_reward(
@@ -125,6 +170,45 @@ def test_success_only_terminal_displacement_never_charges_failed_timeout() -> No
         ),
         terminal,
     )
+
+
+def test_forward_return_requires_loading_then_reversal() -> None:
+    quality = forward_return_quality(
+        torch.tensor([0.0, 1.0, 1.0]),
+        torch.tensor([0.0, 1.0, 0.0]),
+        excursion_scale_m=0.35,
+    )
+    assert float(quality[0]) == 0.0
+    assert float(quality[1]) == 0.0
+    assert 0.9 < float(quality[2]) < 1.0
+
+
+def test_release_quality_requires_backward_uav_and_forward_relative_tip() -> None:
+    quality = forward_release_quality(
+        torch.ones(4),
+        torch.tensor([-1.0, 1.0, -1.0, -1.0]),
+        torch.tensor([4.0, 4.0, -4.0, 0.0]),
+        excursion_scale_m=0.35,
+        backward_speed_scale_m_s=1.0,
+        tip_speed_scale_m_s=4.0,
+    )
+    assert 0.3 < float(quality[0]) < 1.0
+    assert torch.equal(quality[1:], torch.zeros(3))
+
+
+def test_dense_return_release_requires_the_complete_mechanism() -> None:
+    quality = return_release_strike_quality(
+        torch.ones(5),
+        torch.tensor([0.25, 1.0, 0.25, 0.25, 0.25]),
+        torch.tensor([-1.0, -1.0, 1.0, -1.0, -1.0]),
+        torch.tensor([4.0, 4.0, 4.0, -4.0, 4.0]),
+        torch.tensor([0.8, 0.8, 0.8, 0.8, 0.0]),
+        excursion_scale_m=0.35,
+        backward_speed_scale_m_s=1.0,
+        tip_speed_scale_m_s=4.0,
+    )
+    assert float(quality[0]) > 0.1
+    assert torch.equal(quality[1:], torch.zeros(4))
 
 
 def test_complete_scientific_success_requires_tip_first_and_all_safety_gates() -> None:

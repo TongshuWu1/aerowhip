@@ -235,11 +235,50 @@ def _load_config(path: Path) -> dict[str, Any]:
             raise ValueError(
                 "terminal_displacement_success_only must be a JSON boolean."
             )
+        for weight_name in (
+            "success_forward_return_bonus_weight",
+            "success_release_bonus_weight",
+            "return_release_improvement_weight",
+        ):
+            value = float(config["reward"].get(weight_name, 0.0))
+            if not math.isfinite(value) or value < 0.0:
+                raise ValueError(f"{weight_name} must be finite and non-negative.")
+        release_at_strike = config["reward"].get(
+            "success_release_at_strike", False
+        )
+        if not isinstance(release_at_strike, bool):
+            raise ValueError("success_release_at_strike must be a JSON boolean.")
+        for scale_name, default in (
+            ("forward_excursion_scale_m", 0.35),
+            ("uav_backward_speed_scale_m_s", 1.0),
+            ("relative_tip_forward_speed_scale_m_s", 4.0),
+        ):
+            value = float(config["reward"].get(scale_name, default))
+            if not math.isfinite(value) or value <= 0.0:
+                raise ValueError(f"{scale_name} must be positive and finite.")
         shaping_reference = str(
             config["reward"].get("directed_speed_shaping_reference", "world_tip")
         )
+        progress_reference = str(
+            config["reward"].get("progress_shaping_reference", "world_tip")
+        )
         if shaping_reference not in {"world_tip", "attachment_relative"}:
             raise ValueError("Unsupported directed-speed shaping reference.")
+        if progress_reference not in {
+            "world_tip",
+            "attachment_compensated_tip",
+            "blended_world_attachment",
+        }:
+            raise ValueError("Unsupported progress shaping reference.")
+        progress_fraction = float(
+            config["reward"].get(
+                "progress_attachment_compensation_fraction", 0.5
+            )
+        )
+        if not 0.0 <= progress_fraction <= 1.0:
+            raise ValueError(
+                "Progress attachment-compensation fraction must lie in [0,1]."
+            )
     validation = config.get("validation")
     if validation is not None and bool(validation.get("enabled", False)):
         if int(validation["episodes"]) < 10:
@@ -277,9 +316,13 @@ def _load_config(path: Path) -> dict[str, Any]:
         if selection_metric not in {
             "validation_success_rate_then_lower_mean_uav_displacement",
             "lower_mean_uav_displacement_subject_to_success_floor",
+            "higher_return_quality_subject_to_success_floor",
         }:
             raise ValueError("Unsupported validation checkpoint-selection metric.")
-        if selection_metric == "lower_mean_uav_displacement_subject_to_success_floor":
+        if selection_metric in {
+            "lower_mean_uav_displacement_subject_to_success_floor",
+            "higher_return_quality_subject_to_success_floor",
+        }:
             success_floor = float(
                 early_stopping.get("minimum_validation_success_rate", 0.0)
             )
@@ -515,7 +558,7 @@ def _consider_best_validation(
         )
     )
 
-    def validation_rank(row: dict[str, Any]) -> tuple[float, float, float]:
+    def validation_rank(row: dict[str, Any]) -> tuple[float, ...]:
         success = float(row["validation_success_rate"])
         displacement = float(row["mean_maximum_uav_displacement_m"])
         if selection_metric == "lower_mean_uav_displacement_subject_to_success_floor":
@@ -524,6 +567,21 @@ def _consider_best_validation(
                 float(success >= floor),
                 -displacement if success >= floor else success,
                 success if success >= floor else -displacement,
+            )
+        if selection_metric == "higher_return_quality_subject_to_success_floor":
+            floor = float(early_stopping["minimum_validation_success_rate"])
+            return_quality = float(
+                row.get("mean_successful_return_quality") or 0.0
+            )
+            release_quality = float(
+                row.get("mean_successful_release_quality") or 0.0
+            )
+            return (
+                float(success >= floor),
+                return_quality if success >= floor else success,
+                release_quality if success >= floor else -displacement,
+                success,
+                -displacement,
             )
         return (
             success,
@@ -631,6 +689,14 @@ def train(
         shaping_reference = str(
             config["reward"].get("directed_speed_shaping_reference", "world_tip")
         )
+        progress_reference = str(
+            config["reward"].get("progress_shaping_reference", "world_tip")
+        )
+        progress_fraction = float(
+            config["reward"].get(
+                "progress_attachment_compensation_fraction", 0.5
+            )
+        )
         initial_state_description = (
             "Training uses the canonical settled initial state. "
             if str(initial_state_config.get("mode", "canonical")) == "canonical"
@@ -653,8 +719,10 @@ def train(
             + f"action is {action_description}. The reported "
             + success_contract
             + f"Speed-shaping credit is capped at {speed_reward_cap:g} m/s. "
-            + f"The dense speed-shaping reference is {shaping_reference}; hard success "
-            "still uses true world-frame tip velocity. "
+            + f"The dense speed-shaping reference is {shaping_reference}, and the "
+            + f"progress-shaping reference is {progress_reference} with attachment "
+            + f"fraction {progress_fraction:g}; hard success "
+            "still uses the true world-frame tip state. "
             + "No CEM, protected data, or hardware "
             "is used. A STOP_REQUESTED file causes a checkpointed cooperative stop.\n",
             encoding="utf-8",

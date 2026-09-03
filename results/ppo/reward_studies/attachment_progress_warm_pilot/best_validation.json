@@ -1,0 +1,81 @@
+{
+  "checkpoint_episodes": 81920,
+  "validation_episodes": 512,
+  "validation_successes": 468,
+  "validation_success_rate": 0.9140625,
+  "validation_endpoint_successes": 469,
+  "validation_endpoint_success_rate": 0.916015625,
+  "validation_legacy_scientific_successes": 0,
+  "validation_legacy_scientific_success_rate": 0.0,
+  "median_minimum_tip_distance_m": 0.03295409306883812,
+  "mean_maximum_uav_displacement_m": 0.9038910865783691,
+  "mean_terminal_uav_displacement_m": 0.7915163636207581,
+  "median_terminal_uav_displacement_m": 0.8425112962722778,
+  "mean_successful_peak_forward_displacement_m": 0.6119845509529114,
+  "mean_successful_return_distance_m": 0.10350703448057175,
+  "mean_successful_return_quality": 0.14007581770420074,
+  "mean_successful_release_quality": 0.5140522122383118,
+  "mean_successful_forward_displacement_at_hit_m": 0.508477509021759,
+  "mean_successful_uav_forward_speed_at_hit_m_s": -1.5027213096618652,
+  "mean_successful_relative_tip_forward_speed_at_hit_m_s": 6.539606094360352,
+  "numerical_failures": 0,
+  "tip_first_count": 479,
+  "mean_maximum_uav_speed_m_s": 1.8600046634674072,
+  "mean_maximum_command_acceleration_m_s2": 10.0,
+  "successful_first_entry_physics_step": {
+    "mean": 89.38461538461539,
+    "median": 88.0,
+    "minimum": 76.0,
+    "maximum": 355.0
+  },
+  "successful_first_entry_time_s": {
+    "mean": 0.8938461357457006,
+    "median": 0.8799999952316284,
+    "minimum": 0.7599999904632568,
+    "maximum": 3.549999952316284
+  },
+  "first_entry_tip_distance_m": {
+    "mean": 0.031086591321218292,
+    "median": 0.0319431908428669,
+    "minimum": 0.002717563882470131,
+    "maximum": 0.07838644832372665
+  },
+  "first_entry_tip_speed_m_s": {
+    "mean": 5.435264346003533,
+    "median": 5.393123626708984,
+    "minimum": 4.4033403396606445,
+    "maximum": 7.725367546081543
+  },
+  "first_entry_directed_speed_m_s": {
+    "mean": 5.021160189310709,
+    "median": 4.98265528678894,
+    "minimum": 4.057866096496582,
+    "maximum": 6.941342353820801
+  },
+  "first_entry_direction_error_deg": {
+    "mean": 22.014720485607782,
+    "median": 22.14093589782715,
+    "minimum": 9.245118141174316,
+    "maximum": 35.57312774658203
+  },
+  "first_entry_speed_gate_passes": 480,
+  "first_entry_direction_gate_passes": 469,
+  "successful_tip_distance_m": {
+    "mean": 0.03097756744390274,
+    "median": 0.03184567950665951,
+    "minimum": 0.002717563882470131,
+    "maximum": 0.049772512167692184
+  },
+  "successful_directed_speed_m_s": {
+    "mean": 5.022324671093215,
+    "median": 4.986728191375732,
+    "minimum": 4.303587913513184,
+    "maximum": 6.941342353820801
+  },
+  "successful_direction_error_deg": {
+    "mean": 21.800151949254875,
+    "median": 22.02798080444336,
+    "minimum": 9.245118141174316,
+    "maximum": 29.725093841552734
+  }
+}

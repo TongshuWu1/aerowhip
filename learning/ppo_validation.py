@@ -74,6 +74,7 @@ class FixedMildStateValidationPanel:
         *,
         count_override: int | None = None,
         fixed_evaluation_batch_size: int | None = None,
+        record_state_trajectory: bool = False,
     ) -> None:
         validation = config["validation"]
         count = (
@@ -159,6 +160,21 @@ class FixedMildStateValidationPanel:
                 displacement_integral=float(
                     reward.get("displacement_integral_weight", 0.0)
                 ),
+                success_forward_return_bonus=float(
+                    reward.get("success_forward_return_bonus_weight", 0.0)
+                ),
+                success_release_bonus=float(
+                    reward.get("success_release_bonus_weight", 0.0)
+                ),
+                forward_excursion_scale_m=float(
+                    reward.get("forward_excursion_scale_m", 0.35)
+                ),
+                uav_backward_speed_scale_m_s=float(
+                    reward.get("uav_backward_speed_scale_m_s", 1.0)
+                ),
+                relative_tip_forward_speed_scale_m_s=float(
+                    reward.get("relative_tip_forward_speed_scale_m_s", 4.0)
+                ),
                 uav_speed_integral=float(
                     reward.get("uav_speed_integral_weight", 0.0)
                 ),
@@ -188,6 +204,12 @@ class FixedMildStateValidationPanel:
                 ),
             ),
             action_mode=str(config["action"].get("mode", "full_6d")),
+            progress_shaping_reference=str(
+                reward.get("progress_shaping_reference", "world_tip")
+            ),
+            progress_attachment_compensation_fraction=float(
+                reward.get("progress_attachment_compensation_fraction", 0.5)
+            ),
             directed_speed_shaping_reference=str(
                 reward.get("directed_speed_shaping_reference", "world_tip")
             ),
@@ -198,6 +220,7 @@ class FixedMildStateValidationPanel:
                     "episode_continues_after_success", True
                 )
             ),
+            record_state_trajectory=record_state_trajectory,
         )
         self.manifest = {
             "schema": "simple_ppo_fixed_mild_state_validation_v1",
@@ -262,6 +285,44 @@ class FixedMildStateValidationPanel:
                     self.environment.episode_terminal_displacement
                 ).cpu()
             ),
+            "mean_successful_peak_forward_displacement_m": float(
+                self.environment.episode_peak_forward_displacement[success]
+                .mean()
+                .cpu()
+            ) if bool(success.any()) else float("nan"),
+            "mean_successful_return_distance_m": float(
+                torch.nanmean(
+                    self.environment.episode_success_return_distance[success]
+                ).cpu()
+            ) if bool(success.any()) else float("nan"),
+            "mean_successful_return_quality": float(
+                torch.nanmean(
+                    self.environment.episode_success_return_quality[success]
+                ).cpu()
+            ) if bool(success.any()) else float("nan"),
+            "mean_successful_release_quality": float(
+                torch.nanmean(
+                    self.environment.episode_success_release_quality[success]
+                ).cpu()
+            ) if bool(success.any()) else float("nan"),
+            "mean_best_return_release_quality": float(
+                self.environment.episode_best_return_release_quality.mean().cpu()
+            ),
+            "mean_successful_forward_displacement_at_hit_m": float(
+                torch.nanmean(
+                    self.environment.episode_success_forward_displacement[success]
+                ).cpu()
+            ) if bool(success.any()) else float("nan"),
+            "mean_successful_uav_forward_speed_at_hit_m_s": float(
+                torch.nanmean(
+                    self.environment.episode_success_uav_forward_speed[success]
+                ).cpu()
+            ) if bool(success.any()) else float("nan"),
+            "mean_successful_relative_tip_forward_speed_at_hit_m_s": float(
+                torch.nanmean(
+                    self.environment.episode_success_relative_tip_forward_speed[success]
+                ).cpu()
+            ) if bool(success.any()) else float("nan"),
             "numerical_failures": int(self.environment.failed.sum().cpu()),
             "tip_first_count": int(
                 (self.environment.episode_first_entry_marker == 10).sum().cpu()
@@ -333,6 +394,13 @@ VALIDATION_FIELDS = (
     "mean_maximum_uav_displacement_m",
     "mean_terminal_uav_displacement_m",
     "median_terminal_uav_displacement_m",
+    "mean_successful_peak_forward_displacement_m",
+    "mean_successful_return_distance_m",
+    "mean_successful_return_quality",
+    "mean_successful_release_quality",
+    "mean_successful_forward_displacement_at_hit_m",
+    "mean_successful_uav_forward_speed_at_hit_m_s",
+    "mean_successful_relative_tip_forward_speed_at_hit_m_s",
     "numerical_failures",
     "tip_first_count",
     "mean_maximum_uav_speed_m_s",
@@ -664,6 +732,80 @@ def write_training_plots(artifact: Path) -> None:
     axis.grid(True, alpha=0.25)
     figure.tight_layout()
     save(figure, "validation_success_vs_episodes.png")
+
+    mechanism_fields = (
+        "mean_successful_peak_forward_displacement_m",
+        "mean_successful_return_distance_m",
+        "mean_successful_forward_displacement_at_hit_m",
+        "mean_successful_uav_forward_speed_at_hit_m_s",
+        "mean_successful_relative_tip_forward_speed_at_hit_m_s",
+        "mean_successful_return_quality",
+        "mean_successful_release_quality",
+    )
+    if all(
+        field in validation[0]
+        and all(row.get(field, "") != "" for row in validation)
+        for field in mechanism_fields
+    ):
+        mechanism = {
+            field: np.asarray([float(row[field]) for row in validation])
+            for field in mechanism_fields
+        }
+        figure, axes = plt.subplots(3, 1, figsize=(9.0, 9.5), sharex=True)
+        axes[0].plot(
+            validation_episodes,
+            mechanism["mean_successful_peak_forward_displacement_m"],
+            "o-",
+            label="peak forward",
+        )
+        axes[0].plot(
+            validation_episodes,
+            mechanism["mean_successful_forward_displacement_at_hit_m"],
+            "o-",
+            label="forward position at hit",
+        )
+        axes[0].plot(
+            validation_episodes,
+            mechanism["mean_successful_return_distance_m"],
+            "o-",
+            label="returned before hit",
+        )
+        axes[0].set_ylabel("Target-axis distance (m)")
+        axes[0].legend(loc="best")
+        axes[1].plot(
+            validation_episodes,
+            mechanism["mean_successful_uav_forward_speed_at_hit_m_s"],
+            "o-",
+            label="UAV velocity at hit",
+        )
+        axes[1].plot(
+            validation_episodes,
+            mechanism["mean_successful_relative_tip_forward_speed_at_hit_m_s"],
+            "o-",
+            label="tip relative velocity at hit",
+        )
+        axes[1].axhline(0.0, color="#64748b", linewidth=0.8)
+        axes[1].set_ylabel("Target-axis velocity (m/s)")
+        axes[1].legend(loc="best")
+        axes[2].plot(
+            validation_episodes,
+            mechanism["mean_successful_return_quality"],
+            "o-",
+            label="return quality",
+        )
+        axes[2].plot(
+            validation_episodes,
+            mechanism["mean_successful_release_quality"],
+            "o-",
+            label="release quality",
+        )
+        axes[2].set_ylabel("Bounded quality")
+        axes[2].set_xlabel("Training episodes at validation checkpoint")
+        axes[2].legend(loc="best")
+        for axis in axes:
+            axis.grid(True, alpha=0.25)
+        figure.tight_layout()
+        save(figure, "validation_whip_mechanism_vs_episodes.png")
 
     figure, axes = plt.subplots(2, 1, figsize=(9.0, 8.0), sharex=True)
     axes[0].plot(episodes, total, label="cumulative training success", linewidth=2.0)

@@ -46,7 +46,7 @@ def test_simulator_page_is_a_simple_frozen_ppo_runner() -> None:
     application = QApplication.instance() or QApplication([])
     page = SimulatorReplayPage()
     assert DEFAULT_CHECKPOINT.is_file()
-    assert page.run_ppo_button.text() == "RUN LATEST PPO"
+    assert page.run_ppo_button.text() == "RUN SELECTED PPO"
     assert page.run_ppo_button.objectName() == "runPpoSimulationButton"
     assert page.canvas.backend_name == "MATPLOTLIB TEST FALLBACK"
     assert page.show_command.isChecked()
@@ -55,6 +55,7 @@ def test_simulator_page_is_a_simple_frozen_ppo_runner() -> None:
     source = latest_ppo_policy_source()
     assert source is not None
     assert source[2].is_file()
+    assert "PPO_WHIP_FORWARD_REVERSE_RELEASE_D50_V1" in str(source[0])
     assert source[3] > 0
     assert "episodes" in page.policy_description.text()
     assert "PPO" in page.loaded_label.text() or page.loaded_label.text() == "No replay loaded"

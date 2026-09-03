@@ -1,0 +1,15 @@
+{
+  "policy_id": "PPO_WHIP_DENSE_RETURN_RELEASE_100_V1",
+  "status": "RETAINED_RETURN_FOCUSED_CANDIDATE",
+  "source_run": "data/policy_training/whip_ppo_dense_return_release_100_continuation_v1/2026-09-03T051013.176959Z",
+  "terminal_checkpoint": "checkpoints/terminal.pt",
+  "terminal_checkpoint_sha256": "cc6348e005203980d70f70ffc7015319d1a38aaa58a80cce7462a9750007894e",
+  "best_return_checkpoint": "checkpoints/best_return.pt",
+  "best_return_checkpoint_sha256": "c01dfccc33c3134ab68cd0c021a023b734b3ccce2afa4bbd098acb9fa1dc222f",
+  "terminal_validation_successes": 474,
+  "validation_episodes": 512,
+  "terminal_validation_success_rate": 0.92578125,
+  "target": "canonical fixed target",
+  "theta": "nominal only",
+  "hardware": "NOT_EXECUTED"
+}

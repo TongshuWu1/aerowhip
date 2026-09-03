@@ -1,0 +1,15 @@
+{
+  "policy_id": "PPO_WHIP_FORWARD_REVERSE_RELEASE_D50_V1",
+  "status": "SELECTED_SIMULATION_CONTROLLER",
+  "source_run": "data/policy_training/whip_ppo_forward_reverse_release_v1/2026-09-02T174750.625177Z",
+  "selected_checkpoint": "checkpoints/terminal.pt",
+  "selected_checkpoint_sha256": "6c3c2b764765b125e1f1fdfaffdda74df9882117793d115d09277587e4a8addc",
+  "best_validation_checkpoint_sha256": "cae1739efdccac88bd88e7507a8c521a4f6e52978889e1bd3016ab2fa82e2c02",
+  "validation_successes": 480,
+  "validation_episodes": 512,
+  "validation_success_rate": 0.9375,
+  "target": "canonical fixed target",
+  "theta": "nominal only",
+  "controller": "deterministic 10 Hz closed-loop PPO",
+  "hardware": "NOT_EXECUTED"
+}

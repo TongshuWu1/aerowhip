@@ -129,6 +129,135 @@ def test_displacement_return_finetune_warm_starts_with_compact_selection() -> No
     )
 
 
+def test_forward_return_100_pilot_changes_only_the_intended_reward_pressure() -> None:
+    config = _load_config(
+        ROOT / "config" / "learning" / "whip_ppo_forward_return_100_pilot_v1.json"
+    )
+    assert config["requested_episodes"] == 100_000
+    assert config["initialization"]["uses_previous_policy_checkpoint"] is True
+    assert config["initialization"]["load_value_network"] is True
+    assert config["reward"]["success_forward_return_bonus_weight"] == 100.0
+    assert config["reward"]["success_release_bonus_weight"] == 25.0
+    assert config["reward"]["terminal_displacement_weight"] == 50.0
+    assert config["reward"]["terminal_displacement_success_only"] is True
+    assert config["reward"]["displacement_integral_weight"] == 0.0
+    assert config["reward"]["time_to_success_weight_per_s"] == 1.0
+    assert config["early_stopping"]["minimum_validation_success_rate"] == 0.90
+    assert (
+        config["early_stopping"]["selection_metric"]
+        == "higher_return_quality_subject_to_success_floor"
+    )
+
+
+def test_attachment_compensated_progress_pilot_keeps_world_success_contract() -> None:
+    config = _load_config(
+        ROOT
+        / "config"
+        / "learning"
+        / "whip_ppo_attachment_compensated_progress_v1.json"
+    )
+    assert config["requested_episodes"] == 100_000
+    assert config["reward"]["progress_shaping_reference"] == (
+        "attachment_compensated_tip"
+    )
+    assert config["reward"]["success_forward_return_bonus_weight"] == 50.0
+    assert config["reward"]["success_release_bonus_weight"] == 25.0
+    assert config["reported_success"]["tip_target_distance_m"] == 0.05
+    assert config["reported_success"]["minimum_directed_tip_speed_m_s"] == 4.0
+    assert config["reported_success"]["maximum_direction_error_deg"] == 30.0
+
+
+def test_blended_progress_run_is_a_genuinely_fresh_policy() -> None:
+    config = _load_config(
+        ROOT / "config" / "learning" / "whip_ppo_blended_progress_fresh_v1.json"
+    )
+    assert config["requested_episodes"] == 1_000_000
+    assert config["initialization"]["uses_previous_policy_checkpoint"] is False
+    assert "policy_checkpoint" not in config["initialization"]
+    assert config["reward"]["progress_shaping_reference"] == (
+        "blended_world_attachment"
+    )
+    assert config["reward"]["progress_attachment_compensation_fraction"] == 0.5
+    assert config["reward"]["success_forward_return_bonus_weight"] == 50.0
+    assert config["ppo"]["learning_rate"] == 3.0e-4
+    assert config["ppo"]["update_epochs"] == 4
+
+
+def test_attachment_progress_fresh_run_uses_one_progress_definition() -> None:
+    config = _load_config(
+        ROOT / "config" / "learning" / "whip_ppo_attachment_progress_fresh_v1.json"
+    )
+    assert config["requested_episodes"] == 1_000_000
+    assert config["initialization"]["uses_previous_policy_checkpoint"] is False
+    assert "policy_checkpoint" not in config["initialization"]
+    assert config["reward"]["progress_shaping_reference"] == (
+        "attachment_compensated_tip"
+    )
+    assert config["reward"]["progress_attachment_compensation_fraction"] == 1.0
+    assert config["reward"]["success_forward_return_bonus_weight"] == 50.0
+
+
+def test_forward_reverse_d60_pilot_changes_only_terminal_displacement_pressure() -> None:
+    config = _load_config(
+        ROOT
+        / "config"
+        / "learning"
+        / "whip_ppo_forward_reverse_release_d60_pilot_v1.json"
+    )
+    assert config["requested_episodes"] == 100_000
+    assert config["initialization"]["uses_previous_policy_checkpoint"] is True
+    assert "whip_ppo_forward_reverse_release_v1" in config["initialization"][
+        "policy_checkpoint"
+    ]
+    assert config["reward"]["progress_shaping_reference"] == "world_tip"
+    assert config["reward"]["terminal_displacement_weight"] == 60.0
+    assert config["reward"]["terminal_displacement_success_only"] is True
+    assert config["reward"]["displacement_integral_weight"] == 0.0
+    assert config["reward"]["success_forward_return_bonus_weight"] == 50.0
+    assert config["reward"]["success_release_bonus_weight"] == 25.0
+    assert config["early_stopping"]["minimum_validation_success_rate"] == 0.90
+
+
+def test_dense_return_release_pilot_preserves_d50_and_times_release_at_strike() -> None:
+    config = _load_config(
+        ROOT
+        / "config"
+        / "learning"
+        / "whip_ppo_dense_return_release_pilot_v1.json"
+    )
+    reward = config["reward"]
+    assert config["requested_episodes"] == 100_000
+    assert "whip_ppo_forward_reverse_release_v1" in config["initialization"][
+        "policy_checkpoint"
+    ]
+    assert reward["progress_shaping_reference"] == "world_tip"
+    assert reward["terminal_displacement_weight"] == 50.0
+    assert reward["displacement_integral_weight"] == 0.0
+    assert reward["return_release_improvement_weight"] == 50.0
+    assert reward["success_release_at_strike"] is True
+    assert reward["success_forward_return_bonus_weight"] == 50.0
+    assert reward["success_release_bonus_weight"] == 25.0
+
+
+def test_dense_return_release_100_continuation_changes_only_dense_return_pressure() -> None:
+    config = _load_config(
+        ROOT
+        / "config"
+        / "learning"
+        / "whip_ppo_dense_return_release_100_continuation_v1.json"
+    )
+    reward = config["reward"]
+    assert config["requested_episodes"] == 500_000
+    assert "whip_ppo_dense_return_release_pilot_v1" in config["initialization"][
+        "policy_checkpoint"
+    ]
+    assert reward["return_release_improvement_weight"] == 100.0
+    assert reward["terminal_displacement_weight"] == 50.0
+    assert reward["displacement_integral_weight"] == 0.0
+    assert reward["success_release_at_strike"] is True
+    assert config["early_stopping"]["minimum_validation_success_rate"] == 0.90
+
+
 def test_gradual_displacement_return_changes_only_terminal_cost() -> None:
     config = _load_config(
         ROOT / "config" / "learning" / "whip_ppo_displacement_return_gradual_v1.json"
@@ -164,6 +293,63 @@ def test_success_conditioned_return_finetune_is_guarded() -> None:
     assert config["early_stopping"]["minimum_validation_success_rate"] == 0.90
     assert config["early_stopping"]["abort_below_validation_success_rate"] == 0.80
     assert config["early_stopping"]["abort_below_patience_evaluations"] == 2
+    assert config["early_stopping"]["minimum_episodes"] == 50_000
+
+
+def test_success_conditioned_return_integral_stage_is_incremental() -> None:
+    config = _load_config(
+        ROOT
+        / "config"
+        / "learning"
+        / "whip_ppo_success_conditioned_return_integral_0p5_v1.json"
+    )
+    assert config["initialization"]["load_value_network"] is True
+    assert config["requested_episodes"] == 500_000
+    assert "whip_ppo_success_conditioned_return_finetune_v1" in config[
+        "initialization"
+    ]["policy_checkpoint"]
+    assert config["reward"]["terminal_displacement_weight"] == 45.0
+    assert config["reward"]["terminal_displacement_success_only"] is True
+    assert config["reward"]["displacement_integral_weight"] == 0.5
+    assert config["early_stopping"]["abort_below_validation_success_rate"] == 0.80
+    assert config["early_stopping"]["minimum_episodes"] == 500_000
+
+
+def test_terminal_50_stage_changes_only_success_compactness_strength() -> None:
+    config = _load_config(
+        ROOT
+        / "config"
+        / "learning"
+        / "whip_ppo_success_conditioned_return_terminal_50_v1.json"
+    )
+    assert config["requested_episodes"] == 500_000
+    assert config["initialization"]["load_value_network"] is True
+    assert config["initialization"]["source_checkpoint_episodes"] == 471_040
+    assert config["reward"]["terminal_displacement_weight"] == 50.0
+    assert config["reward"]["terminal_displacement_success_only"] is True
+    assert config["reward"]["displacement_integral_weight"] == 0.5
+    assert config["reward"]["body_rate_effort_weight"] == 0.0
+    assert config["ppo"]["learning_rate"] == 0.00002
+    assert config["early_stopping"]["abort_below_validation_success_rate"] == 0.80
+
+
+def test_forward_reverse_release_stage_uses_success_conditioned_mechanism() -> None:
+    config = _load_config(
+        ROOT / "config" / "learning" / "whip_ppo_forward_reverse_release_v1.json"
+    )
+    reward = config["reward"]
+    assert config["requested_episodes"] == 500_000
+    assert config["initialization"]["source_checkpoint_episodes"] == 419_840
+    assert reward["terminal_displacement_weight"] == 50.0
+    assert reward["terminal_displacement_success_only"] is True
+    assert reward["displacement_integral_weight"] == 0.0
+    assert reward["success_forward_return_bonus_weight"] == 50.0
+    assert reward["success_release_bonus_weight"] == 25.0
+    assert reward["body_rate_effort_weight"] == 0.0
+    assert (
+        config["early_stopping"]["selection_metric"]
+        == "higher_return_quality_subject_to_success_floor"
+    )
 
 
 def test_bounded_policy_has_finite_actions_and_consistent_log_probabilities() -> None:

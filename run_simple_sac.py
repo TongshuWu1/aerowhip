@@ -138,6 +138,27 @@ def _build_environment(
             displacement_integral=float(
                 reward_config.get("displacement_integral_weight", 0.0)
             ),
+            success_forward_return_bonus=float(
+                reward_config.get("success_forward_return_bonus_weight", 0.0)
+            ),
+            success_release_bonus=float(
+                reward_config.get("success_release_bonus_weight", 0.0)
+            ),
+            return_release_improvement=float(
+                reward_config.get("return_release_improvement_weight", 0.0)
+            ),
+            success_release_at_strike=bool(
+                reward_config.get("success_release_at_strike", False)
+            ),
+            forward_excursion_scale_m=float(
+                reward_config.get("forward_excursion_scale_m", 0.35)
+            ),
+            uav_backward_speed_scale_m_s=float(
+                reward_config.get("uav_backward_speed_scale_m_s", 1.0)
+            ),
+            relative_tip_forward_speed_scale_m_s=float(
+                reward_config.get("relative_tip_forward_speed_scale_m_s", 4.0)
+            ),
             uav_speed_integral=float(
                 reward_config.get("uav_speed_integral_weight", 0.0)
             ),
@@ -167,6 +188,12 @@ def _build_environment(
             ),
         ),
         action_mode=str(action_config.get("mode", "full_6d")),
+        progress_shaping_reference=str(
+            reward_config.get("progress_shaping_reference", "world_tip")
+        ),
+        progress_attachment_compensation_fraction=float(
+            reward_config.get("progress_attachment_compensation_fraction", 0.5)
+        ),
         directed_speed_shaping_reference=str(
             reward_config.get("directed_speed_shaping_reference", "world_tip")
         ),

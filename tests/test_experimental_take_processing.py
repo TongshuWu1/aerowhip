@@ -198,6 +198,10 @@ def test_production_gui_has_training_status_page() -> None:
         window.training_page.speed_reference_input.currentData()
         == "attachment_relative"
     )
+    assert (
+        window.training_page.progress_reference_input.currentData()
+        == "world_tip"
+    )
     launch_config = window.training_page._configuration_from_controls()
     assert launch_config["initialization"]["uses_previous_policy_checkpoint"] is True
     assert launch_config["action"]["mode"] == "target_aligned_sagittal_3d"
@@ -211,13 +215,23 @@ def test_production_gui_has_training_status_page() -> None:
         launch_config["reward"]["directed_speed_shaping_reference"]
         == "attachment_relative"
     )
+    assert (
+        launch_config["reward"]["progress_shaping_reference"]
+        == "world_tip"
+    )
+    assert launch_config["reward"]["progress_attachment_compensation_fraction"] == 0.0
     assert window.training_page.initialization_mode_input.findData("fresh") >= 0
-    assert window.training_page.episode_budget_input.value() == 50_000
+    assert window.training_page.episode_budget_input.value() == 500_000
+    assert window.training_page.forward_return_bonus_input.value() == 50.0
     assert window.training_page.episode_horizon_input.value() == 7.0
     assert window.training_page.rolling_window_input.value() == 5_000
-    assert window.training_page.terminal_displacement_weight_input.value() == 45.0
+    assert window.training_page.terminal_displacement_weight_input.value() == 50.0
     assert window.training_page.terminal_displacement_success_only_input.isChecked()
     assert window.training_page.displacement_integral_weight_input.value() == 0.0
+    assert window.training_page.forward_return_bonus_input.value() == 50.0
+    assert window.training_page.release_bonus_input.value() == 25.0
+    assert window.training_page.return_release_improvement_input.value() == 100.0
+    assert window.training_page.release_at_strike_input.isChecked()
     assert window.training_page.learning_rate_input.value() == 0.00002
     assert window.training_page.update_epochs_input.value() == 2
     assert "rolling 5,000" in window.training_page.training_card.detail_label.text()

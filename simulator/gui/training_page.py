@@ -44,13 +44,13 @@ CONFIG_PATH = (
     PROJECT_ROOT
     / "config"
     / "learning"
-    / "whip_ppo_success_conditioned_return_finetune_v1.json"
+    / "whip_ppo_dense_return_release_100_continuation_v1.json"
 )
 ACTIVE_RUN_ROOT = (
     PROJECT_ROOT
     / "data"
     / "policy_training"
-    / "whip_ppo_success_conditioned_return_finetune_v1"
+    / "whip_ppo_dense_return_release_100_continuation_v1"
 )
 CURATED_RUN = PROJECT_ROOT / "results" / "ppo" / "data"
 ACTIVE_STATUSES = {"STARTING", "RESUMING", "RUNNING"}
@@ -658,6 +658,46 @@ class TrainingPage(QWidget):
         self.progress_weight_input = decimal_input(
             float(reward_defaults.get("progress_weight", 20.0)), 0.0, 500.0, 1.0, 2
         )
+        self.progress_reference_input = QComboBox()
+        self.progress_reference_input.setObjectName("ppoProgressReferenceInput")
+        self.progress_reference_input.addItem(
+            "Cable span from initial attachment",
+            "attachment_compensated_tip",
+        )
+        self.progress_reference_input.addItem(
+            "Blend world and cable-span progress",
+            "blended_world_attachment",
+        )
+        self.progress_reference_input.addItem("World-frame cable tip", "world_tip")
+        configured_progress_reference = str(
+            reward_defaults.get("progress_shaping_reference", "world_tip")
+        )
+        progress_reference_index = self.progress_reference_input.findData(
+            configured_progress_reference
+        )
+        self.progress_reference_input.setCurrentIndex(
+            max(progress_reference_index, 0)
+        )
+        self.progress_reference_input.setToolTip(
+            "Attachment-compensated progress credits cable-span motion, not carrying "
+            "the whole UAV/cable assembly toward the target. Real success remains world-frame."
+        )
+        self.config_inputs.append(self.progress_reference_input)
+        self.progress_attachment_fraction_input = decimal_input(
+            float(
+                reward_defaults.get(
+                    "progress_attachment_compensation_fraction", 0.5
+                )
+            ),
+            0.0,
+            1.0,
+            0.05,
+            2,
+        )
+        self.progress_attachment_fraction_input.setToolTip(
+            "For blended progress: 0 is entirely world-frame and 1 is entirely "
+            "attachment-compensated cable-span progress."
+        )
         self.speed_reward_weight_input = decimal_input(
             float(reward_defaults.get("directed_speed_near_target_weight", 15.0)),
             0.0,
@@ -711,6 +751,50 @@ class TrainingPage(QWidget):
             1.0,
             2,
         )
+        self.forward_return_bonus_input = decimal_input(
+            float(reward_defaults.get("success_forward_return_bonus_weight", 0.0)),
+            0.0,
+            500.0,
+            5.0,
+            2,
+        )
+        self.forward_return_bonus_input.setToolTip(
+            "Paid only on a successful strike after genuine forward loading and "
+            "subsequent target-axis return."
+        )
+        self.release_bonus_input = decimal_input(
+            float(reward_defaults.get("success_release_bonus_weight", 0.0)),
+            0.0,
+            500.0,
+            5.0,
+            2,
+        )
+        self.release_bonus_input.setToolTip(
+            "Paid only on success for a retreating UAV while the cable tip moves "
+            "forward relative to its attachment."
+        )
+        self.return_release_improvement_input = decimal_input(
+            float(reward_defaults.get("return_release_improvement_weight", 0.0)),
+            0.0,
+            500.0,
+            5.0,
+            2,
+        )
+        self.return_release_improvement_input.setToolTip(
+            "Dense potential improvement for forward loading followed by UAV return "
+            "while the cable moves toward a viable strike."
+        )
+        self.release_at_strike_input = QCheckBox("Credit release at strike only")
+        self.release_at_strike_input.setChecked(
+            bool(reward_defaults.get("success_release_at_strike", False))
+        )
+        self.release_at_strike_input.setToolTip(
+            "When enabled, the success release bonus uses the release state at impact "
+            "instead of the best release observed earlier in the episode."
+        )
+        self.config_inputs.extend(
+            [self.return_release_improvement_input, self.release_at_strike_input]
+        )
         self.success_bonus_input = decimal_input(
             float(reward_defaults.get("success_bonus", 100.0)), 0.0, 1000.0, 5.0, 2
         )
@@ -722,11 +806,22 @@ class TrainingPage(QWidget):
             2,
         )
         task_reward_form.addRow("Progress", self.progress_weight_input)
+        task_reward_form.addRow("Progress reference", self.progress_reference_input)
+        task_reward_form.addRow(
+            "Attachment progress fraction",
+            self.progress_attachment_fraction_input,
+        )
         task_reward_form.addRow("Directed speed", self.speed_reward_weight_input)
         task_reward_form.addRow("Speed cap", self.speed_cap_input)
         task_reward_form.addRow("Speed reference", self.speed_reference_input)
         task_reward_form.addRow("Direction alignment", self.direction_reward_weight_input)
         task_reward_form.addRow("Joint strike", self.strike_weight_input)
+        task_reward_form.addRow("Forward-return bonus", self.forward_return_bonus_input)
+        task_reward_form.addRow("Cable-release bonus", self.release_bonus_input)
+        task_reward_form.addRow(
+            "Dense return-release", self.return_release_improvement_input
+        )
+        task_reward_form.addRow("Release timing", self.release_at_strike_input)
         task_reward_form.addRow("Success bonus", self.success_bonus_input)
         task_reward_form.addRow("Non-tip-first", self.non_tip_penalty_input)
         configuration_layout.addWidget(task_reward_group, 1)
@@ -1051,6 +1146,12 @@ class TrainingPage(QWidget):
         reward.update(
             {
                 "progress_weight": float(self.progress_weight_input.value()),
+                "progress_shaping_reference": str(
+                    self.progress_reference_input.currentData()
+                ),
+                "progress_attachment_compensation_fraction": float(
+                    self.progress_attachment_fraction_input.value()
+                ),
                 "directed_speed_near_target_weight": float(
                     self.speed_reward_weight_input.value()
                 ),
@@ -1063,6 +1164,18 @@ class TrainingPage(QWidget):
                 ),
                 "strike_quality_improvement_weight": float(
                     self.strike_weight_input.value()
+                ),
+                "success_forward_return_bonus_weight": float(
+                    self.forward_return_bonus_input.value()
+                ),
+                "success_release_bonus_weight": float(
+                    self.release_bonus_input.value()
+                ),
+                "return_release_improvement_weight": float(
+                    self.return_release_improvement_input.value()
+                ),
+                "success_release_at_strike": bool(
+                    self.release_at_strike_input.isChecked()
                 ),
                 "success_bonus": float(self.success_bonus_input.value()),
                 "non_tip_first_penalty": float(self.non_tip_penalty_input.value()),
@@ -1167,6 +1280,22 @@ class TrainingPage(QWidget):
             int(early_stopping.get("validation_patience_evaluations", 30))
         )
         reward = config.get("reward", {})
+        progress_reference = str(
+            reward.get("progress_shaping_reference", "world_tip")
+        )
+        progress_reference_index = self.progress_reference_input.findData(
+            progress_reference
+        )
+        self.progress_reference_input.setCurrentIndex(
+            max(progress_reference_index, 0)
+        )
+        self.progress_attachment_fraction_input.setValue(
+            float(
+                reward.get(
+                    "progress_attachment_compensation_fraction", 0.5
+                )
+            )
+        )
         speed_reference = str(
             reward.get("directed_speed_shaping_reference", "world_tip")
         )
@@ -1178,6 +1307,12 @@ class TrainingPage(QWidget):
             (self.speed_cap_input, "directed_speed_reward_cap_m_s"),
             (self.direction_reward_weight_input, "direction_near_target_weight"),
             (self.strike_weight_input, "strike_quality_improvement_weight"),
+            (self.forward_return_bonus_input, "success_forward_return_bonus_weight"),
+            (self.release_bonus_input, "success_release_bonus_weight"),
+            (
+                self.return_release_improvement_input,
+                "return_release_improvement_weight",
+            ),
             (self.success_bonus_input, "success_bonus"),
             (self.non_tip_penalty_input, "non_tip_first_penalty"),
             (self.terminal_displacement_weight_input, "terminal_displacement_weight"),
@@ -1191,6 +1326,9 @@ class TrainingPage(QWidget):
         for control, key in reward_controls:
             if key in reward:
                 control.setValue(float(reward[key]))
+        self.release_at_strike_input.setChecked(
+            bool(reward.get("success_release_at_strike", False))
+        )
         self.terminal_displacement_success_only_input.setChecked(
             bool(reward.get("terminal_displacement_success_only", False))
         )

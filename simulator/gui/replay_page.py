@@ -38,6 +38,13 @@ PPO_SIMULATION_OUTPUT = PROJECT_ROOT / "data" / "ppo_simulation" / "current"
 PPO_CHECKPOINT = PROJECT_ROOT / "results" / "ppo" / "checkpoints" / "terminal.pt"
 PPO_CURATED_ARTIFACT = PROJECT_ROOT / "results" / "ppo" / "data"
 PPO_TRAINING_ROOT = PROJECT_ROOT / "data" / "policy_training"
+PPO_SELECTED_ARTIFACT = (
+    PROJECT_ROOT
+    / "results"
+    / "ppo"
+    / "policies"
+    / "PPO_WHIP_FORWARD_REVERSE_RELEASE_D50_V1"
+)
 CEM_REFERENCE_TASK_ID = "canonical_whip_variable_duration_tuned_reward_v1"
 
 
@@ -49,7 +56,24 @@ def _read_json(path: Path) -> dict[str, object] | None:
 
 
 def latest_ppo_policy_source() -> tuple[Path, Path, Path, int] | None:
-    """Return artifact, config, checkpoint, and episode count for the newest whip PPO."""
+    """Return the selected validated policy, falling back to the newest durable PPO."""
+
+    selected_checkpoint = PPO_SELECTED_ARTIFACT / "checkpoints" / "terminal.pt"
+    selected_config = PPO_SELECTED_ARTIFACT / "config.json"
+    if selected_checkpoint.is_file() and selected_config.is_file():
+        selected_status = _read_json(PPO_SELECTED_ARTIFACT / "status.json") or {}
+        selected_episodes = int(
+            selected_status.get(
+                "latest_durable_checkpoint_episodes",
+                selected_status.get("episodes", 0),
+            )
+        )
+        return (
+            PPO_SELECTED_ARTIFACT,
+            selected_config,
+            selected_checkpoint,
+            selected_episodes,
+        )
 
     candidates: list[tuple[float, Path, Path, Path, int]] = []
     if PPO_TRAINING_ROOT.is_dir():
@@ -406,7 +430,7 @@ class SimulatorReplayPage(QWidget):
         self.ppo_status = QLabel("READY")
         set_status_badge(self.ppo_status, "READY", "neutral")
         controller_layout.addWidget(self.ppo_status)
-        self.run_ppo_button = QPushButton("RUN LATEST PPO")
+        self.run_ppo_button = QPushButton("RUN SELECTED PPO")
         self.run_ppo_button.setObjectName("runPpoSimulationButton")
         self.run_ppo_button.setProperty("role", "primary")
         self.run_ppo_button.setStyleSheet(
@@ -521,7 +545,7 @@ class SimulatorReplayPage(QWidget):
         artifact, _, checkpoint, episodes = source
         episode_label = f"{episodes:,} episodes" if episodes > 0 else "episode count unavailable"
         self.policy_description.setText(
-            f"Newest durable checkpoint  •  {episode_label}  •  deterministic 10 Hz feedback  •  7 s"
+            f"Selected validated checkpoint  •  {episode_label}  •  deterministic 10 Hz feedback  •  7 s"
         )
         self.policy_description.setToolTip(
             f"Artifact: {artifact}\nCheckpoint: {checkpoint}"

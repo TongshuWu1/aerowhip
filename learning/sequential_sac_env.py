@@ -33,6 +33,9 @@ FULL_6D_ACTION_MODE = "full_6d"
 TARGET_ALIGNED_SAGITTAL_ACTION_MODE = "target_aligned_sagittal_3d"
 WORLD_TIP_SPEED_SHAPING = "world_tip"
 ATTACHMENT_RELATIVE_SPEED_SHAPING = "attachment_relative"
+WORLD_TIP_PROGRESS_SHAPING = "world_tip"
+ATTACHMENT_COMPENSATED_PROGRESS_SHAPING = "attachment_compensated_tip"
+BLENDED_PROGRESS_SHAPING = "blended_world_attachment"
 
 
 def sequential_action_dimension(action_mode: str) -> int:
@@ -109,6 +112,40 @@ def shaping_tip_velocity(
     raise ValueError(f"Unsupported directed-speed shaping reference: {mode}")
 
 
+def progress_shaping_distance(
+    tip_position_world_m: torch.Tensor,
+    attachment_position_world_m: torch.Tensor,
+    target_position_world_m: torch.Tensor,
+    initial_attachment_position_world_m: torch.Tensor,
+    *,
+    mode: str,
+    attachment_compensation_fraction: float = 0.5,
+) -> torch.Tensor:
+    """Distance used by reward progress without changing world-frame success."""
+
+    fraction = float(attachment_compensation_fraction)
+    if not 0.0 <= fraction <= 1.0:
+        raise ValueError("Attachment-compensation fraction must lie in [0,1].")
+    world_distance = torch.linalg.vector_norm(
+        tip_position_world_m - target_position_world_m, dim=-1
+    )
+    cable_span = tip_position_world_m - attachment_position_world_m
+    desired_span = target_position_world_m - initial_attachment_position_world_m
+    attachment_distance = torch.linalg.vector_norm(
+        cable_span - desired_span, dim=-1
+    )
+    if mode == WORLD_TIP_PROGRESS_SHAPING:
+        return world_distance
+    if mode == ATTACHMENT_COMPENSATED_PROGRESS_SHAPING:
+        return attachment_distance
+    if mode == BLENDED_PROGRESS_SHAPING:
+        return (
+            (1.0 - fraction) * world_distance
+            + fraction * attachment_distance
+        )
+    raise ValueError(f"Unsupported progress shaping reference: {mode}")
+
+
 @dataclass(frozen=True, slots=True)
 class SimpleRewardWeights:
     progress: float = 5.0
@@ -124,6 +161,13 @@ class SimpleRewardWeights:
     terminal_displacement: float = 0.0
     terminal_displacement_success_only: bool = False
     displacement_integral: float = 0.0
+    success_forward_return_bonus: float = 0.0
+    success_release_bonus: float = 0.0
+    return_release_improvement: float = 0.0
+    success_release_at_strike: bool = False
+    forward_excursion_scale_m: float = 0.35
+    uav_backward_speed_scale_m_s: float = 1.0
+    relative_tip_forward_speed_scale_m_s: float = 4.0
     uav_speed_integral: float = 0.0
     acceleration_effort: float = 0.0
     body_rate_effort: float = 0.0
@@ -405,6 +449,82 @@ def terminal_displacement_charge_mask(
     return newly_successful if success_only else terminal_now
 
 
+def forward_return_quality(
+    peak_forward_displacement_m: torch.Tensor,
+    current_forward_displacement_m: torch.Tensor,
+    *,
+    excursion_scale_m: float,
+) -> torch.Tensor:
+    """Bounded quality for genuine forward loading followed by return."""
+
+    scale = max(float(excursion_scale_m), 1.0e-6)
+    peak = peak_forward_displacement_m.clamp_min(0.0)
+    returned = (peak - current_forward_displacement_m).clamp_min(0.0)
+    return_fraction = (returned / peak.clamp_min(1.0e-6)).clamp(max=1.0)
+    forward_activation = 1.0 - torch.exp(-peak / scale)
+    return forward_activation * return_fraction
+
+
+def forward_release_quality(
+    peak_forward_displacement_m: torch.Tensor,
+    uav_forward_speed_m_s: torch.Tensor,
+    relative_tip_forward_speed_m_s: torch.Tensor,
+    *,
+    excursion_scale_m: float,
+    backward_speed_scale_m_s: float,
+    tip_speed_scale_m_s: float,
+) -> torch.Tensor:
+    """Bounded evidence of a retreating UAV releasing cable motion forward."""
+
+    forward_activation = 1.0 - torch.exp(
+        -peak_forward_displacement_m.clamp_min(0.0)
+        / max(float(excursion_scale_m), 1.0e-6)
+    )
+    backward_quality = 1.0 - torch.exp(
+        -(-uav_forward_speed_m_s).clamp_min(0.0)
+        / max(float(backward_speed_scale_m_s), 1.0e-6)
+    )
+    tip_quality = 1.0 - torch.exp(
+        -relative_tip_forward_speed_m_s.clamp_min(0.0)
+        / max(float(tip_speed_scale_m_s), 1.0e-6)
+    )
+    return forward_activation * backward_quality * tip_quality
+
+
+def return_release_strike_quality(
+    peak_forward_displacement_m: torch.Tensor,
+    current_forward_displacement_m: torch.Tensor,
+    uav_forward_speed_m_s: torch.Tensor,
+    relative_tip_forward_speed_m_s: torch.Tensor,
+    current_strike_quality: torch.Tensor,
+    *,
+    excursion_scale_m: float,
+    backward_speed_scale_m_s: float,
+    tip_speed_scale_m_s: float,
+) -> torch.Tensor:
+    """Dense quality for loading, returning, and releasing toward a viable strike."""
+
+    return_quality = forward_return_quality(
+        peak_forward_displacement_m,
+        current_forward_displacement_m,
+        excursion_scale_m=excursion_scale_m,
+    )
+    backward_quality = 1.0 - torch.exp(
+        -(-uav_forward_speed_m_s).clamp_min(0.0)
+        / max(float(backward_speed_scale_m_s), 1.0e-6)
+    )
+    tip_quality = 1.0 - torch.exp(
+        -relative_tip_forward_speed_m_s.clamp_min(0.0)
+        / max(float(tip_speed_scale_m_s), 1.0e-6)
+    )
+    return (
+        return_quality
+        * backward_quality
+        * tip_quality
+        * current_strike_quality.clamp(0.0, 1.0)
+    )
+
+
 def simple_dense_reward(
     previous_distance_m: torch.Tensor,
     current_distance_m: torch.Tensor,
@@ -505,6 +625,8 @@ class SequentialWhipEnvironment:
         observation_clip: float = 10.0,
         reward_weights: SimpleRewardWeights = SimpleRewardWeights(),
         action_mode: str = FULL_6D_ACTION_MODE,
+        progress_shaping_reference: str = WORLD_TIP_PROGRESS_SHAPING,
+        progress_attachment_compensation_fraction: float = 0.5,
         directed_speed_shaping_reference: str = WORLD_TIP_SPEED_SHAPING,
         success_mode: str = "simple_endpoint",
         reward_mode: str = "legacy_dense",
@@ -533,6 +655,23 @@ class SequentialWhipEnvironment:
         self.reward_weights = reward_weights
         self.action_mode = str(action_mode)
         self.action_dimension = sequential_action_dimension(self.action_mode)
+        if progress_shaping_reference not in {
+            WORLD_TIP_PROGRESS_SHAPING,
+            ATTACHMENT_COMPENSATED_PROGRESS_SHAPING,
+            BLENDED_PROGRESS_SHAPING,
+        }:
+            raise ValueError(
+                "Unsupported progress shaping reference: "
+                f"{progress_shaping_reference}"
+            )
+        self.progress_shaping_reference = str(progress_shaping_reference)
+        if not 0.0 <= float(progress_attachment_compensation_fraction) <= 1.0:
+            raise ValueError(
+                "Progress attachment-compensation fraction must lie in [0,1]."
+            )
+        self.progress_attachment_compensation_fraction = float(
+            progress_attachment_compensation_fraction
+        )
         if directed_speed_shaping_reference not in {
             WORLD_TIP_SPEED_SHAPING,
             ATTACHMENT_RELATIVE_SPEED_SHAPING,
@@ -584,6 +723,12 @@ class SequentialWhipEnvironment:
             dtype=simulator.dtype,
             device=simulator.device,
         ).view(1, 3).expand(batch_size, -1)
+        self._initial_attachment_position_m = (
+            self.simulator.root_boundary.evaluate(
+                self._initial_state.uav,
+                self.simulator.cable_configuration.rest_lengths_m[0],
+            ).attachment_position_m
+        )
         self.state = self._initial_state
         self.control_index = 0
         self.yaw_command = self._initial_yaw_command.clone()
@@ -618,9 +763,37 @@ class SequentialWhipEnvironment:
         self.episode_terminal_displacement = torch.full_like(
             self.episode_reward, torch.nan
         )
+        self.episode_peak_forward_displacement = torch.zeros_like(
+            self.episode_reward
+        )
+        self.episode_success_return_distance = torch.full_like(
+            self.episode_reward, torch.nan
+        )
+        self.episode_success_return_quality = torch.full_like(
+            self.episode_reward, torch.nan
+        )
+        self.episode_best_release_quality = torch.zeros_like(self.episode_reward)
+        self.episode_best_return_release_quality = torch.zeros_like(
+            self.episode_reward
+        )
+        self.episode_success_release_quality = torch.full_like(
+            self.episode_reward, torch.nan
+        )
+        self.episode_success_forward_displacement = torch.full_like(
+            self.episode_reward, torch.nan
+        )
+        self.episode_success_uav_forward_speed = torch.full_like(
+            self.episode_reward, torch.nan
+        )
+        self.episode_success_relative_tip_forward_speed = torch.full_like(
+            self.episode_reward, torch.nan
+        )
         self.episode_maximum_uav_speed = torch.zeros_like(self.episode_reward)
         self.episode_maximum_command_acceleration = torch.zeros_like(self.episode_reward)
         self.episode_minimum_tip_distance = torch.full_like(self.episode_reward, torch.inf)
+        self.episode_minimum_progress_distance = torch.full_like(
+            self.episode_reward, torch.inf
+        )
         self.episode_best_strike_quality = torch.zeros_like(self.episode_reward)
         self.episode_best_directed_speed_quality = torch.zeros_like(
             self.episode_reward
@@ -785,6 +958,12 @@ class SequentialWhipEnvironment:
                 "Episode initial-state batch must match the environment batch size."
             )
         self._initial_state = clone_state_batch(initial_state, self.batch_size)
+        self._initial_attachment_position_m = (
+            self.simulator.root_boundary.evaluate(
+                self._initial_state.uav,
+                self.simulator.cable_configuration.rest_lengths_m[0],
+            ).attachment_position_m
+        )
         yaw = torch.as_tensor(
             self.task.initial_yaw_rad
             if command_yaw_world_rad is None
@@ -819,12 +998,37 @@ class SequentialWhipEnvironment:
         self.episode_reward.zero_()
         self.episode_maximum_displacement.zero_()
         self.episode_terminal_displacement.fill_(torch.nan)
+        self.episode_peak_forward_displacement.zero_()
+        self.episode_success_return_distance.fill_(torch.nan)
+        self.episode_success_return_quality.fill_(torch.nan)
+        self.episode_best_release_quality.zero_()
+        self.episode_best_return_release_quality.zero_()
+        self.episode_success_release_quality.fill_(torch.nan)
+        self.episode_success_forward_displacement.fill_(torch.nan)
+        self.episode_success_uav_forward_speed.fill_(torch.nan)
+        self.episode_success_relative_tip_forward_speed.fill_(torch.nan)
         self.episode_maximum_uav_speed.zero_()
         self.episode_maximum_command_acceleration.zero_()
         initial_distance = torch.linalg.vector_norm(
             self.state.cable.positions_m[:, -1] - self._target, dim=-1
         )
         self.episode_minimum_tip_distance.copy_(initial_distance)
+        initial_attachment = self.simulator.root_boundary.evaluate(
+            self.state.uav,
+            self.simulator.cable_configuration.rest_lengths_m[0],
+        ).attachment_position_m
+        self.episode_minimum_progress_distance.copy_(
+            progress_shaping_distance(
+                self.state.cable.positions_m[:, -1],
+                initial_attachment,
+                self._target,
+                self._initial_attachment_position_m,
+                mode=self.progress_shaping_reference,
+                attachment_compensation_fraction=(
+                    self.progress_attachment_compensation_fraction
+                ),
+            )
+        )
         self.episode_best_strike_quality.zero_()
         self.episode_best_directed_speed_quality.zero_()
         self.episode_best_direction_quality.zero_()
@@ -888,12 +1092,17 @@ class SequentialWhipEnvironment:
         normalized_action = normalized_action.to(
             dtype=self.simulator.dtype, device=self.simulator.device
         )
-        previous_episode_minimum_distance = self.episode_minimum_tip_distance.clone()
+        previous_episode_minimum_progress_distance = (
+            self.episode_minimum_progress_distance.clone()
+        )
         previous_episode_best_strike = self.episode_best_strike_quality.clone()
         previous_episode_best_directed_speed = (
             self.episode_best_directed_speed_quality.clone()
         )
         previous_episode_best_direction = self.episode_best_direction_quality.clone()
+        previous_episode_best_return_release = (
+            self.episode_best_return_release_quality.clone()
+        )
         previous_episode_maximum_displacement = (
             self.episode_maximum_displacement.clone()
         )
@@ -912,6 +1121,20 @@ class SequentialWhipEnvironment:
             self.state.cable.positions_m[:, -1] - self._target, dim=-1
         )
         minimum_distance = previous_distance.clone()
+        initial_attachment = self.simulator.root_boundary.evaluate(
+            self.state.uav,
+            self.simulator.cable_configuration.rest_lengths_m[0],
+        ).attachment_position_m
+        minimum_progress_distance = progress_shaping_distance(
+            self.state.cable.positions_m[:, -1],
+            initial_attachment,
+            self._target,
+            self._initial_attachment_position_m,
+            mode=self.progress_shaping_reference,
+            attachment_compensation_fraction=(
+                self.progress_attachment_compensation_fraction
+            ),
+        )
         interval_maximum_displacement = torch.linalg.vector_norm(
             self.state.uav.position_m - initial_position, dim=-1
         )
@@ -926,6 +1149,7 @@ class SequentialWhipEnvironment:
         best_proximity_speed = torch.full_like(previous_distance, -torch.inf)
         best_proximity_direction = torch.full_like(previous_distance, -torch.inf)
         interval_best_strike_quality = torch.zeros_like(previous_distance)
+        interval_best_return_release_quality = torch.zeros_like(previous_distance)
         interval_best_directed_speed_quality = torch.zeros_like(previous_distance)
         interval_best_direction_quality = torch.zeros_like(previous_distance)
         interval_endpoint_success = torch.zeros_like(self.failed)
@@ -997,16 +1221,29 @@ class SequentialWhipEnvironment:
             direction_cosine = directed_speed / speed.clamp_min(
                 torch.finfo(speed.dtype).eps
             )
-            if (
-                self.directed_speed_shaping_reference
+            physical_attachment = self.simulator.root_boundary.evaluate(
+                self.state.uav,
+                self.simulator.cable_configuration.rest_lengths_m[0],
+            )
+            physical_attachment_velocity = (
+                physical_attachment.attachment_velocity_analytic_m_s
+            )
+            progress_distance = progress_shaping_distance(
+                tip_position,
+                physical_attachment.attachment_position_m,
+                self._target,
+                self._initial_attachment_position_m,
+                mode=self.progress_shaping_reference,
+                attachment_compensation_fraction=(
+                    self.progress_attachment_compensation_fraction
+                ),
+            )
+            attachment_velocity = (
+                physical_attachment_velocity
+                if self.directed_speed_shaping_reference
                 == ATTACHMENT_RELATIVE_SPEED_SHAPING
-            ):
-                attachment_velocity = self.simulator.root_boundary.evaluate(
-                    self.state.uav,
-                    self.simulator.cable_configuration.rest_lengths_m[0],
-                ).attachment_velocity_analytic_m_s
-            else:
-                attachment_velocity = torch.zeros_like(tip_velocity)
+                else torch.zeros_like(tip_velocity)
+            )
             reward_tip_velocity = shaping_tip_velocity(
                 tip_velocity,
                 attachment_velocity,
@@ -1044,8 +1281,49 @@ class SequentialWhipEnvironment:
             minimum_distance = torch.where(
                 eligible, torch.minimum(minimum_distance, distance), minimum_distance
             )
+            minimum_progress_distance = torch.where(
+                eligible,
+                torch.minimum(minimum_progress_distance, progress_distance),
+                minimum_progress_distance,
+            )
             displacement = torch.linalg.vector_norm(
                 self.state.uav.position_m - initial_position, dim=-1
+            )
+            forward_displacement = (
+                (self.state.uav.position_m - initial_position) * self._direction
+            ).sum(dim=-1)
+            self.episode_peak_forward_displacement = torch.where(
+                eligible,
+                torch.maximum(
+                    self.episode_peak_forward_displacement,
+                    forward_displacement,
+                ),
+                self.episode_peak_forward_displacement,
+            )
+            uav_forward_speed = (
+                self.state.uav.velocity_m_s * self._direction
+            ).sum(dim=-1)
+            relative_tip_forward_speed = (
+                (tip_velocity - physical_attachment_velocity) * self._direction
+            ).sum(dim=-1)
+            release_quality = forward_release_quality(
+                self.episode_peak_forward_displacement,
+                uav_forward_speed,
+                relative_tip_forward_speed,
+                excursion_scale_m=self.reward_weights.forward_excursion_scale_m,
+                backward_speed_scale_m_s=(
+                    self.reward_weights.uav_backward_speed_scale_m_s
+                ),
+                tip_speed_scale_m_s=(
+                    self.reward_weights.relative_tip_forward_speed_scale_m_s
+                ),
+            )
+            self.episode_best_release_quality = torch.where(
+                eligible,
+                torch.maximum(
+                    self.episode_best_release_quality, release_quality
+                ),
+                self.episode_best_release_quality,
             )
             uav_speed = torch.linalg.vector_norm(self.state.uav.velocity_m_s, dim=-1)
             interval_maximum_displacement = torch.where(
@@ -1077,27 +1355,50 @@ class SequentialWhipEnvironment:
                 * self.simulator.dt_s,
                 torch.zeros_like(uav_speed),
             )
+            current_strike_quality = strike_quality(
+                distance,
+                reward_directed_speed,
+                reward_direction_cosine,
+                proximity_scale_m=self.reward_weights.proximity_scale_m,
+                target_directed_speed_m_s=(
+                    self.task.minimum_directed_speed_m_s
+                ),
+                maximum_direction_error_deg=(
+                    self.task.maximum_direction_error_deg
+                ),
+                speed_reward_cap_m_s=(
+                    self.reward_weights.directed_speed_reward_cap_m_s
+                ),
+            )
             interval_best_strike_quality = torch.where(
                 eligible,
                 torch.maximum(
                     interval_best_strike_quality,
-                    strike_quality(
-                        distance,
-                        reward_directed_speed,
-                        reward_direction_cosine,
-                        proximity_scale_m=self.reward_weights.proximity_scale_m,
-                        target_directed_speed_m_s=(
-                            self.task.minimum_directed_speed_m_s
-                        ),
-                        maximum_direction_error_deg=(
-                            self.task.maximum_direction_error_deg
-                        ),
-                        speed_reward_cap_m_s=(
-                            self.reward_weights.directed_speed_reward_cap_m_s
-                        ),
-                    ),
+                    current_strike_quality,
                 ),
                 interval_best_strike_quality,
+            )
+            current_return_release_quality = return_release_strike_quality(
+                self.episode_peak_forward_displacement,
+                forward_displacement,
+                uav_forward_speed,
+                relative_tip_forward_speed,
+                current_strike_quality,
+                excursion_scale_m=self.reward_weights.forward_excursion_scale_m,
+                backward_speed_scale_m_s=(
+                    self.reward_weights.uav_backward_speed_scale_m_s
+                ),
+                tip_speed_scale_m_s=(
+                    self.reward_weights.relative_tip_forward_speed_scale_m_s
+                ),
+            )
+            interval_best_return_release_quality = torch.where(
+                eligible,
+                torch.maximum(
+                    interval_best_return_release_quality,
+                    current_return_release_quality,
+                ),
+                interval_best_return_release_quality,
             )
             soft_speed_quality, soft_direction_quality = (
                 soft_near_target_strike_components(
@@ -1246,6 +1547,10 @@ class SequentialWhipEnvironment:
         self.episode_best_strike_quality = torch.maximum(
             self.episode_best_strike_quality, interval_best_strike_quality
         )
+        self.episode_best_return_release_quality = torch.maximum(
+            self.episode_best_return_release_quality,
+            interval_best_return_release_quality,
+        )
         self.episode_best_directed_speed_quality = torch.maximum(
             self.episode_best_directed_speed_quality,
             interval_best_directed_speed_quality,
@@ -1255,6 +1560,10 @@ class SequentialWhipEnvironment:
         )
         self.episode_minimum_tip_distance = torch.minimum(
             self.episode_minimum_tip_distance, minimum_distance
+        )
+        self.episode_minimum_progress_distance = torch.minimum(
+            self.episode_minimum_progress_distance,
+            minimum_progress_distance,
         )
         horizon_done = self.control_index + 1 >= self.control_step_count
         pre_success_time_increment = (
@@ -1311,8 +1620,8 @@ class SequentialWhipEnvironment:
                 self._initial_state.cable.positions_m[:, -1] - self._target, dim=-1
             ).clamp_min(1.0e-6)
             progress_improvement = (
-                previous_episode_minimum_distance
-                - self.episode_minimum_tip_distance
+                previous_episode_minimum_progress_distance
+                - self.episode_minimum_progress_distance
             ).clamp_min(0.0) / initial_distance
             strike_improvement = (
                 self.episode_best_strike_quality - previous_episode_best_strike
@@ -1323,6 +1632,10 @@ class SequentialWhipEnvironment:
             ).clamp_min(0.0)
             direction_improvement = (
                 self.episode_best_direction_quality - previous_episode_best_direction
+            ).clamp_min(0.0)
+            return_release_improvement = (
+                self.episode_best_return_release_quality
+                - previous_episode_best_return_release
             ).clamp_min(0.0)
             maximum_displacement_increase = (
                 smooth_displacement_cost(
@@ -1339,6 +1652,65 @@ class SequentialWhipEnvironment:
                 terminal_now |= newly_successful
             terminal_displacement = torch.linalg.vector_norm(
                 self.state.uav.position_m - initial_position, dim=-1
+            )
+            terminal_forward_displacement = (
+                (self.state.uav.position_m - initial_position) * self._direction
+            ).sum(dim=-1)
+            terminal_return_distance = (
+                self.episode_peak_forward_displacement
+                - terminal_forward_displacement
+            ).clamp_min(0.0)
+            terminal_return_quality = forward_return_quality(
+                self.episode_peak_forward_displacement,
+                terminal_forward_displacement,
+                excursion_scale_m=self.reward_weights.forward_excursion_scale_m,
+            )
+            terminal_release_quality = forward_release_quality(
+                self.episode_peak_forward_displacement,
+                uav_forward_speed,
+                relative_tip_forward_speed,
+                excursion_scale_m=self.reward_weights.forward_excursion_scale_m,
+                backward_speed_scale_m_s=(
+                    self.reward_weights.uav_backward_speed_scale_m_s
+                ),
+                tip_speed_scale_m_s=(
+                    self.reward_weights.relative_tip_forward_speed_scale_m_s
+                ),
+            )
+            credited_release_quality = (
+                terminal_release_quality
+                if self.reward_weights.success_release_at_strike
+                else self.episode_best_release_quality
+            )
+            self.episode_success_return_distance = torch.where(
+                newly_successful,
+                terminal_return_distance,
+                self.episode_success_return_distance,
+            )
+            self.episode_success_return_quality = torch.where(
+                newly_successful,
+                terminal_return_quality,
+                self.episode_success_return_quality,
+            )
+            self.episode_success_release_quality = torch.where(
+                newly_successful,
+                credited_release_quality,
+                self.episode_success_release_quality,
+            )
+            self.episode_success_forward_displacement = torch.where(
+                newly_successful,
+                terminal_forward_displacement,
+                self.episode_success_forward_displacement,
+            )
+            self.episode_success_uav_forward_speed = torch.where(
+                newly_successful,
+                uav_forward_speed,
+                self.episode_success_uav_forward_speed,
+            )
+            self.episode_success_relative_tip_forward_speed = torch.where(
+                newly_successful,
+                relative_tip_forward_speed,
+                self.episode_success_relative_tip_forward_speed,
             )
             terminal_displacement_cost = smooth_displacement_cost(
                 terminal_displacement,
@@ -1381,6 +1753,8 @@ class SequentialWhipEnvironment:
                 * directed_speed_improvement
                 + self.reward_weights.direction_near_target * direction_improvement
                 + self.reward_weights.strike_quality_improvement * strike_improvement
+                + self.reward_weights.return_release_improvement
+                * return_release_improvement
                 + self.reward_weights.success_bonus
                 * newly_successful.to(previous_distance.dtype)
                 + self.reward_weights.success_compactness_bonus
@@ -1388,6 +1762,12 @@ class SequentialWhipEnvironment:
                     self.episode_maximum_displacement,
                     scale_m=self.reward_weights.success_compactness_scale_m,
                 )
+                * newly_successful.to(previous_distance.dtype)
+                + self.reward_weights.success_forward_return_bonus
+                * terminal_return_quality
+                * newly_successful.to(previous_distance.dtype)
+                + self.reward_weights.success_release_bonus
+                * credited_release_quality
                 * newly_successful.to(previous_distance.dtype)
                 - self.reward_weights.non_tip_first
                 * interval_non_tip_first.to(previous_distance.dtype)
