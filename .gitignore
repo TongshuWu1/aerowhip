@@ -1,5 +1,17 @@
 __pycache__/
 *.py[cod]
-diagnostics/recordings/
-diagnostics/experiments/
-diagnostics/evaluation_runs/
+.venv/
+.idea/
+# Share portable PyCharm launch configurations; machine-specific settings stay in .idea.
+.pytest_cache/
+.ruff_cache/
+tmp/
+/archive/
+/results/
+/dist/
+/runs/
+# Local measurements and fitted artifacts are distributed separately, if approved.
+# This does not untrack existing files or remove Git history.
+/data/**
+!/data/README.md
+!/data/dataset_manifest.json

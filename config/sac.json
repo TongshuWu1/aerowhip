@@ -1,0 +1,115 @@
+{
+  "bootstrap": {
+    "actions": [
+      [
+        0.7993160486221313,
+        0.0,
+        0.398320734500885
+      ],
+      [
+        0.5555974245071411,
+        0.0,
+        0.3505104184150696
+      ],
+      [
+        0.15491145849227905,
+        0.0,
+        0.30080074071884155
+      ],
+      [
+        -0.30416643619537354,
+        0.0,
+        0.24940098822116852
+      ],
+      [
+        -0.6141148805618286,
+        0.0,
+        0.15255941450595856
+      ],
+      [
+        -0.6865454912185669,
+        0.0,
+        -0.12810003757476807
+      ],
+      [
+        -0.7475075721740723,
+        0.0,
+        -0.38963982462882996
+      ],
+      [
+        -0.7980332374572754,
+        0.0,
+        -0.6005090475082397
+      ],
+      [
+        -0.7840757369995117,
+        0.0,
+        -0.6822627782821655
+      ],
+      [
+        -0.6491082310676575,
+        0.0,
+        -0.6398767232894897
+      ]
+    ],
+    "enabled": true,
+    "phase_control_steps": [
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2,
+      2
+    ],
+    "source": "C:\\Users\\wts28\\Documents\\PHD\\Projects\\PRISMS\\Sim2Real2SimWhip\\data\\reward_tuning_20260905\\seed_evaluation_1s\\source_sequence.pt",
+    "total_control_steps": 20
+  },
+  "logging": {
+    "per_attempt": true
+  },
+  "sac": {
+    "actor_learning_rate": 1e-05,
+    "critic_learning_rate": 0.0003,
+    "critic_warmup_updates": 512,
+    "gamma": 1.0,
+    "hidden_dim": 256,
+    "initial_log_std": [
+      -2.995732273553991,
+      -3.912023005428146,
+      -2.995732273553991
+    ],
+    "initial_temperature": 0.02,
+    "maximum_gradient_norm": 10.0,
+    "minibatch_transitions": 1024,
+    "replay_capacity": 262144,
+    "scale_updates_with_actual_batch": true,
+    "stochastic_action_indices": [
+      0,
+      1,
+      2
+    ],
+    "target_entropy": -7.0,
+    "target_smoothing_tau": 0.005,
+    "temperature_learning_rate": 0.0001,
+    "updates_per_collection": 256,
+    "warmup_transitions": 16384
+  },
+  "schema": "point_force_sac_algorithm_v1",
+  "seed": 651,
+  "training": {
+    "collection_batch": 1024,
+    "device": "auto",
+    "execution": "initial_state_only_open_loop_once_with_pid_recovery",
+    "requested_episodes": 500000
+  },
+  "validation": {
+    "enabled": true,
+    "episodes": 256,
+    "every_episodes": 1024,
+    "policy": "deterministic_open_loop"
+  }
+}

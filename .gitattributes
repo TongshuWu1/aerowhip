@@ -1,2 +1,6 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# OptiTrack evidence required to reproduce data processing and cable validation.
+data/raw_takes/**/*.csv filter=lfs diff=lfs merge=lfs -text
+data/processed_takes/**/*.npz filter=lfs diff=lfs merge=lfs -text

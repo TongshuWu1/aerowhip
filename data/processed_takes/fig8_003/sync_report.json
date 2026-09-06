@@ -1,0 +1,319 @@
+{
+  "commands": {
+    "availability": "logger cmd_valid at matched NatNet/Motive frame",
+    "command_coverage_fraction": 0.9846422338568935,
+    "command_event_rate_hz": 30.00031052286007,
+    "duplicate_value_conflicts": 0,
+    "first_command_take_time_s": 10.446705923080572,
+    "last_command_take_time_s": 78.1126721954347,
+    "raw_command_diagnostics_no_unit_inference": {
+      "command_omega_raw_absolute_max": 0.0,
+      "command_quaternion_xy_norm_max": 0.0,
+      "command_quaternion_xy_norm_median": 0.0,
+      "command_yaw_raw_max": -0.0007449935675914718,
+      "command_yaw_raw_min": -0.0007449935675914718,
+      "horizontal_acceleration_max": 9.024308064970947
+    },
+    "reconstruction": "zero_order_hold_latest_unique_valid_cmd_ros_time",
+    "unique_command_count": 2031
+  },
+  "coordinate_audit": {
+    "configured_transform": "identity",
+    "interpretation": "logger and Motive positions already share the same global metric frame",
+    "matched_pose_count": 5729,
+    "orientation_absolute_dot_median": 0.9999976577635971,
+    "orientation_absolute_dot_minimum": 0.9993502489719128,
+    "position_max_m": 0.017919023058570824,
+    "position_rms_m": 0.007415170452003025
+  },
+  "frames": {
+    "logger_count": 8367,
+    "logger_frame_resets": [
+      {
+        "frame_after": 0,
+        "frame_before": 158388,
+        "motive_time_after_s": 1583.89,
+        "motive_time_before_s": 1583.88,
+        "row_before": 42
+      }
+    ],
+    "logger_missing_frame_runs": [
+      {
+        "after_frame": 651,
+        "before_frame": 653,
+        "count": 1
+      },
+      {
+        "after_frame": 6577,
+        "before_frame": 6579,
+        "count": 1
+      },
+      {
+        "after_frame": 7078,
+        "before_frame": 7080,
+        "count": 1
+      },
+      {
+        "after_frame": 7252,
+        "before_frame": 7255,
+        "count": 2
+      },
+      {
+        "after_frame": 7264,
+        "before_frame": 165654,
+        "count": 158389
+      },
+      {
+        "after_frame": 165970,
+        "before_frame": 165972,
+        "count": 1
+      }
+    ],
+    "logger_only_count": 2638,
+    "logger_only_frame_ranges": [
+      {
+        "count": 652,
+        "first": 0,
+        "last": 651
+      },
+      {
+        "count": 305,
+        "first": 653,
+        "last": 957
+      },
+      {
+        "count": 391,
+        "first": 6688,
+        "last": 7078
+      },
+      {
+        "count": 173,
+        "first": 7080,
+        "last": 7252
+      },
+      {
+        "count": 10,
+        "first": 7255,
+        "last": 7264
+      },
+      {
+        "count": 43,
+        "first": 158346,
+        "last": 158388
+      },
+      {
+        "count": 317,
+        "first": 165654,
+        "last": 165970
+      },
+      {
+        "count": 747,
+        "first": 165972,
+        "last": 166718
+      }
+    ],
+    "matched_count": 5729,
+    "motive_count": 5730,
+    "motive_match_fraction": 0.999825479930192,
+    "motive_missing_frame_runs": [],
+    "motive_only_count": 1,
+    "motive_only_frames": [
+      6578
+    ]
+  },
+  "logger_motive_to_take": {
+    "maximum_residual_s": 2.7355895326763857e-13,
+    "offset": -1583.8899999999996,
+    "rejected_count": 0,
+    "rms_residual_s": 1.762829531422294e-13,
+    "sample_count": 5729,
+    "slope": 0.9999999999999999
+  },
+  "missing_marker_samples": {
+    "c1": 1,
+    "c10": 14,
+    "c2": 0,
+    "c3": 1,
+    "c4": 0,
+    "c5": 1,
+    "c6": 2,
+    "c7": 0,
+    "c8": 0,
+    "c9": 3
+  },
+  "missing_uav_samples": 0,
+  "processing_errors": [],
+  "quality": {
+    "automatic_problem_regions": [
+      {
+        "end_s": 0.8599999999999994,
+        "reason": "command_invalid",
+        "start_s": 0.0
+      },
+      {
+        "end_s": 29.120000000000005,
+        "reason": "marker_dropout",
+        "start_s": 29.120000000000005
+      },
+      {
+        "end_s": 29.14,
+        "reason": "marker_jump",
+        "start_s": 29.130000000000003
+      },
+      {
+        "end_s": 29.93,
+        "reason": "geometry_invalid",
+        "start_s": 29.93
+      },
+      {
+        "end_s": 29.97,
+        "reason": "marker_jump",
+        "start_s": 29.96
+      },
+      {
+        "end_s": 29.97,
+        "reason": "geometry_invalid",
+        "start_s": 29.97
+      },
+      {
+        "end_s": 29.980000000000004,
+        "reason": "marker_dropout",
+        "start_s": 29.980000000000004
+      },
+      {
+        "end_s": 29.990000000000002,
+        "reason": "geometry_invalid",
+        "start_s": 29.990000000000002
+      },
+      {
+        "end_s": 30.75,
+        "reason": "geometry_invalid",
+        "start_s": 30.740000000000002
+      },
+      {
+        "end_s": 31.61,
+        "reason": "marker_dropout",
+        "start_s": 31.6
+      },
+      {
+        "end_s": 33.120000000000005,
+        "reason": "geometry_invalid",
+        "start_s": 33.11
+      },
+      {
+        "end_s": 35.34,
+        "reason": "marker_dropout",
+        "start_s": 35.32
+      },
+      {
+        "end_s": 36.17,
+        "reason": "geometry_invalid",
+        "start_s": 36.050000000000004
+      },
+      {
+        "end_s": 36.08,
+        "reason": "marker_dropout",
+        "start_s": 36.08
+      },
+      {
+        "end_s": 36.120000000000005,
+        "reason": "marker_dropout",
+        "start_s": 36.120000000000005
+      },
+      {
+        "end_s": 36.17,
+        "reason": "marker_dropout",
+        "start_s": 36.14
+      },
+      {
+        "end_s": 36.190000000000005,
+        "reason": "geometry_invalid",
+        "start_s": 36.190000000000005
+      },
+      {
+        "end_s": 37.75,
+        "reason": "marker_dropout",
+        "start_s": 37.75
+      },
+      {
+        "end_s": 38.550000000000004,
+        "reason": "marker_jump",
+        "start_s": 38.54
+      },
+      {
+        "end_s": 39.38,
+        "reason": "marker_dropout",
+        "start_s": 39.370000000000005
+      },
+      {
+        "end_s": 39.81,
+        "reason": "marker_dropout",
+        "start_s": 39.81
+      },
+      {
+        "end_s": 41.32,
+        "reason": "marker_dropout",
+        "start_s": 41.32
+      },
+      {
+        "end_s": 43.52,
+        "reason": "marker_dropout",
+        "start_s": 43.52
+      },
+      {
+        "end_s": 56.2,
+        "reason": "command_invalid",
+        "start_s": 56.2
+      }
+    ],
+    "cable_valid_fraction": 0.9996160558464223,
+    "flagged_frame_counts": {
+      "quality_command_invalid": 88,
+      "quality_command_stale": 0,
+      "quality_geometry_invalid": 21,
+      "quality_marker_dropout": 19,
+      "quality_marker_jump": 6,
+      "quality_uav_invalid": 0,
+      "quality_uav_jump": 0
+    },
+    "long_dropout_intervals": [],
+    "marker_valid_fraction": [
+      0.999825479930192,
+      1.0,
+      0.999825479930192,
+      1.0,
+      0.999825479930192,
+      0.999650959860384,
+      1.0,
+      1.0,
+      0.9994764397905759,
+      0.9975567190226876
+    ],
+    "maximum_measured_interval_error_m": 0.08295283674761639,
+    "uav_valid_fraction": 1.0
+  },
+  "ros_to_logger_motive": {
+    "maximum_residual_s": 0.0024528121948605985,
+    "offset": -1787858807.845461,
+    "rejected_count": 50,
+    "rms_residual_s": 0.0006197220825843049,
+    "sample_count": 8317,
+    "slope": 0.9999884304275947
+  },
+  "schema": "aerial_cable_sync_report_v1",
+  "scientific_timeline": {
+    "duration_s": 57.290000000000006,
+    "logger_first_synchronized_time_s": -0.4299999999998363,
+    "logger_last_synchronized_time_s": 83.29000000000019,
+    "logger_post_history_excluded_s": 16.420000000000186,
+    "logger_pre_history_available_s": 10.009999999999836,
+    "motive_end_time_s": 66.87,
+    "motive_start_time_s": 9.58,
+    "scientific_samples_are_motive_frames_only": true,
+    "source": "motive_manual_trim"
+  },
+  "take_id": "fig8_003",
+  "warnings": [
+    "Isolated Motive cable-marker dropout is retained as NaN plus validity masks."
+  ]
+}
