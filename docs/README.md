@@ -9,6 +9,7 @@ Current entry points:
 
 - [Project context and active experiments](PROJECT_CONTEXT.md)
 - [Flight adaptation quickstart and ROS recorder interface](FLIGHT_ADAPTATION_QUICKSTART.md)
+- [Supplied Mellinger controller script review and force mapping](CONTROLLER_INTERFACE_REVIEW.md)
 - [Between-trial adaptation research proposal](RESEARCH_PROPOSAL_ADAPTIVE_AERIAL_WHIP.md)
 - [Identification research design](IDENTIFICATION_RESEARCH_DESIGN.md)
 - [Open-loop initial-state contract](INITIAL_STATE_OPEN_LOOP.md)

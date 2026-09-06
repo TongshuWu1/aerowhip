@@ -1,5 +1,16 @@
 # Project decisions to retain
 
+Controller file received September 6: colleague supplied Downloads/force_controller.py.
+It is a ROS 2/Crazyswarm2 Mellinger feedforward-hover test, not a custom Lee
+implementation or PPO executor. Review: docs/CONTROLLER_INTERFACE_REVIEW.md.
+Under the inspected upstream firmware, convert total world force using
+a_ff=F_policy/ctrlMel.mass-[0,0,g_firmware]. Actual firmware/frame/massThrust
+remain unverified. Offline mocks found 0.82 s setpoint gaps during gain switching
+and six gains left zero after Ctrl-C during feedforward. No real ROS/hardware
+execution and no edits to the supplied script were performed. Its 0.40 m takeoff
+does not accommodate our 0.9525 m hanging cable. Vehicle identity and firmware
+parameters have been requested; do not infer them from upstream defaults.
+
 SAC baseline decision, September 6: user says SAC itself is not needed; the goal
 is baseline comparison. SAC was intentionally stopped at 32,768 attempts after
 validation collapsed from 48.8% to 0%. Saved critics predict initial values around

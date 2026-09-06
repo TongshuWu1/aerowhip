@@ -14,7 +14,8 @@ import zipfile
 
 ROOT=Path(__file__).resolve().parents[1]
 PACKAGES=('simulator','learning','experimental_data','tools','tests')
-GUIDES=('INSTALL.md','ARCHITECTURE.md','REPRODUCIBILITY.md','PUBLICATION.md')
+GUIDES=('INSTALL.md','ARCHITECTURE.md','REPRODUCIBILITY.md','PUBLICATION.md',
+        'CONTROLLER_INTERFACE_REVIEW.md')
 CONFIGS=('model','task','ppo','sac','cable_fit')
 
 

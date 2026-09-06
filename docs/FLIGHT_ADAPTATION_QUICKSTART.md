@@ -16,7 +16,14 @@ The new UI is available after restarting the UI. The separate training queue can
 
 ## If ROS runs alongside the simulator
 
-The user has not selected ROS 1 versus ROS 2 or confirmed message types yet. The recording core is independent of that decision: `experimental_data.flight_recorder.FlightRecorder` accepts callback data and produces the same importable trial folder. It needs no ROS dependency and does not publish commands. A small adapter can call these methods from either ROS version after explicitly converting frames/units:
+The colleague's supplied script uses ROS 2/Crazyswarm2 and onboard Mellinger.
+Its force mapping and unresolved transition issues are documented in the
+[controller review](CONTROLLER_INTERFACE_REVIEW.md). The exact installed stack
+and tracking/controller log messages still need confirmation. The recording core
+is transport-independent: `experimental_data.flight_recorder.FlightRecorder`
+accepts callback data and produces the same importable trial folder. It needs
+no ROS dependency and does not publish commands. A small adapter can call these
+methods after explicitly converting frames/units:
 
 ```python
 recorder = FlightRecorder(new_folder, exact_model_snapshot, exact_task_snapshot, metadata=trial_metadata)
