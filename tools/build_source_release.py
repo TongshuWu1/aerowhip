@@ -13,9 +13,9 @@ import re
 import zipfile
 
 ROOT=Path(__file__).resolve().parents[1]
-PACKAGES=('simulator','learning','experimental_data','tools','tests')
+PACKAGES=('simulator','learning','experimental_data','tools','tests','deployment')
 GUIDES=('INSTALL.md','ARCHITECTURE.md','REPRODUCIBILITY.md','PUBLICATION.md',
-        'CONTROLLER_INTERFACE_REVIEW.md')
+        'CONTROLLER_INTERFACE_REVIEW.md','LAB_SETUP.md')
 CONFIGS=('model','task','ppo','sac','cable_fit')
 
 
@@ -62,6 +62,7 @@ def build(root,output):
     for folder in PACKAGES:
         for path in sorted((root/folder).rglob('*')):
             if '__pycache__' in path.parts:continue
+            if folder=='deployment' and 'reference' in path.relative_to(root/folder).parts:continue
             if path.is_file() and path.suffix in ('.py','.svg'):add(path.relative_to(root))
     for path in sorted((root/'requirements').glob('*')):
         if path.suffix in ('.txt','.json'):add(path.relative_to(root))

@@ -231,11 +231,11 @@
   },
   "schema": "point_force_ppo_training_v1",
   "seed": 651,
-  "status": "frozen_20hz_500k_comparison",
+  "status": "lab_new_run_defaults_20hz",
   "training": {
     "canonical_initial_state_fraction": 1.0,
-    "collection_batch": 32768,
-    "device": "cuda",
+    "collection_batch": 1024,
+    "device": "auto",
     "requested_episodes": 500000
   },
   "update_guard": {
@@ -252,7 +252,7 @@
   "validation": {
     "enabled": true,
     "episodes": 256,
-    "every_episodes": 32768,
+    "every_episodes": 1024,
     "policy": "deterministic_open_loop"
   }
 }

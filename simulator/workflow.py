@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import re
 import shutil
+import sys
 
 from experimental_data.io import atomic_json, canonical_json_hash, resolve_raw_pair, sha256_file
 
@@ -120,7 +121,7 @@ def prepare_training(root, algorithm, *, seed, episodes, batch, device, override
         display_name=name, seed=config['seed'], resumed_from=str(resume) if resume else None,
         baseline=read_json(root / 'config/baseline.json', {}) if not resume else {'inherited_from': str(source)},
         config_sha256={key: canonical_json_hash(value) for key, value in configs.items()}))
-    command = [str(root / '.venv/Scripts/python.exe'), '-u', f'run_{algorithm}.py', '--train',
+    command = [sys.executable, '-u', f'run_{algorithm}.py', '--train',
                '--config-directory', str(launch), '--device', device, '--episodes', str(episodes)]
     command += ['--artifact-directory' if algorithm == 'ppo' else '--artifact', str(directory),
                 '--batch-size' if algorithm == 'ppo' else '--batch', str(batch)]
@@ -142,7 +143,7 @@ def prepare_data_job(root, kind, model):
     fit['comparison_baseline'] = dict(boundary='current_one_position_node_pivot',
         **{key: model['cable'][key] for key in ('EI_n_m2', 'Cb_n_m2_s')})
     atomic_json(directory / 'fit_config.json', fit)
-    return directory, [str(root / '.venv/Scripts/python.exe'), '-u', '-m', 'simulator.workflow',
+    return directory, [sys.executable, '-u', '-m', 'simulator.workflow',
                         kind, '--root', str(root), '--job', str(directory)]
 
 

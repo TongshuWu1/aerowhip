@@ -245,6 +245,9 @@ def test_real_short_training_writes_batch_validation_and_run_snapshot(workspace,
     task = read_json(workspace / 'config/task.json')
     shared = read_json(workspace / 'config/ppo.json')
     task['episode_duration_s'] = .1
+    # This short synthetic task cannot use the production one-second prior.
+    shared['bootstrap']['enabled'] = False
+    shared['deployment']['recovery_duration_s'] = .5
     shared['ppo'].update(hidden_dim=8, minibatch_transitions=2, update_epochs=1)
     shared['validation'].update(episodes=2, every_episodes=2)
     shared['update_guard'].update(validation_episodes=2)
@@ -252,6 +255,7 @@ def test_real_short_training_writes_batch_validation_and_run_snapshot(workspace,
     for name, value in (('model', model), ('task', task), ('ppo', shared)):
         atomic_json(workspace / 'config' / f'{name}.json', value)
     sac = read_json(workspace / 'config/sac.json')
+    sac['bootstrap']['enabled'] = False
     sac['sac'].update(hidden_dim=8, replay_capacity=32, minibatch_transitions=2, updates_per_collection=1)
     sac['validation']['episodes'] = 2
     atomic_json(workspace / 'config/sac.json', sac)

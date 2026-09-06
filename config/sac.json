@@ -85,7 +85,7 @@
     "initial_temperature": 0.02,
     "maximum_gradient_norm": 10.0,
     "minibatch_transitions": 1024,
-    "replay_capacity": 2621440,
+    "replay_capacity": 262144,
     "scale_updates_with_actual_batch": true,
     "stochastic_action_indices": [
       0,
@@ -95,21 +95,21 @@
     "target_entropy": -7.0,
     "target_smoothing_tau": 0.005,
     "temperature_learning_rate": 0.0001,
-    "updates_per_collection": 8192,
+    "updates_per_collection": 256,
     "warmup_transitions": 16384
   },
   "schema": "point_force_sac_algorithm_v1",
   "seed": 651,
   "training": {
-    "collection_batch": 32768,
-    "device": "cuda",
+    "collection_batch": 1024,
+    "device": "auto",
     "execution": "initial_state_only_open_loop_once_with_pid_recovery",
     "requested_episodes": 500000
   },
   "validation": {
     "enabled": true,
     "episodes": 256,
-    "every_episodes": 32768,
+    "every_episodes": 1024,
     "policy": "deterministic_open_loop"
   }
 }

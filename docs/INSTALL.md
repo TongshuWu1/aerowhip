@@ -1,5 +1,8 @@
 # Installation
 
+For the current private lab bundles and PyCharm/Ubuntu instructions, start with
+[lab setup](LAB_SETUP.md). The selected-policy bundle differs from a source-only release.
+
 The development workstation uses Windows and Python 3.12. The tested direct-package inventory is in `requirements/environment.windows-py312.json`. It records one observed environment, not a complete cross-platform lockfile. Hardware deployment and ROS are not part of this installer.
 
 ## Create an isolated environment

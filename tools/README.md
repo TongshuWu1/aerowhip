@@ -4,6 +4,8 @@ These scripts run from the repository root using `.venv/Scripts/python.exe`.
 
 | Task | Script |
 |---|---|
+| Export private development and selected-PPO deployment bundles | `export_lab_transfer.py --output <new-folder-outside-project>` |
+| CPU/CUDA environment check without training | `lab_preflight.py --device cpu` (or `--device cuda --batch 1024`) |
 | Build a portable source-only review bundle | `build_source_release.py` |
 | Flight template, import, replay, physical fit, force correction | `adapt_flight.py` |
 | Process preliminary OptiTrack/Motive recordings | `process_takes.py` |

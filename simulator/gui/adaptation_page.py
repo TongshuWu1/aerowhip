@@ -1,6 +1,7 @@
 """Recorded flights, physical candidates, and local command correction."""
 from pathlib import Path
 import shutil
+import sys
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPixmap, QDesktopServices
 from PySide6.QtCore import QUrl
@@ -90,7 +91,7 @@ class AdaptationPage(QWidget):
         trial=self.trials[row].parent if row>=0 else selected[0]
         directory=self.root/'data/adaptation_jobs'/f'{stamp()}-{mode}'
         self.last_output=directory/'result'
-        command=[str(self.root/'.venv/Scripts/python.exe'),'-u','tools/adapt_flight.py',mode,
+        command=[sys.executable,'-u','tools/adapt_flight.py',mode,
                  '--model',self.models.currentData(),'--output',str(self.last_output)]
         command+=['--trials',*map(str,selected)] if mode=='fit' else ['--source',str(trial)]
         try:self.job.start(directory,command)

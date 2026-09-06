@@ -8,6 +8,11 @@ The real Lee-controller interface and force response are not yet validated. Adap
 
 ## Start here
 
+For the current Windows/Ubuntu lab transfer, read [HANDOFF.md](HANDOFF.md) and
+[lab setup](docs/LAB_SETUP.md). The selected PPO can be transferred without retraining.
+The [small deployment package](deployment/README.md) plans offline; the real ROS
+controller bridge remains to be implemented and verified with the colleague.
+
 For a new environment, start with [installation](docs/INSTALL.md). For a source-only
 research release, see [publication preparation](docs/PUBLICATION.md). The release
 builder creates a portable review bundle without copying recordings, checkpoints,

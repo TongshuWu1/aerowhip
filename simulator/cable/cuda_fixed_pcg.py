@@ -10,6 +10,7 @@ the call site.
 from __future__ import annotations
 
 import ctypes
+import ctypes.util
 import os
 from pathlib import Path
 import re
@@ -20,19 +21,23 @@ import torch
 
 
 def _nvrtc_library_path() -> Path:
-    """Find Windows NVRTC in an explicit Toolkit or the CUDA PyTorch wheel."""
+    """Find NVRTC in a toolkit or the host's CUDA-enabled PyTorch installation."""
     directories = []
     configured = os.environ.get("CUDA_PATH", "").strip()
     if configured:
         toolkit = Path(configured).expanduser()
         if toolkit.is_absolute():
-            directories.append(toolkit / "bin")
-    directories.append(Path(torch.__file__).resolve().parent / "lib")
+            directories.extend([toolkit / "bin", toolkit / "lib64"])
+    torch_root = Path(torch.__file__).resolve().parent
+    directories.append(torch_root / "lib")
+    if os.name != "nt":
+        directories.extend([torch_root.parent / 'nvidia/cuda_nvrtc/lib',
+                            Path('/usr/local/cuda/lib64')])
     for directory in directories:
-        candidates = sorted(
-            path for path in directory.glob("nvrtc64_*.dll")
-            if path.is_file() and re.fullmatch(r"nvrtc64_\d+(?:_\d+)*\.dll", path.name)
-        )
+        pattern = "nvrtc64_*.dll" if os.name == 'nt' else 'libnvrtc.so*'
+        candidates = sorted(path for path in directory.glob(pattern)
+            if path.is_file() and (os.name != 'nt' or
+                re.fullmatch(r"nvrtc64_\d+(?:_\d+)*\.dll", path.name)))
         if candidates:
             return candidates[-1].resolve()
     searched = ", ".join(str(path) for path in directories)
@@ -1175,8 +1180,10 @@ class _FixedPcgKernel:
         nvrtc_path = _nvrtc_library_path()
         if hasattr(os, "add_dll_directory"):
             self._dll_directory = os.add_dll_directory(str(nvrtc_path.parent))
-        self._nvrtc = ctypes.WinDLL(str(nvrtc_path))
-        self._cuda = ctypes.WinDLL("nvcuda.dll")
+        loader = ctypes.WinDLL if os.name == 'nt' else ctypes.CDLL
+        self._nvrtc = loader(str(nvrtc_path))
+        self._cuda = loader("nvcuda.dll" if os.name == 'nt' else
+                            (ctypes.util.find_library('cuda') or 'libcuda.so.1'))
         self._configure_signatures()
         self._check_cuda(self._cuda.cuInit(0), "cuInit")
         major, minor = torch.cuda.get_device_capability()

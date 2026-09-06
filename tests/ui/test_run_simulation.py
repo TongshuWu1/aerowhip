@@ -88,7 +88,7 @@ def test_policy_rollout_ends_on_success_without_recording_the_remaining_horizon(
                                      progress_callback=lambda done, total: progress.append((done, total)))
     assert summary["success"]
     assert summary["hit_time_s"] == summary["duration_s"] == .01
-    assert summary["maximum_duration_s"] == 7.
+    assert summary["maximum_duration_s"] == task["episode_duration_s"]
     assert len(arrays["time_s"]) == 2
     assert len(arrays["commanded_force_world_n"]) == 1
     assert progress[-1] == (1, 1)

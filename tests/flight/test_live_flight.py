@@ -91,8 +91,10 @@ def test_compile_uses_initial_state_and_cuts_the_sequence_at_predicted_first_hit
         return torch.zeros((1, 3))
     plan = compile_strike_plan(model, task, ppo, initial, policy,
                                physics=lambda *_: (next_q, next_v))
-    assert len(plan.forces_world_n) == 1  # Do not finish even the ten-step action hold.
-    assert plan.duration_s == .01
+    # One contact step plus the configured frozen follow-through; no new actor query.
+    expected_steps = 1 + round(ppo['deployment']['strike_followthrough_s']/model['simulation']['dt_s'])
+    assert len(plan.forces_world_n) == expected_steps
+    assert plan.duration_s == expected_steps * model['simulation']['dt_s']
     assert len(observations) == 1
     torch.testing.assert_close(plan.initial_observation, observations[0])
     torch.testing.assert_close(observations[0][0, 36:72], (v / 5.).float().flatten())
