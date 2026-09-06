@@ -1,20 +1,31 @@
-# Current learning package
+# Learning
 
-This package contains the retained learned-control paths and shared production
-context/action interfaces:
+PPO and SAC share the point-force task and initial-state-only strike execution.
+`simple_ppo.py` implements PPO; `simple_sac.py` implements SAC.
+`point_force_env.py` provides the 79-value nominal-state observation, force
+mapping, hit conditions and reward. `deployment_rollout.py` plans a finite
+sequence from an initial estimate, executes it on a separate plant, and scores
+its strike and PID recovery. SAC replay integration is in `sac_deployment.py`.
 
-- `sequential_sac_env.py`: full-model sequential whip environment used by both
-  PPO and the stopped SAC baseline.
-- `simple_ppo.py`: selected PPO actor/value implementation.
-- `ppo_validation.py`: deterministic state-bank validation and plots.
-- `ppo_trajectory_compiler.py`: zero-training feedback/open-loop audit tools.
-- `simple_sac.py`: retained pure-SAC negative baseline.
-- `normalization.py`, `policy_context.py`, `policy_action.py`, `state_bank.py`,
-  and `context_sampling.py`: shared production data contracts used by PPO/CEM.
+The current action has three world-frame force components. Exploration uses Fx
+and Fz; Fy is fixed at zero for the symmetric task. The actual plant does not
+feed observations or hit results into force selection or the scheduled cutoff.
 
-Figure-eight SAC, one-shot SAC helpers, diffusion/amortization, flick, and
-iterative-residual branches are historical and are not part of the active
-package. Their source and full artifacts are recoverable from the dated sibling
-archive.
+The hit conditions require a tip-first target entry within 5 cm, at least
+4 m/s of world-frame tip velocity along the desired strike direction, and at
+most 45 degrees of velocity-direction error. Angle is a binary gate. The
+terminal cable tangent is a diagnostic, not the hit vector.
 
-Current evidence and checkpoints are organized under [`results/`](../results/README.md).
+Task reward and force settings are in `config/ppo.json` and are shared by both
+algorithms. The elapsed-time cost is 1 point/s. A failed PID recovery adds a
+bounded cost. Whole-plan returns are undiscounted. Algorithm hyperparameters
+remain in `config/ppo.json` and `config/sac.json` respectively.
+
+All previous exploratory checkpoints and policy results were removed on
+2026-09-05. New paper experiments start with fresh policies and a frozen
+physical baseline. The retained calibration data precede policy deployment.
+
+See [the paper protocol](../docs/PAPER_EXPERIMENT_PROTOCOL.md) for proposed
+seed repetitions, common validation scenarios, required logging and figure
+exports. Several reporting requirements, including complete validation history,
+remain implementation work for the redesigned experiment workflow.

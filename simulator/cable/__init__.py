@@ -6,6 +6,7 @@ from .dder import (
     DderModel,
     DderParameters,
     DderState,
+    FREE_ENDPOINTS,
     START_PINNED_FREE_END,
 )
 from .initialization import (
@@ -20,6 +21,7 @@ __all__ = [
     "DderModel",
     "DderParameters",
     "DderState",
+    "FREE_ENDPOINTS",
     "START_PINNED_FREE_END",
     "clamped_hanging_cable_state",
     "hanging_cable_state",

@@ -1,179 +1,138 @@
-"""Publication-quality shell for the production research workflow."""
-
-from __future__ import annotations
-
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QColor, QCloseEvent, QPalette
-from PySide6.QtWidgets import (
-    QButtonGroup,
-    QFrame,
-    QHBoxLayout,
-    QLabel,
-    QMainWindow,
-    QPushButton,
-    QTabWidget,
-    QVBoxLayout,
-    QWidget,
-)
-
-from ..parameters import SimulatorSettings
-from .data_page import DataPage
-from .model_page import ModelPage
-from .planning_page import PlanningPage
-from .replay_page import SimulatorReplayPage
-from .training_page import TrainingPage
-from .theme import APP_STYLE, set_status_badge
-
+"""Five-stage interface for preliminary calibration and open-loop policy research."""
+from pathlib import Path
+from PySide6.QtCore import QTimer
+from PySide6.QtGui import QColor, QPalette
+from PySide6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QFrame,
+                              QLabel, QPushButton, QTabWidget, QButtonGroup)
+from .calibration_page import BaselinePage
+from .reward_page import RewardSettingsPage
+from .training_workspace import AlgorithmTrainingPage
+from .adaptation_page import AdaptationPage
+from .research_widgets import note
+from .theme import APP_STYLE, load_application_font
 
 PAGE_DEFINITIONS = (
-    ("Run & Replay", "Execute the frozen controller and inspect the complete maneuver"),
-    ("PPO Training", "Live learning, state-bank validation, and compactness progression"),
-    ("Production Model", "Frozen UAV, residual, cable, geometry, and validation evidence"),
-    ("Experimental Data", "Accepted physical takes and immutable scientific ownership"),
-    ("Planning Archive", "Authoritative CEM and historical planning references"),
+    ('Data & Calibration', 'Recordings → fit setup → review and apply a physical baseline'),
+    ('Task & Rewards', 'Shared strike conditions for PPO and SAC'),
+    ('PPO', 'Train, inspect validation, and fly the latest policy'),
+    ('SAC', 'Train, inspect validation, and fly the latest policy'),
+    ('Real-world Updates', 'Recorded-flight replay, physical candidates and force-sequence refinement'),
 )
 
 
 class SimulatorMainWindow(QMainWindow):
-    """Workflow-first shell with scientific logic outside Qt widgets."""
-
-    def __init__(self, settings: SimulatorSettings) -> None:
+    def __init__(self, project_root, model_config, task_config, ppo_config):
         super().__init__()
-        self.settings = settings
-        self.setWindowTitle("Aerial Cable Research — Production")
+        self.project_root=Path(project_root)
+        load_application_font()
+        self.setWindowTitle('Aerial Cable Research')
         self.resize(1440, 900)
         self.setMinimumSize(1120, 720)
         palette = self.palette()
-        palette.setColor(QPalette.ColorRole.Window, QColor("#f8fafc"))
-        palette.setColor(QPalette.ColorRole.WindowText, QColor("#0f172a"))
-        palette.setColor(QPalette.ColorRole.Base, QColor("#ffffff"))
-        palette.setColor(QPalette.ColorRole.AlternateBase, QColor("#f1f5f9"))
-        palette.setColor(QPalette.ColorRole.Text, QColor("#0f172a"))
-        palette.setColor(QPalette.ColorRole.Button, QColor("#ffffff"))
-        palette.setColor(QPalette.ColorRole.ButtonText, QColor("#0f172a"))
-        palette.setColor(QPalette.ColorRole.Highlight, QColor("#2563eb"))
-        palette.setColor(QPalette.ColorRole.HighlightedText, QColor("#ffffff"))
+        for role, color in ((QPalette.ColorRole.Window, '#f5f7fb'),
+                (QPalette.ColorRole.WindowText, '#172033'), (QPalette.ColorRole.Base, '#ffffff'),
+                (QPalette.ColorRole.AlternateBase, '#f5f7fb'), (QPalette.ColorRole.Text, '#172033'),
+                (QPalette.ColorRole.Button, '#ffffff'), (QPalette.ColorRole.ButtonText, '#172033'),
+                (QPalette.ColorRole.Highlight, '#2563eb'), (QPalette.ColorRole.HighlightedText, '#ffffff')):
+            palette.setColor(role, QColor(color))
         self.setPalette(palette)
         self.setStyleSheet(APP_STYLE)
-        shell = QWidget(self)
-        shell.setObjectName("applicationShell")
-        shell_layout = QHBoxLayout(shell)
-        shell_layout.setContentsMargins(0, 0, 0, 0)
-        shell_layout.setSpacing(0)
+        shell = QWidget()
+        shell.setObjectName('applicationShell')
         self.setCentralWidget(shell)
-
-        sidebar = QFrame(shell)
-        sidebar.setObjectName("sideBar")
-        sidebar.setFixedWidth(224)
-        sidebar_layout = QVBoxLayout(sidebar)
-        sidebar_layout.setContentsMargins(18, 22, 18, 18)
-        sidebar_layout.setSpacing(8)
-        brand = QLabel("AERIAL CABLE\nRESEARCH")
-        brand.setObjectName("brandTitle")
-        brand_subtitle = QLabel("PRODUCTION CONSOLE")
-        brand_subtitle.setObjectName("brandSubtitle")
-        sidebar_layout.addWidget(brand)
-        sidebar_layout.addWidget(brand_subtitle)
-        sidebar_layout.addSpacing(26)
-        section = QLabel("WORKFLOW")
-        section.setObjectName("sideSection")
-        sidebar_layout.addWidget(section)
+        layout = QHBoxLayout(shell)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.setSpacing(0)
+        sidebar = QFrame()
+        sidebar.setObjectName('sideBar')
+        sidebar.setFixedWidth(218)
+        navigation = QVBoxLayout(sidebar)
+        navigation.setContentsMargins(16, 24, 16, 20)
+        navigation.setSpacing(10)
+        brand = QLabel('AERIAL CABLE\nRESEARCH')
+        brand.setObjectName('brandTitle')
+        navigation.addWidget(brand)
+        subtitle = QLabel('SIM → REAL → SIM')
+        subtitle.setObjectName('brandSubtitle')
+        navigation.addWidget(subtitle)
+        navigation.addSpacing(30)
         self.navigation_group = QButtonGroup(self)
-        self.navigation_group.setExclusive(True)
-        self.navigation_buttons: list[QPushButton] = []
-        for index, (title, _) in enumerate(PAGE_DEFINITIONS):
-            button = QPushButton(f"{index + 1:02d}   {title}")
-            button.setObjectName("navButton")
-            button.setCheckable(True)
-            button.clicked.connect(
-                lambda checked=False, page_index=index: self.main_tabs.setCurrentIndex(
-                    page_index
-                )
-            )
-            self.navigation_group.addButton(button, index)
-            self.navigation_buttons.append(button)
-            sidebar_layout.addWidget(button)
-        sidebar_layout.addStretch(1)
-        divider = QFrame()
-        divider.setFixedHeight(1)
-        divider.setStyleSheet("background: #334155; border: none;")
-        sidebar_layout.addWidget(divider)
-        freeze_label = QLabel("MODEL FREEZE\nREMEASURED GEOMETRY")
-        freeze_label.setObjectName("sideFootnote")
-        freeze_label.setStyleSheet("font-size: 8pt; font-weight: 700;")
-        sidebar_layout.addWidget(freeze_label)
-        simulation_label = QLabel("SIMULATION ONLY")
-        set_status_badge(simulation_label, "SIMULATION ONLY", "dark")
-        sidebar_layout.addWidget(simulation_label)
-        shell_layout.addWidget(sidebar)
-
-        content = QWidget(shell)
-        content_layout = QVBoxLayout(content)
-        content_layout.setContentsMargins(0, 0, 0, 0)
-        content_layout.setSpacing(0)
-        top_bar = QFrame(content)
-        top_bar.setObjectName("topBar")
-        top_bar.setFixedHeight(78)
-        top_bar_layout = QHBoxLayout(top_bar)
-        top_bar_layout.setContentsMargins(24, 14, 24, 14)
-        heading = QVBoxLayout()
-        heading.setSpacing(1)
-        self.shell_page_title = QLabel()
-        self.shell_page_title.setObjectName("shellPageTitle")
-        self.shell_page_subtitle = QLabel()
-        self.shell_page_subtitle.setObjectName("shellPageSubtitle")
-        heading.addWidget(self.shell_page_title)
-        heading.addWidget(self.shell_page_subtitle)
-        top_bar_layout.addLayout(heading)
-        top_bar_layout.addStretch(1)
-        model_badge = QLabel()
-        set_status_badge(model_badge, "MODEL FROZEN", "success")
-        top_bar_layout.addWidget(model_badge)
-        physics_badge = QLabel()
-        set_status_badge(physics_badge, "FULL UAV + DDER", "info")
-        top_bar_layout.addWidget(physics_badge)
-        content_layout.addWidget(top_bar)
-
-        self.main_tabs = QTabWidget(content)
+        self.navigation_buttons = []
+        self.main_tabs = QTabWidget()
         self.main_tabs.tabBar().hide()
         self.main_tabs.setDocumentMode(True)
-        content_layout.addWidget(self.main_tabs, 1)
-        shell_layout.addWidget(content, 1)
-        self.simulator_page = SimulatorReplayPage(self, settings=settings)
-        self.data_page = DataPage(settings, self)
-        self.model_page = ModelPage(settings, self)
-        self.planning_page = PlanningPage(self)
-        self.training_page = TrainingPage(self)
-        self.main_tabs.addTab(self.simulator_page, "Run & Replay")
-        self.main_tabs.addTab(self.training_page, "PPO Training")
-        self.main_tabs.addTab(self.model_page, "Production Model")
-        self.main_tabs.addTab(self.data_page, "Experimental Data")
-        self.main_tabs.addTab(self.planning_page, "Planning Archive")
+        for index, (title, _) in enumerate(PAGE_DEFINITIONS):
+            button = QPushButton(f'{index+1:02d}   {title.replace("&", "&&")}')
+            button.setObjectName('navButton')
+            button.setCheckable(True)
+            button.clicked.connect(lambda checked=False, index=index: self.main_tabs.setCurrentIndex(index))
+            self.navigation_group.addButton(button, index)
+            self.navigation_buttons.append(button)
+            navigation.addWidget(button)
+        navigation.addStretch()
+        footnote = QLabel('INITIAL STATE → ONE STRIKE\nPoint force + DDER cable')
+        footnote.setObjectName('sideFootnote')
+        footnote.setStyleSheet('font-size: 9pt;')
+        navigation.addWidget(footnote)
+        layout.addWidget(sidebar)
+        content = QVBoxLayout()
+        content.setContentsMargins(0, 0, 0, 0)
+        content.setSpacing(0)
+        header = QFrame()
+        header.setObjectName('topBar')
+        heading = QVBoxLayout(header)
+        heading.setContentsMargins(24, 16, 24, 16)
+        heading.setSpacing(3)
+        self.shell_page_title = QLabel()
+        self.shell_page_title.setObjectName('shellPageTitle')
+        self.shell_page_subtitle = QLabel()
+        self.shell_page_subtitle.setObjectName('shellPageSubtitle')
+        heading.addWidget(self.shell_page_title)
+        heading.addWidget(self.shell_page_subtitle)
+        self.model_status=note('');heading.addWidget(self.model_status)
+        content.addWidget(header)
+        content.addWidget(self.main_tabs, 1)
+        layout.addLayout(content, 1)
+        self.baseline_page = BaselinePage(project_root)
+        self.baseline_page.baseline_applied.connect(self.refresh_model_status)
+        self.reward_page = RewardSettingsPage(project_root, ppo_config)
+        self.training_page = AlgorithmTrainingPage(project_root, 'PPO')
+        self.sac_page = AlgorithmTrainingPage(project_root, 'SAC')
+        self.adaptation_page = AdaptationPage(project_root)
+        for page, (title, _) in zip((self.baseline_page, self.reward_page, self.training_page,
+                                    self.sac_page, self.adaptation_page), PAGE_DEFINITIONS):
+            self.main_tabs.addTab(page, title)
+        self.closing = False
+        for page in (self.training_page, self.sac_page):
+            page.viewport.flight_finished.connect(self.retry_close)
         self.main_tabs.currentChanged.connect(self._page_changed)
-        self.planning_page.replay_requested.connect(self._show_replay)
-        self.navigation_buttons[0].setChecked(True)
         self._page_changed(0)
+        self.refresh_model_status()
 
-    def _page_changed(self, index: int) -> None:
-        page = self.main_tabs.widget(index)
+    def refresh_model_status(self):
+        from simulator.workflow import read_json
+        model=read_json(self.project_root/'config/model.json');baseline=read_json(self.project_root/'config/baseline.json',{})
+        self.model_status.setText(f'Active model: {baseline.get("version","initial")}  ·  Cable drag {model["cable"].get("external_drag_s_inv",0):g}/s  ·  Applied to new runs')
+        for page in (self.training_page,self.sac_page):page.refresh()
+
+    def _page_changed(self, index):
         title, subtitle = PAGE_DEFINITIONS[index]
         self.shell_page_title.setText(title)
         self.shell_page_subtitle.setText(subtitle)
         self.navigation_buttons[index].setChecked(True)
-        if page is self.data_page:
-            self.data_page.refresh()
-        elif page is self.model_page:
-            self.model_page.refresh()
-        elif page is self.planning_page:
-            self.planning_page.refresh()
-        elif page is self.training_page:
-            self.training_page.refresh()
+        self.training_page.set_page_active(index == 2)
+        self.sac_page.set_page_active(index == 3)
+        if index == 1:
+            self.reward_page.page_activated()
 
-    def _show_replay(self, result_directory: str) -> None:
-        self.simulator_page.load_result(result_directory)
-        self.main_tabs.setCurrentWidget(self.simulator_page)
+    def retry_close(self):
+        if self.closing:
+            QTimer.singleShot(0, self.close)
 
-    def closeEvent(self, event: QCloseEvent) -> None:  # noqa: N802
-        self.simulator_page.close()
-        self.data_page.close()
+    def closeEvent(self, event):
+        self.closing = True
+        ready = [page.shutdown() for page in (self.training_page, self.sac_page)]
+        if not all(ready):
+            event.ignore()
+            return
         super().closeEvent(event)

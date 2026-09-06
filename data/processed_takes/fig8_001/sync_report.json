@@ -2,10 +2,10 @@
   "commands": {
     "availability": "logger cmd_valid at matched NatNet/Motive frame",
     "command_coverage_fraction": 0.9451575262543758,
-    "command_event_rate_hz": 29.999965283969022,
+    "command_event_rate_hz": 29.999965109516808,
     "duplicate_value_conflicts": 0,
     "first_command_take_time_s": 8.735376291274974,
-    "last_command_take_time_s": 49.735423736572216,
+    "last_command_take_time_s": 49.735423974990795,
     "raw_command_diagnostics_no_unit_inference": {
       "command_omega_raw_absolute_max": 0.0,
       "command_quaternion_xy_norm_max": 0.0,
@@ -73,11 +73,11 @@
   },
   "logger_motive_to_take": {
     "maximum_residual_s": 7.283063041541027e-14,
-    "offset": -263.8200000000001,
+    "offset": -263.82000000000005,
     "rejected_count": 0,
     "rms_residual_s": 4.6401737721925173e-14,
     "sample_count": 4284,
-    "slope": 1.0000000000000002
+    "slope": 1.0
   },
   "missing_marker_samples": {
     "c1": 0,
@@ -124,16 +124,16 @@
       1.0,
       1.0
     ],
-    "maximum_measured_interval_error_m": 0.009077249641943369,
+    "maximum_measured_interval_error_m": 0.005086284435917368,
     "uav_valid_fraction": 1.0
   },
   "ros_to_logger_motive": {
     "maximum_residual_s": 0.0006967163085960237,
-    "offset": -1787875624.6488922,
+    "offset": -1787875624.648892,
     "rejected_count": 658,
-    "rms_residual_s": 0.00015225672448320878,
+    "rms_residual_s": 0.00015225561707993987,
     "sample_count": 5335,
-    "slope": 0.9999978364309975
+    "slope": 0.9999978364309974
   },
   "schema": "aerial_cable_sync_report_v1",
   "scientific_timeline": {
@@ -148,7 +148,5 @@
     "source": "motive_manual_trim"
   },
   "take_id": "fig8_001",
-  "warnings": [
-    "Fitting disabled: the logger mapping is audited, but the FullState publisher, Crazyflie controller/estimator configuration, and cmd_omega frame remain unavailable."
-  ]
+  "warnings": []
 }

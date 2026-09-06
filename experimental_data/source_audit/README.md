@@ -10,8 +10,6 @@ logger subscribes to `crazyflie_interfaces.msg.FullState`, copies
 `pose.orientation` as xyzw, copies `twist.angular` without conversion, and
 derives the CSV `cmd_yaw` from the quaternion using `atan2` (radians).
 
-It does not contain the publisher/controller implementation. Consequently it
-does not establish whether the publisher intended the quaternion as full
-attitude or yaw-only, the angular-rate frame, the firmware controller, or the
-estimator configuration. Those unresolved items continue to block parameter
-fitting.
+It does not contain motor thrust, RPM, or collective-thrust telemetry. The
+historical FullState acceleration therefore cannot be treated as a measured
+force label for the new model.

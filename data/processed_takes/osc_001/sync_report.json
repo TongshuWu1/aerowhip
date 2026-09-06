@@ -70,11 +70,11 @@
   },
   "logger_motive_to_take": {
     "maximum_residual_s": 1.3109513474773848e-12,
-    "offset": -12554.449999999997,
+    "offset": -12554.449999999999,
     "rejected_count": 0,
     "rms_residual_s": 6.824038073366573e-13,
     "sample_count": 1930,
-    "slope": 0.9999999999999998
+    "slope": 0.9999999999999999
   },
   "missing_marker_samples": {
     "c1": 0,
@@ -156,7 +156,7 @@
       0.9994821336095288,
       0.9984464008285863
     ],
-    "maximum_measured_interval_error_m": 0.008228352894158575,
+    "maximum_measured_interval_error_m": 0.007240062821096169,
     "uav_valid_fraction": 1.0
   },
   "ros_to_logger_motive": {

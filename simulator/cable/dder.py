@@ -19,6 +19,7 @@ import torch
 EXPLICIT_STABILITY_LIMIT = 1.5
 
 PinnedEndpointMask = tuple[bool | int, bool | int]
+FREE_ENDPOINTS: PinnedEndpointMask = (False, False)
 TWO_PINNED_ENDPOINTS: PinnedEndpointMask = (True, True)
 START_PINNED_FREE_END: PinnedEndpointMask = (True, False)
 # Discrete centerline clamp: the first physical edge is prescribed while the
@@ -39,7 +40,7 @@ def _validate_pinned_endpoints(
     normalized = (int(pinned_endpoints[0]), int(pinned_endpoints[1]))
     if any(value < 0 for value in normalized):
         raise ValueError("Pinned-node counts cannot be negative.")
-    supported = ((1, 1), (1, 0), (2, 0))
+    supported = ((0, 0), (1, 1), (1, 0), (2, 0))
     if supported_only and normalized not in supported:
         raise ValueError(
             "DDER dynamics supports two pinned endpoints, a pivot start with "
@@ -325,6 +326,26 @@ def _skew_matrix(vector: torch.Tensor) -> torch.Tensor:
     ).reshape(vector.shape[:-1] + (3, 3))
 
 
+def analytic_isotropic_bending_force(positions, stiffness, dual_lengths):
+    """Closed-form gradient of the same zero-rest-curvature bending energy.
+
+For unit tangents a,b, |2(a cross b)/(1+a.b)|²=4(1-a.b)/(1+a.b).
+The fitting domain excludes folded/singular edges, as does the reference DER.
+"""
+    edges = positions[:, 1:] - positions[:, :-1]
+    lengths = torch.linalg.vector_norm(edges, dim=-1, keepdim=True).clamp_min(1e-12)
+    tangent = edges / lengths
+    a, b = tangent[:, :-1], tangent[:, 1:]
+    cosine = (a * b).sum(-1, keepdim=True)
+    factor = -4 * stiffness[:, None, None] / dual_lengths[None, :, None]
+    factor = factor / (1 + cosine).clamp_min(1e-12).square()
+    previous = factor * (b - cosine * a) / lengths[:, :-1]
+    following = factor * (a - cosine * b) / lengths[:, 1:]
+    zero = torch.zeros_like(previous[:, :1])
+    edge_gradient = torch.cat((previous, zero), 1) + torch.cat((zero, following), 1)
+    return torch.cat((edge_gradient, zero), 1) - torch.cat((zero, edge_gradient), 1)
+
+
 def _curvature_rate_jacobian_impl(
     positions: torch.Tensor,
     rest_lengths: torch.Tensor,
@@ -388,46 +409,34 @@ def _curvature_rate_jacobian_impl(
             min=128.0 * torch.finfo(positions.dtype).eps,
         )[..., None]
         identity_batch = identity[None].expand(previous.shape[0], -1, -1)
-        cosine = torch.sum(previous * following, dim=-1)
-        tangent_sum = previous + following
         tangent_difference = previous - following
         normal = torch.linalg.cross(previous, following, dim=-1)
-
-        def projector(vector: torch.Tensor) -> torch.Tensor:
-            norm_squared = torch.sum(vector.square(), dim=-1)
-            return (
-                vector[..., :, None] * vector[..., None, :]
-                / torch.clamp(norm_squared[..., None, None], min=epsilon)
-            )
-
-        # Eigenvectors of 2I-aa^T-bb^T are a+b, a-b, and a cross b,
-        # with eigenvalues 1-c, 1+c, and 2.  This closed form is the same
-        # Moore-Penrose inverse as the former batched SVD, but avoids one tiny
-        # decomposition per curvature site and time step.  At a nearly
-        # straight joint, rotation about the common tangent is unobservable;
-        # the exact limiting pseudoinverse is 0.5(I-aa^T).
-        general_inverse = (
-            projector(tangent_sum)
-            / torch.clamp((1.0 - cosine)[..., None, None], min=epsilon)
-            + projector(tangent_difference)
-            / torch.clamp((1.0 + cosine)[..., None, None], min=epsilon)
-            + 0.5 * projector(normal)
-        )
+        # On unit-tangent variations, removing the pair's rigid spin leaves
+        # only the rate of 2*tan(theta/2), along its binormal. Evaluate this
+        # directly: the equivalent angular pseudoinverse divides by 1-cos(theta)
+        # and then cancels large terms. Clamping that eigenvalue by float32
+        # epsilon previously changed damping by nearly 100% at small bends.
+        unit_normal = normal / torch.sqrt(torch.clamp(
+            normal.square().sum(dim=-1, keepdim=True), min=1.0e-20))
+        coefficient = -2.0 / torch.clamp(
+            1.0 + (previous * following).sum(dim=-1),
+            min=128.0 * torch.finfo(positions.dtype).eps)
+        bent_previous = coefficient[..., None, None] * unit_normal[..., :, None] * (
+            torch.linalg.cross(unit_normal, previous, dim=-1)[..., None, :])
+        bent_following = coefficient[..., None, None] * unit_normal[..., :, None] * (
+            torch.linalg.cross(following, unit_normal, dim=-1)[..., None, :])
         straight_inverse = 0.5 * (
             identity_batch
             - previous[..., :, None] * previous[..., None, :]
         )
-        angular_inverse = torch.where(
-            ((1.0 - cosine) > 1.0e-7)[..., None, None],
-            general_inverse,
-            straight_inverse,
-        )
-        spin_previous = angular_inverse @ _skew_matrix(previous)
-        spin_following = angular_inverse @ _skew_matrix(following)
+        spin_previous = straight_inverse @ _skew_matrix(previous)
+        spin_following = straight_inverse @ _skew_matrix(following)
         corotation = _skew_matrix(curvature)
+        # ||a-b||² = 2(1-cos(theta)), without cancellation near zero.
+        bent = (tangent_difference.square().sum(dim=-1) > 2.0e-7)[..., None, None]
         return (
-            derivative_previous + corotation @ spin_previous,
-            derivative_following + corotation @ spin_following,
+            torch.where(bent, bent_previous, derivative_previous + corotation @ spin_previous),
+            torch.where(bent, bent_following, derivative_following + corotation @ spin_following),
         )
 
     zero_block = torch.zeros(
@@ -1179,13 +1188,14 @@ class DderParameters:
     cable_diameter_m: float
     bending_stiffness_n_m2: float
     bending_damping_n_m2_s: float
-    gravity_camera_m_s2: tuple[float, float, float]
+    gravity_world_m_s2: tuple[float, float, float]
     torsional_stiffness_n_m2: float = 0.0
     external_drag_s_inv: float = 0.0
     rest_lengths_m: tuple[float, ...] | None = None
     vertex_masses_kg: tuple[float, ...] | None = None
     substeps: int = 2
     constraint_iterations: int = 8
+    external_drag_node_weights: tuple[float, ...] | None = None
 
     def __post_init__(self) -> None:
         if self.node_count < 6:
@@ -1206,10 +1216,15 @@ class DderParameters:
             raise ValueError("DDER torsional stiffness must be finite and non-negative.")
         if not math.isfinite(self.external_drag_s_inv) or self.external_drag_s_inv < 0.0:
             raise ValueError("DDER external drag must be finite and non-negative.")
-        if len(self.gravity_camera_m_s2) != 3 or not all(
-            math.isfinite(value) for value in self.gravity_camera_m_s2
+        if self.external_drag_node_weights is not None:
+            if len(self.external_drag_node_weights) != self.node_count or any(
+                not math.isfinite(x) or not 0 <= x <= 1 for x in self.external_drag_node_weights
+            ):
+                raise ValueError("External drag node weights must contain one finite value in [0, 1] per node.")
+        if len(self.gravity_world_m_s2) != 3 or not all(
+            math.isfinite(value) for value in self.gravity_world_m_s2
         ):
-            raise ValueError("Gravity must contain three finite camera-frame values.")
+            raise ValueError("Gravity must contain three finite world-frame values.")
         if min(self.substeps, self.constraint_iterations) < 1:
             raise ValueError("DDER solver counts must be positive.")
         if self.rest_lengths_m is not None:
@@ -1264,6 +1279,7 @@ class DderRuntimeConstants:
     bending_damping_n_m2_s: torch.Tensor
     torsional_stiffness_n_m2: torch.Tensor
     external_drag_s_inv: torch.Tensor
+    external_drag_node_weights: torch.Tensor
 
 
 class DderModel:
@@ -1271,6 +1287,7 @@ class DderModel:
 
     def __init__(self, parameters: DderParameters) -> None:
         self.parameters = parameters
+        self.motion_residual = None
         self._rest_lengths = torch.as_tensor(
             parameters.rest_lengths_m
             if parameters.rest_lengths_m is not None
@@ -1348,6 +1365,10 @@ class DderModel:
             two_holder_unit_stiffness,
             TWO_PINNED_ENDPOINTS,
         )
+        self._maximum_bending_eigenvalue_per_ei_free = maximum_free_eigenvalue(
+            interior_unit_stiffness,
+            FREE_ENDPOINTS,
+        )
         self._maximum_bending_eigenvalue_per_ei_one_attached = (
             maximum_free_eigenvalue(
                 interior_unit_stiffness,
@@ -1371,6 +1392,8 @@ class DderModel:
         )
         if normalized == (1, 1):
             return self._maximum_bending_eigenvalue_per_ei
+        if normalized == (0, 0):
+            return self._maximum_bending_eigenvalue_per_ei_free
         if normalized == (1, 0):
             return self._maximum_bending_eigenvalue_per_ei_one_attached
         return self._maximum_bending_eigenvalue_per_ei_clamped_start
@@ -1422,7 +1445,7 @@ class DderModel:
             masses_kg=masses,
             dual_lengths_m=0.5 * (rest_lengths[:-1] + rest_lengths[1:]),
             gravity_m_s2=torch.tensor(
-                self.parameters.gravity_camera_m_s2,
+                self.parameters.gravity_world_m_s2,
                 dtype=reference.dtype,
                 device=reference.device,
             )[None, None],
@@ -1449,6 +1472,11 @@ class DderModel:
                 self.parameters.external_drag_s_inv,
                 dtype=reference.dtype,
                 device=reference.device,
+            ),
+            external_drag_node_weights=reference.new_tensor(
+                self.parameters.external_drag_node_weights
+                if self.parameters.external_drag_node_weights is not None
+                else (1.,) * self.parameters.node_count
             ),
         )
 
@@ -1799,6 +1827,7 @@ class DderModel:
         boundary_positions_next_m: torch.Tensor,
         dt_s: torch.Tensor | float,
         *,
+        external_force_world_n: torch.Tensor | None = None,
         create_graph: bool = False,
         bending_stiffness_n_m2: torch.Tensor | float | None = None,
         bending_damping_n_m2_s: torch.Tensor | float | None = None,
@@ -1939,8 +1968,19 @@ class DderModel:
                 validate=_validate,
             ).detach()
         rest_lengths, masses = self._constants(q)
+        external_force = (
+            torch.zeros_like(q)
+            if external_force_world_n is None
+            else torch.as_tensor(
+                external_force_world_n, dtype=q.dtype, device=q.device
+            )
+        )
+        if external_force.shape != q.shape:
+            raise ValueError("external_force_world_n must match the DDER state shape.")
+        if _validate and bool(torch.any(~torch.isfinite(external_force)).detach().cpu()):
+            raise ValueError("external_force_world_n must contain finite values.")
         gravity = torch.as_tensor(
-            self.parameters.gravity_camera_m_s2,
+            self.parameters.gravity_world_m_s2,
             dtype=q.dtype,
             device=q.device,
         )[None, None]
@@ -1976,9 +2016,17 @@ class DderModel:
                 endpoint_twist_reference_rad=continuous_twist,
                 _validate=_validate,
             )
-            acceleration = force / masses[None, :, None] + gravity
+            acceleration = (
+                (force + external_force) / masses[None, :, None] + gravity
+            )
+            if self.motion_residual is not None:
+                acceleration = acceleration + self.motion_residual(q, v)
             undamped_v = (v + substep_dt * acceleration) * torch.exp(
-                -external_drag[:, None, None] * substep_dt
+                -external_drag[:, None, None] * substep_dt * q.new_tensor(
+                    self.parameters.external_drag_node_weights
+                    if self.parameters.external_drag_node_weights is not None
+                    else (1.,) * self.parameters.node_count
+                )[None, :, None]
             )
             predicted_v = _implicit_bending_damping_velocity(
                 q,
@@ -2041,6 +2089,7 @@ class DderModel:
         boundary_positions_next_m: torch.Tensor,
         dt_s: torch.Tensor | float,
         *,
+        external_force_world_n: torch.Tensor | None = None,
         pinned_endpoints: PinnedEndpointMask = TWO_PINNED_ENDPOINTS,
     ) -> DderState:
         """Validated-model inference step without host synchronizations.
@@ -2055,6 +2104,7 @@ class DderModel:
             state,
             boundary_positions_next_m,
             dt_s,
+            external_force_world_n=external_force_world_n,
             create_graph=False,
             _validate=False,
             pinned_endpoints=pinned_endpoints,
@@ -2068,11 +2118,14 @@ class DderModel:
         constants: DderRuntimeConstants,
         boundary_orientations_next: torch.Tensor | None = None,
         *,
+        external_force_world_n: torch.Tensor | None = None,
         iterative_damping: bool = False,
         damping_backend: str = "pcg60_reference",
         pinned_endpoints: PinnedEndpointMask = TWO_PINNED_ENDPOINTS,
         create_graph: bool = False,
         functional_force_autograd: bool = False,
+        dense_constraint_solve: bool = False,
+        analytic_bending: bool = False,
     ) -> DderState:
         """Fixed-shape inference update.
 
@@ -2095,6 +2148,13 @@ class DderModel:
                 "frames or torsional state."
             )
         q, v = state.positions_m, state.velocities_m_s
+        external_force = (
+            torch.zeros_like(q)
+            if external_force_world_n is None
+            else external_force_world_n
+        )
+        if external_force.shape != q.shape:
+            raise ValueError("external_force_world_n must match the DDER state shape.")
         dt = dt_s
         boundary_count = int(pinned_endpoints[0]) + int(pinned_endpoints[1])
         if boundary_positions_next_m.shape != (q.shape[0], boundary_count, 3):
@@ -2133,6 +2193,9 @@ class DderModel:
                     dt,
                 )
             force = (
+                analytic_isotropic_bending_force(q, constants.bending_stiffness_n_m2, constants.dual_lengths_m)
+                if analytic_bending and orientations is None
+                else
                 self._runtime_internal_force_functional(
                     q,
                     constants,
@@ -2149,11 +2212,14 @@ class DderModel:
                 )
             )
             acceleration = (
-                force / constants.masses_kg[None, :, None]
+                (force + external_force) / constants.masses_kg[None, :, None]
                 + constants.gravity_m_s2
             )
+            if self.motion_residual is not None:
+                acceleration = acceleration + self.motion_residual(q, v)
             undamped_v = (v + substep_dt * acceleration) * torch.exp(
                 -constants.external_drag_s_inv[:, None, None] * substep_dt
+                * constants.external_drag_node_weights[None, :, None]
             )
             predicted_v = _implicit_bending_damping_velocity(
                 q,
@@ -2213,6 +2279,7 @@ class DderModel:
                     constants.masses_kg,
                     boundary,
                     iterations=self.parameters.constraint_iterations,
+                    dense_solve=dense_constraint_solve,
                     pinned_endpoints=pinned_endpoints,
                 )
                 provisional_v = (next_q - q) / substep_dt
@@ -2222,6 +2289,7 @@ class DderModel:
                     constants.masses_kg,
                     boundary_velocity,
                     validate=False,
+                    dense_solve=dense_constraint_solve,
                     pinned_endpoints=pinned_endpoints,
                 )
             q = next_q

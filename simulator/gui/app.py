@@ -1,4 +1,4 @@
-"""PySide6/PyVista application construction kept separate from physics."""
+"""Construct and launch the point-force simulator desktop application."""
 
 from __future__ import annotations
 
@@ -10,19 +10,25 @@ os.environ.setdefault("QT_API", "pyside6")
 
 from PySide6.QtWidgets import QApplication
 
-from ..parameters import SimulatorSettings
+from simulator.rollout import load_json
+
 from .main_window import SimulatorMainWindow
 
 
 def main() -> int:
     project_root = Path(__file__).resolve().parents[2]
-    settings = SimulatorSettings.load(project_root / "config" / "default.json")
     application = QApplication.instance()
     owns_application = application is None
     if application is None:
-        application = QApplication(sys.argv)
+        application = QApplication([sys.argv[0]])
     application.setApplicationName("Aerial Cable Research Simulator")
+    application.setStyle('Fusion')
     application.setOrganizationName("Aerial Cable Research")
-    window = SimulatorMainWindow(settings)
+    window = SimulatorMainWindow(
+        project_root,
+        load_json(project_root / "config" / "model.json"),
+        load_json(project_root / "config" / "task.json"),
+        load_json(project_root / "config" / "ppo.json"),
+    )
     window.show()
     return application.exec() if owns_application else 0

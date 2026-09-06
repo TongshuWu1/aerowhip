@@ -21,6 +21,7 @@ class CableConfiguration:
     gravity_m_s2: tuple[float, float, float]
     substeps: int
     constraint_iterations: int
+    external_drag_s_inv: float = 0.0
 
     def __post_init__(self) -> None:
         lengths = tuple(float(value) for value in self.marker_interval_lengths_m)
@@ -53,6 +54,8 @@ class CableConfiguration:
             raise ValueError("Interval subdivisions must be between 1 and 8.")
         if min(int(self.substeps), int(self.constraint_iterations)) < 1:
             raise ValueError("DDER solver counts must be positive.")
+        if not math.isfinite(self.external_drag_s_inv) or self.external_drag_s_inv < 0:
+            raise ValueError("External drag rate must be finite and non-negative.")
         object.__setattr__(self, "marker_interval_lengths_m", lengths)
         object.__setattr__(self, "moving_marker_masses_kg", marker_masses)
         object.__setattr__(self, "gravity_m_s2", gravity)
@@ -71,6 +74,7 @@ class CableConfiguration:
             gravity_m_s2=tuple(payload["gravity_m_s2"]),
             substeps=int(payload["substeps"]),
             constraint_iterations=int(payload["constraint_iterations"]),
+            external_drag_s_inv=float(payload.get("external_drag_s_inv", 0.0)),
         )
 
     @property
@@ -149,9 +153,9 @@ class CableConfiguration:
             cable_diameter_m=self.diameter_m,
             bending_stiffness_n_m2=float(EI),
             bending_damping_n_m2_s=float(Cb),
-            gravity_camera_m_s2=self.gravity_m_s2,
+            gravity_world_m_s2=self.gravity_m_s2,
             torsional_stiffness_n_m2=0.0,
-            external_drag_s_inv=0.0,
+            external_drag_s_inv=self.external_drag_s_inv,
             rest_lengths_m=self.rest_lengths_m,
             vertex_masses_kg=self.vertex_masses_kg,
             substeps=self.substeps,

@@ -4,8 +4,8 @@
     "command_coverage_fraction": 0.9481950950675118,
     "command_event_rate_hz": 29.9714572405477,
     "duplicate_value_conflicts": 0,
-    "first_command_take_time_s": 10.688012218474796,
-    "last_command_take_time_s": 45.02067718505805,
+    "first_command_take_time_s": 10.688012456893375,
+    "last_command_take_time_s": 45.02067742347663,
     "raw_command_diagnostics_no_unit_inference": {
       "command_omega_raw_absolute_max": 0.0,
       "command_quaternion_xy_norm_max": 0.0,
@@ -120,11 +120,11 @@
   },
   "logger_motive_to_take": {
     "maximum_residual_s": 7.105427357601002e-13,
-    "offset": -2517.1500000000024,
+    "offset": -2517.1500000000005,
     "rejected_count": 0,
     "rms_residual_s": 5.081061865515597e-13,
     "sample_count": 3616,
-    "slope": 1.0000000000000007
+    "slope": 1.0
   },
   "missing_marker_samples": {
     "c1": 0,
@@ -201,16 +201,16 @@
       1.0,
       1.0
     ],
-    "maximum_measured_interval_error_m": 0.007477663326228387,
+    "maximum_measured_interval_error_m": 0.006592224277694667,
     "uav_valid_fraction": 1.0
   },
   "ros_to_logger_motive": {
-    "maximum_residual_s": 0.003044033050628059,
-    "offset": -1787881144.617412,
+    "maximum_residual_s": 0.0030442714692071604,
+    "offset": -1787881144.6174123,
     "rejected_count": 21,
-    "rms_residual_s": 0.0007898458433891072,
+    "rms_residual_s": 0.0007898419291515414,
     "sample_count": 5038,
-    "slope": 0.9999762260394883
+    "slope": 0.9999762260394885
   },
   "schema": "aerial_cable_sync_report_v1",
   "scientific_timeline": {

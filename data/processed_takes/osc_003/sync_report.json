@@ -89,11 +89,11 @@
   },
   "logger_motive_to_take": {
     "maximum_residual_s": 5.648814749292796e-13,
-    "offset": -2930.059999999999,
+    "offset": -2930.0599999999995,
     "rejected_count": 0,
     "rms_residual_s": 3.6971321015659716e-13,
     "sample_count": 1798,
-    "slope": 0.9999999999999996
+    "slope": 0.9999999999999997
   },
   "missing_marker_samples": {
     "c1": 0,
@@ -150,16 +150,16 @@
       1.0,
       1.0
     ],
-    "maximum_measured_interval_error_m": 0.01623057967290506,
+    "maximum_measured_interval_error_m": 0.01973267717874906,
     "uav_valid_fraction": 1.0
   },
   "ros_to_logger_motive": {
     "maximum_residual_s": 0.00035197258011976373,
-    "offset": -1787923204.380196,
+    "offset": -1787923204.3801963,
     "rejected_count": 266,
-    "rms_residual_s": 7.735906876732829e-05,
+    "rms_residual_s": 7.73575762262333e-05,
     "sample_count": 3269,
-    "slope": 0.9999997503650706
+    "slope": 0.9999997503650707
   },
   "schema": "aerial_cable_sync_report_v1",
   "scientific_timeline": {

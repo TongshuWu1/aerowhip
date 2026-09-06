@@ -1,4 +1,4 @@
-"""Conventional on-policy PPO for the simple sequential whip environment."""
+"""Small, conventional on-policy PPO implementation."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from torch import nn
 from torch.distributions import Normal
 
 
-SIMPLE_PPO_ACTION_DIM = 6
+FORCE_ACTION_DIM = 3
 
 
 def _mlp(input_dim: int, output_dim: int, hidden_dim: int) -> nn.Sequential:
@@ -25,36 +25,135 @@ def _mlp(input_dim: int, output_dim: int, hidden_dim: int) -> nn.Sequential:
 
 
 class BoundedGaussianPolicy(nn.Module):
-    """State-dependent Gaussian mean with a tanh-bounded physical action."""
+    """Gaussian residual around an optional time-indexed action prior."""
 
-    def __init__(self, observation_dim: int, action_dim: int, hidden_dim: int = 256) -> None:
+    def __init__(
+        self,
+        observation_dim: int,
+        action_dim: int,
+        hidden_dim: int = 256,
+        *,
+        action_prior: dict[str, Any] | None = None,
+        stochastic_action_indices: list[int] | tuple[int, ...] | None = None,
+        initial_log_std: float | list[float] | tuple[float, ...] = -0.5,
+        minimum_log_std: float = -10.0,
+    ) -> None:
         super().__init__()
         self.mean_network = _mlp(observation_dim, action_dim, hidden_dim)
-        self.log_std = nn.Parameter(torch.full((action_dim,), -0.5))
+        indices = (
+            tuple(range(action_dim))
+            if stochastic_action_indices is None
+            else tuple(int(index) for index in stochastic_action_indices)
+        )
+        if not indices or len(set(indices)) != len(indices):
+            raise ValueError("stochastic_action_indices must be unique and non-empty.")
+        if any(index < 0 or index >= action_dim for index in indices):
+            raise ValueError("A stochastic action index is out of range.")
+        stochastic_mask = torch.zeros(action_dim, dtype=torch.bool)
+        stochastic_mask[list(indices)] = True
+        self.register_buffer("_stochastic_mask", stochastic_mask, persistent=False)
+        self.minimum_log_std = float(minimum_log_std)
+        if not math.isfinite(self.minimum_log_std) or self.minimum_log_std >= 1.0:
+            raise ValueError("minimum_log_std must be finite and below 1.")
+        initial_std = torch.as_tensor(initial_log_std, dtype=torch.float32)
+        if initial_std.ndim == 0:
+            initial_std = initial_std.expand(action_dim).clone()
+        if initial_std.shape != (action_dim,):
+            raise ValueError("initial_log_std must be a scalar or one value per action.")
+        if not torch.isfinite(initial_std).all():
+            raise ValueError("initial_log_std must be finite.")
+        self.log_std = nn.Parameter(initial_std)
+        self.action_prior: dict[str, Any] | None = None
+        self.set_action_prior(action_prior)
         final = self.mean_network[-1]
         assert isinstance(final, nn.Linear)
-        nn.init.orthogonal_(final.weight, gain=0.01)
+        if self.action_prior is None:
+            nn.init.orthogonal_(final.weight, gain=0.01)
+        else:
+            nn.init.zeros_(final.weight)
         nn.init.zeros_(final.bias)
 
+    def set_action_prior(self, value: dict[str, Any] | None) -> None:
+        if value is None or not bool(value.get("enabled", True)):
+            self.action_prior = None
+            return
+        phase_steps = [int(item) for item in value["phase_control_steps"]]
+        actions = [[float(number) for number in row] for row in value["actions"]]
+        total_steps = int(value["total_control_steps"])
+        if len(phase_steps) != len(actions) or not phase_steps:
+            raise ValueError("Action-prior phases and actions must have equal length.")
+        if any(step < 1 for step in phase_steps) or sum(phase_steps) > total_steps:
+            raise ValueError("Action-prior phase durations are invalid.")
+        if any(len(row) != self.log_std.numel() for row in actions):
+            raise ValueError("Action-prior vectors have the wrong dimension.")
+        if any(abs(number) >= 1.0 for row in actions for number in row):
+            raise ValueError("Action-prior values must lie strictly inside (-1, 1).")
+        self.action_prior = {
+            "enabled": True,
+            "source": str(value.get("source", "configured_action_prior")),
+            "total_control_steps": total_steps,
+            "phase_control_steps": phase_steps,
+            "actions": actions,
+        }
+
+    def _prior_latent(self, observation: torch.Tensor) -> torch.Tensor:
+        prior = self.action_prior
+        if prior is None:
+            return torch.zeros(
+                (*observation.shape[:-1], self.log_std.numel()),
+                dtype=observation.dtype,
+                device=observation.device,
+            )
+        elapsed = torch.round(
+            (1.0 - observation[..., -1]).clamp(0.0, 1.0)
+            * int(prior["total_control_steps"])
+        )
+        action = torch.zeros(
+            (*observation.shape[:-1], self.log_std.numel()),
+            dtype=observation.dtype,
+            device=observation.device,
+        )
+        start = 0
+        for duration, values in zip(
+            prior["phase_control_steps"], prior["actions"], strict=True
+        ):
+            end = start + int(duration)
+            phase_action = torch.as_tensor(
+                values, dtype=observation.dtype, device=observation.device
+            )
+            action = torch.where(
+                ((elapsed >= start) & (elapsed < end))[..., None],
+                phase_action,
+                action,
+            )
+            start = end
+        return torch.atanh(action.clamp(-1.0 + 1.0e-6, 1.0 - 1.0e-6))
+
     def distribution(self, observation: torch.Tensor) -> Normal:
-        mean = self.mean_network(observation)
-        std = self.log_std.clamp(-5.0, 1.0).exp().expand_as(mean)
+        residual = self.mean_network(observation)
+        mean = self._prior_latent(observation) + residual * self._stochastic_mask
+        std = self.log_std.clamp(self.minimum_log_std, 1.0).exp().expand_as(mean)
         return Normal(mean, std)
 
-    @staticmethod
-    def _log_probability(distribution: Normal, latent: torch.Tensor) -> torch.Tensor:
+    def _log_probability(
+        self, distribution: Normal, latent: torch.Tensor
+    ) -> torch.Tensor:
         action = torch.tanh(latent)
         correction = torch.log(torch.clamp(1.0 - action.square(), min=1.0e-6))
-        return (distribution.log_prob(latent) - correction).sum(dim=-1, keepdim=True)
+        terms = (distribution.log_prob(latent) - correction) * self._stochastic_mask
+        return terms.sum(dim=-1, keepdim=True)
 
     def sample(
         self, observation: torch.Tensor
     ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         distribution = self.distribution(observation)
-        latent = distribution.rsample()
+        noise = torch.randn_like(distribution.loc) * self._stochastic_mask
+        latent = distribution.loc + distribution.scale * noise
         action = torch.tanh(latent)
         log_probability = self._log_probability(distribution, latent)
-        entropy = distribution.entropy().sum(dim=-1, keepdim=True)
+        entropy = (distribution.entropy() * self._stochastic_mask).sum(
+            dim=-1, keepdim=True
+        )
         return action, log_probability, entropy
 
     def evaluate(
@@ -64,11 +163,16 @@ class BoundedGaussianPolicy(nn.Module):
         latent = torch.atanh(action)
         distribution = self.distribution(observation)
         log_probability = self._log_probability(distribution, latent)
-        entropy = distribution.entropy().sum(dim=-1, keepdim=True)
+        entropy = (distribution.entropy() * self._stochastic_mask).sum(
+            dim=-1, keepdim=True
+        )
         return log_probability, entropy
 
     def deterministic(self, observation: torch.Tensor) -> torch.Tensor:
-        return torch.tanh(self.mean_network(observation))
+        return torch.tanh(
+            self._prior_latent(observation)
+            + self.mean_network(observation) * self._stochastic_mask
+        )
 
 
 class StateValue(nn.Module):
@@ -169,7 +273,7 @@ class SimplePPOAgent:
     def __init__(
         self,
         observation_dim: int,
-        action_dim: int = SIMPLE_PPO_ACTION_DIM,
+        action_dim: int = FORCE_ACTION_DIM,
         *,
         device: torch.device,
         hidden_dim: int = 256,
@@ -181,6 +285,10 @@ class SimplePPOAgent:
         entropy_coefficient: float = 0.01,
         maximum_gradient_norm: float = 0.5,
         target_kl: float = 0.02,
+        action_prior: dict[str, Any] | None = None,
+        stochastic_action_indices: list[int] | tuple[int, ...] | None = None,
+        initial_log_std: float | list[float] | tuple[float, ...] = -0.5,
+        minimum_log_std: float = -10.0,
     ) -> None:
         self.device = device
         self.gamma = float(gamma)
@@ -191,11 +299,22 @@ class SimplePPOAgent:
         self.maximum_gradient_norm = float(maximum_gradient_norm)
         self.target_kl = float(target_kl)
         self.policy = BoundedGaussianPolicy(
-            observation_dim, action_dim, hidden_dim
+            observation_dim,
+            action_dim,
+            hidden_dim,
+            action_prior=action_prior,
+            stochastic_action_indices=stochastic_action_indices,
+            initial_log_std=initial_log_std,
+            minimum_log_std=minimum_log_std,
         ).to(device)
         self.value = StateValue(observation_dim, hidden_dim).to(device)
-        self.optimizer = torch.optim.Adam(
-            list(self.policy.parameters()) + list(self.value.parameters()),
+        self.policy_optimizer = torch.optim.Adam(
+            self.policy.parameters(),
+            lr=learning_rate,
+            eps=1.0e-5,
+        )
+        self.value_optimizer = torch.optim.Adam(
+            self.value.parameters(),
             lr=learning_rate,
             eps=1.0e-5,
         )
@@ -253,10 +372,14 @@ class SimplePPOAgent:
         update_count = 0
         epochs_completed = 0
         for epoch in range(int(epochs)):
-            permutation = torch.randperm(valid_count, generator=generator, device="cpu")
+            permutation = torch.randperm(
+                valid_count, generator=generator, device=self.device
+            )
             stop_for_kl = False
             for start in range(0, valid_count, int(minibatch_size)):
-                indices = permutation[start : start + int(minibatch_size)].to(self.device)
+                from .training_control import check_training_stop
+                check_training_stop()
+                indices = permutation[start : start + int(minibatch_size)]
                 new_log_probability, entropy = self.policy.evaluate(
                     observations[indices], actions[indices]
                 )
@@ -276,18 +399,24 @@ class SimplePPOAgent:
                     (value_clipped - returns[indices]).square(),
                 ).mean()
                 entropy_mean = entropy.mean()
-                loss = (
-                    policy_loss
-                    + self.value_coefficient * value_loss
-                    - self.entropy_coefficient * entropy_mean
+                policy_objective = (
+                    policy_loss - self.entropy_coefficient * entropy_mean
                 )
-                self.optimizer.zero_grad(set_to_none=True)
-                loss.backward()
-                gradient_norm = nn.utils.clip_grad_norm_(
-                    list(self.policy.parameters()) + list(self.value.parameters()),
+                self.policy_optimizer.zero_grad(set_to_none=True)
+                policy_objective.backward()
+                policy_gradient_norm = nn.utils.clip_grad_norm_(
+                    self.policy.parameters(),
                     self.maximum_gradient_norm,
                 )
-                self.optimizer.step()
+                self.policy_optimizer.step()
+
+                self.value_optimizer.zero_grad(set_to_none=True)
+                (self.value_coefficient * value_loss).backward()
+                value_gradient_norm = nn.utils.clip_grad_norm_(
+                    self.value.parameters(),
+                    self.maximum_gradient_norm,
+                )
+                self.value_optimizer.step()
                 self.gradient_updates += 1
 
                 with torch.no_grad():
@@ -301,7 +430,10 @@ class SimplePPOAgent:
                     float(entropy_mean.detach()),
                     float(approximate_kl.detach()),
                     float(clip_fraction.detach()),
-                    float(torch.as_tensor(gradient_norm).detach()),
+                    max(
+                        float(torch.as_tensor(policy_gradient_norm).detach()),
+                        float(torch.as_tensor(value_gradient_norm).detach()),
+                    ),
                 )
                 if not all(math.isfinite(item) for item in values):
                     raise FloatingPointError("PPO update produced a non-finite metric.")
@@ -328,12 +460,14 @@ class SimplePPOAgent:
 
     def checkpoint(self) -> dict[str, Any]:
         return {
-            "schema": "simple_sequential_ppo_checkpoint_v1",
+            "schema": "force_ppo_checkpoint_v1",
             "policy": self.policy.state_dict(),
             "value": self.value.state_dict(),
-            "optimizer": self.optimizer.state_dict(),
+            "policy_optimizer": self.policy_optimizer.state_dict(),
+            "value_optimizer": self.value_optimizer.state_dict(),
             "gradient_updates": self.gradient_updates,
             "gamma": self.gamma,
             "gae_lambda": self.gae_lambda,
             "clip_ratio": self.clip_ratio,
+            "action_prior": self.policy.action_prior,
         }

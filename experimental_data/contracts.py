@@ -2,7 +2,7 @@
 
 The processed numerical arrays are immutable evidence.  This module may enrich
 metadata only after proving that those arrays are the exact manually trimmed
-Motive frames.  It never reparses data for GUI playback or fitting.
+Motive frames. It audits provenance without altering processed numeric evidence.
 """
 
 from __future__ import annotations

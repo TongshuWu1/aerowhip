@@ -4,8 +4,8 @@
     "command_coverage_fraction": 0.9846422338568935,
     "command_event_rate_hz": 30.00031052286007,
     "duplicate_value_conflicts": 0,
-    "first_command_take_time_s": 10.44670616149915,
-    "last_command_take_time_s": 78.11267243385328,
+    "first_command_take_time_s": 10.446705923080572,
+    "last_command_take_time_s": 78.1126721954347,
     "raw_command_diagnostics_no_unit_inference": {
       "command_omega_raw_absolute_max": 0.0,
       "command_quaternion_xy_norm_max": 0.0,
@@ -123,11 +123,11 @@
   },
   "logger_motive_to_take": {
     "maximum_residual_s": 2.7355895326763857e-13,
-    "offset": -1583.8900000000003,
+    "offset": -1583.8899999999996,
     "rejected_count": 0,
     "rms_residual_s": 1.762829531422294e-13,
     "sample_count": 5729,
-    "slope": 1.0000000000000002
+    "slope": 0.9999999999999999
   },
   "missing_marker_samples": {
     "c1": 1,
@@ -196,11 +196,6 @@
         "start_s": 31.6
       },
       {
-        "end_s": 32.79,
-        "reason": "geometry_invalid",
-        "start_s": 32.510000000000005
-      },
-      {
         "end_s": 33.120000000000005,
         "reason": "geometry_invalid",
         "start_s": 33.11
@@ -211,19 +206,9 @@
         "start_s": 35.32
       },
       {
-        "end_s": 35.6,
+        "end_s": 36.17,
         "reason": "geometry_invalid",
-        "start_s": 35.550000000000004
-      },
-      {
-        "end_s": 35.77,
-        "reason": "geometry_invalid",
-        "start_s": 35.760000000000005
-      },
-      {
-        "end_s": 36.11,
-        "reason": "geometry_invalid",
-        "start_s": 36.07
+        "start_s": 36.050000000000004
       },
       {
         "end_s": 36.08,
@@ -234,11 +219,6 @@
         "end_s": 36.120000000000005,
         "reason": "marker_dropout",
         "start_s": 36.120000000000005
-      },
-      {
-        "end_s": 36.17,
-        "reason": "geometry_invalid",
-        "start_s": 36.13
       },
       {
         "end_s": 36.17,
@@ -259,11 +239,6 @@
         "end_s": 38.550000000000004,
         "reason": "marker_jump",
         "start_s": 38.54
-      },
-      {
-        "end_s": 39.02,
-        "reason": "geometry_invalid",
-        "start_s": 38.760000000000005
       },
       {
         "end_s": 39.38,
@@ -295,7 +270,7 @@
     "flagged_frame_counts": {
       "quality_command_invalid": 88,
       "quality_command_stale": 0,
-      "quality_geometry_invalid": 82,
+      "quality_geometry_invalid": 21,
       "quality_marker_dropout": 19,
       "quality_marker_jump": 6,
       "quality_uav_invalid": 0,
@@ -318,12 +293,12 @@
     "uav_valid_fraction": 1.0
   },
   "ros_to_logger_motive": {
-    "maximum_residual_s": 0.0024530506134397,
-    "offset": -1787858807.8454602,
+    "maximum_residual_s": 0.0024528121948605985,
+    "offset": -1787858807.845461,
     "rejected_count": 50,
-    "rms_residual_s": 0.0006197209419300129,
+    "rms_residual_s": 0.0006197220825843049,
     "sample_count": 8317,
-    "slope": 0.9999884304275943
+    "slope": 0.9999884304275947
   },
   "schema": "aerial_cable_sync_report_v1",
   "scientific_timeline": {
@@ -339,7 +314,6 @@
   },
   "take_id": "fig8_003",
   "warnings": [
-    "Fitting disabled: the logger mapping is audited, but the FullState publisher, Crazyflie controller/estimator configuration, and cmd_omega frame remain unavailable.",
     "Isolated Motive cable-marker dropout is retained as NaN plus validity masks."
   ]
 }

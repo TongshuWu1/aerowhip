@@ -218,14 +218,19 @@ def process_take(
         np.asarray(transform["translation_m"]), np.zeros(3)
     ):
         raise ValueError("Nonidentity source transforms require an explicit quaternion transform implementation.")
-    from simulator.parameters import SimulatorSettings
+    from simulator.cable import CableConfiguration
 
-    settings = SimulatorSettings.load(PROJECT_ROOT / "config" / "default.json")
+    model_config = json.loads(
+        (PROJECT_ROOT / "config" / "model.json").read_text(encoding="utf-8")
+    )
+    cable_configuration = CableConfiguration.from_mapping(model_config["cable"])
     flags, quality_report = evaluate_quality(
         arrays,
         quality_config=config["quality"],  # type: ignore[arg-type]
-        attachment_offset_body_m=settings.attachment_offset_body_m,
-        interval_lengths_m=settings.cable_configuration.marker_interval_lengths_m,
+        attachment_offset_body_m=model_config["recorded_data"][
+            "optitrack_to_attachment_offset_body_m"
+        ],
+        interval_lengths_m=cable_configuration.marker_interval_lengths_m,
     )
     arrays.update(flags)
     match_fraction = len(motive_index) / len(motive.frame)

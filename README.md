@@ -1,103 +1,62 @@
-# Aerial Cable Research Simulator
+# Sim → Real → Sim aerial whipping
 
-This repository contains the frozen aerial-cable simulator, the selected
-closed-loop PPO whip controller, the stopped pure-SAC baseline, and the
-production CEM reference planner.
+A force-controlled drone point coupled to a DDER cable, with PPO/SAC maneuver planning and between-flight model adaptation.
 
-## Current decision
+The current strike is **open-loop**: estimate the initial drone and cable state, generate one force sequence, execute it once, then return to PID hover at the frozen cutoff. Cable/hit feedback does not alter the sequence during execution. Commands are **20 Hz**, physics is **100 Hz**, and the maximum strike horizon is **1 second**. Exact current physics, rewards and limits live in `config/`; existing runs retain their own snapshots.
 
-The selected learned architecture is **10 Hz closed-loop PPO**:
+The real Lee-controller interface and force response are not yet validated. Adaptation exports are simulation candidates, not hardware-authorized commands.
 
-```text
-measured UAV + cable state
-  -> normalized 83-D state/goal/physics context
-  -> PPO query every 0.1 s
-  -> acceleration + body-rate command
-  -> full UAV/residual/12-node-DDER propagation
-```
+## Start here
 
-The selected D50 terminal PPO checkpoint achieved 480/512 = **93.75%**
-deterministic success on the nominal physically propagated state-bank audit. Compiling the
-same controller into an open-loop command reproduces nominal simulation
-exactly, but takes about 12.17 s and loses substantial robustness under model
-mismatch and post-start disturbances. Continuous PPO feedback is therefore the
-current choice.
-
-Production CEM remains the strongest offline reference: 98.05% first-seed and
-98.44% up-to-three-seed success over 256 contexts, with 34.61 s median planning
-time. Pure SAC is retained as a negative baseline: 106 successes in 1,206,272
-episodes before it was stopped.
-
-The concise evidence bundle is in [`results/`](results/README.md):
-
-- [`results/ppo/`](results/ppo/README.md): checkpoints, plots, logs, compiler
-  audit, and full PPO reports.
-- [`results/sac/`](results/sac/README.md): stopped checkpoint, plots, and logs.
-- [`results/cem/`](results/cem/README.md): benchmark rows, authoritative
-  actions, plots, and report.
-- [`results/common/`](results/common/): shared context normalizer and state
-  banks used by current configurations.
-
-See [PROJECT_GOALS_METHODS_AND_RESULTS.md](PROJECT_GOALS_METHODS_AND_RESULTS.md)
-for the research goal, task definitions, method history, contributions, and
-limitations.
-
-## Frozen scientific model
-
-- Freeze: `MODEL_FREEZE_REMEASURED_GEOMETRY_PRE_MPPI`.
-- CUDA float32, PCG32 cable damping.
-- Attitude-coupled UAV model plus causal 100 ms learned residual.
-- Twelve-node DDER cable, three DDER substeps, four position projections.
-- Protected `fig8vertical_002` is not evaluated.
-- No hardware execution is authorized by this repository state.
-
-## Active entry points
-
-For a new RTX 5090 workstation, follow
-[`PORTABLE_WORKSTATION_SETUP.md`](PORTABLE_WORKSTATION_SETUP.md). PyCharm run
-configurations are committed under `.run/`; after selecting the project `.venv`
-interpreter, choose **01 Workstation Preflight** and press Run.
+For a new environment, start with [installation](docs/INSTALL.md). For a source-only
+research release, see [publication preparation](docs/PUBLICATION.md). The release
+builder creates a portable review bundle without copying recordings, checkpoints,
+internal history or the current Git repository.
 
 ```powershell
-# GUI and simulation inspection
-.\.venv\Scripts\python.exe run_simulator.py
-
-# The Simulator tab runs the frozen PPO checkpoint with one button.
-# Headless equivalent:
-.\.venv\Scripts\python.exe run_ppo_simulation.py
-
-# Portable selected-policy continuation (expensive; plain Run performs preflight only)
-.\.venv\Scripts\python.exe run_simple_ppo.py --train
-
-# Retained pure-SAC baseline (normally do not resume)
-.\.venv\Scripts\python.exe run_simple_sac.py --train
-
-# Zero-training PPO feedback/open-loop compiler audit
-.\.venv\Scripts\python.exe run_ppo_open_loop_compiler_audit.py
-
-# Production CEM benchmark (expensive; curated result already exists)
-.\.venv\Scripts\python.exe run_milestone6a.py
-
-# Identification/refit workflow (expensive and not part of controller work)
-.\.venv\Scripts\python.exe run_milestone3c.py
-
-# Rebuild the curated results bundle from available historical run trees
-.\.venv\Scripts\python.exe tools\curate_current_results.py
+.venv/Scripts/python.exe run_simulation.py
 ```
 
-## Repository organization
+The UI has five pages: **Data & Calibration**, **Task & Rewards**, **PPO**, **SAC**, and **Real-world Updates**. PPO/SAC each have their own validation plots and 3D replay. The adaptation page imports flight data, compares replay, fits a physical candidate, and refines a force sequence without changing actor weights.
 
-- `simulator/`: coupled UAV, residual, DDER cable, and GUI.
-- `fitting/`: model identification and validation.
-- `planning/`: current CEM, rollout, action codec, metrics, and replay tools.
-- `learning/`: current PPO/SAC control environments, networks, state/context
-  interfaces, validation, and trajectory compiler.
-- `config/`: current model, task, PPO, SAC, compiler, and CEM configs.
-- `results/`: curated current evidence and checkpoints.
-- `data/`: raw/processed measurements and active model assets only; historical
-  policy/planning runs live in the dated sibling archive.
-- `tests/`: regression coverage for retained code paths.
+- [Tomorrow’s flight/adaptation guide](docs/FLIGHT_ADAPTATION_QUICKSTART.md)
+- [Current decisions and active comparison](docs/PROJECT_CONTEXT.md)
+- [Research proposal](docs/RESEARCH_PROPOSAL_ADAPTIVE_AERIAL_WHIP.md)
+- [Documentation index](docs/README.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [Reproducibility and data availability](docs/REPRODUCIBILITY.md)
+- [Command-line tools](tools/README.md)
 
-Historical milestone reports, retired learners, obsolete runners, and complete
-run trees were moved—not deleted—to the dated sibling archive during repository
-cleanup.
+## Repository layout
+
+| Folder | Purpose |
+|---|---|
+| `config/` | Active model, task and algorithm defaults |
+| `simulator/` | DDER physics, point-force dynamics, replay and desktop UI |
+| `learning/` | PPO/SAC, rewards, open-loop execution and sequence correction |
+| `experimental_data/` | Recording processing, calibration and flight adaptation |
+| `tools/` | Current workflow commands, evaluation and research utilities |
+| `tests/` | Checks grouped into physics, calibration, training, flight and UI |
+| `docs/` | Current guides and research design; dated reports in `docs/history/` |
+| `data/` | Raw recordings, processed data, physical baselines and flight imports |
+| `runs/` | Training checkpoints and per-run validation records |
+| `results/` | Comparison studies, immutable source snapshots and plots |
+
+Generated runs, results and caches are excluded from ordinary Git/search discovery. Raw recordings, active fit dependencies, selected policies, current training runs and the original CEM prior are preserved.
+
+## Run checks
+
+```powershell
+.venv/Scripts/python.exe run_tests.py physics
+.venv/Scripts/python.exe run_tests.py flight
+.venv/Scripts/python.exe run_tests.py training ui
+.venv/Scripts/python.exe run_tests.py
+```
+
+With no group, all maintained tests run. See [the test guide](tests/README.md) for scope. Some calibration, GPU and training integration checks are intentionally slower.
+
+## Reproducibility
+
+Each training run keeps its model/task/algorithm settings, checkpoints and validation history. The active comparison also freezes its source. Applying a new baseline or changing UI settings affects future runs rather than rewriting existing experiments. Historical reports document the settings at the time; the current configuration and project context take precedence.
+
+Legacy UI pages, MPCC code/configuration, the duplicate launcher, one-off experiment scripts and obsolete tests have been removed from the working tree. Retired artifacts and the older source-review bundle are outside this repository, in the sibling `Sim2Real2SimWhip-retired-20260906` directory; `moved.json` there records their original locations. The current interface uses only the five research pages described above.

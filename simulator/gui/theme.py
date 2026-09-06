@@ -1,8 +1,11 @@
-"""Shared visual system for the production research console."""
+"""Shared visual style for the simulator desktop interface."""
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QFontDatabase
 from PySide6.QtWidgets import QFrame, QLabel, QVBoxLayout, QWidget
 
 
@@ -42,6 +45,7 @@ QPushButton#navButton {
     padding: 0 13px;
     text-align: left;
     font-weight: 650;
+    font-size: 9pt;
 }
 QPushButton#navButton:hover {
     background: #1e293b;
@@ -79,7 +83,7 @@ QGroupBox::title {
     padding: 0 5px;
     color: #334155;
 }
-QFrame#metricCard, QFrame#toolbarCard {
+QFrame#metricCard, QFrame#toolbarCard, QFrame#contentCard {
     background: white;
     border: 1px solid #dce3ed;
     border-radius: 9px;
@@ -99,7 +103,7 @@ QLabel#metricDetail {
     color: #64748b;
     font-size: 8.5pt;
 }
-QPushButton, QComboBox, QDoubleSpinBox {
+QPushButton, QComboBox, QDoubleSpinBox, QSpinBox {
     background: white;
     color: #172033;
     border: 1px solid #cbd5e1;
@@ -107,7 +111,7 @@ QPushButton, QComboBox, QDoubleSpinBox {
     min-height: 30px;
     padding: 3px 11px;
 }
-QPushButton:hover, QComboBox:hover, QDoubleSpinBox:hover {
+QPushButton:hover, QComboBox:hover, QDoubleSpinBox:hover, QSpinBox:hover {
     border-color: #2563eb;
 }
 QPushButton:disabled {
@@ -121,46 +125,24 @@ QPushButton#primaryButton {
     border: none;
     font-weight: 800;
 }
-QPushButton#dangerButton {
-    background: #fff7f7;
-    color: #b42318;
-    border-color: #fecaca;
+QPushButton#secondaryButton {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-color: #bfdbfe;
     font-weight: 750;
 }
-QTableWidget {
-    background: white;
-    alternate-background-color: #f8fafc;
-    color: #172033;
-    gridline-color: #e8edf4;
-    border: 1px solid #dce3ed;
-    border-radius: 8px;
+QPushButton#secondaryButton:disabled, QPushButton#primaryButton:disabled {
+    color: #94a3b8;
+    background: #eef2f7;
+    border: 1px solid #e2e8f0;
 }
-QHeaderView::section {
-    background: #f1f5f9;
-    color: #475569;
-    padding: 7px;
-    border: none;
-    border-bottom: 1px solid #dce3ed;
+QLabel#sectionLead {
+    color: #0f172a;
+    font-size: 16pt;
     font-weight: 800;
 }
-QProgressBar {
-    background: #e8edf4;
-    border: none;
-    border-radius: 4px;
-    min-height: 8px;
-    max-height: 8px;
-    text-align: center;
-}
-QProgressBar::chunk {
-    background: #2563eb;
-    border-radius: 4px;
-}
-QScrollArea {
-    background: transparent;
-    border: none;
-}
-QScrollArea > QWidget > QWidget {
-    background: #f5f7fb;
+QLabel#mutedText {
+    color: #64748b;
 }
 QSlider::groove:horizontal {
     height: 5px;
@@ -173,22 +155,102 @@ QSlider::handle:horizontal {
     border-radius: 7px;
     background: #2563eb;
 }
+QScrollArea {
+    background: transparent;
+    border: none;
+}
+QScrollArea > QWidget > QWidget {
+    background: #f5f7fb;
+}
+QTableWidget, QPlainTextEdit, QComboBox QAbstractItemView {
+    background: white;
+    color: #172033;
+    border: 1px solid #dce3ed;
+    border-radius: 6px;
+    selection-background-color: #e7effc;
+    selection-color: #172033;
+}
+QTableWidget { gridline-color: #eef2f7; }
+QHeaderView::section {
+    background: #f0f4f9;
+    color: #475569;
+    border: none;
+    padding: 8px;
+    font-size: 9pt;
+    font-weight: 600;
+}
+QProgressBar {
+    background: #e8eef7;
+    border: none;
+    border-radius: 5px;
+    min-height: 27px;
+    color: #172033;
+    text-align: center;
+}
+QProgressBar::chunk { background: #b9d2fc; border-radius: 5px; }
+QSplitter::handle { background: transparent; width: 10px; }
+QTabWidget::pane { border: none; }
+QTabBar::tab {
+    background: #e9eef7;
+    color: #52627c;
+    border: none;
+    padding: 9px 16px;
+    margin-right: 4px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+QTabBar::tab:selected { background: #ffffff; color: #1d4ed8; }
+QToolTip { background: #ffffff; color: #172033; border: 1px solid #cbd5e1; padding: 5px; }
+QScrollBar:vertical { background: transparent; width: 9px; margin: 0; }
+QScrollBar::handle:vertical { background: #cbd5e1; min-height: 24px; border-radius: 4px; }
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; }
+QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical { background: transparent; }
+QSpinBox::up-button, QDoubleSpinBox::up-button {
+    subcontrol-origin: border; subcontrol-position: top right; width: 20px; height: 17px;
+    background: transparent; border: none;
+}
+QSpinBox::down-button, QDoubleSpinBox::down-button {
+    subcontrol-origin: border; subcontrol-position: bottom right; width: 20px; height: 17px;
+    background: transparent; border: none;
+}
+QSpinBox, QDoubleSpinBox { padding-right: 23px; }
+"""
+
+_ASSETS = Path(__file__).resolve().parent / 'assets'
+APP_STYLE += f"""
+QSpinBox::up-arrow, QDoubleSpinBox::up-arrow {{
+    image: url('{(_ASSETS / 'chevron_up.svg').as_posix()}'); width: 10px; height: 7px;
+}}
+QSpinBox::down-arrow, QDoubleSpinBox::down-arrow {{
+    image: url('{(_ASSETS / 'chevron_down.svg').as_posix()}'); width: 10px; height: 7px;
+}}
 """
 
 
-class MetricCard(QFrame):
-    """Compact KPI card with stable labels that pages can update in place."""
+def load_application_font() -> None:
+    """Load a Windows UI font when Qt's isolated runtime finds none."""
 
+    if QFontDatabase.families():
+        return
+    for path in (
+        Path("C:/Windows/Fonts/segoeui.ttf"),
+        Path("C:/Windows/Fonts/arial.ttf"),
+    ):
+        if path.is_file() and QFontDatabase.addApplicationFont(str(path)) >= 0:
+            return
+
+
+class MetricCard(QFrame):
     def __init__(
         self,
         caption: str,
-        value: str = "—",
+        value: str = "-",
         detail: str = "",
         parent: QWidget | None = None,
     ) -> None:
         super().__init__(parent)
         self.setObjectName("metricCard")
-        self.setMinimumWidth(132)
+        self.setMinimumWidth(126)
         layout = QVBoxLayout(self)
         layout.setContentsMargins(13, 10, 13, 10)
         layout.setSpacing(2)
@@ -196,7 +258,9 @@ class MetricCard(QFrame):
         self.caption_label.setObjectName("metricCaption")
         self.value_label = QLabel(value)
         self.value_label.setObjectName("metricValue")
-        self.value_label.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
+        self.value_label.setTextInteractionFlags(
+            Qt.TextInteractionFlag.TextSelectableByMouse
+        )
         self.detail_label = QLabel(detail)
         self.detail_label.setObjectName("metricDetail")
         self.detail_label.setWordWrap(True)

@@ -12,10 +12,34 @@ from __future__ import annotations
 import ctypes
 import os
 from pathlib import Path
+import re
 import threading
 from typing import Literal
 
 import torch
+
+
+def _nvrtc_library_path() -> Path:
+    """Find Windows NVRTC in an explicit Toolkit or the CUDA PyTorch wheel."""
+    directories = []
+    configured = os.environ.get("CUDA_PATH", "").strip()
+    if configured:
+        toolkit = Path(configured).expanduser()
+        if toolkit.is_absolute():
+            directories.append(toolkit / "bin")
+    directories.append(Path(torch.__file__).resolve().parent / "lib")
+    for directory in directories:
+        candidates = sorted(
+            path for path in directory.glob("nvrtc64_*.dll")
+            if path.is_file() and re.fullmatch(r"nvrtc64_\d+(?:_\d+)*\.dll", path.name)
+        )
+        if candidates:
+            return candidates[-1].resolve()
+    searched = ", ".join(str(path) for path in directories)
+    raise RuntimeError(
+        "NVRTC was not found. Install the documented CUDA-enabled PyTorch wheel "
+        f"or set CUDA_PATH to a CUDA Toolkit installation. Searched: {searched}"
+    )
 
 
 _SOURCE = r"""
@@ -175,38 +199,36 @@ extern "C" __device__ __forceinline__ void objective_derivatives(
         }
     }
 
-    float tangent_sum[3], tangent_difference[3];
+    float tangent_difference[3];
 #pragma unroll
     for (int axis = 0; axis < 3; ++axis) {
-        tangent_sum[axis] = previous[axis] + following[axis];
         tangent_difference[axis] = previous[axis] - following[axis];
     }
-    const float sum_norm = fmaxf(dot3(tangent_sum, tangent_sum), EPSILON);
-    const float difference_norm = fmaxf(
-        dot3(tangent_difference, tangent_difference), EPSILON
-    );
-    const float normal_norm = fmaxf(dot3(cross, cross), EPSILON);
-    const float sum_eigenvalue = fmaxf(1.0f - cosine, EPSILON);
-    const float difference_eigenvalue = fmaxf(1.0f + cosine, EPSILON);
+    // Stable tangent-space form of the same corotational curvature rate.
+    if (dot3(tangent_difference, tangent_difference) > 2.0e-7f) {
+        const float inverse_normal = rsqrtf(fmaxf(dot3(cross, cross), 1.0e-20f));
+        float normal[3], previous_rate[3], following_rate[3];
+#pragma unroll
+        for (int axis = 0; axis < 3; ++axis) normal[axis] = cross[axis] * inverse_normal;
+        cross3(normal, previous, previous_rate);
+        cross3(following, normal, following_rate);
+#pragma unroll
+        for (int row = 0; row < 3; ++row) {
+#pragma unroll
+            for (int column = 0; column < 3; ++column) {
+                derivative_previous[row * 3 + column] = -2.0f / denominator * normal[row] * previous_rate[column];
+                derivative_following[row * 3 + column] = -2.0f / denominator * normal[row] * following_rate[column];
+            }
+        }
+        return;
+    }
     float angular_inverse[9];
 #pragma unroll
     for (int row = 0; row < 3; ++row) {
 #pragma unroll
         for (int column = 0; column < 3; ++column) {
-            const int index = row * 3 + column;
-            const float general =
-                tangent_sum[row] * tangent_sum[column]
-                    / sum_norm / sum_eigenvalue
-                + tangent_difference[row] * tangent_difference[column]
-                    / difference_norm / difference_eigenvalue
-                + 0.5f * cross[row] * cross[column] / normal_norm;
-            const float straight = 0.5f * (
-                (row == column ? 1.0f : 0.0f)
-                - previous[row] * previous[column]
-            );
-            angular_inverse[index] = (1.0f - cosine) > 1.0e-7f
-                ? general
-                : straight;
+            angular_inverse[row * 3 + column] = 0.5f * (
+                (row == column ? 1.0f : 0.0f) - previous[row] * previous[column]);
         }
     }
     float spin_previous[9], spin_following[9];
@@ -1150,16 +1172,10 @@ class _FixedPcgKernel:
             else _PCG_BACKEND_ITERATIONS.get(self.backend, 0)
         )
         self._mechanics_threads = _block_threads(node_count, pinned_start_nodes)
-        cuda_path = Path(os.environ.get("CUDA_PATH", ""))
-        if not cuda_path.is_dir():
-            raise RuntimeError("CUDA_PATH does not identify a CUDA Toolkit installation.")
-        bin_path = cuda_path / "bin"
+        nvrtc_path = _nvrtc_library_path()
         if hasattr(os, "add_dll_directory"):
-            self._dll_directory = os.add_dll_directory(str(bin_path))
-        nvrtc_candidates = sorted(bin_path.glob("nvrtc64_*.dll"))
-        if not nvrtc_candidates:
-            raise RuntimeError(f"NVRTC was not found below {bin_path}.")
-        self._nvrtc = ctypes.WinDLL(str(nvrtc_candidates[-1]))
+            self._dll_directory = os.add_dll_directory(str(nvrtc_path.parent))
+        self._nvrtc = ctypes.WinDLL(str(nvrtc_path))
         self._cuda = ctypes.WinDLL("nvcuda.dll")
         self._configure_signatures()
         self._check_cuda(self._cuda.cuInit(0), "cuInit")
@@ -1629,4 +1645,10 @@ def fixed_projection_supported_nodes(
 
 
 def is_available() -> bool:
-    return torch.cuda.is_available() and bool(os.environ.get("CUDA_PATH"))
+    if not torch.cuda.is_available():
+        return False
+    try:
+        _nvrtc_library_path()
+    except RuntimeError:
+        return False
+    return True
