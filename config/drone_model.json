@@ -1,0 +1,22 @@
+{
+  "schema": "simulation_nominal_drone_v1",
+  "provenance": "Unfitted illustrative simulator response; not a measured or validated aircraft model.",
+  "nominal": {
+    "parameters": {
+      "kp_xy": 6.0,
+      "kp_z": 6.0,
+      "kd_xy": 4.0,
+      "kd_z": 4.0,
+      "feedforward_xy": 1.0,
+      "feedforward_z": 1.0,
+      "attitude_time_constant_s": 0.08,
+      "delay_s": 0.03,
+      "attitude_drive_model": "independent_scale_v3",
+      "attitude_acceleration_scale_xy": 1.0,
+      "attitude_acceleration_scale_z": 1.0
+    }
+  },
+  "residual": {
+    "enabled": false
+  }
+}

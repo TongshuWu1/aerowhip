@@ -1,0 +1,87 @@
+{
+  "schema": "pivot_cable_fit_config_v1",
+  "boundary": "one_position_node_pivot",
+  "objective": {
+    "horizon_s": 0.7,
+    "stride_s": 0.7,
+    "pseudo_huber_scale_m": 0.002,
+    "aggregation": "equal_take_mean_over_c1_to_c10",
+    "initial_projection_passes": 8,
+    "initialization": "causal_polynomial",
+    "initialization_samples": 11
+  },
+  "search": {
+    "grid_size_per_axis": 8,
+    "passes": 3,
+    "EI_n_m2": [
+      1e-09,
+      0.00028
+    ],
+    "Cb_n_m2_s": [
+      1e-08,
+      0.02
+    ]
+  },
+  "validation_lead_times_s": [
+    0.1,
+    0.25,
+    0.5,
+    0.7
+  ],
+  "protected_role": "untouched_test",
+  "device": "auto",
+  "dtype": "float64",
+  "method": "constrained_geometry_drag",
+  "differentiable": {
+    "seed": 1729,
+    "device": "cpu",
+    "cpu_threads": 1,
+    "horizon_s": 1.0,
+    "evaluation_horizons_s": [
+      1.0,
+      2.0,
+      5.0,
+      7.0
+    ],
+    "physics_updates": 60,
+    "residual_updates": 120,
+    "windows_per_take": 2,
+    "evaluate_every": 5,
+    "patience_evaluations": 6,
+    "minimum_improvement": 1e-06,
+    "physics_learning_rate": 0.03,
+    "residual_learning_rate": 0.001,
+    "parameter_bounds": [
+      [
+        1e-09,
+        0.00028
+      ],
+      [
+        1e-08,
+        0.02
+      ]
+    ],
+    "curriculum": [
+      [
+        0.17,
+        0.1
+      ],
+      [
+        0.34,
+        0.25
+      ],
+      [
+        0.5,
+        0.5
+      ],
+      [
+        1.0,
+        1.0
+      ]
+    ],
+    "gradient_clip": 1.0,
+    "hidden": 48,
+    "acceleration_limit_m_s2": 2.0,
+    "residual_penalty": 0.0001
+  }
+}

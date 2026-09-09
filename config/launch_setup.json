@@ -1,0 +1,15 @@
+{
+  "schema": "native_launch_setup_v1",
+  "frame": "World XYZ; unshifted OptiTrack tracked origin; metres",
+  "initial_tracking_origin_m": [
+    -2.0,
+    0.0,
+    1.255
+  ],
+  "target_position_m": [
+    -1.0,
+    0.0,
+    1.1
+  ],
+  "preflight_hold_s": 10.0
+}

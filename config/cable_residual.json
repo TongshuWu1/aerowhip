@@ -1,0 +1,21 @@
+{
+  "schema": "preliminary_cable_residual_v3",
+  "drag_mode": "nn_only",
+  "seed": 1729,
+  "device": "cuda",
+  "hidden": 32,
+  "acceleration_limit_m_s2": 0.5,
+  "updates": 24,
+  "learning_rate": 0.0005,
+  "penalty": 0.001,
+  "gradient_clip": 1.0,
+  "training_horizon_s": 0.05,
+  "training_windows_per_take": 24,
+  "batch_windows_per_take": 2,
+  "evaluation_windows_per_take": 4,
+  "evaluate_every": 12,
+  "evaluation_horizons_s": [
+    2.0,
+    5.0
+  ]
+}

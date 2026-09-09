@@ -1,0 +1,69 @@
+{
+  "optimizer": "mppi",
+  "representation": "independent_force_30hz_v2",
+  "population": 128,
+  "iterations": 12,
+  "temperature": 20.0,
+  "action_std": 0.2,
+  "horizon_s": 2.0,
+  "random_seed": 655,
+  "device": "cuda",
+  "maximum_height_m": 2.8,
+  "minimum_height_m": 0.08,
+  "display_name": "Simulator MPPI force sequence",
+  "model_path": "config/research_30hz/model.json",
+  "launch_setup": {
+    "initial_tracking_origin_m": [
+      0.0,
+      0.0,
+      1.225
+    ],
+    "target_position_m": [
+      1.5,
+      0.0,
+      1.1
+    ]
+  },
+  "reward": {
+    "progress_weight": 60.0,
+    "strike_quality_improvement_weight": 60.0,
+    "success_bonus": 200.0,
+    "point_displacement_integral_weight": 0.5,
+    "maximum_displacement_weight": 15.0,
+    "success_forward_return_bonus_weight": 0.0,
+    "success_release_bonus_weight": 0.0,
+    "non_tip_first_penalty": 25.0,
+    "invalid_tip_entry_penalty": 0.0,
+    "timeout_penalty": 0.0,
+    "terminal_displacement_weight": 0.0,
+    "time_to_success_weight_per_s": 10.0,
+    "numerical_failure_penalty": 100.0,
+    "proximity_scale_m": 0.3,
+    "directed_speed_reward_cap_m_s": 4.0,
+    "forward_excursion_scale_m": 0.35,
+    "point_backward_speed_scale_m_s": 1.0,
+    "relative_tip_forward_speed_scale_m_s": 4.0,
+    "displacement_cost_scale_m": 0.35
+  },
+  "action": {
+    "delta_force_scale_n": [
+      2.0,
+      2.0,
+      1.6
+    ],
+    "maximum_force_norm_n": 3.2,
+    "minimum_vertical_force_n": 0.0
+  },
+  "success": {
+    "tip_target_distance_m": 0.05,
+    "minimum_directed_tip_speed_m_s": 4.0,
+    "maximum_tip_velocity_to_desired_direction_error_deg": 45.0,
+    "first_contact_only": true,
+    "tip_must_enter_before_other_markers": true
+  },
+  "desired_strike_direction_world": [
+    1.0,
+    0.0,
+    0.0
+  ]
+}
