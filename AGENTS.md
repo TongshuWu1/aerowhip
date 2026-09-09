@@ -1,5 +1,12 @@
 # Latest priority
 
+- Paper writing (9 September): user requested a detailed handoff for another
+  Codex. Start with docs/PAPER_WRITING_HANDOFF.md and newest HANDOFF.md. Keep
+  historical force-PPO results, current direct-PVA simulation evidence and
+  proposed battery calibration separate. Writing does not authorize restarting
+  stopped fitting/PPO/MPPI or running flights. Include the documentation in the
+  user-requested commit/push snapshot.
+
 - Latest verified MPPI result (9 September): run20260909-135429-797997 is
   COMPLETED, with forward pull then backward release measured at interpolated
   contact: drone -0.62040m/s, tip +5.02739m/s, backward travel0.100000267m,

@@ -1,5 +1,11 @@
 # Sim → Real → Sim aerial whipping: lab handoff
 
+Paper-writing entry point: `docs/PAPER_WRITING_HANDOFF.md` consolidates technical
+equations/code, candidate contributions, data lineage, current and historical
+results, limitations, related-work pointers and instructions for the separate
+writing Codex. User requested it as part of the commit/push snapshot. This is
+documentation only; no fit, training, optimization or flight was started.
+
 Latest discussion (9 September): user confirms the Bolt uses a2S battery and
 attributes the OLD sudden drop to acceleration demands exceeding vehicle
 capability. Keep this separate from the unconfirmed battery/height hypothesis.

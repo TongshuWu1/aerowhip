@@ -6,6 +6,8 @@ Generation is offline and open loop. Start from a settled hover with an assumed 
 
 Read [the current PVA design](docs/DIRECT_PVA_WORKFLOW.md) and [implementation/worker status](docs/PVA_IMPLEMENTATION_PROGRESS.md). Historical force policies and old 20/30 Hz workflows remain preserved; their checkpoints cannot be reinterpreted as jerk policies. Independent Isaac/PhysX development is paused.
 
+For manuscript work or onboarding a separate writing agent, start with the detailed [paper-writing handoff](docs/PAPER_WRITING_HANDOFF.md): technical method, equations, candidate contributions, experiment lineage, verified results, limitations, and source/artifact links.
+
 ## Start here
 
 For the current Windows/Ubuntu lab transfer, read [HANDOFF.md](HANDOFF.md) and

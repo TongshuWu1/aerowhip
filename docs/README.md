@@ -2,6 +2,7 @@
 
 Current entry points:
 
+- [Detailed paper-writing handoff: method, contributions, evidence and experiment plan](PAPER_WRITING_HANDOFF.md)
 - [Installation and supported environment](INSTALL.md)
 - [Architecture](ARCHITECTURE.md)
 - [Reproducibility and data availability](REPRODUCIBILITY.md)
