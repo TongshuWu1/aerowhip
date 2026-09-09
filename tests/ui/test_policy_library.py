@@ -100,7 +100,7 @@ def test_fullstate_uses_exact_checkpoint_and_filters_deleted(library_root):
     from types import SimpleNamespace
     from PySide6.QtWidgets import QTabWidget
     from simulator.gui.rehearsal_workspace import RehearsalWorkspace
-    from simulator.gui.main_window import SimulatorMainWindow
+    from simulator.gui.main_window import HistoricalResearchWindow as SimulatorMainWindow
     app = QApplication.instance() or QApplication([])
     root, source = library_root
     training = AlgorithmTrainingPage(root, 'PPO')

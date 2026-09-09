@@ -1,0 +1,26 @@
+{
+  "cutoff_s": 1.5666666666666667,
+  "error": "No curved recovery meets the reference limits for this whip exit; no CSV generated.",
+  "exit": [
+    0.6315726053700519,
+    0.18126077005196434,
+    1.5584781876204923,
+    4.883247574258025,
+    1.0394056718850504,
+    0.03877802781512474,
+    5.295829669437486,
+    1.5702255675307981,
+    -1.0462656058171635,
+    0.0,
+    0.0
+  ],
+  "options": {
+    "maximum_descent_speed_m_s": 5.0,
+    "maximum_downward_acceleration_m_s2": 7.806649999999999,
+    "maximum_horizontal_acceleration_m_s2": 18.28571428571429,
+    "maximum_specific_force_m_s2": 18.28571428571429,
+    "maximum_speed_m_s": 5.0,
+    "maximum_tilt_deg": 60.0,
+    "minimum_specific_vertical_m_s2": 2.0
+  }
+}

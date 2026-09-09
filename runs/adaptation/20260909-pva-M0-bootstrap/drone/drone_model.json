@@ -1,0 +1,44 @@
+{
+  "nominal": {
+    "adaptation_job": "runs\\adaptation\\20260909-pva-M0-bootstrap",
+    "cold_start": true,
+    "geometry": [
+      0.0066549972854827175,
+      -0.01287427254333901,
+      -0.055
+    ],
+    "parameters": {
+      "attitude_acceleration_scale_xy": 1.2479506694392841,
+      "attitude_acceleration_scale_z": 0.5621593082698552,
+      "attitude_drive_model": "independent_scale_v3",
+      "attitude_time_constant_s": 0.04803455255388368,
+      "delay_s": 0.1,
+      "feedforward_xy": 0.7816136847875778,
+      "feedforward_z": 2.774152987208188,
+      "gravity_m_s2": 9.80665,
+      "kd_xy": 0.10000000000000539,
+      "kd_z": 3.3123172844054327,
+      "kp_xy": 0.10000000000000012,
+      "kp_z": 16.259909136695324
+    },
+    "schema": "nominal_loaded_drone_pose_candidate_v3",
+    "training_takes": [
+      "whip_adp_0_001",
+      "whip_adp_0_002",
+      "whip_adp_0_003",
+      "whip_adp_0_004",
+      "whip_adp_0_005"
+    ]
+  },
+  "residual": {
+    "checkpoint": "drone_residual.pt",
+    "schema": "drone_pose_residual_v1",
+    "sha256": "344396f9b78f9a76b7f1b27faa615202fb4d83c6bcf9d8ab549059b8e7726720",
+    "specification": {
+      "acceleration_limit": 0.5,
+      "hidden": 16,
+      "hover_gate": true
+    },
+    "target": "Bounded motion-dependent origin acceleration; nominal hover equilibrium preserved"
+  }
+}

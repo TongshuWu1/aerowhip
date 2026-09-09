@@ -1,0 +1,8 @@
+[W909 11:43:00.000000000 Context.cpp:448] Warning: torch.backends.cuda.preferred_linalg_library is an experimental feature. If you see any error or unexpected behavior when this flag is set please file an issue on GitHub. (function operator ())
+Traceback (most recent call last):
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\runs\mppi_pva\20260909-114135-860757\source_snapshot\tools\rehearse_pva.py", line 14, in <module>
+    generate(a.job,a.output,checkpoint=a.checkpoint,origin=a.origin,target=a.target,device=a.device,progress=progress)
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\runs\mppi_pva\20260909-114135-860757\source_snapshot\deployment\pva_rehearsal.py", line 56, in generate
+    if bool(result['failed'][0]):raise ValueError('Whip fails the command, workspace or model envelope; no CSV exported')
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: Whip fails the command, workspace or model envelope; no CSV exported

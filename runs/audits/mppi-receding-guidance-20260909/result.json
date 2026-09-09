@@ -1,0 +1,201 @@
+{
+  "evidence": "Historical M1 simulation only; no fitting, PPO or flight",
+  "gpu": "NVIDIA GeForce RTX 4080",
+  "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260909-124046-219074",
+  "metadata": {
+    "checkpoint": null,
+    "checkpoint_sha256": null,
+    "command_contract": "bounded_jerk_pva_30hz_v1",
+    "command_height_range_m": [
+      1.061804369179042,
+      1.7126538735892876
+    ],
+    "command_semantics": "Desired OptiTrack tracked-origin P/V/A, kinematic acceleration, 30 Hz zero-order hold, no force or mass compensation",
+    "csv_sha256": "4d5450cb3e1e9d1692a3a45d1e7dfb592caac65c59ce62abfe62774f9f74f1b5",
+    "evidence": "Fitted model simulation only; real flight performance remains to be measured",
+    "execution": "Take off; hold 10 s at saved start; execute complete CSV at saved timestamps; land. Offline artifact, no flight sender.",
+    "initial_tracking_origin_m": [
+      -2.0,
+      0.0,
+      1.255
+    ],
+    "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260909-124046-219074",
+    "lookahead_s": 0.4,
+    "minimum_predicted_cable_height_m": 0.0917965523494275,
+    "minimum_tip_distance_m": 0.5146526904353032,
+    "plan_sha256": "db942e72d4170fe6ace8f7fc9d7414f237d995be6eff36e0cb7b4c7d0815974c",
+    "planner": "MPPI PVA",
+    "planner_mode": "receding",
+    "predicted_drone_height_range_m": [
+      0.9975484964164624,
+      1.712890673784379
+    ],
+    "predicted_hit_time_s": null,
+    "predicted_valid_hit": false,
+    "prediction_valid_through_s": 13.700000000000001,
+    "recovery": {
+      "approach_coefficients_normalized": [
+        [
+          -1.7383831269231012,
+          -0.7560136319680129,
+          1.4299867816980902
+        ],
+        [
+          -0.5255248793022675,
+          1.5186481208881222,
+          -0.35150602577667367
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.5369805450446145,
+          -1.5517524056486043,
+          0.3591683376791396
+        ],
+        [
+          -0.27994593826465425,
+          0.8089804875847845,
+          -0.18724648074203584
+        ],
+        [
+          0.0068733994454082,
+          -0.019862570856289362,
+          0.004597387141479606
+        ]
+      ],
+      "approach_position_m": [
+        -1.7383831269231012,
+        -0.7560136319680129,
+        1.4299867816980902
+      ],
+      "approach_velocity_m_s": [
+        -0.11181380410686542,
+        0.3231166214655579,
+        -0.07478851612269652
+      ],
+      "brake_end_s": 1.0,
+      "hold_s": 3.0,
+      "hover_position_m": [
+        -2.0,
+        0.0,
+        1.255
+      ],
+      "maximum_tilt_limit_deg": 60.0,
+      "phase_description": "Moving curved turn/descent, slow approach, stationary final hold",
+      "return_end_s": 5.7,
+      "return_s": 4.7,
+      "schema": "curved_moving_recovery_v1",
+      "settings": {
+        "approach_distance_m": 0.8,
+        "approach_height_m": 0.4,
+        "approach_speed_m_s": 0.35,
+        "hold_s": 3.0,
+        "maximum_descent_speed_m_s": 5.0,
+        "maximum_downward_acceleration_m_s2": 7.806649999999999,
+        "maximum_horizontal_acceleration_m_s2": 18.28571428571429,
+        "maximum_specific_force_m_s2": 18.28571428571429,
+        "maximum_speed_m_s": 5.0,
+        "maximum_tilt_deg": 60.0,
+        "maximum_turn_s": 8.0,
+        "minimum_specific_vertical_m_s2": 2.0,
+        "minimum_turn_s": 1.0
+      },
+      "stationary_braking_waypoint": false,
+      "total_duration_s": 8.7,
+      "turn_coefficients_normalized": [
+        [
+          -0.373314752422902,
+          -0.07596964195481133,
+          1.4299867816980902
+        ],
+        [
+          0.07563059888039814,
+          -0.21855533656913279,
+          -0.07769688605246333
+        ],
+        [
+          -0.006038052113904319,
+          0.01840432079104315,
+          0.005932785598905976
+        ],
+        [
+          -13.63909796551518,
+          -6.836787328952565,
+          0.7475370240088474
+        ],
+        [
+          20.280259623456367,
+          10.769246470276975,
+          -1.1272963444818633
+        ],
+        [
+          -8.075822579207875,
+          -4.41235211555952,
+          0.4515234209265731
+        ]
+      ],
+      "turn_end_s": 1.0,
+      "turn_metrics": {
+        "minimum_az_m_s2": -0.4349956012926231,
+        "minimum_height_m": 1.4186343306474933,
+        "minimum_specific_vertical_m_s2": 9.371654398707376,
+        "minimum_vz_m_s": -0.07769688605246333,
+        "peak_height_m": 1.4409092613997605,
+        "peak_horizontal_acceleration_m_s2": 8.965842193137355,
+        "peak_specific_force_m_s2": 13.492416969780091,
+        "peak_speed_m_s": 2.867287514522068
+      },
+      "vehicle_limits_verified": false
+    },
+    "recovery_empirically_validated": false,
+    "recovery_prediction_complete": true,
+    "reference_feasible": true,
+    "schema": "pva_fullstate_30hz_v1",
+    "scored_duration_s": 5.0,
+    "target_position_m": [
+      -1.0,
+      0.0,
+      1.1
+    ],
+    "total_duration_s": 13.7,
+    "training_export_cable_max_difference_m": 2.2413604305882018e-10,
+    "training_export_prefix_max_difference_m": 1.6637732858093557e-14,
+    "whip_end_s": 5.0
+  },
+  "model": "data/model_candidates/20260908-normalized-M1/model.json",
+  "model_sha256": "51d11f38bf8727f52c3641cbdce29f01cb1715c9313752a51299bfa43465e760",
+  "optimization": {
+    "best_failed": false,
+    "best_minimum_tip_distance_m": 0.5146526904353032,
+    "best_reward": -73.01517346641246,
+    "best_success": false,
+    "command_steps": 150,
+    "elapsed_s": 971.7092785999994,
+    "evidence": "simulation only",
+    "iterations": 938,
+    "lookahead_s": 0.4,
+    "maneuver_duration_s": 5.0,
+    "plan": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260909-124046-219074\\plan.npz",
+    "planner_mode": "receding_pva_v1",
+    "scored_duration_s": 5.0,
+    "stop_reason": "maneuver_time_limit"
+  },
+  "portable_csv_identical": true,
+  "portable_max_difference": {
+    "cable_positions_m": 0.0,
+    "command_phase": 0.0,
+    "command_time_s": 0.0,
+    "commands": 0.0,
+    "jerk_m_s3": 0.0,
+    "jerk_time_s": 0.0,
+    "origin_positions_m": 0.0,
+    "origin_rotations": 0.0,
+    "prediction_time_s": 0.0,
+    "target_position_m": 0.0
+  },
+  "rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\20260909-124046-219074-mppi-diagnostic",
+  "torch": "2.11.0+cu128"
+}

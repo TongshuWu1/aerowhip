@@ -1,4 +1,4 @@
-"""Construct and launch the point-force simulator desktop application."""
+"""Construct and launch the direct-PVA research desktop application."""
 
 from __future__ import annotations
 

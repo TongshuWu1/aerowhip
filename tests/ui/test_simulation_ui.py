@@ -24,27 +24,26 @@ def test_desktop_ui_exposes_ppo_without_sac() -> None:
     ppo = load_json(ROOT / 'config/ppo.json')
     window = SimulatorMainWindow(ROOT, load_json(ROOT / 'config/model.json'),
                                  load_json(ROOT / 'config/task.json'), ppo)
-    assert window.main_tabs.count() == 7
-    assert window.main_tabs.widget(5) is window.mppi_page
+    assert window.main_tabs.count() == 6
+    assert window.main_tabs.widget(3) is window.mppi_page
     assert not hasattr(window,'cem_page')
     assert 'Testing' not in [window.main_tabs.tabText(i) for i in range(window.main_tabs.count())]
-    assert window.main_tabs.widget(4) is window.fullstate_page
-    assert window.reward_page.hit_spins['maximum_tip_velocity_to_desired_direction_error_deg'].value() == 45
-    assert window.reward_page.spins['time_to_success_weight_per_s'].value() == ppo['reward']['time_to_success_weight_per_s']
-    assert window.training_page.start_button.text() == 'Train new policy'
+    assert window.main_tabs.widget(4) is window.rehearsal_page
+    assert window.ppo_page.fields[('task','maximum_angle_deg')].value() == 45
+    assert window.ppo_page.fields[('reward','time_per_s')].value() > 0
+    assert window.training_page.run.text() == 'Start new training'
     assert not hasattr(window, 'sac_page')
     assert 'SAC' not in [window.main_tabs.tabText(i) for i in range(window.main_tabs.count())]
-    assert window.training_page.tabs.tabText(1) == 'Policies'
+    assert window.training_page.tabs.tabText(2) == 'Policy library'
     window.main_tabs.setCurrentIndex(2)
     application.processEvents()
     assert window.training_page.timer.isActive()
-    window.navigation_buttons[4].click()
+    window.buttons[4].click()
     application.processEvents()
-    assert window.fullstate_page.active
-    assert window.shell_page_title.text() == 'Rehearsal & Export'
-    assert [window.main_tabs.tabText(i) for i in range(5)]==['Model','Recordings','PPO','Diagnostics','Rehearsal & Export']
-    assert window.training_page.tabs.tabText(2)=='Task & rewards'
-    assert window.fullstate_page.viewer is None  # Native scene is constructed when a prediction is available.
+    assert window.inspector.active
+    assert window.title.text() == 'Rehearsals'
+    assert [window.main_tabs.tabText(i) for i in range(6)]==['Models & fitting','Recordings','PPO','MPPI','Rehearsals','Flight comparison']
+    assert window.inspector.viewer is None  # Scene is constructed only for a saved prediction.
     window.close()
     application.processEvents()
 

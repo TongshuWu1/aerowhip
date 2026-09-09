@@ -1,0 +1,1168 @@
+{
+  "experiment": "Paired 40-iteration diagnostic only; current task, reward, physics and limits unchanged",
+  "history": [
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.1171867129937334,
+            "failed": false,
+            "hit": false,
+            "reward": 4.7602473336524245
+          },
+          "ess": 37.801584157154835,
+          "hits": 0,
+          "mean_abs_max": 0.4907949937075406,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.1171867129937334,
+            "failed": false,
+            "hit": false,
+            "reward": 4.7602473336524245
+          },
+          "ess": 37.801584157154835,
+          "hits": 0,
+          "mean_abs_max": 0.4907949937075406,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 1
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0707883978725972,
+            "failed": false,
+            "hit": false,
+            "reward": 6.85804873071644
+          },
+          "ess": 202.71223114995541,
+          "hits": 0,
+          "mean_abs_max": 0.5269179822112275,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0707883978725972,
+            "failed": false,
+            "hit": false,
+            "reward": 6.85804873071644
+          },
+          "ess": 146.12928477580564,
+          "hits": 0,
+          "mean_abs_max": 0.7328917824388671,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 2
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0707883978725972,
+            "failed": false,
+            "hit": false,
+            "reward": 6.85804873071644
+          },
+          "ess": 445.7272762648654,
+          "hits": 0,
+          "mean_abs_max": 0.5178311985237789,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0656620345443355,
+            "failed": false,
+            "hit": false,
+            "reward": 7.086832825772421
+          },
+          "ess": 227.20733103940833,
+          "hits": 0,
+          "mean_abs_max": 0.8859765212190309,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 3
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0707883978725972,
+            "failed": false,
+            "hit": false,
+            "reward": 6.85804873071644
+          },
+          "ess": 483.63968752371716,
+          "hits": 0,
+          "mean_abs_max": 0.5254435881343168,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0612197652621895,
+            "failed": false,
+            "hit": false,
+            "reward": 7.28747419106089
+          },
+          "ess": 304.9528186822361,
+          "hits": 0,
+          "mean_abs_max": 0.9850121539721499,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 4
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0689729248684259,
+            "failed": false,
+            "hit": false,
+            "reward": 6.938316894107452
+          },
+          "ess": 461.7587254524507,
+          "hits": 0,
+          "mean_abs_max": 0.5341484742402858,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0612197652621895,
+            "failed": false,
+            "hit": false,
+            "reward": 7.28747419106089
+          },
+          "ess": 328.04176238604316,
+          "hits": 0,
+          "mean_abs_max": 1.0986653488724463,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 5
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0689729248684259,
+            "failed": false,
+            "hit": false,
+            "reward": 6.938316894107452
+          },
+          "ess": 490.0312491211587,
+          "hits": 0,
+          "mean_abs_max": 0.5281003833169556,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0598836300944334,
+            "failed": false,
+            "hit": false,
+            "reward": 7.346416768627
+          },
+          "ess": 397.6972753680565,
+          "hits": 0,
+          "mean_abs_max": 1.185206275039733,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 6
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0689729248684259,
+            "failed": false,
+            "hit": false,
+            "reward": 6.938316894107452
+          },
+          "ess": 495.760942448101,
+          "hits": 0,
+          "mean_abs_max": 0.5211360711314551,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0589056026825663,
+            "failed": false,
+            "hit": false,
+            "reward": 7.388461821853579
+          },
+          "ess": 411.4021135180686,
+          "hits": 0,
+          "mean_abs_max": 1.260809470358328,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 7
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0689729248684259,
+            "failed": false,
+            "hit": false,
+            "reward": 6.938316894107452
+          },
+          "ess": 478.26270559530155,
+          "hits": 0,
+          "mean_abs_max": 0.5172083267760972,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.057029389314802,
+            "failed": false,
+            "hit": false,
+            "reward": 7.474506900157772
+          },
+          "ess": 439.13860446459904,
+          "hits": 0,
+          "mean_abs_max": 1.3279400971467066,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 8
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0689729248684259,
+            "failed": false,
+            "hit": false,
+            "reward": 6.938316894107452
+          },
+          "ess": 494.5367127950752,
+          "hits": 0,
+          "mean_abs_max": 0.5450150266499836,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.057029389314802,
+            "failed": false,
+            "hit": false,
+            "reward": 7.474506900157772
+          },
+          "ess": 470.6473538898608,
+          "hits": 0,
+          "mean_abs_max": 1.397056693306029,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 9
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0689729248684259,
+            "failed": false,
+            "hit": false,
+            "reward": 6.938316894107452
+          },
+          "ess": 454.7695768738741,
+          "hits": 0,
+          "mean_abs_max": 0.517200842915986,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0555252331200973,
+            "failed": false,
+            "hit": false,
+            "reward": 7.542508857604862
+          },
+          "ess": 466.0590653777556,
+          "hits": 0,
+          "mean_abs_max": 1.4358270090133367,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 10
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0689729248684259,
+            "failed": false,
+            "hit": false,
+            "reward": 6.938316894107452
+          },
+          "ess": 460.26651077481915,
+          "hits": 0,
+          "mean_abs_max": 0.5344656435886257,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0555252331200973,
+            "failed": false,
+            "hit": false,
+            "reward": 7.542508857604862
+          },
+          "ess": 484.7621014931142,
+          "hits": 0,
+          "mean_abs_max": 1.489505615211257,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 11
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0689729248684259,
+            "failed": false,
+            "hit": false,
+            "reward": 6.938316894107452
+          },
+          "ess": 468.7046178410864,
+          "hits": 0,
+          "mean_abs_max": 0.5223342126469327,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0555252331200973,
+            "failed": false,
+            "hit": false,
+            "reward": 7.542508857604862
+          },
+          "ess": 514.6896880025676,
+          "hits": 0,
+          "mean_abs_max": 1.5453847547760606,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 12
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0689729248684259,
+            "failed": false,
+            "hit": false,
+            "reward": 6.938316894107452
+          },
+          "ess": 468.6300461526643,
+          "hits": 0,
+          "mean_abs_max": 0.5371261024829255,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0543300287295396,
+            "failed": false,
+            "hit": false,
+            "reward": 7.593991575502624
+          },
+          "ess": 502.4573424383567,
+          "hits": 0,
+          "mean_abs_max": 1.585932147692532,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 13
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0689729248684259,
+            "failed": false,
+            "hit": false,
+            "reward": 6.938316894107452
+          },
+          "ess": 480.19329649535234,
+          "hits": 0,
+          "mean_abs_max": 0.5232025331937228,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0543300287295396,
+            "failed": false,
+            "hit": false,
+            "reward": 7.593991575502624
+          },
+          "ess": 525.5990133421911,
+          "hits": 0,
+          "mean_abs_max": 1.6173109234493426,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 14
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0689729248684259,
+            "failed": false,
+            "hit": false,
+            "reward": 6.938316894107452
+          },
+          "ess": 465.62793992571073,
+          "hits": 0,
+          "mean_abs_max": 0.5106498491540123,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0543300287295396,
+            "failed": false,
+            "hit": false,
+            "reward": 7.593991575502624
+          },
+          "ess": 518.2799171633316,
+          "hits": 0,
+          "mean_abs_max": 1.6363120638927797,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 15
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0689729248684259,
+            "failed": false,
+            "hit": false,
+            "reward": 6.938316894107452
+          },
+          "ess": 463.50842480866646,
+          "hits": 0,
+          "mean_abs_max": 0.533933008380715,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0536797026223708,
+            "failed": false,
+            "hit": false,
+            "reward": 7.622138449164547
+          },
+          "ess": 529.7998879898635,
+          "hits": 0,
+          "mean_abs_max": 1.6735900813331859,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 16
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0689729248684259,
+            "failed": false,
+            "hit": false,
+            "reward": 6.938316894107452
+          },
+          "ess": 468.38009704894984,
+          "hits": 0,
+          "mean_abs_max": 0.50975134101705,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0534814173551281,
+            "failed": false,
+            "hit": false,
+            "reward": 7.631510644676619
+          },
+          "ess": 530.2204151427894,
+          "hits": 0,
+          "mean_abs_max": 1.6911393243929185,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 17
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0689729248684259,
+            "failed": false,
+            "hit": false,
+            "reward": 6.938316894107452
+          },
+          "ess": 492.12810744235196,
+          "hits": 0,
+          "mean_abs_max": 0.5236523914788305,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0534814173551281,
+            "failed": false,
+            "hit": false,
+            "reward": 7.631510644676619
+          },
+          "ess": 544.6380218651951,
+          "hits": 0,
+          "mean_abs_max": 1.7260740761464364,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 18
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0666585506106478,
+            "failed": false,
+            "hit": false,
+            "reward": 7.04204659509788
+          },
+          "ess": 488.0356679982853,
+          "hits": 0,
+          "mean_abs_max": 0.5234249868737387,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0527719335730374,
+            "failed": false,
+            "hit": false,
+            "reward": 7.665263141527511
+          },
+          "ess": 553.4554125554905,
+          "hits": 0,
+          "mean_abs_max": 1.7566890176283154,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 19
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0666585506106478,
+            "failed": false,
+            "hit": false,
+            "reward": 7.04204659509788
+          },
+          "ess": 468.7457295634598,
+          "hits": 0,
+          "mean_abs_max": 0.5208319788807283,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0527719335730374,
+            "failed": false,
+            "hit": false,
+            "reward": 7.665263141527511
+          },
+          "ess": 545.5053959407783,
+          "hits": 0,
+          "mean_abs_max": 1.7713754430378228,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 20
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0649782403382297,
+            "failed": false,
+            "hit": false,
+            "reward": 7.11934720625112
+          },
+          "ess": 446.54260559720103,
+          "hits": 0,
+          "mean_abs_max": 0.5322222094566713,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0498051085002218,
+            "failed": false,
+            "hit": false,
+            "reward": 7.798096043034999
+          },
+          "ess": 526.5011712007813,
+          "hits": 0,
+          "mean_abs_max": 1.8209111122210981,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 21
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0649782403382297,
+            "failed": false,
+            "hit": false,
+            "reward": 7.11934720625112
+          },
+          "ess": 458.4093624332157,
+          "hits": 0,
+          "mean_abs_max": 0.515393411498725,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0498051085002218,
+            "failed": false,
+            "hit": false,
+            "reward": 7.798096043034999
+          },
+          "ess": 537.1327378450375,
+          "hits": 0,
+          "mean_abs_max": 1.8191848079809372,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 22
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0649782403382297,
+            "failed": false,
+            "hit": false,
+            "reward": 7.11934720625112
+          },
+          "ess": 479.4154076875315,
+          "hits": 0,
+          "mean_abs_max": 0.5208396421243693,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0498051085002218,
+            "failed": false,
+            "hit": false,
+            "reward": 7.798096043034999
+          },
+          "ess": 537.6284278334884,
+          "hits": 0,
+          "mean_abs_max": 1.8496739158785214,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 23
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0649782403382297,
+            "failed": false,
+            "hit": false,
+            "reward": 7.11934720625112
+          },
+          "ess": 496.9460695864097,
+          "hits": 0,
+          "mean_abs_max": 0.5153002441825163,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0498051085002218,
+            "failed": false,
+            "hit": false,
+            "reward": 7.798096043034999
+          },
+          "ess": 571.2198799364213,
+          "hits": 0,
+          "mean_abs_max": 1.8637469911566602,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 24
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0649782403382297,
+            "failed": false,
+            "hit": false,
+            "reward": 7.11934720625112
+          },
+          "ess": 448.5665406464208,
+          "hits": 0,
+          "mean_abs_max": 0.5226808594762946,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0498051085002218,
+            "failed": false,
+            "hit": false,
+            "reward": 7.798096043034999
+          },
+          "ess": 534.0399538928162,
+          "hits": 0,
+          "mean_abs_max": 1.8965177503475603,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 25
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0633808473920858,
+            "failed": false,
+            "hit": false,
+            "reward": 7.189748606042668
+          },
+          "ess": 446.9834657612982,
+          "hits": 0,
+          "mean_abs_max": 0.5238312956252003,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0498051085002218,
+            "failed": false,
+            "hit": false,
+            "reward": 7.798096043034999
+          },
+          "ess": 551.4028824976427,
+          "hits": 0,
+          "mean_abs_max": 1.91734198072172,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 26
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0633808473920858,
+            "failed": false,
+            "hit": false,
+            "reward": 7.189748606042668
+          },
+          "ess": 471.0683702372332,
+          "hits": 0,
+          "mean_abs_max": 0.5217100509503738,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0498051085002218,
+            "failed": false,
+            "hit": false,
+            "reward": 7.798096043034999
+          },
+          "ess": 557.6628381181796,
+          "hits": 0,
+          "mean_abs_max": 1.9409618557777013,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 27
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0633808473920858,
+            "failed": false,
+            "hit": false,
+            "reward": 7.189748606042668
+          },
+          "ess": 438.0479506049042,
+          "hits": 0,
+          "mean_abs_max": 0.5180879575346126,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0498051085002218,
+            "failed": false,
+            "hit": false,
+            "reward": 7.798096043034999
+          },
+          "ess": 566.5914180562044,
+          "hits": 0,
+          "mean_abs_max": 1.9465548573776807,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 28
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0633808473920858,
+            "failed": false,
+            "hit": false,
+            "reward": 7.189748606042668
+          },
+          "ess": 510.9339851463477,
+          "hits": 0,
+          "mean_abs_max": 0.5332002204678666,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0498051085002218,
+            "failed": false,
+            "hit": false,
+            "reward": 7.798096043034999
+          },
+          "ess": 572.6596461709795,
+          "hits": 0,
+          "mean_abs_max": 1.9666740547821036,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 29
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0633808473920858,
+            "failed": false,
+            "hit": false,
+            "reward": 7.189748606042668
+          },
+          "ess": 488.02501543095485,
+          "hits": 0,
+          "mean_abs_max": 0.5305793837919561,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0498051085002218,
+            "failed": false,
+            "hit": false,
+            "reward": 7.798096043034999
+          },
+          "ess": 566.0636771721634,
+          "hits": 0,
+          "mean_abs_max": 1.9955741891142504,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 30
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0633808473920858,
+            "failed": false,
+            "hit": false,
+            "reward": 7.189748606042668
+          },
+          "ess": 487.55064569124545,
+          "hits": 0,
+          "mean_abs_max": 0.5273666852129182,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0498051085002218,
+            "failed": false,
+            "hit": false,
+            "reward": 7.798096043034999
+          },
+          "ess": 569.8799078355429,
+          "hits": 0,
+          "mean_abs_max": 2.0159408562347494,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 31
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0633808473920858,
+            "failed": false,
+            "hit": false,
+            "reward": 7.189748606042668
+          },
+          "ess": 530.925974590009,
+          "hits": 0,
+          "mean_abs_max": 0.5235509936005807,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0498051085002218,
+            "failed": false,
+            "hit": false,
+            "reward": 7.798096043034999
+          },
+          "ess": 591.4051365063216,
+          "hits": 0,
+          "mean_abs_max": 2.0284451371690064,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 32
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0633808473920858,
+            "failed": false,
+            "hit": false,
+            "reward": 7.189748606042668
+          },
+          "ess": 485.98186953259346,
+          "hits": 0,
+          "mean_abs_max": 0.5398933379935321,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0497623548094146,
+            "failed": false,
+            "hit": false,
+            "reward": 7.799779910946858
+          },
+          "ess": 563.480638993676,
+          "hits": 0,
+          "mean_abs_max": 2.0769350975545255,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 33
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0633808473920858,
+            "failed": false,
+            "hit": false,
+            "reward": 7.189748606042668
+          },
+          "ess": 471.2488051630421,
+          "hits": 0,
+          "mean_abs_max": 0.5221464257030839,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0497623548094146,
+            "failed": false,
+            "hit": false,
+            "reward": 7.799779910946858
+          },
+          "ess": 560.9734155643396,
+          "hits": 0,
+          "mean_abs_max": 2.083371740831092,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 34
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0633808473920858,
+            "failed": false,
+            "hit": false,
+            "reward": 7.189748606042668
+          },
+          "ess": 459.9993079788068,
+          "hits": 0,
+          "mean_abs_max": 0.5205358502072301,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0497623548094146,
+            "failed": false,
+            "hit": false,
+            "reward": 7.799779910946858
+          },
+          "ess": 577.2676523402031,
+          "hits": 0,
+          "mean_abs_max": 2.087662819902242,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 35
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0633808473920858,
+            "failed": false,
+            "hit": false,
+            "reward": 7.189748606042668
+          },
+          "ess": 452.04167610185107,
+          "hits": 0,
+          "mean_abs_max": 0.5115894600098467,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0493360289155167,
+            "failed": false,
+            "hit": false,
+            "reward": 7.819400909171821
+          },
+          "ess": 549.3729606381004,
+          "hits": 0,
+          "mean_abs_max": 2.092453963695864,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 36
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0633808473920858,
+            "failed": false,
+            "hit": false,
+            "reward": 7.189748606042668
+          },
+          "ess": 508.24536424701824,
+          "hits": 0,
+          "mean_abs_max": 0.5184984281836291,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0493360289155167,
+            "failed": false,
+            "hit": false,
+            "reward": 7.819400909171821
+          },
+          "ess": 603.0821553415261,
+          "hits": 0,
+          "mean_abs_max": 2.0932807757270924,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 37
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0633808473920858,
+            "failed": false,
+            "hit": false,
+            "reward": 7.189748606042668
+          },
+          "ess": 458.2262420684559,
+          "hits": 0,
+          "mean_abs_max": 0.5186750656308792,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0493360289155167,
+            "failed": false,
+            "hit": false,
+            "reward": 7.819400909171821
+          },
+          "ess": 569.9070896932412,
+          "hits": 0,
+          "mean_abs_max": 2.108047194626731,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 38
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0633808473920858,
+            "failed": false,
+            "hit": false,
+            "reward": 7.189748606042668
+          },
+          "ess": 461.6739465291144,
+          "hits": 0,
+          "mean_abs_max": 0.5136527705485501,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0493360289155167,
+            "failed": false,
+            "hit": false,
+            "reward": 7.819400909171821
+          },
+          "ess": 578.4089383460539,
+          "hits": 0,
+          "mean_abs_max": 2.1291720917137598,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 39
+    },
+    {
+      "conditions": [
+        {
+          "best": {
+            "distance_m": 1.0633808473920858,
+            "failed": false,
+            "hit": false,
+            "reward": 7.189748606042668
+          },
+          "ess": 472.56942703588214,
+          "hits": 0,
+          "mean_abs_max": 0.5234350303430122,
+          "prior_strength": 1.0
+        },
+        {
+          "best": {
+            "distance_m": 1.0492442330975602,
+            "failed": false,
+            "hit": false,
+            "reward": 7.823993161203615
+          },
+          "ess": 590.34598330605,
+          "hits": 0,
+          "mean_abs_max": 2.156387908883014,
+          "prior_strength": 0.0
+        }
+      ],
+      "iteration": 40
+    }
+  ],
+  "noise_std": 0.3,
+  "samples": 1024,
+  "temperature": 1.0
+}

@@ -1,10 +1,10 @@
 # Sim → Real → Sim aerial whipping
 
-A force-controlled drone point coupled to a DDER cable, with PPO/SAC maneuver planning and between-flight model adaptation.
+The current workflow generates **desired position, velocity and acceleration at 30 Hz**, using either PPO or independent MPPI. Bounded XYZ jerk integrates into a consistent P/V/A reference. The fitted loaded-drone model and drone NN predict tracked-origin motion; its rotated cable attachment drives DDER and the cable NN. There is no virtual-force planning stage in new PVA jobs.
 
-The current strike is **open-loop**: estimate the initial drone and cable state, generate one force sequence, execute it once, then return to PID hover at the frozen cutoff. Cable/hit feedback does not alter the sequence during execution. Commands are **20 Hz**, physics is **100 Hz**, and the maximum strike horizon is **1 second**. Exact current physics, rewards and limits live in `config/`; existing runs retain their own snapshots.
+Generation is offline and open loop. Start from a settled hover with an assumed hanging cable, freeze the complete command sequence, then export whip + smooth recovery + final hold. The real controller continues to use cmdFullState. Saved predictions are matched to actual flights using their exact CSV, not regenerated with a later model.
 
-The real Lee-controller interface and force response are not yet validated. Adaptation exports are simulation candidates, not hardware-authorized commands.
+Read [the current PVA design](docs/DIRECT_PVA_WORKFLOW.md) and [implementation/worker status](docs/PVA_IMPLEMENTATION_PROGRESS.md). Historical force policies and old 20/30 Hz workflows remain preserved; their checkpoints cannot be reinterpreted as jerk policies. Independent Isaac/PhysX development is paused.
 
 ## Start here
 
@@ -22,7 +22,7 @@ internal history or the current Git repository.
 .venv/Scripts/python.exe run_simulation.py
 ```
 
-The UI has five pages: **Data & Calibration**, **Task & Rewards**, **PPO**, **SAC**, and **Real-world Updates**. PPO/SAC each have their own validation plots and 3D replay. The adaptation page imports flight data, compares replay, fits a physical candidate, and refines a force sequence without changing actor weights.
+The UI has six pages: **Models & fitting**, **Recordings**, **PPO**, **MPPI**, **Rehearsals**, and **Flight comparison**. PPO and MPPI own separate setup files, run libraries and rehearsal/export tabs. Model-fit diagnostics are distinct from prospective measured-flight results. Older documents below describe preserved historical stages; the current PVA design and HANDOFF take precedence.
 
 - [Tomorrow’s flight/adaptation guide](docs/FLIGHT_ADAPTATION_QUICKSTART.md)
 - [Current decisions and active comparison](docs/PROJECT_CONTEXT.md)

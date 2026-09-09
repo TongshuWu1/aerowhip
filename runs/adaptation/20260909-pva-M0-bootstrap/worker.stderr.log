@@ -1,0 +1,15 @@
+[W909 03:32:03.000000000 Context.cpp:448] Warning: torch.backends.cuda.preferred_linalg_library is an experimental feature. If you see any error or unexpected behavior when this flag is set please file an issue on GitHub. (function operator ())
+Traceback (most recent call last):
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\tools\fit_pva_bootstrap.py", line 13, in <module>
+    if args.prepare:prepare_job(args.job)
+                ^^^^^^^^^^^^^
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\experimental_data\pva_bootstrap.py", line 267, in run
+    
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\experimental_data\pva_bootstrap.py", line 198, in fit_cable
+    def physical_residual(log_values):
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\experimental_data\pva_bootstrap.py", line 97, in selected_training
+    note(job,label,update=update,ceiling=settings['ceiling'])
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\experimental_data\current_adaptation_fit.py", line 25, in note
+    raise InterruptedError('Adaptation stopped at a fit/update boundary; partial results preserved.')
+InterruptedError: Adaptation stopped at a fit/update boundary; partial results preserved.

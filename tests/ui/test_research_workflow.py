@@ -293,10 +293,10 @@ def test_real_short_training_writes_batch_validation_and_run_snapshot(workspace,
         assert data['positions_m'].shape[1:] == (1, 12, 3)
 
 
-def test_research_pages_and_parallel_plot_viewport(workspace):
+def test_historical_research_pages_and_parallel_plot_viewport(workspace):
     os.environ.setdefault('QT_QPA_PLATFORM', 'offscreen')
     from PySide6.QtWidgets import QApplication
-    from simulator.gui.main_window import SimulatorMainWindow, PAGE_DEFINITIONS
+    from simulator.gui.main_window import HistoricalResearchWindow as SimulatorMainWindow, PAGE_DEFINITIONS
     app = QApplication.instance() or QApplication([])
     window = SimulatorMainWindow(workspace, *[read_json(workspace / 'config' / name)
                                                for name in ('model.json', 'task.json', 'ppo.json')])

@@ -1,0 +1,32 @@
+{
+  "tests": {
+    "passed": 73,
+    "elapsed_s": 30.95,
+    "platform": "Windows",
+    "gpu": "NVIDIA GeForce RTX 4080",
+    "torch": "2.11.0+cu128"
+  },
+  "prefix_30_commands_exact": true,
+  "portable_csv_identical": true,
+  "portable_all_arrays_exact": true,
+  "contact_criteria_pass": true,
+  "hashes": {
+    "config/pva/ppo.json": "195562600bff1b6b05d5fd1cbf5ab7391d9ca5260dd106339984d33b4db71c75",
+    "data/model_candidates/20260908-normalized-M1/model.json": "51d11f38bf8727f52c3641cbdce29f01cb1715c9313752a51299bfa43465e760"
+  },
+  "stopped_jobs": {
+    "runs/adaptation/20260909-pva-M0-bootstrap": "stopped",
+    "runs/pva_campaign/20260909-M0-PVA": "stopped"
+  },
+  "heartbeats": {
+    "finish-pva-research-workflow": "PAUSED",
+    "check-ppo-reward-convergence": "PAUSED"
+  },
+  "native_ui": {
+    "errors": [],
+    "pages": 6,
+    "platform": "windows",
+    "rendered_rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\20260909-135429-797997-mppi-diagnostic",
+    "started_jobs": false
+  }
+}

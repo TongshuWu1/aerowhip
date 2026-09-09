@@ -1,0 +1,375 @@
+{
+  "adaptation": {
+    "evaluation_frame": "hover_normalized_z",
+    "fitted_vehicle": "cf7",
+    "heldout": [],
+    "model_selected": false,
+    "old_M1_used": false,
+    "prospective_validation": false,
+    "report": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\20260908-normalized-M1\\report\\ADAPTATION_REPORT.md",
+    "round": "current_adp0",
+    "source_model": "M0",
+    "status": "fresh_normalized_whip_candidate",
+    "training": [
+      "whip_adp_0_001",
+      "whip_adp_0_002",
+      "whip_adp_0_003",
+      "whip_adp_0_004",
+      "whip_adp_0_005"
+    ],
+    "validation": "Maneuver fitting excludes each held-out flight; shared batch nuisance Z calibration uses pre/post holds from all takes. Conditional retrospective diagnostic, not fully independent or prospective validation.",
+    "vertical_calibration": {
+      "bias_z_m": 0.050705750000000105,
+      "checks_passed": true,
+      "method": "median across takes of equal-weight pre/post median measured-minus-commanded Z",
+      "operation": "corrected_z = raw_z - bias_z_m; same translation for drone and all cable markers",
+      "per_take_bias_m": [
+        0.06934325000000013,
+        0.050705750000000105,
+        0.04122875000000009,
+        0.06898100000000007,
+        0.04561250000000017
+      ],
+      "post_hover_uses_future_data": true,
+      "purpose": "Retrospective hover-normalized fitting; raw real-flight target error is unchanged",
+      "schema": "batch_hover_z_calibration_v1",
+      "short_hover_warning": true,
+      "source_drone": "cf_7",
+      "source_hashes": {
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\experiment_whip_adp_0_001.csv": "ff14452bee60d121acdb7f0bc8b9ba024d0dd4600038690489a00dee6bdd1122",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\experiment_whip_adp_0_002.csv": "df5043e53b2ec171502b5aca15c5b2cfade674fb878761226f819dbde706047d",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\experiment_whip_adp_0_003.csv": "5369d74e77c550712a83a5485a26d52ab6aa25f1f42dd04144cbed1e280b43a5",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\experiment_whip_adp_0_004.csv": "50943df6a841c64f5b6ff6a6dc9692992191c070176b8e330aceb2febce59650",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\experiment_whip_adp_0_005.csv": "e7ce3e5c8e63a9e8a0b78906ee6935a0afb6d974493e5131a5f3c2982cd50a54",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\whip_adp_0_001.csv": "248dfa60b273405940f17b960c806e05fb1daf5a72d74fbef49c25e16dde9405",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\whip_adp_0_002.csv": "5e154c513f0c804e8c7aa111422dbf599f2e6d14a16f879b9e57b204f7493c5c",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\whip_adp_0_003.csv": "04469a740982c33dc535e47594e431842bfaca1f108d82f185c1cdb840e4b9bd",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\whip_adp_0_004.csv": "2d0e6f55836ed03b7a19f481a39ab96e4e93f979a7c568a68f549599b634b703",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\whip_adp_0_005.csv": "114ba7d168cee070aa88238dfe1412c7adfb2837d870374e143c289003522794",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\simulation_csv\\fullstate_30hz.csv": "d54b86aa6a1584a56ce1a063d29e47cb1ca91ea89c553e818ac33505e7225452"
+      },
+      "takes": [
+        {
+          "clock_alignment": {
+            "clock_verified": false,
+            "half_offsets_s": [
+              -1.034459526584866,
+              -1.0249253849432602
+            ],
+            "includes_logging_latency": true,
+            "method": "Frozen legacy audit offset (originally measured-stream aligned)",
+            "offset_s": -1.034452944799245,
+            "rms_m": 0.018162338631501546
+          },
+          "drone": "cf_7",
+          "post": {
+            "covered_s": 1.8200000000000003,
+            "drift_m_s": -0.0014771699967886564,
+            "end_s": 10.994135394688467,
+            "median_bias_m": 0.0637770000000002,
+            "samples": 183,
+            "short_trim": false,
+            "spread_p90_m": 0.0038262999999999422,
+            "start_s": 9.174135394688467
+          },
+          "pre": {
+            "covered_s": 1.6099999999999994,
+            "drift_m_s": -0.004821532091097318,
+            "end_s": -0.025864605311532785,
+            "median_bias_m": 0.07490950000000007,
+            "samples": 162,
+            "short_trim": false,
+            "spread_p90_m": 0.006486799999999918,
+            "start_s": -1.6358646053115322
+          },
+          "take": "whip_adp_0_001"
+        },
+        {
+          "clock_alignment": {
+            "clock_verified": false,
+            "half_offsets_s": [
+              -0.03467965232535403,
+              -0.025296528445824314
+            ],
+            "includes_logging_latency": true,
+            "method": "Frozen legacy audit offset (originally measured-stream aligned)",
+            "offset_s": -0.034677077899311785,
+            "rms_m": 0.018991942117174254
+          },
+          "drone": "cf_7",
+          "post": {
+            "covered_s": 1.8299999999999983,
+            "drift_m_s": -0.0006402435899905613,
+            "end_s": 10.998156399756734,
+            "median_bias_m": 0.04455650000000011,
+            "samples": 184,
+            "short_trim": false,
+            "spread_p90_m": 0.003247950000000034,
+            "start_s": 9.168156399756736
+          },
+          "pre": {
+            "covered_s": 0.23000000000000043,
+            "drift_m_s": -0.0014566956521740203,
+            "end_s": -0.02184360024326537,
+            "median_bias_m": 0.0568550000000001,
+            "samples": 24,
+            "short_trim": true,
+            "spread_p90_m": 0.00034520000000000384,
+            "start_s": -0.2518436002432658
+          },
+          "take": "whip_adp_0_002"
+        },
+        {
+          "clock_alignment": {
+            "clock_verified": false,
+            "half_offsets_s": [
+              -0.19430896710195197,
+              -0.1844304210226893
+            ],
+            "includes_logging_latency": true,
+            "method": "Frozen legacy audit offset (originally measured-stream aligned)",
+            "offset_s": -0.18529857923443224,
+            "rms_m": 0.018582410498175914
+          },
+          "drone": "cf_7",
+          "post": {
+            "covered_s": 1.8299999999999983,
+            "drift_m_s": -0.002243126793935775,
+            "end_s": 10.999205545089097,
+            "median_bias_m": 0.036607500000000126,
+            "samples": 184,
+            "short_trim": false,
+            "spread_p90_m": 0.005863649999999963,
+            "start_s": 9.169205545089099
+          },
+          "pre": {
+            "covered_s": 1.6699999999999982,
+            "drift_m_s": 0.0020301676444237867,
+            "end_s": -0.02079445491090226,
+            "median_bias_m": 0.04585000000000006,
+            "samples": 168,
+            "short_trim": false,
+            "spread_p90_m": 0.003764150000000001,
+            "start_s": -1.6907944549109004
+          },
+          "take": "whip_adp_0_003"
+        },
+        {
+          "clock_alignment": {
+            "clock_verified": false,
+            "half_offsets_s": [
+              -0.0045483160265610365,
+              -0.004449502474190127
+            ],
+            "includes_logging_latency": true,
+            "method": "Frozen legacy audit offset (originally measured-stream aligned)",
+            "offset_s": -0.004546364116777255,
+            "rms_m": 0.018219103117223936
+          },
+          "drone": "cf_7",
+          "post": {
+            "covered_s": 1.740000000000002,
+            "drift_m_s": -0.0003682848186295883,
+            "end_s": 10.911393976243229,
+            "median_bias_m": 0.05997800000000009,
+            "samples": 175,
+            "short_trim": false,
+            "spread_p90_m": 0.0021282000000000453,
+            "start_s": 9.171393976243227
+          },
+          "pre": {
+            "covered_s": 1.9199999999999982,
+            "drift_m_s": -0.002006759287698291,
+            "end_s": -0.02860602375677246,
+            "median_bias_m": 0.07798400000000005,
+            "samples": 193,
+            "short_trim": false,
+            "spread_p90_m": 0.0037538000000000016,
+            "start_s": -1.9486060237567706
+          },
+          "take": "whip_adp_0_004"
+        },
+        {
+          "clock_alignment": {
+            "clock_verified": false,
+            "half_offsets_s": [
+              -0.3344649034519266,
+              -0.33457099676482177
+            ],
+            "includes_logging_latency": true,
+            "method": "Frozen legacy audit offset (originally measured-stream aligned)",
+            "offset_s": -0.3344662245192187,
+            "rms_m": 0.019059295333746472
+          },
+          "drone": "cf_7",
+          "post": {
+            "covered_s": 1.8200000000000003,
+            "drift_m_s": -0.001073220453815576,
+            "end_s": 10.990905031355414,
+            "median_bias_m": 0.041831000000000174,
+            "samples": 183,
+            "short_trim": false,
+            "spread_p90_m": 0.0020015999999999368,
+            "start_s": 9.170905031355414
+          },
+          "pre": {
+            "covered_s": 0.740000000000002,
+            "drift_m_s": -0.00464546230440961,
+            "end_s": -0.029094968644585606,
+            "median_bias_m": 0.04939400000000016,
+            "samples": 75,
+            "short_trim": true,
+            "spread_p90_m": 0.004065099999999884,
+            "start_s": -0.7690949686445876
+          },
+          "take": "whip_adp_0_005"
+        }
+      ],
+      "thresholds": {
+        "batch_deviation_m": 0.02,
+        "hover_drift_m_s": 0.01,
+        "hover_spread_p90_m": 0.02,
+        "pre_post_difference_m": 0.02
+      },
+      "warnings": []
+    }
+  },
+  "adaptation_candidate": {
+    "acceleration_bound_per_axis_m_s2": 0.5,
+    "additional_correction_initialization": "exactly zero",
+    "bound_is_measured": false,
+    "curvature_frame_regularization": 2e-07,
+    "damping_numerics_changed": true,
+    "schema": "cable_zero_extension_v1",
+    "selected_for_deployment": false,
+    "source_model": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\config\\research_30hz\\model.json",
+    "source_model_sha256": "17278c6f8dd61a040a536bc85c5dbe1904dfa6c21639d7beec905b31aec9e347",
+    "source_residual_sha256": "ef99d1d50881e8632be0860bef402a77ea0d260736a01a16551ec3b7293cb023",
+    "status": "UNFITTED",
+    "trained": false
+  },
+  "cable": {
+    "Cb_n_m2_s": 2.5e-05,
+    "EI_n_m2": 1e-07,
+    "attachment": "dynamic_shared_node_0_free_pivot",
+    "bare_cable_mass_kg": 0.007830508032174688,
+    "constraint_iterations": 4,
+    "curvature_frame_regularization": 2e-07,
+    "diameter_m": 0.0035,
+    "external_drag_s_inv": 0.0,
+    "gravity_m_s2": [
+      0.0,
+      0.0,
+      -9.80665
+    ],
+    "marker_interval_lengths_m": [
+      0.063,
+      0.087,
+      0.1,
+      0.1,
+      0.1,
+      0.1,
+      0.1,
+      0.1025,
+      0.1,
+      0.1
+    ],
+    "moving_marker_masses_kg": [
+      0.0010169491967825313,
+      0.0010169491967825313,
+      0.0010169491967825313,
+      0.0010169491967825313,
+      0.0010169491967825313,
+      0.0010169491967825313,
+      0.0010169491967825313,
+      0.0010169491967825313,
+      0.0010169491967825313,
+      0.0010169491967825313
+    ],
+    "parameter_source": "data/baselines/20260906-201616-163804/manifest.json",
+    "previous_parameter_source": "data/baselines/20260905-181108-847814/manifest.json",
+    "segments_per_marker_interval": [
+      2,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "substeps": 8
+  },
+  "force_accounting": {
+    "aerodynamic_drag": "effective_world_velocity_decay_on_free_cable_vertices",
+    "cable_reaction": "internal_bending_damping_and_inextensibility_forces_transmitted_at_shared_node_0",
+    "commanded_force": "acts_only_on_shared_node_0",
+    "gravity": "acts_on_point_mass_and_every_cable_vertex"
+  },
+  "fullstate_execution": {
+    "checkpoint": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\20260909-131121-677417-mppi-diagnostic\\assets\\drone_model.json",
+    "command_rate_hz": 30.0,
+    "enabled": true,
+    "feasibility": {
+      "maximum_specific_force_m_s2": 18.28571428571429,
+      "maximum_speed_m_s": 5.0,
+      "maximum_tilt_deg": 60.0,
+      "minimum_specific_vertical_m_s2": 2.0,
+      "source": "Provisional simulation envelope, not measured hardware limits"
+    },
+    "initialization": "settled_hover_pose_and_hanging_planning_cable",
+    "recovery_objective": "excluded",
+    "reference": "integrated_piecewise_linear_virtual_velocity_v1",
+    "schema": "tracked_pose_execution_v1",
+    "sha256": "8cf21c6927bab4e3c5fc6e44bdcbd4fdb7eb02b8984f7df0eb1278e813694eae",
+    "source_job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\20260908-normalized-M1"
+  },
+  "mass_measurement": {
+    "cable_assembly_mass_kg": 0.018,
+    "distribution": "Provisional proportional scaling of prior cable/marker distribution",
+    "drone_mass_kg": 0.157,
+    "scale": 1.118644004596384,
+    "source": "User measurement, includes hanging markers and attachments",
+    "total_mass_kg": 0.175
+  },
+  "motion_residual": {
+    "checkpoint": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\20260909-131121-677417-mppi-diagnostic\\assets\\cable_residual.pt",
+    "drag_mode": "nn_only",
+    "enabled": true,
+    "sha256": "1ec3fc6692f94dde9bdb5c8e40d11612ddde935c264bd4db85176157e278d8b3",
+    "specification": {
+      "acceleration_limit": 0.5,
+      "damping_limit_s_inv": 2.0,
+      "hidden": 32,
+      "mode": "dissipative_plus_acceleration",
+      "node_count": 12
+    }
+  },
+  "point_force_controller": {
+    "application_node": 0,
+    "dimensions": 3,
+    "force_limit_status": "measurement_required",
+    "input": "commanded_force_world_n",
+    "maximum_force_norm_n": null,
+    "response": "instantaneous_direct_force"
+  },
+  "point_mass": {
+    "degrees_of_freedom": 3,
+    "mass_kg": 0.157,
+    "state_location": "shared_cable_node_0"
+  },
+  "recorded_data": {
+    "optitrack_to_attachment_offset_body_m": [
+      0.0066549972854827175,
+      -0.01287427254333901,
+      -0.055
+    ]
+  },
+  "schema": "point_force_dder_model_v1",
+  "simulation": {
+    "device": "auto",
+    "dt_s": 0.006666666666666667
+  }
+}

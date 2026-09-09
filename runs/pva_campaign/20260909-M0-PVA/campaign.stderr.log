@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\tools\run_pva_campaign.py", line 102, in <module>
+    if args.run:run(args.campaign)
+                ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\tools\run_pva_campaign.py", line 60, in run
+    stopped();state=read_json(fit/'status.json',{})
+    ^^^^^^^^^
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\tools\run_pva_campaign.py", line 40, in stopped
+    if (folder/'STOP').exists():raise InterruptedError('Campaign stopped by request')
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+InterruptedError: Campaign stopped by request

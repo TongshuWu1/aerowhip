@@ -1,0 +1,21 @@
+{
+  "evidence": "Historical M1 simulation only; no fitting, PPO or flight",
+  "gpu": "NVIDIA GeForce RTX 4080",
+  "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260909-114135-860757",
+  "model": "data/model_candidates/20260908-normalized-M1/model.json",
+  "model_sha256": "51d11f38bf8727f52c3641cbdce29f01cb1715c9313752a51299bfa43465e760",
+  "optimization": {
+    "best_failed": true,
+    "best_iteration": 9,
+    "best_minimum_tip_distance_m": 0.2939750849386031,
+    "best_reward": -37.20353077678524,
+    "best_success": false,
+    "elapsed_s": 80.28943589999835,
+    "evidence": "simulation only",
+    "iterations": 24,
+    "plan": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260909-114135-860757\\plan.npz",
+    "stop_reason": "reward_plateau"
+  },
+  "rehearsal_error": "[W909 11:43:00.000000000 Context.cpp:448] Warning: torch.backends.cuda.preferred_linalg_library is an experimental feature. If you see any error or unexpected behavior when this flag is set please file an issue on GitHub. (function operator ())\nTraceback (most recent call last):\n  File \"C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260909-114135-860757\\source_snapshot\\tools\\rehearse_pva.py\", line 14, in <module>\n    generate(a.job,a.output,checkpoint=a.checkpoint,origin=a.origin,target=a.target,device=a.device,progress=progress)\n  File \"C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260909-114135-860757\\source_snapshot\\deployment\\pva_rehearsal.py\", line 56, in generate\n    if bool(result['failed'][0]):raise ValueError('Whip fails the command, workspace or model envelope; no CSV exported')\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nValueError: Whip fails the command, workspace or model envelope; no CSV exported\n",
+  "torch": "2.11.0+cu128"
+}

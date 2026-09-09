@@ -1,0 +1,489 @@
+[W909 12:34:49.000000000 Context.cpp:448] Warning: torch.backends.cuda.preferred_linalg_library is an experimental feature. If you see any error or unexpected behavior when this flag is set please file an issue on GitHub. (function operator ())
+{"stage": "MPPI lookahead optimization", "iteration": 1, "window_iteration": 1, "command_step": 0, "maneuver_time_s": 0.0, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 2, "window_iteration": 2, "command_step": 0, "maneuver_time_s": 0.0, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 3, "window_iteration": 3, "command_step": 0, "maneuver_time_s": 0.0, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 4, "window_iteration": 4, "command_step": 0, "maneuver_time_s": 0.0, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 5, "window_iteration": 5, "command_step": 0, "maneuver_time_s": 0.0, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 6, "window_iteration": 6, "command_step": 0, "maneuver_time_s": 0.0, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 7, "window_iteration": 7, "command_step": 0, "maneuver_time_s": 0.0, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 8, "window_iteration": 8, "command_step": 0, "maneuver_time_s": 0.0, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 9, "window_iteration": 9, "command_step": 0, "maneuver_time_s": 0.0, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 10, "window_iteration": 10, "command_step": 0, "maneuver_time_s": 0.0, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 11, "window_iteration": 11, "command_step": 0, "maneuver_time_s": 0.0, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 12, "window_iteration": 12, "command_step": 0, "maneuver_time_s": 0.0, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 13, "window_iteration": 13, "command_step": 0, "maneuver_time_s": 0.0, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 14, "window_iteration": 14, "command_step": 0, "maneuver_time_s": 0.0, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 14, "command_step": 0}
+{"stage": "MPPI command committed", "iteration": 14, "command_step": 1, "time_s": 0.03333333333333333, "iterations": 14, "stop_reason": "reward_plateau", "actual_reward": -0.3312133390095858, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.3090152012878358, "lookahead_score": -80.08678400499511, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 1.091694278508713}
+{"stage": "MPPI lookahead optimization", "iteration": 15, "window_iteration": 1, "command_step": 1, "maneuver_time_s": 0.03333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 16, "window_iteration": 2, "command_step": 1, "maneuver_time_s": 0.03333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 17, "window_iteration": 3, "command_step": 1, "maneuver_time_s": 0.03333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 18, "window_iteration": 4, "command_step": 1, "maneuver_time_s": 0.03333333333333333, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 18, "command_step": 1}
+{"stage": "MPPI command committed", "iteration": 18, "command_step": 2, "time_s": 0.06666666666666667, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": -0.6584501420785519, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.3088749092753398, "lookahead_score": -75.63753324847659, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 1.0787987354675672}
+{"stage": "MPPI lookahead optimization", "iteration": 19, "window_iteration": 1, "command_step": 2, "maneuver_time_s": 0.06666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 20, "window_iteration": 2, "command_step": 2, "maneuver_time_s": 0.06666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 21, "window_iteration": 3, "command_step": 2, "maneuver_time_s": 0.06666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 22, "window_iteration": 4, "command_step": 2, "maneuver_time_s": 0.06666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 23, "window_iteration": 5, "command_step": 2, "maneuver_time_s": 0.06666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 24, "window_iteration": 6, "command_step": 2, "maneuver_time_s": 0.06666666666666667, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 24, "command_step": 2}
+{"stage": "MPPI command committed", "iteration": 24, "command_step": 3, "time_s": 0.1, "iterations": 6, "stop_reason": "reward_plateau", "actual_reward": -0.9397213793223143, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.3077330097852817, "lookahead_score": -71.81386023016243, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 1.0431283138663483}
+{"stage": "MPPI lookahead optimization", "iteration": 25, "window_iteration": 1, "command_step": 3, "maneuver_time_s": 0.1, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 26, "window_iteration": 2, "command_step": 3, "maneuver_time_s": 0.1, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 27, "window_iteration": 3, "command_step": 3, "maneuver_time_s": 0.1, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 28, "window_iteration": 4, "command_step": 3, "maneuver_time_s": 0.1, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 28, "command_step": 3}
+{"stage": "MPPI command committed", "iteration": 28, "command_step": 4, "time_s": 0.13333333333333333, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": -1.0553303664454536, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.3029772336364185, "lookahead_score": -69.10410867110575, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 1.036684454686655}
+{"stage": "MPPI lookahead optimization", "iteration": 29, "window_iteration": 1, "command_step": 4, "maneuver_time_s": 0.13333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 30, "window_iteration": 2, "command_step": 4, "maneuver_time_s": 0.13333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 31, "window_iteration": 3, "command_step": 4, "maneuver_time_s": 0.13333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 32, "window_iteration": 4, "command_step": 4, "maneuver_time_s": 0.13333333333333333, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 32, "command_step": 4}
+{"stage": "MPPI command committed", "iteration": 32, "command_step": 5, "time_s": 0.16666666666666666, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": -0.8972657122029565, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.2922525994182141, "lookahead_score": -67.6532155840167, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 1.0236706193486147}
+{"stage": "MPPI lookahead optimization", "iteration": 33, "window_iteration": 1, "command_step": 5, "maneuver_time_s": 0.16666666666666666, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 34, "window_iteration": 2, "command_step": 5, "maneuver_time_s": 0.16666666666666666, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 35, "window_iteration": 3, "command_step": 5, "maneuver_time_s": 0.16666666666666666, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 36, "window_iteration": 4, "command_step": 5, "maneuver_time_s": 0.16666666666666666, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 36, "command_step": 5}
+{"stage": "MPPI command committed", "iteration": 36, "command_step": 6, "time_s": 0.2, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": -0.3806237219101717, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.2736955132266425, "lookahead_score": -66.67917550535668, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 1.0190915400224876}
+{"stage": "MPPI lookahead optimization", "iteration": 37, "window_iteration": 1, "command_step": 6, "maneuver_time_s": 0.2, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 38, "window_iteration": 2, "command_step": 6, "maneuver_time_s": 0.2, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 39, "window_iteration": 3, "command_step": 6, "maneuver_time_s": 0.2, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 40, "window_iteration": 4, "command_step": 6, "maneuver_time_s": 0.2, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 40, "command_step": 6}
+{"stage": "MPPI command committed", "iteration": 40, "command_step": 7, "time_s": 0.23333333333333334, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": 0.5260148165348195, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.2466100583855515, "lookahead_score": -67.17651631248883, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 1.0172029806388645}
+{"stage": "MPPI lookahead optimization", "iteration": 41, "window_iteration": 1, "command_step": 7, "maneuver_time_s": 0.23333333333333334, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 42, "window_iteration": 2, "command_step": 7, "maneuver_time_s": 0.23333333333333334, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 43, "window_iteration": 3, "command_step": 7, "maneuver_time_s": 0.23333333333333334, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 44, "window_iteration": 4, "command_step": 7, "maneuver_time_s": 0.23333333333333334, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 44, "command_step": 7}
+{"stage": "MPPI command committed", "iteration": 44, "command_step": 8, "time_s": 0.26666666666666666, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": 1.742865714211669, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.2127141817967773, "lookahead_score": -68.56705062806927, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 1.0155667473327439}
+{"stage": "MPPI lookahead optimization", "iteration": 45, "window_iteration": 1, "command_step": 8, "maneuver_time_s": 0.26666666666666666, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 46, "window_iteration": 2, "command_step": 8, "maneuver_time_s": 0.26666666666666666, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 47, "window_iteration": 3, "command_step": 8, "maneuver_time_s": 0.26666666666666666, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 48, "window_iteration": 4, "command_step": 8, "maneuver_time_s": 0.26666666666666666, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 48, "command_step": 8}
+{"stage": "MPPI command committed", "iteration": 48, "command_step": 9, "time_s": 0.3, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": 3.1043771454835305, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.1755854148764895, "lookahead_score": -70.24375696872343, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 1.0122122963142115}
+{"stage": "MPPI lookahead optimization", "iteration": 49, "window_iteration": 1, "command_step": 9, "maneuver_time_s": 0.3, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 50, "window_iteration": 2, "command_step": 9, "maneuver_time_s": 0.3, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 51, "window_iteration": 3, "command_step": 9, "maneuver_time_s": 0.3, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 52, "window_iteration": 4, "command_step": 9, "maneuver_time_s": 0.3, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 52, "command_step": 9}
+{"stage": "MPPI command committed", "iteration": 52, "command_step": 10, "time_s": 0.3333333333333333, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": 4.440354992676445, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.138898729505398, "lookahead_score": -71.88116930268404, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 1.0074110414559962}
+{"stage": "MPPI lookahead optimization", "iteration": 53, "window_iteration": 1, "command_step": 10, "maneuver_time_s": 0.3333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 54, "window_iteration": 2, "command_step": 10, "maneuver_time_s": 0.3333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 55, "window_iteration": 3, "command_step": 10, "maneuver_time_s": 0.3333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 56, "window_iteration": 4, "command_step": 10, "maneuver_time_s": 0.3333333333333333, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 56, "command_step": 10}
+{"stage": "MPPI command committed", "iteration": 56, "command_step": 11, "time_s": 0.36666666666666664, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": 5.62115587904877, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.1054413312516111, "lookahead_score": -73.92277548109756, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 1.0064124879001253}
+{"stage": "MPPI lookahead optimization", "iteration": 57, "window_iteration": 1, "command_step": 11, "maneuver_time_s": 0.36666666666666664, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 58, "window_iteration": 2, "command_step": 11, "maneuver_time_s": 0.36666666666666664, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 59, "window_iteration": 3, "command_step": 11, "maneuver_time_s": 0.36666666666666664, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 60, "window_iteration": 4, "command_step": 11, "maneuver_time_s": 0.36666666666666664, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 60, "command_step": 11}
+{"stage": "MPPI command committed", "iteration": 60, "command_step": 12, "time_s": 0.4, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": 6.572910787249967, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.0767900340261485, "lookahead_score": -75.9441915291608, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 1.0056899773115278}
+{"stage": "MPPI lookahead optimization", "iteration": 61, "window_iteration": 1, "command_step": 12, "maneuver_time_s": 0.4, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 62, "window_iteration": 2, "command_step": 12, "maneuver_time_s": 0.4, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 63, "window_iteration": 3, "command_step": 12, "maneuver_time_s": 0.4, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 64, "window_iteration": 4, "command_step": 12, "maneuver_time_s": 0.4, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 64, "command_step": 12}
+{"stage": "MPPI command committed", "iteration": 64, "command_step": 13, "time_s": 0.43333333333333335, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": 7.2757297592569365, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.0533645093496358, "lookahead_score": -77.37833376859224, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 1.005382167097726}
+{"stage": "MPPI lookahead optimization", "iteration": 65, "window_iteration": 1, "command_step": 13, "maneuver_time_s": 0.43333333333333335, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 66, "window_iteration": 2, "command_step": 13, "maneuver_time_s": 0.43333333333333335, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 67, "window_iteration": 3, "command_step": 13, "maneuver_time_s": 0.43333333333333335, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 68, "window_iteration": 4, "command_step": 13, "maneuver_time_s": 0.43333333333333335, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 68, "command_step": 13}
+{"stage": "MPPI command committed", "iteration": 68, "command_step": 14, "time_s": 0.4666666666666667, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": 7.734568970667414, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.0350335753287798, "lookahead_score": -79.30398692629976, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 1.0054090429232663}
+{"stage": "MPPI lookahead optimization", "iteration": 69, "window_iteration": 1, "command_step": 14, "maneuver_time_s": 0.4666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 70, "window_iteration": 2, "command_step": 14, "maneuver_time_s": 0.4666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 71, "window_iteration": 3, "command_step": 14, "maneuver_time_s": 0.4666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 72, "window_iteration": 4, "command_step": 14, "maneuver_time_s": 0.4666666666666667, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 72, "command_step": 14}
+{"stage": "MPPI command committed", "iteration": 72, "command_step": 15, "time_s": 0.5, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": 7.95960820087031, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.0215768044942157, "lookahead_score": -81.90316901377692, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 1.0053433928389797}
+{"stage": "MPPI lookahead optimization", "iteration": 73, "window_iteration": 1, "command_step": 15, "maneuver_time_s": 0.5, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 74, "window_iteration": 2, "command_step": 15, "maneuver_time_s": 0.5, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 75, "window_iteration": 3, "command_step": 15, "maneuver_time_s": 0.5, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 76, "window_iteration": 4, "command_step": 15, "maneuver_time_s": 0.5, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 76, "command_step": 15}
+{"stage": "MPPI command committed", "iteration": 76, "command_step": 16, "time_s": 0.5333333333333333, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": 7.9713118018947196, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.0125434618706353, "lookahead_score": -84.64820560141152, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 1.0053710699173657}
+{"stage": "MPPI lookahead optimization", "iteration": 77, "window_iteration": 1, "command_step": 16, "maneuver_time_s": 0.5333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 78, "window_iteration": 2, "command_step": 16, "maneuver_time_s": 0.5333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 79, "window_iteration": 3, "command_step": 16, "maneuver_time_s": 0.5333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 80, "window_iteration": 4, "command_step": 16, "maneuver_time_s": 0.5333333333333333, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 80, "command_step": 16}
+{"stage": "MPPI command committed", "iteration": 80, "command_step": 17, "time_s": 0.5666666666666667, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": 7.792983399661141, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.0074454040148262, "lookahead_score": -87.31447590377154, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 1.0053708114868718}
+{"stage": "MPPI lookahead optimization", "iteration": 81, "window_iteration": 1, "command_step": 17, "maneuver_time_s": 0.5666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 82, "window_iteration": 2, "command_step": 17, "maneuver_time_s": 0.5666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 83, "window_iteration": 3, "command_step": 17, "maneuver_time_s": 0.5666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 84, "window_iteration": 4, "command_step": 17, "maneuver_time_s": 0.5666666666666667, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 84, "command_step": 17}
+{"stage": "MPPI command committed", "iteration": 84, "command_step": 18, "time_s": 0.6, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": 7.462420398684299, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.0054941182264576, "lookahead_score": -89.66737678782808, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 1.0053708114868785}
+{"stage": "MPPI lookahead optimization", "iteration": 85, "window_iteration": 1, "command_step": 18, "maneuver_time_s": 0.6, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 86, "window_iteration": 2, "command_step": 18, "maneuver_time_s": 0.6, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 87, "window_iteration": 3, "command_step": 18, "maneuver_time_s": 0.6, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 88, "window_iteration": 4, "command_step": 18, "maneuver_time_s": 0.6, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 88, "command_step": 18}
+{"stage": "MPPI command committed", "iteration": 88, "command_step": 19, "time_s": 0.6333333333333333, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": 7.042948106176134, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.0053708114868771, "lookahead_score": -90.41796408603055, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 1.005370811486876}
+{"stage": "MPPI lookahead optimization", "iteration": 89, "window_iteration": 1, "command_step": 19, "maneuver_time_s": 0.6333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 90, "window_iteration": 2, "command_step": 19, "maneuver_time_s": 0.6333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 91, "window_iteration": 3, "command_step": 19, "maneuver_time_s": 0.6333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 92, "window_iteration": 4, "command_step": 19, "maneuver_time_s": 0.6333333333333333, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 92, "command_step": 19}
+{"stage": "MPPI command committed", "iteration": 92, "command_step": 20, "time_s": 0.6666666666666666, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": 6.61548993996335, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.0053708114868771, "lookahead_score": -89.60960894456545, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 1.0053708114868771}
+{"stage": "MPPI lookahead optimization", "iteration": 93, "window_iteration": 1, "command_step": 20, "maneuver_time_s": 0.6666666666666666, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 94, "window_iteration": 2, "command_step": 20, "maneuver_time_s": 0.6666666666666666, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 95, "window_iteration": 3, "command_step": 20, "maneuver_time_s": 0.6666666666666666, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 96, "window_iteration": 4, "command_step": 20, "maneuver_time_s": 0.6666666666666666, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 96, "command_step": 20}
+{"stage": "MPPI command committed", "iteration": 96, "command_step": 21, "time_s": 0.7, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": 6.186949622957438, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.0053708114868771, "lookahead_score": -82.10278057646653, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 1.0053708114868771}
+{"stage": "MPPI lookahead optimization", "iteration": 97, "window_iteration": 1, "command_step": 21, "maneuver_time_s": 0.7, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 98, "window_iteration": 2, "command_step": 21, "maneuver_time_s": 0.7, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 99, "window_iteration": 3, "command_step": 21, "maneuver_time_s": 0.7, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 100, "window_iteration": 4, "command_step": 21, "maneuver_time_s": 0.7, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 100, "command_step": 21}
+{"stage": "MPPI command committed", "iteration": 100, "command_step": 22, "time_s": 0.7333333333333333, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": 5.758511509798225, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.0053708114868771, "lookahead_score": -76.09138039304429, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 1.0053708114868771}
+{"stage": "MPPI lookahead optimization", "iteration": 101, "window_iteration": 1, "command_step": 22, "maneuver_time_s": 0.7333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 102, "window_iteration": 2, "command_step": 22, "maneuver_time_s": 0.7333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 103, "window_iteration": 3, "command_step": 22, "maneuver_time_s": 0.7333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 104, "window_iteration": 4, "command_step": 22, "maneuver_time_s": 0.7333333333333333, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 104, "command_step": 22}
+{"stage": "MPPI command committed", "iteration": 104, "command_step": 23, "time_s": 0.7666666666666667, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": 5.330354855278711, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.0053708114868771, "lookahead_score": -70.9370573779769, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 1.0053708114868771}
+{"stage": "MPPI lookahead optimization", "iteration": 105, "window_iteration": 1, "command_step": 23, "maneuver_time_s": 0.7666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 106, "window_iteration": 2, "command_step": 23, "maneuver_time_s": 0.7666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 107, "window_iteration": 3, "command_step": 23, "maneuver_time_s": 0.7666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 108, "window_iteration": 4, "command_step": 23, "maneuver_time_s": 0.7666666666666667, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 108, "command_step": 23}
+{"stage": "MPPI command committed", "iteration": 108, "command_step": 24, "time_s": 0.8, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": 4.902785738998551, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.0053708114868771, "lookahead_score": -67.20435233627727, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 1.0053708114868771}
+{"stage": "MPPI lookahead optimization", "iteration": 109, "window_iteration": 1, "command_step": 24, "maneuver_time_s": 0.8, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 110, "window_iteration": 2, "command_step": 24, "maneuver_time_s": 0.8, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 111, "window_iteration": 3, "command_step": 24, "maneuver_time_s": 0.8, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 112, "window_iteration": 4, "command_step": 24, "maneuver_time_s": 0.8, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 112, "command_step": 24}
+{"stage": "MPPI command committed", "iteration": 112, "command_step": 25, "time_s": 0.8333333333333334, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": 4.476564566569647, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.0053708114868771, "lookahead_score": -63.73878044682437, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.9823340503495145}
+{"stage": "MPPI lookahead optimization", "iteration": 113, "window_iteration": 1, "command_step": 25, "maneuver_time_s": 0.8333333333333334, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 114, "window_iteration": 2, "command_step": 25, "maneuver_time_s": 0.8333333333333334, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 115, "window_iteration": 3, "command_step": 25, "maneuver_time_s": 0.8333333333333334, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 116, "window_iteration": 4, "command_step": 25, "maneuver_time_s": 0.8333333333333334, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 117, "window_iteration": 5, "command_step": 25, "maneuver_time_s": 0.8333333333333334, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 118, "window_iteration": 6, "command_step": 25, "maneuver_time_s": 0.8333333333333334, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 119, "window_iteration": 7, "command_step": 25, "maneuver_time_s": 0.8333333333333334, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 119, "command_step": 25}
+{"stage": "MPPI command committed", "iteration": 119, "command_step": 26, "time_s": 0.8666666666666667, "iterations": 7, "stop_reason": "reward_plateau", "actual_reward": 4.052514137927207, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.0053708114868771, "lookahead_score": -60.63938624161622, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.9621670363044892}
+{"stage": "MPPI lookahead optimization", "iteration": 120, "window_iteration": 1, "command_step": 26, "maneuver_time_s": 0.8666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 121, "window_iteration": 2, "command_step": 26, "maneuver_time_s": 0.8666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 122, "window_iteration": 3, "command_step": 26, "maneuver_time_s": 0.8666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 123, "window_iteration": 4, "command_step": 26, "maneuver_time_s": 0.8666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 124, "window_iteration": 5, "command_step": 26, "maneuver_time_s": 0.8666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 125, "window_iteration": 6, "command_step": 26, "maneuver_time_s": 0.8666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 126, "window_iteration": 7, "command_step": 26, "maneuver_time_s": 0.8666666666666667, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 126, "command_step": 26}
+{"stage": "MPPI command committed", "iteration": 126, "command_step": 27, "time_s": 0.9, "iterations": 7, "stop_reason": "reward_plateau", "actual_reward": 3.6312394002420816, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.0053708114868771, "lookahead_score": -58.50824273820574, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.936113879297166}
+{"stage": "MPPI lookahead optimization", "iteration": 127, "window_iteration": 1, "command_step": 27, "maneuver_time_s": 0.9, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 128, "window_iteration": 2, "command_step": 27, "maneuver_time_s": 0.9, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 129, "window_iteration": 3, "command_step": 27, "maneuver_time_s": 0.9, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 130, "window_iteration": 4, "command_step": 27, "maneuver_time_s": 0.9, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 131, "window_iteration": 5, "command_step": 27, "maneuver_time_s": 0.9, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 131, "command_step": 27}
+{"stage": "MPPI command committed", "iteration": 131, "command_step": 28, "time_s": 0.9333333333333333, "iterations": 5, "stop_reason": "reward_plateau", "actual_reward": 3.2130786850047817, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.0053708114868771, "lookahead_score": -57.352532505560035, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.9146133112602611}
+{"stage": "MPPI lookahead optimization", "iteration": 132, "window_iteration": 1, "command_step": 28, "maneuver_time_s": 0.9333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 133, "window_iteration": 2, "command_step": 28, "maneuver_time_s": 0.9333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 134, "window_iteration": 3, "command_step": 28, "maneuver_time_s": 0.9333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 135, "window_iteration": 4, "command_step": 28, "maneuver_time_s": 0.9333333333333333, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 135, "command_step": 28}
+{"stage": "MPPI command committed", "iteration": 135, "command_step": 29, "time_s": 0.9666666666666667, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": 2.7978007253453248, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.0053708114868771, "lookahead_score": -55.84354399022665, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.8898045277511546}
+{"stage": "MPPI lookahead optimization", "iteration": 136, "window_iteration": 1, "command_step": 29, "maneuver_time_s": 0.9666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 137, "window_iteration": 2, "command_step": 29, "maneuver_time_s": 0.9666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 138, "window_iteration": 3, "command_step": 29, "maneuver_time_s": 0.9666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 139, "window_iteration": 4, "command_step": 29, "maneuver_time_s": 0.9666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 140, "window_iteration": 5, "command_step": 29, "maneuver_time_s": 0.9666666666666667, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 140, "command_step": 29}
+{"stage": "MPPI command committed", "iteration": 140, "command_step": 30, "time_s": 1.0, "iterations": 5, "stop_reason": "reward_plateau", "actual_reward": 2.3839135547720294, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.0053708114868771, "lookahead_score": -54.50772706189905, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.8675411443251099}
+{"stage": "MPPI lookahead optimization", "iteration": 141, "window_iteration": 1, "command_step": 30, "maneuver_time_s": 1.0, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 142, "window_iteration": 2, "command_step": 30, "maneuver_time_s": 1.0, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 143, "window_iteration": 3, "command_step": 30, "maneuver_time_s": 1.0, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 144, "window_iteration": 4, "command_step": 30, "maneuver_time_s": 1.0, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 145, "window_iteration": 5, "command_step": 30, "maneuver_time_s": 1.0, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 146, "window_iteration": 6, "command_step": 30, "maneuver_time_s": 1.0, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 147, "window_iteration": 7, "command_step": 30, "maneuver_time_s": 1.0, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 147, "command_step": 30}
+{"stage": "MPPI command committed", "iteration": 147, "command_step": 31, "time_s": 1.0333333333333334, "iterations": 7, "stop_reason": "reward_plateau", "actual_reward": 1.968988922033647, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.0053708114868771, "lookahead_score": -54.7547803949756, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.8509777889077257}
+{"stage": "MPPI lookahead optimization", "iteration": 148, "window_iteration": 1, "command_step": 31, "maneuver_time_s": 1.0333333333333334, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 149, "window_iteration": 2, "command_step": 31, "maneuver_time_s": 1.0333333333333334, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 150, "window_iteration": 3, "command_step": 31, "maneuver_time_s": 1.0333333333333334, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 151, "window_iteration": 4, "command_step": 31, "maneuver_time_s": 1.0333333333333334, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 151, "command_step": 31}
+{"stage": "MPPI command committed", "iteration": 151, "command_step": 32, "time_s": 1.0666666666666667, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": 1.5505559298393212, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.0053708114868771, "lookahead_score": -56.50557152167544, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.8410899932401427}
+{"stage": "MPPI lookahead optimization", "iteration": 152, "window_iteration": 1, "command_step": 32, "maneuver_time_s": 1.0666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 153, "window_iteration": 2, "command_step": 32, "maneuver_time_s": 1.0666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 154, "window_iteration": 3, "command_step": 32, "maneuver_time_s": 1.0666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 155, "window_iteration": 4, "command_step": 32, "maneuver_time_s": 1.0666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 156, "window_iteration": 5, "command_step": 32, "maneuver_time_s": 1.0666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 157, "window_iteration": 6, "command_step": 32, "maneuver_time_s": 1.0666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 158, "window_iteration": 7, "command_step": 32, "maneuver_time_s": 1.0666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 159, "window_iteration": 8, "command_step": 32, "maneuver_time_s": 1.0666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 160, "window_iteration": 9, "command_step": 32, "maneuver_time_s": 1.0666666666666667, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 160, "command_step": 32}
+{"stage": "MPPI command committed", "iteration": 160, "command_step": 33, "time_s": 1.1, "iterations": 9, "stop_reason": "reward_plateau", "actual_reward": 1.1268875484928922, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.0053708114868771, "lookahead_score": -57.47279658425097, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.831679891156923}
+{"stage": "MPPI lookahead optimization", "iteration": 161, "window_iteration": 1, "command_step": 33, "maneuver_time_s": 1.1, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 162, "window_iteration": 2, "command_step": 33, "maneuver_time_s": 1.1, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 163, "window_iteration": 3, "command_step": 33, "maneuver_time_s": 1.1, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 164, "window_iteration": 4, "command_step": 33, "maneuver_time_s": 1.1, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 165, "window_iteration": 5, "command_step": 33, "maneuver_time_s": 1.1, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 166, "window_iteration": 6, "command_step": 33, "maneuver_time_s": 1.1, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 166, "command_step": 33}
+{"stage": "MPPI command committed", "iteration": 166, "command_step": 34, "time_s": 1.1333333333333333, "iterations": 6, "stop_reason": "reward_plateau", "actual_reward": 0.6961582186631439, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.0053708114868771, "lookahead_score": -59.11685122218766, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.825817233527322}
+{"stage": "MPPI lookahead optimization", "iteration": 167, "window_iteration": 1, "command_step": 34, "maneuver_time_s": 1.1333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 168, "window_iteration": 2, "command_step": 34, "maneuver_time_s": 1.1333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 169, "window_iteration": 3, "command_step": 34, "maneuver_time_s": 1.1333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 170, "window_iteration": 4, "command_step": 34, "maneuver_time_s": 1.1333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 171, "window_iteration": 5, "command_step": 34, "maneuver_time_s": 1.1333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 172, "window_iteration": 6, "command_step": 34, "maneuver_time_s": 1.1333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 173, "window_iteration": 7, "command_step": 34, "maneuver_time_s": 1.1333333333333333, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 173, "command_step": 34}
+{"stage": "MPPI command committed", "iteration": 173, "command_step": 35, "time_s": 1.1666666666666667, "iterations": 7, "stop_reason": "reward_plateau", "actual_reward": 0.25836248045108745, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 1.0053708114868771, "lookahead_score": -61.42382256434874, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.8265871524456911}
+{"stage": "MPPI lookahead optimization", "iteration": 174, "window_iteration": 1, "command_step": 35, "maneuver_time_s": 1.1666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 175, "window_iteration": 2, "command_step": 35, "maneuver_time_s": 1.1666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 176, "window_iteration": 3, "command_step": 35, "maneuver_time_s": 1.1666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 177, "window_iteration": 4, "command_step": 35, "maneuver_time_s": 1.1666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 178, "window_iteration": 5, "command_step": 35, "maneuver_time_s": 1.1666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 179, "window_iteration": 6, "command_step": 35, "maneuver_time_s": 1.1666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 180, "window_iteration": 7, "command_step": 35, "maneuver_time_s": 1.1666666666666667, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 180, "command_step": 35}
+{"stage": "MPPI command committed", "iteration": 180, "command_step": 36, "time_s": 1.2, "iterations": 7, "stop_reason": "reward_plateau", "actual_reward": 0.3065625472664063, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.994628921476857, "lookahead_score": -65.19411198603322, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.8276721915534676}
+{"stage": "MPPI lookahead optimization", "iteration": 181, "window_iteration": 1, "command_step": 36, "maneuver_time_s": 1.2, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 182, "window_iteration": 2, "command_step": 36, "maneuver_time_s": 1.2, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 183, "window_iteration": 3, "command_step": 36, "maneuver_time_s": 1.2, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 184, "window_iteration": 4, "command_step": 36, "maneuver_time_s": 1.2, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 185, "window_iteration": 5, "command_step": 36, "maneuver_time_s": 1.2, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 186, "window_iteration": 6, "command_step": 36, "maneuver_time_s": 1.2, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 186, "command_step": 36}
+{"stage": "MPPI command committed", "iteration": 186, "command_step": 37, "time_s": 1.2333333333333334, "iterations": 6, "stop_reason": "reward_plateau", "actual_reward": 1.3125946899989716, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.9628902704265251, "lookahead_score": -70.00787214107469, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.8275047160682022}
+{"stage": "MPPI lookahead optimization", "iteration": 187, "window_iteration": 1, "command_step": 37, "maneuver_time_s": 1.2333333333333334, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 188, "window_iteration": 2, "command_step": 37, "maneuver_time_s": 1.2333333333333334, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 189, "window_iteration": 3, "command_step": 37, "maneuver_time_s": 1.2333333333333334, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 190, "window_iteration": 4, "command_step": 37, "maneuver_time_s": 1.2333333333333334, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 191, "window_iteration": 5, "command_step": 37, "maneuver_time_s": 1.2333333333333334, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 191, "command_step": 37}
+{"stage": "MPPI command committed", "iteration": 191, "command_step": 38, "time_s": 1.2666666666666666, "iterations": 5, "stop_reason": "reward_plateau", "actual_reward": 2.203013967839027, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.9336023951940439, "lookahead_score": -78.18731602652757, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.82838946970877}
+{"stage": "MPPI lookahead optimization", "iteration": 192, "window_iteration": 1, "command_step": 38, "maneuver_time_s": 1.2666666666666666, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 193, "window_iteration": 2, "command_step": 38, "maneuver_time_s": 1.2666666666666666, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 194, "window_iteration": 3, "command_step": 38, "maneuver_time_s": 1.2666666666666666, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 195, "window_iteration": 4, "command_step": 38, "maneuver_time_s": 1.2666666666666666, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 195, "command_step": 38}
+{"stage": "MPPI command committed", "iteration": 195, "command_step": 39, "time_s": 1.3, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": 2.863832845713367, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.9092900866274019, "lookahead_score": -89.67590742877181, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.8278792282126253}
+{"stage": "MPPI lookahead optimization", "iteration": 196, "window_iteration": 1, "command_step": 39, "maneuver_time_s": 1.3, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 197, "window_iteration": 2, "command_step": 39, "maneuver_time_s": 1.3, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 198, "window_iteration": 3, "command_step": 39, "maneuver_time_s": 1.3, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 199, "window_iteration": 4, "command_step": 39, "maneuver_time_s": 1.3, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 200, "window_iteration": 5, "command_step": 39, "maneuver_time_s": 1.3, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 201, "window_iteration": 6, "command_step": 39, "maneuver_time_s": 1.3, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 202, "window_iteration": 7, "command_step": 39, "maneuver_time_s": 1.3, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 203, "window_iteration": 8, "command_step": 39, "maneuver_time_s": 1.3, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 203, "command_step": 39}
+{"stage": "MPPI command committed", "iteration": 203, "command_step": 40, "time_s": 1.3333333333333333, "iterations": 8, "stop_reason": "reward_plateau", "actual_reward": 3.353255851775302, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.8887452060472876, "lookahead_score": -90.94759933947653, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.8375838324428996}
+{"stage": "MPPI lookahead optimization", "iteration": 204, "window_iteration": 1, "command_step": 40, "maneuver_time_s": 1.3333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 205, "window_iteration": 2, "command_step": 40, "maneuver_time_s": 1.3333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 206, "window_iteration": 3, "command_step": 40, "maneuver_time_s": 1.3333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 207, "window_iteration": 4, "command_step": 40, "maneuver_time_s": 1.3333333333333333, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 207, "command_step": 40}
+{"stage": "MPPI command committed", "iteration": 207, "command_step": 41, "time_s": 1.3666666666666667, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": 3.7046109212385447, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.8712639254933078, "lookahead_score": -88.65655715186072, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.8375396729982458}
+{"stage": "MPPI lookahead optimization", "iteration": 208, "window_iteration": 1, "command_step": 41, "maneuver_time_s": 1.3666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 209, "window_iteration": 2, "command_step": 41, "maneuver_time_s": 1.3666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 210, "window_iteration": 3, "command_step": 41, "maneuver_time_s": 1.3666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 211, "window_iteration": 4, "command_step": 41, "maneuver_time_s": 1.3666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 212, "window_iteration": 5, "command_step": 41, "maneuver_time_s": 1.3666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 213, "window_iteration": 6, "command_step": 41, "maneuver_time_s": 1.3666666666666667, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 213, "command_step": 41}
+{"stage": "MPPI command committed", "iteration": 213, "command_step": 42, "time_s": 1.4, "iterations": 6, "stop_reason": "reward_plateau", "actual_reward": 3.8951278281838024, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.8574066248838791, "lookahead_score": -87.05830446520004, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.8375544242655488}
+{"stage": "MPPI lookahead optimization", "iteration": 214, "window_iteration": 1, "command_step": 42, "maneuver_time_s": 1.4, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 215, "window_iteration": 2, "command_step": 42, "maneuver_time_s": 1.4, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 216, "window_iteration": 3, "command_step": 42, "maneuver_time_s": 1.4, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 217, "window_iteration": 4, "command_step": 42, "maneuver_time_s": 1.4, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 217, "command_step": 42}
+{"stage": "MPPI command committed", "iteration": 217, "command_step": 43, "time_s": 1.4333333333333333, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": 3.953718992602559, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.846583090924212, "lookahead_score": -86.80840222170457, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.8375880135156301}
+{"stage": "MPPI lookahead optimization", "iteration": 218, "window_iteration": 1, "command_step": 43, "maneuver_time_s": 1.4333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 219, "window_iteration": 2, "command_step": 43, "maneuver_time_s": 1.4333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 220, "window_iteration": 3, "command_step": 43, "maneuver_time_s": 1.4333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 221, "window_iteration": 4, "command_step": 43, "maneuver_time_s": 1.4333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 222, "window_iteration": 5, "command_step": 43, "maneuver_time_s": 1.4333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 223, "window_iteration": 6, "command_step": 43, "maneuver_time_s": 1.4333333333333333, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 223, "command_step": 43}
+{"stage": "MPPI command committed", "iteration": 223, "command_step": 44, "time_s": 1.4666666666666666, "iterations": 6, "stop_reason": "reward_plateau", "actual_reward": 3.854839227572681, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.8393397744188391, "lookahead_score": -86.70302906664145, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.8375880135156282}
+{"stage": "MPPI lookahead optimization", "iteration": 224, "window_iteration": 1, "command_step": 44, "maneuver_time_s": 1.4666666666666666, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 225, "window_iteration": 2, "command_step": 44, "maneuver_time_s": 1.4666666666666666, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 226, "window_iteration": 3, "command_step": 44, "maneuver_time_s": 1.4666666666666666, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 227, "window_iteration": 4, "command_step": 44, "maneuver_time_s": 1.4666666666666666, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 228, "window_iteration": 5, "command_step": 44, "maneuver_time_s": 1.4666666666666666, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 229, "window_iteration": 6, "command_step": 44, "maneuver_time_s": 1.4666666666666666, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 229, "command_step": 44}
+{"stage": "MPPI command committed", "iteration": 229, "command_step": 45, "time_s": 1.5, "iterations": 6, "stop_reason": "reward_plateau", "actual_reward": 3.510396543062059, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.8375880135156463, "lookahead_score": -87.17814835648295, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.8375880135156475}
+{"stage": "MPPI lookahead optimization", "iteration": 230, "window_iteration": 1, "command_step": 45, "maneuver_time_s": 1.5, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 231, "window_iteration": 2, "command_step": 45, "maneuver_time_s": 1.5, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 232, "window_iteration": 3, "command_step": 45, "maneuver_time_s": 1.5, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 233, "window_iteration": 4, "command_step": 45, "maneuver_time_s": 1.5, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 234, "window_iteration": 5, "command_step": 45, "maneuver_time_s": 1.5, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 235, "window_iteration": 6, "command_step": 45, "maneuver_time_s": 1.5, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 236, "window_iteration": 7, "command_step": 45, "maneuver_time_s": 1.5, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 237, "window_iteration": 8, "command_step": 45, "maneuver_time_s": 1.5, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 238, "window_iteration": 9, "command_step": 45, "maneuver_time_s": 1.5, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 239, "window_iteration": 10, "command_step": 45, "maneuver_time_s": 1.5, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 240, "window_iteration": 11, "command_step": 45, "maneuver_time_s": 1.5, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 241, "window_iteration": 12, "command_step": 45, "maneuver_time_s": 1.5, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 241, "command_step": 45}
+{"stage": "MPPI command committed", "iteration": 241, "command_step": 46, "time_s": 1.5333333333333334, "iterations": 12, "stop_reason": "reward_plateau", "actual_reward": 3.090450340927751, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.8375880135156463, "lookahead_score": -86.99503543346415, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.8375880135156463}
+{"stage": "MPPI lookahead optimization", "iteration": 242, "window_iteration": 1, "command_step": 46, "maneuver_time_s": 1.5333333333333334, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 243, "window_iteration": 2, "command_step": 46, "maneuver_time_s": 1.5333333333333334, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 244, "window_iteration": 3, "command_step": 46, "maneuver_time_s": 1.5333333333333334, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 245, "window_iteration": 4, "command_step": 46, "maneuver_time_s": 1.5333333333333334, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 246, "window_iteration": 5, "command_step": 46, "maneuver_time_s": 1.5333333333333334, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 247, "window_iteration": 6, "command_step": 46, "maneuver_time_s": 1.5333333333333334, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 247, "command_step": 46}
+{"stage": "MPPI command committed", "iteration": 247, "command_step": 47, "time_s": 1.5666666666666667, "iterations": 6, "stop_reason": "reward_plateau", "actual_reward": 2.6738149323398526, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.8375880135156463, "lookahead_score": -90.07260965297482, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.8375880135156463}
+{"stage": "MPPI lookahead optimization", "iteration": 248, "window_iteration": 1, "command_step": 47, "maneuver_time_s": 1.5666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 249, "window_iteration": 2, "command_step": 47, "maneuver_time_s": 1.5666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 250, "window_iteration": 3, "command_step": 47, "maneuver_time_s": 1.5666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 251, "window_iteration": 4, "command_step": 47, "maneuver_time_s": 1.5666666666666667, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 251, "command_step": 47}
+{"stage": "MPPI command committed", "iteration": 251, "command_step": 48, "time_s": 1.6, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": 2.259548102977666, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.8375880135156463, "lookahead_score": -92.52206104121565, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.8375880135156463}
+{"stage": "MPPI lookahead optimization", "iteration": 252, "window_iteration": 1, "command_step": 48, "maneuver_time_s": 1.6, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 253, "window_iteration": 2, "command_step": 48, "maneuver_time_s": 1.6, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 254, "window_iteration": 3, "command_step": 48, "maneuver_time_s": 1.6, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 255, "window_iteration": 4, "command_step": 48, "maneuver_time_s": 1.6, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 255, "command_step": 48}
+{"stage": "MPPI command committed", "iteration": 255, "command_step": 49, "time_s": 1.6333333333333333, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": 1.8483139854264716, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.8375880135156463, "lookahead_score": -95.2023882416414, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.8375880135156463}
+{"stage": "MPPI lookahead optimization", "iteration": 256, "window_iteration": 1, "command_step": 49, "maneuver_time_s": 1.6333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 257, "window_iteration": 2, "command_step": 49, "maneuver_time_s": 1.6333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 258, "window_iteration": 3, "command_step": 49, "maneuver_time_s": 1.6333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 259, "window_iteration": 4, "command_step": 49, "maneuver_time_s": 1.6333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 260, "window_iteration": 5, "command_step": 49, "maneuver_time_s": 1.6333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 261, "window_iteration": 6, "command_step": 49, "maneuver_time_s": 1.6333333333333333, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 261, "command_step": 49}
+{"stage": "MPPI command committed", "iteration": 261, "command_step": 50, "time_s": 1.6666666666666667, "iterations": 6, "stop_reason": "reward_plateau", "actual_reward": 1.4406096422467203, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.8375880135156463, "lookahead_score": -94.77011631879981, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.8375880135156463}
+{"stage": "MPPI lookahead optimization", "iteration": 262, "window_iteration": 1, "command_step": 50, "maneuver_time_s": 1.6666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 263, "window_iteration": 2, "command_step": 50, "maneuver_time_s": 1.6666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 264, "window_iteration": 3, "command_step": 50, "maneuver_time_s": 1.6666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 265, "window_iteration": 4, "command_step": 50, "maneuver_time_s": 1.6666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 266, "window_iteration": 5, "command_step": 50, "maneuver_time_s": 1.6666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 267, "window_iteration": 6, "command_step": 50, "maneuver_time_s": 1.6666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 268, "window_iteration": 7, "command_step": 50, "maneuver_time_s": 1.6666666666666667, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 268, "command_step": 50}
+{"stage": "MPPI command committed", "iteration": 268, "command_step": 51, "time_s": 1.7, "iterations": 7, "stop_reason": "reward_plateau", "actual_reward": 1.037883989278897, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.8375880135156463, "lookahead_score": -91.78391215118798, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.8375880135156463}
+{"stage": "MPPI lookahead optimization", "iteration": 269, "window_iteration": 1, "command_step": 51, "maneuver_time_s": 1.7, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 270, "window_iteration": 2, "command_step": 51, "maneuver_time_s": 1.7, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 271, "window_iteration": 3, "command_step": 51, "maneuver_time_s": 1.7, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 272, "window_iteration": 4, "command_step": 51, "maneuver_time_s": 1.7, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 272, "command_step": 51}
+{"stage": "MPPI command committed", "iteration": 272, "command_step": 52, "time_s": 1.7333333333333334, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": 0.6413748308052022, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.8375880135156463, "lookahead_score": -83.9986041681958, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.8375880135156463}
+{"stage": "MPPI lookahead optimization", "iteration": 273, "window_iteration": 1, "command_step": 52, "maneuver_time_s": 1.7333333333333334, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 274, "window_iteration": 2, "command_step": 52, "maneuver_time_s": 1.7333333333333334, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 275, "window_iteration": 3, "command_step": 52, "maneuver_time_s": 1.7333333333333334, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 276, "window_iteration": 4, "command_step": 52, "maneuver_time_s": 1.7333333333333334, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 276, "command_step": 52}
+{"stage": "MPPI command committed", "iteration": 276, "command_step": 53, "time_s": 1.7666666666666666, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": 0.2514716648821231, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.8375880135156463, "lookahead_score": -75.84457745413351, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.8375880135156463}
+{"stage": "MPPI lookahead optimization", "iteration": 277, "window_iteration": 1, "command_step": 53, "maneuver_time_s": 1.7666666666666666, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 278, "window_iteration": 2, "command_step": 53, "maneuver_time_s": 1.7666666666666666, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 279, "window_iteration": 3, "command_step": 53, "maneuver_time_s": 1.7666666666666666, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 280, "window_iteration": 4, "command_step": 53, "maneuver_time_s": 1.7666666666666666, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 281, "window_iteration": 5, "command_step": 53, "maneuver_time_s": 1.7666666666666666, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 281, "command_step": 53}
+{"stage": "MPPI command committed", "iteration": 281, "command_step": 54, "time_s": 1.8, "iterations": 5, "stop_reason": "reward_plateau", "actual_reward": -0.13229950024915993, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.8375880135156463, "lookahead_score": -67.99216501505592, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.8375880135156463}
+{"stage": "MPPI lookahead optimization", "iteration": 282, "window_iteration": 1, "command_step": 54, "maneuver_time_s": 1.8, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 283, "window_iteration": 2, "command_step": 54, "maneuver_time_s": 1.8, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 284, "window_iteration": 3, "command_step": 54, "maneuver_time_s": 1.8, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 285, "window_iteration": 4, "command_step": 54, "maneuver_time_s": 1.8, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 286, "window_iteration": 5, "command_step": 54, "maneuver_time_s": 1.8, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 286, "command_step": 54}
+{"stage": "MPPI command committed", "iteration": 286, "command_step": 55, "time_s": 1.8333333333333333, "iterations": 5, "stop_reason": "reward_plateau", "actual_reward": -0.510595709928302, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.8375880135156463, "lookahead_score": -60.5723379237837, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.8375880135156463}
+{"stage": "MPPI lookahead optimization", "iteration": 287, "window_iteration": 1, "command_step": 55, "maneuver_time_s": 1.8333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 288, "window_iteration": 2, "command_step": 55, "maneuver_time_s": 1.8333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 289, "window_iteration": 3, "command_step": 55, "maneuver_time_s": 1.8333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 290, "window_iteration": 4, "command_step": 55, "maneuver_time_s": 1.8333333333333333, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 290, "command_step": 55}
+{"stage": "MPPI command committed", "iteration": 290, "command_step": 56, "time_s": 1.8666666666666667, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": -0.8847472621011989, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.8375880135156463, "lookahead_score": -54.843107841190694, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.8375880135156463}
+{"stage": "MPPI lookahead optimization", "iteration": 291, "window_iteration": 1, "command_step": 56, "maneuver_time_s": 1.8666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 292, "window_iteration": 2, "command_step": 56, "maneuver_time_s": 1.8666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 293, "window_iteration": 3, "command_step": 56, "maneuver_time_s": 1.8666666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 294, "window_iteration": 4, "command_step": 56, "maneuver_time_s": 1.8666666666666667, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 294, "command_step": 56}
+{"stage": "MPPI command committed", "iteration": 294, "command_step": 57, "time_s": 1.9, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": -1.2557934765897363, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.8375880135156463, "lookahead_score": -48.511186825631995, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.7941397802760807}
+{"stage": "MPPI lookahead optimization", "iteration": 295, "window_iteration": 1, "command_step": 57, "maneuver_time_s": 1.9, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 296, "window_iteration": 2, "command_step": 57, "maneuver_time_s": 1.9, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 297, "window_iteration": 3, "command_step": 57, "maneuver_time_s": 1.9, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 298, "window_iteration": 4, "command_step": 57, "maneuver_time_s": 1.9, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 299, "window_iteration": 5, "command_step": 57, "maneuver_time_s": 1.9, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 300, "window_iteration": 6, "command_step": 57, "maneuver_time_s": 1.9, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 301, "window_iteration": 7, "command_step": 57, "maneuver_time_s": 1.9, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 302, "window_iteration": 8, "command_step": 57, "maneuver_time_s": 1.9, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 303, "window_iteration": 9, "command_step": 57, "maneuver_time_s": 1.9, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 304, "window_iteration": 10, "command_step": 57, "maneuver_time_s": 1.9, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 304, "command_step": 57}
+{"stage": "MPPI command committed", "iteration": 304, "command_step": 58, "time_s": 1.9333333333333333, "iterations": 10, "stop_reason": "reward_plateau", "actual_reward": -1.6251274756089193, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.8375880135156463, "lookahead_score": -40.452675350491376, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.7352922545482904}
+{"stage": "MPPI lookahead optimization", "iteration": 305, "window_iteration": 1, "command_step": 58, "maneuver_time_s": 1.9333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 306, "window_iteration": 2, "command_step": 58, "maneuver_time_s": 1.9333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 307, "window_iteration": 3, "command_step": 58, "maneuver_time_s": 1.9333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 308, "window_iteration": 4, "command_step": 58, "maneuver_time_s": 1.9333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 309, "window_iteration": 5, "command_step": 58, "maneuver_time_s": 1.9333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 310, "window_iteration": 6, "command_step": 58, "maneuver_time_s": 1.9333333333333333, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 310, "command_step": 58}
+{"stage": "MPPI command committed", "iteration": 310, "command_step": 59, "time_s": 1.9666666666666666, "iterations": 6, "stop_reason": "reward_plateau", "actual_reward": -1.994169974752725, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.8375880135156463, "lookahead_score": -33.621486220001145, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.6722599565694513}
+{"stage": "MPPI lookahead optimization", "iteration": 311, "window_iteration": 1, "command_step": 59, "maneuver_time_s": 1.9666666666666666, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 312, "window_iteration": 2, "command_step": 59, "maneuver_time_s": 1.9666666666666666, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 313, "window_iteration": 3, "command_step": 59, "maneuver_time_s": 1.9666666666666666, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 314, "window_iteration": 4, "command_step": 59, "maneuver_time_s": 1.9666666666666666, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 314, "command_step": 59}
+{"stage": "MPPI command committed", "iteration": 314, "command_step": 60, "time_s": 2.0, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": -2.3645191300754647, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.8375880135156463, "lookahead_score": -26.999162811384522, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.6215046660541775}
+{"stage": "MPPI lookahead optimization", "iteration": 315, "window_iteration": 1, "command_step": 60, "maneuver_time_s": 2.0, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 316, "window_iteration": 2, "command_step": 60, "maneuver_time_s": 2.0, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 317, "window_iteration": 3, "command_step": 60, "maneuver_time_s": 2.0, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 318, "window_iteration": 4, "command_step": 60, "maneuver_time_s": 2.0, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 319, "window_iteration": 5, "command_step": 60, "maneuver_time_s": 2.0, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 320, "window_iteration": 6, "command_step": 60, "maneuver_time_s": 2.0, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 320, "command_step": 60}
+{"stage": "MPPI command committed", "iteration": 320, "command_step": 61, "time_s": 2.033333333333333, "iterations": 6, "stop_reason": "reward_plateau", "actual_reward": -2.7379804407073776, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.8375880135156463, "lookahead_score": -21.829617779169507, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.5709805802082852}
+{"stage": "MPPI lookahead optimization", "iteration": 321, "window_iteration": 1, "command_step": 61, "maneuver_time_s": 2.033333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 322, "window_iteration": 2, "command_step": 61, "maneuver_time_s": 2.033333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 323, "window_iteration": 3, "command_step": 61, "maneuver_time_s": 2.033333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 324, "window_iteration": 4, "command_step": 61, "maneuver_time_s": 2.033333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 325, "window_iteration": 5, "command_step": 61, "maneuver_time_s": 2.033333333333333, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 325, "command_step": 61}
+{"stage": "MPPI command committed", "iteration": 325, "command_step": 62, "time_s": 2.066666666666667, "iterations": 5, "stop_reason": "reward_plateau", "actual_reward": -3.1165869707181644, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.8375880135156463, "lookahead_score": -17.877224893060884, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.526417812384944}
+{"stage": "MPPI lookahead optimization", "iteration": 326, "window_iteration": 1, "command_step": 62, "maneuver_time_s": 2.066666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 327, "window_iteration": 2, "command_step": 62, "maneuver_time_s": 2.066666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 328, "window_iteration": 3, "command_step": 62, "maneuver_time_s": 2.066666666666667, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 329, "window_iteration": 4, "command_step": 62, "maneuver_time_s": 2.066666666666667, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 329, "command_step": 62}
+{"stage": "MPPI command committed", "iteration": 329, "command_step": 63, "time_s": 2.1, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": -3.502759509418437, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.8375880135156463, "lookahead_score": -15.205122029309177, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.4856092136716165}
+{"stage": "MPPI lookahead optimization", "iteration": 330, "window_iteration": 1, "command_step": 63, "maneuver_time_s": 2.1, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 331, "window_iteration": 2, "command_step": 63, "maneuver_time_s": 2.1, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 332, "window_iteration": 3, "command_step": 63, "maneuver_time_s": 2.1, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 333, "window_iteration": 4, "command_step": 63, "maneuver_time_s": 2.1, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 333, "command_step": 63}
+{"stage": "MPPI command committed", "iteration": 333, "command_step": 64, "time_s": 2.1333333333333333, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": -3.8990497466843648, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.8375880135156463, "lookahead_score": -13.548180508988441, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.44868202394998175}
+{"stage": "MPPI lookahead optimization", "iteration": 334, "window_iteration": 1, "command_step": 64, "maneuver_time_s": 2.1333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 335, "window_iteration": 2, "command_step": 64, "maneuver_time_s": 2.1333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 336, "window_iteration": 3, "command_step": 64, "maneuver_time_s": 2.1333333333333333, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 337, "window_iteration": 4, "command_step": 64, "maneuver_time_s": 2.1333333333333333, "lookahead_s": 0.4}
+{"stage": "Committing next 30 Hz command", "iteration": 337, "command_step": 64}
+{"stage": "MPPI command committed", "iteration": 337, "command_step": 65, "time_s": 2.1666666666666665, "iterations": 4, "stop_reason": "reward_plateau", "actual_reward": -4.306782817129096, "actual_success": false, "actual_failed": false, "actual_minimum_tip_distance_m": 0.8375880135156463, "lookahead_score": -13.058638663735586, "predicted_hit": false, "predicted_failed": false, "predicted_distance_m": 0.417271539064556}
+{"stage": "MPPI lookahead optimization", "iteration": 338, "window_iteration": 1, "command_step": 65, "maneuver_time_s": 2.1666666666666665, "lookahead_s": 0.4}
+{"stage": "MPPI lookahead optimization", "iteration": 339, "window_iteration": 2, "command_step": 65, "maneuver_time_s": 2.1666666666666665, "lookahead_s": 0.4}
+Traceback (most recent call last):
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\runs\mppi_pva\20260909-123448-035589\source_snapshot\tools\run_pva.py", line 8, in <module>
+    p=argparse.ArgumentParser();p.add_argument('--job',type=Path,required=True);a=p.parse_args();run(a.job)
+                                                                                                 ^^^^^^^^^^
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\runs\mppi_pva\20260909-123448-035589\source_snapshot\planning\pva_job.py", line 259, in run
+    result=ppo(job,model,cfg) if cfg['method']=='ppo' else mppi(job,model,cfg)
+                                                           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\runs\mppi_pva\20260909-123448-035589\source_snapshot\planning\pva_job.py", line 206, in mppi
+    return optimize(job,model,cfg)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\.venv\Lib\site-packages\torch\utils\_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\runs\mppi_pva\20260909-123448-035589\source_snapshot\planning\mppi_receding.py", line 49, in optimize
+    progress(job,stage='MPPI lookahead optimization',iteration=total_iterations,window_iteration=iteration,
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\runs\mppi_pva\20260909-123448-035589\source_snapshot\planning\pva_job.py", line 149, in progress
+    if (job/'STOP').exists():raise InterruptedError('Stopped by request at a rollout/update boundary')
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+InterruptedError: Stopped by request at a rollout/update boundary

@@ -1,0 +1,20 @@
+{
+  "horizon_s": 2.0,
+  "job_launch": {
+    "origin_m": [
+      -2.0,
+      0.0,
+      1.255
+    ],
+    "start_radius_m": 0.0,
+    "target_m": [
+      -1.0,
+      0.0,
+      1.1
+    ],
+    "target_radius_m": 0.0
+  },
+  "model_sha256": "51d11f38bf8727f52c3641cbdce29f01cb1715c9313752a51299bfa43465e760",
+  "only_requested_coordinates_changed": true,
+  "ppo_unchanged": true
+}

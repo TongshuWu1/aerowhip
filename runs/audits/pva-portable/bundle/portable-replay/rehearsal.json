@@ -1,0 +1,151 @@
+{
+  "checkpoint": null,
+  "checkpoint_sha256": null,
+  "command_contract": "bounded_jerk_pva_30hz_v1",
+  "command_semantics": "Desired OptiTrack tracked-origin P/V/A, kinematic acceleration, 30 Hz zero-order hold, no force or mass compensation",
+  "csv_sha256": "b7d9b2594e1fab9c5bef6b586c303a9a2f9b6939ba6b469285522a46fb4acaa1",
+  "evidence": "Fitted model simulation only; real flight performance remains to be measured",
+  "execution": "Take off; hold 10 s at saved start; execute complete CSV at saved timestamps; land. Offline artifact, no flight sender.",
+  "initial_tracking_origin_m": [
+    0.0,
+    0.0,
+    1.225
+  ],
+  "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\audits\\pva-portable\\bundle",
+  "minimum_tip_distance_m": 1.7216661151788195,
+  "planner": "MPPI PVA",
+  "predicted_hit_time_s": null,
+  "predicted_valid_hit": false,
+  "prediction_valid_through_s": 8.8,
+  "recovery": {
+    "approach_coefficients_normalized": [
+      [
+        0.5110663524780973,
+        0.6154763873332051,
+        1.2669784795432504
+      ],
+      [
+        -1.0271079733998414,
+        -1.2369444824610256,
+        -0.08436562266525331
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        1.0519843156180753,
+        1.2669030214341026,
+        0.08640894055901766
+      ],
+      [
+        -0.5508685000272717,
+        -0.6634100496901285,
+        -0.045247788173273164
+      ],
+      [
+        0.01492580533094043,
+        0.017975123383846294,
+        0.0012259907362586037
+      ]
+    ],
+    "approach_position_m": [
+      0.5110663524780973,
+      0.6154763873332051,
+      1.2669784795432504
+    ],
+    "approach_velocity_m_s": [
+      -0.2232843420434438,
+      -0.26890097444804906,
+      -0.018340352753315938
+    ],
+    "brake_end_s": 1.0,
+    "hold_s": 3.0,
+    "hover_position_m": [
+      0.0,
+      0.0,
+      1.225
+    ],
+    "maximum_tilt_limit_deg": 45.0,
+    "phase_description": "Moving curved turn/descent, slow approach, stationary final hold",
+    "return_end_s": 5.6,
+    "return_s": 4.6,
+    "schema": "curved_moving_recovery_v1",
+    "settings": {
+      "approach_distance_m": 0.8,
+      "approach_height_m": 0.4,
+      "approach_speed_m_s": 0.35,
+      "hold_s": 3.0,
+      "maximum_descent_speed_m_s": 1.25,
+      "maximum_downward_acceleration_m_s2": 3.5,
+      "maximum_horizontal_acceleration_m_s2": 5.6808858324602225,
+      "maximum_specific_force_m_s2": 18.28571428571429,
+      "maximum_speed_m_s": 5.0,
+      "maximum_tilt_deg": 45.0,
+      "maximum_turn_s": 8.0,
+      "minimum_specific_vertical_m_s2": 2.0,
+      "minimum_turn_s": 1.0
+    },
+    "stationary_braking_waypoint": false,
+    "total_duration_s": 8.6,
+    "turn_coefficients_normalized": [
+      [
+        0.027639822657771315,
+        0.02694671814339604,
+        1.2669784795432504
+      ],
+      [
+        0.3622931245355664,
+        0.4363090279052674,
+        0.5297413072708207
+      ],
+      [
+        1.4817876756497979,
+        2.423307913710965,
+        1.571281356023017
+      ],
+      [
+        -0.8917191077857597,
+        -2.9268773188742103,
+        -7.818930500680704
+      ],
+      [
+        -1.470680318375067,
+        0.05014410539155234,
+        8.823392056962394
+      ],
+      [
+        1.0017451557957884,
+        0.6056459410562354,
+        -3.1054842195755272
+      ]
+    ],
+    "turn_end_s": 1.0,
+    "turn_metrics": {
+      "minimum_az_m_s2": -3.079330297400006,
+      "minimum_height_m": 1.2669784795432504,
+      "minimum_specific_vertical_m_s2": 6.727319702599994,
+      "minimum_vz_m_s": -0.4216812126675593,
+      "peak_height_m": 1.425953025937449,
+      "peak_horizontal_acceleration_m_s2": 5.6808858324602225,
+      "peak_specific_force_m_s2": 14.140529470400388,
+      "peak_speed_m_s": 1.4547653038988866
+    },
+    "vehicle_limits_verified": false
+  },
+  "recovery_empirically_validated": false,
+  "recovery_prediction_complete": true,
+  "reference_feasible": true,
+  "schema": "pva_fullstate_30hz_v1",
+  "scored_duration_s": 0.2,
+  "target_position_m": [
+    1.5,
+    0.0,
+    1.1
+  ],
+  "total_duration_s": 8.8,
+  "training_export_cable_max_difference_m": 1.3340023530261647e-15,
+  "training_export_prefix_max_difference_m": 2.220446049250313e-16,
+  "whip_end_s": 0.2
+}

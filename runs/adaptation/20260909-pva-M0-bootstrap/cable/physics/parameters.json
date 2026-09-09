@@ -1,0 +1,23 @@
+{
+  "Cb_n_m2_s": 3.241538013397505e-08,
+  "EI_n_m2": 5.900135620909374e-07,
+  "active_bounds": [
+    0,
+    0
+  ],
+  "bounds": [
+    [
+      1e-09,
+      1e-09
+    ],
+    [
+      0.0001,
+      0.001
+    ]
+  ],
+  "method": "bounded finite-difference least squares on full-whip DDER rollout",
+  "nfev": 6,
+  "objective": 0.5317503831228009,
+  "stop_reason": "`ftol` termination condition is satisfied.",
+  "success": true
+}

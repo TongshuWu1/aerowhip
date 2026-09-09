@@ -1,4 +1,4 @@
-"""Launch the point-force cable simulator UI (or an optional headless rollout)."""
+"""Launch the PVA research UI (or a historical headless constant-force rollout)."""
 
 from __future__ import annotations
 

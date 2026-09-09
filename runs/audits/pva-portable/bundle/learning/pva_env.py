@@ -1,0 +1,197 @@
+"""Direct PVA planning in the fitted loaded-drone and DDER cable model.
+
+No virtual force rollout. Training and MPPI call this same environment. The
+open-loop sequence is frozen before export; observations here are simulated.
+"""
+from copy import deepcopy
+from dataclasses import replace
+import math
+import numpy as np
+import torch
+from simulator.cable import DderState
+from simulator.research_execution import ResearchExecutionModel
+from simulator.research_pose import settled_initial,PoseStepper
+from simulator.research_physics import ResearchPhysics
+from simulator.research_reference import reference_packet_validity
+from simulator.pva_commands import SCHEMA,integrate_jerk,sphere_entry
+
+
+def defaults(method='ppo'):
+    if method not in ('ppo','mppi'):raise ValueError('Unknown PVA planner')
+    return dict(schema='pva_planner_settings_v1',method=method,command_contract=SCHEMA,
+        model_path='runs/adaptation/20260909-pva-M0-bootstrap/candidate/model.json',
+        launch=dict(origin_m=[-2.,0.,1.255],target_m=[-1.,0.,1.1],start_radius_m=.05,target_radius_m=.05),
+        task=dict(duration_s=1.,target_radius_m=.05,minimum_directed_speed_m_s=4.,maximum_angle_deg=45.,
+            strike_direction=[1.,0.,0.],first_contact_only=True),
+        action=dict(jerk_limit_m_s3=[60.,60.,60.]),
+        limits=dict(minimum_origin_z_m=.96,maximum_origin_z_m=2.8,minimum_cable_z_m=.02,
+            maximum_specific_force_m_s2=18.28571428571429,minimum_specific_vertical_m_s2=2.,
+            maximum_speed_m_s=5.,maximum_tilt_deg=60.),
+        reward=dict(progress=60.,strike_quality=60.,success=200.,time_per_s=10.,failure=100.,
+            invalid_contact=25.,displacement=5.,jerk=0.02,proximity_scale_m=.35),
+        training=dict(batch_size=1024,hidden_dim=256,learning_rate=.0003,epochs=4,minibatch_size=8192,
+            entropy_coefficient=.01,seed=655,minimum_attempts=20480,plateau_attempts=20480,
+            maximum_attempts=500000,relative_improvement=.005,evaluate_every_updates=5),
+        mppi=dict(samples=1024,iterations=100,temperature=10.,noise_std=.5,noise_correlation=.7,
+            minimum_iterations=20,patience=15,seed=656),device='cuda')
+
+
+class PVAEnvironment:
+    def __init__(self,model,settings,*,root=None,batch_size=1,device='cuda',graph=True):
+        self.model_config=deepcopy(model);self.settings=deepcopy(settings);self.device=torch.device(device)
+        if settings.get('command_contract')!=SCHEMA:raise ValueError('PVA action contract required; a force checkpoint cannot be reinterpreted')
+        self.batch_size=int(batch_size);self.engine=ResearchExecutionModel.from_mapping(model,root=root,device=device)
+        self.dt=self.engine.dt_s;self.control_dt=1/30;self.stride=round(self.control_dt/self.dt)
+        if self.stride<1 or not math.isclose(self.dt*self.stride,self.control_dt,abs_tol=1e-10):raise ValueError('PVA/physics clocks do not align')
+        self.steps=round(settings['task']['duration_s']*30)
+        if self.steps<1 or not math.isclose(self.steps/30,settings['task']['duration_s'],abs_tol=1e-9):raise ValueError('Duration must be a positive multiple of 1/30 s')
+        if self.batch_size<1:raise ValueError('Positive batch required')
+        self.limit=self.tensor(settings['action']['jerk_limit_m_s3'])
+        if self.limit.shape!=(3,) or not bool(torch.isfinite(self.limit).all()&(self.limit>0).all()):raise ValueError('Positive finite XYZ jerk bounds required')
+        self.direction=self.tensor(settings['task']['strike_direction'])
+        if self.direction.shape!=(3,) or not bool(torch.isfinite(self.direction).all()) or self.direction.norm()<1e-8:raise ValueError('A nonzero strike direction is required')
+        self.direction=self.direction/self.direction.norm()
+        self.delay=float(self.engine.drone.parameters.delay_s);self.queue_size=8
+        if math.ceil(self.delay*30)+2>self.queue_size:raise ValueError('Fitted delay exceeds the saved PVA observation history')
+        self.reset()
+        self.pose_stepper=PoseStepper(self.pose,self.engine.drone.parameters,self.engine.drone.residual,graph=graph)
+        self.cable_stepper=ResearchPhysics(self.engine.physics,self.state,self.dt,graph=graph)
+        p=self.engine.drone.parameters
+        self.pose_maximum=min(.005,float(p.attitude_time_constant_s)/4,
+            .25/max(float(p.kd_xy)+math.sqrt(float(p.kp_xy)),float(p.kd_z)+math.sqrt(float(p.kp_z))))
+        self.observation_dim=self.observation().shape[1]
+
+    def tensor(self,value):return torch.as_tensor(value,device=self.device,dtype=torch.float64)
+
+    @torch.no_grad()
+    def reset(self,*,origin=None,target=None,randomize=False,generator=None):
+        b=self.batch_size;launch=self.settings['launch']
+        def positions(value):
+            t=self.tensor(value)
+            return t[None].expand(b,-1).clone() if t.ndim==1 else t.clone()
+        self.origin0=positions(launch['origin_m'] if origin is None else origin)
+        self.target=positions(launch['target_m'] if target is None else target)
+        if self.origin0.shape!=(b,3) or self.target.shape!=(b,3):raise ValueError('Launch dimensions differ')
+        if randomize:
+            for values,radius in ((self.origin0,launch['start_radius_m']),(self.target,launch['target_radius_m'])):
+                direction=torch.randn((b,3),device=self.device,dtype=torch.float64,generator=generator)
+                r=torch.rand((b,1),device=self.device,dtype=torch.float64,generator=generator).pow(1/3)*radius
+                values.add_(direction/direction.norm(dim=-1,keepdim=True).clamp_min(1e-12)*r)
+        root=self.origin0+self.tensor(self.engine.offset)
+        self.pose=settled_initial(root,torch.zeros_like(root),self.engine.offset)
+        # Structural rest lengths, free pivot and no privileged measured cable state.
+        lengths=self.tensor(self.engine.cable.rest_lengths_m)
+        distance=torch.cat((lengths.new_zeros(1),lengths.cumsum(0)))
+        q=root[:,None]+torch.stack((torch.zeros_like(distance),torch.zeros_like(distance),-distance),-1)[None]
+        self.state=DderState(q,torch.zeros_like(q));self.initial_state=self.state
+        self.initial_pose=self.pose
+        self.command=torch.cat((self.origin0,self.origin0.new_zeros(b,8)),-1)
+        self.hover=self.command.clone();self.packets=[self.command.clone()];self.actions=[]
+        self.index=0;self.active=torch.ones(b,device=self.device,dtype=torch.bool)
+        self.success=torch.zeros_like(self.active);self.failed=torch.zeros_like(self.active);self.contact=torch.zeros_like(self.active)
+        self.total=self.origin0.new_zeros(b);self.minimum_distance=(q[:,-1]-self.target).norm(dim=-1)
+        self.initial_distance=self.minimum_distance.clone();self.best_quality=self.total.clone()
+        self.termination_time=self.total.new_full((b,),self.steps*self.control_dt)
+        self.cutoff=torch.full((b,),self.steps,device=self.device,dtype=torch.long)
+        self.frames=[]
+        return self.observation()
+
+    def observation(self):
+        q,v=self.state.positions_m,self.state.velocities_m_s;p=self.pose.position
+        history=self.packets[-self.queue_size:]
+        history=[self.hover]*(self.queue_size-len(history))+history
+        commands=torch.stack(history,1)
+        commands=torch.cat((commands[:,:,:3]-p[:,None],commands[:,:,3:6]/5,commands[:,:,6:9]/10),-1).flatten(1)
+        extra=torch.stack((self.minimum_distance,self.best_quality,self.contact.double(),
+            self.total.new_full(self.total.shape,self.index/self.steps)),1)
+        return torch.cat(((q-q[:,:1]).flatten(1),v.flatten(1)/5,
+            p-self.origin0,self.target-p,self.pose.velocity/5,self.pose.rotation.flatten(1),
+            self.pose.omega_tracking/10,commands,extra),-1).float()
+
+    def _pose_advance(self,left,right):
+        events=np.arange(len(self.packets))/30+self.delay
+        bounds=np.r_[left,events[(events>left+1e-12)&(events<right-1e-12)],right]
+        valid=torch.ones_like(self.active)
+        for a,b in zip(bounds[:-1],bounds[1:]):
+            i=np.searchsorted(events,(a+b)/2+1e-12,side='right')-1
+            command=self.hover if i<0 else self.packets[i]
+            n=max(1,math.ceil((b-a)/self.pose_maximum-1e-10))
+            for _ in range(n):
+                proposal,ok=self.pose_stepper(self.pose,command,(b-a)/n);valid&=ok
+                accepted=valid&self.evolving
+                self.pose=replace(self.pose,**{name:torch.where(accepted.reshape((-1,)+(1,)*(getattr(self.pose,name).ndim-1)),
+                    getattr(proposal,name),getattr(self.pose,name)) for name in ('position','velocity','rotation','omega_tracking')})
+        return valid
+
+    @torch.no_grad()
+    def step(self,action,*,trace=False):
+        if self.index>=self.steps:raise ValueError('Reset a completed PVA rollout before stepping')
+        action=action.to(device=self.device,dtype=torch.float64)
+        if action.shape!=(self.batch_size,3) or not bool(torch.isfinite(action).all()) or bool((action.abs()>1+1e-6).any()):raise ValueError('Finite normalized bounded XYZ jerk action required')
+        mask=self.active.clone();self.evolving=mask.clone();weights=self.settings['reward'];limits=self.settings['limits'];task=self.settings['task']
+        reward=self.total.new_zeros(self.batch_size)
+        next_command=integrate_jerk(self.command,action*self.limit,self.control_dt)
+        packet_ok,_=reference_packet_validity(next_command[:,None],limits);packet_ok=packet_ok[:,0]
+        packet_ok&=(next_command[:,2]>=limits['minimum_origin_z_m'])&(next_command[:,2]<=limits['maximum_origin_z_m'])
+        # Reject infeasible next knots explicitly; no clipping to inconsistent P/V/A.
+        bad=mask&~packet_ok;self.failed|=bad;self.active&=~bad;self.evolving&=~bad
+        reward-=bad*weights['failure'];self.termination_time=torch.where(bad,self.total.new_full(self.total.shape,self.index/30),self.termination_time)
+        self.cutoff=torch.where(bad,torch.full_like(self.cutoff,self.index),self.cutoff)
+        for tick in range(self.stride):
+            left=(self.index*self.stride+tick)*self.dt;right=left+self.dt
+            running=self.active.clone();previous=self.state
+            pose_ok=self._pose_advance(left,right)
+            root=self.pose.position+torch.einsum('bij,j->bi',self.pose.rotation,self.tensor(self.engine.offset))
+            candidate=self.cable_stepper(self.state,root)
+            q,v=candidate.positions_m,candidate.velocities_m_s
+            finite=torch.isfinite(q).flatten(1).all(-1)&torch.isfinite(v).flatten(1).all(-1)
+            domain=finite&(q.abs().flatten(1).amax(-1)<20)&(v.norm(dim=-1).amax(-1)<100)&pose_ok
+            workspace=(self.pose.position[:,2]>=limits['minimum_origin_z_m'])&(self.pose.position[:,2]<=limits['maximum_origin_z_m'])
+            workspace&=q[:,:,2].amin(-1)>=limits['minimum_cable_z_m']
+            invalid=self.evolving&(~domain|~workspace)
+            # A failure before the export boundary also invalidates a sub-tick hit.
+            revoke=invalid&self.success
+            reward-=revoke*weights['success'];self.success&=~invalid
+            reward-=invalid*weights['failure'];self.failed|=invalid;self.active&=~invalid;self.evolving&=~invalid
+            running&=~invalid
+            self.state=DderState(torch.where(self.evolving[:,None,None],q,previous.positions_m),
+                torch.where(self.evolving[:,None,None],v,previous.velocities_m_s))
+            q,v=self.state.positions_m,self.state.velocities_m_s
+            dist=(q[:,-1]-self.target).norm(dim=-1)
+            progress=(self.minimum_distance-dist).clamp_min(0)/self.initial_distance.clamp_min(.05)
+            directed=(v[:,-1]*self.direction).sum(-1)
+            quality=torch.exp(-(dist/weights['proximity_scale_m']).square())*(directed/task['minimum_directed_speed_m_s']).clamp(0,1)
+            reward+=running*(weights['progress']*progress+weights['strike_quality']*(quality-self.best_quality).clamp_min(0))
+            self.minimum_distance=torch.where(running,torch.minimum(self.minimum_distance,dist),self.minimum_distance)
+            self.best_quality=torch.where(running,torch.maximum(self.best_quality,quality),self.best_quality)
+            entry=sphere_entry(previous.positions_m,q,self.target,task['target_radius_m'])
+            tip=entry[:,-1];other=entry[:,:-1].amin(-1)
+            entered=running&torch.isfinite(tip);first_allowed=~self.contact if task['first_contact_only'] else torch.ones_like(running)
+            angle_ok=directed/v[:,-1].norm(dim=-1).clamp_min(1e-12)>=math.cos(math.radians(task['maximum_angle_deg']))
+            hit=entered&(tip<other)&first_allowed&(directed>=task['minimum_directed_speed_m_s'])&angle_ok
+            any_contact=running&torch.isfinite(entry).any(-1)
+            invalid_contact=any_contact&~hit&~self.contact
+            self.contact|=any_contact;self.success|=hit;self.active&=~hit
+            reward+=hit*weights['success']-invalid_contact*weights['invalid_contact']
+            duration=torch.where(hit,tip.clamp(0,1)*self.dt,self.total.new_full(self.total.shape,self.dt))
+            reward-=running*(weights['time_per_s']*duration+weights['displacement']*(self.pose.position-self.origin0).square().sum(-1)*duration)
+            ended=hit|invalid
+            self.termination_time=torch.where(ended,self.total.new_full(self.total.shape,left)+torch.where(hit,tip.clamp(0,1)*self.dt,torch.zeros_like(tip)),self.termination_time)
+            self.cutoff=torch.where(ended,torch.full_like(self.cutoff,self.index+1),self.cutoff)
+            if trace:self.frames.append(dict(time_s=right,origin=self.pose.position.clone(),rotation=self.pose.rotation.clone(),cable=q.clone()))
+        reward-=mask*weights['jerk']*action.square().mean(-1)*self.control_dt
+        self.actions.append(action.clone());self.command=torch.where(self.evolving[:,None],next_command,self.command)
+        self.packets.append(self.command.clone());self.index+=1
+        if self.index>=self.steps:self.active.zero_()
+        self.total+=reward
+        return self.observation(),reward.float()[:,None],(~self.active).float()[:,None],mask.float()[:,None]
+
+    @torch.no_grad()
+    def rollout(self,policy=None,actions=None,*,trace=False):
+        if (policy is None)==(actions is None):raise ValueError('Supply one policy or action sequence')
+        for i in range(self.steps):
+            self.step(policy(self.observation()) if policy is not None else actions[:,i],trace=trace)
+            if not bool(self.active.any()):break
+        return dict(reward=self.total.clone(),success=self.success.clone(),failed=self.failed.clone(),
+            minimum_tip_distance_m=self.minimum_distance.clone(),duration_s=self.termination_time.clone(),
+            cutoffs=self.cutoff.clone(),packets=torch.stack(self.packets,1),actions=torch.stack(self.actions,1))

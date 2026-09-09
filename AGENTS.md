@@ -1,5 +1,131 @@
 # Latest priority
 
+- Latest verified MPPI result (9 September): run20260909-135429-797997 is
+  COMPLETED, with forward pull then backward release measured at interpolated
+  contact: drone -0.62040m/s, tip +5.02739m/s, backward travel0.100000267m,
+  hit1.26666754s/minimum distance1.34697cm. Current rolling horizon2s/60 actions,
+  1024 samples, pullback initialization; separate5s maneuver limit, no optimizer
+  iteration/wall-clock cap. First30 commands reused explicitly from provisional
+  parent20260909-133459-410882, last9 refined (36 new iterations/56.934s).
+  Full10.4333s recovery/hold and exact portable CSV/all-array replay pass;
+  73 tests and native UI pass. No live worker or automatic rerun. Historical
+  normalized M1 simulation only; fitting/PPO remain stopped, heartbeats PAUSED.
+  Parent's interval-end contact check is superseded; old1.2s forward-only hit
+  is not this task. Read docs/MPPI_PULLBACK_20260909.md and final audit
+  runs/audits/mppi-pullback-contact-20260909. Older entries below are history.
+
+- Latest user correction (9 September): a fast tip contact alone is NOT the
+  requested strike. Drone must move forward to load the cable, then backward
+  to release/propagate the cable toward the target. Previous1.2s result still
+  had modeled forward drone speed~0.99m/s at contact; retain it under its old
+  tip-hit semantics, not as verification of this newly clarified task.
+  New MPPI task requires forward travel>=0.25m at>=1m/s followed by backward
+  travel>=0.10m from the forward peak and drone speed<=-0.5m/s at contact,
+  all projected onto strike direction using modeled ACTUAL drone pose/velocity.
+  Existing tip-first/contact/speed/angle and physical limits remain. Phase
+  rewards are bounded once per phase. Fitting/PPO remain stopped. Cold2s/2.5s
+  diagnostics missed. NEW task-shaped initialization followed by rolling2s
+  MPPI completed as20260909-133459-410882 under a provisional interval-end
+  contact check. Corrected final result is recorded above. Preserve both runs;
+  do not restart. Read docs/MPPI_PULLBACK_20260909.md.
+
+- Latest completed MPPI improvement (9 September): user allowed longer horizon
+  and tuning. Active lookahead now1.2s/36 actions, noise0.05, terminal geometric
+  guidance off, explicit strike-exit costs. Cold1.2s/2s comparison favored1.2s
+  in this seed. New rolling run20260909-131121-677417 hit at1.12667s/2.351cm,
+  34 committed actions,168 iterations/381.85s. Complete recovery/export passed.
+  Derived final replay20260909-131858-327997 retains EXACT same plan/CSV with
+  corrected height filtering in recovery search; optimizer NOT rerun. Final
+  drone peak1.72496m, complete10.26667s command; portable replay exactly equal.
+  69 tests/native UI pass; GUI reopened. No live optimizer or automatic rerun.
+  Model, hit rules, limits and raw task rewards unchanged. Historical M1
+  simulation only; fitting/PPO/heartbeat remain stopped. Read
+  docs/MPPI_LONGER_HORIZON_20260909.md. This supersedes the0.4s default below.
+
+- Horizon correction verified (9 September): current MPPI uses a rolling
+  0.4s/12-action lookahead, one committed 30Hz action per replan, separate 5s
+  maneuver safety limit and no optimizer iteration/wall-clock cap. New run
+  `20260909-124046-219074` COMPLETED: 150 actions, 938 optimizer iterations,
+  971.71s runtime, simulated MISS at 0.514653m, no modeled constraint failure.
+  Complete 13.7s whip/recovery/hold export passed; portable CSV and all arrays
+  regenerated exactly. 49 tests and native six-page UI/rehearsal render pass.
+  Desktop reopened with corrected controls. No live optimizer remains; do not
+  restart automatically. This fixes horizon/state/replay semantics, not strike
+  performance or PPO equivalence. Read docs/MPPI_RECEDING_PROGRESS.md.
+  Fitting/PPO and both heartbeats remain stopped/paused; historical M1 only.
+
+- Latest user instruction (9 September): horizon conflation is a BUG. Fix
+  MPPI so0.4s is rolling lookahead, not the entire maneuver; fix the complete
+  planning/recovery/UI workflow. Active implementation uses mppi.mode=receding,
+  horizon_s=.4 and separate task.duration_s=5s maneuver safety limit; unlimited
+  optimization with per-window plateau/manual stopping. Preserve model physics,
+  real hit criteria and old snapshots. Explicit MPPI terminal guidance and
+  exploration tuning are part of this authorized correction; no fitting/PPO.
+  Read docs/MPPI_RECEDING_PROGRESS.md and latest audit status before launching.
+
+- Latest MPPI audit (9 September): read docs/MPPI_MISS_AUDIT_20260909.md.
+  User clarification pending:0.4s whole whip versus rolling lookahead. Current
+  implementation is whole-whip open-loop planning. Historical PPO hit0.8733s
+  under old force semantics; no trained same-contract PVA PPO baseline exists.
+  Small exploration and an additional zero-action prior also contribute to
+  stalled search. Diagnostic variants did not hit; no active reward/model/
+  sampling changes adopted. Preserve old runs and await horizon intent before
+  changing that contract. Fitting/PPO remain stopped.
+
+- Latest user confirmation (9 September): remove MPPI's iteration ceiling.
+  Active config uses mppi.iterations=0 (no limit); new MPPI defaults and UI
+  support this. Stop only on practical reward plateau, manual stop or failure;
+  no wall-clock timeout. Keep0.4s/12-action trajectory horizon and all other
+  task/sampling settings. No new production run requested/launched for this
+  change; old frozen runs retain their original finite budgets and results.
+
+- Latest user correction (9 September): MPPI horizon is now0.4s (12 actions
+  at30Hz), with the PPO-matched start/target and1024 random samples plus mean.
+  Run20260909-121121-501019 COMPLETED:25 iterations/26.57s, simulated MISS,
+  closest tip1.23165m. Recovery/export complete, portable replay exact. Evidence:
+  runs/audits/mppi-horizon04-20260909. All other MPPI settings retained.
+  No automatic rerun, fitting/PPO restart, or physical-flight validation claim.
+
+- Latest user request (9 September, PPO-matched launch): set MPPI initial and
+  target coordinates to PPO's saved values, [-2,0,1.255] and [-1,0,1.1] m,
+  and run a NEW MPPI optimization. Run20260909-120300-901531 COMPLETED at31
+  iterations/162.43s, modeled valid hit at4.400cm. Its current curved recovery
+  planner could not find a return inside the saved limits: NO rehearsal/CSV/ZIP
+  exported. Do not call this an exportable plan or restart it automatically.
+  Same historical normalized M1, two-second
+  MPPI horizon, rewards/limits/sampling. PPO config and all prior runs unchanged.
+  No fitting, PPO or heartbeat restart. Audit: runs/audits/mppi-ppo-launch-20260909.
+
+- Latest user decision (9 September, MPPI continuation): keep all fitting and
+  PPO stopped while the user investigates the physical drone/height problem.
+  Continue direct-PVA MPPI implementation and end-to-end verification. Bounded
+  simulation diagnostics may use frozen historical normalized M1, explicitly
+  labeled as historical simulation evidence, not the unfinished fresh M0 or a
+  verified model of the repaired drone. No fit, PPO or heartbeat restart.
+  MPPI verification completed; read docs/MPPI_PVA_VERIFICATION_20260909.md.
+  Final selectable run20260909-115040-750483 retains the unchanged successful
+  simulated strike from20260909-114422-355245 with corrected PVA recovery.
+  Portable replay exact,43 tests pass; no live worker. Do not call it physical
+  flight validation or resume diagnostics automatically.
+
+- Latest user request (9 September, performance review): STOP the active PVA
+  fit and queued PPO campaign, then optimize fitting, training and planning for
+  speed/GPU efficiency. STOP files issued to both existing jobs; heartbeat
+  paused. Preserve saved weights/optimizer state. No production restart while
+  benchmarking. Preserve numerical/task/data semantics and measure speed plus
+  forward/gradient parity before adopting acceleration. This supersedes the
+  overnight auto-completion instruction below.
+
+- User authorized overnight completion (9 September 2026): replace ACTIVE PPO
+  and MPPI action generation with 30 Hz direct PVA via bounded XYZ jerk, no
+  virtual force rollout; fit a FRESH preliminary M0 from the five normalized
+  cf7/adp0 flights, with no historical learned priors/residual weights; rebuild
+  and verify the whole UI around that workflow. Preserve all historical flight
+  artifacts and force checkpoints under their original semantics. This
+  supersedes the paused MPPI/force-only restrictions below. Isaac/PhysX remains
+  PAUSED. Read docs/PVA_IMPLEMENTATION_PROGRESS.md. New PPO training is authorized
+  as part of completing the new workflow; never resume old force checkpoints.
+
 - Latest user instruction: future model fitting should use practical convergence/plateau stopping, not fixed NN budgets, and essential validation only. Read `docs/FUTURE_ADAPTATION_FITTING.md` before any new fit. Current normalized M1 is already fitted; remaining validation intentionally stopped. New PPO adaptation is running; inspect newest HANDOFF/status and do not duplicate or refit its frozen model.
 
 - MPPI work is PAUSED at user request. Independent force code has targeted tests but its export audit was stopped; do not resume or call it fully verified.

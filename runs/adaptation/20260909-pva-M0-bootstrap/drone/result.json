@@ -1,0 +1,157 @@
+{
+  "stopping": {
+    "converged": true,
+    "evidence": "training-only selection",
+    "selected_update": 880,
+    "selection_loss": 0.2466139473253762,
+    "stop_reason": "plateau",
+    "updates": 880
+  },
+  "training": {
+    "whip_adp_0_001": {
+      "max_runtime_difference_m": 5.008295379527183e-06,
+      "position": {
+        "complete": {
+          "maximum_m": 0.04536489250235935,
+          "mean_m": 0.024591892993105532,
+          "rmse_m": 0.027637580046147327,
+          "samples": 100
+        },
+        "early_recovery": {
+          "maximum_m": null,
+          "mean_m": null,
+          "rmse_m": null,
+          "samples": 0
+        },
+        "late_recovery_hold": {
+          "maximum_m": null,
+          "mean_m": null,
+          "rmse_m": null,
+          "samples": 0
+        },
+        "whip": {
+          "maximum_m": 0.04536489250235935,
+          "mean_m": 0.024591892993105532,
+          "rmse_m": 0.027637580046147327,
+          "samples": 100
+        }
+      }
+    },
+    "whip_adp_0_002": {
+      "max_runtime_difference_m": 5.098083388777042e-06,
+      "position": {
+        "complete": {
+          "maximum_m": 0.04354050233173747,
+          "mean_m": 0.022067159803285715,
+          "rmse_m": 0.025209757800099278,
+          "samples": 100
+        },
+        "early_recovery": {
+          "maximum_m": null,
+          "mean_m": null,
+          "rmse_m": null,
+          "samples": 0
+        },
+        "late_recovery_hold": {
+          "maximum_m": null,
+          "mean_m": null,
+          "rmse_m": null,
+          "samples": 0
+        },
+        "whip": {
+          "maximum_m": 0.04354050233173747,
+          "mean_m": 0.022067159803285715,
+          "rmse_m": 0.025209757800099278,
+          "samples": 100
+        }
+      }
+    },
+    "whip_adp_0_003": {
+      "max_runtime_difference_m": 4.832458264214523e-06,
+      "position": {
+        "complete": {
+          "maximum_m": 0.0429257847802966,
+          "mean_m": 0.022451420000600564,
+          "rmse_m": 0.0254407675652947,
+          "samples": 100
+        },
+        "early_recovery": {
+          "maximum_m": null,
+          "mean_m": null,
+          "rmse_m": null,
+          "samples": 0
+        },
+        "late_recovery_hold": {
+          "maximum_m": null,
+          "mean_m": null,
+          "rmse_m": null,
+          "samples": 0
+        },
+        "whip": {
+          "maximum_m": 0.0429257847802966,
+          "mean_m": 0.022451420000600564,
+          "rmse_m": 0.0254407675652947,
+          "samples": 100
+        }
+      }
+    },
+    "whip_adp_0_004": {
+      "max_runtime_difference_m": 4.8820422380302375e-06,
+      "position": {
+        "complete": {
+          "maximum_m": 0.05070950337314145,
+          "mean_m": 0.023055841122907338,
+          "rmse_m": 0.02661685456726215,
+          "samples": 100
+        },
+        "early_recovery": {
+          "maximum_m": null,
+          "mean_m": null,
+          "rmse_m": null,
+          "samples": 0
+        },
+        "late_recovery_hold": {
+          "maximum_m": null,
+          "mean_m": null,
+          "rmse_m": null,
+          "samples": 0
+        },
+        "whip": {
+          "maximum_m": 0.05070950337314145,
+          "mean_m": 0.023055841122907338,
+          "rmse_m": 0.02661685456726215,
+          "samples": 100
+        }
+      }
+    },
+    "whip_adp_0_005": {
+      "max_runtime_difference_m": 4.677626169513616e-06,
+      "position": {
+        "complete": {
+          "maximum_m": 0.05020415335128241,
+          "mean_m": 0.019988709206188386,
+          "rmse_m": 0.023222451661085563,
+          "samples": 100
+        },
+        "early_recovery": {
+          "maximum_m": null,
+          "mean_m": null,
+          "rmse_m": null,
+          "samples": 0
+        },
+        "late_recovery_hold": {
+          "maximum_m": null,
+          "mean_m": null,
+          "rmse_m": null,
+          "samples": 0
+        },
+        "whip": {
+          "maximum_m": 0.05020415335128241,
+          "mean_m": 0.019988709206188386,
+          "rmse_m": 0.023222451661085563,
+          "samples": 100
+        }
+      }
+    }
+  }
+}

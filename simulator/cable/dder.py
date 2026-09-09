@@ -353,6 +353,7 @@ def _curvature_rate_jacobian_impl(
     endpoint_orientation_rates: torch.Tensor | None,
     *,
     frame_regularization: float = 0.0,
+    vectorized: bool = False,
 ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """Return ``J, r, w`` for ``0.5 * Cb * ||J v + r||_w^2``."""
 
@@ -459,6 +460,21 @@ def _curvature_rate_jacobian_impl(
             torch.where(bent, bent_following, derivative_following + corotation @ spin_following),
         )
 
+    if vectorized and endpoint_orientations is None:
+        # Evaluate independent interior vertices in the batch dimension instead
+        # of launching the same geometry algebra once per cable vertex.
+        count=node_count-2
+        dp,df=objective_curvature_derivatives(tangents[:,:-1].reshape(-1,3),tangents[:,1:].reshape(-1,3))
+        previous=(dp@tangent_rate_blocks[:,:-1].reshape(-1,3,3)).reshape(batch,count,3,3)
+        following=(df@tangent_rate_blocks[:,1:].reshape(-1,3,3)).reshape(batch,count,3,3)
+        jacobian=positions.new_zeros(batch,count,3,node_count,3)
+        index=torch.arange(count,device=positions.device)
+        jacobian[:,index,:,index,:]=-previous.transpose(0,1)
+        jacobian[:,index,:,index+1,:]=(previous-following).transpose(0,1)
+        jacobian[:,index,:,index+2,:]=following.transpose(0,1)
+        weights=(2.0/(rest_lengths[:-1]+rest_lengths[1:]))[None].expand(batch,-1).repeat_interleave(3,dim=1)
+        return jacobian.reshape(batch,3*count,3*node_count),positions.new_zeros(batch,3*count),weights
+
     zero_block = torch.zeros(
         (batch, 3, 3), dtype=positions.dtype, device=positions.device
     )
@@ -545,6 +561,7 @@ def _implicit_bending_damping_velocity(
     pinned_endpoints: PinnedEndpointMask = TWO_PINNED_ENDPOINTS,
     linear_solvers=None,
     frame_regularization: float = 0.0,
+    vectorized=False,
 ) -> torch.Tensor:
     """Backward-Euler solve for exact Kelvin--Voigt curvature damping.
 
@@ -618,7 +635,7 @@ def _implicit_bending_damping_velocity(
             conjugate_gradient_iterations = None
     jacobian, affine, weight = _curvature_rate_jacobian_impl(
         positions, rest_lengths, endpoint_orientations, endpoint_orientation_rates,
-        frame_regularization=frame_regularization,
+        frame_regularization=frame_regularization,vectorized=vectorized,
     )
     free_start = int(pinned_endpoints[0])
     free_stop = node_count - int(pinned_endpoints[1])
@@ -1103,6 +1120,8 @@ def momentum_project_lengths(
         if dense_solve
         else solve_symmetric_tridiagonal
     )
+    if dense_solve == 'cuda_tridiagonal':
+        from .cuda_tridiagonal import solve
     value = clamp_boundary(positions)
     epsilon = 64.0 * torch.finfo(value.dtype).eps
     for _ in range(iterations):
@@ -1196,6 +1215,8 @@ def momentum_project_velocities(
         if dense_solve
         else solve_symmetric_tridiagonal
     )
+    if dense_solve == 'cuda_tridiagonal':
+        from .cuda_tridiagonal import solve
     multiplier = solve(
         diagonal + regularization,
         off_diagonal,
@@ -2175,6 +2196,7 @@ class DderModel:
         dense_constraint_solve: bool = False,
         analytic_bending: bool = False,
         linear_solvers=None,
+        vectorized_curvature=False,
     ) -> DderState:
         """Fixed-shape inference update.
 
@@ -2289,6 +2311,7 @@ class DderModel:
                 pinned_endpoints=pinned_endpoints,
                 linear_solvers=linear_solvers,
                 frame_regularization=self.parameters.curvature_frame_regularization,
+                vectorized=vectorized_curvature,
             )
             predicted_q = q + substep_dt * predicted_v
             predicted_q = _replace_pinned_values(

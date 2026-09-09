@@ -1,0 +1,172 @@
+{
+  "after": {
+    "action": {
+      "jerk_limit_m_s3": [
+        60.0,
+        60.0,
+        60.0
+      ]
+    },
+    "command_contract": "bounded_jerk_pva_30hz_v1",
+    "device": "cuda",
+    "launch": {
+      "origin_m": [
+        -2.0,
+        0.0,
+        1.255
+      ],
+      "start_radius_m": 0.0,
+      "target_m": [
+        -1.0,
+        0.0,
+        1.1
+      ],
+      "target_radius_m": 0.0
+    },
+    "limits": {
+      "maximum_origin_z_m": 2.8,
+      "maximum_specific_force_m_s2": 18.28571428571429,
+      "maximum_speed_m_s": 5.0,
+      "maximum_tilt_deg": 60.0,
+      "minimum_cable_z_m": 0.02,
+      "minimum_origin_z_m": 0.96,
+      "minimum_specific_vertical_m_s2": 2.0
+    },
+    "method": "mppi",
+    "model_path": "data/model_candidates/20260908-normalized-M1/model.json",
+    "mppi": {
+      "iterations": 100,
+      "minimum_iterations": 20,
+      "noise_correlation": 0.7,
+      "noise_std": 0.05,
+      "patience": 15,
+      "samples": 1024,
+      "seed": 656,
+      "temperature": 1.0
+    },
+    "reward": {
+      "displacement": 5.0,
+      "failure": 100.0,
+      "invalid_contact": 25.0,
+      "jerk": 0.02,
+      "progress": 60.0,
+      "proximity_scale_m": 0.35,
+      "strike_quality": 60.0,
+      "success": 200.0,
+      "time_per_s": 10.0
+    },
+    "schema": "pva_planner_settings_v1",
+    "task": {
+      "duration_s": 2.0,
+      "first_contact_only": true,
+      "maximum_angle_deg": 45.0,
+      "minimum_directed_speed_m_s": 4.0,
+      "strike_direction": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "target_radius_m": 0.05
+    },
+    "training": {
+      "batch_size": 1024,
+      "entropy_coefficient": 0.01,
+      "epochs": 4,
+      "evaluate_every_updates": 5,
+      "hidden_dim": 256,
+      "learning_rate": 0.0003,
+      "maximum_attempts": 500000,
+      "minibatch_size": 8192,
+      "minimum_attempts": 20480,
+      "plateau_attempts": 20480,
+      "relative_improvement": 0.005,
+      "seed": 655
+    }
+  },
+  "before": {
+    "action": {
+      "jerk_limit_m_s3": [
+        60.0,
+        60.0,
+        60.0
+      ]
+    },
+    "command_contract": "bounded_jerk_pva_30hz_v1",
+    "device": "cuda",
+    "launch": {
+      "origin_m": [
+        0.0,
+        0.0,
+        1.225
+      ],
+      "start_radius_m": 0.0,
+      "target_m": [
+        1.5,
+        0.0,
+        1.1
+      ],
+      "target_radius_m": 0.0
+    },
+    "limits": {
+      "maximum_origin_z_m": 2.8,
+      "maximum_specific_force_m_s2": 18.28571428571429,
+      "maximum_speed_m_s": 5.0,
+      "maximum_tilt_deg": 60.0,
+      "minimum_cable_z_m": 0.02,
+      "minimum_origin_z_m": 0.96,
+      "minimum_specific_vertical_m_s2": 2.0
+    },
+    "method": "mppi",
+    "model_path": "data/model_candidates/20260908-normalized-M1/model.json",
+    "mppi": {
+      "iterations": 100,
+      "minimum_iterations": 20,
+      "noise_correlation": 0.7,
+      "noise_std": 0.05,
+      "patience": 15,
+      "samples": 1024,
+      "seed": 656,
+      "temperature": 1.0
+    },
+    "reward": {
+      "displacement": 5.0,
+      "failure": 100.0,
+      "invalid_contact": 25.0,
+      "jerk": 0.02,
+      "progress": 60.0,
+      "proximity_scale_m": 0.35,
+      "strike_quality": 60.0,
+      "success": 200.0,
+      "time_per_s": 10.0
+    },
+    "schema": "pva_planner_settings_v1",
+    "task": {
+      "duration_s": 2.0,
+      "first_contact_only": true,
+      "maximum_angle_deg": 45.0,
+      "minimum_directed_speed_m_s": 4.0,
+      "strike_direction": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "target_radius_m": 0.05
+    },
+    "training": {
+      "batch_size": 1024,
+      "entropy_coefficient": 0.01,
+      "epochs": 4,
+      "evaluate_every_updates": 5,
+      "hidden_dim": 256,
+      "learning_rate": 0.0003,
+      "maximum_attempts": 500000,
+      "minibatch_size": 8192,
+      "minimum_attempts": 20480,
+      "plateau_attempts": 20480,
+      "relative_improvement": 0.005,
+      "seed": 655
+    }
+  },
+  "ppo_sha256": "195562600bff1b6b05d5fd1cbf5ab7391d9ca5260dd106339984d33b4db71c75",
+  "scope": "Copy PPO initial and target coordinates only; new MPPI run, no translation of saved plans"
+}

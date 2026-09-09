@@ -1,0 +1,16 @@
+{
+  "best_failed": false,
+  "best_minimum_tip_distance_m": 0.5146526904353032,
+  "best_reward": -73.01517346641246,
+  "best_success": false,
+  "command_steps": 150,
+  "elapsed_s": 971.7092785999994,
+  "evidence": "simulation only",
+  "iterations": 938,
+  "lookahead_s": 0.4,
+  "maneuver_duration_s": 5.0,
+  "plan": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260909-124046-219074\\plan.npz",
+  "planner_mode": "receding_pva_v1",
+  "scored_duration_s": 5.0,
+  "stop_reason": "maneuver_time_limit"
+}

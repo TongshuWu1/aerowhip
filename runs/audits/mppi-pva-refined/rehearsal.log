@@ -1,0 +1,17 @@
+[W909 11:46:48.000000000 Context.cpp:448] Warning: torch.backends.cuda.preferred_linalg_library is an experimental feature. If you see any error or unexpected behavior when this flag is set please file an issue on GitHub. (function operator ())
+Appending smooth recovery
+Traceback (most recent call last):
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\runs\mppi_pva\20260909-114422-355245\source_snapshot\tools\rehearse_pva.py", line 14, in <module>
+    generate(a.job,a.output,checkpoint=a.checkpoint,origin=a.origin,target=a.target,device=a.device,progress=progress)
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\runs\mppi_pva\20260909-114422-355245\source_snapshot\deployment\pva_rehearsal.py", line 60, in generate
+    times,packets,phases,recovery=complete_pva_packets(whip,np.asarray(cfg['launch']['origin_m']))
+                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\runs\mppi_pva\20260909-114422-355245\source_snapshot\deployment\pva_rehearsal.py", line 26, in complete_pva_packets
+    return complete_packets(whip,hover)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\runs\mppi_pva\20260909-114422-355245\source_snapshot\deployment\research_rehearsal.py", line 55, in complete_packets
+    sample,recovery=plan_curved_recovery(whip[-1,:3],whip[-1,3:6],whip[-1,6:9],hover,settings)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\runs\mppi_pva\20260909-114422-355245\source_snapshot\deployment\curved_recovery.py", line 114, in plan_curved_recovery
+    raise ValueError('No curved recovery meets the reference limits for this whip exit; no CSV generated.')
+ValueError: No curved recovery meets the reference limits for this whip exit; no CSV generated.
