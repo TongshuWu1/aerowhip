@@ -26,6 +26,8 @@ from learning import (
 from learning.checkpoint_library import write_active_run
 from learning.simple_ppo import PPORollout
 from learning.training_control import stoppable_training, TrainingStopped
+from learning.reward_plateau import RewardPlateau
+from simulator.artifact_io import replace_with_retry
 from simulator.rollout import load_json, resolve_device
 
 
@@ -52,14 +54,14 @@ def _atomic_json(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix(path.suffix + ".tmp")
     temporary.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
-    os.replace(temporary, path)
+    replace_with_retry(temporary, path)
 
 
 def _atomic_checkpoint(path: Path, payload: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix(path.suffix + ".tmp")
     torch.save(payload, temporary)
-    os.replace(temporary, path)
+    replace_with_retry(temporary, path)
 
 
 def _sha256(path: Path) -> str:
@@ -78,6 +80,8 @@ def load_configs(config_directory=None) -> tuple[dict[str, Any], dict[str, Any],
 def validate_contract(
     model: dict[str, Any], task: dict[str, Any], config: dict[str, Any]
 ) -> None:
+    from simulator.research_config import validate_research_contract
+    validate_research_contract(model,task,config)
     if model["schema"] != "point_force_dder_model_v1":
         raise ValueError("PPO requires the point-force DDER model.")
     if task["schema"] != "force_whip_task_v1":
@@ -105,9 +109,12 @@ def validate_contract(
                 raise ValueError(f"Invalid deployment tolerance: {key}")
         if deployment["recovery_duration_s"] < .5:
             raise ValueError("Deployment evaluation must include PID settling time.")
-        for key in ('initial_cable_bend_deg','state_cable_bend_error_deg','launch_position_drift_m','launch_velocity_drift_m_s'):
+        for key in ('initial_cable_bend_deg','state_cable_bend_error_deg','launch_position_drift_m','launch_velocity_drift_m_s',
+                    'initial_position_radius_m','target_position_radius_m'):
             if key in deployment and (not math.isfinite(deployment[key]) or deployment[key] < 0):
                 raise ValueError(f'Invalid deployment tolerance: {key}')
+    elif any(float(deployment.get(key, 0.)) > 0 for key in ('initial_position_radius_m', 'target_position_radius_m')):
+        raise ValueError('Position radius randomization requires open-loop deployment training.')
     stochastic_indices = [
         int(index) for index in config["ppo"].get("stochastic_action_indices", [0, 1, 2])
     ]
@@ -116,6 +123,8 @@ def validate_contract(
     if any(index < 0 or index >= 3 for index in stochastic_indices):
         raise ValueError("A stochastic PPO action index is out of range.")
     if 1 not in stochastic_indices:
+        if any(float(deployment.get(key, 0.)) > 0 for key in ('initial_position_radius_m', 'target_position_radius_m')):
+            raise ValueError('3D position randomization requires stochastic Fy exploration.')
         lateral_target_offset = float(task["target_position_m"][1]) - float(
             task["initial_root_position_m"][1]
         )
@@ -282,8 +291,10 @@ def guarded_update_is_acceptable(
 def validation_rank(result: dict[str, Any]) -> tuple[float, float, float]:
     """Rank baseline policies by success, scalar reward, then compactness."""
 
+    whip_only = result.get("evaluation_mode") == "30hz_frozen_reference_tracked_pose_and_cable_whip_only"
+    success = result["success_rate"] if whip_only else result.get("hit_and_recovery_rate", result["success_rate"])
     return (
-        float(result.get("hit_and_recovery_rate", result["success_rate"])),
+        float(success),
         float(result["mean_episode_reward"]),
         -float(result["mean_point_displacement_cost_integral_s"]),
     )
@@ -318,6 +329,9 @@ def collect_rollout(
     rollout: PPORollout,
     *, progress=None,
 ) -> None:
+    if hasattr(environment,'collect_training_rollout'):
+        environment.collect_training_rollout(agent,rollout,progress=progress)
+        return
     if environment.ppo_config.get("deployment", {}).get("enabled", False):
         from learning.deployment_rollout import collect_deployment_rollout
         collect_deployment_rollout(environment, agent, rollout, progress=progress)
@@ -543,8 +557,10 @@ def train(
     artifact: Path | None,
     resume_checkpoint: Path | None,
     config_directory: Path | None = None,
+    environment_factory=None,
 ) -> Path:
     model, task, config = load_configs(config_directory)
+    environment_factory=environment_factory or PointForceWhipEnvironment
     validate_contract(model, task, config)
     device = resolve_device(device_name)
     configure_accelerator(device)
@@ -598,7 +614,19 @@ def train(
                 ROOT / "learning" / "point_force_env.py",
                 ROOT / "learning" / "simple_ppo.py",
                 ROOT / "learning" / "training_control.py",
+                ROOT / "learning" / "reward_plateau.py",
+                ROOT / "learning" / "live_scene.py",
+                ROOT / "simulator" / "artifact_io.py",
+                ROOT / "experimental_data" / "io.py",
                 ROOT / "learning" / "deployment_rollout.py",
+                ROOT / "learning" / "fullstate_rollout.py",
+                ROOT / "simulator" / "fullstate_execution.py",
+                ROOT / "simulator" / "drone_tracking.py",
+                ROOT / "simulator" / "research_pose.py",
+                ROOT / "simulator" / "research_physics.py",
+                ROOT / "simulator" / "research_reference.py",
+                ROOT / "simulator" / "drone_pose_residual.py",
+                ROOT / "learning" / "research_rollout.py",
                 ROOT / "simulator" / "live_flight.py",
                 ROOT / "run_ppo.py",
                 ROOT / "simulator" / "point_mass.py",
@@ -624,7 +652,7 @@ def train(
         },
     )
 
-    environment = PointForceWhipEnvironment(
+    environment = environment_factory(
         model, task, config, batch_size=collection_batch, device=device
     )
     agent = build_agent(config, device)
@@ -642,12 +670,15 @@ def train(
         successes = int(checkpoint.get("successes", 0))
         elapsed_offset = float(checkpoint.get("elapsed_s", 0.0))
         run_metadata["parent_training_episodes"] = episodes
+        run_metadata["optimizer_state_restored"] = not bool(config.get("deployment", {}).get("reset_optimizer_on_resume", False))
         _atomic_json(run_metadata_path, run_metadata)
 
     agent.training_execution_mode = (
         "initial_state_only_open_loop_once_with_pid_recovery"
         if config.get("deployment", {}).get("enabled", False) else "feedback"
     )
+    if config.get('deployment',{}).get('termination')=='execution_success_or_timeout':
+        agent.training_execution_mode='initial_state_only_open_loop_predicted_hit_or_timeout'
 
     rollout = PPORollout.allocate(
         environment.control_step_count,
@@ -712,6 +743,28 @@ def train(
     )
     _atomic_checkpoint(artifact / "checkpoints" / "latest.pt", initial_checkpoint)
     validation = config["validation"]
+    plateau = RewardPlateau.from_history(config.get('early_stopping'), start_episodes=episodes,
+                                        history=config.get('reward_plateau_resume'))
+    if plateau.enabled and not bool(validation['enabled']):
+        raise ValueError('Reward plateau stopping requires validation.')
+    best_reward = -math.inf
+
+    def observe_reward(result, checkpoint):
+        nonlocal best_reward
+        if not plateau.enabled:
+            return False
+        reward = float(result['mean_episode_reward'])
+        if math.isfinite(reward) and reward > best_reward:
+            best_reward = reward
+            _atomic_checkpoint(artifact / 'checkpoints/best_reward.pt', checkpoint)
+            _atomic_json(artifact / 'best_reward.json', dict(result))
+        record = dict(result)
+        if hasattr(result, 'evaluation_id'):
+            record['evaluation_id'] = result.evaluation_id
+        decision = plateau.observe(record)
+        _atomic_json(artifact / 'reward_convergence.json', decision)
+        return decision['should_stop']
+
     if bool(validation["enabled"]):
         initial_validation = evaluate(
             model,
@@ -730,6 +783,7 @@ def train(
             artifact / "checkpoints" / "best_validation.pt", initial_checkpoint
         )
         _atomic_json(artifact / "best_validation.json", initial_validation)
+        observe_reward(initial_validation, initial_checkpoint)
     started = time.perf_counter()
     _atomic_json(artifact / "status.json", {
         "status": "RUNNING", "stage": "Collecting training batch",
@@ -740,6 +794,7 @@ def train(
     last_row: dict[str, Any] = {}
     last_progress_time = 0.0
     last_progress_stage = None
+    scene_batch_index = 0
     def report_progress(stage, step=0, total=0):
         nonlocal last_progress_time, last_progress_stage
         now = time.perf_counter()
@@ -763,7 +818,7 @@ def train(
             remaining = episodes_target - episodes
             if remaining < collection_batch:
                 collection_batch = remaining
-                environment = PointForceWhipEnvironment(
+                environment = environment_factory(
                     model, task, config, batch_size=collection_batch, device=device
                 )
                 rollout = PPORollout.allocate(
@@ -786,7 +841,13 @@ def train(
                 ),
             )
             report_progress('Preparing training batch')
+            if config.get('live_scene', {}).get('enabled', False):
+                if model.get('fullstate_execution', {}).get('schema') != 'tracked_pose_execution_v1':
+                    raise ValueError('Live Isaac scenes require the native 30 Hz tracked-pose model.')
+                environment._live_scene_context = dict(artifact=str(artifact), episodes_before=episodes,
+                    batch_index=scene_batch_index)
             collect_rollout(environment, agent, rollout, progress=report_progress)
+            scene_batch_index += 1
             report_progress('Updating PPO')
             valid_transitions = int(rollout.masks.sum().detach().cpu())
             pre_update_checkpoint = copy.deepcopy(agent.checkpoint())
@@ -1018,13 +1079,16 @@ def train(
                     _atomic_json(
                         artifact / "best_validation.json", validation_result
                     )
+                if observe_reward(validation_result, checkpoint):
+                    break
     except TrainingStopped:
         raise
-    except BaseException:
+    except BaseException as error:
         _atomic_json(
             artifact / "status.json",
             {
                 "status": "FAILED",
+                "error": f"{type(error).__name__}: {error}",
                 "pid": os.getpid(),
                 "episodes": episodes,
                 "successes": successes,
@@ -1081,6 +1145,12 @@ def train(
         "elapsed_s": elapsed,
         "artifact": str(artifact),
     }
+    if plateau.enabled:
+        final['reward_convergence'] = dict(plateau.decision)
+        final['stop_reason'] = ('Validation reward plateau' if plateau.decision['should_stop']
+                                else 'User request' if episodes < episodes_target
+                                else 'Attempt budget reached; reward plateau not established')
+        final['stage'] = final['stop_reason']
     _atomic_json(artifact / "status.json", final)
     print(json.dumps(final, indent=2), flush=True)
     return artifact

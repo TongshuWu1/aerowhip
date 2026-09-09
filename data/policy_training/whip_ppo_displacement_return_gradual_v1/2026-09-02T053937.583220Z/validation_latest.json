@@ -1,0 +1,74 @@
+{
+  "checkpoint_episodes": 184320,
+  "validation_episodes": 512,
+  "validation_successes": 78,
+  "validation_success_rate": 0.15234375,
+  "validation_endpoint_successes": 78,
+  "validation_endpoint_success_rate": 0.15234375,
+  "validation_legacy_scientific_successes": 0,
+  "validation_legacy_scientific_success_rate": 0.0,
+  "median_minimum_tip_distance_m": 0.06488091498613358,
+  "mean_maximum_uav_displacement_m": 1.0477969646453857,
+  "mean_terminal_uav_displacement_m": 0.21707740426063538,
+  "median_terminal_uav_displacement_m": 0.07394308596849442,
+  "numerical_failures": 0,
+  "tip_first_count": 84,
+  "mean_maximum_uav_speed_m_s": 2.3725223541259766,
+  "mean_maximum_command_acceleration_m_s2": 9.991875648498535,
+  "successful_first_entry_physics_step": {
+    "mean": 88.14102564102564,
+    "median": 87.0,
+    "minimum": 77.0,
+    "maximum": 100.0
+  },
+  "successful_first_entry_time_s": {
+    "mean": 0.881410233485393,
+    "median": 0.8700000047683716,
+    "minimum": 0.7699999809265137,
+    "maximum": 1.0
+  },
+  "first_entry_tip_distance_m": {
+    "mean": 0.043823415369671936,
+    "median": 0.04500908777117729,
+    "minimum": 0.01628704182803631,
+    "maximum": 0.07750298082828522
+  },
+  "first_entry_tip_speed_m_s": {
+    "mean": 5.279121104408713,
+    "median": 5.2868852615356445,
+    "minimum": 2.6308958530426025,
+    "maximum": 7.825953483581543
+  },
+  "first_entry_directed_speed_m_s": {
+    "mean": 4.795251490789301,
+    "median": 4.857229709625244,
+    "minimum": 0.7857750058174133,
+    "maximum": 6.922365665435791
+  },
+  "first_entry_direction_error_deg": {
+    "mean": 24.63722224516027,
+    "median": 24.059282302856445,
+    "minimum": 18.015792846679688,
+    "maximum": 72.62214660644531
+  },
+  "first_entry_speed_gate_passes": 79,
+  "first_entry_direction_gate_passes": 81,
+  "successful_tip_distance_m": {
+    "mean": 0.04353558307943436,
+    "median": 0.045156003907322884,
+    "minimum": 0.01628704182803631,
+    "maximum": 0.04990357533097267
+  },
+  "successful_directed_speed_m_s": {
+    "mean": 4.930000641407111,
+    "median": 4.901380300521851,
+    "minimum": 4.038676738739014,
+    "maximum": 6.922365665435791
+  },
+  "successful_direction_error_deg": {
+    "mean": 23.742192317277958,
+    "median": 23.81206226348877,
+    "minimum": 18.015792846679688,
+    "maximum": 29.15910530090332
+  }
+}

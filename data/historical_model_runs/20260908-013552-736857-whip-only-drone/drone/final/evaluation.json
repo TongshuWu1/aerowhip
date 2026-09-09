@@ -1,0 +1,36 @@
+{
+  "nominal": {
+    "whip1_001": {
+      "maximum_position_error_m": 0.10287795959042677,
+      "position_rmse_m": 0.01747412417268203,
+      "windows": 6
+    },
+    "whip1_002": {
+      "maximum_position_error_m": 0.12111405547329984,
+      "position_rmse_m": 0.03507477471021439,
+      "windows": 6
+    },
+    "whip1_003": {
+      "maximum_position_error_m": 0.06444479068822268,
+      "position_rmse_m": 0.013395144039379183,
+      "windows": 6
+    }
+  },
+  "residual": {
+    "whip1_001": {
+      "maximum_position_error_m": 0.0967098711824704,
+      "position_rmse_m": 0.013981696995814105,
+      "windows": 6
+    },
+    "whip1_002": {
+      "maximum_position_error_m": 0.11300446549328284,
+      "position_rmse_m": 0.030259915817621955,
+      "windows": 6
+    },
+    "whip1_003": {
+      "maximum_position_error_m": 0.07625596010621431,
+      "position_rmse_m": 0.013637175887159412,
+      "windows": 6
+    }
+  }
+}

@@ -59,7 +59,8 @@ def test_planner_never_observes_true_plant_and_truncates_inside_action_hold(env)
     torch.testing.assert_close(first_forces, second_forces)
     torch.testing.assert_close(first_cutoffs, second_cutoffs)
     torch.testing.assert_close(observations[0], observations[1])
-    assert len(first_forces) == 1 and first_cutoffs.tolist() == [1, 1]
+    cutoff = 1 + round(env.ppo_config['deployment']['strike_followthrough_s'] / env.physics_dt_s)
+    assert len(first_forces) == cutoff and first_cutoffs.tolist() == [cutoff, cutoff]
 
 
 def test_execution_keeps_frozen_commands_after_early_hit_and_after_miss(env, monkeypatch):
@@ -150,13 +151,16 @@ def test_whole_plan_reward_including_recovery_reaches_every_planning_action(env,
     class Agent:
         def act(self, observation):
             return torch.zeros((2, 3)), torch.zeros((2, 1)), torch.zeros((2, 1))
-    rollout = PPORollout.allocate(2, 2, 79, 3, device=env.device)
+    rollout = PPORollout.allocate(env.control_step_count, 2, 79, 3, device=env.device)
     result = deployment.collect_deployment_rollout(env, Agent(), rollout)
-    assert rollout.masks.sum() == 4
-    assert torch.count_nonzero(rollout.rewards[0]) == 0
-    torch.testing.assert_close(rollout.rewards[1, :, 0], result.episode_reward.float())
+    # The mocked tip reaches the target on physics step 11, hence the third
+    # policy query at 20 Hz. Execution follow-through adds no actor queries.
+    assert rollout.masks.sum() == 6
+    assert torch.count_nonzero(rollout.rewards[:2]) == 0
+    torch.testing.assert_close(rollout.rewards[2, :, 0], result.episode_reward.float())
     _, returns = generalized_advantage_estimate(rollout.rewards, rollout.dones,
                                                rollout.masks, rollout.values,
                                                gamma=1., gae_lambda=1.)
     torch.testing.assert_close(returns[0], returns[1])
+    torch.testing.assert_close(returns[1], returns[2])
     assert not result.deployment["recovered"].any()

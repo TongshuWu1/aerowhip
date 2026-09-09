@@ -1,0 +1,44 @@
+{
+  "nominal": {
+    "alignment": "prehover_effective_alignment",
+    "fit_protocol_sha256": "c16daddc92e95db28d2dacaa8e52623d18f8bdc038e80de1a64b4848a16bca3a",
+    "geometry": [
+      0.0066549972854827175,
+      -0.01287427254333901,
+      -0.055
+    ],
+    "has_drone_residual": false,
+    "parameters": {
+      "attitude_acceleration_scale_xy": 1.0046304480070598,
+      "attitude_acceleration_scale_z": 0.46397068222679966,
+      "attitude_drive_model": "independent_scale_v3",
+      "attitude_time_constant_s": 0.021640765369525698,
+      "delay_s": 0.06,
+      "feedforward_xy": 0.30413446453428755,
+      "feedforward_z": 1.9075418288842554,
+      "gravity_m_s2": 9.80665,
+      "kd_xy": 6.153111372284283,
+      "kd_z": 1.8240439100550376,
+      "kp_xy": 5.927819744592067,
+      "kp_z": 21.405321535954528
+    },
+    "reference_point": "cf_7 tracking origin",
+    "schema": "nominal_loaded_drone_pose_candidate_v3",
+    "selected": false,
+    "training_takes": [
+      "whip1_001",
+      "whip1_002",
+      "whip1_003"
+    ]
+  },
+  "residual": {
+    "checkpoint": "drone_residual.pt",
+    "schema": "drone_pose_residual_v1",
+    "sha256": "9d81b95fe4c114c4977ef6fb79a2f8ed8faa679b9f3c0b1be189419657cad10c",
+    "specification": {
+      "acceleration_limit": 0.5,
+      "hidden": 16
+    },
+    "target": "Additional realized origin acceleration; no direct injection into attitude drive"
+  }
+}

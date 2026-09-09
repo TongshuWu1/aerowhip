@@ -1,0 +1,90 @@
+{
+  "platform": "Windows, project Python / native Qt and VTK",
+  "takes": [
+    {
+      "take": "whip_adp_0_001",
+      "frames": 1120,
+      "alignment": {
+        "offset_s": -1.034452944799245,
+        "rms_m": 0.018162338631501546,
+        "half_offsets_s": [
+          -1.034459526584866,
+          -1.0249253849432602
+        ],
+        "method": "measured XYZ constant-offset least squares; no spatial fit",
+        "clock_verified": false,
+        "includes_logging_latency": true
+      }
+    },
+    {
+      "take": "whip_adp_0_002",
+      "frames": 1120,
+      "alignment": {
+        "offset_s": -0.034677077899311785,
+        "rms_m": 0.018991942117174254,
+        "half_offsets_s": [
+          -0.03467965232535403,
+          -0.025296528445824314
+        ],
+        "method": "measured XYZ constant-offset least squares; no spatial fit",
+        "clock_verified": false,
+        "includes_logging_latency": true
+      }
+    },
+    {
+      "take": "whip_adp_0_003",
+      "frames": 1117,
+      "alignment": {
+        "offset_s": -0.18529857923443224,
+        "rms_m": 0.018582410498175914,
+        "half_offsets_s": [
+          -0.19430896710195197,
+          -0.1844304210226893
+        ],
+        "method": "measured XYZ constant-offset least squares; no spatial fit",
+        "clock_verified": false,
+        "includes_logging_latency": true
+      }
+    },
+    {
+      "take": "whip_adp_0_004",
+      "frames": 1092,
+      "alignment": {
+        "offset_s": -0.004546364116777255,
+        "rms_m": 0.018219103117223936,
+        "half_offsets_s": [
+          -0.0045483160265610365,
+          -0.004449502474190127
+        ],
+        "method": "measured XYZ constant-offset least squares; no spatial fit",
+        "clock_verified": false,
+        "includes_logging_latency": true
+      }
+    },
+    {
+      "take": "whip_adp_0_005",
+      "frames": 1120,
+      "alignment": {
+        "offset_s": -0.3344662245192187,
+        "rms_m": 0.019059295333746472,
+        "half_offsets_s": [
+          -0.3344649034519266,
+          -0.33457099676482177
+        ],
+        "method": "measured XYZ constant-offset least squares; no spatial fit",
+        "clock_verified": false,
+        "includes_logging_latency": true
+      }
+    }
+  ],
+  "checks": [
+    "all five command matches and complete whip coverage",
+    "forward/reverse scrub pose matrices",
+    "fixed camera",
+    "missing-marker connectivity",
+    "strike seek",
+    "playback pauses on tab exit",
+    "background loading",
+    "raw CSV and selected checkpoint hashes unchanged"
+  ]
+}

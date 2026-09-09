@@ -1,0 +1,46 @@
+episodes=2048/50000 batch_success=79.834% rolling_5000=79.834% total_success=79.834% endpoint_success=80.566% episodes_per_second=95.02
+episodes=4096/50000 batch_success=80.957% rolling_5000=80.396% total_success=80.396% endpoint_success=81.104% episodes_per_second=128.49
+episodes=6144/50000 batch_success=80.518% rolling_5000=80.800% total_success=80.436% endpoint_success=81.136% episodes_per_second=147.26
+episodes=8192/50000 batch_success=81.836% rolling_5000=80.860% total_success=80.786% endpoint_success=81.433% episodes_per_second=158.03
+episodes=10240/50000 batch_success=80.518% rolling_5000=81.060% total_success=80.732% endpoint_success=81.387% episodes_per_second=165.40
+validation_episodes=10240 success=480/512
+episodes=12288/50000 batch_success=81.494% rolling_5000=81.340% total_success=80.859% endpoint_success=81.494% episodes_per_second=148.67
+episodes=14336/50000 batch_success=81.641% rolling_5000=81.260% total_success=80.971% endpoint_success=81.606% episodes_per_second=154.81
+episodes=16384/50000 batch_success=82.715% rolling_5000=82.140% total_success=81.189% endpoint_success=81.793% episodes_per_second=159.80
+episodes=18432/50000 batch_success=81.641% rolling_5000=82.500% total_success=81.239% endpoint_success=81.814% episodes_per_second=163.95
+episodes=20480/50000 batch_success=81.494% rolling_5000=81.820% total_success=81.265% endpoint_success=81.821% episodes_per_second=167.53
+validation_episodes=20480 success=479/512
+episodes=22528/50000 batch_success=80.273% rolling_5000=80.800% total_success=81.175% endpoint_success=81.760% episodes_per_second=157.73
+episodes=24576/50000 batch_success=81.396% rolling_5000=80.960% total_success=81.193% endpoint_success=81.767% episodes_per_second=160.72
+episodes=26624/50000 batch_success=80.029% rolling_5000=80.820% total_success=81.104% endpoint_success=81.663% episodes_per_second=163.64
+episodes=28672/50000 batch_success=82.422% rolling_5000=81.260% total_success=81.198% endpoint_success=81.749% episodes_per_second=166.24
+episodes=30720/50000 batch_success=81.787% rolling_5000=81.920% total_success=81.237% endpoint_success=81.781% episodes_per_second=168.50
+validation_episodes=30720 success=484/512
+episodes=32768/50000 batch_success=80.664% rolling_5000=81.020% total_success=81.201% endpoint_success=81.729% episodes_per_second=161.57
+episodes=34816/50000 batch_success=80.615% rolling_5000=80.860% total_success=81.167% endpoint_success=81.704% episodes_per_second=163.63
+episodes=36864/50000 batch_success=81.543% rolling_5000=80.900% total_success=81.188% endpoint_success=81.727% episodes_per_second=165.30
+episodes=38912/50000 batch_success=80.176% rolling_5000=80.800% total_success=81.134% endpoint_success=81.679% episodes_per_second=167.03
+episodes=40960/50000 batch_success=81.250% rolling_5000=81.020% total_success=81.140% endpoint_success=81.687% episodes_per_second=168.53
+validation_episodes=40960 success=481/512
+episodes=43008/50000 batch_success=79.980% rolling_5000=80.540% total_success=81.085% endpoint_success=81.631% episodes_per_second=163.15
+episodes=45056/50000 batch_success=79.541% rolling_5000=80.000% total_success=81.015% endpoint_success=81.552% episodes_per_second=164.71
+episodes=47104/50000 batch_success=79.980% rolling_5000=79.440% total_success=80.970% endpoint_success=81.498% episodes_per_second=166.17
+episodes=49152/50000 batch_success=82.568% rolling_5000=80.640% total_success=81.036% endpoint_success=81.553% episodes_per_second=167.48
+episodes=51200/50000 batch_success=82.568% rolling_5000=81.620% total_success=81.098% endpoint_success=81.611% episodes_per_second=168.73
+validation_episodes=51200 success=482/512
+{
+  "status": "COMPLETE",
+  "episodes": 51200,
+  "requested_episodes": 50000,
+  "batch_aligned_overshoot": 1200,
+  "episodes_remaining": 0,
+  "successes": 41522,
+  "endpoint_successes": 41785,
+  "legacy_scientific_successes": 0,
+  "success_rate": 0.8109765625,
+  "rolling_success_rate": 0.8162,
+  "rolling_window_episodes": 5000,
+  "episodes_per_second": 162.96270936637188,
+  "elapsed_s": 314.1823071000399,
+  "early_stopping_reason": null
+}

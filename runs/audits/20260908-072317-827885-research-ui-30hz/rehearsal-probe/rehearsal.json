@@ -1,0 +1,87 @@
+{
+  "checkpoint": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\audits\\20260908-072317-827885-research-ui-30hz\\native-checkpoint\\checkpoints\\policy.pt",
+  "checkpoint_sha256": "cafdde26ac0e3ccba9bd31a1d1ba01ef60bef41d18bf26f40edcb10427615640",
+  "command_rate_hz": 30,
+  "execution": "Take off; hold for 10 s; play complete CSV once at native timestamps; land. Offline artifact only.",
+  "force_rate_hz": 30,
+  "frame": "World XYZ, metres; FullState position refers to unshifted OptiTrack tracked origin",
+  "initial_attachment_m": [
+    0.0,
+    0.0,
+    1.5
+  ],
+  "initial_state": "Ideal settled level hover, zero velocity/bias, hanging planning cable",
+  "initial_tracking_origin_m": [
+    -0.0066549972854827175,
+    0.01287427254333901,
+    1.555
+  ],
+  "minimum_tip_distance_m": 1.3140609765151692,
+  "predicted_valid_hit": false,
+  "prediction_valid_through_s": 14.600000000000001,
+  "preflight_hold_s": 10.0,
+  "recovery": {
+    "axis_plateau_end_times_s": [
+      0.3,
+      0.3,
+      0.3
+    ],
+    "axis_stop_times_s": [
+      0.6,
+      0.6,
+      0.6
+    ],
+    "brake_end_s": 0.6,
+    "brake_position_m": [
+      0.0020019279118597875,
+      0.014376036639611789,
+      1.5445486411763008
+    ],
+    "braking_acceleration_m_s2": [
+      -0.035953174995246785,
+      -0.007537494307645598,
+      0.04593294447549755
+    ],
+    "hold_s": 3.0,
+    "hover_position_m": [
+      -0.0066549972854827175,
+      0.01287427254333901,
+      1.555
+    ],
+    "return_end_s": 10.6,
+    "return_peak_acceleration_limit_m_s2": 0.3,
+    "return_peak_speed_limit_m_s": 0.4,
+    "return_s": 10.0,
+    "settings": {
+      "hold_s": 3.0,
+      "horizontal_braking_m_s2": 2.5,
+      "ramp_out_s": 0.3,
+      "return_s": 10.0,
+      "transition_s": 0.3,
+      "vertical_braking_m_s2": 1.5
+    },
+    "total_duration_s": 13.6,
+    "transition_s": 0.3,
+    "vehicle_limits_verified": false
+  },
+  "recovery_empirically_validated": false,
+  "recovery_prediction_complete": true,
+  "reference_feasible": true,
+  "reference_metrics": {
+    "maximum_reference_specific_force_m_s2": 9.852651426006206,
+    "maximum_reference_speed_m_s": 0.016400150162173985,
+    "maximum_reference_tilt_deg": 0.21362302089792845,
+    "minimum_reference_specific_vertical_m_s2": 9.792451430073688
+  },
+  "schema": "research_fullstate_30hz_v1",
+  "source_job": "20260908-064040-669809",
+  "target_position_m": [
+    1.0,
+    0.0,
+    1.4
+  ],
+  "total_duration_s": 14.6,
+  "training_export_prefix_max_difference_m": 0.0,
+  "virtual_force_csv": "Virtual simulator input, including gravity; not a direct drone force command",
+  "whip_end_s": 1.0
+}

@@ -1,0 +1,15 @@
+{
+  "control_points": 12,
+  "device": "cuda",
+  "display_name": "CEM lower setup - validated spline",
+  "duration_std_s": 0.08,
+  "elite_fraction": 0.125,
+  "iterations": 6,
+  "maximum_duration_s": 2.0,
+  "maximum_height_m": 2.8,
+  "minimum_duration_s": 0.8,
+  "minimum_height_m": 0.08,
+  "population": 64,
+  "position_std_m": 0.025,
+  "random_seed": 655
+}

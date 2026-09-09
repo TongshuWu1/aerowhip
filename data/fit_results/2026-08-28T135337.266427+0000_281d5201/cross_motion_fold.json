@@ -1,0 +1,56 @@
+{
+  "baseline_orientation_rmse_deg": 4.518897711860087,
+  "baseline_position_rmse_m": 0.021603279852501586,
+  "fig8_003_used": false,
+  "fit_directory": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\fit_results\\2026-08-28T135337.266427+0000_281d5201",
+  "fold": 2,
+  "held_out_take": "fig8_001",
+  "held_out_used_during_training_or_checkpoint_selection": false,
+  "lead_time_position_rmse_m": {
+    "0.1": {
+      "baseline": 0.004024896745315463,
+      "residual": 0.002934547106150274
+    },
+    "0.25": {
+      "baseline": 0.011291049949076606,
+      "residual": 0.008961532249945328
+    },
+    "0.5": {
+      "baseline": 0.02095362663700312,
+      "residual": 0.01726556706699819
+    },
+    "1.0": {
+      "baseline": 0.032485784226975484,
+      "residual": 0.026197366587201686
+    }
+  },
+  "mppi": "NOT_RUN",
+  "network_state_sha256": "b7fc49716272d77518358198aad6faef09cfefdb2342f427842c1d658380a005",
+  "normalization_canonical_sha256": "9c0e1a847a69f28029e0496102dd531e8e6fafcc8c9dce3f80847a8566acf768",
+  "position_axis_rmse_m": {
+    "x": {
+      "baseline": 0.012719458035699358,
+      "residual": 0.014115814886668784
+    },
+    "y": {
+      "baseline": 0.009853247098224261,
+      "residual": 0.010212005966324563
+    },
+    "z": {
+      "baseline": 0.014416331339315117,
+      "residual": 0.0025733789106616354
+    }
+  },
+  "relative_position_improvement": 0.1847783493458175,
+  "residual_acceleration_p95_mps2": 1.5096450165892248,
+  "residual_acceleration_rms_mps2": 1.125750082716187,
+  "residual_orientation_rmse_deg": 2.151080718836554,
+  "residual_position_rmse_m": 0.017611461460900587,
+  "schema": "milestone3a3_cross_motion_fold_v1",
+  "stage_b": "LOCKED_NOT_RUN",
+  "training_runtime_s": 731.2217019000091,
+  "training_takes": [
+    "osc_001",
+    "fig8_002"
+  ]
+}

@@ -1,0 +1,126 @@
+{
+  "per_take": {
+    "fig8_001": {
+      "acceleration_onset_count": 32,
+      "acceleration_reversal_count": 0,
+      "aggressive_turn_count": 7,
+      "axis_rms_mps2": {
+        "x": 0.5887461360105879,
+        "y": 0.09444237653829622,
+        "z": 0.8160698399548448
+      },
+      "event_comparison_lag_s": 0.09999999999999787,
+      "finite": true,
+      "maximum_norm_mps2": 2.4115997494985164,
+      "mean_residual_norm_at_aggressive_turn_mps2": 0.9954777495091199,
+      "mean_residual_norm_at_onset_mps2": 1.0691977847649448,
+      "mean_residual_norm_at_reversal_mps2": null,
+      "median_norm_mps2": 0.9657281579449594,
+      "p95_norm_mps2": 1.3343737474449233,
+      "residual_acceleration_rms_mps2": 1.010698450991949,
+      "role": "training",
+      "smoothness_over_residual_rms": 0.04386080070403717,
+      "smoothness_rms_delta_mps2": 0.04433004333083695,
+      "take_id": "fig8_001"
+    },
+    "fig8_002": {
+      "acceleration_onset_count": 30,
+      "acceleration_reversal_count": 15,
+      "aggressive_turn_count": 40,
+      "axis_rms_mps2": {
+        "x": 0.7034082242133632,
+        "y": 0.6840445676591603,
+        "z": 0.8368893629393681
+      },
+      "event_comparison_lag_s": 0.09999999999999787,
+      "finite": true,
+      "maximum_norm_mps2": 3.7619498753568843,
+      "mean_residual_norm_at_aggressive_turn_mps2": 1.3914352445048537,
+      "mean_residual_norm_at_onset_mps2": 1.4307385884789467,
+      "mean_residual_norm_at_reversal_mps2": 1.6045982535653727,
+      "median_norm_mps2": 0.9489784511366002,
+      "p95_norm_mps2": 2.4867143703151684,
+      "residual_acceleration_rms_mps2": 1.2896061050708725,
+      "role": "training",
+      "smoothness_over_residual_rms": 0.07556411160099333,
+      "smoothness_rms_delta_mps2": 0.09744793964489773,
+      "take_id": "fig8_002"
+    },
+    "fig8_003": {
+      "acceleration_onset_count": 59,
+      "acceleration_reversal_count": 29,
+      "aggressive_turn_count": 66,
+      "axis_rms_mps2": {
+        "x": 1.1307155187732147,
+        "y": 1.324420784915195,
+        "z": 1.0869869223046418
+      },
+      "event_comparison_lag_s": 0.0999999999999801,
+      "finite": true,
+      "maximum_norm_mps2": 6.874319119316417,
+      "mean_residual_norm_at_aggressive_turn_mps2": 2.354161780277823,
+      "mean_residual_norm_at_onset_mps2": 2.0956283818968466,
+      "mean_residual_norm_at_reversal_mps2": 2.66847262770877,
+      "median_norm_mps2": 1.2892007177638318,
+      "p95_norm_mps2": 4.119658678593738,
+      "residual_acceleration_rms_mps2": 2.0528391483921187,
+      "role": "validation",
+      "smoothness_over_residual_rms": 0.09052537662438592,
+      "smoothness_rms_delta_mps2": 0.1858340370574802,
+      "take_id": "fig8_003"
+    },
+    "osc_001": {
+      "acceleration_onset_count": 39,
+      "acceleration_reversal_count": 3,
+      "aggressive_turn_count": 3,
+      "axis_rms_mps2": {
+        "x": 1.195961941106036,
+        "y": 0.29648351457297306,
+        "z": 0.9825915804089277
+      },
+      "event_comparison_lag_s": 0.09999999999999787,
+      "finite": true,
+      "maximum_norm_mps2": 3.552341214410732,
+      "mean_residual_norm_at_aggressive_turn_mps2": 1.8905551730156813,
+      "mean_residual_norm_at_onset_mps2": 1.4468142650226776,
+      "mean_residual_norm_at_reversal_mps2": 1.8905551730156813,
+      "median_norm_mps2": 1.4807187879317765,
+      "p95_norm_mps2": 2.4749854536310205,
+      "residual_acceleration_rms_mps2": 1.5759802196976251,
+      "role": "training",
+      "smoothness_over_residual_rms": 0.07004903914394876,
+      "smoothness_rms_delta_mps2": 0.11039590009968792,
+      "take_id": "osc_001"
+    }
+  },
+  "training": {
+    "all_finite": true,
+    "axis_rms_mps2": {
+      "x": 0.8701973161554629,
+      "y": 0.4338735635503932,
+      "z": 0.8816348456845199
+    },
+    "maximum_norm_mps2": 3.7619498753568843,
+    "median_norm_mps2_mean_across_takes": 1.131808465671112,
+    "p95_norm_mps2_max_across_takes": 2.4867143703151684,
+    "residual_acceleration_rms_mps2": 1.3125431952195918,
+    "smoothness_over_residual_rms_max_across_takes": 0.07556411160099333,
+    "smoothness_rms_delta_mps2": 0.0887853374560796,
+    "takes": 3
+  },
+  "validation": {
+    "all_finite": true,
+    "axis_rms_mps2": {
+      "x": 1.1307155187732147,
+      "y": 1.324420784915195,
+      "z": 1.0869869223046418
+    },
+    "maximum_norm_mps2": 6.874319119316417,
+    "median_norm_mps2_mean_across_takes": 1.2892007177638318,
+    "p95_norm_mps2_max_across_takes": 4.119658678593738,
+    "residual_acceleration_rms_mps2": 2.0528391483921187,
+    "smoothness_over_residual_rms_max_across_takes": 0.09052537662438592,
+    "smoothness_rms_delta_mps2": 0.1858340370574802,
+    "takes": 1
+  }
+}

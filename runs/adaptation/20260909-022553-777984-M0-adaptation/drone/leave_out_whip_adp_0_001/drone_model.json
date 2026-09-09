@@ -1,0 +1,43 @@
+{
+  "nominal": {
+    "adaptation_job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\20260909-022553-777984-M0-adaptation",
+    "alignment": "prehover_effective_alignment",
+    "geometry": [
+      0.0066549972854827175,
+      -0.01287427254333901,
+      -0.055
+    ],
+    "parameters": {
+      "attitude_acceleration_scale_xy": 1.1622549385827967,
+      "attitude_acceleration_scale_z": 0.47689172574394767,
+      "attitude_drive_model": "independent_scale_v3",
+      "attitude_time_constant_s": 0.04328153073905132,
+      "delay_s": 0.04,
+      "feedforward_xy": 0.5939539133807575,
+      "feedforward_z": 1.901412005838114,
+      "gravity_m_s2": 9.80665,
+      "kd_xy": 3.8898469220584153,
+      "kd_z": 3.648087807971154,
+      "kp_xy": 2.9639098722960338,
+      "kp_z": 14.942355421395709
+    },
+    "schema": "nominal_loaded_drone_pose_candidate_v3",
+    "selected": false,
+    "training_takes": [
+      "whip_adp_0_002",
+      "whip_adp_0_003",
+      "whip_adp_0_004",
+      "whip_adp_0_005"
+    ]
+  },
+  "residual": {
+    "checkpoint": "drone_residual.pt",
+    "schema": "drone_pose_residual_v1",
+    "sha256": "874e01cdaa271a8dcae4fd42ed3a670f75d7e3fdb1fa3bb3ecd580da8c47e6cb",
+    "specification": {
+      "acceleration_limit": 0.5,
+      "hidden": 16
+    },
+    "target": "Additional realized origin acceleration; no direct injection into attitude drive"
+  }
+}

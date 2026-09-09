@@ -1,0 +1,25 @@
+{
+  "schema": "long_horizon_shooting_config_v1",
+  "shooting_interval_s": 1.0,
+  "continuity_tolerance_rms": 1e-5,
+  "continuity_tolerance_max": 1e-4,
+  "state_scales": {
+    "uav_position_m": 0.1,
+    "uav_velocity_mps": 1.0,
+    "orientation_rad": 0.1,
+    "angular_velocity_radps": 1.0,
+    "cable_position_m": 0.1,
+    "cable_velocity_mps": 1.0,
+    "residual_feature": 1.0
+  },
+  "augmented_lagrangian": {
+    "outer_iterations": 8,
+    "inner_iterations": 100,
+    "learning_rate": 0.005,
+    "initial_penalty": 1.0,
+    "penalty_multiplier": 10.0,
+    "maximum_penalty": 1000000.0,
+    "gradient_clip": 10.0
+  },
+  "status": "IMPLEMENTED_BUT_NOT_VALIDATED_BY_COMPLETED_SYNTHETIC_RECOVERY"
+}

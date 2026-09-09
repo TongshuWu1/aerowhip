@@ -1,0 +1,99 @@
+{
+  "active_parameters": [
+    "K_p",
+    "K_v",
+    "k_a",
+    "K_R",
+    "K_omega",
+    "tau_cmd"
+  ],
+  "active_stage": "Milestone 3A.1 - UAV single-delay ablation",
+  "baseline_fit_directory": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\fit_results\\2026-08-28T035156.958739+0000_a0319d7f",
+  "cable_loss_weight": 0.0,
+  "command_delay_ablation": {
+    "delay_profile_interval_adam_iterations": 10,
+    "tau_cmd_bounds_s": [
+      0.0,
+      0.08
+    ],
+    "zoh_profile_step_s": 0.01
+  },
+  "fixed_parameters": {
+    "Cb": 3.872983346207417e-08,
+    "EI": 2e-06
+  },
+  "initialization_history_frames": 5,
+  "joint_weights": {
+    "cable": 1.0,
+    "uav_orientation": 1.0,
+    "uav_position": 1.0
+  },
+  "maximum_initialization_rmse_m": 0.01,
+  "model_candidate": "five_parameters_plus_tau_cmd",
+  "normalization_scales": {
+    "cable_position_m": 0.05,
+    "uav_orientation_rad": 0.2,
+    "uav_position_m": 0.05
+  },
+  "optimizer": {
+    "adam_iterations_per_stage": 100,
+    "gradient_clip": 10.0,
+    "learning_rate": 0.02,
+    "seed": 42,
+    "sobol_candidates_per_stage": 32
+  },
+  "parameter_bounds_provisional": {
+    "Cb": [
+      1e-10,
+      1.5e-05
+    ],
+    "EI": [
+      1e-08,
+      0.0004
+    ],
+    "K_R": [
+      1.0,
+      80.0
+    ],
+    "K_omega": [
+      0.5,
+      30.0
+    ],
+    "K_p": [
+      1.0,
+      60.0
+    ],
+    "K_v": [
+      0.5,
+      30.0
+    ],
+    "k_a": [
+      0.1,
+      2.0
+    ]
+  },
+  "prediction_horizon_s": 1.0,
+  "robust_cable_scale_m": 0.002,
+  "schema": "aerial_cable_joint_fit_config_v1",
+  "stage_b": "LOCKED_NOT_RUN",
+  "stage_c": "LOCKED_NOT_RUN",
+  "tau_handling": "bounded_discrete_profile_causal_zero_order_hold",
+  "tau_profile_s": [
+    0.0,
+    0.01,
+    0.02,
+    0.03,
+    0.04,
+    0.05,
+    0.06,
+    0.07,
+    0.08
+  ],
+  "validation_lead_times_s": [
+    0.1,
+    0.25,
+    0.5,
+    1.0
+  ],
+  "window_stride_s": 0.25
+}

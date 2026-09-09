@@ -1,0 +1,38 @@
+{
+  "attempts_per_s": 5.404300119907756,
+  "batch": 1024,
+  "checkpoint_attempts": 7168,
+  "checkpoint_sha256": "d82934141f4e6f04175a91402c41c1a8ffe523c748a5163d438b0f0b6a6bb0f5",
+  "cycle_s": 189.47874419999425,
+  "device": "NVIDIA GeForce RTX 4080",
+  "failures": 3,
+  "finite_rewards": true,
+  "gpu_free_after_gib": 13.5703125,
+  "gpu_free_before_gib": 14.607421875,
+  "gpu_total_gib": 15.99169921875,
+  "mean_reward": 37.89773994461532,
+  "note": "Single full five-second cycle, includes first shape-specific graph capture and live publication; not convergence speed.",
+  "optimizer": {
+    "approximate_kl": 0.0024906263476000994,
+    "clip_fraction": 0.01471426053658912,
+    "entropy": -1.048207750445918,
+    "epochs_completed": 4,
+    "gradient_norm": 24.008994913414902,
+    "policy_loss": 0.00021749111137499933,
+    "valid_transitions": 151709,
+    "value_loss": 1194.6159896850586
+  },
+  "peak_allocated_gib": 0.7227754592895508,
+  "peak_reserved_gib": 1.03515625,
+  "status": "PASS",
+  "timings": {
+    "collection_total_s": 124.02570119997836,
+    "execute_batch_s": 55.68418290000409,
+    "optimizer_s": 2.0252991000015754,
+    "plan_batch_s": 53.15089320001425,
+    "scene_publication_s": 15.126025799982017,
+    "setup_s": 1.064867700013565,
+    "validation_s": 63.42774390001432
+  },
+  "validation_reward": 51.19306607952964
+}

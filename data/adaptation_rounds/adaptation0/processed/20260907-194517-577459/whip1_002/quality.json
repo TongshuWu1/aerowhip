@@ -1,0 +1,70 @@
+{
+  "trial_id": "whip1_002",
+  "status": "processed \u2014 review required",
+  "alignment": {
+    "offset_s": -0.5436216669131031,
+    "rms_m": 0.012365901280481517,
+    "half_offsets_s": [
+      -0.5348918379288389,
+      -0.5345234191163457
+    ],
+    "method": "measured XYZ constant-offset least squares; no spatial fit",
+    "clock_verified": false,
+    "includes_logging_latency": true
+  },
+  "tracking_frames": 1484,
+  "missing_cable_samples_per_marker": [
+    0,
+    0,
+    0,
+    1,
+    1,
+    1,
+    1,
+    0,
+    0,
+    0
+  ],
+  "missing_drone_positions": 0,
+  "logged_position_update_hz": 10.000152590218967,
+  "candidate_motion_intervals": [
+    {
+      "start_s": 18.860148429870605,
+      "end_s": 19.530173540115356,
+      "reviewed": false
+    }
+  ],
+  "reference_comparison": {
+    "prefix_matches": true,
+    "recorded_distinct_samples": 20,
+    "reference_samples": 25,
+    "absent_tail_times_s": [
+      0.6666666666666666,
+      0.7,
+      0.7333333333333333,
+      0.7666666666666667,
+      0.8
+    ]
+  },
+  "training_ready": false,
+  "role": "unassigned",
+  "outcome": "unreviewed",
+  "required_review": [
+    "time alignment",
+    "marker direction and attachment offset",
+    "contact/intervention interval",
+    "outcome and dataset split"
+  ],
+  "conventions": {
+    "position": "source global meters; no frame transform",
+    "quaternion": "source OptiTrack XYZW; mapping to body frame unverified",
+    "cable": "c1..c10 numerically ordered; physical endpoint mapping unverified",
+    "velocity": "offline centered difference; NaN at gaps and endpoints; not controller velocity",
+    "reference": "kinematic full-state commands, not forces; causal hold with 100 ms age limit"
+  },
+  "output_files": {
+    "dataset.npz": "51dbcc3050345c6e316fc9a7825c90d0feb1e58a98268133ee45cb370474eba6",
+    "fullstate_aligned.csv": "1de8fbd2ffcbc0d5f06f94102033c7f9afd2c66b145469c9297b7c4d98cc2b18",
+    "tracking.csv": "618f0e5bfc9aac847a6b29058241d25cdbfe4e404840f541ef8b76a2c6c7ecf4"
+  }
+}

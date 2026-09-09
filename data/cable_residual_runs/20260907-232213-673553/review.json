@@ -1,0 +1,22 @@
+{
+  "accepted": false,
+  "active_model_changed": false,
+  "candidate_sha256": "ff0003903490178aa9deb424189a409eef3cc3c49dd78e4ab426ea3c70b69b31",
+  "drone_residual_trained": false,
+  "fitted_drag_s_inv": 0.3020478401040927,
+  "frozen_parameters": "Masses, geometry, EI and internal bending damping",
+  "hardware": "NVIDIA GeForce RTX 4080",
+  "initial_drag_s_inv": 0.3,
+  "initial_training_objective": 0.01742919364455588,
+  "learned_drag": true,
+  "model_sha256": "51a6349546d255cd9ebdf8913f5ff10fc70e58dc48a70f725518771a97fb3d11",
+  "physics_frozen": false,
+  "selected_training_objective": 0.01707000234643425,
+  "selected_update": 24,
+  "selection": "Training-only 2-second rollout objective, including initialized residual",
+  "validation_checks": {
+    "2.0": false,
+    "5.0": false
+  },
+  "validation_scope": "Preliminary development takes; not independent final or whip evidence"
+}

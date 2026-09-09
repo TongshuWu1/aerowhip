@@ -1,0 +1,14 @@
+{
+  "schema": "milestone3b1_solver_profile_after_v1",
+  "status": "not_available",
+  "reason": "The required A/B linearization microbenchmark rejected both allowed sparse-SQP implementations before a complete solver was built. Implementing or launching it would knowingly violate the ten-minute synthetic runtime gate.",
+  "solver_implemented": false,
+  "synthetic_recovery_run": false,
+  "authoritative_measurements": {
+    "old_forward_s": 33.36906269995961,
+    "old_backward_s": 60.98267170001054,
+    "old_complete_gradient_primitive_s": 94.35173439997016,
+    "one_exact_parameter_jvp_s": 137.19127600005595,
+    "seven_direction_vectorized_jacfwd_s": 162.42657789995428
+  }
+}

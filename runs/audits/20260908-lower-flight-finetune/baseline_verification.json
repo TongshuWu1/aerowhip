@@ -1,0 +1,27 @@
+{
+  "bounds": {
+    "command": {
+      "maximum_z_m": 2.66227164932947,
+      "minimum_z_m": 1.2549999999999997
+    },
+    "predicted_cable": {
+      "maximum_z_m": 2.6650579551693587,
+      "minimum_z_m": 0.24689601488491714
+    },
+    "predicted_drone": {
+      "maximum_z_m": 2.4227548014636247,
+      "minimum_z_m": 1.2511694325039429
+    }
+  },
+  "checkpoint_sha256": "466f5d8e392357f33df3a7f7b312ee09ad3487cf5cf4f2a8c5e2b75c2c9a6f75",
+  "complete_prediction": true,
+  "hardware": "Windows / RTX 4080",
+  "height_below_2_8_m": true,
+  "hit_time_s": 0.9400000000000001,
+  "output": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260908-192859-616554-lower-setup-baseline",
+  "postprocessed_translation": false,
+  "predicted_valid_hit": true,
+  "prefix_difference_m": 0.0,
+  "reference_feasible": true,
+  "targeted_tests_passed": 28
+}

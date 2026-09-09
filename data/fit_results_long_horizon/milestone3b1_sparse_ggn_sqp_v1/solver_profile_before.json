@@ -1,0 +1,50 @@
+{
+  "already_batches_equal_length_segments": true,
+  "continuity_max": 0.0012530088424682617,
+  "continuity_rms": 0.00036383705446496606,
+  "cuda_memory": {
+    "allocated_after_bytes": 17065984,
+    "peak_allocated_bytes": 496020480,
+    "peak_reserved_bytes": 501219328,
+    "reserved_after_bytes": 501219328
+  },
+  "device": "cuda",
+  "episode_duration_s": 2.96,
+  "gpu": "NVIDIA GeForce RTX 4080",
+  "memory_after_bytes": {
+    "private": null,
+    "rss": null,
+    "vms": null
+  },
+  "memory_before_bytes": {
+    "private": null,
+    "rss": null,
+    "vms": null
+  },
+  "prior_milestone_observed_private_process_memory_approx_bytes": 17000000000,
+  "process_memory_note": "psutil was unavailable in the profiling environment, so this bounded rerun did not capture a new process-memory peak. The approximately 17 GB value is retained with explicit provenance from the Milestone 3B stopped run and is not presented as a new measurement.",
+  "notes": [
+    "Section timing synchronizes only in this opt-in profile.",
+    "Observation timing includes masked residual formation and accumulation.",
+    "The old evaluator already batches equal-length shooting segments; Python shot-by-shot rollout is not the primary defect."
+  ],
+  "observation_objective": 89.95213317871094,
+  "python": "3.12.10",
+  "schema": "milestone3b1_solver_profile_before_v1",
+  "segments": 3,
+  "shooting_boundaries": 2,
+  "timings_s": {
+    "backward_gradient": 60.98267170001054,
+    "complete_adam_primitive_without_optimizer_step": 94.35173439997016,
+    "continuity_defect": 0.0014979999978095293,
+    "forward_total": 33.36485610000091,
+    "measured_forward_total": 33.36906269995961,
+    "observation_aggregation": 0.00019539997447282076,
+    "observation_loss": 0.004620799969416112,
+    "segment_forward": 33.328390400041826,
+    "state_retraction": 0.030093099980149418,
+    "timed_section_sum": 33.364797699963674,
+    "unattributed_forward": 0.004264999995939434
+  },
+  "torch": "2.11.0+cu128"
+}

@@ -1,0 +1,80 @@
+{
+  "whip1_001": {
+    "csv_maneuver": {
+      "origin_measured_samples": 67,
+      "origin_rmse_m": 0.18111914374906002,
+      "origin_max_m": 0.26505662861933,
+      "origin_samples": 67,
+      "attachment_measured_samples": 67,
+      "attachment_rmse_m": 0.184411713621002,
+      "attachment_max_m": 0.2716718399295688,
+      "attachment_samples": 67,
+      "orientation_samples": 67,
+      "orientation_rmse_deg": 4.874471018969649
+    },
+    "post_maneuver_fullstate_hold": {
+      "origin_measured_samples": 50,
+      "origin_rmse_m": 0.10342910547486675,
+      "origin_max_m": 0.1454399387334582,
+      "origin_samples": 50,
+      "attachment_measured_samples": 50,
+      "attachment_rmse_m": 0.11382999254324076,
+      "attachment_max_m": 0.16354427064080382,
+      "attachment_samples": 50,
+      "orientation_samples": 50,
+      "orientation_rmse_deg": 14.229068382150013
+    }
+  },
+  "whip1_002": {
+    "csv_maneuver": {
+      "origin_measured_samples": 67,
+      "origin_rmse_m": 0.18675326365456305,
+      "origin_max_m": 0.27058900812104814,
+      "origin_samples": 67,
+      "attachment_measured_samples": 67,
+      "attachment_rmse_m": 0.1902748118371537,
+      "attachment_max_m": 0.2778258412464261,
+      "attachment_samples": 67,
+      "orientation_samples": 67,
+      "orientation_rmse_deg": 5.180175878246099
+    },
+    "post_maneuver_fullstate_hold": {
+      "origin_measured_samples": 50,
+      "origin_rmse_m": 0.12230984417006605,
+      "origin_max_m": 0.1676956156782801,
+      "origin_samples": 50,
+      "attachment_measured_samples": 50,
+      "attachment_rmse_m": 0.13278240373827643,
+      "attachment_max_m": 0.18476974354952636,
+      "attachment_samples": 50,
+      "orientation_samples": 50,
+      "orientation_rmse_deg": 15.509803682235724
+    }
+  },
+  "whip1_003": {
+    "csv_maneuver": {
+      "origin_measured_samples": 66,
+      "origin_rmse_m": 0.1833822235715288,
+      "origin_max_m": 0.2639958260147705,
+      "origin_samples": 66,
+      "attachment_measured_samples": 66,
+      "attachment_rmse_m": 0.18596136682469264,
+      "attachment_max_m": 0.26752291856431115,
+      "attachment_samples": 66,
+      "orientation_samples": 66,
+      "orientation_rmse_deg": 4.2012858558558595
+    },
+    "post_maneuver_fullstate_hold": {
+      "origin_measured_samples": 50,
+      "origin_rmse_m": 0.12460837443864048,
+      "origin_max_m": 0.1673559047146363,
+      "origin_samples": 50,
+      "attachment_measured_samples": 50,
+      "attachment_rmse_m": 0.13491150009706243,
+      "attachment_max_m": 0.18625907307068718,
+      "attachment_samples": 50,
+      "orientation_samples": 50,
+      "orientation_rmse_deg": 14.713351937405754
+    }
+  }
+}

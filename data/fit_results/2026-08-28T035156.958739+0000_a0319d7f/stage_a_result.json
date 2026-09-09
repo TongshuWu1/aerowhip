@@ -1,0 +1,261 @@
+{
+  "best_training_objective": 0.9572972195564173,
+  "cable_loss_weight": 0.0,
+  "command_semantics": {
+    "command_angular_velocity_frame": "unresolved_nonblocking_because_all_samples_are_zero",
+    "command_quaternion_interpretation": "heading_yaw_reference_for_current_dataset",
+    "configuration": "default_user_confirmed_external_files_unavailable",
+    "firmware": "stock_unmodified_user_confirmed_exact_version_unknown",
+    "flight_stack_location": "external_computer_not_available_in_repository",
+    "model_scope": "effective_closed_loop_recorded_command_to_measured_uav_motion",
+    "vehicle_type": "medium"
+  },
+  "created_utc": "2026-08-28T03:55:49.558797+00:00",
+  "dataset_snapshot_created_utc": "2026-08-28T03:51:56.958739+00:00",
+  "device": "cuda",
+  "dtype": "torch.float64",
+  "fit_directory": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\fit_results\\2026-08-28T035156.958739+0000_a0319d7f",
+  "fitted_parameters": {
+    "K_R": 59.59101429997879,
+    "K_omega": 8.910098723693643,
+    "K_p": 24.63021508310789,
+    "K_v": 24.36340283220377,
+    "k_a": 1.0512255257949055
+  },
+  "fixed_cable_parameters": {
+    "Cb": 3.872983346207417e-08,
+    "EI": 2e-06
+  },
+  "metrics": {
+    "per_take": {
+      "fig8_001": {
+        "lead_time": {
+          "0.1": {
+            "actual_lead_s": 0.09999999999999787,
+            "orientation_rmse_deg": 2.2579517095839243,
+            "position_rmse_m": 0.004024896745315463
+          },
+          "0.25": {
+            "actual_lead_s": 0.24999999999999467,
+            "orientation_rmse_deg": 4.059219403717049,
+            "position_rmse_m": 0.011291049949076606
+          },
+          "0.5": {
+            "actual_lead_s": 0.49999999999998934,
+            "orientation_rmse_deg": 5.306066299199906,
+            "position_rmse_m": 0.02095362663700312
+          },
+          "1.0": {
+            "actual_lead_s": 0.9999999999999787,
+            "orientation_rmse_deg": 4.796480158921603,
+            "position_rmse_m": 0.032485784226975484
+          }
+        },
+        "orientation_rmse_deg": 4.518897711860087,
+        "pitch_rmse_deg": 4.322453336273028,
+        "position_axis_rmse_m": {
+          "x": 0.012719458035699358,
+          "y": 0.009853247098224261,
+          "z": 0.014416331339315117
+        },
+        "position_rmse_m": 0.021603279852501586,
+        "position_rmse_mm": 21.603279852501586,
+        "role": "training",
+        "roll_rmse_deg": 1.2326290635739956,
+        "take_id": "fig8_001",
+        "windows": 158,
+        "yaw_rmse_deg": 0.47852472839241716
+      },
+      "fig8_002": {
+        "lead_time": {
+          "0.1": {
+            "actual_lead_s": 0.09999999999999787,
+            "orientation_rmse_deg": 2.6778973517531734,
+            "position_rmse_m": 0.007175064802927664
+          },
+          "0.25": {
+            "actual_lead_s": 0.24999999999999467,
+            "orientation_rmse_deg": 5.241998692751728,
+            "position_rmse_m": 0.02016345837383538
+          },
+          "0.5": {
+            "actual_lead_s": 0.49999999999998934,
+            "orientation_rmse_deg": 6.986279521848654,
+            "position_rmse_m": 0.03540117447197765
+          },
+          "1.0": {
+            "actual_lead_s": 0.9999999999999787,
+            "orientation_rmse_deg": 6.7095724932715175,
+            "position_rmse_m": 0.04574103773196767
+          }
+        },
+        "orientation_rmse_deg": 6.045078283526885,
+        "pitch_rmse_deg": 4.475000382303437,
+        "position_axis_rmse_m": {
+          "x": 0.024375111697967175,
+          "y": 0.01832259267264786,
+          "z": 0.014736883288004302
+        },
+        "position_rmse_m": 0.03386796718996293,
+        "position_rmse_mm": 33.86796718996293,
+        "role": "training",
+        "roll_rmse_deg": 4.009177924406355,
+        "take_id": "fig8_002",
+        "windows": 99,
+        "yaw_rmse_deg": 1.1009681841846155
+      },
+      "fig8_003": {
+        "lead_time": {
+          "0.1": {
+            "actual_lead_s": 0.0999999999999801,
+            "orientation_rmse_deg": 3.6934269026692954,
+            "position_rmse_m": 0.01217981890925288
+          },
+          "0.25": {
+            "actual_lead_s": 0.24999999999995026,
+            "orientation_rmse_deg": 7.2083119437458,
+            "position_rmse_m": 0.03503883550120067
+          },
+          "0.5": {
+            "actual_lead_s": 0.4999999999999005,
+            "orientation_rmse_deg": 9.232520165212962,
+            "position_rmse_m": 0.0632197918158053
+          },
+          "1.0": {
+            "actual_lead_s": 0.999999999999801,
+            "orientation_rmse_deg": 9.46213059410616,
+            "position_rmse_m": 0.08471759271956787
+          }
+        },
+        "orientation_rmse_deg": 8.243671595571424,
+        "pitch_rmse_deg": 4.96370878859955,
+        "position_axis_rmse_m": {
+          "x": 0.0459812596364286,
+          "y": 0.0344868415574502,
+          "z": 0.02106276949077301
+        },
+        "position_rmse_m": 0.06121485715888563,
+        "position_rmse_mm": 61.21485715888563,
+        "role": "validation",
+        "roll_rmse_deg": 6.549248539584824,
+        "take_id": "fig8_003",
+        "windows": 188,
+        "yaw_rmse_deg": 2.4976363505690182
+      },
+      "osc_001": {
+        "lead_time": {
+          "0.1": {
+            "actual_lead_s": 0.09999999999999787,
+            "orientation_rmse_deg": 3.2234105101614734,
+            "position_rmse_m": 0.012167261018633151
+          },
+          "0.25": {
+            "actual_lead_s": 0.24999999999999467,
+            "orientation_rmse_deg": 5.226602669686586,
+            "position_rmse_m": 0.03466471011415283
+          },
+          "0.5": {
+            "actual_lead_s": 0.49999999999998934,
+            "orientation_rmse_deg": 6.460455954469605,
+            "position_rmse_m": 0.06286166581521976
+          },
+          "1.0": {
+            "actual_lead_s": 0.9999999999999787,
+            "orientation_rmse_deg": 5.776145552638761,
+            "position_rmse_m": 0.08878069309592178
+          }
+        },
+        "orientation_rmse_deg": 5.630680266780854,
+        "pitch_rmse_deg": 5.515972262830039,
+        "position_axis_rmse_m": {
+          "x": 0.056423601631644546,
+          "y": 0.01548475297963662,
+          "z": 0.021318416149767788
+        },
+        "position_rmse_m": 0.062272588376119126,
+        "position_rmse_mm": 62.272588376119124,
+        "role": "training",
+        "roll_rmse_deg": 1.0424940517910142,
+        "take_id": "osc_001",
+        "windows": 64,
+        "yaw_rmse_deg": 0.44299875382491244
+      }
+    },
+    "schema": "milestone3a_uav_fit_metrics_v1",
+    "training": {
+      "lead_time": {
+        "0.1": {
+          "orientation_rmse_deg": 2.7483240630342385,
+          "position_rmse_m": 0.008479850419911351
+        },
+        "0.25": {
+          "orientation_rmse_deg": 4.874190118337567,
+          "position_rmse_m": 0.02405337807075605
+        },
+        "0.5": {
+          "orientation_rmse_deg": 6.290202229619983,
+          "position_rmse_m": 0.043373904029584034
+        },
+        "1.0": {
+          "orientation_rmse_deg": 5.813445404194857,
+          "position_rmse_m": 0.06063436917632098
+        }
+      },
+      "orientation_rmse_deg": 5.4365420459129465,
+      "pitch_rmse_deg": 4.800527098496029,
+      "position_rmse_m": 0.042784795449736866,
+      "position_rmse_mm": 42.78479544973687,
+      "roll_rmse_deg": 2.4953073214826134,
+      "takes": 3,
+      "windows": 321,
+      "yaw_rmse_deg": 0.7387748313165141
+    },
+    "validation": {
+      "lead_time": {
+        "0.1": {
+          "orientation_rmse_deg": 3.6934269026692954,
+          "position_rmse_m": 0.01217981890925288
+        },
+        "0.25": {
+          "orientation_rmse_deg": 7.2083119437458,
+          "position_rmse_m": 0.03503883550120067
+        },
+        "0.5": {
+          "orientation_rmse_deg": 9.232520165212962,
+          "position_rmse_m": 0.0632197918158053
+        },
+        "1.0": {
+          "orientation_rmse_deg": 9.46213059410616,
+          "position_rmse_m": 0.08471759271956787
+        }
+      },
+      "orientation_rmse_deg": 8.243671595571424,
+      "pitch_rmse_deg": 4.96370878859955,
+      "position_rmse_m": 0.06121485715888563,
+      "position_rmse_mm": 61.21485715888563,
+      "roll_rmse_deg": 6.549248539584824,
+      "takes": 1,
+      "windows": 188,
+      "yaw_rmse_deg": 2.4976363505690182
+    }
+  },
+  "optimization_runtime_s": 231.41390330001013,
+  "optimizer": {
+    "adam_iterations_per_stage": 100,
+    "gradient_clip": 10.0,
+    "learning_rate": 0.02,
+    "seed": 42,
+    "sobol_candidates_per_stage": 32
+  },
+  "parameter_bound_hits": {
+    "K_R": false,
+    "K_omega": false,
+    "K_p": false,
+    "K_v": false,
+    "k_a": false
+  },
+  "schema": "milestone3a_stage_a_result_v1",
+  "stage": "Stage A - UAV only",
+  "stage_b": "LOCKED_NOT_RUN",
+  "stage_c": "LOCKED_NOT_RUN"
+}

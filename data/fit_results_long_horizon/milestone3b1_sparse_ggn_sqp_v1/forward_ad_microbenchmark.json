@@ -1,0 +1,13 @@
+{
+  "compatible": true,
+  "device": "cuda",
+  "elapsed_s": 137.19127600005595,
+  "error": null,
+  "finite_output": true,
+  "finite_tangent": true,
+  "gpu": "NVIDIA GeForce RTX 4080",
+  "method": "torch.func.jvp_forward_ad",
+  "output_dimension": 253,
+  "peak_cuda_allocated_bytes": 9898496,
+  "schema": "milestone3b1_forward_ad_microbenchmark_v1"
+}

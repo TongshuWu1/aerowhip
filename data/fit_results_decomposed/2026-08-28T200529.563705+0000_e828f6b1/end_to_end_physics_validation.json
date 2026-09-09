@@ -1,0 +1,134 @@
+{
+  "aggregate_equal_take_rmse": {
+    "distributed_marker_rmse_m": 4.553188335305643,
+    "lead_time": {
+      "0.1": {
+        "episode_count": 1,
+        "tip_rmse_m": 0.006955016404390335,
+        "uav_orientation_rmse_deg": 0.45970040559768677,
+        "uav_position_rmse_m": 0.009235636331140995
+      },
+      "0.25": {
+        "episode_count": 1,
+        "tip_rmse_m": 0.01900985836982727,
+        "uav_orientation_rmse_deg": 3.478001832962036,
+        "uav_position_rmse_m": 0.02313275821506977
+      },
+      "0.5": {
+        "episode_count": 1,
+        "tip_rmse_m": 0.06188821420073509,
+        "uav_orientation_rmse_deg": 3.5629425048828125,
+        "uav_position_rmse_m": 0.04397386685013771
+      },
+      "1.0": {
+        "episode_count": 1,
+        "tip_rmse_m": 0.07766525447368622,
+        "uav_orientation_rmse_deg": 4.210484027862549,
+        "uav_position_rmse_m": 0.0421084389090538
+      },
+      "2.0": {
+        "episode_count": 1,
+        "tip_rmse_m": 0.7351666688919067,
+        "uav_orientation_rmse_deg": 6.802097320556641,
+        "uav_position_rmse_m": 0.1403726190328598
+      },
+      "4.0": {
+        "episode_count": 1,
+        "tip_rmse_m": 0.22057543694972992,
+        "uav_orientation_rmse_deg": 11.385771751403809,
+        "uav_position_rmse_m": 0.08797605335712433
+      },
+      "8.0": {
+        "episode_count": 1,
+        "tip_rmse_m": 0.24166780710220337,
+        "uav_orientation_rmse_deg": 4.034836292266846,
+        "uav_position_rmse_m": 0.17828692495822906
+      }
+    },
+    "terminal_tip_rmse_m": 77.48311938133686,
+    "terminal_uav_orientation_rmse_deg": 18.05082242968601,
+    "terminal_uav_position_rmse_m": 84.93021319460614,
+    "tip_rmse_m": 4.475174870245619,
+    "uav_orientation_rmse_deg": 12.654702127332234,
+    "uav_position_rmse_m": 4.760561339781887
+  },
+  "complete": false,
+  "episodes": [
+    {
+      "duration_s": 15.499999999999998,
+      "kind": "physical_episode",
+      "lead_time": {
+        "0.1": {
+          "tip_error_m": 0.006955016404390335,
+          "uav_orientation_error_deg": 0.45970040559768677,
+          "uav_position_error_m": 0.009235636331140995
+        },
+        "0.25": {
+          "tip_error_m": 0.01900985836982727,
+          "uav_orientation_error_deg": 3.478001832962036,
+          "uav_position_error_m": 0.02313275821506977
+        },
+        "0.5": {
+          "tip_error_m": 0.06188821420073509,
+          "uav_orientation_error_deg": 3.5629425048828125,
+          "uav_position_error_m": 0.04397386685013771
+        },
+        "1.0": {
+          "tip_error_m": 0.07766525447368622,
+          "uav_orientation_error_deg": 4.210484027862549,
+          "uav_position_error_m": 0.0421084389090538
+        },
+        "2.0": {
+          "tip_error_m": 0.7351666688919067,
+          "uav_orientation_error_deg": 6.802097320556641,
+          "uav_position_error_m": 0.1403726190328598
+        },
+        "4.0": {
+          "tip_error_m": 0.22057543694972992,
+          "uav_orientation_error_deg": 11.385771751403809,
+          "uav_position_error_m": 0.08797605335712433
+        },
+        "8.0": {
+          "tip_error_m": 0.24166780710220337,
+          "uav_orientation_error_deg": 4.034836292266846,
+          "uav_position_error_m": 0.17828692495822906
+        }
+      },
+      "take_id": "osc_003",
+      "terminal_tip_error_m": 77.48311938133686,
+      "terminal_uav_orientation_error_deg": 18.05082242968601,
+      "terminal_uav_position_error_m": 84.93021319460614,
+      "view_id": "osc_003__episode_000__full"
+    }
+  ],
+  "failed_episodes": [
+    {
+      "reason": "non_finite_coupled_rollout",
+      "take_id": "fig8_003",
+      "view_id": "fig8_003__episode_000__full"
+    },
+    {
+      "detail": "initialization_rmse=0.011709 exceeds 0.01 m",
+      "reason": "cable_initialization_ineligible",
+      "take_id": "fig8_003",
+      "view_id": "fig8_003__episode_001__full"
+    }
+  ],
+  "label": "end_to_end_physics_validation",
+  "measured_uav_boundary_used": false,
+  "measurement_reset_after_initialization": false,
+  "method": "full_episode_end_to_end_v1",
+  "per_take": {
+    "osc_003": {
+      "distributed_marker_rmse_m": 4.553188335305643,
+      "terminal_tip_rmse_m": 77.48311938133686,
+      "terminal_uav_orientation_rmse_deg": 18.05082242968601,
+      "terminal_uav_position_rmse_m": 84.93021319460614,
+      "tip_rmse_m": 4.475174870245619,
+      "uav_orientation_rmse_deg": 12.654702127332234,
+      "uav_position_rmse_m": 4.760561339781887
+    }
+  },
+  "residual_history_rule": null,
+  "schema": "decomposed_end_to_end_metrics_v1"
+}

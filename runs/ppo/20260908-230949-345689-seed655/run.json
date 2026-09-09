@@ -1,0 +1,21 @@
+{
+  "algorithm": "PPO",
+  "baseline": {
+    "schema": "tracked_pose_execution_v1",
+    "source_job": "20260908-064040-669809"
+  },
+  "config_sha256": {
+    "model": "5bf77093ed9db8bda6ea75f970f61689515a74d7615965aafefe2aaa8a933871",
+    "ppo": "a66ff9d13bbc4e7ed72e835ecd3e82d6e7d68d9929e07368ed0212c2419928ff",
+    "task": "e7066b620da636604747a03094a01176af929cf9f023aa94e16c6cf7d107735f"
+  },
+  "deployment_amendment": null,
+  "display_name": "1.5Mtarget_run",
+  "resumed_from": null,
+  "reward_amendment": null,
+  "schema": "point_force_training_run_v1",
+  "seed": 655,
+  "task_amendment": null,
+  "target_episodes": 500000,
+  "collection_batch": 2048
+}

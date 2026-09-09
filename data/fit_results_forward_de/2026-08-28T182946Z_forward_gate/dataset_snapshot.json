@@ -1,0 +1,53 @@
+{
+  "schema": "milestone3b2_dataset_snapshot_v1",
+  "takes": {
+    "fig8_001": {
+      "enabled": true,
+      "predictively_evaluated": false,
+      "processed_take_sha256": "9013eb961fb6f16b66ce848804b6e4367a9c7d002dbb6843f0e6300ac8e36619",
+      "role": "training"
+    },
+    "fig8_002": {
+      "enabled": true,
+      "predictively_evaluated": false,
+      "processed_take_sha256": "d742a704475b6c2e428755d80bde9b9ecdfb9a6f0c48b7c91c9614548e777355",
+      "role": "training"
+    },
+    "fig8_003": {
+      "enabled": true,
+      "predictively_evaluated": false,
+      "processed_take_sha256": "4703bf2c2744114a1b7556b274af153a7dc185188660734906dae63463d138f4",
+      "role": "validation"
+    },
+    "fig8vertical_001": {
+      "enabled": true,
+      "predictively_evaluated": false,
+      "processed_take_sha256": "bc241defaa84f8a449fc238886680b9ec77475e9659186108505aea3e77891a1",
+      "role": "training"
+    },
+    "fig8vertical_002": {
+      "enabled": true,
+      "predictively_evaluated": false,
+      "processed_take_sha256": "62cea07c81d55e43d5003f9365883dd7de58c4fc063895000105026cba4b3abb",
+      "role": "untouched_test"
+    },
+    "osc_001": {
+      "enabled": true,
+      "predictively_evaluated": false,
+      "processed_take_sha256": "08481352225a3e01f96ae7c84998f998b3ffeb98078e1fa6008c859123eaec2e",
+      "role": "training"
+    },
+    "osc_002": {
+      "enabled": true,
+      "predictively_evaluated": false,
+      "processed_take_sha256": "d92a66adf2b6994a0d093f37b991796e9414293ce1daa52b9c27967cd12ebf52",
+      "role": "training"
+    },
+    "osc_003": {
+      "enabled": true,
+      "predictively_evaluated": false,
+      "processed_take_sha256": "5013b98e5418483b5f576a215dcfeee6296bd51baf64e33069c5dd2c03edf53d",
+      "role": "validation"
+    }
+  }
+}

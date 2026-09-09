@@ -1,0 +1,154 @@
+{
+  "adaptation": {
+    "heldout": [],
+    "model_selected": false,
+    "prospective_validation": false,
+    "round": "current_adp0",
+    "source_model": "M0",
+    "training": [
+      "whip_adp_0_001",
+      "whip_adp_0_002",
+      "whip_adp_0_003",
+      "whip_adp_0_004",
+      "whip_adp_0_005"
+    ]
+  },
+  "adaptation_candidate": {
+    "acceleration_bound_per_axis_m_s2": 0.5,
+    "additional_correction_initialization": "exactly zero",
+    "bound_is_measured": false,
+    "curvature_frame_regularization": 2e-07,
+    "damping_numerics_changed": true,
+    "schema": "cable_zero_extension_v1",
+    "selected_for_deployment": false,
+    "source_model": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\config\\research_30hz\\model.json",
+    "source_model_sha256": "17278c6f8dd61a040a536bc85c5dbe1904dfa6c21639d7beec905b31aec9e347",
+    "source_residual_sha256": "ef99d1d50881e8632be0860bef402a77ea0d260736a01a16551ec3b7293cb023",
+    "status": "UNFITTED",
+    "trained": false
+  },
+  "cable": {
+    "Cb_n_m2_s": 2.5e-05,
+    "EI_n_m2": 1e-07,
+    "attachment": "dynamic_shared_node_0_free_pivot",
+    "bare_cable_mass_kg": 0.007830508032174688,
+    "constraint_iterations": 4,
+    "curvature_frame_regularization": 2e-07,
+    "diameter_m": 0.0035,
+    "external_drag_s_inv": 0.0,
+    "gravity_m_s2": [
+      0.0,
+      0.0,
+      -9.80665
+    ],
+    "marker_interval_lengths_m": [
+      0.063,
+      0.087,
+      0.1,
+      0.1,
+      0.1,
+      0.1,
+      0.1,
+      0.1025,
+      0.1,
+      0.1
+    ],
+    "moving_marker_masses_kg": [
+      0.0010169491967825313,
+      0.0010169491967825313,
+      0.0010169491967825313,
+      0.0010169491967825313,
+      0.0010169491967825313,
+      0.0010169491967825313,
+      0.0010169491967825313,
+      0.0010169491967825313,
+      0.0010169491967825313,
+      0.0010169491967825313
+    ],
+    "parameter_source": "data/baselines/20260906-201616-163804/manifest.json",
+    "previous_parameter_source": "data/baselines/20260905-181108-847814/manifest.json",
+    "segments_per_marker_interval": [
+      2,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "substeps": 8
+  },
+  "force_accounting": {
+    "aerodynamic_drag": "effective_world_velocity_decay_on_free_cable_vertices",
+    "cable_reaction": "internal_bending_damping_and_inextensibility_forces_transmitted_at_shared_node_0",
+    "commanded_force": "acts_only_on_shared_node_0",
+    "gravity": "acts_on_point_mass_and_every_cable_vertex"
+  },
+  "fullstate_execution": {
+    "checkpoint": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\20260908-normalized-M1\\models\\all_five\\assets\\drone_model.json",
+    "command_rate_hz": 30.0,
+    "enabled": true,
+    "feasibility": {
+      "maximum_specific_force_m_s2": 18.28571428571429,
+      "maximum_speed_m_s": 5.0,
+      "maximum_tilt_deg": 60.0,
+      "minimum_specific_vertical_m_s2": 2.0,
+      "source": "Provisional simulation envelope, not measured hardware limits"
+    },
+    "initialization": "settled_hover_pose_and_hanging_planning_cable",
+    "recovery_objective": "excluded",
+    "reference": "integrated_piecewise_linear_virtual_velocity_v1",
+    "schema": "tracked_pose_execution_v1",
+    "sha256": "8cf21c6927bab4e3c5fc6e44bdcbd4fdb7eb02b8984f7df0eb1278e813694eae",
+    "source_job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\20260908-normalized-M1"
+  },
+  "mass_measurement": {
+    "cable_assembly_mass_kg": 0.018,
+    "distribution": "Provisional proportional scaling of prior cable/marker distribution",
+    "drone_mass_kg": 0.157,
+    "scale": 1.118644004596384,
+    "source": "User measurement, includes hanging markers and attachments",
+    "total_mass_kg": 0.175
+  },
+  "motion_residual": {
+    "checkpoint": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\20260908-normalized-M1\\models\\all_five\\assets\\cable_residual.pt",
+    "drag_mode": "nn_only",
+    "enabled": true,
+    "sha256": "1ec3fc6692f94dde9bdb5c8e40d11612ddde935c264bd4db85176157e278d8b3",
+    "specification": {
+      "acceleration_limit": 0.5,
+      "damping_limit_s_inv": 2.0,
+      "hidden": 32,
+      "mode": "dissipative_plus_acceleration",
+      "node_count": 12
+    }
+  },
+  "point_force_controller": {
+    "application_node": 0,
+    "dimensions": 3,
+    "force_limit_status": "measurement_required",
+    "input": "commanded_force_world_n",
+    "maximum_force_norm_n": null,
+    "response": "instantaneous_direct_force"
+  },
+  "point_mass": {
+    "degrees_of_freedom": 3,
+    "mass_kg": 0.157,
+    "state_location": "shared_cable_node_0"
+  },
+  "recorded_data": {
+    "optitrack_to_attachment_offset_body_m": [
+      0.0066549972854827175,
+      -0.01287427254333901,
+      -0.055
+    ]
+  },
+  "schema": "point_force_dder_model_v1",
+  "simulation": {
+    "device": "auto",
+    "dt_s": 0.006666666666666667
+  }
+}

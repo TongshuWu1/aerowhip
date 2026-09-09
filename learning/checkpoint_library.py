@@ -21,6 +21,7 @@ CHECKPOINT_LABELS = {
     "terminal.pt": "Terminal",
     "latest.pt": "Latest",
     "best_validation.pt": "Best validation",
+    "best_reward.pt": "Best reward",
 }
 MANUAL_CHECKPOINT_GLOB = "manual_*.pt"
 CURRENT_SUCCESS_DIRECTION_KEY = (

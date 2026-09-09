@@ -1,0 +1,20 @@
+{
+  "criterion": "Two consecutive steps agree with autodiff and each other within 5%",
+  "passed": true,
+  "steps": [
+    {
+      "analytic": 1.0939205245059958e-06,
+      "epsilon": 0.001,
+      "finite_difference": 1.0939970422618739e-06,
+      "passed": true,
+      "relative_error": 6.994329319196987e-05
+    },
+    {
+      "analytic": 1.0939205245059958e-06,
+      "epsilon": 0.0003,
+      "finite_difference": 1.0939434254286784e-06,
+      "passed": true,
+      "relative_error": 2.0934284305977584e-05
+    }
+  ]
+}

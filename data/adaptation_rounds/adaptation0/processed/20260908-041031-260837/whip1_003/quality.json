@@ -1,0 +1,325 @@
+{
+  "trial_id": "whip1_003",
+  "status": "processed \u2014 review required",
+  "alignment": {
+    "offset_s": 0.03552421910808016,
+    "rms_m": 0.009649033586761755,
+    "half_offsets_s": [
+      0.035103929511559974,
+      0.03552762680634337
+    ],
+    "method": "measured XYZ constant-offset least squares; no spatial fit",
+    "clock_verified": false,
+    "includes_logging_latency": true
+  },
+  "tracking_frames": 1484,
+  "missing_cable_samples_per_marker": [
+    0,
+    0,
+    0,
+    1,
+    0,
+    1,
+    0,
+    0,
+    0,
+    1
+  ],
+  "missing_drone_positions": 0,
+  "logged_position_update_hz": 10.000188354225156,
+  "candidate_motion_intervals": [
+    {
+      "start_s": 16.640151977539062,
+      "end_s": 17.300195455551147,
+      "reviewed": false,
+      "source": "Exact supplied controller sequence matched in logged order"
+    }
+  ],
+  "reference_comparison": {
+    "prefix_matches": true,
+    "recorded_distinct_samples": 20,
+    "reference_samples": 25,
+    "absent_tail_times_s": [
+      0.6666666666666666,
+      0.7,
+      0.7333333333333333,
+      0.7666666666666667,
+      0.8
+    ],
+    "method": "All CSV row P/V/A values matched to supplied controller and log, including zero V/A rows"
+  },
+  "execution_phases": {
+    "schema": "legacy_whip_phases_v1",
+    "csv_start_s": 16.640151977539062,
+    "csv_end_s": 17.300195455551147,
+    "csv_duration_observed_s": 0.660043478012085,
+    "csv_samples_observed": 20,
+    "intervals": [
+      {
+        "phase": "unobserved_command",
+        "start_s": 3.3855438232421875e-05,
+        "end_s": 6.640172958374023,
+        "samples": 664,
+        "end_is_log_boundary": false
+      },
+      {
+        "phase": "pre_maneuver_fullstate_hold",
+        "start_s": 6.640172958374023,
+        "end_s": 16.640151977539062,
+        "samples": 1000,
+        "end_is_log_boundary": false
+      },
+      {
+        "phase": "csv_maneuver",
+        "start_s": 16.640151977539062,
+        "end_s": 17.300195455551147,
+        "samples": 66,
+        "end_is_log_boundary": false
+      },
+      {
+        "phase": "post_maneuver_fullstate_hold",
+        "start_s": 17.300195455551147,
+        "end_s": 22.400160551071167,
+        "samples": 510,
+        "end_is_log_boundary": false
+      },
+      {
+        "phase": "unobserved_command",
+        "start_s": 22.400160551071167,
+        "end_s": 29.290188789367676,
+        "samples": 690,
+        "end_is_log_boundary": true
+      }
+    ],
+    "csv_events": [
+      {
+        "csv_row": 0,
+        "csv_time_s": 0.0,
+        "first_observed_s": 16.640151977539062,
+        "previous_logger_row_s": 16.63017773628235,
+        "callback_time_estimate_s": 16.63312077522278,
+        "next_value_observed_s": 16.67018985748291
+      },
+      {
+        "csv_row": 1,
+        "csv_time_s": 0.03333333333333333,
+        "first_observed_s": 16.67018985748291,
+        "previous_logger_row_s": 16.660157203674316,
+        "callback_time_estimate_s": 16.66642928123474,
+        "next_value_observed_s": 16.700164079666138
+      },
+      {
+        "csv_row": 2,
+        "csv_time_s": 0.06666666666666667,
+        "first_observed_s": 16.700164079666138,
+        "previous_logger_row_s": 16.69015383720398,
+        "callback_time_estimate_s": 16.699795246124268,
+        "next_value_observed_s": 16.740158319473267
+      },
+      {
+        "csv_row": 3,
+        "csv_time_s": 0.1,
+        "first_observed_s": 16.740158319473267,
+        "previous_logger_row_s": 16.73015785217285,
+        "callback_time_estimate_s": 16.733051776885986,
+        "next_value_observed_s": 16.770155906677246
+      },
+      {
+        "csv_row": 4,
+        "csv_time_s": 0.13333333333333333,
+        "first_observed_s": 16.770155906677246,
+        "previous_logger_row_s": 16.760194778442383,
+        "callback_time_estimate_s": 16.766377925872803,
+        "next_value_observed_s": 16.80017638206482
+      },
+      {
+        "csv_row": 5,
+        "csv_time_s": 0.16666666666666666,
+        "first_observed_s": 16.80017638206482,
+        "previous_logger_row_s": 16.79020643234253,
+        "callback_time_estimate_s": 16.79972529411316,
+        "next_value_observed_s": 16.840161323547363
+      },
+      {
+        "csv_row": 6,
+        "csv_time_s": 0.2,
+        "first_observed_s": 16.840161323547363,
+        "previous_logger_row_s": 16.830193758010864,
+        "callback_time_estimate_s": 16.83306884765625,
+        "next_value_observed_s": 16.870179414749146
+      },
+      {
+        "csv_row": 7,
+        "csv_time_s": 0.23333333333333334,
+        "first_observed_s": 16.870179414749146,
+        "previous_logger_row_s": 16.860158920288086,
+        "callback_time_estimate_s": 16.866387128829956,
+        "next_value_observed_s": 16.90014910697937
+      },
+      {
+        "csv_row": 8,
+        "csv_time_s": 0.26666666666666666,
+        "first_observed_s": 16.90014910697937,
+        "previous_logger_row_s": 16.89014506340027,
+        "callback_time_estimate_s": 16.899719715118408,
+        "next_value_observed_s": 16.94015645980835
+      },
+      {
+        "csv_row": 9,
+        "csv_time_s": 0.3,
+        "first_observed_s": 16.94015645980835,
+        "previous_logger_row_s": 16.93016004562378,
+        "callback_time_estimate_s": 16.933074712753296,
+        "next_value_observed_s": 16.970139503479004
+      },
+      {
+        "csv_row": 10,
+        "csv_time_s": 0.3333333333333333,
+        "first_observed_s": 16.970139503479004,
+        "previous_logger_row_s": 16.960187435150146,
+        "callback_time_estimate_s": 16.966416597366333,
+        "next_value_observed_s": 17.000194311141968
+      },
+      {
+        "csv_row": 11,
+        "csv_time_s": 0.36666666666666664,
+        "first_observed_s": 17.000194311141968,
+        "previous_logger_row_s": 16.990187883377075,
+        "callback_time_estimate_s": 16.999764919281006,
+        "next_value_observed_s": 17.04017972946167
+      },
+      {
+        "csv_row": 12,
+        "csv_time_s": 0.4,
+        "first_observed_s": 17.04017972946167,
+        "previous_logger_row_s": 17.030158758163452,
+        "callback_time_estimate_s": 17.033112287521362,
+        "next_value_observed_s": 17.070207118988037
+      },
+      {
+        "csv_row": 13,
+        "csv_time_s": 0.43333333333333335,
+        "first_observed_s": 17.070207118988037,
+        "previous_logger_row_s": 17.060161352157593,
+        "callback_time_estimate_s": 17.066444873809814,
+        "next_value_observed_s": 17.100202798843384
+      },
+      {
+        "csv_row": 14,
+        "csv_time_s": 0.4666666666666667,
+        "first_observed_s": 17.100202798843384,
+        "previous_logger_row_s": 17.090200901031494,
+        "callback_time_estimate_s": 17.099833250045776,
+        "next_value_observed_s": 17.140167713165283
+      },
+      {
+        "csv_row": 15,
+        "csv_time_s": 0.5,
+        "first_observed_s": 17.140167713165283,
+        "previous_logger_row_s": 17.130197286605835,
+        "callback_time_estimate_s": 17.133047342300415,
+        "next_value_observed_s": 17.170175075531006
+      },
+      {
+        "csv_row": 16,
+        "csv_time_s": 0.5333333333333333,
+        "first_observed_s": 17.170175075531006,
+        "previous_logger_row_s": 17.160151958465576,
+        "callback_time_estimate_s": 17.166409015655518,
+        "next_value_observed_s": 17.20016360282898
+      },
+      {
+        "csv_row": 17,
+        "csv_time_s": 0.5666666666666667,
+        "first_observed_s": 17.20016360282898,
+        "previous_logger_row_s": 17.190190315246582,
+        "callback_time_estimate_s": 17.199723720550537,
+        "next_value_observed_s": 17.240168809890747
+      },
+      {
+        "csv_row": 18,
+        "csv_time_s": 0.6,
+        "first_observed_s": 17.240168809890747,
+        "previous_logger_row_s": 17.230200052261353,
+        "callback_time_estimate_s": 17.23307514190674,
+        "next_value_observed_s": 17.270151138305664
+      },
+      {
+        "csv_row": 19,
+        "csv_time_s": 0.6333333333333333,
+        "first_observed_s": 17.270151138305664,
+        "previous_logger_row_s": 17.26018714904785,
+        "callback_time_estimate_s": 17.266380786895752,
+        "next_value_observed_s": 17.300195455551147
+      }
+    ],
+    "pre_hold_target_m": [
+      0.0,
+      0.0,
+      1.502255342821949
+    ],
+    "post_hold_targets_m": [
+      [
+        0.5791568160057068,
+        0.015507432632148266,
+        2.243943691253662
+      ]
+    ],
+    "post_last_callback_estimate_s": 22.29961323738098,
+    "post_callback_coverage_s": 4.999417781829834,
+    "source_post_hold_duration_s": 5,
+    "source_behavior": "Hold cf.get_position() sampled at sequence end; no return-to-start path",
+    "timing": "First observed logger row; callback estimate = row time - cmd_age is diagnostic only. Not radio/onboard actuation time.",
+    "unknown": "No fresh FullState observation; may include takeoff, landing, intervention or cache expiry. No command imputed.",
+    "phase_meaning": "Command source/target, not proof that the drone is stationary or settled",
+    "cache_tail": "A fresh cached value can outlive publishing by up to 100 ms. Phase end is an observation limit, not a verified mode-switch time.",
+    "warnings": [],
+    "tracking_coverage_controller_s": [
+      6.27552421910808,
+      21.10552421910808
+    ],
+    "tracking_phase_counts": {
+      "csv_maneuver": 66,
+      "post_maneuver_fullstate_hold": 381,
+      "pre_maneuver_fullstate_hold": 1000,
+      "unobserved_command": 37
+    },
+    "tracking_boundary_uncertain_frames": 3,
+    "tracking_covers_complete_csv": true,
+    "boundary_uncertainty": "Previous-to-first logger-row bracket around phase transitions only; excludes unknown clock/measurement latency."
+  },
+  "geometry": {
+    "offset_tracking_m": [
+      0.0066549972854827175,
+      -0.01287427254333901,
+      -0.055
+    ],
+    "measurement": "55 mm vertical; lateral terms from preserved active calibration",
+    "convention": "p_attachment = p_cf7 + R_tracking_to_world @ offset_tracking_m"
+  },
+  "training_ready": false,
+  "role": "unassigned",
+  "outcome": "unreviewed",
+  "required_review": [
+    "time alignment",
+    "marker direction and attachment offset",
+    "contact/intervention interval",
+    "outcome and dataset split"
+  ],
+  "conventions": {
+    "position": "source global meters; no frame transform",
+    "quaternion": "source OptiTrack XYZW; mapping to body frame unverified",
+    "cable": "c1..c10 numerically ordered; physical endpoint mapping unverified",
+    "velocity": "offline centered difference; NaN at gaps and endpoints; not controller velocity",
+    "reference": "Original kinematic full-state commands, not forces; causal hold with 100 ms age limit; no retrospective position offset",
+    "attachment": "Derived measured attachment uses archived geometry and measured orientation; commands remain at cf_7 origin"
+  },
+  "output_files": {
+    "controller_phases.csv": "fa881f0ca0e855f48c69cf5529661bd8ddcd05cb4c75de6cc81b892330f83d4b",
+    "dataset.npz": "45b5e7e4f36cf90ad776d92653c43822b352e8ead3cc6dd6da1ef347c7b68e3c",
+    "execution_phases.json": "9d52946fc92807dbe3bb23f00871aa6fa32b2ad708b5ee71e1a049ff61264631",
+    "fullstate_aligned.csv": "549c74f595fc2d0cb11e9667906a998bcab2b7f0156637bd08ae4210f489500e",
+    "phases.csv": "b8fbf88879b30e48a93b2a4d402663f4356de928c14d059803b096bf154aacac",
+    "tracking.csv": "6c6215b98027c8d7c2befa4c2c716edf5ad193ef62753f325a58776005da571a"
+  }
+}

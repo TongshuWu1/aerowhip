@@ -1,0 +1,56 @@
+{
+  "baseline_orientation_rmse_deg": 5.6313915857856625,
+  "baseline_position_rmse_m": 0.06266556101279838,
+  "fig8_003_used": false,
+  "fit_directory": "data\\fit_results\\2026-08-28T133646.844546+0000_24c1119a",
+  "fold": 1,
+  "held_out_take": "osc_001",
+  "held_out_used_during_training_or_checkpoint_selection": false,
+  "lead_time_position_rmse_m": {
+    "0.1": {
+      "baseline": 0.01223237157418259,
+      "residual": 0.00859159042238199
+    },
+    "0.25": {
+      "baseline": 0.03485750240967709,
+      "residual": 0.027428914833749384
+    },
+    "0.5": {
+      "baseline": 0.06324668134403669,
+      "residual": 0.0537725516319019
+    },
+    "1.0": {
+      "baseline": 0.08935041034921917,
+      "residual": 0.07817597727071345
+    }
+  },
+  "mppi": "NOT_RUN",
+  "network_state_sha256": "3819d682696d81c60959167e6e70b1d4cce587a6fc41b9cc23e7eb60c91004fc",
+  "normalization_canonical_sha256": "559b70e83ce109f4a82c64b74f83d3cb57c5fd1826afd36be404046b8d527008",
+  "position_axis_rmse_m": {
+    "x": {
+      "baseline": 0.05686713450600865,
+      "residual": 0.05087321354029592
+    },
+    "y": {
+      "baseline": 0.015573307629825008,
+      "residual": 0.01596627524078992
+    },
+    "z": {
+      "baseline": 0.021226719944237988,
+      "residual": 0.00838606155233413
+    }
+  },
+  "relative_position_improvement": 0.13867699913978537,
+  "residual_acceleration_p95_mps2": 2.6109237932007034,
+  "residual_acceleration_rms_mps2": 1.7632369273718638,
+  "residual_orientation_rmse_deg": 9.533062063569622,
+  "residual_position_rmse_m": 0.05397528906213237,
+  "schema": "milestone3a3_cross_motion_fold_v1",
+  "stage_b": "LOCKED_NOT_RUN",
+  "training_runtime_s": null,
+  "training_takes": [
+    "fig8_001",
+    "fig8_002"
+  ]
+}

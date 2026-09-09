@@ -1,0 +1,48 @@
+{
+  "criterion": "Two consecutive steps agree with autodiff and each other within 5%",
+  "passed": true,
+  "steps": [
+    {
+      "analytic": 3.569753822071672e-06,
+      "epsilon": 0.001,
+      "finite_difference": -1.630985191521106e-06,
+      "passed": false,
+      "relative_error": 1.4568901030196473
+    },
+    {
+      "analytic": 3.569753822071672e-06,
+      "epsilon": 0.0003,
+      "finite_difference": 1.8644081692271535e-06,
+      "passed": false,
+      "relative_error": 0.4777208003253394
+    },
+    {
+      "analytic": 3.569753822071672e-06,
+      "epsilon": 0.0001,
+      "finite_difference": 2.943745546803156e-06,
+      "passed": false,
+      "relative_error": 0.17536455074238652
+    },
+    {
+      "analytic": 3.569753822071672e-06,
+      "epsilon": 3e-05,
+      "finite_difference": 3.3718217887918067e-06,
+      "passed": false,
+      "relative_error": 0.055446970056046374
+    },
+    {
+      "analytic": 3.569753822071672e-06,
+      "epsilon": 1e-05,
+      "finite_difference": 3.5059873840920237e-06,
+      "passed": true,
+      "relative_error": 0.017862979117882653
+    },
+    {
+      "analytic": 3.569753822071672e-06,
+      "epsilon": 3e-06,
+      "finite_difference": 3.558889438935268e-06,
+      "passed": true,
+      "relative_error": 0.0030434544447378357
+    }
+  ]
+}

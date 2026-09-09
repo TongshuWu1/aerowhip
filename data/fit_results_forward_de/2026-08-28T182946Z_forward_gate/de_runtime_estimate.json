@@ -1,0 +1,26 @@
+{
+  "acceptable_gate_s": 30.0,
+  "cached_parent_fitness": true,
+  "de_implemented": false,
+  "de_run": false,
+  "gate_passed": false,
+  "hard_stop_gate_s": 60.0,
+  "measured_generation_s_P32": 159.6507870000205,
+  "preferred_gate_s": 15.0,
+  "projected": {
+    "100": {
+      "minutes": 266.0846450000342,
+      "seconds": 15965.07870000205
+    },
+    "25": {
+      "minutes": 66.52116125000855,
+      "seconds": 3991.2696750005125
+    },
+    "50": {
+      "minutes": 133.0423225000171,
+      "seconds": 7982.539350001025
+    }
+  },
+  "schema": "milestone3b2_de_runtime_estimate_v1",
+  "trial_population_evaluations_per_generation": 1
+}

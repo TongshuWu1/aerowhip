@@ -1,0 +1,18 @@
+{
+  "device": "cuda",
+  "elapsed_s": 193.09768359997543,
+  "finite_output": true,
+  "finite_tangent": true,
+  "gpu": "NVIDIA GeForce RTX 4080",
+  "lower_bound_notes": [
+    "This differentiates only one of seven global parameter directions.",
+    "All shooting-state directions are frozen, so this is a strict lower-bound workload for explicit sparse local Jacobians.",
+    "A matrix-free Krylov GGN solve needs repeated JVP/VJP products per nonlinear iteration."
+  ],
+  "method": "exact_autograd_functional_jvp",
+  "output_dimension": 253,
+  "parameter_direction": "bounded_raw_K_p",
+  "peak_cuda_allocated_bytes": 1331694592,
+  "schema": "milestone3b1_linearization_microbenchmark_v1",
+  "segments": 3
+}

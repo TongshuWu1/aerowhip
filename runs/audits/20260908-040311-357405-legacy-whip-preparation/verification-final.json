@@ -1,0 +1,42 @@
+{
+  "platform": "Windows-11-10.0.26200-SP0",
+  "device": "CPU",
+  "tests_passed": 20,
+  "protected_files_verified": 95,
+  "data_verification_sha256": "cfd86e571988e80f9d7f1798d77e7c9e34320937921174eff825d15a61303f2b",
+  "processed_version": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\adaptation_rounds\\adaptation0\\processed\\20260908-041031-260837",
+  "supplied_controller_and_logger_unchanged": true,
+  "user_confirmed_different_take3_post_hold": true,
+  "reviews": [
+    {
+      "trial_id": "whip1_001",
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\adaptation_rounds\\adaptation0\\reviews\\20260908-041243-500458.json",
+      "sha256": "139b4ed94f356aa9973ee2fadeb7860a3cd9fcd2e401daa53a3eb054a4f4836f"
+    },
+    {
+      "trial_id": "whip1_002",
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\adaptation_rounds\\adaptation0\\reviews\\20260908-041243-501458.json",
+      "sha256": "f565bdcf52b0d1a6d3736a6d142ac75e6c0e3e711ad7c1296240b324814d6c2d"
+    },
+    {
+      "trial_id": "whip1_003",
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\adaptation_rounds\\adaptation0\\reviews\\20260908-041354-092439-01788840834092439100-789b24c4.json",
+      "sha256": "64e5e68c9793af71b4273a9330f0aa00ba5334235da5a0861fd63f4b368869ec"
+    }
+  ],
+  "ui": "Qt offscreen, actual round and version loaded, all 3 trials visible; Segoe UI explicitly registered for rendering",
+  "source_files": {
+    "experimental_data/adaptation_rounds.py": "c07d8d090dab79de476c9b120a93408b2eb0528a868796a8e9cd38c064ac6ebf",
+    "experimental_data/legacy_execution.py": "e05273e8b95f582a55b35501c12dfdcc67bb4ee06f7b6088818081315225c0ac",
+    "simulator/gui/recording_rounds_page.py": "d9f5b0ab5880c504d0ec77831a6fbde77caac405d702ddea66cbaf784d1c286d",
+    "tools/process_recording_round.py": "7c238faa731434ab3aef09fef39bdbd64759cb63753e0aca89315de8bd701bfc",
+    "tests/flight/test_legacy_execution.py": "10c29a3c3d04b75a44d2aa50c44e87cb3c08e8fcaea32f69399c6b304dc17ac8",
+    "tests/flight/test_adaptation_rounds.py": "ee8e68c5146e56a555b75c654a7f9d9e15bca53dc6f866e83cddc0376a150970",
+    "tests/ui/test_recording_rounds_page.py": "cc2b7f97509c4705c0ec786ee0ec20b6b195080de40ba9df10011f8d679ebe42",
+    "docs/LEGACY_WHIP_DATA_PROCESSING.md": "64445866da0ada0c5865d1bff8b82ea2f56d2285ec2ad2d45ac1b920ef3d52d4",
+    "docs/RECORDING_ROUNDS.md": "ce6924cdecd2c33b50f736870a971691e6ef311c3c3215aaaad63fd1097f51a1",
+    "HANDOFF.md": "3d0e10c6dfa2b1b8e8e2d4dd0ec934dd8aec46fb7dbe3f578750df2bf58f49b7"
+  },
+  "fit_started": false,
+  "training_started": false
+}

@@ -1,0 +1,34 @@
+episodes=2048/1000000 batch_success=82.568% total_success=82.568% endpoint_success=92.627% episodes_per_second=106.24
+episodes=4096/1000000 batch_success=72.949% total_success=77.759% endpoint_success=90.869% episodes_per_second=136.45
+episodes=6144/1000000 batch_success=70.508% total_success=75.342% endpoint_success=91.016% episodes_per_second=157.21
+episodes=8192/1000000 batch_success=81.982% total_success=77.002% endpoint_success=91.760% episodes_per_second=164.61
+episodes=10240/1000000 batch_success=81.006% total_success=77.803% endpoint_success=91.934% episodes_per_second=173.59
+validation_episodes=10240 success=63/64
+episodes=12288/1000000 batch_success=80.176% total_success=78.198% endpoint_success=92.082% episodes_per_second=159.53
+episodes=14336/1000000 batch_success=73.291% total_success=77.497% endpoint_success=91.316% episodes_per_second=165.52
+episodes=16384/1000000 batch_success=72.412% total_success=76.862% endpoint_success=90.533% episodes_per_second=169.60
+episodes=18432/1000000 batch_success=74.170% total_success=76.562% endpoint_success=90.120% episodes_per_second=171.62
+episodes=20480/1000000 batch_success=76.709% total_success=76.577% endpoint_success=90.020% episodes_per_second=174.68
+validation_episodes=20480 success=59/64
+episodes=22528/1000000 batch_success=77.783% total_success=76.687% endpoint_success=89.715% episodes_per_second=165.83
+episodes=24576/1000000 batch_success=79.834% total_success=76.949% endpoint_success=89.823% episodes_per_second=167.91
+episodes=26624/1000000 batch_success=79.102% total_success=77.115% endpoint_success=89.870% episodes_per_second=169.81
+episodes=28672/1000000 batch_success=77.539% total_success=77.145% endpoint_success=89.673% episodes_per_second=171.79
+episodes=30720/1000000 batch_success=81.885% total_success=77.461% endpoint_success=89.883% episodes_per_second=173.18
+validation_episodes=30720 success=63/64
+episodes=32768/1000000 batch_success=86.328% total_success=78.015% endpoint_success=90.070% episodes_per_second=165.89
+episodes=34816/1000000 batch_success=87.305% total_success=78.562% endpoint_success=90.306% episodes_per_second=167.93
+episodes=36864/1000000 batch_success=85.742% total_success=78.961% endpoint_success=90.384% episodes_per_second=169.08
+episodes=38912/1000000 batch_success=84.131% total_success=79.233% endpoint_success=90.414% episodes_per_second=169.22
+{
+  "status": "STOPPED_BY_USER",
+  "episodes": 38912,
+  "requested_episodes": 1000000,
+  "successes": 30831,
+  "endpoint_successes": 35182,
+  "legacy_scientific_successes": 0,
+  "success_rate": 0.7923262746710527,
+  "episodes_per_second": 169.2234090481873,
+  "elapsed_s": 229.94454619998578,
+  "latest_durable_checkpoint_episodes": 38912
+}

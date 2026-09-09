@@ -1,0 +1,36 @@
+{
+  "heldout": [
+    "whip_adp_0_002"
+  ],
+  "per_window_objectives": [
+    0.7145306906155802,
+    0.4901699510811825,
+    0.6295659050429215,
+    0.521513719260934,
+    0.6407548556282694,
+    0.5149652393853861,
+    0.6904510722534682,
+    0.6048947932155343,
+    0.7756996250284693,
+    0.5136167332152443
+  ],
+  "selected_physics": [
+    1e-07,
+    2.5e-05
+  ],
+  "selected_update": 24,
+  "selection_score": 0.6708556390726164,
+  "specification": {
+    "acceleration_limit": 0.5,
+    "damping_limit_s_inv": 2.0,
+    "hidden": 32,
+    "mode": "dissipative_plus_acceleration",
+    "node_count": 12
+  },
+  "training": [
+    "whip_adp_0_001",
+    "whip_adp_0_003",
+    "whip_adp_0_004",
+    "whip_adp_0_005"
+  ]
+}

@@ -1,0 +1,218 @@
+{
+  "status": "READ_ONLY_DATA_LIFECYCLE_REVIEW",
+  "takes": [
+    {
+      "take": "fig8_001",
+      "kind": "legacy_preliminary",
+      "frames": 4285,
+      "duration_s": 42.839999999999996,
+      "enabled_in_legacy_manifest": true,
+      "manual_segments": [],
+      "current_intended_scope": "bootstrap cable physics/residual only; not new drone fit",
+      "source": "data\\processed_takes\\fig8_001\\take.npz",
+      "source_sha256": "a9fa92c0daa27423f44794933bd51de5edfc2b8ae37f4183e898682c44390a91"
+    },
+    {
+      "take": "fig8_002",
+      "kind": "legacy_preliminary",
+      "frames": 3035,
+      "duration_s": 30.339999999999996,
+      "enabled_in_legacy_manifest": true,
+      "manual_segments": [],
+      "current_intended_scope": "bootstrap cable physics/residual only; not new drone fit",
+      "source": "data\\processed_takes\\fig8_002\\take.npz",
+      "source_sha256": "d9f3e81993e3cae2def5fc2179a652154a6218b509b6c7abb3bf8458916359ac"
+    },
+    {
+      "take": "fig8_003",
+      "kind": "legacy_preliminary",
+      "frames": 5730,
+      "duration_s": 57.290000000000006,
+      "enabled_in_legacy_manifest": true,
+      "manual_segments": [],
+      "current_intended_scope": "bootstrap cable physics/residual only; not new drone fit",
+      "source": "data\\processed_takes\\fig8_003\\take.npz",
+      "source_sha256": "c2147d18afbfe9a84b6485eb13d21d908fe043278c8506a2580378137f3308ac"
+    },
+    {
+      "take": "fig8vertical_001",
+      "kind": "legacy_preliminary",
+      "frames": 6976,
+      "duration_s": 69.75,
+      "enabled_in_legacy_manifest": true,
+      "manual_segments": [],
+      "current_intended_scope": "bootstrap cable physics/residual only; not new drone fit",
+      "source": "data\\processed_takes\\fig8vertical_001\\take.npz",
+      "source_sha256": "bc241defaa84f8a449fc238886680b9ec77475e9659186108505aea3e77891a1"
+    },
+    {
+      "take": "fig8vertical_002",
+      "kind": "legacy_preliminary",
+      "frames": 5307,
+      "duration_s": 53.06,
+      "enabled_in_legacy_manifest": true,
+      "manual_segments": [],
+      "current_intended_scope": "bootstrap cable physics/residual only; not new drone fit",
+      "source": "data\\processed_takes\\fig8vertical_002\\take.npz",
+      "source_sha256": "62cea07c81d55e43d5003f9365883dd7de58c4fc063895000105026cba4b3abb"
+    },
+    {
+      "take": "osc_001",
+      "kind": "legacy_preliminary",
+      "frames": 1931,
+      "duration_s": 19.299999999999997,
+      "enabled_in_legacy_manifest": true,
+      "manual_segments": [],
+      "current_intended_scope": "bootstrap cable physics/residual only; not new drone fit",
+      "source": "data\\processed_takes\\osc_001\\take.npz",
+      "source_sha256": "08481352225a3e01f96ae7c84998f998b3ffeb98078e1fa6008c859123eaec2e"
+    },
+    {
+      "take": "osc_002",
+      "kind": "legacy_preliminary",
+      "frames": 3629,
+      "duration_s": 36.28,
+      "enabled_in_legacy_manifest": true,
+      "manual_segments": [],
+      "current_intended_scope": "bootstrap cable physics/residual only; not new drone fit",
+      "source": "data\\processed_takes\\osc_002\\take.npz",
+      "source_sha256": "a2793a9fdd7881fc3fa6955927eac1c0c9a316101e88847d51fff67e0d3f8e73"
+    },
+    {
+      "take": "osc_003",
+      "kind": "legacy_preliminary",
+      "frames": 1800,
+      "duration_s": 17.99,
+      "enabled_in_legacy_manifest": true,
+      "manual_segments": [],
+      "current_intended_scope": "bootstrap cable physics/residual only; not new drone fit",
+      "source": "data\\processed_takes\\osc_003\\take.npz",
+      "source_sha256": "7eb607e9344a3e78ebd1610d008ab1be3f85a10185450b0e2510951c3cf12c2c"
+    },
+    {
+      "take": "whip1_001",
+      "kind": "legacy_whip",
+      "frames": 1484,
+      "duration_s": 14.829999999999998,
+      "source": "data\\adaptation_rounds\\adaptation0\\processed\\20260908-041031-260837\\whip1_001\\dataset.npz",
+      "source_sha256": "012bdf6478d3f1d35e5f1ad6a6b3b76b3186265709b2536e24a526293c1c8d65",
+      "training_ready": false,
+      "current_intended_scope": "bootstrap drone nominal/residual and cable physics/residual; new drone engine currently probed only",
+      "csv_start_controller_s": 18.810239553451538,
+      "csv_end_controller_s": 19.480232000350952,
+      "observed_csv_rows": 20,
+      "reference_rows": 25,
+      "phase_counts": {
+        "csv_maneuver": 67,
+        "post_maneuver_fullstate_hold": 160,
+        "pre_maneuver_fullstate_hold": 1000,
+        "unobserved_command": 257
+      },
+      "missing_named_cable_observations_during_csv": 0,
+      "latest_review": {
+        "processed_version": "20260908-041031-260837",
+        "trial_id": "whip1_001",
+        "role": "unassigned",
+        "outcome": "unreviewed",
+        "notes": "User confirmed take 3 intentionally has a different post-hold. Preserve each take's observed commands/timing (001/002 approximately 1.5 s callback coverage, 003 approximately 5 s). Source-script duration difference is documented provenance, not grounds to exclude a take. Contact and outcomes remain unreviewed.",
+        "alignment_reviewed": false,
+        "precontact_start_s": null,
+        "precontact_end_s": null,
+        "created_utc": "2026-09-08T04:12:43.500458+00:00",
+        "training_ready": false
+      }
+    },
+    {
+      "take": "whip1_002",
+      "kind": "legacy_whip",
+      "frames": 1484,
+      "duration_s": 14.83,
+      "source": "data\\adaptation_rounds\\adaptation0\\processed\\20260908-041031-260837\\whip1_002\\dataset.npz",
+      "source_sha256": "1cf6dfcc327d8680efd6b8254ace05a1af7b608c6a062fc04dc59d46e1901ba3",
+      "training_ready": false,
+      "current_intended_scope": "bootstrap drone nominal/residual and cable physics/residual; new drone engine currently probed only",
+      "csv_start_controller_s": 18.860148429870605,
+      "csv_end_controller_s": 19.530173540115356,
+      "observed_csv_rows": 20,
+      "reference_rows": 25,
+      "phase_counts": {
+        "csv_maneuver": 67,
+        "post_maneuver_fullstate_hold": 101,
+        "pre_maneuver_fullstate_hold": 1000,
+        "unobserved_command": 316
+      },
+      "missing_named_cable_observations_during_csv": 0,
+      "latest_review": {
+        "processed_version": "20260908-041031-260837",
+        "trial_id": "whip1_002",
+        "role": "unassigned",
+        "outcome": "unreviewed",
+        "notes": "User confirmed take 3 intentionally has a different post-hold. Preserve each take's observed commands/timing (001/002 approximately 1.5 s callback coverage, 003 approximately 5 s). Source-script duration difference is documented provenance, not grounds to exclude a take. Contact and outcomes remain unreviewed.",
+        "alignment_reviewed": false,
+        "precontact_start_s": null,
+        "precontact_end_s": null,
+        "created_utc": "2026-09-08T04:12:43.501458+00:00",
+        "training_ready": false
+      }
+    },
+    {
+      "take": "whip1_003",
+      "kind": "legacy_whip",
+      "frames": 1484,
+      "duration_s": 14.83,
+      "source": "data\\adaptation_rounds\\adaptation0\\processed\\20260908-041031-260837\\whip1_003\\dataset.npz",
+      "source_sha256": "45b5e7e4f36cf90ad776d92653c43822b352e8ead3cc6dd6da1ef347c7b68e3c",
+      "training_ready": false,
+      "current_intended_scope": "bootstrap drone nominal/residual and cable physics/residual; new drone engine currently probed only",
+      "csv_start_controller_s": 16.640151977539062,
+      "csv_end_controller_s": 17.300195455551147,
+      "observed_csv_rows": 20,
+      "reference_rows": 25,
+      "phase_counts": {
+        "csv_maneuver": 66,
+        "post_maneuver_fullstate_hold": 381,
+        "pre_maneuver_fullstate_hold": 1000,
+        "unobserved_command": 37
+      },
+      "missing_named_cable_observations_during_csv": 0,
+      "latest_review": {
+        "processed_version": "20260908-041031-260837",
+        "trial_id": "whip1_003",
+        "role": "unassigned",
+        "outcome": "unreviewed",
+        "notes": "User confirmed take 3 intentionally has a different post-hold. Preserve each take's observed commands/timing (001/002 approximately 1.5 s callback coverage, 003 approximately 5 s). Source-script duration difference is documented provenance, not grounds to exclude a take. Contact and outcomes remain unreviewed.",
+        "alignment_reviewed": false,
+        "precontact_start_s": null,
+        "precontact_end_s": null,
+        "created_utc": "2026-09-08T04:13:54.092439+00:00",
+        "training_ready": false
+      }
+    }
+  ],
+  "source_hashes": {
+    "data/dataset_manifest.json": "4dac8b140e7258f578f8a76c54caca99c79f68ea1bc7778f9abea06120bf20db",
+    "config/model.json": "f5e0a8a57b5070aa6a31e2073730e7d9ebc3fcd21aa8a878d8b3fc50114e95e9",
+    "config/baseline.json": "e96623eedb5103c5559ab7e25433e00d14a6742a7adad1b9b165bbcad8a489c8",
+    "experimental_data/historical_dataset.py": "aedbfaebdb2f532904656191f56765ec35c5d231ed0aa133821805f0ba325f27",
+    "experimental_data/drone_pose_response_data.py": "99179459badd49853bad3837f231a4c653f0b1b278d0b30ec04c7ef55da71ee8",
+    "experimental_data/adaptation_rounds.py": "c07d8d090dab79de476c9b120a93408b2eb0528a868796a8e9cd38c064ac6ebf",
+    "experimental_data/legacy_execution.py": "e05273e8b95f582a55b35501c12dfdcc67bb4ee06f7b6088818081315225c0ac",
+    "experimental_data/source_audit/experiment_logger.py": "f27cdcd9b34c15f5ef5b63a4dfb6ecb4586af4ff9e77be92cb776cc5e82c1b95",
+    "simulator/gui/recording_rounds_page.py": "d9f5b0ab5880c504d0ec77831a6fbde77caac405d702ddea66cbaf784d1c286d",
+    "C:\\Users\\wts28\\Downloads\\full_state_pva.py": "19ab591043c97fa1cbe56c5258be235fb0aafebea449a69261d982ec2d889bc8",
+    "C:\\Users\\wts28\\Downloads\\experiment_logger_pva.py": "de6ca9f2ca5d8a42b12791129b5cebde71cf3e390da99704211328daf718e64c"
+  },
+  "protected_files_verified": 133,
+  "new_model_fitted": false,
+  "legacy_retirement_enforced": false,
+  "new_manual_trims_applied": false,
+  "raw_data_changed": false,
+  "training_started": false,
+  "findings": [
+    "Eight preliminary takes remain enabled in legacy manifest with empty manual segments.",
+    "New pose engine has only been probed on the latest phase-aware three-whip version.",
+    "UI interval reviews are saved but not consumed by the new pose adapter or legacy historical loader.",
+    "Legacy historical loader pins the older 20260907-194802-922485 whip version.",
+    "New round UI currently has one reference CSV per round; per-trial plan/event integration is pending."
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "baseline_forward_s": 37.92552349998732,
+  "candidate_forward_s": 29.4629182999779,
+  "candidate_model": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\model_candidates\\20260908-differentiable-zero-extension\\model.json",
+  "candidate_sha256": "f3d5226dca93d92d8d610354b30e6f767293578cd08b1f0f67b9dcba9ed83881",
+  "command_gradient_norm": 1.5850745037113037,
+  "csv_sha256": "d54b86aa6a1584a56ce1a063d29e47cb1ca91ea89c553e818ac33505e7225452",
+  "damping_frame_regularization": 2e-07,
+  "device": "cuda",
+  "flight_performed": false,
+  "gpu": "NVIDIA GeForce RTX 4080",
+  "gradient_candidate": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\model_candidates\\20260908-smooth-differentiable\\model.json",
+  "gradient_candidate_sha256": "6bc57793c97918975b44d381b1ad72e1c483cf3766d463ef02e5249c2bf74555",
+  "model_selected": false,
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.12.10",
+  "rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260908-203914-039721",
+  "saved_prediction_max_abs_difference": {
+    "cable_positions_m": 0.0,
+    "position_origin_m": 0.0,
+    "rotation_tracking_to_world": 0.0
+  },
+  "schema": "differentiable_execution_audit_v1",
+  "smooth_candidate_change_from_M0_m": 0.017327712345589052,
+  "smooth_pva_gradient": [
+    {
+      "absolute_difference": 0.001566869427406914,
+      "autograd": 2.4168031453437107,
+      "finite_difference": 2.4183700147711176,
+      "perturbation_amplitude_m": 1e-05
+    },
+    {
+      "absolute_difference": 0.00013681181514835217,
+      "autograd": 2.4168031453437107,
+      "finite_difference": 2.416939957158859,
+      "perturbation_amplitude_m": 1e-06
+    }
+  ],
+  "torch": "2.11.0+cu128",
+  "trained": false,
+  "whip_forward_backward_s": 119.05419910000637,
+  "whip_forward_mode_max_abs_difference_m": 0.0,
+  "zero_extension_max_abs_difference": {
+    "cable_positions_m": 0.0,
+    "cable_velocities_m_s": 0.0,
+    "omega_tracking_rad_s": 0.0,
+    "position_attachment_m": 0.0,
+    "position_origin_m": 0.0,
+    "rotation_tracking_to_world": 0.0,
+    "velocity_origin_m_s": 0.0
+  }
+}

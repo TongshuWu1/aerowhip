@@ -1,0 +1,657 @@
+[INFO][AppLauncher]: Using device: cuda
+[INFO][AppLauncher]: Loading experience file: C:\Users\wts28\Documents\PHD\IsaacLab\apps\isaaclab.python.kit
+Loading user config located at: 'c:/users/wts28/env_isaaclab/lib/site-packages/isaacsim/kit/data/Kit/Isaac-Sim/5.1/user.config.json'
+[Info] [carb] Logging to file: c:/users/wts28/env_isaaclab/lib/site-packages/isaacsim/kit/logs/Kit/Isaac-Sim/5.1/kit_20260908_190949.log
+[0.140s] [ext: omni.kit.async_engine-0.0.3] startup
+[0.321s] [ext: omni.metrics.core-0.0.3] startup
+[0.323s] [ext: omni.client.lib-1.1.0] startup
+[0.343s] [ext: omni.blobkey-1.1.2] startup
+[0.344s] [ext: omni.stats-1.0.1] startup
+[0.346s] [ext: omni.datastore-0.0.0] startup
+[0.348s] [ext: omni.client-1.3.0] startup
+[0.354s] [ext: omni.ujitso.default-1.0.0] startup
+[0.358s] [ext: omni.hsscclient-1.1.2] startup
+[0.364s] [ext: omni.gpu_foundation.shadercache.d3d12-1.0.0] startup
+[0.368s] [ext: omni.assets.plugins-0.0.0] startup
+[0.372s] [ext: omni.gpu_foundation-0.0.0] startup
+[0.399s] [ext: carb.windowing.plugins-1.0.0] startup
+[0.495s] [ext: omni.kit.renderer.init-0.0.0] startup
+[0.497s] [ext: omni.materialx.libs-1.0.7] startup
+[0.511s] [ext: omni.kit.loop-isaac-1.3.7] startup
+[0.513s] [ext: omni.kit.test-2.0.1] startup
+[0.601s] [ext: omni.kit.pipapi-0.0.0] startup
+[0.602s] [ext: omni.usd.config-1.0.6] startup
+[0.617s] [ext: omni.gpucompute.plugins-0.0.0] startup
+[0.620s] [ext: omni.usd.libs-1.0.1] startup
+[0.741s] [ext: omni.kit.pip_archive-0.0.0] startup
+[0.742s] [ext: omni.mdl-56.0.3] startup
+[0.865s] [ext: omni.iray.libs-0.0.0] startup
+[0.914s] [ext: omni.mdl.neuraylib-0.2.12] startup
+[0.921s] [ext: omni.kit.usd.mdl-1.1.5] startup
+[1.026s] [ext: omni.kit.telemetry-0.5.2] startup
+[1.042s] [ext: omni.appwindow-1.1.10] startup
+[1.074s] [ext: omni.kit.renderer.core-1.1.0] startup
+[1.079s] [ext: omni.kit.renderer.capture-0.0.0] startup
+[1.089s] [ext: omni.kit.renderer.imgui-2.0.5] startup
+[1.125s] [ext: omni.ui-2.27.1] startup
+[1.137s] [ext: omni.kit.mainwindow-1.0.3] startup
+[1.139s] [ext: carb.audio-0.1.0] startup
+[1.140s] [ext: omni.uiaudio-1.0.0] startup
+[1.143s] [ext: omni.kit.uiapp-0.0.0] startup
+[1.143s] [ext: omni.usd.schema.metrics.assembler-107.3.1] startup
+[1.149s] [ext: omni.usd.schema.audio-0.0.0] startup
+
+|---------------------------------------------------------------------------------------------|
+| Driver Version: 610.88        | Graphics API: D3D12
+|=============================================================================================|
+| GPU | Name                             | Active | LDA | GPU Memory | Vendor-ID | LUID       |
+|     |                                  |        |     |            | Device-ID | UUID       |
+|     |                                  |        |     |            | Bus-ID    |            |
+|---------------------------------------------------------------------------------------------|
+| 0   | NVIDIA GeForce RTX 4080          | Yes: 0 |     | 16048   MB | 10de      | 794a0100.. |
+|     |                                  |        |     |            | 2704      | 0          |
+|     |                                  |        |     |            | 1         |            |
+|=============================================================================================|
+| OS: Windows 11 Pro, Version: 10.0 (25H2), Build: 26200, Kernel: 10.0.26100.9168
+| Processor: 13th Gen Intel(R) Core(TM) i7-13700K
+| Cores: 16 | Logical Cores: 24
+|---------------------------------------------------------------------------------------------|
+| Total Memory (MB): 65277 | Free Memory: 35499
+| Total Page/Swap (MB): 69373 | Free Page/Swap: 14060
+|---------------------------------------------------------------------------------------------|
+[1.164s] [ext: omni.usd_resolver-1.0.0] startup
+[1.174s] [ext: omni.usd.core-1.5.3] startup
+[1.175s] [ext: omni.usd.schema.render_settings.rtx-0.0.0] startup
+[1.196s] [ext: omni.usd.schema.semantics-0.0.0] startup
+[1.200s] [ext: omni.usd.schema.geospatial-0.0.0] startup
+[1.213s] [ext: omni.usd.schema.anim-0.0.0] startup
+[1.247s] [ext: omni.usd.schema.omni_lens_distortion-0.0.0] startup
+[1.248s] [ext: isaacsim.robot.schema-3.6.0] startup
+[1.276s] [ext: omni.usd.schema.omnigraph-1.0.0] startup
+[1.283s] [ext: omni.usd.schema.physx-107.3.26] startup
+[1.308s] [ext: omni.usd.schema.omni_sensors-0.0.0] startup
+[1.309s] [ext: omni.usd.schema.omniscripting-1.0.0] startup
+[1.315s] [ext: omni.graph.exec-0.9.6] startup
+[1.316s] [ext: omni.kit.actions.core-1.0.0] startup
+[1.320s] [ext: omni.kit.usd_undo-0.1.8] startup
+[1.321s] [ext: omni.kit.exec.core-0.13.4] startup
+[1.325s] [ext: omni.kit.commands-1.4.10] startup
+[1.331s] [ext: omni.kit.window.popup_dialog-2.0.24] startup
+[1.336s] [ext: omni.activity.core-1.0.3] startup
+[1.340s] [ext: omni.resourcemonitor-107.0.1] startup
+[1.343s] [ext: omni.timeline-1.0.14] startup
+[1.346s] [ext: omni.kit.widget.nucleus_connector-2.0.1] startup
+[1.349s] [ext: usdrt.scenegraph-7.6.1] startup
+[1.397s] [ext: omni.kit.audiodeviceenum-1.0.2] startup
+[1.400s] [ext: omni.hydra.usdrt_delegate-7.5.1] startup
+[1.410s] [ext: omni.hydra.scene_delegate-0.3.4] startup
+[1.413s] [ext: omni.usd-1.13.10] startup
+[1.450s] [ext: omni.kit.asset_converter-5.0.17] startup
+[1.462s] [ext: omni.index.libs-380600.8087.0] startup
+[1.462s] [ext: omni.volume-0.5.2] startup
+[1.468s] [ext: omni.ujitso.client-0.0.0] startup
+[1.469s] [ext: omni.index-1.0.1] startup
+[1.470s] [ext: omni.hydra.rtx.shadercache.d3d12-1.0.0] startup
+[1.473s] [ext: omni.hydra.rtx-1.0.0] startup
+[1.518s] [ext: omni.kit.notification_manager-1.0.10] startup
+[1.520s] [ext: omni.kit.clipboard-1.0.5] startup
+[1.522s] [ext: omni.kit.viewport.legacy_gizmos-1.0.19] startup
+[1.525s] [ext: omni.kit.raycast.query-1.1.0] startup
+[1.530s] [ext: omni.kit.menu.core-1.1.2] startup
+[1.530s] [ext: omni.kit.widget.options_menu-1.1.6] startup
+[1.534s] [ext: omni.kit.helper.file_utils-0.1.9] startup
+[1.536s] [ext: omni.kit.widget.path_field-2.0.11] startup
+[1.538s] [ext: omni.kit.widget.context_menu-1.2.5] startup
+[1.540s] [ext: omni.kit.widget.options_button-1.0.3] startup
+[1.541s] [ext: omni.kit.widget.filebrowser-2.12.3] startup
+[1.549s] [ext: omni.kit.widget.browser_bar-2.0.10] startup
+[1.550s] [ext: omni.kit.usd.layers-2.2.11] startup
+[1.559s] [ext: omni.ui.scene-1.11.5] startup
+[1.563s] [ext: omni.kit.viewport.registry-104.0.6] startup
+[1.564s] [ext: omni.kit.window.filepicker-2.13.4] startup
+[1.584s] [ext: omni.kit.menu.utils-2.0.5] startup
+[1.593s] [ext: omni.kit.context_menu-1.8.6] startup
+[1.598s] [ext: omni.kit.viewport.scene_camera_model-1.0.6] startup
+[1.600s] [ext: omni.kit.hydra_texture-1.4.6] startup
+[1.603s] [ext: omni.kit.window.file_importer-1.1.18] startup
+[1.607s] [ext: omni.kit.widget.searchable_combobox-1.0.6] startup
+[1.609s] [ext: omni.kit.window.drop_support-1.0.5] startup
+[1.609s] [ext: omni.kit.widget.viewport-107.1.3] startup
+[1.615s] [ext: omni.kit.material.library-2.0.7] startup
+[1.621s] [ext: omni.hydra.engine.stats-1.0.3] startup
+[1.624s] [ext: omni.kit.widget.settings-1.2.6] startup
+[1.628s] [ext: omni.kit.viewport.window-107.2.0] startup
+[1.777s] [ext: omni.kit.window.preferences-1.8.0] startup
+[1.785s] [ext: omni.kit.widget.toolbar-2.0.1] startup
+[1.793s] [ext: omni.kit.viewport.utility-1.1.2] startup
+[1.794s] [ext: omni.kit.manipulator.transform-107.0.0] startup
+[1.799s] [ext: omni.kit.manipulator.tool.snap-1.5.13] startup
+[1.806s] [ext: omni.kit.manipulator.selector-1.1.3] startup
+[1.808s] [ext: omni.kit.property.adapter.core-1.0.2] startup
+[1.816s] [ext: omni.kit.viewport.manipulator.transform-107.0.4] startup
+[1.819s] [ext: omni.kit.manipulator.viewport-107.0.1] startup
+[1.821s] [ext: omni.kit.property.adapter.fabric-1.0.3] startup
+[1.823s] [ext: omni.kit.manipulator.prim.core-107.0.8] startup
+[1.832s] [ext: omni.kit.primitive.mesh-1.0.17] startup
+[1.837s] [ext: omni.kit.widget.filter-1.1.4] startup
+[1.838s] [ext: omni.kit.hotkeys.core-1.3.10] startup
+[1.841s] [ext: omni.kit.manipulator.prim.usd-107.0.3] startup
+[1.843s] [ext: omni.fabric.commands-1.1.6] startup
+[1.847s] [ext: omni.kit.window.file_exporter-1.0.33] startup
+[1.848s] [ext: omni.kit.widget.searchfield-1.1.8] startup
+[1.849s] [ext: omni.kit.manipulator.prim.fabric-107.0.4] startup
+[1.851s] [ext: omni.debugdraw-0.1.4] startup
+[1.854s] [ext: omni.kit.widget.stage-3.1.4] startup
+[1.879s] [ext: omni.kit.property.adapter.usd-1.0.2] startup
+[1.880s] [ext: omni.kit.manipulator.prim-107.0.0] startup
+[1.880s] [ext: omni.kvdb-107.3.26] startup
+[1.883s] [ext: omni.convexdecomposition-107.3.26] startup
+[1.888s] [ext: omni.physx.foundation-107.3.26] startup
+[1.900s] [ext: omni.localcache-107.3.26] startup
+[1.903s] [ext: omni.kit.window.content_browser_registry-0.0.6] startup
+[1.904s] [ext: omni.kit.widget.highlight_label-1.0.3] startup
+[1.905s] [ext: omni.kit.stage_template.core-1.1.22] startup
+[1.906s] [ext: omni.usdphysics-107.3.26] startup
+[1.910s] [ext: omni.kit.window.file-2.0.5] startup
+[1.916s] [ext: omni.physx.cooking-107.3.26] startup
+[1.920s] [ext: omni.physics-107.3.26] startup
+[1.927s] [ext: omni.kit.window.property-1.12.1] startup
+[1.930s] [ext: omni.kit.window.content_browser-3.1.3] startup
+[1.943s] [ext: omni.physx-107.3.26] startup
+[1.957s] [ext: omni.physics.stageupdate-107.3.26] startup
+[1.962s] [ext: omni.kit.property.usd-4.5.12] startup
+[1.974s] [ext: omni.kit.manipulator.selection-106.0.1] startup
+[1.976s] [ext: omni.physics.physx-107.3.26] startup
+2026-09-08T23:09:51Z [1,883ms] [Warning] [carb] Acquiring non optional plugin interface which is not listed as dependency: [omni::physx::IPhysxBenchmarks v1.0] (plugin: <default plugin>), by client: omni.physics.physx.plugin. Add it to CARB_PLUGIN_IMPL_DEPS() macro of a client.
+[1.978s] [ext: omni.kit.widget.prompt-1.0.7] startup
+[1.979s] [ext: omni.kit.viewport.menubar.core-107.2.1] startup
+[1.996s] [ext: omni.kit.viewport.actions-107.0.2] startup
+[2.000s] [ext: omni.inspect-1.0.2] startup
+[2.005s] [ext: omni.kit.widget.layers-1.8.6] startup
+[2.022s] [ext: omni.kit.viewport.menubar.display-107.0.3] startup
+[2.024s] [ext: omni.usd.metrics.assembler-107.3.1] startup
+[2.033s] [ext: omni.graph.core-2.184.5] startup
+[2.038s] [ext: omni.kit.numpy.common-0.1.3] startup
+[2.041s] [ext: omni.usdphysics.ui-107.3.26] startup
+[2.062s] [ext: omni.physx.commands-107.3.26] startup
+[2.066s] [ext: isaacsim.core.deprecation_manager-0.2.7] startup
+[2.067s] [ext: omni.isaac.dynamic_control-2.0.7] startup
+2026-09-08T23:09:51Z [1,982ms] [Warning] [omni.isaac.dynamic_control] omni.isaac.dynamic_control is deprecated as of Isaac Sim 4.5. No action is needed from end-users.
+[2.077s] [ext: omni.physx.ui-107.3.26] startup
+[2.118s] [ext: isaacsim.core.version-2.0.6] startup
+[2.119s] [ext: omni.physics.tensors-107.3.26] startup
+[2.125s] [ext: omni.warp.core-1.8.2] startup
+[2.274s] [ext: omni.usd.metrics.assembler.physics-107.3.26] startup
+[2.277s] [ext: isaacsim.storage.native-1.5.1] startup
+[2.279s] [ext: omni.physx.tensors-107.3.26] startup
+[2.282s] [ext: isaacsim.core.utils-3.5.1] startup
+[2.291s] [ext: isaacsim.core.simulation_manager-1.4.4] startup
+[3.927s] [ext: omni.kit.widget.stage_icons-1.0.8] startup
+[3.929s] [ext: omni.kit.widget.text_editor-1.1.1] startup
+[3.931s] [ext: omni.kit.window.stage-2.6.1] startup
+[3.935s] [ext: omni.kit.menu.create-2.0.1] startup
+[3.937s] [ext: omni.kit.window.extensions-1.4.27] startup
+[3.944s] [ext: omni.kit.scripting-107.3.2] startup
+[3.950s] [ext: omni.kit.stagerecorder.core-107.0.3] startup
+[3.954s] [ext: isaacsim.replicator.behavior-1.1.16] startup
+[3.954s] [ext: omni.graph.tools-1.79.2] startup
+[3.982s] [ext: omni.ui_query-1.1.8] startup
+[3.983s] [ext: omni.kit.widget.zoombar-1.0.6] startup
+[3.984s] [ext: omni.graph-1.141.2] startup
+[4.031s] [ext: omni.graph.action_core-1.1.7] startup
+[4.035s] [ext: omni.kit.ui_test-1.3.7] startup
+[4.038s] [ext: omni.kit.browser.core-2.3.13] startup
+[4.044s] [ext: omni.kit.usd.collect-2.4.5] startup
+[4.048s] [ext: omni.graph.action_nodes-1.50.4] startup
+[4.052s] [ext: omni.kit.menu.stage-1.2.7] startup
+[4.059s] [ext: omni.kit.browser.folder.core-1.10.9] startup
+[4.071s] [ext: omni.kit.usdz_export-1.0.9] startup
+[4.076s] [ext: omni.graph.visualization.nodes-2.1.3] startup
+[4.087s] [ext: omni.graph.action-1.130.0] startup
+[4.092s] [ext: omni.kit.tool.collect-2.2.18] startup
+[4.098s] [ext: omni.kit.tool.asset_importer-4.3.2] startup
+[4.111s] [ext: isaacsim.gui.components-1.2.1] startup
+[4.118s] [ext: isaacsim.examples.browser-0.2.1] startup
+[4.127s] [ext: isaacsim.asset.importer.urdf-2.4.31] startup
+[4.229s] [ext: isaacsim.core.cloner-1.4.10] startup
+[4.235s] [ext: omni.kit.stagerecorder.ui-107.0.1] startup
+[4.244s] [ext: isaacsim.asset.browser-1.3.23] startup
+[4.451s] [ext: semantics.schema.editor-2.0.2] startup
+2026-09-08T23:09:54Z [4,363ms] [Warning] [pxr.Semantics] pxr.Semantics is deprecated - please use Semantics instead
+[4.459s] [ext: omni.kit.stagerecorder.bundle-105.0.2] startup
+[4.460s] [ext: omni.kit.window.status_bar-0.1.9] startup
+[4.463s] [ext: omni.kit.widget.graph-2.0.0] startup
+[4.471s] [ext: omni.kit.stage_templates-2.0.0] startup
+[4.475s] [ext: omni.graph.image.core-0.6.1] startup
+[4.476s] [ext: omni.kit.graph.delegate.default-1.2.3] startup
+[4.478s] [ext: isaacsim.core.experimental.utils-0.3.0] startup
+[4.482s] [ext: omni.graph.image.nodes-1.3.1] startup
+[4.485s] [ext: omni.kit.graph.editor.core-1.5.3] startup
+[4.488s] [ext: omni.kit.graph.usd.commands-1.3.1] startup
+[4.491s] [ext: omni.graph.nodes-1.170.10] startup
+[4.502s] [ext: omni.graph.ui_nodes-1.50.5] startup
+[4.508s] [ext: omni.kit.widget.material_preview-1.0.16] startup
+[4.512s] [ext: omni.syntheticdata-0.6.13] startup
+[4.540s] [ext: omni.videoencoding-0.1.2] startup
+[4.547s] [ext: omni.warp-1.8.2] startup
+[4.603s] [ext: omni.kit.window.material_graph-1.9.1] startup
+[4.630s] [ext: omni.graph.scriptnode-1.50.0] startup
+[4.633s] [ext: isaacsim.core.prims-0.6.1] startup
+[4.666s] [ext: isaacsim.test.docstring-1.1.0] startup
+[4.674s] [ext: omni.replicator.core-1.12.27] startup
+2026-09-08T23:09:54Z [4,736ms] [Warning] [omni.graph.core.plugin] Found duplicate of category 'Replicator' - was 'Annotators', adding 'Fabric Reader'
+2026-09-08T23:09:54Z [4,736ms] [Warning] [omni.graph.core.plugin] Category 'Replicator' not accepted on node type 'omni.replicator.core.FabricReader' in extension 'omni.replicator.core'
+2026-09-08T23:09:54Z [4,737ms] [Warning] [omni.replicator.core.scripts.extension] No material configuration file, adding configuration to material settings directly.
+[4.834s] [ext: isaacsim.core.api-4.8.0] startup
+[4.863s] [ext: isaacsim.core.experimental.prims-0.8.1] startup
+[4.901s] [ext: isaacsim.core.nodes-3.4.3] startup
+[4.913s] [ext: isaacsim.robot.surface_gripper-3.3.1] startup
+[4.921s] [ext: isaacsim.util.debug_draw-3.1.0] startup
+[4.936s] [ext: omni.sensors.nv.common-3.0.0] startup
+[4.969s] [ext: isaacsim.robot.manipulators-3.3.6] startup
+[4.982s] [ext: isaacsim.sensors.physx-2.3.2] startup
+[4.999s] [ext: omni.sensors.nv.materials-2.0.0] startup
+[5.020s] [ext: omni.sensors.net-1.0.0] startup
+[5.040s] [ext: isaacsim.app.about-2.0.11] startup
+[5.046s] [ext: isaacsim.simulation_app-2.12.2] startup
+[5.047s] [ext: omni.sensors.nv.ids-2.0.0] startup
+[5.060s] [ext: omni.sensors.nv.lidar-3.0.0] startup
+[5.072s] [ext: omni.kit.property.audio-1.0.16] startup
+[5.079s] [ext: omni.kit.property.camera-1.0.10] startup
+[5.082s] [ext: omni.kit.property.geometry-2.0.4] startup
+[5.088s] [ext: omni.hydra.scene_api-0.1.2] startup
+[5.092s] [ext: omni.kit.property.light-1.0.12] startup
+[5.110s] [ext: omni.sensors.nv.wpm-3.0.0] startup
+[5.117s] [ext: omni.kit.selection-0.1.6] startup
+[5.131s] [ext: omni.kit.property.material-1.11.9] startup
+[5.167s] [ext: omni.kit.property.transform-1.5.13] startup
+[5.205s] [ext: omni.kit.property.render-1.2.1] startup
+[5.215s] [ext: omni.sensors.nv.radar-3.0.0] startup
+[5.227s] [ext: isaacsim.gui.menu-2.4.4] startup
+[5.300s] [ext: omni.kit.manipulator.camera-106.0.4] startup
+[5.324s] [ext: isaacsim.gui.property-1.1.3] startup
+[5.337s] [ext: omni.kit.property.bundle-1.4.1] startup
+[5.345s] [ext: isaacsim.sensors.rtx-15.8.4] startup
+[5.385s] [ext: isaacsim.sensors.physics-0.4.3] startup
+[5.416s] [ext: omni.kit.viewport.menubar.camera-107.0.6] startup
+[5.498s] [ext: omni.kit.viewport.menubar.lighting-107.3.1] startup
+[5.511s] [ext: omni.kit.viewport.menubar.settings-107.0.3] startup
+[5.523s] [ext: omni.kit.viewport.menubar.render-107.0.10] startup
+[5.532s] [ext: isaacsim.robot.policy.examples-4.1.11] startup
+[5.536s] [ext: isaacsim.asset.importer.mjcf-2.5.13] startup
+[5.547s] [ext: omni.kit.window.console-1.1.4] startup
+[5.554s] [ext: omni.rtx.window.settings-0.6.19] startup
+[5.564s] [ext: omni.ocio-0.1.1] startup
+[5.567s] [ext: omni.physx.demos-107.3.26] startup
+[5.609s] [ext: omni.kit.property.physx-107.3.26] startup
+[5.629s] [ext: omni.replicator.replicator_yaml-2.0.11] startup
+[5.646s] [ext: omni.asset_validator.core-1.1.6] startup
+[5.699s] [ext: omni.rtx.settings.core-0.6.5] startup
+[5.703s] [ext: omni.physx.vehicle-107.3.26] startup
+[5.724s] [ext: omni.usd.metrics.assembler.ui-107.3.1] startup
+[5.732s] [ext: omni.kit.window.script_editor-2.0.1] startup
+[5.736s] [ext: isaacsim.robot.wheeled_robots-4.0.24] startup
+[5.746s] [ext: omni.physx.asset_validator-107.3.26] startup
+[5.757s] [ext: omni.kit.window.toolbar-2.0.0] startup
+[5.762s] [ext: omni.physx.camera-107.3.26] startup
+[5.774s] [ext: omni.anim.curve.core-1.3.1] startup
+[5.786s] [ext: omni.physx.cct-107.3.26] startup
+[5.805s] [ext: omni.physx.graph-107.3.26] startup
+[5.830s] [ext: omni.physx.supportui-107.3.26] startup
+[5.859s] [ext: omni.physx.telemetry-107.3.26] startup
+[5.863s] [ext: isaaclab-0.54.2] startup
+[6.149s] [ext: isaaclab_contrib-0.0.2] startup
+[6.150s] [ext: isaacsim.core.throttling-2.2.2] startup
+[6.155s] [ext: omni.kit.ui.actions-1.0.5] startup
+[6.158s] [ext: semantics.schema.property-2.0.1] startup
+[6.160s] [ext: omni.physx.bundle-107.3.26] startup
+[6.161s] [ext: isaacsim.sensors.camera-1.3.6] startup
+[6.166s] [ext: isaaclab_assets-0.2.4] startup
+[6.440s] [ext: isaaclab_tasks-0.11.12] startup
+[6.654s] [ext: omni.kit.menu.common-2.0.1] startup
+[6.657s] [ext: isaaclab_rl-0.4.7] startup
+[6.658s] [ext: isaaclab_mimic-1.0.16] startup
+[6.658s] [ext: isaaclab.python-2.3.2] startup
+[6.662s] Simulation App Starting
+2026-09-08T23:09:56Z [6,768ms] [Warning] [omni.fabric.plugin] Warning: attribute overrideClipRange not found for bucket id 9
+
+[6.979s] app ready
+[16.650s] Simulation App Startup Complete
+
+[36m===================================================================================================================[0m
+[36m[1m[INFO][IsaacLab]: Logging to file: C:\Users\wts28\AppData\Local\Temp\isaaclab\logs\isaaclab_2026-09-08_19-10-06.log[0m
+[36m===================================================================================================================[0m
+
+[16.812s] [ext: omni.physx.fabric-107.3.26] startup
+[33m19:10:06 [simulation_context.py] WARNING: The `enable_external_forces_every_iteration` parameter in the PhysxCfg is set to False. If you are experiencing noisy velocities, consider enabling this flag. You may need to slightly increase the number of velocity iterations (setting it to 1 or 2 rather than 0), together with this flag, to improve the accuracy of velocity updates.[0m
+2026-09-08T23:10:09Z [19,402ms] [Warning] [omni.physx.fabric.plugin] FabricManager::initializePointInstancer mismatched prototypes on point instancer: /World/TrainingDrones.
+2026-09-08T23:10:09Z [19,413ms] [Warning] [omni.fabric.plugin] Warning: attribute timeVaryingAttributes not found for bucket id 1f
+
+[W908 19:10:09.000000000 Context.cpp:324] Warning: torch.backends.cuda.preferred_linalg_library is an experimental feature. If you see any error or unexpected behavior when this flag is set please file an issue on GitHub. (function operator ())
+2026-09-08T23:11:25Z [95,229ms] [Warning] [omni.physx.fabric.plugin] FabricManager::initializePointInstancer mismatched prototypes on point instancer: /World/TrainingDrones.
+2026-09-08T23:11:36Z [106,966ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:36Z [106,966ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:36Z [107,076ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:36Z [107,077ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:37Z [107,206ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:37Z [107,206ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:37Z [107,240ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:37Z [107,240ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:37Z [107,362ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:37Z [107,363ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:37Z [107,489ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:37Z [107,489ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:37Z [107,575ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:37Z [107,575ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:37Z [107,609ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:37Z [107,609ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:37Z [107,731ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:37Z [107,731ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:37Z [107,854ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:37Z [107,855ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:37Z [107,941ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:37Z [107,941ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:37Z [107,975ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:37Z [107,975ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:37Z [108,098ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:37Z [108,098ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:38Z [108,220ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:38Z [108,220ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:38Z [108,307ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:38Z [108,307ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:38Z [108,340ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:38Z [108,341ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:38Z [108,465ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:38Z [108,465ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:38Z [108,590ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:38Z [108,590ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:38Z [108,676ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:38Z [108,676ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:38Z [108,709ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:38Z [108,710ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:38Z [108,831ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:38Z [108,831ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:38Z [108,952ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:38Z [108,953ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:38Z [109,039ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:38Z [109,039ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:38Z [109,073ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:38Z [109,073ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:39Z [109,197ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:39Z [109,197ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:39Z [109,318ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:39Z [109,319ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:39Z [109,405ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:39Z [109,405ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:39Z [109,439ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:39Z [109,440ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:39Z [109,561ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:39Z [109,562ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:39Z [109,683ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:39Z [109,683ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:39Z [109,770ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:39Z [109,770ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:39Z [109,803ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:39Z [109,804ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:39Z [109,929ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:39Z [109,930ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:39Z [110,049ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:39Z [110,050ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:40Z [110,138ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:40Z [110,139ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:40Z [110,172ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:40Z [110,173ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:40Z [110,294ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:40Z [110,295ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:40Z [110,419ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:40Z [110,419ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:40Z [110,505ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:40Z [110,505ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:40Z [110,538ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:40Z [110,539ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:40Z [110,667ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:40Z [110,667ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:40Z [110,790ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:40Z [110,790ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:40Z [110,875ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:40Z [110,876ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:40Z [110,909ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:40Z [110,910ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:40Z [111,032ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:40Z [111,033ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:41Z [111,154ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:41Z [111,155ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:41Z [111,241ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:41Z [111,241ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:41Z [111,274ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:41Z [111,275ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:41Z [111,397ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:41Z [111,398ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:41Z [111,520ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:41Z [111,520ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:41Z [111,607ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:41Z [111,607ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:41Z [111,641ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:41Z [111,641ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:41Z [111,764ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:41Z [111,764ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:41Z [111,889ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:41Z [111,889ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:41Z [111,975ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:41Z [111,975ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:41Z [112,009ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:41Z [112,009ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:42Z [112,135ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:42Z [112,136ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:42Z [112,139ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:42Z [112,139ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:42Z [112,257ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:42Z [112,257ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:42Z [112,343ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:42Z [112,343ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:42Z [112,376ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:42Z [112,377ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:42Z [112,498ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:42Z [112,498ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:42Z [112,625ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:42Z [112,625ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:42Z [112,711ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:42Z [112,711ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:42Z [112,744ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:42Z [112,745ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:42Z [112,866ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:42Z [112,867ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:42Z [112,989ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:42Z [112,989ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:42Z [113,076ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:42Z [113,076ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:43Z [113,110ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:43Z [113,110ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:43Z [113,231ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:43Z [113,232ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:43Z [113,353ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:43Z [113,353ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:43Z [113,442ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:43Z [113,443ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:43Z [113,476ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:43Z [113,476ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:43Z [113,597ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:43Z [113,598ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:43Z [113,720ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:43Z [113,720ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:43Z [113,806ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:43Z [113,806ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:43Z [113,840ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:43Z [113,840ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:43Z [113,963ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:43Z [113,963ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:43Z [114,082ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:43Z [114,083ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:44Z [114,173ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:44Z [114,173ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:44Z [114,207ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:44Z [114,207ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:44Z [114,332ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:44Z [114,333ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:44Z [114,457ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:44Z [114,457ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:44Z [114,544ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:44Z [114,544ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:44Z [114,578ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:44Z [114,578ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:44Z [114,699ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:44Z [114,699ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:44Z [114,823ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:44Z [114,823ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:44Z [114,909ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:44Z [114,909ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:44Z [114,943ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:44Z [114,944ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:44Z [115,065ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:44Z [115,066ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:45Z [115,187ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:45Z [115,188ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:45Z [115,273ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:45Z [115,273ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:45Z [115,307ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:45Z [115,307ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:45Z [115,432ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:45Z [115,432ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:45Z [115,554ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:45Z [115,554ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:45Z [115,640ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:45Z [115,640ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:45Z [115,674ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:45Z [115,675ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:45Z [115,798ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:45Z [115,798ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:45Z [115,921ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:45Z [115,921ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:45Z [116,007ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:45Z [116,007ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:45Z [116,041ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:45Z [116,041ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:46Z [116,163ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:46Z [116,163ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:46Z [116,284ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:46Z [116,285ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:46Z [116,370ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:46Z [116,370ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:46Z [116,404ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:46Z [116,405ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:46Z [116,528ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:46Z [116,529ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:46Z [116,655ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:46Z [116,656ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:46Z [116,742ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:46Z [116,742ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:46Z [116,775ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:46Z [116,776ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:46Z [116,904ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:46Z [116,904ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:46Z [117,029ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:46Z [117,029ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:47Z [117,117ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:47Z [117,117ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:47Z [117,151ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:47Z [117,151ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:47Z [117,272ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:47Z [117,273ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:47Z [117,395ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:47Z [117,395ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:47Z [117,482ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:47Z [117,482ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:47Z [117,516ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:47Z [117,516ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:47Z [117,637ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:47Z [117,637ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:47Z [117,759ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:47Z [117,759ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:47Z [117,846ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:47Z [117,846ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:47Z [117,880ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:47Z [117,880ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:47Z [118,002ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:47Z [118,002ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:48Z [118,123ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:48Z [118,124ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:48Z [118,209ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:48Z [118,209ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:48Z [118,243ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:48Z [118,244ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:48Z [118,365ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:48Z [118,365ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:48Z [118,490ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:48Z [118,490ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:48Z [118,577ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:48Z [118,578ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:48Z [118,611ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:48Z [118,612ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:48Z [118,733ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:48Z [118,733ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:48Z [118,855ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:48Z [118,855ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:48Z [118,941ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:48Z [118,941ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:48Z [118,975ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:48Z [118,975ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:48Z [119,096ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:48Z [119,096ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:49Z [119,219ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:49Z [119,220ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:49Z [119,305ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:49Z [119,306ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:49Z [119,339ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:49Z [119,340ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:49Z [119,464ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:49Z [119,464ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:49Z [119,586ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:49Z [119,586ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:49Z [119,673ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:49Z [119,673ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:49Z [119,707ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:49Z [119,707ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:49Z [119,829ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:49Z [119,829ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:49Z [119,952ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:49Z [119,953ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:49Z [120,038ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:49Z [120,038ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:49Z [120,072ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:49Z [120,073ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:50Z [120,194ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:50Z [120,194ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:50Z [120,316ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:50Z [120,316ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:50Z [120,405ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:50Z [120,405ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:50Z [120,438ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:50Z [120,439ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:50Z [120,560ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:50Z [120,561ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:50Z [120,685ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:50Z [120,685ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:50Z [120,773ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:50Z [120,774ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:50Z [120,807ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:50Z [120,808ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:50Z [120,929ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:50Z [120,930ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:50Z [121,054ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:50Z [121,054ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:51Z [121,141ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:51Z [121,141ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:51Z [121,174ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:51Z [121,175ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:51Z [121,295ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:51Z [121,295ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:51Z [121,298ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:51Z [121,299ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:51Z [121,421ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:51Z [121,421ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:51Z [121,507ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:51Z [121,508ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:51Z [121,541ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+2026-09-08T23:11:51Z [121,541ms] [Warning] [omni.usd._impl.utils] Incompatible xformOpOrder, rotation or translation applied before scale.
+{"pid": 30128, "device": "cuda", "target_episodes": 500000, "collection_batch": 2048, "artifact": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\ppo\\20260908-230949-345689-seed655", "status": "STOPPED", "episodes": 0, "stage": "Stopped \u00b7 last saved update preserved", "phase_step": 0, "phase_total": 0, "stop_reason": "User request; unfinished work discarded", "resume_checkpoint": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\ppo\\20260908-230949-345689-seed655\\checkpoints\\latest.pt", "successes": 0}
+[185.480s] Simulation App Shutting Down

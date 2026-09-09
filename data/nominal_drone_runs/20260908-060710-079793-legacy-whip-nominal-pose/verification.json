@@ -1,0 +1,51 @@
+{
+  "platform": "Windows-11-10.0.26200-SP0",
+  "gpu": "NVIDIA GeForce RTX 4080",
+  "elapsed_s": 180.77733149999403,
+  "protected_files_verified": 133,
+  "active_model_changed": false,
+  "ppo_started": false,
+  "drone_nn_fitted": false,
+  "cable_fitted": false,
+  "development_assessment_only": true,
+  "parameters_fitted": true,
+  "pose_domain_failures": {
+    "final_all_three": {
+      "whip1_003": {
+        "status": "POST_HOLD_DOMAIN_FAILURE",
+        "maneuver_only": true,
+        "reason": "Attitude error is too close to 180 degrees for this local response model",
+        "last_assessed_time_s": 17.29552421910808,
+        "unavailable_samples": 50
+      }
+    },
+    "leave_out_whip1_001": {
+      "whip1_001": {
+        "status": "POSE_CANDIDATE_REJECTED",
+        "reason": "No valid attitude candidate on the fixed search grid",
+        "translation_only": true
+      },
+      "whip1_002": {
+        "status": "POSE_CANDIDATE_REJECTED",
+        "reason": "No valid attitude candidate on the fixed search grid",
+        "translation_only": true
+      },
+      "whip1_003": {
+        "status": "POSE_CANDIDATE_REJECTED",
+        "reason": "No valid attitude candidate on the fixed search grid",
+        "translation_only": true
+      }
+    },
+    "leave_out_whip1_002": {
+      "whip1_003": {
+        "status": "POST_HOLD_DOMAIN_FAILURE",
+        "maneuver_only": true,
+        "reason": "Attitude error is too close to 180 degrees for this local response model",
+        "last_assessed_time_s": 17.29552421910808,
+        "unavailable_samples": 50
+      }
+    },
+    "leave_out_whip1_003": {}
+  },
+  "deployment_ready": false
+}

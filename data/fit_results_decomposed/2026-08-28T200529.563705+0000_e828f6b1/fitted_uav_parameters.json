@@ -1,0 +1,33 @@
+{
+  "adam_updates_per_refinement": 60,
+  "best_training_objective": 1.9976031533522989,
+  "bound_proximity": {
+    "K_R": 0.13690893975564186,
+    "K_omega": 0.3714095991295258,
+    "K_p": 0.0511880979431814,
+    "K_v": 0.39177249661132846,
+    "k_a": 0.333015866754417
+  },
+  "early_stopping": {
+    "patience_updates": 15,
+    "relative_minimum_improvement": 1e-06,
+    "selection_uses_validation": false
+  },
+  "fitted_parameters": {
+    "K_R": 69.18419375930429,
+    "K_omega": 11.456583174321011,
+    "K_p": 4.020097778647703,
+    "K_v": 12.05728865003419,
+    "k_a": 0.7327301468333923
+  },
+  "gradient_clip": 10.0,
+  "initial_sobol_candidates": 64,
+  "learning_rate": 0.01,
+  "method": "full_episode_sobol_adam_v1",
+  "refinements": 2,
+  "runtime_s": 1290.3840669000056,
+  "schema": "decomposed_uav_fit_v1",
+  "seed": 42,
+  "sobol_candidates": 128,
+  "sobol_extension_reason": "initial 64-point batch contained fewer than two finite full-episode candidates"
+}

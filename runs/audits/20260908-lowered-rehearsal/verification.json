@@ -1,0 +1,45 @@
+{
+  "bounds": {
+    "commanded_tracking_origin": {
+      "maximum": 2.6634285586943927,
+      "minimum": 1.2549999999999997
+    },
+    "predicted_cable": {
+      "maximum": 2.666680640722728,
+      "minimum": 0.2469803381666617
+    },
+    "predicted_tracking_origin": {
+      "maximum": 2.42372146506346,
+      "minimum": 1.251168239923481
+    }
+  },
+  "cable_translation_full_max_error_m": 0.014795691712396086,
+  "cable_translation_whip_max_error_m": 2.567945849729636e-05,
+  "fresh_predicted_cable_max_z_m": 2.666678058555282,
+  "fresh_predicted_cable_min_z_m": 0.2469785810444608,
+  "fresh_vs_translated_saved_cable_max_error_m": 0.008336066877518575,
+  "note": "Exact rigid command translation; floating-point cable integration is not bitwise translation invariant over the long recovery.",
+  "offset_m": [
+    0.0,
+    0.0,
+    -0.3
+  ],
+  "original_and_lowered_hit_times_s": [
+    0.9400000000000001,
+    0.9400000000000001
+  ],
+  "original_and_lowered_minimum_tip_distance_m": [
+    0.0483642099932574,
+    0.04836424942633317
+  ],
+  "original_and_lowered_valid_hits": [
+    true,
+    true
+  ],
+  "output": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260908-191823-117184-lowered30cm",
+  "pose_translation_max_error_m": 1.8318679906315083e-15,
+  "rotation_max_error": 4.996003610813204e-16,
+  "source": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260908-143530-158718",
+  "targeted_tests_passed": 24,
+  "tested_hardware": "Windows / RTX 4080"
+}

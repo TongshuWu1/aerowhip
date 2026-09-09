@@ -1,0 +1,102 @@
+{
+  "all_cable_markers": {
+    "complete": {
+      "maximum_m": 0.8369784079147389,
+      "mean_m": 0.2381784453677225,
+      "rmse_m": 0.3013321353711858,
+      "samples": 11041
+    },
+    "early_recovery": {
+      "maximum_m": 0.7434138287025374,
+      "mean_m": 0.3720115097612513,
+      "rmse_m": 0.40222360522146006,
+      "samples": 1891
+    },
+    "late_recovery_hold": {
+      "maximum_m": 0.8369784079147389,
+      "mean_m": 0.22870029068701714,
+      "rmse_m": 0.2904554393722498,
+      "samples": 8150
+    },
+    "whip": {
+      "maximum_m": 0.4504260536518468,
+      "mean_m": 0.062347081247308526,
+      "rmse_m": 0.09503517698677436,
+      "samples": 1000
+    }
+  },
+  "all_pose_domains_valid": true,
+  "initial_projection_max_coordinate_m": 0.014278624166922937,
+  "measured_tip_at_saved_strike_m": [
+    -0.892260191934602,
+    0.1069501774783692,
+    1.3733273590622173
+  ],
+  "measured_tip_target_distance_at_saved_strike_m": 0.3126564439069658,
+  "observed_grid_span_s": [
+    -0.0007944549109026866,
+    11.1492055450891
+  ],
+  "origin": {
+    "complete": {
+      "maximum_m": 0.3685080831443711,
+      "mean_m": 0.11275524115045019,
+      "rmse_m": 0.15268192829033528,
+      "samples": 1115
+    },
+    "early_recovery": {
+      "maximum_m": 0.3685080831443711,
+      "mean_m": 0.2865333602948885,
+      "rmse_m": 0.2940904045767444,
+      "samples": 200
+    },
+    "late_recovery_hold": {
+      "maximum_m": 0.3159794969310923,
+      "mean_m": 0.07495620822043209,
+      "rmse_m": 0.09597745184590949,
+      "samples": 815
+    },
+    "whip": {
+      "maximum_m": 0.28357647584356105,
+      "mean_m": 0.07326112124122104,
+      "rmse_m": 0.1089623616422281,
+      "samples": 100
+    }
+  },
+  "predicted_tip_at_saved_strike_m": [
+    -1.0472252075338242,
+    0.009594047968745644,
+    1.0877284175287747
+  ],
+  "reference_to_actual_target": "virtual target [-1,0,1.1]; old flight unchanged",
+  "saved_strike_time_s": 0.94,
+  "scoring": "native_100hz_observations_v1",
+  "tip": {
+    "complete": {
+      "maximum_m": 0.8369784079147389,
+      "mean_m": 0.4221115298293512,
+      "rmse_m": 0.4774096520307796,
+      "samples": 1114
+    },
+    "early_recovery": {
+      "maximum_m": 0.7434138287025374,
+      "mean_m": 0.4836744870439345,
+      "rmse_m": 0.5122016685092112,
+      "samples": 199
+    },
+    "late_recovery_hold": {
+      "maximum_m": 0.8369784079147389,
+      "mean_m": 0.449269857649196,
+      "rmse_m": 0.49537577518632714,
+      "samples": 815
+    },
+    "whip": {
+      "maximum_m": 0.4504260536518468,
+      "mean_m": 0.07826087324059572,
+      "rmse_m": 0.13024628635816984,
+      "samples": 100
+    }
+  },
+  "tip_prediction_error_at_saved_strike_m": 0.3392036665747947,
+  "whip_attitude_rmse_deg": 2.8137587538070754
+}

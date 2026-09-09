@@ -1,0 +1,20 @@
+{
+  "enabled": true,
+  "status": "WARMUP",
+  "should_stop": false,
+  "start_episodes": 314368,
+  "settings": {
+    "enabled": true,
+    "metric": "fixed_scenario_deterministic_validation_mean_episode_reward",
+    "minimum_additional_episodes": 20000,
+    "minimum_relative_improvement": 0.01,
+    "minimum_reward_improvement": 2.0,
+    "patience_episodes": 20000,
+    "purpose": "User requested continued training until reward converges; practical stable plateau, not a proof of global optimality",
+    "window_evaluations": 20
+  },
+  "latest_episodes": 316416,
+  "additional_episodes": 2048,
+  "window_count": 2,
+  "latest_reward": 223.87619746084368
+}

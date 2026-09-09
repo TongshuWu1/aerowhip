@@ -10,6 +10,10 @@ from PySide6.QtWidgets import QFrame, QLabel, QVBoxLayout, QWidget
 
 
 APP_STYLE = """
+QLabel#pipelineBanner {
+    color: #1e40af; background: #eaf1ff; border: 1px solid #d5e3ff;
+    border-radius: 8px; padding: 14px; font-weight: 600;
+}
 QMainWindow, QWidget#applicationShell, QTabWidget::pane {
     background: #f5f7fb;
 }

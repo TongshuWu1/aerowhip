@@ -1,0 +1,34 @@
+[
+  {
+    "batch": 1024,
+    "physics_steps": 40,
+    "wall_seconds": 2.63472129999991,
+    "transitions_per_second": 15546.236332473343,
+    "torch_peak_reserved_gib": 0.1171875,
+    "finite": true
+  },
+  {
+    "batch": 2048,
+    "physics_steps": 40,
+    "wall_seconds": 3.3889791999999943,
+    "transitions_per_second": 24172.47057757101,
+    "torch_peak_reserved_gib": 0.2109375,
+    "finite": true
+  },
+  {
+    "batch": 4096,
+    "physics_steps": 40,
+    "wall_seconds": 5.167480500000238,
+    "transitions_per_second": 31705.973539714847,
+    "torch_peak_reserved_gib": 0.40234375,
+    "finite": true
+  },
+  {
+    "batch": 8192,
+    "physics_steps": 40,
+    "wall_seconds": 9.178339699999924,
+    "transitions_per_second": 35701.44609051708,
+    "torch_peak_reserved_gib": 0.73046875,
+    "finite": true
+  }
+]

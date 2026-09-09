@@ -1,0 +1,457 @@
+{
+  "target_m": [
+    1.0,
+    0.0,
+    1.4
+  ],
+  "hit_radius_m": 0.05,
+  "expected_hit_time_s": 0.78,
+  "source_tip_at_hit_m": [
+    0.9546944465351797,
+    0.002177847880707231,
+    1.380620923919269
+  ],
+  "source_tip_target_error_at_hit_m": 0.04932428190950124,
+  "source_closest": {
+    "time_s": 0.7886703842771647,
+    "position_m": [
+      0.9986971081674583,
+      0.002407223034382956,
+      1.402585057624382
+    ],
+    "error_xyz_m": [
+      -0.0013028918325417305,
+      0.002407223034382956,
+      0.0025850576243819923
+    ],
+    "distance_m": 0.003764939944533419,
+    "segment_index": 78,
+    "fraction": 0.8670384277164733
+  },
+  "planned_cutoff_s": 0.8,
+  "method": "Raw named c10 marker, common world coordinates; fixed measured-position clock offsets; adjacent-frame linear interpolation only",
+  "limitations": [
+    "Target is the saved intended coordinate, not an independently tracked physical target.",
+    "Timing includes unmeasured measurement/logging latency; no clock synchronization verified.",
+    "Closest pass after 0.67 s includes the subsequent position-hold response.",
+    "c10 endpoint mapping is supported by numeric naming and prelaunch geometry, not a new physical measurement.",
+    "No physical-contact labels or model/policy adaptation inferred."
+  ],
+  "results": [
+    {
+      "trial": "whip1_001",
+      "target_m": [
+        1.0,
+        0.0,
+        1.4
+      ],
+      "tip_marker": "cable1:c10",
+      "start_controller_s": 18.80992555618286,
+      "start_optitrack_s": 17.634723078063807,
+      "offset_s": 1.175202478119055,
+      "alignment_rms_m": 0.011101311481103717,
+      "observed_reference_duration_s": 0.6690807342529297,
+      "recorded_reference_samples": 20,
+      "intended_reference_samples": 25,
+      "expected_hit_time_s": 0.78,
+      "measured_tip_at_expected_hit_m": [
+        0.32331575204734403,
+        0.028106941386288244,
+        1.8261142841220592
+      ],
+      "target_error_xyz_m": [
+        -0.676684247952656,
+        0.028106941386288244,
+        0.4261142841220593
+      ],
+      "target_error_3d_m": 0.800165579561005,
+      "planned_tip_at_expected_hit_m": [
+        0.9546944465351797,
+        0.002177847880707231,
+        1.380620923919269
+      ],
+      "measured_minus_planned_tip_xyz_m": [
+        -0.6313786944878357,
+        0.025929093505581015,
+        0.4454933602027902
+      ],
+      "measured_minus_planned_tip_3d_m": 0.773159561622281,
+      "error_at_source_closest_time_m": 0.7855412408255369,
+      "closest_during_intended_sequence": {
+        "time_s": 0.8,
+        "position_m": [
+          0.37533952765120876,
+          0.025037904413931732,
+          1.840410911391613
+        ],
+        "error_xyz_m": [
+          -0.6246604723487912,
+          0.025037904413931732,
+          0.44041091139161304
+        ],
+        "distance_m": 0.7647152236259243,
+        "segment_index": 1219,
+        "fraction": 0.47230780638067127
+      },
+      "closest_during_recorded_commands": {
+        "time_s": 0.6690807342529297,
+        "position_m": [
+          0.06464302686221228,
+          0.0412774544868036,
+          1.6502605417302534
+        ],
+        "error_xyz_m": [
+          -0.9353569731377878,
+          0.0412774544868036,
+          0.25026054173025347
+        ],
+        "distance_m": 0.9691371596391888,
+        "segment_index": 1206,
+        "fraction": 0.3803812316736856
+      },
+      "closest_through_half_second_after_cutoff": {
+        "time_s": 0.9852769219361939,
+        "position_m": [
+          1.004757,
+          -0.008498,
+          1.740027
+        ],
+        "error_xyz_m": [
+          0.0047569999999999,
+          -0.008498,
+          0.3400270000000001
+        ],
+        "distance_m": 0.340166438353345,
+        "segment_index": 1237,
+        "fraction": 1.0
+      },
+      "closest_time_minus_planned_hit_s": 0.20527692193619385,
+      "timing_sensitivity_plus_minus_50ms_error_range_m": [
+        0.7082711816428999,
+        0.881144207987362
+      ],
+      "timing_sensitivity_note": "Illustrative time shifts, not a confidence interval or clock-error bound",
+      "missing_tip_samples_near_expected_hit": 0,
+      "median_prelaunch_drone_to_markers_m": [
+        0.11859669206808818,
+        0.20244813908945047,
+        0.30251944801112274,
+        0.40249058737839766,
+        0.5019481717441077,
+        0.6010557061935027,
+        0.700413452125055,
+        0.8007926154023258,
+        0.9002338931693132,
+        1.0003330508486759
+      ]
+    },
+    {
+      "trial": "whip1_002",
+      "target_m": [
+        1.0,
+        0.0,
+        1.4
+      ],
+      "tip_marker": "cable1:c10",
+      "start_controller_s": 18.856013774871826,
+      "start_optitrack_s": 19.39064291255051,
+      "offset_s": -0.534629137678685,
+      "alignment_rms_m": 0.011325276146963653,
+      "observed_reference_duration_s": 0.6691644191741943,
+      "recorded_reference_samples": 20,
+      "intended_reference_samples": 25,
+      "expected_hit_time_s": 0.78,
+      "measured_tip_at_expected_hit_m": [
+        0.36623158657351224,
+        0.020385692475640777,
+        1.806914073651095
+      ],
+      "target_error_xyz_m": [
+        -0.6337684134264878,
+        0.020385692475640777,
+        0.406914073651095
+      ],
+      "target_error_3d_m": 0.7534301836601502,
+      "planned_tip_at_expected_hit_m": [
+        0.9546944465351797,
+        0.002177847880707231,
+        1.380620923919269
+      ],
+      "measured_minus_planned_tip_xyz_m": [
+        -0.5884628599616675,
+        0.018207844594933548,
+        0.42629314973182586
+      ],
+      "measured_minus_planned_tip_3d_m": 0.7268740693320538,
+      "error_at_source_closest_time_m": 0.7385126495510645,
+      "closest_during_intended_sequence": {
+        "time_s": 0.8,
+        "position_m": [
+          0.4182881419544071,
+          0.01721274360041607,
+          1.8218521386975155
+        ],
+        "error_xyz_m": [
+          -0.5817118580455929,
+          0.01721274360041607,
+          0.4218521386975156
+        ],
+        "distance_m": 0.7187796541755879,
+        "segment_index": 1395,
+        "fraction": 0.06429125505102054
+      },
+      "closest_during_recorded_commands": {
+        "time_s": 0.6691644191741943,
+        "position_m": [
+          0.10699857597392147,
+          0.03233654289573921,
+          1.6287817361156716
+        ],
+        "error_xyz_m": [
+          -0.8930014240260785,
+          0.03233654289573921,
+          0.22878173611567165
+        ],
+        "distance_m": 0.9224089538264212,
+        "segment_index": 1381,
+        "fraction": 0.9807331724706888
+      },
+      "closest_through_half_second_after_cutoff": {
+        "time_s": 0.9833626131508,
+        "position_m": [
+          1.0346947474306833,
+          -0.01725250296036915,
+          1.7328097564437177
+        ],
+        "error_xyz_m": [
+          0.03469474743068335,
+          -0.01725250296036915,
+          0.3328097564437178
+        ],
+        "distance_m": 0.3350577686635593,
+        "segment_index": 1413,
+        "fraction": 0.4005525701311084
+      },
+      "closest_time_minus_planned_hit_s": 0.20336261315079995,
+      "timing_sensitivity_plus_minus_50ms_error_range_m": [
+        0.6644054267309187,
+        0.8332802680884365
+      ],
+      "timing_sensitivity_note": "Illustrative time shifts, not a confidence interval or clock-error bound",
+      "missing_tip_samples_near_expected_hit": 0,
+      "median_prelaunch_drone_to_markers_m": [
+        0.11752459347497775,
+        0.20167436352555518,
+        0.3017237490889204,
+        0.4012241264728815,
+        0.5006852959057679,
+        0.6000771757757393,
+        0.699178932699539,
+        0.7995631181656604,
+        0.8988456560155136,
+        0.9989297219680296
+      ]
+    },
+    {
+      "trial": "whip1_003",
+      "target_m": [
+        1.0,
+        0.0,
+        1.4
+      ],
+      "tip_marker": "cable1:c10",
+      "start_controller_s": 16.63312077522278,
+      "start_optitrack_s": 16.5975965561147,
+      "offset_s": 0.03552421910808016,
+      "alignment_rms_m": 0.009649033586761755,
+      "observed_reference_duration_s": 0.6670365333557129,
+      "recorded_reference_samples": 20,
+      "intended_reference_samples": 25,
+      "expected_hit_time_s": 0.78,
+      "measured_tip_at_expected_hit_m": [
+        0.2987361076213754,
+        0.04055780512945285,
+        1.836938109864775
+      ],
+      "target_error_xyz_m": [
+        -0.7012638923786245,
+        0.04055780512945285,
+        0.4369381098647751
+      ],
+      "target_error_3d_m": 0.8272429474846794,
+      "planned_tip_at_expected_hit_m": [
+        0.9546944465351797,
+        0.002177847880707231,
+        1.380620923919269
+      ],
+      "measured_minus_planned_tip_xyz_m": [
+        -0.6559583389138042,
+        0.038379957248745614,
+        0.45631718594550597
+      ],
+      "measured_minus_planned_tip_3d_m": 0.7999873359611377,
+      "error_at_source_closest_time_m": 0.8127327842987502,
+      "closest_during_intended_sequence": {
+        "time_s": 0.8,
+        "position_m": [
+          0.34895380234034734,
+          0.03739587697811412,
+          1.852172181895339
+        ],
+        "error_xyz_m": [
+          -0.6510461976596527,
+          0.03739587697811412,
+          0.45217218189533903
+        ],
+        "distance_m": 0.7935485399029132,
+        "segment_index": 1115,
+        "fraction": 0.7596556114699516
+      },
+      "closest_during_recorded_commands": {
+        "time_s": 0.6670365333557129,
+        "position_m": [
+          0.03896765198475973,
+          0.05782218058416301,
+          1.6550129852985673
+        ],
+        "error_xyz_m": [
+          -0.9610323480152403,
+          0.05782218058416301,
+          0.2550129852985674
+        ],
+        "distance_m": 0.9959709841004811,
+        "segment_index": 1102,
+        "fraction": 0.46330894704107783
+      },
+      "closest_through_half_second_after_cutoff": {
+        "time_s": 1.012403443885301,
+        "position_m": [
+          1.032511,
+          9.200000000000007e-05,
+          1.694516
+        ],
+        "error_xyz_m": [
+          0.03251099999999996,
+          9.200000000000007e-05,
+          0.294516
+        ],
+        "distance_m": 0.29630499125225684,
+        "segment_index": 1136,
+        "fraction": 1.0
+      },
+      "closest_time_minus_planned_hit_s": 0.23240344388530088,
+      "timing_sensitivity_plus_minus_50ms_error_range_m": [
+        0.7387125579598374,
+        0.9069228091087154
+      ],
+      "timing_sensitivity_note": "Illustrative time shifts, not a confidence interval or clock-error bound",
+      "missing_tip_samples_near_expected_hit": 0,
+      "median_prelaunch_drone_to_markers_m": [
+        0.11781920181804009,
+        0.2018858396141176,
+        0.3021781184425977,
+        0.40224223782110624,
+        0.5013331546952509,
+        0.601014342095179,
+        0.7002137772750228,
+        0.8003616907890627,
+        0.899304440390658,
+        0.9987671437156991
+      ]
+    }
+  ],
+  "sources": [
+    {
+      "path": "data/adaptation_rounds/adaptation0/round.json",
+      "sha256": "0452bcce7407757bbab699b17fa26b0a7c05a8a2f09d6f5d540e0da05ae25455"
+    },
+    {
+      "path": "runs/rehearsals/20260906-222405-804438/plan_001/plan.json",
+      "sha256": "49646353c4bb5734b3c84299747e3acf51493637a8bccd30e21ccd6307f7bbe4"
+    },
+    {
+      "path": "runs/rehearsals/20260906-222405-804438/plan_001/fullstate.json",
+      "sha256": "439fced264c7c5bf9b5fb16c4c1b03388af94fa1af2f3787807b15cb07552f25"
+    },
+    {
+      "path": "runs/rehearsals/20260906-222405-804438/rehearsal_task.json",
+      "sha256": "85e0e27fc643be4bb9f350dc3f68fc3160c310ccfeda974924209c4b58e64fea"
+    },
+    {
+      "path": "data/adaptation_rounds/adaptation0/reference/fullstate_30hz.csv",
+      "sha256": "2f53b06af9849c2ac6053b29f16eeec34f12fd2e83dfe7e2c9c144145f43f81f"
+    },
+    {
+      "path": "runs/rehearsals/20260906-222405-804438/plan_001/fullstate_30hz.csv",
+      "sha256": "2f53b06af9849c2ac6053b29f16eeec34f12fd2e83dfe7e2c9c144145f43f81f"
+    },
+    {
+      "path": "runs/rehearsals/20260906-222405-804438/plan_001/plan.npz",
+      "sha256": "a4e92b07a80df6f29f2f89293be80ff9e735d60127f8ff17448ab9b3eb8f6c83"
+    },
+    {
+      "path": "runs/rehearsals/20260906-222405-804438/plan_001/fullstate_source.npz",
+      "sha256": "ca15aaf91abcac9a958a1f8eae48a9985752766a0016ae9a5e667a8d7af47808"
+    },
+    {
+      "path": "data/adaptation_rounds/adaptation0/raw/whip1_001/whip1_001.csv",
+      "sha256": "b6b7f01d81e6b7e490cd321f4fd6390207dc15ba8246de190901f9e0f47100c5"
+    },
+    {
+      "path": "data/adaptation_rounds/adaptation0/raw/whip1_001/experiment_whip1_001.csv",
+      "sha256": "0b3dca254c83b03546c8f570b8cb202bb89efe5e2560c1adb16fab1cbd026ec6"
+    },
+    {
+      "path": "data/adaptation_rounds/adaptation0/raw/whip1_001/whip1_001.csv",
+      "sha256": "b6b7f01d81e6b7e490cd321f4fd6390207dc15ba8246de190901f9e0f47100c5"
+    },
+    {
+      "path": "data/adaptation_rounds/adaptation0/processed/20260907-194802-922485/whip1_001/quality.json",
+      "sha256": "2e93dad21915e6c82230ebb5cc6a9edcb13ec5abb9ca2a56147707064b79378f"
+    },
+    {
+      "path": "data/adaptation_rounds/adaptation0/processed/20260907-194802-922485/whip1_001/dataset.npz",
+      "sha256": "c1b57e4e7e11da28637c2d2557c098063c097ecd66da452aa36d888977cd81bd"
+    },
+    {
+      "path": "data/adaptation_rounds/adaptation0/raw/whip1_002/whip1_002.csv",
+      "sha256": "4749d4e9e0d4246d2150784faf08dc9e4e964b88725fbc359a9401ed7310a7b9"
+    },
+    {
+      "path": "data/adaptation_rounds/adaptation0/raw/whip1_002/experiment_whip1_002.csv",
+      "sha256": "b22a953e6b15c9784f35361e0816c8bfa2b0a1178cf281b882362a66438ef2e5"
+    },
+    {
+      "path": "data/adaptation_rounds/adaptation0/raw/whip1_002/whip1_002.csv",
+      "sha256": "4749d4e9e0d4246d2150784faf08dc9e4e964b88725fbc359a9401ed7310a7b9"
+    },
+    {
+      "path": "data/adaptation_rounds/adaptation0/processed/20260907-194802-922485/whip1_002/quality.json",
+      "sha256": "b024c796e593b23cbec048ebd3d862eb2e5894a3f85d112a3ab786a97e15f532"
+    },
+    {
+      "path": "data/adaptation_rounds/adaptation0/processed/20260907-194802-922485/whip1_002/dataset.npz",
+      "sha256": "ed5157b026c3310ae23f3b95179123e665079886e119de13da55f5f33d6549a9"
+    },
+    {
+      "path": "data/adaptation_rounds/adaptation0/raw/whip1_003/whip1_003.csv",
+      "sha256": "4f98624de55a5f07b5aed5d7ccd4bd31914b1654eef76b61f41441b29f41d06f"
+    },
+    {
+      "path": "data/adaptation_rounds/adaptation0/raw/whip1_003/experiment_whip1_003.csv",
+      "sha256": "4f52038d547f2271791d41a5569afc09b7249e2b2353cbd3255cb6ddc3229fda"
+    },
+    {
+      "path": "data/adaptation_rounds/adaptation0/raw/whip1_003/whip1_003.csv",
+      "sha256": "4f98624de55a5f07b5aed5d7ccd4bd31914b1654eef76b61f41441b29f41d06f"
+    },
+    {
+      "path": "data/adaptation_rounds/adaptation0/processed/20260907-194802-922485/whip1_003/quality.json",
+      "sha256": "8849b3e2922d33425d48c4c7b982327703d6ced53c9135013d3770093d9ddebc"
+    },
+    {
+      "path": "data/adaptation_rounds/adaptation0/processed/20260907-194802-922485/whip1_003/dataset.npz",
+      "sha256": "036cbcd64c22e441584cd107a1f7166ba5ae45e4b9dfb2eaa7c19c88bea4fce7"
+    }
+  ]
+}

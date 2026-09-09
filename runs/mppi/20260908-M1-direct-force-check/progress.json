@@ -1,0 +1,32 @@
+{
+  "best_score": 28.747367038696915,
+  "closest_tip_m": 0.37823937209005554,
+  "effective_sample_size": 4.946317957795876,
+  "evaluated_candidates": 18,
+  "feasible_fraction": 1.0,
+  "iteration": 2,
+  "label": "MPPI force iteration 2/2 · PPO return 28.75",
+  "maximum_weight": 0.33062003653020644,
+  "model_feasible_fraction": 1.0,
+  "proposal_samples": 16,
+  "reward_components": {
+    "forward_return": 0.0,
+    "invalid_tip_entry": 0.0,
+    "maximum_displacement": -37.67802959796575,
+    "non_tip_first": 0.0,
+    "numerical_failure": 0.0,
+    "point_displacement_integral": -0.5667667515663293,
+    "progress": 45.18476871183102,
+    "recovery": 0.0,
+    "release": 0.0,
+    "strike_quality": 15.001148623419775,
+    "success": 0.0,
+    "terminal_displacement": 0.0,
+    "time": -0.09999999999999999,
+    "timeout": 0.0
+  },
+  "step": 2,
+  "success_fraction": 0.0,
+  "temperature": 20.0,
+  "total": 2
+}

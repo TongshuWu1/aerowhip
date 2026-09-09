@@ -1,0 +1,269 @@
+{
+  "active_model_changed": false,
+  "all_results": {
+    "fold_2": {
+      "both_residuals/fig8_002": {
+        "initial_marker_rmse_m": 0.005689217524768964,
+        "marker_rmse_m": 0.036082892735048035,
+        "objective": 0.026585853534719983,
+        "starts": [
+          236,
+          621,
+          1142,
+          2052,
+          2357,
+          2792
+        ],
+        "tip_rmse_m": 0.05076053424943219,
+        "windows": 6
+      },
+      "both_residuals/fig8vertical_002": {
+        "initial_marker_rmse_m": 0.006677968822098999,
+        "marker_rmse_m": 0.036867607478062385,
+        "objective": 0.027771258815147557,
+        "starts": [
+          243,
+          983,
+          1523,
+          3768,
+          4248,
+          5058
+        ],
+        "tip_rmse_m": 0.052381327631636214,
+        "windows": 6
+      },
+      "both_residuals/osc_002": {
+        "initial_marker_rmse_m": 0.006256388708120907,
+        "marker_rmse_m": 0.035208241967135685,
+        "objective": 0.027562669779667894,
+        "starts": [
+          161,
+          341,
+          401,
+          3035,
+          3115,
+          3380
+        ],
+        "tip_rmse_m": 0.04573302725499474,
+        "windows": 6
+      },
+      "both_residuals/whip1_002": {
+        "initial_marker_rmse_m": 0.0062756374582477225,
+        "marker_rmse_m": 0.09468909998906486,
+        "objective": 0.052328124477079095,
+        "starts": [
+          336,
+          371,
+          561,
+          1131,
+          1136,
+          1266
+        ],
+        "tip_rmse_m": 0.15051696931850633,
+        "windows": 6
+      },
+      "nominal_drone_physics_cable/fig8_002": {
+        "initial_marker_rmse_m": 0.005689217524768964,
+        "marker_rmse_m": 0.05173074705390961,
+        "objective": 0.036007869701883286,
+        "starts": [
+          236,
+          621,
+          1142,
+          2052,
+          2357,
+          2792
+        ],
+        "tip_rmse_m": 0.08118014393324842,
+        "windows": 6
+      },
+      "nominal_drone_physics_cable/fig8vertical_002": {
+        "initial_marker_rmse_m": 0.006677968822098999,
+        "marker_rmse_m": 0.038401434670244844,
+        "objective": 0.029479690228302217,
+        "starts": [
+          243,
+          983,
+          1523,
+          3768,
+          4248,
+          5058
+        ],
+        "tip_rmse_m": 0.05808704943467423,
+        "windows": 6
+      },
+      "nominal_drone_physics_cable/osc_002": {
+        "initial_marker_rmse_m": 0.006256388708120907,
+        "marker_rmse_m": 0.04451025369868209,
+        "objective": 0.03390153103775893,
+        "starts": [
+          161,
+          341,
+          401,
+          3035,
+          3115,
+          3380
+        ],
+        "tip_rmse_m": 0.06459316908365137,
+        "windows": 6
+      },
+      "nominal_drone_physics_cable/whip1_002": {
+        "initial_marker_rmse_m": 0.0062756374582477225,
+        "marker_rmse_m": 0.10432602927226158,
+        "objective": 0.05493395897529397,
+        "starts": [
+          336,
+          371,
+          561,
+          1131,
+          1136,
+          1266
+        ],
+        "tip_rmse_m": 0.1762256869352579,
+        "windows": 6
+      },
+      "nominal_drone_residual_cable/fig8_002": {
+        "initial_marker_rmse_m": 0.005689217524768964,
+        "marker_rmse_m": 0.03875500899580136,
+        "objective": 0.029181261341797236,
+        "starts": [
+          236,
+          621,
+          1142,
+          2052,
+          2357,
+          2792
+        ],
+        "tip_rmse_m": 0.054682187774502754,
+        "windows": 6
+      },
+      "nominal_drone_residual_cable/fig8vertical_002": {
+        "initial_marker_rmse_m": 0.006677968822098999,
+        "marker_rmse_m": 0.03404688343875916,
+        "objective": 0.026616530221464388,
+        "starts": [
+          243,
+          983,
+          1523,
+          3768,
+          4248,
+          5058
+        ],
+        "tip_rmse_m": 0.048026842686207064,
+        "windows": 6
+      },
+      "nominal_drone_residual_cable/osc_002": {
+        "initial_marker_rmse_m": 0.006256388708120907,
+        "marker_rmse_m": 0.0305770502691127,
+        "objective": 0.024713703229817804,
+        "starts": [
+          161,
+          341,
+          401,
+          3035,
+          3115,
+          3380
+        ],
+        "tip_rmse_m": 0.03951224523810274,
+        "windows": 6
+      },
+      "nominal_drone_residual_cable/whip1_002": {
+        "initial_marker_rmse_m": 0.0062756374582477225,
+        "marker_rmse_m": 0.09073935074621507,
+        "objective": 0.05013361782181257,
+        "starts": [
+          336,
+          371,
+          561,
+          1131,
+          1136,
+          1266
+        ],
+        "tip_rmse_m": 0.14456848277290407,
+        "windows": 6
+      },
+      "residual_drone_physics_cable/fig8_002": {
+        "initial_marker_rmse_m": 0.005689217524768964,
+        "marker_rmse_m": 0.05329903490359024,
+        "objective": 0.03606402156289147,
+        "starts": [
+          236,
+          621,
+          1142,
+          2052,
+          2357,
+          2792
+        ],
+        "tip_rmse_m": 0.08430441878296173,
+        "windows": 6
+      },
+      "residual_drone_physics_cable/fig8vertical_002": {
+        "initial_marker_rmse_m": 0.006677968822098999,
+        "marker_rmse_m": 0.04214532264995441,
+        "objective": 0.03093593282104166,
+        "starts": [
+          243,
+          983,
+          1523,
+          3768,
+          4248,
+          5058
+        ],
+        "tip_rmse_m": 0.06378495944219911,
+        "windows": 6
+      },
+      "residual_drone_physics_cable/osc_002": {
+        "initial_marker_rmse_m": 0.006256388708120907,
+        "marker_rmse_m": 0.047315538370810886,
+        "objective": 0.03518460447357822,
+        "starts": [
+          161,
+          341,
+          401,
+          3035,
+          3115,
+          3380
+        ],
+        "tip_rmse_m": 0.06814390523754389,
+        "windows": 6
+      },
+      "residual_drone_physics_cable/whip1_002": {
+        "initial_marker_rmse_m": 0.0062756374582477225,
+        "marker_rmse_m": 0.10869726665071505,
+        "objective": 0.057016492790129505,
+        "starts": [
+          336,
+          371,
+          561,
+          1131,
+          1136,
+          1266
+        ],
+        "tip_rmse_m": 0.18297798818997146,
+        "windows": 6
+      }
+    }
+  },
+  "cross_fitted_equal_take": {
+    "both_residuals": {
+      "marker_rmse_m": 0.05071196054232774,
+      "tip_rmse_m": 0.07484796461364238
+    },
+    "nominal_drone_physics_cable": {
+      "marker_rmse_m": 0.059742116173774534,
+      "tip_rmse_m": 0.09502151234670797
+    },
+    "nominal_drone_residual_cable": {
+      "marker_rmse_m": 0.04852957336247207,
+      "tip_rmse_m": 0.07169743961792915
+    },
+    "residual_drone_physics_cable": {
+      "marker_rmse_m": 0.06286429064376764,
+      "tip_rmse_m": 0.09980281791316904
+    }
+  },
+  "horizon_s": 2.0,
+  "independent_test": false,
+  "interpretation": "Development whole-take command-to-cable predictions; no future measured drone or cable state after initialization",
+  "ppo_started": false
+}

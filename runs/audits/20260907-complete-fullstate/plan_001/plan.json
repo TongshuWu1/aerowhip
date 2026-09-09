@@ -1,0 +1,37 @@
+{
+  "initialization": "assumed_vertical_cable",
+  "simulation_only": true,
+  "state_time_s": 11.69,
+  "planning_wall_seconds": 1.3830081000014616,
+  "policy_sha256": "18f33e89fea72e683c40359853e40710f52ecb45623d53669ed6e240334078d7",
+  "planning_device": "cuda",
+  "target_changed_during_planning": false,
+  "schema": "frozen_open_loop_force_plan_v1",
+  "flight_ready": false,
+  "physics_dt_s": 0.01,
+  "policy_dt_s": 0.05,
+  "cutoff_s": 0.8,
+  "target_position_m": [
+    1.0,
+    0.0,
+    1.4
+  ],
+  "desired_strike_direction_world": [
+    1.0,
+    0.0,
+    0.0
+  ],
+  "force_units": "N",
+  "frame": "verified_common_world_z_up_required",
+  "gravity_convention": "total commanded thrust vector; simulator applies gravity separately",
+  "controller_export": {
+    "mass_kg": 0.175,
+    "gravity_m_s2": 9.80665,
+    "frame": "world_z_up",
+    "force_file": "controller_force.csv",
+    "acceleration_file": "controller_acceleration.csv",
+    "force_convention": "F_policy - [0, 0, controller_mass * gravity]",
+    "acceleration_convention": "controller_force / controller_mass",
+    "total_force_file": "commands.csv"
+  }
+}

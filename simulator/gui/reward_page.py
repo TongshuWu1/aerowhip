@@ -55,6 +55,7 @@ WEIGHT_FIELDS = (
 SCALE_FIELDS = (
     ("proximity_scale_m", "Target proximity width", " m", 0.08),
     ("directed_speed_reward_cap_m_s", "Speed shaping cap", " m/s", 4.0),
+    ("relative_directed_speed_reward_cap_m_s", "Combined reward: relative speed cap", " m/s", 6.0),
     ("forward_excursion_scale_m", "Forward excursion scale", " m", 0.35),
     ("point_backward_speed_scale_m_s", "Point return-speed scale", " m/s", 1.0),
     ("relative_tip_forward_speed_scale_m_s", "Relative tip-speed scale", " m/s", 4.0),
@@ -76,11 +77,13 @@ class RewardSettingsPage(QWidget):
         project_root: Path,
         ppo_config: dict[str, Any],
         parent: QWidget | None = None,
+        config_directory: Path | None = None,
     ) -> None:
         super().__init__(parent)
         self.project_root = project_root
+        self.config_directory = Path(config_directory) if config_directory else project_root/'config'
         self.ppo_config = ppo_config
-        self.task_config = json.loads((project_root / "config/task.json").read_text(encoding="utf-8"))
+        self.task_config = json.loads((self.config_directory / 'task.json').read_text(encoding="utf-8"))
         self.spins: dict[str, QDoubleSpinBox] = {}
         self.hit_spins: dict[str, QDoubleSpinBox] = {}
         self.task_spins = {}
@@ -90,6 +93,12 @@ class RewardSettingsPage(QWidget):
         self._saved_hit: dict[str, float] = {}
         self._loading = True
         self._build_ui()
+        model_path=self.config_directory/'model.json'
+        saved_model=json.loads(model_path.read_text(encoding='utf-8')) if model_path.is_file() else {}
+        self.native_fullstate = saved_model.get('fullstate_execution',{}).get('schema')=='tracked_pose_execution_v1'
+        if self.native_fullstate:
+            self.task_spins[('control_dt_s',None)].setEnabled(False)
+            self.task_spins[('control_dt_s',None)].setToolTip('Native 30 Hz force / FullState contract. A different clock requires a separately designed model.')
         self._load_values(ppo_config["reward"])
 
     def _build_ui(self) -> None:
@@ -120,7 +129,7 @@ class RewardSettingsPage(QWidget):
         layout.setContentsMargins(0, 0, 8, 0)
         layout.setSpacing(16)
 
-        contract = self._note('Shared by PPO and SAC: hover → capture drone + cable state → execute one planned force sequence → recover. '
+        contract = self._note('Plan from the initial state and known target, then execute one frozen sequence. '
                               'Hit conditions score the simulation. Real execution ends at the planned cutoff; it does not wait for hit feedback.')
         layout.addWidget(contract)
         setup = QGroupBox('Strike task')
@@ -193,8 +202,19 @@ class RewardSettingsPage(QWidget):
         self.speed_reference=QComboBox()
         self.speed_reference.addItem('World frame (impact speed)','world')
         self.speed_reference.addItem('Relative to drone','attachment_relative')
+        self.speed_reference.addItem('World × relative to attachment','world_and_attachment_relative')
         self.speed_reference.currentIndexChanged.connect(self._refresh_summary)
         scales_form.addRow('Speed reward reference',self.speed_reference)
+        self.allowance_mode = QComboBox()
+        self.allowance_mode.addItem('Charge all displacement', 'none')
+        self.allowance_mode.addItem('Required reach + preparation margin', 'required_reach_plus_margin')
+        self.allowance_mode.currentIndexChanged.connect(self._refresh_summary)
+        scales_form.addRow('Travel allowance', self.allowance_mode)
+        margin = self._make_spin(suffix=' m', minimum=0., maximum=5.)
+        self.spins['displacement_allowance_margin_m'] = margin
+        self._field(scales_form, 'Preparation margin',
+            'No travel cost inside max(0, start-to-target distance − cable length − hit radius) + margin. '
+            'Uses each sampled target and initial attachment. This is a soft reward allowance, not a workspace safety limit.', margin)
         for key, label, suffix, _default in SCALE_FIELDS:
             spin = self._make_spin(suffix=suffix, minimum=0.001, maximum=1000.0)
             self._field(scales_form, label, FIELD_HELP[key], spin)
@@ -257,10 +277,16 @@ class RewardSettingsPage(QWidget):
         return spin
 
     def _load_values(self, reward: dict[str, Any]) -> None:
-        reward = {'maximum_displacement_weight':0.,**reward}
+        reward = {'maximum_displacement_weight':0., 'relative_directed_speed_reward_cap_m_s':6.,
+                  'displacement_allowance_margin_m':0., **reward}
         self._loading = True
         deployment = self.ppo_config.get('deployment', {})
-        if deployment.get('enabled', False):
+        if self.native_fullstate:
+            self.execution_note.setText('Native 30 Hz force plan → frozen FullState reference → fitted drone and cable, both residuals. '
+                'Preparation is included in the maximum plan duration; gentle recovery is appended only during export. '
+                'Combined speed shaping rewards forward world tip motion and forward tip motion relative to the attachment together. '
+                'The geometric travel allowance is a lower-bound estimate, not proof that a trajectory is reachable.')
+        elif deployment.get('enabled', False):
             self.execution_note.setText(
                 f"Saved execution settings: {1000 * deployment.get('strike_followthrough_s', 0.):g} ms fixed follow-through · "
                 f"{deployment['recovery_duration_s']:g} s PID recovery allowance · "
@@ -269,6 +295,7 @@ class RewardSettingsPage(QWidget):
         else:
             self.execution_note.setText('')
         self.speed_reference.setCurrentIndex(self.speed_reference.findData(reward.get('directed_speed_shaping_reference','attachment_relative')))
+        self.allowance_mode.setCurrentIndex(self.allowance_mode.findData(reward.get('displacement_allowance_mode','none')))
         for key, spin in self.spins.items():
             spin.blockSignals(True)
             spin.setValue(float(reward[key]))
@@ -288,7 +315,8 @@ class RewardSettingsPage(QWidget):
 
     def _reward_values(self) -> dict[str, float]:
         return {**{key: spin.value() for key, spin in self.spins.items()},
-                'directed_speed_shaping_reference':self.speed_reference.currentData()}
+                'directed_speed_shaping_reference':self.speed_reference.currentData(),
+                'displacement_allowance_mode':self.allowance_mode.currentData()}
 
     def _hit_values(self) -> dict[str, float]:
         return {key: spin.value() for key, spin in self.hit_spins.items()}
@@ -319,18 +347,23 @@ class RewardSettingsPage(QWidget):
     @staticmethod
     def _equation(values: dict[str, float], *, multiline: bool) -> str:
         separator = "\n" if multiline else " "
+        displacement = ('max(0, displacement − required-reach allowance − preparation margin)'
+                        if values.get('displacement_allowance_mode') == 'required_reach_plus_margin' else 'point displacement')
+        quality = ('proximity × world-speed quality × attachment-relative-speed quality'
+                   if values.get('directed_speed_shaping_reference') == 'world_and_attachment_relative'
+                   else f"near-target {values.get('directed_speed_shaping_reference','attachment_relative')} target-directed tip-speed quality")
         terms = (
             f"+ {values['progress_weight']:g} × Δ(best normalized tip progress)",
-            f"+ {values['strike_quality_improvement_weight']:g} × Δ(best near-target {values.get('directed_speed_shaping_reference','attachment_relative')} target-directed tip-speed quality)",
+            f"+ {values['strike_quality_improvement_weight']:g} × Δ(best {quality})",
             f"+ {values['success_bonus']:g} × first valid hit",
-            f"− {values['point_displacement_integral_weight']:g} × ∫ log1p((point displacement / {values['displacement_cost_scale_m']:g} m)²) dt",
+            f"− {values['point_displacement_integral_weight']:g} × ∫ log1p(({displacement} / {values['displacement_cost_scale_m']:g} m)²) dt",
             f"+ {values['success_forward_return_bonus_weight']:g} × successful return quality",
             f"+ {values['success_release_bonus_weight']:g} × successful release quality",
             f"− {values['non_tip_first_penalty']:g} × non-tip-first",
             f"− {values['invalid_tip_entry_penalty']:g} × invalid tip entry",
             f"− {values['timeout_penalty']:g} × timeout",
             f"− {values['terminal_displacement_weight']:g} × successful terminal displacement cost",
-            f"− {values.get('maximum_displacement_weight',0):g} × log1p((maximum drone displacement / {values['displacement_cost_scale_m']:g} m)²)",
+            f"− {values.get('maximum_displacement_weight',0):g} × max log1p(({displacement} / {values['displacement_cost_scale_m']:g} m)²)",
             f"− {values['time_to_success_weight_per_s']:g} × elapsed seconds",
             f"− {values['numerical_failure_penalty']:g} × numerical failure",
             "+ 0 × impact-angle quality",
@@ -338,10 +371,10 @@ class RewardSettingsPage(QWidget):
         return separator.join(terms)
 
     def reload_saved(self) -> None:
-        path = self.project_root / "config" / "ppo.json"
+        path = self.config_directory / "ppo.json"
         try:
             config = json.loads(path.read_text(encoding="utf-8"))
-            self.task_config = json.loads((self.project_root / 'config/task.json').read_text(encoding='utf-8'))
+            self.task_config = json.loads((self.config_directory / 'task.json').read_text(encoding='utf-8'))
             self.ppo_config.clear()
             self.ppo_config.update(config)
             self._load_values(config["reward"])
@@ -352,8 +385,8 @@ class RewardSettingsPage(QWidget):
 
     def save_settings(self) -> None:
         values = self._reward_values()
-        ppo_path = self.project_root / "config" / "ppo.json"
-        task_path = self.project_root / "config" / "task.json"
+        ppo_path = self.config_directory / "ppo.json"
+        task_path = self.config_directory / "task.json"
         try:
             # Merge this editor's fields into the latest saved config. Do not
             # overwrite training controls changed elsewhere since the page loaded.
@@ -374,7 +407,7 @@ class RewardSettingsPage(QWidget):
                 raise ValueError('The hit direction must be nonzero.')
             from run_ppo import validate_contract
             from simulator.workflow import read_json, stamp
-            validate_contract(read_json(self.project_root / 'config/model.json'), task, config)
+            validate_contract(read_json(self.config_directory / 'model.json'), task, config)
             task.setdefault("reward", {})["angle_shaping_weight"] = 0.0
             task["reward"]["angle_is_binary_success_gate_only"] = True
             atomic_json(ppo_path, config)

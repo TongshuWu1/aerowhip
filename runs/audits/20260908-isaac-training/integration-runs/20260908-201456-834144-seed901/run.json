@@ -1,0 +1,21 @@
+{
+  "algorithm": "PPO",
+  "baseline": {
+    "schema": "tracked_pose_execution_v1",
+    "source_job": "20260908-064040-669809"
+  },
+  "config_sha256": {
+    "model": "41ccf4c17345d81b8b05c090c6d38199e439019938671117084bb3c45c79c9a3",
+    "ppo": "92bbc455cd433bffacefc8954d3c5f7effb5e121bae8ed190fc8960f5b6f5a53",
+    "task": "615e7812cd2e6b4766145d15ff2a15bf141950c08d8237fec0dbd13ab4f833e4"
+  },
+  "deployment_amendment": null,
+  "display_name": "Isaac Lab integration test",
+  "resumed_from": null,
+  "reward_amendment": null,
+  "schema": "point_force_training_run_v1",
+  "seed": 901,
+  "task_amendment": null,
+  "target_episodes": 8,
+  "collection_batch": 4
+}

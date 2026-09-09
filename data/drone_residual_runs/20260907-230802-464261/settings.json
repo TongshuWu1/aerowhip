@@ -1,0 +1,22 @@
+{
+  "acceleration_limit": 2.0,
+  "delay_candidates_s": [
+    0.0,
+    0.02,
+    0.04,
+    0.06,
+    0.08,
+    0.1
+  ],
+  "device": "cuda",
+  "hidden": 32,
+  "history_s": 0.05,
+  "interval_s": [
+    -0.2,
+    1.2
+  ],
+  "learning_rate": 0.001,
+  "penalty": 0.001,
+  "seed": 1729,
+  "updates": 160
+}

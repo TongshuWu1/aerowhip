@@ -1,0 +1,27 @@
+{
+  "corrected_initialization_feasible": true,
+  "corrected_score": -63.71217178440118,
+  "diagnostics": {
+    "closest_tip_m": 0.4422112023968405,
+    "prediction_feasible_fraction": 0.5,
+    "reference_feasible_fraction": 0.5,
+    "success_fraction": 0.0
+  },
+  "exported": false,
+  "launch": {
+    "initial_tracking_origin_m": [
+      0.0,
+      0.0,
+      1.225
+    ],
+    "target_position_m": [
+      1.5,
+      0.0,
+      1.1
+    ]
+  },
+  "model_sha256": "ee99478f670ae36cd21ca15095b52251d394a761ac9b044369845c6e0cb02d5a",
+  "old_initialization_feasible": false,
+  "optimized": false,
+  "seed_unchanged": true
+}

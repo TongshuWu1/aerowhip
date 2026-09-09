@@ -1,0 +1,61 @@
+{
+  "completed_utc": "2026-08-28T21:23:17.894211+00:00",
+  "elapsed_s": 347.2589006999624,
+  "fit_directory": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\fit_results_decomposed\\2026-08-28T200529.563705+0000_e828f6b1",
+  "freeze": {
+    "artifact_manifest_sha256": "784fd0fe93281ce688ac5e4fd2f0d11ef6bcc759a4e46a137e8b3ab65d7e7a1a",
+    "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\model_freezes\\MODEL_FREEZE_DECOMPOSED_PRETEST",
+    "source": {
+      "aggregate_source_sha256": "d34f1550d0d1e271ceb99298660d6028d18b5e23bcaead2fd0f917f96efc8d8f",
+      "files": {
+        "config/default.json": "e976eb498f506c5670b87a26439f86ad5cd566874df6cfe8e28916f247623ae3",
+        "fitting/config.py": "7630f05c4b80723372ffa4fc28c64b286bd4cd1dbdb33b7bd569fd82786819c9",
+        "fitting/decomposed.py": "d9d791b3469bddfed96d6dfd7f47a23db6f2ff28edbcf93d66d7de31d226612a",
+        "fitting/default_fit.json": "a484642a3ad0e61b9d77eb21cdbeb00ce5e37486c883c2525fc6071bc80c299d",
+        "fitting/episodes.py": "2955d3c0e1201fa8234f15bc0c9915db4158e69c4747cf3cbe7c50d266d782af",
+        "fitting/initialization.py": "f361533f9f7a7b3b5f0f6916a736a6e8694d32822b7f119f89bb40b45a9edff4",
+        "run_milestone3c.py": "dac1aae1e8415dbae6c0f709cf28004bfa7c25a7bc153109dea9143411ccc095",
+        "simulator/cable/cuda_fixed_pcg.py": "0914c8067309e06ead47c5c85f305f46fe9866e5cfa4b0fa3eaf96758e17b5fd",
+        "simulator/cable/dder.py": "3e3f18c6ab9e512f2c3c068f88cfcf950db2354ce378c8c7758dbdb40e06775d",
+        "simulator/coupling/attachment.py": "2ec33209eacbd551f01605eec6e854b8d45a54dade6bb3fccfae9db3a5591c75",
+        "simulator/coupling/root_boundary.py": "7b326089a49585f18c323d03501d12352fa154a2c91b318d3f7ef18e6b215672",
+        "simulator/parameters.py": "6521373c1b89205c512f6859ecb37032b5f454d2f02551a47d484322d94e57ba",
+        "simulator/simulator.py": "409ba74483a3d9f2799198359e639fd403db760395b8fda27b66a9357c2a81ae",
+        "simulator/uav/model.py": "8f22de3f97a684204f56afed1bce0ecc6803deaa84f111132cadedaa841cf193",
+        "simulator/uav/residual.py": "f52fe21c9220a1f792d218891244d0ef5fac6521c77606df4da7ad505b30a84e"
+      },
+      "git_commit": "cbdb59b4f05472506599b6f7e08be08e05541ff3",
+      "working_tree_dirty": true,
+      "working_tree_status_sha256": "a7c21767c5c79a8ebcb4c9b575d83992050254eed3cdd0ce9340e01f04dbbf67"
+    }
+  },
+  "protected_test_predictively_evaluated": false,
+  "resumed": true,
+  "runtime_consumed_before_resume_s": 3410.5195076999953,
+  "schema": "milestone3c_execution_status_v1",
+  "stages": {
+    "cable_physics_fit": {
+      "runtime_s": 272.9125270000077,
+      "status": "complete"
+    },
+    "end_to_end_validation": {
+      "status": "complete"
+    },
+    "preflight": {
+      "status": "complete",
+      "training_episodes": 21,
+      "validation_episodes": 3
+    },
+    "uav_physics_fit": {
+      "runtime_s": 1290.3840669000056,
+      "status": "complete"
+    },
+    "uav_residual_fit": {
+      "runtime_s": 1847.222913799982,
+      "status": "complete"
+    }
+  },
+  "started_utc": "2026-08-28T21:17:30.634794+00:00",
+  "status": "complete",
+  "wall_clock_limit_s": 5400.0
+}

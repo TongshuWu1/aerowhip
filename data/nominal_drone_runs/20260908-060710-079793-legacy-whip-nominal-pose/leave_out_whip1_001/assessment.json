@@ -1,0 +1,154 @@
+{
+  "training_takes": [
+    "whip1_002",
+    "whip1_003"
+  ],
+  "held_out_take": "whip1_001",
+  "parameters": {
+    "kp_xy": 11.448091219149061,
+    "kp_z": 20.83851969128258,
+    "kd_xy": 4.107826423271454,
+    "kd_z": 1.8805823061324303,
+    "feedforward_xy": 0.34631341369496915,
+    "feedforward_z": 1.9290114893200754,
+    "attitude_time_constant_s": null,
+    "delay_s": 0.06,
+    "gravity_m_s2": 9.80665
+  },
+  "scores": {
+    "whip1_001": {
+      "csv_maneuver": {
+        "origin_measured_samples": 67,
+        "origin_rmse_m": 0.02588300325270894,
+        "origin_max_m": 0.04516132602224588,
+        "origin_samples": 67,
+        "attachment_measured_samples": 67,
+        "attachment_rmse_m": null,
+        "attachment_max_m": null,
+        "attachment_samples": 0,
+        "orientation_samples": 0,
+        "orientation_rmse_deg": null
+      },
+      "post_maneuver_fullstate_hold": {
+        "origin_measured_samples": 50,
+        "origin_rmse_m": 0.16769065924933274,
+        "origin_max_m": 0.2167288502413342,
+        "origin_samples": 50,
+        "attachment_measured_samples": 50,
+        "attachment_rmse_m": null,
+        "attachment_max_m": null,
+        "attachment_samples": 0,
+        "orientation_samples": 0,
+        "orientation_rmse_deg": null
+      }
+    },
+    "whip1_002": {
+      "csv_maneuver": {
+        "origin_measured_samples": 67,
+        "origin_rmse_m": 0.024405448412566734,
+        "origin_max_m": 0.04017876848930985,
+        "origin_samples": 67,
+        "attachment_measured_samples": 67,
+        "attachment_rmse_m": null,
+        "attachment_max_m": null,
+        "attachment_samples": 0,
+        "orientation_samples": 0,
+        "orientation_rmse_deg": null
+      },
+      "post_maneuver_fullstate_hold": {
+        "origin_measured_samples": 50,
+        "origin_rmse_m": 0.19985799925981587,
+        "origin_max_m": 0.24005561967275257,
+        "origin_samples": 50,
+        "attachment_measured_samples": 50,
+        "attachment_rmse_m": null,
+        "attachment_max_m": null,
+        "attachment_samples": 0,
+        "orientation_samples": 0,
+        "orientation_rmse_deg": null
+      }
+    },
+    "whip1_003": {
+      "csv_maneuver": {
+        "origin_measured_samples": 66,
+        "origin_rmse_m": 0.02299716278378475,
+        "origin_max_m": 0.03712162520214619,
+        "origin_samples": 66,
+        "attachment_measured_samples": 66,
+        "attachment_rmse_m": null,
+        "attachment_max_m": null,
+        "attachment_samples": 0,
+        "orientation_samples": 0,
+        "orientation_rmse_deg": null
+      },
+      "post_maneuver_fullstate_hold": {
+        "origin_measured_samples": 50,
+        "origin_rmse_m": 0.16726470188047374,
+        "origin_max_m": 0.1953228871101976,
+        "origin_samples": 50,
+        "attachment_measured_samples": 50,
+        "attachment_rmse_m": null,
+        "attachment_max_m": null,
+        "attachment_samples": 0,
+        "orientation_samples": 0,
+        "orientation_rmse_deg": null
+      }
+    }
+  },
+  "convergence": {
+    "whip1_001": {
+      "position_max_difference_m": 2.284373140881816e-05,
+      "attachment_max_difference_m": null,
+      "orientation_max_difference_deg": null
+    },
+    "whip1_002": {
+      "position_max_difference_m": 2.5623410473523215e-05,
+      "attachment_max_difference_m": null,
+      "orientation_max_difference_deg": null
+    },
+    "whip1_003": {
+      "position_max_difference_m": 2.204746545942835e-05,
+      "attachment_max_difference_m": null,
+      "orientation_max_difference_deg": null
+    }
+  },
+  "evaluator_parity": {
+    "whip1_001": {
+      "status": "Unavailable: selected pose candidate rejected"
+    },
+    "whip1_002": {
+      "status": "Unavailable: selected pose candidate rejected"
+    },
+    "whip1_003": {
+      "status": "Unavailable: selected pose candidate rejected"
+    }
+  },
+  "prediction_status": {
+    "whip1_001": {
+      "status": "POSE_CANDIDATE_REJECTED",
+      "reason": "No valid attitude candidate on the fixed search grid",
+      "translation_only": true
+    },
+    "whip1_002": {
+      "status": "POSE_CANDIDATE_REJECTED",
+      "reason": "No valid attitude candidate on the fixed search grid",
+      "translation_only": true
+    },
+    "whip1_003": {
+      "status": "POSE_CANDIDATE_REJECTED",
+      "reason": "No valid attitude candidate on the fixed search grid",
+      "translation_only": true
+    }
+  },
+  "near_gain_bounds": {
+    "kp_xy": false,
+    "kp_z": false,
+    "kd_xy": false,
+    "kd_z": false,
+    "feedforward_xy": false,
+    "feedforward_z": false
+  },
+  "attitude_near_bound": null,
+  "delay_at_search_edge": false,
+  "jacobian_condition": 36.415641429855945
+}

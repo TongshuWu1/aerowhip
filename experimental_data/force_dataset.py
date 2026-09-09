@@ -108,12 +108,8 @@ def local_polynomial_derivative(
 
 
 def _normalized_rotations(quaternion_xyzw: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
-    quaternion = np.asarray(quaternion_xyzw, dtype=np.float64)
-    norm = np.linalg.norm(quaternion, axis=1)
-    valid = np.isfinite(quaternion).all(axis=1) & (norm > 1.0e-12)
-    normalized = np.full_like(quaternion, np.nan)
-    normalized[valid] = quaternion[valid] / norm[valid, None]
-    return quaternion_to_rotation_matrix_xyzw(normalized), valid
+    from simulator.geometry import normalized_rotations_xyzw
+    return normalized_rotations_xyzw(quaternion_xyzw)
 
 
 def reconstruct_dder_nodes(

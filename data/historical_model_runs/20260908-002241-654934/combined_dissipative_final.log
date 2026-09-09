@@ -1,0 +1,6 @@
+{"label": "final: predicting command-driven attachment and cable, four model combinations"}
+C:\Users\wts28\Documents\PHD\particle_filter_cable_project\.venv\Lib\site-packages\numpy\_core\fromnumeric.py:3862: RuntimeWarning: Mean of empty slice
+  return _methods._mean(a, axis=axis, dtype=dtype,
+C:\Users\wts28\Documents\PHD\particle_filter_cable_project\.venv\Lib\site-packages\numpy\_core\_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+{"label": "Combined prediction review complete", "summary": {"nominal_drone_physics_cable": {"marker_rmse_m": NaN, "tip_rmse_m": NaN}, "nominal_drone_residual_cable": {"marker_rmse_m": NaN, "tip_rmse_m": NaN}, "residual_drone_physics_cable": {"marker_rmse_m": NaN, "tip_rmse_m": NaN}, "both_residuals": {"marker_rmse_m": NaN, "tip_rmse_m": NaN}}}

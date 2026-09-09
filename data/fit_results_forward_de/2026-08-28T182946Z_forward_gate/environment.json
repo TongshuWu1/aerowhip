@@ -1,0 +1,11 @@
+{
+  "cuda_runtime": "12.8",
+  "git_commit": "cbdb59b4f05472506599b6f7e08be08e05541ff3",
+  "gpu": "NVIDIA GeForce RTX 4080",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.12.10",
+  "timing": "time.perf_counter bracketed by torch.cuda.synchronize",
+  "torch": "2.11.0+cu128",
+  "working_tree_entry_count": 1869,
+  "working_tree_status_sha256": "f519a456aa68b15c98f2dc801cf79acaf65fc03c28b6f8e8e13df3ac6c8032da"
+}

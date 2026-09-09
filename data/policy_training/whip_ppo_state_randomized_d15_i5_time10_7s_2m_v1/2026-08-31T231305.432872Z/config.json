@@ -1,0 +1,130 @@
+{
+  "schema": "simple_sequential_ppo_v1",
+  "experiment_id": "whip_ppo_state_randomized_d15_i5_time10_7s_2m_v1",
+  "model_freeze": "MODEL_FREEZE_REMEASURED_GEOMETRY_PRE_MPPI",
+  "comparison_environment": "task_whip_once_v1",
+  "success_mode": "task_whip_once",
+  "reward_mode": "whip_potential",
+  "simulator_config": "config/default.json",
+  "task_config": "config/tasks/canonical_whip_v1.json",
+  "context_normalizer": "results/common/context_normalizer.json",
+  "initialization": {
+    "type": "random_policy_value_and_optimizer",
+    "uses_previous_policy_checkpoint": false
+  },
+  "seed": 244,
+  "requested_episodes": 2000000,
+  "batch_aligned_overshoot_allowed": true,
+  "collection_batch": 2048,
+  "episode_duration_s": 7.0,
+  "control_dt_s": 0.1,
+  "physics_dt_s": 0.01,
+  "training_initial_states": {
+    "mode": "mixed_canonical_physical_bank",
+    "state_bank_root": "results/common",
+    "state_bank_stem": "training_state_bank",
+    "canonical_fraction": 0.25,
+    "physical_state_fraction": 0.75,
+    "state_distance_strata": 4,
+    "validation_holdout_count": 256,
+    "split_seed": 844,
+    "sampling_seed": 246,
+    "sampling": "equal state-distance strata without replacement inside each collection; reshuffled every collection"
+  },
+  "observation": {
+    "context_dimensions": 83,
+    "time_remaining_dimensions": 1,
+    "normalized_clip": 10.0
+  },
+  "action": {
+    "dimensions": 6,
+    "meaning": [
+      "yaw-local acceleration x",
+      "yaw-local acceleration y",
+      "yaw-local acceleration z",
+      "body roll rate",
+      "body pitch rate",
+      "body yaw rate"
+    ],
+    "maximum_acceleration_norm_m_s2": 10.0,
+    "maximum_body_rate_rad_s": 4.0,
+    "position_velocity_commands_reanchored_each_physics_step": true
+  },
+  "reported_success": {
+    "name": "single_attempt_tip_first_whip",
+    "tip_target_distance_m": 0.05,
+    "minimum_directed_tip_speed_m_s": 4.0,
+    "maximum_direction_error_deg": 30.0,
+    "first_target_entry_marker": "c10",
+    "entry_timestep_is_diagnostic_only": true,
+    "episode_continues_after_success": true,
+    "numerical_uav_limits_are_diagnostics_not_failure_gates": true
+  },
+  "reward": {
+    "equation": "25*d(best normalized progress) + 40*d(best gate-aligned strike quality) + 150*first task success - 25*non-tip-first - 15*d(robust max displacement) - 5.0*integral(robust displacement) - 10.0*seconds_before_first_success - 0.25*integral(robust UAV speed) - 0.5*normalized acceleration effort - 0.25*normalized body-rate effort - 0.05*action change^2 - 100*numerical failure",
+    "direction_shaping": "normalized sigmoid centered at 30 deg, cosine width 0.15",
+    "time_cost_semantics": "charged per simulated second until the first valid tip-first strike; failures pay through timeout; the episode still propagates for the complete horizon",
+    "progress_weight": 25.0,
+    "directed_speed_near_target_weight": 0.0,
+    "direction_near_target_weight": 0.0,
+    "uav_displacement_weight": 0.0,
+    "strike_quality_improvement_weight": 40.0,
+    "maximum_displacement_weight": 15.0,
+    "displacement_integral_weight": 5.0,
+    "time_to_success_weight_per_s": 10.0,
+    "uav_speed_integral_weight": 0.25,
+    "acceleration_effort_weight": 0.5,
+    "body_rate_effort_weight": 0.25,
+    "action_smoothness_weight": 0.05,
+    "non_tip_first_penalty": 25.0,
+    "success_bonus": 150.0,
+    "numerical_failure_penalty": 100.0,
+    "proximity_scale_m": 0.15
+  },
+  "ppo": {
+    "hidden_dim": 256,
+    "learning_rate": 0.0003,
+    "gamma": 0.99,
+    "gae_lambda": 0.95,
+    "clip_ratio": 0.2,
+    "value_coefficient": 0.5,
+    "entropy_coefficient": 0.01,
+    "maximum_gradient_norm": 0.5,
+    "target_kl": 0.02,
+    "update_epochs": 4,
+    "minibatch_transitions": 8192
+  },
+  "validation": {
+    "enabled": true,
+    "every_episodes": 10240,
+    "episodes": 256,
+    "state_bank_root": "results/common",
+    "state_bank_stem": "training_state_bank",
+    "selection_mode": "training_bank_stratified_holdout",
+    "state_selection_seed": 844,
+    "state_distance_strata": 4,
+    "maximum_distance_quantile": 1.0,
+    "numerical_batch_size": 2048,
+    "policy": "deterministic"
+  },
+  "external_evaluation": {
+    "state_bank_root": "results/common",
+    "state_bank_stem": "validation_state_bank",
+    "contexts": 512,
+    "used_for_gradients": false,
+    "used_for_checkpoint_selection": false
+  },
+  "logging": {
+    "checkpoint_every_episodes": 10240,
+    "csv_every_collection": true,
+    "print_every_collection": true
+  },
+  "prohibitions": {
+    "cem": true,
+    "demonstrations": true,
+    "behavior_cloning": true,
+    "trajectory_codec": true,
+    "protected_test": "fig8vertical_002",
+    "hardware": true
+  }
+}

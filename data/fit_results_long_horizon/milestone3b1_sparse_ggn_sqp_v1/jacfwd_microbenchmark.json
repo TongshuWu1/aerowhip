@@ -1,0 +1,16 @@
+{
+  "compatible": true,
+  "device": "cuda",
+  "elapsed_s": 162.42657789995428,
+  "error": null,
+  "finite": true,
+  "gpu": "NVIDIA GeForce RTX 4080",
+  "jacobian_shape": [
+    253,
+    7
+  ],
+  "method": "torch.func.jacfwd_all_seven_global_directions",
+  "peak_cuda_allocated_bytes": 11460096,
+  "schema": "milestone3b1_jacfwd_microbenchmark_v1",
+  "scope": "Seven global directions only; no shooting-state Jacobian blocks and no sparse KKT solve."
+}

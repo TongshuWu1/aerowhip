@@ -1,0 +1,313 @@
+{
+  "analytic_pva_max_acceleration_error": 9.277023593767808e-13,
+  "complete_prediction": {
+    "failed": false,
+    "hit_time_s": 0.79,
+    "no_recovery_objective": true,
+    "success": true
+  },
+  "drone_fit_coverage": {
+    "whip1_001": {
+      "end": 1207,
+      "maneuver_fitted_intervals": 35,
+      "maneuver_frames": 67,
+      "onset": 1140,
+      "starts_relative_s": [
+        -9.75,
+        -8.950000000000001,
+        -6.3500000000000005,
+        -0.85,
+        -0.8,
+        1.25
+      ],
+      "total_fitted_intervals": 600,
+      "unique_maneuver_frames": 20,
+      "unrepresented_relative_times_s": [
+        0.2,
+        0.21,
+        0.22,
+        0.23,
+        0.24,
+        0.25,
+        0.26,
+        0.27,
+        0.28,
+        0.29,
+        0.3,
+        0.31,
+        0.32,
+        0.33,
+        0.34,
+        0.35000000000000003,
+        0.36,
+        0.37,
+        0.38,
+        0.39,
+        0.4,
+        0.41000000000000003,
+        0.42,
+        0.43,
+        0.44,
+        0.45,
+        0.46,
+        0.47000000000000003,
+        0.48,
+        0.49,
+        0.5,
+        0.51,
+        0.52,
+        0.53,
+        0.54,
+        0.55,
+        0.56,
+        0.5700000000000001,
+        0.58,
+        0.59,
+        0.6,
+        0.61,
+        0.62,
+        0.63,
+        0.64,
+        0.65,
+        0.66
+      ]
+    },
+    "whip1_002": {
+      "end": 1383,
+      "maneuver_fitted_intervals": 37,
+      "maneuver_frames": 67,
+      "onset": 1316,
+      "starts_relative_s": [
+        -9.75,
+        -8.9,
+        -6.4,
+        -0.85,
+        -0.8,
+        0.65
+      ],
+      "total_fitted_intervals": 600,
+      "unique_maneuver_frames": 22,
+      "unrepresented_relative_times_s": [
+        0.2,
+        0.21,
+        0.22,
+        0.23,
+        0.24,
+        0.25,
+        0.26,
+        0.27,
+        0.28,
+        0.29,
+        0.3,
+        0.31,
+        0.32,
+        0.33,
+        0.34,
+        0.35000000000000003,
+        0.36,
+        0.37,
+        0.38,
+        0.39,
+        0.4,
+        0.41000000000000003,
+        0.42,
+        0.43,
+        0.44,
+        0.45,
+        0.46,
+        0.47000000000000003,
+        0.48,
+        0.49,
+        0.5,
+        0.51,
+        0.52,
+        0.53,
+        0.54,
+        0.55,
+        0.56,
+        0.5700000000000001,
+        0.58,
+        0.59,
+        0.6,
+        0.61,
+        0.62,
+        0.63,
+        0.64
+      ]
+    },
+    "whip1_003": {
+      "end": 1103,
+      "maneuver_fitted_intervals": 15,
+      "maneuver_frames": 66,
+      "onset": 1037,
+      "starts_relative_s": [
+        -9.75,
+        -9.5,
+        -6.95,
+        -0.85,
+        2.75,
+        3.45
+      ],
+      "total_fitted_intervals": 600,
+      "unique_maneuver_frames": 15,
+      "unrepresented_relative_times_s": [
+        0.15,
+        0.16,
+        0.17,
+        0.18,
+        0.19,
+        0.2,
+        0.21,
+        0.22,
+        0.23,
+        0.24,
+        0.25,
+        0.26,
+        0.27,
+        0.28,
+        0.29,
+        0.3,
+        0.31,
+        0.32,
+        0.33,
+        0.34,
+        0.35000000000000003,
+        0.36,
+        0.37,
+        0.38,
+        0.39,
+        0.4,
+        0.41000000000000003,
+        0.42,
+        0.43,
+        0.44,
+        0.45,
+        0.46,
+        0.47000000000000003,
+        0.48,
+        0.49,
+        0.5,
+        0.51,
+        0.52,
+        0.53,
+        0.54,
+        0.55,
+        0.56,
+        0.5700000000000001,
+        0.58,
+        0.59,
+        0.6,
+        0.61,
+        0.62,
+        0.63,
+        0.64,
+        0.65
+      ]
+    }
+  },
+  "export_probe": {
+    "output_created": false,
+    "reason": "Export requires an applied full-state execution baseline.",
+    "rejected": true
+  },
+  "hardware": {
+    "gpu": "NVIDIA GeForce RTX 4080",
+    "os": "Windows",
+    "training_left_running": true
+  },
+  "historical_hermite_vs_interval_delta_v": {
+    "first_delta_v": [
+      10.385146199753729,
+      0.016821802163268652,
+      3.7862605325345555
+    ],
+    "first_exported": [
+      13.003387008252812,
+      0.021062814090227602,
+      4.741460006405412
+    ],
+    "interpretation": "Endpoint derivative versus interval-average acceleration; discrepancy is not itself a ground-truth acceleration error.",
+    "maximum_m_s2": 2.7870430481704545,
+    "vector_rmse_m_s2": 1.317763397415894
+  },
+  "initial_cable_information": {
+    "training_estimate_vs_assumed_hanging_tip_m": 0.014716749347072022,
+    "training_estimate_vs_assumed_hanging_tip_velocity_m_s": 0.023683634129551098
+  },
+  "semiimplicit_12_substep_pva": {
+    "first_acceleration": [
+      1.2500000000000004,
+      0.0,
+      0.0
+    ],
+    "maximum_x": 1.2500000000000568,
+    "mean_x_excluding_terminal": 1.0666666666665743,
+    "minimum_x": 0.7499999999998164,
+    "physical_acceleration_x": 1.0
+  },
+  "snapshot_reference_feasibility_surrogates": {
+    "includes_cable_reaction_or_motor_constraints": false,
+    "max_acceleration_m_s2": 14.180066880729076,
+    "max_tilt_deg": 88.61587812859518,
+    "min_a_plus_g_z": 0.2531912423440321,
+    "max_tilt_time_s": 0.8,
+    "max_tilt_before_hit_deg": 74.2989574802796
+  },
+  "supplied_controller": {
+    "current_colleague_file_verified": false,
+    "execution_duration_including_last_hold_s": 0.6666666666666666,
+    "last_time_s": 0.6333333333333333,
+    "path": "C:\\Users\\wts28\\Downloads\\full_state_pva.py",
+    "prefix_pva_max_abs": 0.0,
+    "samples": 20,
+    "sha256": "19ab591043c97fa1cbe56c5258be235fb0aafebea449a69261d982ec2d889bc8"
+  },
+  "training_vs_ui_plan": {
+    "checkpoint_episodes": 28672,
+    "force_max_abs_difference_n": 0.0,
+    "training_nominal": {
+      "cutoff_s": 1.0,
+      "success": false
+    },
+    "training_steps": 100,
+    "ui_steps": 100
+  },
+  "synthetic_post_hit_failure_probe": {
+    "False": {
+      "success": [
+        true,
+        true
+      ],
+      "failed": [
+        false,
+        false
+      ],
+      "reward": [
+        319.99200000017885,
+        319.98800000026824
+      ],
+      "numerical_penalty": [
+        0.0,
+        0.0
+      ]
+    },
+    "True": {
+      "success": [
+        true,
+        true
+      ],
+      "failed": [
+        true,
+        true
+      ],
+      "reward": [
+        319.99200000017885,
+        319.98800000026824
+      ],
+      "numerical_penalty": [
+        0.0,
+        0.0
+      ]
+    }
+  }
+}

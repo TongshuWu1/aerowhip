@@ -1,0 +1,10 @@
+{
+  "batch": 2048,
+  "compared": "actions, observations, PPO tensors, rewards, CUDA RNG, policy and value weights after update",
+  "device": "NVIDIA GeForce RTX 4080",
+  "exact_hosted_parity": true,
+  "passed": true,
+  "seconds": 1.0,
+  "torch": "2.7.0+cu128",
+  "visible": true
+}

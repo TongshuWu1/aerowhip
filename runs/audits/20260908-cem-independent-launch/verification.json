@@ -1,0 +1,32 @@
+{
+  "tests_passed": 32,
+  "retained_ppo_files_unchanged": 273,
+  "cem_launch": {
+    "initial_tracking_origin_m": [
+      -2.0,
+      0.0,
+      1.255
+    ],
+    "target_position_m": [
+      -1.0,
+      0.0,
+      1.1
+    ]
+  },
+  "ppo_launch": {
+    "schema": "native_launch_setup_v1",
+    "frame": "World XYZ; unshifted OptiTrack tracked origin; metres",
+    "initial_tracking_origin_m": [
+      -2.0,
+      0.0,
+      1.255
+    ],
+    "target_position_m": [
+      -1.0,
+      0.0,
+      1.1
+    ],
+    "preflight_hold_s": 10.0
+  },
+  "training_or_optimization_started": false
+}

@@ -1,0 +1,29 @@
+{
+  "schema": "nominal_loaded_drone_pose_candidate_v1",
+  "parameters": {
+    "kp_xy": 11.448091219149061,
+    "kp_z": 20.83851969128258,
+    "kd_xy": 4.107826423271454,
+    "kd_z": 1.8805823061324303,
+    "feedforward_xy": 0.34631341369496915,
+    "feedforward_z": 1.9290114893200754,
+    "attitude_time_constant_s": null,
+    "delay_s": 0.06,
+    "gravity_m_s2": 9.80665
+  },
+  "training_takes": [
+    "whip1_002",
+    "whip1_003"
+  ],
+  "alignment": "prehover_effective_alignment",
+  "has_drone_residual": false,
+  "selected": false,
+  "reference_point": "cf_7 tracking origin",
+  "geometry": [
+    0.0066549972854827175,
+    -0.01287427254333901,
+    -0.055
+  ],
+  "fit_protocol_sha256": "a2a9b1b8d7984f0e1b5e9784c68bb5da1d798475f908e57bb2928f0f8b15458e",
+  "reason": "No valid attitude candidate on the fixed search grid"
+}

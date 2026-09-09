@@ -1,0 +1,68 @@
+{
+  "schema": "ppo_publication_figures_v1",
+  "generated_utc": "2026-09-02T21:06:16.085803+00:00",
+  "source_artifact": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\policy_training\\whip_ppo_attachment_compensated_progress_v1\\2026-09-02T205551.705339Z",
+  "run_status": "COMPLETE",
+  "figure_status": "FINAL",
+  "latest_training_episodes": 100352,
+  "rolling_window_episodes": 5000,
+  "validation_contexts": 512,
+  "task_success_contract": {
+    "tip_first": true,
+    "tip_target_distance_m": 0.05,
+    "minimum_directed_tip_speed_m_s": 4.0,
+    "maximum_direction_error_deg": 30.0,
+    "uav_limits_are_binary_success_gates": false
+  },
+  "evaluation_scope": {
+    "physics": "nominal frozen production simulator",
+    "target": "canonical only",
+    "initial_state_validation": "fixed mildly perturbed physically propagated state bank",
+    "target_generalization_evaluated": false,
+    "hardware_evaluated": false,
+    "protected_test_evaluated": false
+  },
+  "figures": [
+    {
+      "id": "ppo_learning_curve",
+      "files": [
+        "ppo_learning_curve.png",
+        "ppo_learning_curve.pdf",
+        "ppo_learning_curve.svg"
+      ],
+      "purpose": "Sample efficiency and state-bank generalization progression."
+    },
+    {
+      "id": "ppo_compactness_progression",
+      "files": [
+        "ppo_compactness_progression.png",
+        "ppo_compactness_progression.pdf",
+        "ppo_compactness_progression.svg"
+      ],
+      "purpose": "Joint validation-success and UAV-excursion progression."
+    },
+    {
+      "id": "ppo_optimization_diagnostics",
+      "files": [
+        "ppo_optimization_diagnostics.png",
+        "ppo_optimization_diagnostics.pdf",
+        "ppo_optimization_diagnostics.svg"
+      ],
+      "purpose": "Supplementary optimization-health evidence."
+    },
+    {
+      "id": "ppo_validation_strike_distribution",
+      "files": [
+        "ppo_validation_strike_distribution.png",
+        "ppo_validation_strike_distribution.pdf",
+        "ppo_validation_strike_distribution.svg"
+      ],
+      "purpose": "Median and observed range of successful physical strike metrics."
+    }
+  ],
+  "source_sha256": {
+    "training_log.csv": "0abb577faec1449f083951d246094a8fb5f6c2bdddb70e9f479fb6760f0f1d8e",
+    "validation_history.csv": "4094b2bc7bd42ceb65c7051316551835410d7e946d42680fc2de08d903340907",
+    "validation_latest.json": "64a96fbb163978eb7e9db4dbdcc42b455640118d95b5ad3f42d4d89e3d6f29c3"
+  }
+}

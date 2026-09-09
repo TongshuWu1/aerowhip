@@ -1,0 +1,31 @@
+{
+  "exact_training_log_and_isaac_reward_agreement": true,
+  "real_updates_tested": 2,
+  "test_attempts": 4,
+  "recording_on_off_exact_parity": [
+    "actions",
+    "observations",
+    "rewards",
+    "masks",
+    "values",
+    "log_probabilities",
+    "CUDA RNG",
+    "updated policy parameters"
+  ],
+  "targeted_tests_passed": 23,
+  "preserved_source_snapshots": {
+    "20260908-142124-902520-seed655": {
+      "files": 160,
+      "changed": []
+    },
+    "20260908-151520-716265-seed655": {
+      "files": 161,
+      "changed": []
+    },
+    "20260908-153710-137781-seed655": {
+      "files": 167,
+      "changed": []
+    }
+  },
+  "hardware": "Windows / RTX 4080 / Isaac Sim 5.1.0"
+}

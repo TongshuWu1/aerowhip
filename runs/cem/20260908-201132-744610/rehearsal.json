@@ -1,0 +1,156 @@
+{
+  "command_rate_hz": 30,
+  "continuous_command_envelope_checked": true,
+  "display_name": "CEM spline",
+  "elapsed_s": 86.92643719998887,
+  "execution": "Take off; hold 10 s at initial tracked origin; execute complete CSV once at its timestamps; land. Offline artifact only.",
+  "frame": "World XYZ, metres; unshifted OptiTrack tracked origin",
+  "initial_state": "Settled level hover; zero velocity and acceleration; hanging cable",
+  "initial_tracking_origin_m": [
+    -2.0,
+    0.0,
+    1.255
+  ],
+  "maximum_command_height_m": 2.539615360703943,
+  "maximum_predicted_cable_height_m": 2.6460987084618055,
+  "maximum_predicted_drone_height_m": 2.3332066767231945,
+  "minimum_tip_distance_m": 0.009209213830514184,
+  "objective_score": 983.7162355715147,
+  "optimized_duration_s": 1.0,
+  "planner": "CEM quintic position spline",
+  "predicted_hit_time_s": 0.9466666666666668,
+  "predicted_valid_hit": true,
+  "prediction_rate_hz": 150,
+  "prediction_valid_through_s": 11.033333333333333,
+  "preflight_hold_s": 10,
+  "recovery": {
+    "approach_coefficients_normalized": [
+      [
+        -2.7180330623168314,
+        0.3527442719873898,
+        1.6549999999999998
+      ],
+      [
+        1.4423377124604448,
+        -0.7085695534690012,
+        -0.8034937599149241
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        -1.473695651594355,
+        0.7239746009401093,
+        0.8209625594895453
+      ],
+      [
+        0.7682057649310877,
+        -0.3773923479411628,
+        -0.42795007931939416
+      ],
+      [
+        -0.01881476348034613,
+        0.009243028482664879,
+        0.010481279744772845
+      ]
+    ],
+    "approach_position_m": [
+      -2.7180330623168314,
+      0.3527442719873898,
+      1.6549999999999998
+    ],
+    "approach_velocity_m_s": [
+      0.280974879050736,
+      -0.13803302989655866,
+      -0.1565247584249852
+    ],
+    "brake_end_s": 1.9333333333333333,
+    "hold_s": 3.0,
+    "hover_position_m": [
+      -2.0,
+      0.0,
+      1.255
+    ],
+    "maximum_tilt_limit_deg": 45.0,
+    "phase_description": "Moving curved turn/descent, slow approach, stationary final hold",
+    "return_end_s": 7.066666666666667,
+    "return_s": 5.133333333333334,
+    "schema": "curved_moving_recovery_v1",
+    "settings": {
+      "approach_distance_m": 0.8,
+      "approach_height_m": 0.4,
+      "approach_speed_m_s": 0.35,
+      "hold_s": 3.0,
+      "maximum_descent_speed_m_s": 1.25,
+      "maximum_downward_acceleration_m_s2": 3.5,
+      "maximum_horizontal_acceleration_m_s2": 5.22027760662897,
+      "maximum_specific_force_m_s2": 18.28571428571429,
+      "maximum_speed_m_s": 5.0,
+      "maximum_tilt_deg": 45.0,
+      "maximum_turn_s": 8.0,
+      "minimum_specific_vertical_m_s2": 2.0,
+      "minimum_turn_s": 1.0
+    },
+    "stationary_braking_waypoint": false,
+    "total_duration_s": 10.066666666666666,
+    "turn_coefficients_normalized": [
+      [
+        -1.4850126884444987,
+        0.5839898158868891,
+        2.046095229744166
+      ],
+      [
+        -3.395082029262996,
+        1.6678838365543227,
+        3.1366347133239953
+      ],
+      [
+        -9.406244443147363,
+        -2.589289444342405,
+        -2.4168012355520783
+      ],
+      [
+        34.08614936830435,
+        -3.4844346940936526,
+        -14.26989873890949
+      ],
+      [
+        -33.0815572589744,
+        7.17583851329975,
+        21.590800715413387
+      ],
+      [
+        10.56371398920807,
+        -3.0012437553175135,
+        -8.431830684019976
+      ]
+    ],
+    "turn_end_s": 1.9333333333333333,
+    "turn_metrics": {
+      "minimum_az_m_s2": -3.4648532190661534,
+      "minimum_height_m": 1.6550000000000042,
+      "minimum_specific_vertical_m_s2": 6.341796780933846,
+      "minimum_vz_m_s": -1.028851946739004,
+      "peak_height_m": 2.5399871813859334,
+      "peak_horizontal_acceleration_m_s2": 5.22027760662897,
+      "peak_specific_force_m_s2": 11.489287348174768,
+      "peak_speed_m_s": 2.6680459260210316
+    },
+    "vehicle_limits_verified": false
+  },
+  "recovery_empirically_validated": false,
+  "recovery_prediction_complete": true,
+  "reference_feasible": true,
+  "schema": "cem_fullstate_30hz_v1",
+  "source_job": "20260908-064040-669809",
+  "target_position_m": [
+    -1.0,
+    0.0,
+    1.1
+  ],
+  "total_duration_s": 11.033333333333333,
+  "whip_end_s": 0.9666666666666667,
+  "whip_export_prefix_max_difference_m": 0.0
+}

@@ -1,0 +1,45 @@
+{
+  "nominal": {
+    "adaptation_job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\20260908-adp0-first",
+    "alignment": "prehover_effective_alignment",
+    "attitude_stage": "training-only refit after frozen adapted translational residual",
+    "geometry": [
+      0.0066549972854827175,
+      -0.01287427254333901,
+      -0.055
+    ],
+    "parameters": {
+      "attitude_acceleration_scale_xy": 1.1912247892615626,
+      "attitude_acceleration_scale_z": 0.5190252241057778,
+      "attitude_drive_model": "independent_scale_v3",
+      "attitude_time_constant_s": 0.04328153073905138,
+      "delay_s": 0.04,
+      "feedforward_xy": 0.5958044149595033,
+      "feedforward_z": 1.9186006191759808,
+      "gravity_m_s2": 9.80665,
+      "kd_xy": 3.8923668053810703,
+      "kd_z": 3.648087819972995,
+      "kp_xy": 2.9639098722960338,
+      "kp_z": 15.039750018814004
+    },
+    "schema": "nominal_loaded_drone_pose_candidate_v3",
+    "selected": false,
+    "training_takes": [
+      "whip_adp_0_001",
+      "whip_adp_0_002",
+      "whip_adp_0_003",
+      "whip_adp_0_004",
+      "whip_adp_0_005"
+    ]
+  },
+  "residual": {
+    "checkpoint": "drone_residual.pt",
+    "schema": "drone_pose_residual_v1",
+    "sha256": "48b5b204a4eddbeb4d3d2605bf7ab8397d1f45e748d8fd900b95d75fea32dc8d",
+    "specification": {
+      "acceleration_limit": 0.5,
+      "hidden": 16
+    },
+    "target": "Additional realized origin acceleration; no direct injection into attitude drive"
+  }
+}

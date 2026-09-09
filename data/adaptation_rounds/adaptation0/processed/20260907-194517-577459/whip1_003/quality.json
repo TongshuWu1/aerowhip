@@ -1,0 +1,70 @@
+{
+  "trial_id": "whip1_003",
+  "status": "processed \u2014 review required",
+  "alignment": {
+    "offset_s": 0.04453255139880818,
+    "rms_m": 0.009838699230410043,
+    "half_offsets_s": [
+      0.03510392951156177,
+      0.03552762680633737
+    ],
+    "method": "measured XYZ constant-offset least squares; no spatial fit",
+    "clock_verified": false,
+    "includes_logging_latency": true
+  },
+  "tracking_frames": 1484,
+  "missing_cable_samples_per_marker": [
+    0,
+    0,
+    0,
+    1,
+    0,
+    1,
+    0,
+    0,
+    0,
+    1
+  ],
+  "missing_drone_positions": 0,
+  "logged_position_update_hz": 10.000188354225156,
+  "candidate_motion_intervals": [
+    {
+      "start_s": 16.640151977539062,
+      "end_s": 17.300195455551147,
+      "reviewed": false
+    }
+  ],
+  "reference_comparison": {
+    "prefix_matches": true,
+    "recorded_distinct_samples": 20,
+    "reference_samples": 25,
+    "absent_tail_times_s": [
+      0.6666666666666666,
+      0.7,
+      0.7333333333333333,
+      0.7666666666666667,
+      0.8
+    ]
+  },
+  "training_ready": false,
+  "role": "unassigned",
+  "outcome": "unreviewed",
+  "required_review": [
+    "time alignment",
+    "marker direction and attachment offset",
+    "contact/intervention interval",
+    "outcome and dataset split"
+  ],
+  "conventions": {
+    "position": "source global meters; no frame transform",
+    "quaternion": "source OptiTrack XYZW; mapping to body frame unverified",
+    "cable": "c1..c10 numerically ordered; physical endpoint mapping unverified",
+    "velocity": "offline centered difference; NaN at gaps and endpoints; not controller velocity",
+    "reference": "kinematic full-state commands, not forces; causal hold with 100 ms age limit"
+  },
+  "output_files": {
+    "dataset.npz": "f77e037d47d18095361849ca116315b0446bcfc87b720e69b67d72e614a2ca36",
+    "fullstate_aligned.csv": "40225662d40e018ea9da5bcccebb4c036c216e0f1a9de92f21b9d394254e2d7b",
+    "tracking.csv": "0c801d0e74d51acfe2045ae29ad823041d4130576d198c0a9e4d1ca16a4ef051"
+  }
+}

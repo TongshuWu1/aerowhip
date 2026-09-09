@@ -1,0 +1,185 @@
+{
+  "exact_csv_and_zip": true,
+  "metadata": {
+    "command_rate_hz": 30,
+    "display_name": "M1 MPPI direct-force integration check",
+    "elapsed_s": 56.13255759997992,
+    "execution": "Take off; settle 10 seconds; execute complete fixed 30 Hz FullState CSV; land. Offline only.",
+    "force_rate_hz": 30,
+    "frame": "World XYZ in metres; unshifted OptiTrack tracked origin",
+    "initial_tracking_origin_m": [
+      0.0,
+      0.0,
+      1.225
+    ],
+    "maximum_command_height_m": 2.6139720128129706,
+    "maximum_predicted_cable_height_m": 2.4858622765798244,
+    "maximum_predicted_drone_height_m": 2.4652635151822095,
+    "minimum_tip_distance_m": 0.3782393720904211,
+    "model_provenance": {
+      "source": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\model_candidates\\20260908-adp0-M1\\model.json",
+      "source_sha256": "ee99478f670ae36cd21ca15095b52251d394a761ac9b044369845c6e0cb02d5a"
+    },
+    "objective_score": 28.747367038661974,
+    "optimizer": "mppi",
+    "planner": "MPPI 30 Hz force sequence",
+    "predicted_hit_time_s": null,
+    "predicted_valid_hit": false,
+    "prediction_rate_hz": 150,
+    "prediction_valid_through_s": 11.233333333333333,
+    "preflight_hold_s": 10,
+    "recovery": {
+      "approach_coefficients_normalized": [
+        [
+          -0.7530797554738897,
+          0.26994607219847916,
+          1.625
+        ],
+        [
+          1.512737210603819,
+          -0.5422499613125542,
+          -0.8034937599149243
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -1.5456257088840168,
+          0.5540390458905335,
+          0.8209625594895467
+        ],
+        [
+          0.8057013527222064,
+          -0.2888086075232462,
+          -0.42795007931939594
+        ],
+        [
+          -0.019733098968118777,
+          0.007073450746787656,
+          0.010481279744773512
+        ]
+      ],
+      "approach_position_m": [
+        -0.7530797554738897,
+        0.26994607219847916,
+        1.625
+      ],
+      "approach_velocity_m_s": [
+        0.29468906700074393,
+        -0.10563310934660146,
+        -0.15652475842498526
+      ],
+      "brake_end_s": 2.066666666666667,
+      "hold_s": 3.0,
+      "hover_position_m": [
+        0.0,
+        0.0,
+        1.225
+      ],
+      "maximum_tilt_limit_deg": 45.0,
+      "phase_description": "Moving curved turn/descent, slow approach, stationary final hold",
+      "return_end_s": 7.200000000000001,
+      "return_s": 5.133333333333334,
+      "schema": "curved_moving_recovery_v1",
+      "settings": {
+        "approach_distance_m": 0.8,
+        "approach_height_m": 0.4,
+        "approach_speed_m_s": 0.35,
+        "hold_s": 3.0,
+        "maximum_descent_speed_m_s": 1.25,
+        "maximum_downward_acceleration_m_s2": 3.5,
+        "maximum_horizontal_acceleration_m_s2": 5.257494359733932,
+        "maximum_specific_force_m_s2": 18.28571428571429,
+        "maximum_speed_m_s": 5.0,
+        "maximum_tilt_deg": 45.0,
+        "maximum_turn_s": 8.0,
+        "minimum_specific_vertical_m_s2": 2.0,
+        "minimum_turn_s": 1.0
+      },
+      "stationary_braking_waypoint": false,
+      "total_duration_s": 10.200000000000001,
+      "turn_coefficients_normalized": [
+        [
+          0.5165132564872925,
+          0.5692481659217783,
+          2.0399325049168926
+        ],
+        [
+          -3.7673108268890245,
+          1.350415746907907,
+          3.5595790768764575
+        ],
+        [
+          -8.775080591128228,
+          -7.004181834860468,
+          -2.3954359693949456
+        ],
+        [
+          33.79708032790083,
+          10.790263789832867,
+          -17.02655359926292
+        ],
+        [
+          -33.156664706468334,
+          -7.24784710534948,
+          25.24992077536538
+        ],
+        [
+          10.632382784623575,
+          1.8120473097458754,
+          -9.802442788500855
+        ]
+      ],
+      "turn_end_s": 2.066666666666667,
+      "turn_metrics": {
+        "minimum_az_m_s2": -3.441413187395055,
+        "minimum_height_m": 1.6250000000000098,
+        "minimum_specific_vertical_m_s2": 6.3652368126049454,
+        "minimum_vz_m_s": -1.0857313899905594,
+        "peak_height_m": 2.6139785284487607,
+        "peak_horizontal_acceleration_m_s2": 5.257494359733931,
+        "peak_specific_force_m_s2": 11.470888482924735,
+        "peak_speed_m_s": 2.6602331574060765
+      },
+      "vehicle_limits_verified": false
+    },
+    "recovery_empirically_validated": false,
+    "recovery_prediction_complete": true,
+    "reference_feasible": true,
+    "representation": "ppo_force_30hz_v1",
+    "reward_components": {
+      "forward_return": 0.0,
+      "invalid_tip_entry": 0.0,
+      "maximum_displacement": -37.700796635388556,
+      "non_tip_first": 0.0,
+      "numerical_failure": 0.0,
+      "point_displacement_integral": -0.5709868669989674,
+      "progress": 46.91712509617271,
+      "recovery": 0.0,
+      "release": 0.0,
+      "strike_quality": 20.202025444876764,
+      "success": 0.0,
+      "terminal_displacement": 0.0,
+      "time": -0.1,
+      "timeout": 0.0
+    },
+    "schema": "mppi_force_fullstate_30hz_v1",
+    "target_position_m": [
+      1.5,
+      0.0,
+      1.1
+    ],
+    "termination_mode": "frozen_virtual_plan",
+    "total_duration_s": 11.233333333333333,
+    "training_export_prefix_max_difference_m": 0.0,
+    "virtual_force_csv": "Virtual simulator input INCLUDING gravity, not a direct drone force command",
+    "whip_end_s": 1.0
+  },
+  "no_flight": true,
+  "no_training": true,
+  "protected_files": 286,
+  "protected_unchanged": true,
+  "returncode": 0
+}

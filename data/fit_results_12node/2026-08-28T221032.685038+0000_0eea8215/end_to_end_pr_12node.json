@@ -1,0 +1,224 @@
+{
+  "aggregate_equal_take_rmse": {
+    "distributed_marker_rmse_m": 0.23116042544559115,
+    "lead_time": {
+      "0.1": {
+        "distributed_marker_rmse_m": 0.009523044852606008,
+        "episode_count": 2,
+        "tip_rmse_m": 0.007556232344300465,
+        "uav_orientation_rmse_deg": 3.3897809586315795,
+        "uav_position_rmse_m": 0.004224549792324749
+      },
+      "0.25": {
+        "distributed_marker_rmse_m": 0.023319960780925814,
+        "episode_count": 2,
+        "tip_rmse_m": 0.008480286299256503,
+        "uav_orientation_rmse_deg": 5.283812107798947,
+        "uav_position_rmse_m": 0.011785200094646104
+      },
+      "0.5": {
+        "distributed_marker_rmse_m": 0.039036319674730174,
+        "episode_count": 2,
+        "tip_rmse_m": 0.053018670727123976,
+        "uav_orientation_rmse_deg": 4.083689319771827,
+        "uav_position_rmse_m": 0.00993038337138137
+      },
+      "0.7": {
+        "distributed_marker_rmse_m": 0.05328637152605474,
+        "episode_count": 2,
+        "tip_rmse_m": 0.10371554068647647,
+        "uav_orientation_rmse_deg": 4.11240134155267,
+        "uav_position_rmse_m": 0.011491376534744541
+      },
+      "1.0": {
+        "distributed_marker_rmse_m": 0.05492717861796429,
+        "episode_count": 2,
+        "tip_rmse_m": 0.07334299706339659,
+        "uav_orientation_rmse_deg": 12.540515996520412,
+        "uav_position_rmse_m": 0.013556439189659873
+      },
+      "2.0": {
+        "distributed_marker_rmse_m": 0.07654723117690129,
+        "episode_count": 2,
+        "tip_rmse_m": 0.14574927630342158,
+        "uav_orientation_rmse_deg": 4.329493350780217,
+        "uav_position_rmse_m": 0.02996348593456254
+      },
+      "4.0": {
+        "distributed_marker_rmse_m": 0.12382031171803777,
+        "episode_count": 2,
+        "tip_rmse_m": 0.1937921653292909,
+        "uav_orientation_rmse_deg": 6.998756125430729,
+        "uav_position_rmse_m": 0.03393443039568571
+      },
+      "8.0": {
+        "distributed_marker_rmse_m": 0.18008440143031712,
+        "episode_count": 2,
+        "tip_rmse_m": 0.33279349939495195,
+        "uav_orientation_rmse_deg": 3.8972658399748257,
+        "uav_position_rmse_m": 0.026308448299852034
+      }
+    },
+    "terminal_tip_rmse_m": 0.25868114164500794,
+    "terminal_uav_orientation_rmse_deg": 3.3249149083592684,
+    "terminal_uav_position_rmse_m": 0.030361414463997743,
+    "tip_rmse_m": 0.3948228844774171,
+    "uav_orientation_rmse_deg": 10.169919344570518,
+    "uav_position_rmse_m": 0.05356793491688395
+  },
+  "complete": false,
+  "episodes": [
+    {
+      "duration_s": 55.230000000000004,
+      "kind": "causal_residual_suffix",
+      "lead_time": {
+        "0.1": {
+          "distributed_marker_rmse_m": 0.0067872158251702785,
+          "tip_error_m": 0.005064592231065035,
+          "uav_orientation_error_deg": 3.2511608600616455,
+          "uav_position_error_m": 0.005606071557849646
+        },
+        "0.25": {
+          "distributed_marker_rmse_m": 0.023158477619290352,
+          "tip_error_m": 0.0038989263121038675,
+          "uav_orientation_error_deg": 6.3274431228637695,
+          "uav_position_error_m": 0.014781069941818714
+        },
+        "0.5": {
+          "distributed_marker_rmse_m": 0.03801269084215164,
+          "tip_error_m": 0.03222455456852913,
+          "uav_orientation_error_deg": 1.5731749534606934,
+          "uav_position_error_m": 0.009631160646677017
+        },
+        "0.7": {
+          "distributed_marker_rmse_m": 0.05570503696799278,
+          "tip_error_m": 0.11087791621685028,
+          "uav_orientation_error_deg": 2.137988567352295,
+          "uav_position_error_m": 0.012729628011584282
+        },
+        "1.0": {
+          "distributed_marker_rmse_m": 0.049034811556339264,
+          "tip_error_m": 0.05059036612510681,
+          "uav_orientation_error_deg": 6.3479533195495605,
+          "uav_position_error_m": 0.01218693982809782
+        },
+        "2.0": {
+          "distributed_marker_rmse_m": 0.030985603109002113,
+          "tip_error_m": 0.048484232276678085,
+          "uav_orientation_error_deg": 4.907352447509766,
+          "uav_position_error_m": 0.019052593037486076
+        },
+        "4.0": {
+          "distributed_marker_rmse_m": 0.05184781551361084,
+          "tip_error_m": 0.07361680269241333,
+          "uav_orientation_error_deg": 4.778672218322754,
+          "uav_position_error_m": 0.010120056569576263
+        },
+        "8.0": {
+          "distributed_marker_rmse_m": 0.024846859276294708,
+          "tip_error_m": 0.03046192042529583,
+          "uav_orientation_error_deg": 4.259103298187256,
+          "uav_position_error_m": 0.0055614435113966465
+        }
+      },
+      "take_id": "fig8_003",
+      "terminal_tip_error_m": 0.26636493228215546,
+      "terminal_uav_orientation_error_deg": 4.430106834568873,
+      "terminal_uav_position_error_m": 0.02553279098956355,
+      "view_id": "fig8_003__episode_000__residual_suffix"
+    },
+    {
+      "duration_s": 15.399999999999999,
+      "kind": "causal_residual_suffix",
+      "lead_time": {
+        "0.1": {
+          "distributed_marker_rmse_m": 0.011632302775979042,
+          "tip_error_m": 0.009409739635884762,
+          "uav_orientation_error_deg": 3.5229508876800537,
+          "uav_position_error_m": 0.0020653337705880404
+        },
+        "0.25": {
+          "distributed_marker_rmse_m": 0.023480333387851715,
+          "tip_error_m": 0.011341467499732971,
+          "uav_orientation_error_deg": 3.975022554397583,
+          "uav_position_error_m": 0.007700769696384668
+        },
+        "0.5": {
+          "distributed_marker_rmse_m": 0.04003378376364708,
+          "tip_error_m": 0.06770182400941849,
+          "uav_orientation_error_deg": 5.556811809539795,
+          "uav_position_error_m": 0.010220849886536598
+        },
+        "0.7": {
+          "distributed_marker_rmse_m": 0.05075257271528244,
+          "tip_error_m": 0.09602038562297821,
+          "uav_orientation_error_deg": 5.408576011657715,
+          "uav_position_error_m": 0.010102476924657822
+        },
+        "1.0": {
+          "distributed_marker_rmse_m": 0.060245972126722336,
+          "tip_error_m": 0.09054835885763168,
+          "uav_orientation_error_deg": 16.559968948364258,
+          "uav_position_error_m": 0.014799749478697777
+        },
+        "2.0": {
+          "distributed_marker_rmse_m": 0.1037248745560646,
+          "tip_error_m": 0.20033717155456543,
+          "uav_orientation_error_deg": 3.661545753479004,
+          "uav_position_error_m": 0.03784996271133423
+        },
+        "4.0": {
+          "distributed_marker_rmse_m": 0.16725651919841766,
+          "tip_error_m": 0.26399123668670654,
+          "uav_orientation_error_deg": 8.667725563049316,
+          "uav_position_error_m": 0.04691135883331299
+        },
+        "8.0": {
+          "distributed_marker_rmse_m": 0.25346285104751587,
+          "tip_error_m": 0.46965423226356506,
+          "uav_orientation_error_deg": 3.498199701309204,
+          "uav_position_error_m": 0.03678775951266289
+        }
+      },
+      "take_id": "osc_003",
+      "terminal_tip_error_m": 0.25076201653331004,
+      "terminal_uav_orientation_error_deg": 1.576157266888557,
+      "terminal_uav_position_error_m": 0.03452111760636618,
+      "view_id": "osc_003__episode_000__residual_suffix"
+    }
+  ],
+  "failed_episodes": [
+    {
+      "detail": "initialization_rmse=0.0118034 exceeds 0.01 m",
+      "reason": "cable_initialization_ineligible",
+      "take_id": "fig8_003",
+      "view_id": "fig8_003__episode_001__residual_suffix"
+    }
+  ],
+  "label": "end_to_end_pr_12node",
+  "measured_uav_boundary_used": false,
+  "measurement_reset_after_initialization": false,
+  "method": "full_episode_end_to_end_v1",
+  "per_take": {
+    "fig8_003": {
+      "distributed_marker_rmse_m": 0.27541804160823313,
+      "terminal_tip_rmse_m": 0.26636493228215546,
+      "terminal_uav_orientation_rmse_deg": 4.430106834568873,
+      "terminal_uav_position_rmse_m": 0.02553279098956355,
+      "tip_rmse_m": 0.4610884706330381,
+      "uav_orientation_rmse_deg": 9.000971341530027,
+      "uav_position_rmse_m": 0.0622288694877222
+    },
+    "osc_003": {
+      "distributed_marker_rmse_m": 0.17611129135026798,
+      "terminal_tip_rmse_m": 0.25076201653331004,
+      "terminal_uav_orientation_rmse_deg": 1.576157266888557,
+      "terminal_uav_position_rmse_m": 0.03452111760636618,
+      "tip_rmse_m": 0.3149089431302669,
+      "uav_orientation_rmse_deg": 11.21771072274082,
+      "uav_position_rmse_m": 0.04320434127259744
+    }
+  },
+  "residual_history_rule": "PhysicalEpisode.residual_eligible_start_index",
+  "schema": "decomposed_end_to_end_metrics_v1"
+}

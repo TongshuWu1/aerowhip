@@ -1,0 +1,174 @@
+{
+  "per_take": {
+    "fig8_001": {
+      "lead_time": {
+        "0.1": {
+          "actual_lead_s": 0.09999999999999787,
+          "orientation_rmse_deg": 2.2339671467821254,
+          "position_rmse_m": 0.002790632393033167
+        },
+        "0.25": {
+          "actual_lead_s": 0.24999999999999467,
+          "orientation_rmse_deg": 2.9830618869903556,
+          "position_rmse_m": 0.00782545026695378
+        },
+        "0.5": {
+          "actual_lead_s": 0.49999999999998934,
+          "orientation_rmse_deg": 2.241937608716508,
+          "position_rmse_m": 0.014704156275291399
+        },
+        "1.0": {
+          "actual_lead_s": 0.9999999999999787,
+          "orientation_rmse_deg": 1.596226986948735,
+          "position_rmse_m": 0.022899070120777743
+        }
+      },
+      "orientation_rmse_deg": 2.1944855342666982,
+      "pitch_rmse_deg": 1.6778924520285972,
+      "position_axis_rmse_m": {
+        "x": 0.011849444335510158,
+        "y": 0.009195443697462273,
+        "z": 0.002350187816969969
+      },
+      "position_rmse_m": 0.015181860842090026,
+      "position_rmse_mm": 15.181860842090027,
+      "role": "training",
+      "roll_rmse_deg": 1.3721055301134086,
+      "take_id": "fig8_001",
+      "windows": 158,
+      "yaw_rmse_deg": 0.39147562586809875
+    },
+    "fig8_002": {
+      "lead_time": {
+        "0.1": {
+          "actual_lead_s": 0.09999999999999787,
+          "orientation_rmse_deg": 2.788106597897537,
+          "position_rmse_m": 0.005241964683757291
+        },
+        "0.25": {
+          "actual_lead_s": 0.24999999999999467,
+          "orientation_rmse_deg": 4.637378810780049,
+          "position_rmse_m": 0.014890731689828752
+        },
+        "0.5": {
+          "actual_lead_s": 0.49999999999998934,
+          "orientation_rmse_deg": 4.011542662184967,
+          "position_rmse_m": 0.02564438010368336
+        },
+        "1.0": {
+          "actual_lead_s": 0.9999999999999787,
+          "orientation_rmse_deg": 3.0657648634824235,
+          "position_rmse_m": 0.03297599567935192
+        }
+      },
+      "orientation_rmse_deg": 3.6461036130142515,
+      "pitch_rmse_deg": 2.779401432779197,
+      "position_axis_rmse_m": {
+        "x": 0.019051229055540995,
+        "y": 0.014734659178001966,
+        "z": 0.003456630851592477
+      },
+      "position_rmse_m": 0.024331210542485306,
+      "position_rmse_mm": 24.331210542485305,
+      "role": "training",
+      "roll_rmse_deg": 2.267360185385004,
+      "take_id": "fig8_002",
+      "windows": 99,
+      "yaw_rmse_deg": 0.839743726355466
+    },
+    "osc_001": {
+      "lead_time": {
+        "0.1": {
+          "actual_lead_s": 0.09999999999999787,
+          "orientation_rmse_deg": 4.240305438344163,
+          "position_rmse_m": 0.00859159042238199
+        },
+        "0.25": {
+          "actual_lead_s": 0.24999999999999467,
+          "orientation_rmse_deg": 9.259505409973109,
+          "position_rmse_m": 0.027428914833749384
+        },
+        "0.5": {
+          "actual_lead_s": 0.49999999999998934,
+          "orientation_rmse_deg": 11.126761669816638,
+          "position_rmse_m": 0.0537725516319019
+        },
+        "1.0": {
+          "actual_lead_s": 0.9999999999999787,
+          "orientation_rmse_deg": 8.72112955694056,
+          "position_rmse_m": 0.07817597727071345
+        }
+      },
+      "orientation_rmse_deg": 9.533062063569622,
+      "pitch_rmse_deg": 6.873631020598811,
+      "position_axis_rmse_m": {
+        "x": 0.05087321354029592,
+        "y": 0.01596627524078992,
+        "z": 0.00838606155233413
+      },
+      "position_rmse_m": 0.05397528906213237,
+      "position_rmse_mm": 53.97528906213237,
+      "role": "validation",
+      "roll_rmse_deg": 6.9524101864241015,
+      "take_id": "osc_001",
+      "windows": 63,
+      "yaw_rmse_deg": 2.3853152622507516
+    }
+  },
+  "training": {
+    "lead_time": {
+      "0.1": {
+        "orientation_rmse_deg": 2.526276668750045,
+        "position_rmse_m": 0.0041991560401350115
+      },
+      "0.25": {
+        "orientation_rmse_deg": 3.8989704061640587,
+        "position_rmse_m": 0.011894779572128212
+      },
+      "0.5": {
+        "orientation_rmse_deg": 3.2495198700660026,
+        "position_rmse_m": 0.020902708468884867
+      },
+      "1.0": {
+        "orientation_rmse_deg": 2.4440596138419823,
+        "position_rmse_m": 0.02838823438892363
+      }
+    },
+    "orientation_rmse_deg": 3.009139272029576,
+    "pitch_rmse_deg": 2.29569111653872,
+    "position_rmse_m": 0.020279259171519737,
+    "position_rmse_mm": 20.279259171519737,
+    "roll_rmse_deg": 1.8739791615752985,
+    "takes": 2,
+    "windows": 257,
+    "yaw_rmse_deg": 0.6551422332601461
+  },
+  "validation": {
+    "lead_time": {
+      "0.1": {
+        "orientation_rmse_deg": 4.240305438344163,
+        "position_rmse_m": 0.00859159042238199
+      },
+      "0.25": {
+        "orientation_rmse_deg": 9.259505409973109,
+        "position_rmse_m": 0.027428914833749384
+      },
+      "0.5": {
+        "orientation_rmse_deg": 11.126761669816638,
+        "position_rmse_m": 0.0537725516319019
+      },
+      "1.0": {
+        "orientation_rmse_deg": 8.72112955694056,
+        "position_rmse_m": 0.07817597727071345
+      }
+    },
+    "orientation_rmse_deg": 9.533062063569622,
+    "pitch_rmse_deg": 6.873631020598811,
+    "position_rmse_m": 0.05397528906213237,
+    "position_rmse_mm": 53.97528906213237,
+    "roll_rmse_deg": 6.9524101864241015,
+    "takes": 1,
+    "windows": 63,
+    "yaw_rmse_deg": 2.3853152622507516
+  }
+}

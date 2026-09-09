@@ -1,0 +1,602 @@
+episodes=2048/1000000 batch_success=0.049% rolling_5000=0.049% total_success=0.049% endpoint_success=0.049% episodes_per_second=94.68
+episodes=4096/1000000 batch_success=0.049% rolling_5000=0.049% total_success=0.049% endpoint_success=0.049% episodes_per_second=125.75
+episodes=6144/1000000 batch_success=0.049% rolling_5000=0.040% total_success=0.049% endpoint_success=0.049% episodes_per_second=142.43
+episodes=8192/1000000 batch_success=0.098% rolling_5000=0.060% total_success=0.061% endpoint_success=0.061% episodes_per_second=152.89
+episodes=10240/1000000 batch_success=0.000% rolling_5000=0.060% total_success=0.049% endpoint_success=0.049% episodes_per_second=159.65
+validation_episodes=10240 success=0/512
+episodes=12288/1000000 batch_success=0.049% rolling_5000=0.060% total_success=0.049% endpoint_success=0.049% episodes_per_second=144.03
+episodes=14336/1000000 batch_success=0.000% rolling_5000=0.020% total_success=0.042% endpoint_success=0.042% episodes_per_second=149.69
+episodes=16384/1000000 batch_success=0.000% rolling_5000=0.020% total_success=0.037% endpoint_success=0.037% episodes_per_second=154.29
+episodes=18432/1000000 batch_success=0.146% rolling_5000=0.060% total_success=0.049% endpoint_success=0.054% episodes_per_second=158.14
+episodes=20480/1000000 batch_success=0.049% rolling_5000=0.080% total_success=0.049% endpoint_success=0.054% episodes_per_second=161.32
+validation_episodes=20480 success=0/512
+episodes=22528/1000000 batch_success=0.000% rolling_5000=0.040% total_success=0.044% endpoint_success=0.049% episodes_per_second=152.11
+episodes=24576/1000000 batch_success=0.049% rolling_5000=0.020% total_success=0.045% endpoint_success=0.049% episodes_per_second=154.97
+episodes=26624/1000000 batch_success=0.049% rolling_5000=0.040% total_success=0.045% endpoint_success=0.056% episodes_per_second=157.60
+episodes=28672/1000000 batch_success=0.146% rolling_5000=0.080% total_success=0.052% endpoint_success=0.063% episodes_per_second=159.85
+episodes=30720/1000000 batch_success=0.000% rolling_5000=0.060% total_success=0.049% endpoint_success=0.059% episodes_per_second=161.85
+validation_episodes=30720 success=0/512
+episodes=32768/1000000 batch_success=0.049% rolling_5000=0.020% total_success=0.049% endpoint_success=0.058% episodes_per_second=154.77
+episodes=34816/1000000 batch_success=0.098% rolling_5000=0.060% total_success=0.052% endpoint_success=0.060% episodes_per_second=156.66
+episodes=36864/1000000 batch_success=0.293% rolling_5000=0.160% total_success=0.065% endpoint_success=0.073% episodes_per_second=158.40
+episodes=38912/1000000 batch_success=0.049% rolling_5000=0.140% total_success=0.064% endpoint_success=0.072% episodes_per_second=159.98
+episodes=40960/1000000 batch_success=0.000% rolling_5000=0.080% total_success=0.061% endpoint_success=0.071% episodes_per_second=161.51
+validation_episodes=40960 success=0/512
+episodes=43008/1000000 batch_success=0.049% rolling_5000=0.020% total_success=0.060% endpoint_success=0.072% episodes_per_second=156.48
+episodes=45056/1000000 batch_success=0.049% rolling_5000=0.040% total_success=0.060% endpoint_success=0.073% episodes_per_second=157.85
+episodes=47104/1000000 batch_success=0.146% rolling_5000=0.100% total_success=0.064% endpoint_success=0.079% episodes_per_second=159.10
+episodes=49152/1000000 batch_success=0.146% rolling_5000=0.120% total_success=0.067% endpoint_success=0.085% episodes_per_second=160.28
+episodes=51200/1000000 batch_success=0.146% rolling_5000=0.140% total_success=0.070% endpoint_success=0.088% episodes_per_second=161.43
+validation_episodes=51200 success=0/512
+episodes=53248/1000000 batch_success=0.195% rolling_5000=0.160% total_success=0.075% endpoint_success=0.092% episodes_per_second=157.23
+episodes=55296/1000000 batch_success=0.098% rolling_5000=0.140% total_success=0.076% endpoint_success=0.092% episodes_per_second=158.33
+episodes=57344/1000000 batch_success=0.146% rolling_5000=0.140% total_success=0.078% endpoint_success=0.094% episodes_per_second=159.38
+episodes=59392/1000000 batch_success=0.195% rolling_5000=0.160% total_success=0.083% endpoint_success=0.098% episodes_per_second=160.37
+episodes=61440/1000000 batch_success=0.391% rolling_5000=0.260% total_success=0.093% endpoint_success=0.109% episodes_per_second=161.34
+validation_episodes=61440 success=0/512
+episodes=63488/1000000 batch_success=0.635% rolling_5000=0.460% total_success=0.110% endpoint_success=0.126% episodes_per_second=158.00
+episodes=65536/1000000 batch_success=0.684% rolling_5000=0.600% total_success=0.128% endpoint_success=0.143% episodes_per_second=158.99
+episodes=67584/1000000 batch_success=0.488% rolling_5000=0.560% total_success=0.139% endpoint_success=0.154% episodes_per_second=159.82
+episodes=69632/1000000 batch_success=0.830% rolling_5000=0.700% total_success=0.159% endpoint_success=0.175% episodes_per_second=160.62
+episodes=71680/1000000 batch_success=0.537% rolling_5000=0.640% total_success=0.170% endpoint_success=0.186% episodes_per_second=161.36
+validation_episodes=71680 success=0/512
+episodes=73728/1000000 batch_success=1.123% rolling_5000=0.820% total_success=0.197% endpoint_success=0.213% episodes_per_second=158.30
+episodes=75776/1000000 batch_success=1.367% rolling_5000=1.180% total_success=0.228% endpoint_success=0.244% episodes_per_second=159.17
+episodes=77824/1000000 batch_success=1.416% rolling_5000=1.300% total_success=0.260% endpoint_success=0.276% episodes_per_second=159.99
+episodes=79872/1000000 batch_success=1.953% rolling_5000=1.660% total_success=0.303% endpoint_success=0.319% episodes_per_second=160.76
+episodes=81920/1000000 batch_success=2.441% rolling_5000=2.000% total_success=0.356% endpoint_success=0.374% episodes_per_second=161.46
+validation_episodes=81920 success=19/512
+episodes=83968/1000000 batch_success=2.930% rolling_5000=2.400% total_success=0.419% endpoint_success=0.438% episodes_per_second=158.82
+episodes=86016/1000000 batch_success=2.783% rolling_5000=2.700% total_success=0.475% endpoint_success=0.496% episodes_per_second=159.50
+episodes=88064/1000000 batch_success=2.832% rolling_5000=2.880% total_success=0.530% endpoint_success=0.552% episodes_per_second=160.22
+episodes=90112/1000000 batch_success=3.857% rolling_5000=3.320% total_success=0.606% endpoint_success=0.629% episodes_per_second=160.60
+episodes=92160/1000000 batch_success=4.004% rolling_5000=3.700% total_success=0.681% endpoint_success=0.710% episodes_per_second=161.33
+validation_episodes=92160 success=183/512
+episodes=94208/1000000 batch_success=3.906% rolling_5000=3.880% total_success=0.752% endpoint_success=0.780% episodes_per_second=158.99
+episodes=96256/1000000 batch_success=5.078% rolling_5000=4.340% total_success=0.844% endpoint_success=0.875% episodes_per_second=159.61
+episodes=98304/1000000 batch_success=5.518% rolling_5000=5.360% total_success=0.941% endpoint_success=0.977% episodes_per_second=160.24
+episodes=100352/1000000 batch_success=5.957% rolling_5000=5.860% total_success=1.043% endpoint_success=1.088% episodes_per_second=160.85
+episodes=102400/1000000 batch_success=5.713% rolling_5000=5.880% total_success=1.137% endpoint_success=1.187% episodes_per_second=161.50
+validation_episodes=102400 success=171/512
+episodes=104448/1000000 batch_success=5.957% rolling_5000=6.040% total_success=1.231% endpoint_success=1.284% episodes_per_second=159.37
+episodes=106496/1000000 batch_success=4.639% rolling_5000=5.400% total_success=1.297% endpoint_success=1.360% episodes_per_second=159.84
+episodes=108544/1000000 batch_success=6.885% rolling_5000=5.720% total_success=1.402% endpoint_success=1.468% episodes_per_second=160.31
+episodes=110592/1000000 batch_success=7.373% rolling_5000=6.580% total_success=1.513% endpoint_success=1.586% episodes_per_second=160.79
+episodes=112640/1000000 batch_success=4.053% rolling_5000=6.060% total_success=1.559% endpoint_success=1.636% episodes_per_second=161.37
+validation_episodes=112640 success=71/512
+episodes=114688/1000000 batch_success=6.250% rolling_5000=5.380% total_success=1.643% endpoint_success=1.726% episodes_per_second=159.48
+episodes=116736/1000000 batch_success=6.104% rolling_5000=5.840% total_success=1.721% endpoint_success=1.813% episodes_per_second=160.11
+episodes=118784/1000000 batch_success=6.250% rolling_5000=6.300% total_success=1.799% endpoint_success=1.896% episodes_per_second=160.61
+episodes=120832/1000000 batch_success=6.055% rolling_5000=6.100% total_success=1.871% endpoint_success=1.975% episodes_per_second=161.11
+episodes=122880/1000000 batch_success=6.885% rolling_5000=6.220% total_success=1.955% endpoint_success=2.063% episodes_per_second=161.66
+validation_episodes=122880 success=107/512
+episodes=124928/1000000 batch_success=6.689% rolling_5000=6.560% total_success=2.032% endpoint_success=2.142% episodes_per_second=159.86
+episodes=126976/1000000 batch_success=6.104% rolling_5000=6.380% total_success=2.098% endpoint_success=2.211% episodes_per_second=160.38
+episodes=129024/1000000 batch_success=8.789% rolling_5000=7.440% total_success=2.204% endpoint_success=2.323% episodes_per_second=160.86
+episodes=131072/1000000 batch_success=5.859% rolling_5000=7.240% total_success=2.261% endpoint_success=2.380% episodes_per_second=161.23
+episodes=133120/1000000 batch_success=8.594% rolling_5000=7.480% total_success=2.359% endpoint_success=2.480% episodes_per_second=161.66
+validation_episodes=133120 success=5/512
+episodes=135168/1000000 batch_success=6.982% rolling_5000=7.480% total_success=2.429% endpoint_success=2.549% episodes_per_second=160.03
+episodes=137216/1000000 batch_success=9.570% rolling_5000=8.280% total_success=2.535% endpoint_success=2.658% episodes_per_second=160.55
+episodes=139264/1000000 batch_success=10.449% rolling_5000=9.540% total_success=2.652% endpoint_success=2.773% episodes_per_second=161.04
+episodes=141312/1000000 batch_success=14.404% rolling_5000=11.960% total_success=2.822% endpoint_success=2.945% episodes_per_second=161.55
+episodes=143360/1000000 batch_success=13.037% rolling_5000=13.260% total_success=2.968% endpoint_success=3.094% episodes_per_second=162.01
+validation_episodes=143360 success=97/512
+episodes=145408/1000000 batch_success=6.934% rolling_5000=10.820% total_success=3.024% endpoint_success=3.150% episodes_per_second=160.50
+episodes=147456/1000000 batch_success=5.371% rolling_5000=7.500% total_success=3.057% endpoint_success=3.181% episodes_per_second=160.93
+episodes=149504/1000000 batch_success=12.598% rolling_5000=8.820% total_success=3.187% endpoint_success=3.314% episodes_per_second=161.38
+episodes=151552/1000000 batch_success=14.209% rolling_5000=11.980% total_success=3.336% endpoint_success=3.466% episodes_per_second=161.81
+episodes=153600/1000000 batch_success=9.961% rolling_5000=12.180% total_success=3.424% endpoint_success=3.553% episodes_per_second=162.24
+validation_episodes=153600 success=141/512
+episodes=155648/1000000 batch_success=12.354% rolling_5000=11.480% total_success=3.542% endpoint_success=3.672% episodes_per_second=160.68
+episodes=157696/1000000 batch_success=13.770% rolling_5000=12.520% total_success=3.675% endpoint_success=3.810% episodes_per_second=161.12
+episodes=159744/1000000 batch_success=15.625% rolling_5000=14.160% total_success=3.828% endpoint_success=3.971% episodes_per_second=161.51
+episodes=161792/1000000 batch_success=15.186% rolling_5000=15.560% total_success=3.972% endpoint_success=4.124% episodes_per_second=161.88
+episodes=163840/1000000 batch_success=14.941% rolling_5000=15.080% total_success=4.109% endpoint_success=4.266% episodes_per_second=162.24
+validation_episodes=163840 success=255/512
+episodes=165888/1000000 batch_success=18.408% rolling_5000=16.520% total_success=4.285% endpoint_success=4.452% episodes_per_second=160.93
+episodes=167936/1000000 batch_success=13.330% rolling_5000=15.560% total_success=4.396% endpoint_success=4.562% episodes_per_second=161.29
+episodes=169984/1000000 batch_success=16.895% rolling_5000=15.800% total_success=4.546% endpoint_success=4.718% episodes_per_second=161.65
+episodes=172032/1000000 batch_success=17.090% rolling_5000=16.160% total_success=4.696% endpoint_success=4.874% episodes_per_second=162.03
+episodes=174080/1000000 batch_success=8.789% rolling_5000=13.540% total_success=4.744% endpoint_success=4.926% episodes_per_second=162.34
+validation_episodes=174080 success=115/512
+episodes=176128/1000000 batch_success=13.037% rolling_5000=12.020% total_success=4.840% endpoint_success=5.028% episodes_per_second=161.09
+episodes=178176/1000000 batch_success=12.207% rolling_5000=11.720% total_success=4.925% endpoint_success=5.114% episodes_per_second=161.47
+episodes=180224/1000000 batch_success=6.445% rolling_5000=10.220% total_success=4.942% endpoint_success=5.135% episodes_per_second=161.82
+episodes=182272/1000000 batch_success=8.594% rolling_5000=8.240% total_success=4.983% endpoint_success=5.179% episodes_per_second=162.11
+episodes=184320/1000000 batch_success=10.742% rolling_5000=9.220% total_success=5.047% endpoint_success=5.246% episodes_per_second=162.40
+validation_episodes=184320 success=133/512
+episodes=186368/1000000 batch_success=14.453% rolling_5000=11.900% total_success=5.151% endpoint_success=5.352% episodes_per_second=161.17
+episodes=188416/1000000 batch_success=3.027% rolling_5000=9.080% total_success=5.127% endpoint_success=5.327% episodes_per_second=161.49
+episodes=190464/1000000 batch_success=7.227% rolling_5000=6.560% total_success=5.150% endpoint_success=5.350% episodes_per_second=161.81
+episodes=192512/1000000 batch_success=8.984% rolling_5000=7.320% total_success=5.191% endpoint_success=5.395% episodes_per_second=162.12
+episodes=194560/1000000 batch_success=11.182% rolling_5000=9.600% total_success=5.254% endpoint_success=5.462% episodes_per_second=162.48
+validation_episodes=194560 success=179/512
+episodes=196608/1000000 batch_success=13.623% rolling_5000=11.620% total_success=5.341% endpoint_success=5.552% episodes_per_second=161.36
+episodes=198656/1000000 batch_success=14.453% rolling_5000=13.420% total_success=5.435% endpoint_success=5.647% episodes_per_second=161.66
+episodes=200704/1000000 batch_success=14.062% rolling_5000=14.240% total_success=5.523% endpoint_success=5.734% episodes_per_second=161.99
+episodes=202752/1000000 batch_success=9.082% rolling_5000=12.260% total_success=5.559% endpoint_success=5.769% episodes_per_second=162.28
+episodes=204800/1000000 batch_success=14.307% rolling_5000=12.040% total_success=5.646% endpoint_success=5.855% episodes_per_second=162.60
+validation_episodes=204800 success=193/512
+episodes=206848/1000000 batch_success=14.990% rolling_5000=13.680% total_success=5.739% endpoint_success=5.950% episodes_per_second=161.53
+episodes=208896/1000000 batch_success=20.020% rolling_5000=16.760% total_success=5.879% endpoint_success=6.093% episodes_per_second=161.84
+episodes=210944/1000000 batch_success=19.385% rolling_5000=18.820% total_success=6.010% endpoint_success=6.225% episodes_per_second=162.11
+episodes=212992/1000000 batch_success=17.627% rolling_5000=18.540% total_success=6.122% endpoint_success=6.339% episodes_per_second=162.41
+episodes=215040/1000000 batch_success=13.232% rolling_5000=16.460% total_success=6.190% endpoint_success=6.410% episodes_per_second=162.69
+validation_episodes=215040 success=169/512
+episodes=217088/1000000 batch_success=16.162% rolling_5000=15.260% total_success=6.284% endpoint_success=6.506% episodes_per_second=161.70
+episodes=219136/1000000 batch_success=17.139% rolling_5000=16.040% total_success=6.385% endpoint_success=6.610% episodes_per_second=161.98
+episodes=221184/1000000 batch_success=16.016% rolling_5000=16.500% total_success=6.474% endpoint_success=6.704% episodes_per_second=162.22
+episodes=223232/1000000 batch_success=18.555% rolling_5000=17.360% total_success=6.585% endpoint_success=6.819% episodes_per_second=162.48
+episodes=225280/1000000 batch_success=21.484% rolling_5000=19.400% total_success=6.721% endpoint_success=6.958% episodes_per_second=162.72
+validation_episodes=225280 success=27/512
+episodes=227328/1000000 batch_success=10.547% rolling_5000=16.440% total_success=6.755% endpoint_success=6.995% episodes_per_second=161.71
+episodes=229376/1000000 batch_success=14.453% rolling_5000=14.020% total_success=6.824% endpoint_success=7.067% episodes_per_second=161.98
+episodes=231424/1000000 batch_success=18.799% rolling_5000=15.380% total_success=6.930% endpoint_success=7.180% episodes_per_second=162.22
+episodes=233472/1000000 batch_success=21.973% rolling_5000=19.420% total_success=7.062% endpoint_success=7.319% episodes_per_second=162.44
+episodes=235520/1000000 batch_success=23.975% rolling_5000=22.080% total_success=7.209% endpoint_success=7.470% episodes_per_second=162.69
+validation_episodes=235520 success=250/512
+episodes=237568/1000000 batch_success=22.656% rolling_5000=23.060% total_success=7.342% endpoint_success=7.604% episodes_per_second=161.71
+episodes=239616/1000000 batch_success=22.852% rolling_5000=22.860% total_success=7.474% endpoint_success=7.738% episodes_per_second=161.98
+episodes=241664/1000000 batch_success=20.215% rolling_5000=21.400% total_success=7.582% endpoint_success=7.848% episodes_per_second=162.23
+episodes=243712/1000000 batch_success=22.412% rolling_5000=21.720% total_success=7.707% endpoint_success=7.978% episodes_per_second=162.48
+episodes=245760/1000000 batch_success=22.168% rolling_5000=21.760% total_success=7.828% endpoint_success=8.105% episodes_per_second=162.72
+validation_episodes=245760 success=81/512
+episodes=247808/1000000 batch_success=12.451% rolling_5000=18.500% total_success=7.866% endpoint_success=8.146% episodes_per_second=161.78
+episodes=249856/1000000 batch_success=19.336% rolling_5000=16.700% total_success=7.960% endpoint_success=8.244% episodes_per_second=162.04
+episodes=251904/1000000 batch_success=21.826% rolling_5000=19.000% total_success=8.073% endpoint_success=8.360% episodes_per_second=162.28
+episodes=253952/1000000 batch_success=26.758% rolling_5000=23.620% total_success=8.223% endpoint_success=8.514% episodes_per_second=162.53
+episodes=256000/1000000 batch_success=25.928% rolling_5000=25.420% total_success=8.365% endpoint_success=8.663% episodes_per_second=162.78
+validation_episodes=256000 success=170/512
+episodes=258048/1000000 batch_success=22.607% rolling_5000=24.740% total_success=8.478% endpoint_success=8.778% episodes_per_second=161.94
+episodes=260096/1000000 batch_success=27.637% rolling_5000=25.300% total_success=8.629% endpoint_success=8.936% episodes_per_second=162.17
+episodes=262144/1000000 batch_success=27.539% rolling_5000=26.600% total_success=8.776% endpoint_success=9.089% episodes_per_second=162.39
+episodes=264192/1000000 batch_success=27.197% rolling_5000=27.400% total_success=8.919% endpoint_success=9.241% episodes_per_second=162.61
+episodes=266240/1000000 batch_success=25.000% rolling_5000=26.380% total_success=9.043% endpoint_success=9.364% episodes_per_second=162.87
+validation_episodes=266240 success=224/512
+episodes=268288/1000000 batch_success=27.148% rolling_5000=26.320% total_success=9.181% endpoint_success=9.505% episodes_per_second=162.05
+episodes=270336/1000000 batch_success=29.395% rolling_5000=27.680% total_success=9.334% endpoint_success=9.663% episodes_per_second=162.29
+episodes=272384/1000000 batch_success=30.664% rolling_5000=29.480% total_success=9.495% endpoint_success=9.830% episodes_per_second=162.53
+episodes=274432/1000000 batch_success=30.127% rolling_5000=30.560% total_success=9.649% endpoint_success=9.989% episodes_per_second=162.74
+episodes=276480/1000000 batch_success=29.980% rolling_5000=30.320% total_success=9.799% endpoint_success=10.145% episodes_per_second=162.94
+validation_episodes=276480 success=312/512
+episodes=278528/1000000 batch_success=31.982% rolling_5000=30.700% total_success=9.962% endpoint_success=10.312% episodes_per_second=162.16
+episodes=280576/1000000 batch_success=28.711% rolling_5000=30.520% total_success=10.099% endpoint_success=10.453% episodes_per_second=162.38
+episodes=282624/1000000 batch_success=30.078% rolling_5000=30.020% total_success=10.244% endpoint_success=10.599% episodes_per_second=162.61
+episodes=284672/1000000 batch_success=27.197% rolling_5000=28.640% total_success=10.366% endpoint_success=10.721% episodes_per_second=162.80
+episodes=286720/1000000 batch_success=29.053% rolling_5000=28.440% total_success=10.499% endpoint_success=10.853% episodes_per_second=163.01
+validation_episodes=286720 success=45/512
+episodes=288768/1000000 batch_success=16.260% rolling_5000=23.720% total_success=10.540% endpoint_success=10.892% episodes_per_second=162.21
+episodes=290816/1000000 batch_success=19.922% rolling_5000=20.040% total_success=10.606% endpoint_success=10.957% episodes_per_second=162.43
+episodes=292864/1000000 batch_success=35.059% rolling_5000=25.620% total_success=10.777% endpoint_success=11.135% episodes_per_second=162.62
+episodes=294912/1000000 batch_success=35.547% rolling_5000=32.580% total_success=10.949% endpoint_success=11.309% episodes_per_second=162.83
+episodes=296960/1000000 batch_success=30.713% rolling_5000=33.240% total_success=11.086% endpoint_success=11.453% episodes_per_second=163.03
+validation_episodes=296960 success=347/512
+episodes=299008/1000000 batch_success=33.838% rolling_5000=32.840% total_success=11.242% endpoint_success=11.612% episodes_per_second=162.27
+episodes=301056/1000000 batch_success=35.010% rolling_5000=33.940% total_success=11.403% endpoint_success=11.780% episodes_per_second=162.50
+episodes=303104/1000000 batch_success=24.902% rolling_5000=30.480% total_success=11.494% endpoint_success=11.870% episodes_per_second=162.70
+episodes=305152/1000000 batch_success=27.441% rolling_5000=27.960% total_success=11.601% endpoint_success=11.978% episodes_per_second=162.92
+episodes=307200/1000000 batch_success=26.758% rolling_5000=26.940% total_success=11.702% endpoint_success=12.078% episodes_per_second=163.15
+validation_episodes=307200 success=335/512
+episodes=309248/1000000 batch_success=38.330% rolling_5000=31.940% total_success=11.879% endpoint_success=12.256% episodes_per_second=162.44
+episodes=311296/1000000 batch_success=37.305% rolling_5000=35.800% total_success=12.046% endpoint_success=12.427% episodes_per_second=162.63
+episodes=313344/1000000 batch_success=37.402% rolling_5000=37.000% total_success=12.212% endpoint_success=12.597% episodes_per_second=162.81
+episodes=315392/1000000 batch_success=34.863% rolling_5000=36.280% total_success=12.359% endpoint_success=12.745% episodes_per_second=162.99
+episodes=317440/1000000 batch_success=38.184% rolling_5000=36.920% total_success=12.526% endpoint_success=12.915% episodes_per_second=163.17
+validation_episodes=317440 success=351/512
+episodes=319488/1000000 batch_success=38.623% rolling_5000=38.020% total_success=12.693% endpoint_success=13.085% episodes_per_second=162.47
+episodes=321536/1000000 batch_success=37.549% rolling_5000=37.820% total_success=12.851% endpoint_success=13.247% episodes_per_second=162.68
+episodes=323584/1000000 batch_success=31.104% rolling_5000=35.040% total_success=12.967% endpoint_success=13.366% episodes_per_second=162.89
+episodes=325632/1000000 batch_success=37.500% rolling_5000=35.120% total_success=13.121% endpoint_success=13.520% episodes_per_second=163.10
+episodes=327680/1000000 batch_success=40.918% rolling_5000=38.020% total_success=13.295% endpoint_success=13.695% episodes_per_second=163.28
+validation_episodes=327680 success=159/512
+episodes=329728/1000000 batch_success=27.051% rolling_5000=34.820% total_success=13.380% endpoint_success=13.779% episodes_per_second=162.60
+episodes=331776/1000000 batch_success=27.539% rolling_5000=29.940% total_success=13.468% endpoint_success=13.866% episodes_per_second=162.80
+episodes=333824/1000000 batch_success=36.670% rolling_5000=30.940% total_success=13.610% endpoint_success=14.008% episodes_per_second=163.00
+episodes=335872/1000000 batch_success=34.619% rolling_5000=33.880% total_success=13.738% endpoint_success=14.136% episodes_per_second=163.20
+episodes=337920/1000000 batch_success=31.299% rolling_5000=33.620% total_success=13.844% endpoint_success=14.243% episodes_per_second=163.36
+validation_episodes=337920 success=273/512
+episodes=339968/1000000 batch_success=34.473% rolling_5000=32.960% total_success=13.969% endpoint_success=14.367% episodes_per_second=162.66
+episodes=342016/1000000 batch_success=40.576% rolling_5000=36.620% total_success=14.128% endpoint_success=14.531% episodes_per_second=162.84
+episodes=344064/1000000 batch_success=40.381% rolling_5000=39.200% total_success=14.284% endpoint_success=14.688% episodes_per_second=163.02
+episodes=346112/1000000 batch_success=42.578% rolling_5000=41.340% total_success=14.452% endpoint_success=14.858% episodes_per_second=163.22
+episodes=348160/1000000 batch_success=38.477% rolling_5000=40.600% total_success=14.593% endpoint_success=14.999% episodes_per_second=163.41
+validation_episodes=348160 success=358/512
+episodes=350208/1000000 batch_success=42.480% rolling_5000=40.940% total_success=14.756% endpoint_success=15.164% episodes_per_second=162.73
+episodes=352256/1000000 batch_success=45.312% rolling_5000=43.220% total_success=14.934% endpoint_success=15.343% episodes_per_second=162.89
+episodes=354304/1000000 batch_success=43.896% rolling_5000=43.820% total_success=15.101% endpoint_success=15.514% episodes_per_second=163.05
+episodes=356352/1000000 batch_success=34.326% rolling_5000=39.920% total_success=15.212% endpoint_success=15.623% episodes_per_second=163.24
+episodes=358400/1000000 batch_success=29.834% rolling_5000=34.340% total_success=15.295% endpoint_success=15.705% episodes_per_second=163.43
+validation_episodes=358400 success=176/512
+episodes=360448/1000000 batch_success=32.471% rolling_5000=31.720% total_success=15.393% endpoint_success=15.801% episodes_per_second=162.83
+episodes=362496/1000000 batch_success=39.062% rolling_5000=34.620% total_success=15.527% endpoint_success=15.936% episodes_per_second=163.01
+episodes=364544/1000000 batch_success=41.211% rolling_5000=38.820% total_success=15.671% endpoint_success=16.080% episodes_per_second=163.18
+episodes=366592/1000000 batch_success=29.346% rolling_5000=35.940% total_success=15.747% endpoint_success=16.155% episodes_per_second=163.34
+episodes=368640/1000000 batch_success=49.268% rolling_5000=39.300% total_success=15.933% endpoint_success=16.345% episodes_per_second=163.49
+validation_episodes=368640 success=365/512
+episodes=370688/1000000 batch_success=46.631% rolling_5000=44.580% total_success=16.103% endpoint_success=16.518% episodes_per_second=162.89
+episodes=372736/1000000 batch_success=46.973% rolling_5000=47.320% total_success=16.273% endpoint_success=16.688% episodes_per_second=163.06
+episodes=374784/1000000 batch_success=45.117% rolling_5000=46.300% total_success=16.430% endpoint_success=16.845% episodes_per_second=163.22
+episodes=376832/1000000 batch_success=43.896% rolling_5000=44.880% total_success=16.580% endpoint_success=16.996% episodes_per_second=163.37
+episodes=378880/1000000 batch_success=46.533% rolling_5000=45.300% total_success=16.741% endpoint_success=17.158% episodes_per_second=163.52
+validation_episodes=378880 success=346/512
+episodes=380928/1000000 batch_success=43.555% rolling_5000=44.600% total_success=16.886% endpoint_success=17.303% episodes_per_second=162.92
+episodes=382976/1000000 batch_success=44.775% rolling_5000=44.580% total_success=17.035% endpoint_success=17.452% episodes_per_second=163.08
+episodes=385024/1000000 batch_success=44.922% rolling_5000=44.860% total_success=17.183% endpoint_success=17.602% episodes_per_second=163.25
+episodes=387072/1000000 batch_success=48.486% rolling_5000=46.500% total_success=17.349% endpoint_success=17.769% episodes_per_second=163.42
+episodes=389120/1000000 batch_success=48.975% rolling_5000=48.320% total_success=17.515% endpoint_success=17.937% episodes_per_second=163.58
+validation_episodes=389120 success=395/512
+episodes=391168/1000000 batch_success=52.441% rolling_5000=50.400% total_success=17.698% endpoint_success=18.120% episodes_per_second=163.00
+episodes=393216/1000000 batch_success=50.244% rolling_5000=50.600% total_success=17.868% endpoint_success=18.291% episodes_per_second=163.15
+episodes=395264/1000000 batch_success=39.355% rolling_5000=46.200% total_success=17.979% endpoint_success=18.402% episodes_per_second=163.29
+episodes=397312/1000000 batch_success=46.533% rolling_5000=43.860% total_success=18.126% endpoint_success=18.549% episodes_per_second=163.45
+episodes=399360/1000000 batch_success=45.557% rolling_5000=44.840% total_success=18.267% endpoint_success=18.689% episodes_per_second=163.59
+validation_episodes=399360 success=395/512
+episodes=401408/1000000 batch_success=48.584% rolling_5000=46.860% total_success=18.421% endpoint_success=18.844% episodes_per_second=163.02
+episodes=403456/1000000 batch_success=53.174% rolling_5000=49.360% total_success=18.598% endpoint_success=19.023% episodes_per_second=163.16
+episodes=405504/1000000 batch_success=51.416% rolling_5000=51.140% total_success=18.764% endpoint_success=19.191% episodes_per_second=163.30
+episodes=407552/1000000 batch_success=52.100% rolling_5000=51.820% total_success=18.931% endpoint_success=19.359% episodes_per_second=163.43
+episodes=409600/1000000 batch_success=52.295% rolling_5000=51.960% total_success=19.098% endpoint_success=19.527% episodes_per_second=163.59
+validation_episodes=409600 success=415/512
+episodes=411648/1000000 batch_success=55.078% rolling_5000=53.500% total_success=19.277% endpoint_success=19.708% episodes_per_second=163.05
+episodes=413696/1000000 batch_success=56.445% rolling_5000=54.940% total_success=19.461% endpoint_success=19.894% episodes_per_second=163.20
+episodes=415744/1000000 batch_success=55.420% rolling_5000=55.860% total_success=19.638% endpoint_success=20.074% episodes_per_second=163.34
+episodes=417792/1000000 batch_success=54.785% rolling_5000=55.260% total_success=19.810% endpoint_success=20.248% episodes_per_second=163.47
+episodes=419840/1000000 batch_success=56.299% rolling_5000=55.540% total_success=19.988% endpoint_success=20.428% episodes_per_second=163.61
+validation_episodes=419840 success=375/512
+episodes=421888/1000000 batch_success=46.875% rolling_5000=51.760% total_success=20.119% endpoint_success=20.558% episodes_per_second=163.07
+episodes=423936/1000000 batch_success=53.760% rolling_5000=51.800% total_success=20.281% endpoint_success=20.724% episodes_per_second=163.19
+episodes=425984/1000000 batch_success=56.494% rolling_5000=53.860% total_success=20.455% endpoint_success=20.899% episodes_per_second=163.32
+episodes=428032/1000000 batch_success=56.104% rolling_5000=56.080% total_success=20.626% endpoint_success=21.070% episodes_per_second=163.44
+episodes=430080/1000000 batch_success=54.395% rolling_5000=55.580% total_success=20.787% endpoint_success=21.234% episodes_per_second=163.58
+validation_episodes=430080 success=392/512
+episodes=432128/1000000 batch_success=52.441% rolling_5000=53.620% total_success=20.937% endpoint_success=21.383% episodes_per_second=163.06
+episodes=434176/1000000 batch_success=57.275% rolling_5000=55.100% total_success=21.108% endpoint_success=21.556% episodes_per_second=163.20
+episodes=436224/1000000 batch_success=57.178% rolling_5000=56.560% total_success=21.278% endpoint_success=21.726% episodes_per_second=163.35
+episodes=438272/1000000 batch_success=58.740% rolling_5000=57.720% total_success=21.453% endpoint_success=21.902% episodes_per_second=163.48
+episodes=440320/1000000 batch_success=59.033% rolling_5000=58.920% total_success=21.627% endpoint_success=22.078% episodes_per_second=163.62
+validation_episodes=440320 success=425/512
+episodes=442368/1000000 batch_success=59.131% rolling_5000=59.360% total_success=21.801% endpoint_success=22.251% episodes_per_second=163.11
+episodes=444416/1000000 batch_success=58.838% rolling_5000=58.640% total_success=21.972% endpoint_success=22.425% episodes_per_second=163.26
+episodes=446464/1000000 batch_success=46.973% rolling_5000=54.020% total_success=22.086% endpoint_success=22.538% episodes_per_second=163.39
+episodes=448512/1000000 batch_success=47.412% rolling_5000=49.760% total_success=22.202% endpoint_success=22.652% episodes_per_second=163.53
+episodes=450560/1000000 batch_success=56.152% rolling_5000=50.800% total_success=22.356% endpoint_success=22.806% episodes_per_second=163.67
+validation_episodes=450560 success=420/512
+episodes=452608/1000000 batch_success=59.521% rolling_5000=55.800% total_success=22.525% endpoint_success=22.973% episodes_per_second=163.18
+episodes=454656/1000000 batch_success=59.180% rolling_5000=58.360% total_success=22.690% endpoint_success=23.139% episodes_per_second=163.31
+episodes=456704/1000000 batch_success=33.447% rolling_5000=48.960% total_success=22.738% endpoint_success=23.185% episodes_per_second=163.43
+episodes=458752/1000000 batch_success=39.258% rolling_5000=40.380% total_success=22.812% endpoint_success=23.257% episodes_per_second=163.55
+episodes=460800/1000000 batch_success=45.459% rolling_5000=40.740% total_success=22.912% endpoint_success=23.356% episodes_per_second=163.68
+validation_episodes=460800 success=358/512
+episodes=462848/1000000 batch_success=52.148% rolling_5000=47.100% total_success=23.042% endpoint_success=23.489% episodes_per_second=163.18
+episodes=464896/1000000 batch_success=59.863% rolling_5000=54.160% total_success=23.204% endpoint_success=23.652% episodes_per_second=163.32
+episodes=466944/1000000 batch_success=59.082% rolling_5000=58.240% total_success=23.361% endpoint_success=23.808% episodes_per_second=163.44
+episodes=468992/1000000 batch_success=58.545% rolling_5000=59.040% total_success=23.515% endpoint_success=23.964% episodes_per_second=163.57
+episodes=471040/1000000 batch_success=42.578% rolling_5000=52.300% total_success=23.598% endpoint_success=24.045% episodes_per_second=163.69
+validation_episodes=471040 success=375/512
+episodes=473088/1000000 batch_success=49.414% rolling_5000=47.940% total_success=23.710% endpoint_success=24.155% episodes_per_second=163.20
+episodes=475136/1000000 batch_success=32.275% rolling_5000=41.340% total_success=23.746% endpoint_success=24.191% episodes_per_second=163.34
+episodes=477184/1000000 batch_success=37.158% rolling_5000=37.480% total_success=23.804% endpoint_success=24.247% episodes_per_second=163.48
+episodes=479232/1000000 batch_success=56.152% rolling_5000=44.180% total_success=23.942% endpoint_success=24.386% episodes_per_second=163.62
+episodes=481280/1000000 batch_success=15.088% rolling_5000=35.920% total_success=23.905% endpoint_success=24.347% episodes_per_second=163.75
+validation_episodes=481280 success=3/512
+episodes=483328/1000000 batch_success=5.273% rolling_5000=18.860% total_success=23.826% endpoint_success=24.266% episodes_per_second=163.26
+episodes=485376/1000000 batch_success=5.811% rolling_5000=7.160% total_success=23.750% endpoint_success=24.188% episodes_per_second=163.38
+episodes=487424/1000000 batch_success=1.709% rolling_5000=3.940% total_success=23.657% endpoint_success=24.094% episodes_per_second=163.52
+episodes=489472/1000000 batch_success=1.172% rolling_5000=2.080% total_success=23.563% endpoint_success=23.998% episodes_per_second=163.63
+episodes=491520/1000000 batch_success=7.227% rolling_5000=3.800% total_success=23.495% endpoint_success=23.928% episodes_per_second=163.74
+validation_episodes=491520 success=37/512
+episodes=493568/1000000 batch_success=12.598% rolling_5000=8.280% total_success=23.450% endpoint_success=23.881% episodes_per_second=163.27
+episodes=495616/1000000 batch_success=23.584% rolling_5000=16.040% total_success=23.450% endpoint_success=23.880% episodes_per_second=163.39
+episodes=497664/1000000 batch_success=31.250% rolling_5000=24.660% total_success=23.482% endpoint_success=23.913% episodes_per_second=163.50
+episodes=499712/1000000 batch_success=37.695% rolling_5000=32.620% total_success=23.541% endpoint_success=23.970% episodes_per_second=163.60
+episodes=501760/1000000 batch_success=42.480% rolling_5000=38.360% total_success=23.618% endpoint_success=24.047% episodes_per_second=163.73
+validation_episodes=501760 success=400/512
+episodes=503808/1000000 batch_success=48.193% rolling_5000=43.700% total_success=23.718% endpoint_success=24.149% episodes_per_second=163.29
+episodes=505856/1000000 batch_success=48.145% rolling_5000=47.200% total_success=23.817% endpoint_success=24.251% episodes_per_second=163.42
+episodes=507904/1000000 batch_success=50.244% rolling_5000=49.240% total_success=23.923% endpoint_success=24.358% episodes_per_second=163.53
+episodes=509952/1000000 batch_success=53.271% rolling_5000=51.160% total_success=24.041% endpoint_success=24.478% episodes_per_second=163.65
+episodes=512000/1000000 batch_success=54.248% rolling_5000=52.720% total_success=24.162% endpoint_success=24.600% episodes_per_second=163.77
+validation_episodes=512000 success=426/512
+episodes=514048/1000000 batch_success=58.105% rolling_5000=55.700% total_success=24.297% endpoint_success=24.738% episodes_per_second=163.31
+episodes=516096/1000000 batch_success=52.930% rolling_5000=54.940% total_success=24.411% endpoint_success=24.855% episodes_per_second=163.42
+episodes=518144/1000000 batch_success=56.250% rolling_5000=55.400% total_success=24.537% endpoint_success=24.983% episodes_per_second=163.53
+episodes=520192/1000000 batch_success=56.055% rolling_5000=55.780% total_success=24.661% endpoint_success=25.111% episodes_per_second=163.64
+episodes=522240/1000000 batch_success=54.932% rolling_5000=55.380% total_success=24.779% endpoint_success=25.232% episodes_per_second=163.74
+validation_episodes=522240 success=433/512
+episodes=524288/1000000 batch_success=57.568% rolling_5000=56.460% total_success=24.907% endpoint_success=25.361% episodes_per_second=163.24
+episodes=526336/1000000 batch_success=54.785% rolling_5000=56.220% total_success=25.024% endpoint_success=25.482% episodes_per_second=163.34
+episodes=528384/1000000 batch_success=46.729% rolling_5000=52.040% total_success=25.108% endpoint_success=25.574% episodes_per_second=163.45
+episodes=530432/1000000 batch_success=58.154% rolling_5000=53.120% total_success=25.235% endpoint_success=25.703% episodes_per_second=163.54
+episodes=532480/1000000 batch_success=61.719% rolling_5000=57.540% total_success=25.376% endpoint_success=25.845% episodes_per_second=163.64
+validation_episodes=532480 success=428/512
+episodes=534528/1000000 batch_success=58.984% rolling_5000=59.980% total_success=25.505% endpoint_success=25.974% episodes_per_second=163.18
+episodes=536576/1000000 batch_success=58.984% rolling_5000=59.580% total_success=25.632% endpoint_success=26.103% episodes_per_second=163.27
+episodes=538624/1000000 batch_success=60.156% rolling_5000=59.220% total_success=25.764% endpoint_success=26.234% episodes_per_second=163.37
+episodes=540672/1000000 batch_success=62.207% rolling_5000=60.520% total_success=25.902% endpoint_success=26.375% episodes_per_second=163.48
+episodes=542720/1000000 batch_success=62.158% rolling_5000=61.580% total_success=26.038% endpoint_success=26.512% episodes_per_second=163.60
+validation_episodes=542720 success=439/512
+episodes=544768/1000000 batch_success=62.695% rolling_5000=62.460% total_success=26.176% endpoint_success=26.649% episodes_per_second=163.14
+episodes=546816/1000000 batch_success=62.549% rolling_5000=62.560% total_success=26.313% endpoint_success=26.786% episodes_per_second=163.23
+episodes=548864/1000000 batch_success=60.352% rolling_5000=61.660% total_success=26.440% endpoint_success=26.913% episodes_per_second=163.32
+episodes=550912/1000000 batch_success=49.121% rolling_5000=56.020% total_success=26.524% endpoint_success=26.996% episodes_per_second=163.40
+episodes=552960/1000000 batch_success=58.545% rolling_5000=54.960% total_success=26.642% endpoint_success=27.115% episodes_per_second=163.52
+validation_episodes=552960 success=323/512
+episodes=555008/1000000 batch_success=46.875% rolling_5000=52.200% total_success=26.717% endpoint_success=27.189% episodes_per_second=163.12
+episodes=557056/1000000 batch_success=42.432% rolling_5000=47.220% total_success=26.775% endpoint_success=27.246% episodes_per_second=163.24
+episodes=559104/1000000 batch_success=59.619% rolling_5000=50.240% total_success=26.895% endpoint_success=27.368% episodes_per_second=163.35
+episodes=561152/1000000 batch_success=63.281% rolling_5000=58.100% total_success=27.028% endpoint_success=27.501% episodes_per_second=163.45
+episodes=563200/1000000 batch_success=64.209% rolling_5000=62.960% total_success=27.163% endpoint_success=27.638% episodes_per_second=163.56
+validation_episodes=563200 success=439/512
+episodes=565248/1000000 batch_success=64.307% rolling_5000=63.940% total_success=27.298% endpoint_success=27.773% episodes_per_second=163.17
+episodes=567296/1000000 batch_success=64.062% rolling_5000=64.420% total_success=27.430% endpoint_success=27.906% episodes_per_second=163.29
+episodes=569344/1000000 batch_success=65.723% rolling_5000=64.680% total_success=27.568% endpoint_success=28.046% episodes_per_second=163.40
+episodes=571392/1000000 batch_success=65.381% rolling_5000=65.420% total_success=27.704% endpoint_success=28.181% episodes_per_second=163.51
+episodes=573440/1000000 batch_success=53.369% rolling_5000=60.520% total_success=27.795% endpoint_success=28.271% episodes_per_second=163.60
+validation_episodes=573440 success=394/512
+episodes=575488/1000000 batch_success=54.053% rolling_5000=55.800% total_success=27.889% endpoint_success=28.364% episodes_per_second=163.20
+episodes=577536/1000000 batch_success=64.746% rolling_5000=58.240% total_success=28.020% endpoint_success=28.497% episodes_per_second=163.29
+episodes=579584/1000000 batch_success=64.160% rolling_5000=62.940% total_success=28.147% endpoint_success=28.624% episodes_per_second=163.40
+episodes=581632/1000000 batch_success=24.072% rolling_5000=47.760% total_success=28.133% endpoint_success=28.608% episodes_per_second=163.51
+episodes=583680/1000000 batch_success=34.424% rolling_5000=35.640% total_success=28.155% endpoint_success=28.629% episodes_per_second=163.62
+validation_episodes=583680 success=302/512
+episodes=585728/1000000 batch_success=44.775% rolling_5000=36.880% total_success=28.213% endpoint_success=28.686% episodes_per_second=163.20
+episodes=587776/1000000 batch_success=65.430% rolling_5000=51.020% total_success=28.343% endpoint_success=28.816% episodes_per_second=163.30
+episodes=589824/1000000 batch_success=62.402% rolling_5000=60.380% total_success=28.461% endpoint_success=28.934% episodes_per_second=163.40
+episodes=591872/1000000 batch_success=44.678% rolling_5000=56.040% total_success=28.517% endpoint_success=28.989% episodes_per_second=163.52
+episodes=593920/1000000 batch_success=65.625% rolling_5000=56.660% total_success=28.645% endpoint_success=29.118% episodes_per_second=163.62
+validation_episodes=593920 success=452/512
+episodes=595968/1000000 batch_success=64.795% rolling_5000=61.500% total_success=28.769% endpoint_success=29.243% episodes_per_second=163.23
+episodes=598016/1000000 batch_success=66.357% rolling_5000=65.620% total_success=28.898% endpoint_success=29.374% episodes_per_second=163.33
+episodes=600064/1000000 batch_success=67.969% rolling_5000=66.720% total_success=29.031% endpoint_success=29.509% episodes_per_second=163.43
+episodes=602112/1000000 batch_success=65.967% rolling_5000=66.780% total_success=29.157% endpoint_success=29.634% episodes_per_second=163.52
+episodes=604160/1000000 batch_success=63.916% rolling_5000=65.420% total_success=29.275% endpoint_success=29.751% episodes_per_second=163.63
+validation_episodes=604160 success=456/512
+episodes=606208/1000000 batch_success=68.848% rolling_5000=66.420% total_success=29.409% endpoint_success=29.885% episodes_per_second=163.26
+episodes=608256/1000000 batch_success=68.799% rolling_5000=67.720% total_success=29.541% endpoint_success=30.018% episodes_per_second=163.37
+episodes=610304/1000000 batch_success=65.137% rolling_5000=67.160% total_success=29.661% endpoint_success=30.138% episodes_per_second=163.47
+episodes=612352/1000000 batch_success=66.357% rolling_5000=66.480% total_success=29.783% endpoint_success=30.261% episodes_per_second=163.57
+episodes=614400/1000000 batch_success=64.990% rolling_5000=65.700% total_success=29.901% endpoint_success=30.378% episodes_per_second=163.67
+validation_episodes=614400 success=447/512
+episodes=616448/1000000 batch_success=64.990% rolling_5000=65.260% total_success=30.017% endpoint_success=30.494% episodes_per_second=163.30
+episodes=618496/1000000 batch_success=57.227% rolling_5000=61.460% total_success=30.107% endpoint_success=30.583% episodes_per_second=163.42
+episodes=620544/1000000 batch_success=71.338% rolling_5000=64.200% total_success=30.243% endpoint_success=30.719% episodes_per_second=163.52
+episodes=622592/1000000 batch_success=67.578% rolling_5000=67.160% total_success=30.366% endpoint_success=30.842% episodes_per_second=163.62
+episodes=624640/1000000 batch_success=65.625% rolling_5000=67.200% total_success=30.482% endpoint_success=30.958% episodes_per_second=163.72
+validation_episodes=624640 success=459/512
+episodes=626688/1000000 batch_success=68.604% rolling_5000=67.080% total_success=30.606% endpoint_success=31.083% episodes_per_second=163.35
+episodes=628736/1000000 batch_success=68.262% rolling_5000=68.140% total_success=30.729% endpoint_success=31.206% episodes_per_second=163.46
+episodes=630784/1000000 batch_success=70.654% rolling_5000=69.200% total_success=30.859% endpoint_success=31.336% episodes_per_second=163.56
+episodes=632832/1000000 batch_success=59.619% rolling_5000=65.940% total_success=30.952% endpoint_success=31.429% episodes_per_second=163.67
+episodes=634880/1000000 batch_success=68.018% rolling_5000=64.800% total_success=31.071% endpoint_success=31.548% episodes_per_second=163.77
+validation_episodes=634880 success=431/512
+episodes=636928/1000000 batch_success=64.014% rolling_5000=65.020% total_success=31.177% endpoint_success=31.655% episodes_per_second=163.41
+episodes=638976/1000000 batch_success=57.129% rolling_5000=61.740% total_success=31.260% endpoint_success=31.738% episodes_per_second=163.50
+episodes=641024/1000000 batch_success=51.709% rolling_5000=56.600% total_success=31.326% endpoint_success=31.803% episodes_per_second=163.59
+episodes=643072/1000000 batch_success=44.531% rolling_5000=49.600% total_success=31.368% endpoint_success=31.844% episodes_per_second=163.69
+episodes=645120/1000000 batch_success=16.895% rolling_5000=34.240% total_success=31.322% endpoint_success=31.797% episodes_per_second=163.79
+validation_episodes=645120 success=421/512
+episodes=647168/1000000 batch_success=62.988% rolling_5000=40.780% total_success=31.422% endpoint_success=31.896% episodes_per_second=163.46
+episodes=649216/1000000 batch_success=71.338% rolling_5000=57.960% total_success=31.548% endpoint_success=32.023% episodes_per_second=163.56
+episodes=651264/1000000 batch_success=72.021% rolling_5000=70.040% total_success=31.675% endpoint_success=32.152% episodes_per_second=163.65
+episodes=653312/1000000 batch_success=67.871% rolling_5000=70.180% total_success=31.789% endpoint_success=32.267% episodes_per_second=163.73
+episodes=655360/1000000 batch_success=71.631% rolling_5000=69.980% total_success=31.913% endpoint_success=32.392% episodes_per_second=163.83
+validation_episodes=655360 success=432/512
+episodes=657408/1000000 batch_success=65.039% rolling_5000=68.160% total_success=32.016% endpoint_success=32.498% episodes_per_second=163.49
+episodes=659456/1000000 batch_success=47.852% rolling_5000=59.080% total_success=32.066% endpoint_success=32.546% episodes_per_second=163.59
+episodes=661504/1000000 batch_success=49.219% rolling_5000=51.620% total_success=32.119% endpoint_success=32.598% episodes_per_second=163.69
+episodes=663552/1000000 batch_success=68.701% rolling_5000=56.460% total_success=32.232% endpoint_success=32.710% episodes_per_second=163.79
+episodes=665600/1000000 batch_success=66.162% rolling_5000=64.060% total_success=32.336% endpoint_success=32.815% episodes_per_second=163.89
+validation_episodes=665600 success=419/512
+episodes=667648/1000000 batch_success=65.137% rolling_5000=66.420% total_success=32.437% endpoint_success=32.918% episodes_per_second=163.55
+episodes=669696/1000000 batch_success=27.393% rolling_5000=49.800% total_success=32.421% endpoint_success=32.901% episodes_per_second=163.65
+episodes=671744/1000000 batch_success=56.982% rolling_5000=46.380% total_success=32.496% endpoint_success=32.975% episodes_per_second=163.76
+episodes=673792/1000000 batch_success=67.188% rolling_5000=56.160% total_success=32.602% endpoint_success=33.080% episodes_per_second=163.85
+episodes=675840/1000000 batch_success=70.312% rolling_5000=66.480% total_success=32.716% endpoint_success=33.194% episodes_per_second=163.94
+validation_episodes=675840 success=460/512
+episodes=677888/1000000 batch_success=72.168% rolling_5000=70.340% total_success=32.835% endpoint_success=33.313% episodes_per_second=163.60
+episodes=679936/1000000 batch_success=73.633% rolling_5000=72.420% total_success=32.958% endpoint_success=33.439% episodes_per_second=163.69
+episodes=681984/1000000 batch_success=67.090% rolling_5000=70.420% total_success=33.060% endpoint_success=33.545% episodes_per_second=163.79
+episodes=684032/1000000 batch_success=65.918% rolling_5000=68.200% total_success=33.159% endpoint_success=33.642% episodes_per_second=163.89
+episodes=686080/1000000 batch_success=54.541% rolling_5000=61.720% total_success=33.223% endpoint_success=33.705% episodes_per_second=163.99
+validation_episodes=686080 success=254/512
+episodes=688128/1000000 batch_success=39.502% rolling_5000=50.580% total_success=33.241% endpoint_success=33.723% episodes_per_second=163.67
+episodes=690176/1000000 batch_success=64.697% rolling_5000=52.560% total_success=33.335% endpoint_success=33.815% episodes_per_second=163.77
+episodes=692224/1000000 batch_success=51.172% rolling_5000=54.620% total_success=33.387% endpoint_success=33.873% episodes_per_second=163.86
+episodes=694272/1000000 batch_success=69.775% rolling_5000=61.380% total_success=33.495% endpoint_success=33.984% episodes_per_second=163.94
+episodes=696320/1000000 batch_success=71.484% rolling_5000=67.280% total_success=33.607% endpoint_success=34.095% episodes_per_second=164.02
+validation_episodes=696320 success=461/512
+episodes=698368/1000000 batch_success=73.779% rolling_5000=71.980% total_success=33.724% endpoint_success=34.212% episodes_per_second=163.69
+episodes=700416/1000000 batch_success=72.119% rolling_5000=72.560% total_success=33.837% endpoint_success=34.324% episodes_per_second=163.78
+episodes=702464/1000000 batch_success=72.461% rolling_5000=72.700% total_success=33.949% endpoint_success=34.436% episodes_per_second=163.87
+episodes=704512/1000000 batch_success=71.240% rolling_5000=71.820% total_success=34.058% endpoint_success=34.545% episodes_per_second=163.95
+episodes=706560/1000000 batch_success=73.096% rolling_5000=72.280% total_success=34.171% endpoint_success=34.657% episodes_per_second=164.03
+validation_episodes=706560 success=471/512
+episodes=708608/1000000 batch_success=73.486% rolling_5000=72.980% total_success=34.284% endpoint_success=34.771% episodes_per_second=163.70
+episodes=710656/1000000 batch_success=74.121% rolling_5000=73.840% total_success=34.399% endpoint_success=34.886% episodes_per_second=163.79
+episodes=712704/1000000 batch_success=69.629% rolling_5000=72.220% total_success=34.500% endpoint_success=34.987% episodes_per_second=163.88
+episodes=714752/1000000 batch_success=72.607% rolling_5000=71.540% total_success=34.610% endpoint_success=35.095% episodes_per_second=163.98
+episodes=716800/1000000 batch_success=71.191% rolling_5000=71.380% total_success=34.714% endpoint_success=35.199% episodes_per_second=164.06
+validation_episodes=716800 success=465/512
+episodes=718848/1000000 batch_success=73.340% rolling_5000=72.380% total_success=34.824% endpoint_success=35.309% episodes_per_second=163.75
+episodes=720896/1000000 batch_success=55.615% rolling_5000=65.760% total_success=34.883% endpoint_success=35.367% episodes_per_second=163.83
+episodes=722944/1000000 batch_success=72.266% rolling_5000=65.920% total_success=34.989% endpoint_success=35.474% episodes_per_second=163.91
+episodes=724992/1000000 batch_success=66.260% rolling_5000=67.100% total_success=35.077% endpoint_success=35.564% episodes_per_second=164.00
+episodes=727040/1000000 batch_success=68.848% rolling_5000=68.440% total_success=35.173% endpoint_success=35.658% episodes_per_second=164.09
+validation_episodes=727040 success=470/512
+episodes=729088/1000000 batch_success=73.486% rolling_5000=70.540% total_success=35.280% endpoint_success=35.766% episodes_per_second=163.79
+episodes=731136/1000000 batch_success=75.488% rolling_5000=73.280% total_success=35.393% endpoint_success=35.879% episodes_per_second=163.87
+episodes=733184/1000000 batch_success=76.318% rolling_5000=75.480% total_success=35.507% endpoint_success=35.994% episodes_per_second=163.95
+episodes=735232/1000000 batch_success=75.000% rolling_5000=75.660% total_success=35.617% endpoint_success=36.104% episodes_per_second=164.03
+episodes=737280/1000000 batch_success=52.100% rolling_5000=65.600% total_success=35.663% endpoint_success=36.148% episodes_per_second=164.12
+validation_episodes=737280 success=455/512
+episodes=739328/1000000 batch_success=69.531% rolling_5000=63.440% total_success=35.757% endpoint_success=36.241% episodes_per_second=163.82
+episodes=741376/1000000 batch_success=71.680% rolling_5000=67.200% total_success=35.856% endpoint_success=36.343% episodes_per_second=163.91
+episodes=743424/1000000 batch_success=72.754% rolling_5000=71.320% total_success=35.958% endpoint_success=36.445% episodes_per_second=163.99
+episodes=745472/1000000 batch_success=75.830% rolling_5000=73.840% total_success=36.067% endpoint_success=36.554% episodes_per_second=164.07
+episodes=747520/1000000 batch_success=74.951% rolling_5000=75.040% total_success=36.174% endpoint_success=36.661% episodes_per_second=164.16
+validation_episodes=747520 success=471/512
+episodes=749568/1000000 batch_success=72.412% rolling_5000=73.980% total_success=36.273% endpoint_success=36.760% episodes_per_second=163.86
+episodes=751616/1000000 batch_success=75.537% rolling_5000=74.080% total_success=36.380% endpoint_success=36.868% episodes_per_second=163.94
+episodes=753664/1000000 batch_success=73.828% rolling_5000=74.400% total_success=36.482% endpoint_success=36.970% episodes_per_second=164.03
+episodes=755712/1000000 batch_success=60.400% rolling_5000=68.660% total_success=36.546% endpoint_success=37.037% episodes_per_second=164.11
+episodes=757760/1000000 batch_success=72.119% rolling_5000=67.900% total_success=36.642% endpoint_success=37.133% episodes_per_second=164.19
+validation_episodes=757760 success=478/512
+episodes=759808/1000000 batch_success=74.658% rolling_5000=70.860% total_success=36.745% endpoint_success=37.236% episodes_per_second=163.86
+episodes=761856/1000000 batch_success=73.291% rolling_5000=73.740% total_success=36.843% endpoint_success=37.335% episodes_per_second=163.93
+episodes=763904/1000000 batch_success=68.164% rolling_5000=71.740% total_success=36.927% endpoint_success=37.418% episodes_per_second=164.00
+episodes=765952/1000000 batch_success=58.398% rolling_5000=65.060% total_success=36.985% endpoint_success=37.480% episodes_per_second=164.07
+episodes=768000/1000000 batch_success=71.289% rolling_5000=65.360% total_success=37.076% endpoint_success=37.573% episodes_per_second=164.15
+validation_episodes=768000 success=445/512
+episodes=770048/1000000 batch_success=67.188% rolling_5000=67.300% total_success=37.156% endpoint_success=37.657% episodes_per_second=163.83
+episodes=772096/1000000 batch_success=74.658% rolling_5000=71.340% total_success=37.256% endpoint_success=37.756% episodes_per_second=163.90
+episodes=774144/1000000 batch_success=75.928% rolling_5000=74.000% total_success=37.358% endpoint_success=37.858% episodes_per_second=163.97
+episodes=776192/1000000 batch_success=74.121% rolling_5000=74.480% total_success=37.455% endpoint_success=37.954% episodes_per_second=164.05
+episodes=778240/1000000 batch_success=65.186% rolling_5000=70.540% total_success=37.528% endpoint_success=38.034% episodes_per_second=164.14
+validation_episodes=778240 success=479/512
+episodes=780288/1000000 batch_success=75.977% rolling_5000=71.440% total_success=37.629% endpoint_success=38.137% episodes_per_second=163.85
+episodes=782336/1000000 batch_success=74.854% rolling_5000=73.300% total_success=37.726% endpoint_success=38.236% episodes_per_second=163.93
+episodes=784384/1000000 batch_success=73.242% rolling_5000=74.640% total_success=37.819% endpoint_success=38.328% episodes_per_second=164.01
+episodes=786432/1000000 batch_success=48.047% rolling_5000=63.140% total_success=37.846% endpoint_success=38.353% episodes_per_second=164.08
+episodes=788480/1000000 batch_success=50.732% rolling_5000=53.700% total_success=37.879% endpoint_success=38.386% episodes_per_second=164.15
+validation_episodes=788480 success=387/512
+episodes=790528/1000000 batch_success=55.078% rolling_5000=52.180% total_success=37.924% endpoint_success=38.429% episodes_per_second=163.86
+episodes=792576/1000000 batch_success=64.258% rolling_5000=58.220% total_success=37.992% endpoint_success=38.496% episodes_per_second=163.94
+episodes=794624/1000000 batch_success=77.197% rolling_5000=68.140% total_success=38.093% endpoint_success=38.598% episodes_per_second=164.02
+episodes=796672/1000000 batch_success=76.416% rolling_5000=74.300% total_success=38.191% endpoint_success=38.696% episodes_per_second=164.11
+episodes=798720/1000000 batch_success=67.773% rolling_5000=73.000% total_success=38.267% endpoint_success=38.771% episodes_per_second=164.19
+validation_episodes=798720 success=467/512
+episodes=800768/1000000 batch_success=75.781% rolling_5000=72.700% total_success=38.363% endpoint_success=38.870% episodes_per_second=163.90
+episodes=802816/1000000 batch_success=73.389% rolling_5000=73.380% total_success=38.452% endpoint_success=38.959% episodes_per_second=163.98
+episodes=804864/1000000 batch_success=76.758% rolling_5000=75.180% total_success=38.550% endpoint_success=39.056% episodes_per_second=164.07
+episodes=806912/1000000 batch_success=77.637% rolling_5000=76.740% total_success=38.649% endpoint_success=39.156% episodes_per_second=164.15
+episodes=808960/1000000 batch_success=79.639% rolling_5000=78.160% total_success=38.753% endpoint_success=39.260% episodes_per_second=164.23
+validation_episodes=808960 success=470/512
+episodes=811008/1000000 batch_success=78.613% rolling_5000=79.120% total_success=38.854% endpoint_success=39.361% episodes_per_second=163.93
+episodes=813056/1000000 batch_success=78.857% rolling_5000=79.080% total_success=38.954% endpoint_success=39.462% episodes_per_second=164.00
+episodes=815104/1000000 batch_success=80.225% rolling_5000=79.440% total_success=39.058% endpoint_success=39.566% episodes_per_second=164.07
+episodes=817152/1000000 batch_success=66.846% rolling_5000=74.340% total_success=39.128% endpoint_success=39.634% episodes_per_second=164.15
+episodes=819200/1000000 batch_success=72.559% rolling_5000=71.540% total_success=39.211% endpoint_success=39.717% episodes_per_second=164.21
+validation_episodes=819200 success=462/512
+episodes=821248/1000000 batch_success=77.539% rolling_5000=73.760% total_success=39.307% endpoint_success=39.812% episodes_per_second=163.94
+episodes=823296/1000000 batch_success=76.904% rolling_5000=76.560% total_success=39.400% endpoint_success=39.909% episodes_per_second=164.01
+episodes=825344/1000000 batch_success=80.762% rolling_5000=78.780% total_success=39.503% endpoint_success=40.011% episodes_per_second=164.08
+episodes=827392/1000000 batch_success=77.344% rolling_5000=78.420% total_success=39.597% endpoint_success=40.104% episodes_per_second=164.15
+episodes=829440/1000000 batch_success=8.203% rolling_5000=49.500% total_success=39.519% endpoint_success=40.028% episodes_per_second=164.23
+validation_episodes=829440 success=1/512
+episodes=831488/1000000 batch_success=0.391% rolling_5000=17.600% total_success=39.423% endpoint_success=39.931% episodes_per_second=163.96
+episodes=833536/1000000 batch_success=3.809% rolling_5000=3.260% total_success=39.335% endpoint_success=39.844% episodes_per_second=164.03
+episodes=835584/1000000 batch_success=16.455% rolling_5000=8.340% total_success=39.279% endpoint_success=39.790% episodes_per_second=164.11
+episodes=837632/1000000 batch_success=73.730% rolling_5000=37.740% total_success=39.363% endpoint_success=39.876% episodes_per_second=164.18
+episodes=839680/1000000 batch_success=57.324% rolling_5000=56.560% total_success=39.407% endpoint_success=39.919% episodes_per_second=164.26
+validation_episodes=839680 success=450/512
+episodes=841728/1000000 batch_success=71.729% rolling_5000=66.000% total_success=39.486% endpoint_success=39.999% episodes_per_second=163.99
+episodes=843776/1000000 batch_success=73.438% rolling_5000=69.780% total_success=39.568% endpoint_success=40.083% episodes_per_second=164.06
+episodes=845824/1000000 batch_success=74.316% rolling_5000=73.520% total_success=39.652% endpoint_success=40.167% episodes_per_second=164.15
+episodes=847872/1000000 batch_success=73.096% rolling_5000=73.520% total_success=39.733% endpoint_success=40.249% episodes_per_second=164.22
+episodes=849920/1000000 batch_success=72.607% rolling_5000=73.080% total_success=39.812% endpoint_success=40.328% episodes_per_second=164.30
+validation_episodes=849920 success=470/512
+episodes=851968/1000000 batch_success=75.439% rolling_5000=73.900% total_success=39.898% endpoint_success=40.413% episodes_per_second=164.02
+episodes=854016/1000000 batch_success=73.682% rolling_5000=73.960% total_success=39.979% endpoint_success=40.494% episodes_per_second=164.09
+episodes=856064/1000000 batch_success=69.238% rolling_5000=72.000% total_success=40.049% endpoint_success=40.563% episodes_per_second=164.17
+episodes=858112/1000000 batch_success=65.625% rolling_5000=68.640% total_success=40.110% endpoint_success=40.626% episodes_per_second=164.24
+episodes=860160/1000000 batch_success=75.049% rolling_5000=70.280% total_success=40.193% endpoint_success=40.710% episodes_per_second=164.32
+validation_episodes=860160 success=473/512
+episodes=862208/1000000 batch_success=74.707% rolling_5000=73.200% total_success=40.275% endpoint_success=40.793% episodes_per_second=164.05
+episodes=864256/1000000 batch_success=77.832% rolling_5000=76.180% total_success=40.364% endpoint_success=40.882% episodes_per_second=164.12
+episodes=866304/1000000 batch_success=75.537% rolling_5000=76.220% total_success=40.447% endpoint_success=40.964% episodes_per_second=164.19
+episodes=868352/1000000 batch_success=70.361% rolling_5000=73.740% total_success=40.518% endpoint_success=41.034% episodes_per_second=164.27
+episodes=870400/1000000 batch_success=72.021% rolling_5000=71.900% total_success=40.592% endpoint_success=41.108% episodes_per_second=164.35
+validation_episodes=870400 success=435/512
+episodes=872448/1000000 batch_success=67.627% rolling_5000=69.800% total_success=40.655% endpoint_success=41.171% episodes_per_second=164.09
+episodes=874496/1000000 batch_success=50.537% rolling_5000=61.080% total_success=40.679% endpoint_success=41.193% episodes_per_second=164.16
+episodes=876544/1000000 batch_success=55.176% rolling_5000=55.520% total_success=40.713% endpoint_success=41.226% episodes_per_second=164.23
+episodes=878592/1000000 batch_success=80.225% rolling_5000=65.000% total_success=40.805% endpoint_success=41.317% episodes_per_second=164.30
+episodes=880640/1000000 batch_success=59.668% rolling_5000=67.080% total_success=40.848% endpoint_success=41.366% episodes_per_second=164.37
+validation_episodes=880640 success=457/512
+episodes=882688/1000000 batch_success=70.801% rolling_5000=68.040% total_success=40.918% endpoint_success=41.439% episodes_per_second=164.11
+episodes=884736/1000000 batch_success=79.248% rolling_5000=72.540% total_success=41.007% endpoint_success=41.529% episodes_per_second=164.18
+episodes=886784/1000000 batch_success=82.471% rolling_5000=79.240% total_success=41.102% endpoint_success=41.625% episodes_per_second=164.24
+episodes=888832/1000000 batch_success=81.641% rolling_5000=81.900% total_success=41.196% endpoint_success=41.718% episodes_per_second=164.31
+episodes=890880/1000000 batch_success=78.662% rolling_5000=80.580% total_success=41.282% endpoint_success=41.805% episodes_per_second=164.38
+validation_episodes=890880 success=469/512
+episodes=892928/1000000 batch_success=76.172% rolling_5000=78.320% total_success=41.362% endpoint_success=41.885% episodes_per_second=164.11
+episodes=894976/1000000 batch_success=73.535% rolling_5000=75.560% total_success=41.436% endpoint_success=41.958% episodes_per_second=164.18
+episodes=897024/1000000 batch_success=76.367% rolling_5000=74.860% total_success=41.515% endpoint_success=42.037% episodes_per_second=164.25
+episodes=899072/1000000 batch_success=78.320% rolling_5000=76.420% total_success=41.599% endpoint_success=42.120% episodes_per_second=164.32
+episodes=901120/1000000 batch_success=81.201% rolling_5000=79.020% total_success=41.689% endpoint_success=42.210% episodes_per_second=164.39
+validation_episodes=901120 success=474/512
+episodes=903168/1000000 batch_success=81.299% rolling_5000=80.740% total_success=41.779% endpoint_success=42.300% episodes_per_second=164.14
+episodes=905216/1000000 batch_success=82.324% rolling_5000=81.940% total_success=41.871% endpoint_success=42.392% episodes_per_second=164.21
+episodes=907264/1000000 batch_success=81.934% rolling_5000=81.920% total_success=41.961% endpoint_success=42.483% episodes_per_second=164.28
+episodes=909312/1000000 batch_success=80.762% rolling_5000=81.420% total_success=42.049% endpoint_success=42.571% episodes_per_second=164.34
+episodes=911360/1000000 batch_success=81.543% rolling_5000=81.220% total_success=42.137% endpoint_success=42.661% episodes_per_second=164.42
+validation_episodes=911360 success=478/512
+episodes=913408/1000000 batch_success=83.252% rolling_5000=82.200% total_success=42.230% endpoint_success=42.753% episodes_per_second=164.17
+episodes=915456/1000000 batch_success=82.129% rolling_5000=82.460% total_success=42.319% endpoint_success=42.843% episodes_per_second=164.24
+episodes=917504/1000000 batch_success=67.480% rolling_5000=76.280% total_success=42.375% endpoint_success=42.901% episodes_per_second=164.32
+episodes=919552/1000000 batch_success=79.541% rolling_5000=75.180% total_success=42.458% endpoint_success=42.984% episodes_per_second=164.38
+episodes=921600/1000000 batch_success=82.959% rolling_5000=78.460% total_success=42.548% endpoint_success=43.074% episodes_per_second=164.45
+validation_episodes=921600 success=475/512
+episodes=923648/1000000 batch_success=78.809% rolling_5000=80.820% total_success=42.628% endpoint_success=43.156% episodes_per_second=164.20
+episodes=925696/1000000 batch_success=83.545% rolling_5000=81.480% total_success=42.719% endpoint_success=43.247% episodes_per_second=164.27
+episodes=927744/1000000 batch_success=51.270% rolling_5000=69.520% total_success=42.738% endpoint_success=43.265% episodes_per_second=164.35
+episodes=929792/1000000 batch_success=83.057% rolling_5000=70.400% total_success=42.826% endpoint_success=43.354% episodes_per_second=164.42
+episodes=931840/1000000 batch_success=83.350% rolling_5000=77.380% total_success=42.915% endpoint_success=43.445% episodes_per_second=164.48
+validation_episodes=931840 success=489/512
+episodes=933888/1000000 batch_success=81.592% rolling_5000=82.860% total_success=43.000% endpoint_success=43.530% episodes_per_second=164.22
+episodes=935936/1000000 batch_success=84.912% rolling_5000=83.200% total_success=43.092% endpoint_success=43.622% episodes_per_second=164.29
+episodes=937984/1000000 batch_success=82.324% rolling_5000=83.500% total_success=43.178% endpoint_success=43.708% episodes_per_second=164.36
+episodes=940032/1000000 batch_success=81.543% rolling_5000=82.500% total_success=43.261% endpoint_success=43.794% episodes_per_second=164.43
+episodes=942080/1000000 batch_success=77.637% rolling_5000=80.240% total_success=43.336% endpoint_success=43.867% episodes_per_second=164.50
+validation_episodes=942080 success=138/512
+episodes=944128/1000000 batch_success=28.271% rolling_5000=58.140% total_success=43.303% endpoint_success=43.840% episodes_per_second=164.25
+episodes=946176/1000000 batch_success=20.654% rolling_5000=34.260% total_success=43.254% endpoint_success=43.797% episodes_per_second=164.31
+episodes=948224/1000000 batch_success=44.824% rolling_5000=32.060% total_success=43.258% endpoint_success=43.805% episodes_per_second=164.37
+episodes=950272/1000000 batch_success=59.619% rolling_5000=46.100% total_success=43.293% endpoint_success=43.843% episodes_per_second=164.44
+episodes=952320/1000000 batch_success=74.268% rolling_5000=63.080% total_success=43.359% endpoint_success=43.909% episodes_per_second=164.50
+validation_episodes=952320 success=478/512
+episodes=954368/1000000 batch_success=79.736% rolling_5000=73.720% total_success=43.438% endpoint_success=43.987% episodes_per_second=164.25
+episodes=956416/1000000 batch_success=80.469% rolling_5000=78.900% total_success=43.517% endpoint_success=44.066% episodes_per_second=164.31
+episodes=958464/1000000 batch_success=80.811% rolling_5000=80.640% total_success=43.597% endpoint_success=44.146% episodes_per_second=164.37
+episodes=960512/1000000 batch_success=82.129% rolling_5000=81.160% total_success=43.679% endpoint_success=44.228% episodes_per_second=164.44
+episodes=962560/1000000 batch_success=83.008% rolling_5000=82.320% total_success=43.762% endpoint_success=44.312% episodes_per_second=164.50
+validation_episodes=962560 success=467/512
+episodes=964608/1000000 batch_success=75.635% rolling_5000=79.980% total_success=43.830% endpoint_success=44.385% episodes_per_second=164.28
+episodes=966656/1000000 batch_success=83.057% rolling_5000=80.440% total_success=43.913% endpoint_success=44.469% episodes_per_second=164.35
+episodes=968704/1000000 batch_success=63.330% rolling_5000=73.740% total_success=43.954% endpoint_success=44.516% episodes_per_second=164.41
+episodes=970752/1000000 batch_success=81.201% rolling_5000=74.600% total_success=44.033% endpoint_success=44.597% episodes_per_second=164.47
+episodes=972800/1000000 batch_success=83.398% rolling_5000=78.520% total_success=44.116% endpoint_success=44.682% episodes_per_second=164.53
+validation_episodes=972800 success=484/512
+episodes=974848/1000000 batch_success=84.326% rolling_5000=83.400% total_success=44.200% endpoint_success=44.766% episodes_per_second=164.28
+episodes=976896/1000000 batch_success=83.740% rolling_5000=83.820% total_success=44.283% endpoint_success=44.849% episodes_per_second=164.35
+episodes=978944/1000000 batch_success=83.936% rolling_5000=83.920% total_success=44.366% endpoint_success=44.931% episodes_per_second=164.41
+episodes=980992/1000000 batch_success=61.865% rolling_5000=75.100% total_success=44.403% endpoint_success=44.967% episodes_per_second=164.48
+episodes=983040/1000000 batch_success=83.691% rolling_5000=74.740% total_success=44.484% endpoint_success=45.048% episodes_per_second=164.53
+validation_episodes=983040 success=482/512
+episodes=985088/1000000 batch_success=83.252% rolling_5000=79.360% total_success=44.565% endpoint_success=45.129% episodes_per_second=164.30
+episodes=987136/1000000 batch_success=85.059% rolling_5000=84.140% total_success=44.649% endpoint_success=45.214% episodes_per_second=164.36
+episodes=989184/1000000 batch_success=83.008% rolling_5000=83.880% total_success=44.728% endpoint_success=45.293% episodes_per_second=164.43
+episodes=991232/1000000 batch_success=84.033% rolling_5000=83.540% total_success=44.810% endpoint_success=45.374% episodes_per_second=164.49
+episodes=993280/1000000 batch_success=84.082% rolling_5000=83.920% total_success=44.891% endpoint_success=45.455% episodes_per_second=164.55
+validation_episodes=993280 success=489/512
+episodes=995328/1000000 batch_success=84.277% rolling_5000=84.340% total_success=44.972% endpoint_success=45.535% episodes_per_second=164.31
+episodes=997376/1000000 batch_success=66.406% rolling_5000=76.760% total_success=45.016% endpoint_success=45.582% episodes_per_second=164.37
+episodes=999424/1000000 batch_success=75.342% rolling_5000=73.360% total_success=45.078% endpoint_success=45.645% episodes_per_second=164.43
+episodes=1001472/1000000 batch_success=80.225% rolling_5000=75.700% total_success=45.150% endpoint_success=45.717% episodes_per_second=164.48
+{
+  "status": "COMPLETE",
+  "episodes": 1001472,
+  "requested_episodes": 1000000,
+  "batch_aligned_overshoot": 1472,
+  "episodes_remaining": 0,
+  "successes": 452161,
+  "endpoint_successes": 457845,
+  "legacy_scientific_successes": 0,
+  "success_rate": 0.45149639730316976,
+  "rolling_success_rate": 0.757,
+  "rolling_window_episodes": 5000,
+  "episodes_per_second": 164.48299129899914,
+  "elapsed_s": 6088.605223500053,
+  "early_stopping_reason": null
+}

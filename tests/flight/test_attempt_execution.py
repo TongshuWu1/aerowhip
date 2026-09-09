@@ -39,7 +39,8 @@ def test_mixed_invalid_first_contact_and_timeout_have_frozen_cutoffs():
     env.model.step_runtime=transition
     agent=SimpleNamespace(deterministic_action=lambda obs:torch.zeros(len(obs),3))
     _,cutoffs=plan_batch(env,agent,batch)
-    assert cutoffs.tolist()==[1,20]
+    tail = round(c['deployment']['strike_followthrough_s'] / env.physics_dt_s)
+    assert cutoffs.tolist()==[1+tail,20]
     assert not env.episode_success.any()
     c['deployment']['require_predicted_success']=True
     _,legacy_cutoffs=plan_batch(env,agent,batch)

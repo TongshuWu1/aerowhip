@@ -1,0 +1,62 @@
+{
+  "schema": "milestone3c_paired_same_suffix_comparison_v1",
+  "selection_rule": "intersection of successfully evaluated causal suffix episode IDs; no failed episode is replaced or truncated",
+  "uav": {
+    "common_episode_ids": [
+      "fig8_003__episode_001__residual_suffix",
+      "osc_003__episode_000__residual_suffix"
+    ],
+    "excluded_from_pair": [
+      {
+        "view_id": "fig8_003__episode_000__residual_suffix",
+        "reason": "physics-only rollout became non-finite; residual rollout completed"
+      }
+    ],
+    "physics": {
+      "position_rmse_m": 0.09297258344114535,
+      "orientation_rmse_deg": 9.881830000468103
+    },
+    "physics_plus_residual": {
+      "position_rmse_m": 0.041996758398037425,
+      "orientation_rmse_deg": 8.092256142936579
+    },
+    "position_improvement_fraction": 0.5482823014861307,
+    "lead_time": {
+      "0.1": {"take_count": 2, "physics_position_rmse_m": 0.00609773455059137, "residual_position_rmse_m": 0.004721199500830423, "physics_orientation_rmse_deg": 2.410198457795831, "residual_orientation_rmse_deg": 2.5789337210932755},
+      "0.25": {"take_count": 2, "physics_position_rmse_m": 0.02070374762848279, "residual_position_rmse_m": 0.018330617819896526, "physics_orientation_rmse_deg": 6.162385347285477, "residual_orientation_rmse_deg": 3.474392400528444},
+      "0.5": {"take_count": 2, "physics_position_rmse_m": 0.027607155181285394, "residual_position_rmse_m": 0.029074943266310476, "physics_orientation_rmse_deg": 5.766367813932225, "residual_orientation_rmse_deg": 4.410491724960849},
+      "1.0": {"take_count": 1, "physics_position_rmse_m": 0.09311892360449563, "residual_position_rmse_m": 0.014799624288854478, "physics_orientation_rmse_deg": 4.234768089101707, "residual_orientation_rmse_deg": 16.559986920543814},
+      "2.0": {"take_count": 1, "physics_position_rmse_m": 0.15793482881066293, "residual_position_rmse_m": 0.03785014060727364, "physics_orientation_rmse_deg": 4.161265048694124, "residual_orientation_rmse_deg": 3.66160810100884},
+      "4.0": {"take_count": 1, "physics_position_rmse_m": 0.06428824766183196, "residual_position_rmse_m": 0.046911340702099694, "physics_orientation_rmse_deg": 11.990670745236654, "residual_orientation_rmse_deg": 8.667831323913118},
+      "8.0": {"take_count": 1, "physics_position_rmse_m": 0.14743792289074303, "residual_position_rmse_m": 0.036787592105417745, "physics_orientation_rmse_deg": 6.065710651630845, "residual_orientation_rmse_deg": 3.4981368587243016}
+    }
+  },
+  "end_to_end": {
+    "common_episode_ids": [
+      "osc_003__episode_000__residual_suffix"
+    ],
+    "excluded_from_pair": [
+      {
+        "view_id": "fig8_003__episode_000__residual_suffix",
+        "reason": "physics-only coupled rollout became non-finite; residual coupled rollout completed"
+      },
+      {
+        "view_id": "fig8_003__episode_001__residual_suffix",
+        "reason": "frozen cable initialization RMSE threshold failed for both models"
+      }
+    ],
+    "physics": {
+      "uav_position_rmse_m": 0.1299086958169937,
+      "uav_orientation_rmse_deg": 12.427708625793457,
+      "distributed_marker_rmse_m": 0.3197726905345917,
+      "tip_rmse_m": 0.5152035355567932
+    },
+    "physics_plus_residual": {
+      "uav_position_rmse_m": 0.04320433735847473,
+      "uav_orientation_rmse_deg": 11.21771240234375,
+      "distributed_marker_rmse_m": 0.2020803689956665,
+      "tip_rmse_m": 0.35881784558296204
+    }
+  },
+  "protected_test_used": false
+}

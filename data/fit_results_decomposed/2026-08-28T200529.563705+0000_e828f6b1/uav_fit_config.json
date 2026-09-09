@@ -1,0 +1,31 @@
+{
+  "bounds": {
+    "K_R": [
+      1.0,
+      80.0
+    ],
+    "K_omega": [
+      0.5,
+      30.0
+    ],
+    "K_p": [
+      1.0,
+      60.0
+    ],
+    "K_v": [
+      0.5,
+      30.0
+    ],
+    "k_a": [
+      0.1,
+      2.0
+    ]
+  },
+  "configured_adam_update_ceiling_per_refinement": 300,
+  "execution_adam_update_ceiling_per_refinement": 60,
+  "execution_note": "bounded by the milestone 90-minute wall-clock policy",
+  "gradient_clip": 10.0,
+  "learning_rate": 0.01,
+  "selected_refinements": 2,
+  "sobol_candidates": 64
+}

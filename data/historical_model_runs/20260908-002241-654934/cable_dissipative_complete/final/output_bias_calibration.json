@@ -1,0 +1,39 @@
+{
+  "external_drag_s_inv": 0.0,
+  "initialized_from_fixed_drag": false,
+  "passes": [
+    {
+      "dimensionless_output_bias_shifts": [
+        -0.75,
+        -0.25,
+        0.0,
+        0.25,
+        0.75,
+        1.5
+      ],
+      "selected": 0.25,
+      "training_objective": [
+        0.029322482195018804,
+        0.029322482195018804,
+        0.02842055048459506,
+        0.023576496242439165,
+        0.02920778819109533,
+        0.04175799529354714
+      ]
+    },
+    {
+      "dimensionless_output_bias_shifts": [
+        0.125,
+        0.25,
+        0.375
+      ],
+      "selected": 0.375,
+      "training_objective": [
+        0.025642798151552605,
+        0.023576187290043384,
+        0.023120989663617777
+      ]
+    }
+  ],
+  "selection": "Training-only two-second rollout"
+}

@@ -1,0 +1,66 @@
+{
+  "authoritative_pointer": {
+    "baseline_fit_directory": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\fit_results\\2026-08-28T035156.958739+0000_a0319d7f",
+    "delay_ablation_fit_directory": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\fit_results\\2026-08-28T121702.805149+0000_66677ae3",
+    "fit_directory": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\fit_results\\2026-08-28T124719.940407+0000_4c7577a0",
+    "result": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\fit_results\\2026-08-28T124719.940407+0000_4c7577a0\\residual_report.json",
+    "schema": "milestone3a2_latest_residual_pointer_v1"
+  },
+  "authoritative_pointer_sha256": "3f500f32cb63b7d055fc8ca483b1a5c5c326f33b533725d7629c59f75a75ffe5",
+  "authoritative_source_directory": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\fit_results\\2026-08-28T124719.940407+0000_4c7577a0",
+  "created_utc": "2026-08-28T14:18:09.253206+00:00",
+  "evaluation_protocol_canonical_sha256": "33d14d40ff285c8398c322fa1c0b79323398ebbbbebde23b8d8016a1b70f51c9",
+  "feature_ordering": [
+    "e_p_x",
+    "e_p_y",
+    "e_p_z",
+    "e_v_x",
+    "e_v_y",
+    "e_v_z",
+    "a_cmd_x",
+    "a_cmd_y",
+    "a_cmd_z"
+  ],
+  "freeze_name": "UAV_MODEL_FREEZE_PRE_UNTOUCHED_TEST",
+  "frozen_file_sha256": {
+    "dataset_snapshot.json": "8a9932a3270ad77e882b780530802eb5c5a609553e82ed459d981342d5963651",
+    "evaluation_protocol.json": "af9ebad5449e2c8a7c30e46527f18f96d4bb14f2d2207ff7839a182e000137fe",
+    "fit_config.json": "6c745cb709acbb231d636eccb6214317ca10f5d579abd66af4bdb4795257847e",
+    "model.json": "6a6aaa180a7df5304422d7704bf94fd3bed92a506499d7aae6817e87f76623a8",
+    "normalization.json": "f73f89227742d12ac3ab817f17fe81553569b8f72fb2a7cb058cdd1ce7f0e940",
+    "per_take_metrics.csv": "b1b6d529ade4645685e6bd32e2d0d1192eb65b6ace86f25971a420275dcc464c",
+    "residual_config.json": "ab3449019be6bb56465d4aa6cce66c10e6500f9a0d35145b67999a3f9b13d977",
+    "residual_report.json": "0e4a439a39ee16db153182c4ae78e1778cc9ec82ce451e96f5942ee51275972b",
+    "residual_statistics.csv": "31db213ff8bc0e699e99973c9786edd018b5e8baafe474abb6f4bf06891852d9",
+    "residual_window_audit.json": "4b4974376e7c609c74abb42e7bc094a52e791b4b48cc9082840eff55b8eec3b6",
+    "source_snapshot.json": "9c5b9df88bd73e976224701674355f6213a9f0ba2956cccbf31fd5c83471e291",
+    "training_history.csv": "7deaa9dbd1969001f235a3d44e4c5caf8e08ee637761f11d20c7f0c42b3d2d7b",
+    "training_metrics.csv": "202bbd58054ddc34d4f3b430cedcafce987744992530aaed0cc2d62efc001d3c",
+    "uav_residual.pt": "8feb4b18ce130641e65fa2bef23801fd3e9b5febfa95277faa550ad32d88c08b",
+    "validation_metrics.csv": "4c7c5723c6d2f2f89547a7018b62d09d526e5353a1c67caf3af7b7fef90b7133",
+    "verification.json": "df023735c6715f0fba2e3f6057293b116d4f963b7399b2931c6560e91179c639"
+  },
+  "history_s": 0.1,
+  "history_samples": 10,
+  "immutable_no_overwrite": true,
+  "mppi": "NOT_RUN",
+  "network_state_sha256": "8feb4b18ce130641e65fa2bef23801fd3e9b5febfa95277faa550ad32d88c08b",
+  "nominal_parameters": {
+    "K_R": 59.59101429997879,
+    "K_omega": 8.910098723693643,
+    "K_p": 24.63021508310789,
+    "K_v": 24.36340283220377,
+    "k_a": 1.0512255257949055
+  },
+  "normalization_canonical_sha256": "4649a6ba1794ceceab75b1917b09667dafd42f5fa76cc9c288e567a860b8ba95",
+  "residual_architecture": "90 -> 32 -> SiLU -> 32 -> SiLU -> 3",
+  "schema": "uav_model_freeze_pre_untouched_test_v1",
+  "source_snapshot_canonical_sha256": "e6adc2dd223dcd8b0c64e5f51b4cf58067acd3a9d5da916b259f7b25234e774d",
+  "stage_b": "LOCKED_NOT_RUN",
+  "stage_c": "LOCKED_NOT_RUN",
+  "training_takes": [
+    "osc_001",
+    "fig8_001",
+    "fig8_002"
+  ]
+}

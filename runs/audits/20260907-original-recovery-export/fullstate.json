@@ -1,0 +1,88 @@
+{
+  "initialization": "assumed_vertical_cable",
+  "simulation_only": true,
+  "state_time_s": 11.69,
+  "planning_wall_seconds": 1.3830081000014616,
+  "policy_sha256": "18f33e89fea72e683c40359853e40710f52ecb45623d53669ed6e240334078d7",
+  "planning_device": "cuda",
+  "target_changed_during_planning": false,
+  "schema": "recorded_rehearsal_fullstate_v3",
+  "flight_ready": false,
+  "physics_dt_s": 0.01,
+  "policy_dt_s": 0.05,
+  "cutoff_s": 0.8,
+  "target_position_m": [
+    1.0,
+    0.0,
+    1.4
+  ],
+  "desired_strike_direction_world": [
+    1.0,
+    0.0,
+    0.0
+  ],
+  "frame": "verified_common_world_z_up_required",
+  "source": "existing GPU rehearsal recording; original force strike and PID recovery",
+  "sample_rate_hz": 30.0,
+  "sample_count": 613,
+  "whip_end_s": 0.8,
+  "total_duration_s": 20.4,
+  "recording_start_time_s": 12.97,
+  "hover_position_m": [
+    0.0,
+    0.0,
+    1.5
+  ],
+  "phases": [
+    "whip",
+    "pid_recovery",
+    "hover_hold"
+  ],
+  "recovery": "original rehearsal PID and settling behavior; no added trajectory or new simulation",
+  "reference_point": "simulated_cable_attachment",
+  "acceleration_convention": "kinematic derivative of recorded p/v; no gravity subtraction or mass division",
+  "interpolation": "same cubic Hermite p/v and analytic derivatives as the original exporter",
+  "endpoint": "actual recorded settled state; no snapping to hover or zeroing derivatives",
+  "final_position_m": [
+    -0.0009546347866079925,
+    -0.00013927304866061322,
+    1.4901865289779541
+  ],
+  "final_velocity_m_s": [
+    0.0006094636410174234,
+    -2.2420661388661502e-05,
+    0.0006854723798394321
+  ],
+  "final_acceleration_m_s2": [
+    -0.00047227836494981323,
+    0.0001627358789446201,
+    -4.155944143201118e-05
+  ],
+  "peak_speed_m_s": 2.142993493772559,
+  "peak_acceleration_m_s2": 14.060785788531723,
+  "csv_sha256": "d35e1097d355c4643f9636e97ad934cbb1cd3baa38d018083d6012780ed98fd5",
+  "source_plan_sha256": "a4e92b07a80df6f29f2f89293be80ff9e735d60127f8ff17448ab9b3eb8f6c83",
+  "limitations": [
+    "Recorded source simulation, not a real full-state tracking-controller model.",
+    "PID acceleration can change at control updates; export does not change or smooth the simulation.",
+    "Verify controlled reference point and actual vehicle tracking/landing conditions."
+  ],
+  "source_force_plan": {
+    "force_units": "N",
+    "gravity_convention": "total commanded thrust vector; simulator applies gravity separately",
+    "controller_export": {
+      "mass_kg": 0.175,
+      "gravity_m_s2": 9.80665,
+      "frame": "world_z_up",
+      "force_file": "controller_force.csv",
+      "acceleration_file": "controller_acceleration.csv",
+      "force_convention": "F_policy - [0, 0, controller_mass * gravity]",
+      "acceleration_convention": "controller_force / controller_mass",
+      "total_force_file": "commands.csv"
+    }
+  },
+  "files": {
+    "fullstate_30hz.csv": "d35e1097d355c4643f9636e97ad934cbb1cd3baa38d018083d6012780ed98fd5",
+    "fullstate_source.npz": "ce1fcbcd7c577aa39141f733bf630f27449f1ef287297873a2f8462ec29cbc94"
+  }
+}

@@ -5,12 +5,18 @@ __pycache__/
 # Share portable PyCharm launch configurations; machine-specific settings stay in .idea.
 .pytest_cache/
 .ruff_cache/
+.natnet_download/
 tmp/
 /archive/
 /results/
 /dist/
 /runs/
-# Local measurements and fitted artifacts are distributed separately, if approved.
+/policies/**
+!/policies/README.md
+# Newly generated research artifacts stay opt-in. The user-authorized September 9
+# snapshot explicitly tracks existing data, models, runs, and policy packages.
+# Downloaded SDKs and regenerable live_scene feeds are not snapshot artifacts.
+# Local measurements and fitted artifacts are distributed separately unless approved.
 # This does not untrack existing files or remove Git history.
 /data/**
 !/data/README.md

@@ -1,0 +1,142 @@
+{
+  "checkpoint": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\ppo\\20260906-174733-192436-seed652\\checkpoints\\terminal.pt",
+  "sha256": "214fb97211c1b57a04a7352d9629a0369c185a97efc0ff665e0336b5188d303d",
+  "device": "NVIDIA GeForce RTX 4080",
+  "os": "win32",
+  "seed": 90606,
+  "initial_conditions": 9,
+  "trials": 117,
+  "scope": "Ideal settled vertical cable, zero initial velocity; strike only, no recovery or hover drift. Fixed plan per initial condition. Uniform total-thrust gain after controller gravity addition. Gain is hypothetical, not calibrated battery voltage. Diagnostic sensitivity, not independent validation.",
+  "scenarios": [
+    {
+      "mass_error_g": -5,
+      "delivered_force_fraction": 1.0,
+      "valid_hits": 0,
+      "trials": 9,
+      "nominal_initial_hit": false,
+      "max_drone_endpoint_error_cm": 11.627859861735383,
+      "mean_drone_z_error_cm": 11.416201890644304,
+      "failures": 0
+    },
+    {
+      "mass_error_g": -3,
+      "delivered_force_fraction": 1.0,
+      "valid_hits": 5,
+      "trials": 9,
+      "nominal_initial_hit": true,
+      "max_drone_endpoint_error_cm": 6.8988087395823,
+      "mean_drone_z_error_cm": 6.773447696468675,
+      "failures": 0
+    },
+    {
+      "mass_error_g": 0,
+      "delivered_force_fraction": 1.0,
+      "valid_hits": 9,
+      "trials": 9,
+      "nominal_initial_hit": true,
+      "max_drone_endpoint_error_cm": 0.0,
+      "mean_drone_z_error_cm": 0.0,
+      "failures": 0
+    },
+    {
+      "mass_error_g": 3,
+      "delivered_force_fraction": 1.0,
+      "valid_hits": 5,
+      "trials": 9,
+      "nominal_initial_hit": true,
+      "max_drone_endpoint_error_cm": 6.672892649810744,
+      "mean_drone_z_error_cm": -6.550129188411782,
+      "failures": 0
+    },
+    {
+      "mass_error_g": 5,
+      "delivered_force_fraction": 1.0,
+      "valid_hits": 0,
+      "trials": 9,
+      "nominal_initial_hit": false,
+      "max_drone_endpoint_error_cm": 11.002217393202157,
+      "mean_drone_z_error_cm": -10.80193003698878,
+      "failures": 0
+    },
+    {
+      "mass_error_g": 0,
+      "delivered_force_fraction": 0.98,
+      "valid_hits": 3,
+      "trials": 9,
+      "nominal_initial_hit": false,
+      "max_drone_endpoint_error_cm": 7.978884297131089,
+      "mean_drone_z_error_cm": -7.8200157025185915,
+      "failures": 0
+    },
+    {
+      "mass_error_g": 0,
+      "delivered_force_fraction": 0.95,
+      "valid_hits": 0,
+      "trials": 9,
+      "nominal_initial_hit": false,
+      "max_drone_endpoint_error_cm": 19.955830227808136,
+      "mean_drone_z_error_cm": -19.56814306587823,
+      "failures": 0
+    },
+    {
+      "mass_error_g": 0,
+      "delivered_force_fraction": 0.9,
+      "valid_hits": 0,
+      "trials": 9,
+      "nominal_initial_hit": false,
+      "max_drone_endpoint_error_cm": 39.9420069197246,
+      "mean_drone_z_error_cm": -39.16659244747856,
+      "failures": 0
+    },
+    {
+      "mass_error_g": 0,
+      "delivered_force_fraction": 0.85,
+      "valid_hits": 0,
+      "trials": 9,
+      "nominal_initial_hit": false,
+      "max_drone_endpoint_error_cm": 59.94976301811852,
+      "mean_drone_z_error_cm": -58.78567691287262,
+      "failures": 0
+    },
+    {
+      "mass_error_g": 3,
+      "delivered_force_fraction": 0.95,
+      "valid_hits": 0,
+      "trials": 9,
+      "nominal_initial_hit": false,
+      "max_drone_endpoint_error_cm": 26.310430966260938,
+      "mean_drone_z_error_cm": -25.805882041224,
+      "failures": 0
+    },
+    {
+      "mass_error_g": 3,
+      "delivered_force_fraction": 0.9,
+      "valid_hits": 0,
+      "trials": 9,
+      "nominal_initial_hit": false,
+      "max_drone_endpoint_error_cm": 45.97216385192273,
+      "mean_drone_z_error_cm": -45.08613654127934,
+      "failures": 0
+    },
+    {
+      "mass_error_g": 5,
+      "delivered_force_fraction": 0.95,
+      "valid_hits": 0,
+      "trials": 9,
+      "nominal_initial_hit": false,
+      "max_drone_endpoint_error_cm": 30.43075388586424,
+      "mean_drone_z_error_cm": -29.852101918893187,
+      "failures": 0
+    },
+    {
+      "mass_error_g": 5,
+      "delivered_force_fraction": 0.9,
+      "valid_hits": 0,
+      "trials": 9,
+      "nominal_initial_hit": false,
+      "max_drone_endpoint_error_cm": 49.88165590869516,
+      "mean_drone_z_error_cm": -48.9251477419055,
+      "failures": 0
+    }
+  ]
+}

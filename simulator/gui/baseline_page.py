@@ -196,6 +196,8 @@ class BaselinePage(QWidget):
             self.table.setItem(index, 4, QTableWidgetItem(f'{100*data["state_valid_fraction"]:.1f}%' if data else '—'))
         baseline = read_json(self.root / 'config/baseline.json', {})
         self.active.setText('Active baseline: ' + baseline.get('version', 'existing preliminary calibration'))
+        residual=read_json(self.root/'config/model.json',{}).get('motion_residual',{}).get('enabled',False)
+        self.active.setText(self.active.text()+(' · Cable NN on' if residual else ' · Cable NN off'))
         if self.table.rowCount():
             self.table.selectRow(0)
 

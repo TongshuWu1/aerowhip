@@ -1,0 +1,19 @@
+{
+  "acceleration_bound_per_axis_m_s2": 0.5,
+  "additional_correction_initialization": "exactly zero",
+  "bound_is_measured": false,
+  "files": {
+    "assets/cable_damping_source.pt": "ef99d1d50881e8632be0860bef402a77ea0d260736a01a16551ec3b7293cb023",
+    "assets/cable_residual.pt": "482ade9d95d87e84a2bf840700209a4aed6ff61a4c70d9fdd0a49c8fb17e8d10",
+    "assets/drone_model.json": "80f3bff25f2e6b8216e9d83d30c37f81c7d8e36b8df3bbbaf758b1ad69a3547c",
+    "assets/drone_residual.pt": "9d81b95fe4c114c4977ef6fb79a2f8ed8faa679b9f3c0b1be189419657cad10c",
+    "model.json": "f3d5226dca93d92d8d610354b30e6f767293578cd08b1f0f67b9dcba9ed83881"
+  },
+  "schema": "unfitted_model_candidate_v1",
+  "selected_for_deployment": false,
+  "source_model": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\config\\research_30hz\\model.json",
+  "source_model_sha256": "17278c6f8dd61a040a536bc85c5dbe1904dfa6c21639d7beec905b31aec9e347",
+  "source_residual_sha256": "ef99d1d50881e8632be0860bef402a77ea0d260736a01a16551ec3b7293cb023",
+  "status": "UNFITTED",
+  "trained": false
+}

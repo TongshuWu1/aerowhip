@@ -1,0 +1,31 @@
+{
+  "all_data_final_fit": false,
+  "held_out": {
+    "marker_rmse_m": {
+      "physics": 0.04179736906950149,
+      "residual": 0.03342181261334005
+    },
+    "tip_rmse_m": {
+      "physics": 0.07040065795716327,
+      "residual": 0.057354173465627656
+    }
+  },
+  "independent_test": false,
+  "label": "fold_1",
+  "physical_parameters": [
+    4e-09,
+    0.0001,
+    0.0
+  ],
+  "selected_update": 24,
+  "trainable_parameters": 4577,
+  "training": [
+    "fig8_002",
+    "fig8_003",
+    "fig8vertical_002",
+    "osc_002",
+    "osc_003",
+    "whip1_002",
+    "whip1_003"
+  ]
+}

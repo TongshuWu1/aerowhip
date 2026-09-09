@@ -1,0 +1,112 @@
+{
+  "schema": "target_aligned_whip_primitive_ppo_v1",
+  "experiment_id": "whip_primitive_ppo_1m_v1",
+  "model_freeze": "MODEL_FREEZE_REMEASURED_GEOMETRY_PRE_MPPI",
+  "simulator_config": "config/default.json",
+  "task_config": "config/tasks/canonical_whip_variable_duration_v1.json",
+  "context_normalizer": "results/common/context_normalizer.json",
+  "initialization": {
+    "type": "fresh_random_policy",
+    "uses_previous_policy_checkpoint": false,
+    "uses_cem_demonstrations": false
+  },
+  "seed": 1701,
+  "requested_episodes": 1000000,
+  "collection_batch": 2048,
+  "training_initial_states": {
+    "mode": "mixed_state_bank",
+    "training_bank": "results/common/training_state_bank.npz",
+    "training_bank_manifest": "results/common/training_state_bank_manifest.json",
+    "validation_bank": "results/common/validation_state_bank.npz",
+    "validation_bank_manifest": "results/common/validation_state_bank_manifest.json",
+    "canonical_fraction": 0.25,
+    "seed": 1702
+  },
+  "observation": {
+    "dimensions": 83,
+    "normalized_clip": 10.0
+  },
+  "action": {
+    "mode": "target_aligned_load_reverse_primitive",
+    "dimensions": 9,
+    "queried_once_per_episode": true,
+    "meaning": [
+      "forward loading excursion",
+      "terminal forward fraction after reversal",
+      "horizontal reversal timing fraction",
+      "terminal backward release velocity",
+      "loading height",
+      "terminal height",
+      "vertical reversal timing fraction",
+      "terminal vertical velocity",
+      "active maneuver duration"
+    ],
+    "commanded_forward_return_fraction_range": [
+      0.1,
+      0.55
+    ],
+    "terminal_forward_velocity_range_m_s": [
+      -2.4,
+      -0.4
+    ],
+    "lateral_motion_available": false,
+    "maximum_acceleration_norm_m_s2": 20.0
+  },
+  "times": {
+    "maneuver_min_s": 0.72,
+    "maneuver_max_s": 1.25,
+    "settle_s": 0.3,
+    "evaluation_s": 2.4,
+    "physics_dt_s": 0.01
+  },
+  "reward": {
+    "profile": "rl_whip_reward_v2",
+    "progress_weight": 4.0,
+    "sigma_position_m": 0.2,
+    "directed_velocity_scale_m_s": 4.0,
+    "position_weight": 2.0,
+    "velocity_weight": 2.0,
+    "direction_weight": 1.0,
+    "success_bonus": 5.0,
+    "safety_weight": 2.0,
+    "normalized_safety_clip": 4.0,
+    "non_tip_penalty": 1.0,
+    "control_effort_weight": 0.05,
+    "control_smoothness_weight": 0.05,
+    "successful_time_weight_per_s": 0.1,
+    "zero_speed_epsilon_m_s": 1e-06,
+    "direction_activation_speed_m_s": 0.1
+  },
+  "ppo": {
+    "hidden_dim": 256,
+    "learning_rate": 0.0003,
+    "gamma": 0.99,
+    "gae_lambda": 0.95,
+    "clip_ratio": 0.2,
+    "value_coefficient": 0.5,
+    "entropy_coefficient": 0.01,
+    "maximum_gradient_norm": 0.5,
+    "target_kl": 0.02,
+    "update_epochs": 10,
+    "minibatch_transitions": 2048
+  },
+  "validation": {
+    "enabled": true,
+    "every_episodes": 20480,
+    "episodes": 512,
+    "policy": "deterministic",
+    "state_bank_only": true,
+    "fixed_numerical_batch_size": 2048
+  },
+  "logging": {
+    "checkpoint_every_episodes": 20480,
+    "rolling_window_episodes": 10000
+  },
+  "prohibitions": {
+    "cem": true,
+    "previous_policy_initialization": true,
+    "demonstrations": true,
+    "protected_test": "fig8vertical_002",
+    "hardware": true
+  }
+}

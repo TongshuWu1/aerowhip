@@ -1,0 +1,29 @@
+{
+  "boundary": "Measured attachment from calibrated body offset and measured orientation",
+  "drone_residual_trained": false,
+  "initialization": "Past 0.2 seconds; quadratic endpoint velocity and length projection",
+  "input_sha256": {
+    "fig8_001": "a9fa92c0daa27423f44794933bd51de5edfc2b8ae37f4183e898682c44390a91",
+    "fig8_002": "d9f3e81993e3cae2def5fc2179a652154a6218b509b6c7abb3bf8458916359ac",
+    "fig8_003": "c2147d18afbfe9a84b6485eb13d21d908fe043278c8506a2580378137f3308ac",
+    "fig8vertical_001": "bc241defaa84f8a449fc238886680b9ec77475e9659186108505aea3e77891a1",
+    "osc_001": "08481352225a3e01f96ae7c84998f998b3ffeb98078e1fa6008c859123eaec2e",
+    "osc_002": "a2793a9fdd7881fc3fa6955927eac1c0c9a316101e88847d51fff67e0d3f8e73",
+    "osc_003": "7eb607e9344a3e78ebd1610d008ab1be3f85a10185450b0e2510951c3cf12c2c"
+  },
+  "model_sha256": "51a6349546d255cd9ebdf8913f5ff10fc70e58dc48a70f725518771a97fb3d11",
+  "physics_frozen": true,
+  "protected_test_used": false,
+  "source_sha256": {
+    "experimental_data/cable_fit.py": "361227518e31d3e4d4ffb90d9972324cefa859319b2bf2c1179949c86ae2666d",
+    "experimental_data/cable_residual_fit.py": "106010f3dc9003d02de4a1006d38972b8e8ef2eb6998e3d5f74841bf4896ad53",
+    "experimental_data/constrained_identification.py": "fdd8b60fb43b262413bbae8ba6185cca1a1089df423f0d6745eef14ebad86897",
+    "experimental_data/differentiable_fit.py": "c19d0890db17d73ece38c57939ec5e6bff58917bdb0a2b48d9fe74bfca22f2f2",
+    "experimental_data/force_dataset.py": "5ee9f2483c583f02484ab46e12ec7a238240f388808a449a90786f8ab6d42703",
+    "experimental_data/state_initialization.py": "d8325ffae3e14e8fdf66f50b9b170c7e64cbef4ff6d2e6e6de8b2516a0abffb6",
+    "simulator/cable/config.py": "e1533eb947686caf1506bb8b029f37e7b6f986b78407ff2330ae2f7cb0e35c83",
+    "simulator/cable/dder.py": "1b9bab4a30f9a8dbb42fd697cc2bb8b872b6c45c06bdaafd580ff44ba156536d",
+    "simulator/cable/residual.py": "9b841dbab3eefb7aabf1e7656a97e9d4b56789720f84b5194e26be5582f1712d"
+  },
+  "whip_data_used": false
+}

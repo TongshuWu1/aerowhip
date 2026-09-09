@@ -1,0 +1,35 @@
+{
+  "trial_id": "whip1_002",
+  "source": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\adaptation_rounds\\adaptation0\\processed\\20260908-041031-260837\\whip1_002",
+  "source_dataset_sha256": "1cf6dfcc327d8680efd6b8254ace05a1af7b608c6a062fc04dc59d46e1901ba3",
+  "csv_onset_s": 18.860148429870605,
+  "csv_end_s": 19.530173540115356,
+  "initialization": {
+    "initial_time_s": 18.755370862321314,
+    "history_duration_s": 1.0,
+    "compensation_estimated_from": "Mean pre-hover acceleration minus nominal PD response; frozen during short rollout",
+    "controller_integral_observed": false,
+    "alignment_provenance": "prehover_effective_alignment",
+    "hardware_mounting_verified_by_this_code": false
+  },
+  "requested_hover_history_s": 1.0,
+  "requested_post_hold_s": 0.5,
+  "observed_prediction_end_s": 20.025370862321314,
+  "requested_post_hold_fully_observed": true,
+  "post_hold_is_conditioned_on_logged_commands": true,
+  "command_timing": "First logger observation, not verified onboard actuation timestamps",
+  "pre_command_margin_s": 0.1,
+  "clock": {
+    "offset_s": -0.534629137678685,
+    "rms_m": 0.011325276146963653,
+    "half_offsets_s": [
+      -0.534891837928839,
+      -0.5345234191163467
+    ],
+    "method": "measured XYZ constant-offset least squares; no spatial fit",
+    "clock_verified": false,
+    "includes_logging_latency": true
+  },
+  "measured_targets_are_model_inputs": false,
+  "model_fitted": false
+}

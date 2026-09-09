@@ -1,0 +1,58 @@
+{
+  "active_model_changed": false,
+  "folds": [
+    {
+      "all_data_final_fit": false,
+      "checksum": "2b424edb17d7820407e28995b7bb602506ef0bdbf4e3caf01fea8607c2118cf5",
+      "delay_s": 0.06,
+      "held_out": [
+        "fig8_001",
+        "fig8vertical_001",
+        "osc_001",
+        "whip1_001"
+      ],
+      "independent_test": false,
+      "label": "fold_1",
+      "selected_update": 160
+    },
+    {
+      "all_data_final_fit": false,
+      "checksum": "94345ec5c928b9b930612773439283a9f0ef1651d0fae484f4b162020faba1bf",
+      "delay_s": 0.06,
+      "held_out": [
+        "fig8_002",
+        "fig8vertical_002",
+        "osc_002",
+        "whip1_002"
+      ],
+      "independent_test": false,
+      "label": "fold_2",
+      "selected_update": 160
+    },
+    {
+      "all_data_final_fit": false,
+      "checksum": "6b0716f4cfc77efc794cc136c6d66da1b62b6cf2cc3b0389bc60dab0e152d8a5",
+      "delay_s": 0.06,
+      "held_out": [
+        "fig8_003",
+        "osc_003",
+        "whip1_003"
+      ],
+      "independent_test": false,
+      "label": "fold_3",
+      "selected_update": 160
+    },
+    {
+      "all_data_final_fit": true,
+      "checksum": "20adc95e36369fd4238c1c1252f8fc5e7d0a4532c032d40372bb643a9d2fc2a8",
+      "delay_s": 0.06,
+      "held_out": [],
+      "independent_test": false,
+      "label": "final",
+      "selected_update": 160
+    }
+  ],
+  "no_independent_test": true,
+  "ppo_started": false,
+  "status": "FITTED_REQUIRES_COMBINED_REVIEW"
+}

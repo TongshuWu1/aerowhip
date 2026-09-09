@@ -1,0 +1,72 @@
+{
+  "checkpoint_episodes": 276480,
+  "validation_episodes": 64,
+  "validation_successes": 64,
+  "validation_success_rate": 1.0,
+  "validation_endpoint_successes": 64,
+  "validation_endpoint_success_rate": 1.0,
+  "validation_legacy_scientific_successes": 0,
+  "validation_legacy_scientific_success_rate": 0.0,
+  "median_minimum_tip_distance_m": 0.017621207982301712,
+  "mean_maximum_uav_displacement_m": 0.9886084794998169,
+  "numerical_failures": 0,
+  "tip_first_count": 64,
+  "mean_maximum_uav_speed_m_s": 1.9764926433563232,
+  "mean_maximum_command_acceleration_m_s2": 10.000001907348633,
+  "successful_first_entry_physics_step": {
+    "mean": 170.40625,
+    "median": 148.5,
+    "minimum": 140.0,
+    "maximum": 300.0
+  },
+  "successful_first_entry_time_s": {
+    "mean": 1.7040624432265759,
+    "median": 1.4850000143051147,
+    "minimum": 1.399999976158142,
+    "maximum": 3.0
+  },
+  "first_entry_tip_distance_m": {
+    "mean": 0.032570290692092385,
+    "median": 0.03376547619700432,
+    "minimum": 0.006586471572518349,
+    "maximum": 0.04978428781032562
+  },
+  "first_entry_tip_speed_m_s": {
+    "mean": 8.431151047348976,
+    "median": 8.406657695770264,
+    "minimum": 6.809280872344971,
+    "maximum": 10.269739151000977
+  },
+  "first_entry_directed_speed_m_s": {
+    "mean": 8.028991185128689,
+    "median": 7.98557448387146,
+    "minimum": 6.394979953765869,
+    "maximum": 9.862998008728027
+  },
+  "first_entry_direction_error_deg": {
+    "mean": 17.41160875558853,
+    "median": 17.06671905517578,
+    "minimum": 10.187849998474121,
+    "maximum": 28.553607940673828
+  },
+  "first_entry_speed_gate_passes": 64,
+  "first_entry_direction_gate_passes": 64,
+  "successful_tip_distance_m": {
+    "mean": 0.032570290692092385,
+    "median": 0.03376547619700432,
+    "minimum": 0.006586471572518349,
+    "maximum": 0.04978428781032562
+  },
+  "successful_directed_speed_m_s": {
+    "mean": 8.028991185128689,
+    "median": 7.98557448387146,
+    "minimum": 6.394979953765869,
+    "maximum": 9.862998008728027
+  },
+  "successful_direction_error_deg": {
+    "mean": 17.41160875558853,
+    "median": 17.06671905517578,
+    "minimum": 10.187849998474121,
+    "maximum": 28.553607940673828
+  }
+}

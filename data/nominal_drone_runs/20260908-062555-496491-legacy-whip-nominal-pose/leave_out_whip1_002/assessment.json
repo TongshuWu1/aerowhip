@@ -1,0 +1,160 @@
+{
+  "training_takes": [
+    "whip1_001",
+    "whip1_003"
+  ],
+  "held_out_take": "whip1_002",
+  "parameters": {
+    "kp_xy": 7.42297725413067,
+    "kp_z": 22.310481871100443,
+    "kd_xy": 5.920004642478293,
+    "kd_z": 1.8744964521987573,
+    "feedforward_xy": 0.3258832846899037,
+    "feedforward_z": 1.9640759812940731,
+    "attitude_time_constant_s": 0.020999529251857055,
+    "delay_s": 0.06,
+    "gravity_m_s2": 9.80665,
+    "attitude_drive_model": "independent_scale_v3",
+    "attitude_acceleration_scale_xy": 1.0020671652584336,
+    "attitude_acceleration_scale_z": 0.4695835623807878
+  },
+  "scores": {
+    "whip1_001": {
+      "csv_maneuver": {
+        "origin_measured_samples": 67,
+        "origin_rmse_m": 0.02013048137503598,
+        "origin_max_m": 0.036332594014612446,
+        "origin_samples": 67,
+        "attachment_measured_samples": 67,
+        "attachment_rmse_m": 0.020706808220923363,
+        "attachment_max_m": 0.03751843794098624,
+        "attachment_samples": 67,
+        "orientation_samples": 67,
+        "orientation_rmse_deg": 2.2168553366425163
+      },
+      "post_maneuver_fullstate_hold": {
+        "origin_measured_samples": 50,
+        "origin_rmse_m": 0.15712685346334154,
+        "origin_max_m": 0.20152424695014726,
+        "origin_samples": 50,
+        "attachment_measured_samples": 50,
+        "attachment_rmse_m": 0.15893333842429785,
+        "attachment_max_m": 0.20681811434548275,
+        "attachment_samples": 50,
+        "orientation_samples": 50,
+        "orientation_rmse_deg": 13.755306231667204
+      }
+    },
+    "whip1_002": {
+      "csv_maneuver": {
+        "origin_measured_samples": 67,
+        "origin_rmse_m": 0.02550469213903512,
+        "origin_max_m": 0.040274234041389204,
+        "origin_samples": 67,
+        "attachment_measured_samples": 67,
+        "attachment_rmse_m": 0.026314360740460407,
+        "attachment_max_m": 0.04338608191244,
+        "attachment_samples": 67,
+        "orientation_samples": 67,
+        "orientation_rmse_deg": 2.445900403985032
+      },
+      "post_maneuver_fullstate_hold": {
+        "origin_measured_samples": 50,
+        "origin_rmse_m": 0.19391978687991826,
+        "origin_max_m": 0.233542084837638,
+        "origin_samples": 50,
+        "attachment_measured_samples": 50,
+        "attachment_rmse_m": 0.19528130036972574,
+        "attachment_max_m": 0.23166836391320686,
+        "attachment_samples": 50,
+        "orientation_samples": 50,
+        "orientation_rmse_deg": 14.368618749666805
+      }
+    },
+    "whip1_003": {
+      "csv_maneuver": {
+        "origin_measured_samples": 66,
+        "origin_rmse_m": 0.024539952651316053,
+        "origin_max_m": 0.04274474159043978,
+        "origin_samples": 66,
+        "attachment_measured_samples": 66,
+        "attachment_rmse_m": 0.02512360409406988,
+        "attachment_max_m": 0.04439212374276923,
+        "attachment_samples": 66,
+        "orientation_samples": 66,
+        "orientation_rmse_deg": 2.224468086874734
+      },
+      "post_maneuver_fullstate_hold": {
+        "origin_measured_samples": 50,
+        "origin_rmse_m": 0.15555927025126165,
+        "origin_max_m": 0.18591331980313075,
+        "origin_samples": 50,
+        "attachment_measured_samples": 50,
+        "attachment_rmse_m": 0.1577248848287041,
+        "attachment_max_m": 0.18458110874368852,
+        "attachment_samples": 50,
+        "orientation_samples": 50,
+        "orientation_rmse_deg": 13.41586632785908
+      }
+    }
+  },
+  "convergence": {
+    "whip1_001": {
+      "position_max_difference_m": 2.2969213110675492e-05,
+      "attachment_max_difference_m": 0.00016983730894678476,
+      "orientation_max_difference_deg": 0.161837354804834
+    },
+    "whip1_002": {
+      "position_max_difference_m": 2.591523432518034e-05,
+      "attachment_max_difference_m": 0.00010583994403649241,
+      "orientation_max_difference_deg": 0.09767378781051854
+    },
+    "whip1_003": {
+      "position_max_difference_m": 2.1920795914949914e-05,
+      "attachment_max_difference_m": 9.698477993954104e-05,
+      "orientation_max_difference_deg": 0.09108181782228215
+    }
+  },
+  "evaluator_parity": {
+    "whip1_001": {
+      "position_max_difference_m": 8.881784197001252e-15,
+      "velocity_max_difference_m_s": 4.119447838402124e-14,
+      "rotation_matrix_max_difference": 3.1086244689504383e-15
+    },
+    "whip1_002": {
+      "position_max_difference_m": 6.217248937900877e-15,
+      "velocity_max_difference_m_s": 2.945907406903814e-14,
+      "rotation_matrix_max_difference": 2.55351295663786e-15
+    },
+    "whip1_003": {
+      "position_max_difference_m": 5.773159728050814e-15,
+      "velocity_max_difference_m_s": 2.7520520584634056e-14,
+      "rotation_matrix_max_difference": 2.4424906541753444e-15
+    }
+  },
+  "prediction_status": {
+    "whip1_001": {
+      "status": "FULL_DIAGNOSTIC_PREDICTED",
+      "maneuver_only": false
+    },
+    "whip1_002": {
+      "status": "FULL_DIAGNOSTIC_PREDICTED",
+      "maneuver_only": false
+    },
+    "whip1_003": {
+      "status": "FULL_DIAGNOSTIC_PREDICTED",
+      "maneuver_only": false
+    }
+  },
+  "near_gain_bounds": {
+    "kp_xy": false,
+    "kp_z": false,
+    "kd_xy": false,
+    "kd_z": false,
+    "feedforward_xy": false,
+    "feedforward_z": false
+  },
+  "attitude_near_bound": true,
+  "delay_at_search_edge": false,
+  "jacobian_condition": 31.55324659365434
+}

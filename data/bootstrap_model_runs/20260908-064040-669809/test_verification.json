@@ -1,0 +1,28 @@
+{
+  "gpu": "NVIDIA GeForce RTX 4080",
+  "platform": "Windows 11",
+  "python_executable": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\.venv\\Scripts\\python.exe",
+  "runs": [
+    {
+      "command": "pytest -q tests/calibration/test_bootstrap_drone.py tests/calibration/test_bootstrap_combined.py tests/calibration/test_drone_pose_initialization.py tests/calibration/test_drone_pose_response_data.py tests/calibration/test_nominal_pose_fit.py tests/calibration/test_attitude_identification.py tests/physics/test_drone_pose_response.py tests/physics/test_dissipative_cable_nn.py tests/calibration/test_historical_fit.py",
+      "exit_code": 0,
+      "passed": 65,
+      "seconds": 19.86
+    },
+    {
+      "command": "pytest -q tests/calibration/test_geometry_conventions.py tests/calibration/test_drone_residual.py tests/flight/test_legacy_execution.py tests/training/test_fullstate_execution.py tests/calibration/test_differentiable_fit.py tests/physics/test_cable_core.py",
+      "exit_code": 0,
+      "passed": 29,
+      "seconds": 197.1,
+      "warnings": "4 existing TorchScript deprecation warnings"
+    },
+    {
+      "command": "pytest -q tests/calibration/test_bootstrap_combined.py",
+      "exit_code": 0,
+      "note": "Rerun after adding portable bundle test; two tests overlap first run",
+      "passed": 3,
+      "seconds": 1.45
+    }
+  ],
+  "unique_tests_passed": 95
+}

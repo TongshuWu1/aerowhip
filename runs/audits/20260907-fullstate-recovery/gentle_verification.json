@@ -1,0 +1,71 @@
+{
+  "csv": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\policies\\PPO-fullstate-gentle-recovery-20260907\\fullstate_30hz.csv",
+  "source_unchanged": true,
+  "whip_rows_byte_identical": true,
+  "whip_rows": 25,
+  "rows": 457,
+  "generation_wall_s": 0.361974100000225,
+  "first_recovery_direction_jump_deg": 2.9613184968072432,
+  "max_recovery_sample_direction_jump_deg": 12.893837442902097,
+  "duration_s": 15.191732284884994,
+  "recovery": {
+    "settings": {
+      "transition_s": 0.3,
+      "ramp_out_s": 0.3,
+      "horizontal_braking_m_s2": 2.5,
+      "vertical_braking_m_s2": 1.5,
+      "return_s": 10.0,
+      "hold_s": 3.0
+    },
+    "transition_s": 0.3,
+    "brake_end_s": 1.391732284884993,
+    "return_end_s": 11.391732284884993,
+    "total_duration_s": 14.391732284884993,
+    "return_s": 10.0,
+    "hold_s": 3.0,
+    "hover_position_m": [
+      0.0,
+      0.0,
+      1.5
+    ],
+    "brake_position_m": [
+      -1.333647802849865,
+      0.011890208817098487,
+      2.064227672845344
+    ],
+    "braking_acceleration_m_s2": [
+      2.4999863220355016,
+      -0.008269802621907787,
+      1.5
+    ],
+    "axis_stop_times_s": [
+      1.391732284884993,
+      1.391732284884993,
+      0.6963815846180287
+    ],
+    "axis_plateau_end_times_s": [
+      1.0917322848849929,
+      1.0917322848849929,
+      0.3963815846180287
+    ],
+    "return_peak_acceleration_limit_m_s2": 0.3,
+    "return_peak_speed_limit_m_s": 0.4,
+    "vehicle_limits_verified": false,
+    "position_min_m": [
+      -1.333647802849865,
+      0.0,
+      1.5
+    ],
+    "position_max_m": [
+      0.488770210635216,
+      0.011890208817098487,
+      2.201239297541738
+    ],
+    "minimum_az_m_s2": -5.582361032745991,
+    "peak_tilt_surrogate_deg": 53.41153455336845,
+    "return_peak_tilt_surrogate_deg": 0.45137322948101244,
+    "peak_direction_rate_surrogate_deg_s": 391.3721941431879,
+    "diagnostic_sample_interval_s": 0.001
+  },
+  "selected_ppo_sha256": "18f33e89fea72e683c40359853e40710f52ecb45623d53669ed6e240334078d7"
+}

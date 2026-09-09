@@ -1,0 +1,29 @@
+{
+  "schema": "nominal_loaded_drone_pose_candidate_v1",
+  "parameters": {
+    "kp_xy": 5.927819744592067,
+    "kp_z": 21.405321535954528,
+    "kd_xy": 6.153111372284283,
+    "kd_z": 1.8240439100550376,
+    "feedforward_xy": 0.30413446453428755,
+    "feedforward_z": 1.9075418288842554,
+    "attitude_time_constant_s": 0.029659774274035922,
+    "delay_s": 0.06,
+    "gravity_m_s2": 9.80665
+  },
+  "training_takes": [
+    "whip1_001",
+    "whip1_002",
+    "whip1_003"
+  ],
+  "alignment": "prehover_effective_alignment",
+  "has_drone_residual": false,
+  "selected": false,
+  "reference_point": "cf_7 tracking origin",
+  "geometry": [
+    0.0066549972854827175,
+    -0.01287427254333901,
+    -0.055
+  ],
+  "fit_protocol_sha256": "a2a9b1b8d7984f0e1b5e9784c68bb5da1d798475f908e57bb2928f0f8b15458e"
+}

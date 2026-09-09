@@ -1,0 +1,91 @@
+{
+  "valid": false,
+  "tau_s": null,
+  "mean_squared_angle_rad2": null,
+  "trace": [
+    {
+      "tau_s": 0.02,
+      "mean_squared_angle_rad2": null,
+      "valid": false,
+      "reason": "Attitude error is too close to 180 degrees for this local response model",
+      "take": "whip1_002"
+    },
+    {
+      "tau_s": 0.026220388460794997,
+      "mean_squared_angle_rad2": null,
+      "valid": false,
+      "reason": "Attitude error is too close to 180 degrees for this local response model",
+      "take": "whip1_002"
+    },
+    {
+      "tau_s": 0.03437543855174958,
+      "mean_squared_angle_rad2": null,
+      "valid": false,
+      "reason": "Attitude error is too close to 180 degrees for this local response model",
+      "take": "whip1_002"
+    },
+    {
+      "tau_s": 0.0450668676168531,
+      "mean_squared_angle_rad2": null,
+      "valid": false,
+      "reason": "Attitude error is too close to 180 degrees for this local response model",
+      "take": "whip1_002"
+    },
+    {
+      "tau_s": 0.05908353878125555,
+      "mean_squared_angle_rad2": null,
+      "valid": false,
+      "reason": "Attitude error is too close to 180 degrees for this local response model",
+      "take": "whip1_002"
+    },
+    {
+      "tau_s": 0.07745966692414837,
+      "mean_squared_angle_rad2": null,
+      "valid": false,
+      "reason": "Attitude error is too close to 180 degrees for this local response model",
+      "take": "whip1_002"
+    },
+    {
+      "tau_s": 0.10155112783974816,
+      "mean_squared_angle_rad2": null,
+      "valid": false,
+      "reason": "Attitude error is too close to 180 degrees for this local response model",
+      "take": "whip1_002"
+    },
+    {
+      "tau_s": 0.1331355010295025,
+      "mean_squared_angle_rad2": null,
+      "valid": false,
+      "reason": "Attitude error is too close to 180 degrees for this local response model",
+      "take": "whip1_002"
+    },
+    {
+      "tau_s": 0.17454322774580638,
+      "mean_squared_angle_rad2": null,
+      "valid": false,
+      "reason": "Attitude error is too close to 180 degrees for this local response model",
+      "take": "whip1_002"
+    },
+    {
+      "tau_s": 0.22882956173480282,
+      "mean_squared_angle_rad2": null,
+      "valid": false,
+      "reason": "Attitude error is too close to 180 degrees for this local response model",
+      "take": "whip1_002"
+    },
+    {
+      "tau_s": 0.3,
+      "mean_squared_angle_rad2": null,
+      "valid": false,
+      "reason": "Attitude error is too close to 180 degrees for this local response model",
+      "take": "whip1_002"
+    }
+  ],
+  "optimizer_success": false,
+  "bounds_s": [
+    0.02,
+    0.3
+  ],
+  "near_bound": null,
+  "reason": "No valid attitude candidate on the fixed search grid"
+}

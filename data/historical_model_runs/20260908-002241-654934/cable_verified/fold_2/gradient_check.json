@@ -1,0 +1,20 @@
+{
+  "passed": false,
+  "reason": "Two local finite-difference scales; initial 1e-3 perturbation failed but converged as epsilon decreased",
+  "steps": [
+    {
+      "analytic": 2.7695291591842186e-05,
+      "epsilon": 0.0001,
+      "finite_difference": 3.5357235477102844e-05,
+      "passed": false,
+      "relative_error": 0.21670087555975615
+    },
+    {
+      "analytic": 2.7695291591842186e-05,
+      "epsilon": 3e-05,
+      "finite_difference": 2.892801681068461e-05,
+      "passed": true,
+      "relative_error": 0.04261354060009796
+    }
+  ]
+}

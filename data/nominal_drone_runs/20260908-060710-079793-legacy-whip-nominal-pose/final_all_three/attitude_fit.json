@@ -1,0 +1,111 @@
+{
+  "tau_s": 0.029659774274035922,
+  "mean_squared_angle_rad2": 0.007616040585192758,
+  "valid": true,
+  "trace": [
+    {
+      "tau_s": 0.02,
+      "mean_squared_angle_rad2": 0.011323952218901154,
+      "valid": true
+    },
+    {
+      "tau_s": 0.026220388460794997,
+      "mean_squared_angle_rad2": 0.00805416471107492,
+      "valid": true
+    },
+    {
+      "tau_s": 0.03437543855174958,
+      "mean_squared_angle_rad2": 0.00836380275353156,
+      "valid": true
+    },
+    {
+      "tau_s": 0.0450668676168531,
+      "mean_squared_angle_rad2": 0.014458666632404547,
+      "valid": true
+    },
+    {
+      "tau_s": 0.05908353878125555,
+      "mean_squared_angle_rad2": 0.027838721162733178,
+      "valid": true
+    },
+    {
+      "tau_s": 0.07745966692414837,
+      "mean_squared_angle_rad2": 0.04797218511095726,
+      "valid": true
+    },
+    {
+      "tau_s": 0.10155112783974816,
+      "mean_squared_angle_rad2": 0.07147056846023671,
+      "valid": true
+    },
+    {
+      "tau_s": 0.1331355010295025,
+      "mean_squared_angle_rad2": null,
+      "valid": false,
+      "reason": "Attitude error is too close to 180 degrees for this local response model",
+      "take": "whip1_002"
+    },
+    {
+      "tau_s": 0.17454322774580638,
+      "mean_squared_angle_rad2": null,
+      "valid": false,
+      "reason": "Attitude error is too close to 180 degrees for this local response model",
+      "take": "whip1_001"
+    },
+    {
+      "tau_s": 0.22882956173480282,
+      "mean_squared_angle_rad2": null,
+      "valid": false,
+      "reason": "Attitude error is too close to 180 degrees for this local response model",
+      "take": "whip1_001"
+    },
+    {
+      "tau_s": 0.3,
+      "mean_squared_angle_rad2": null,
+      "valid": false,
+      "reason": "Attitude error is too close to 180 degrees for this local response model",
+      "take": "whip1_001"
+    },
+    {
+      "tau_s": 0.024596616683040015,
+      "mean_squared_angle_rad2": 0.008585016014261754,
+      "valid": true
+    },
+    {
+      "tau_s": 0.02795135525728814,
+      "mean_squared_angle_rad2": 0.007721409582184834,
+      "valid": true
+    },
+    {
+      "tau_s": 0.030249677612620103,
+      "mean_squared_angle_rad2": 0.007628684361480289,
+      "valid": true
+    },
+    {
+      "tau_s": 0.029717141724914534,
+      "mean_squared_angle_rad2": 0.007616189849960239,
+      "valid": true
+    },
+    {
+      "tau_s": 0.02964000613387939,
+      "mean_squared_angle_rad2": 0.007616043494168885,
+      "valid": true
+    },
+    {
+      "tau_s": 0.029659774274035922,
+      "mean_squared_angle_rad2": 0.007616040585192758,
+      "valid": true
+    },
+    {
+      "tau_s": 0.029679555598085335,
+      "mean_squared_angle_rad2": 0.007616065569729902,
+      "valid": true
+    }
+  ],
+  "optimizer_success": true,
+  "bounds_s": [
+    0.02,
+    0.3
+  ],
+  "near_bound": false
+}

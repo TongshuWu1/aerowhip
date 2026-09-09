@@ -1,0 +1,86 @@
+{
+  "schema": "aerial_whip_recording_round_v1",
+  "round": "adaptation0",
+  "parent_round": null,
+  "created_utc": "2026-09-07T19:45:17.576458+00:00",
+  "notes": "Baseline real flights collected 2026-09-06, before adaptation. PPO ran in simulation; precomputed full-state sequence was executed with cmdFullState. OptiTrack recordings were hand trimmed. Outcomes/contact timing unreviewed.",
+  "provenance": {
+    "drive_folder": "https://drive.google.com/drive/folders/19WifpxNU8EON1y2f4k41j2I1Z9WVrqRh",
+    "owner": "Edward Lopez Tarazona",
+    "collection_date_user_reported": "2026-09-06",
+    "source_audit": "runs/audits/20260907-whip1-check",
+    "baseline_model_adapted": false
+  },
+  "model_adaptation_performed": false,
+  "policy_training_performed": false,
+  "execution": "precomputed full-state reference tracked by vehicle; no onboard PPO",
+  "identity": {
+    "drone": "cf_7",
+    "cable": [
+      "cable1:c1",
+      "cable1:c2",
+      "cable1:c3",
+      "cable1:c4",
+      "cable1:c5",
+      "cable1:c6",
+      "cable1:c7",
+      "cable1:c8",
+      "cable1:c9",
+      "cable1:c10"
+    ],
+    "unlabeled": "ignored"
+  },
+  "import_context": "Current workspace at import, NOT verified flight model/controller snapshots",
+  "reference": {
+    "path": "reference/fullstate_30hz.csv",
+    "sha256": "2f53b06af9849c2ac6053b29f16eeec34f12fd2e83dfe7e2c9c144145f43f81f",
+    "association": "user supplied / prefix match only; not proof of flight firmware or complete execution"
+  },
+  "trials": [
+    {
+      "trial_id": "whip1_001",
+      "sources": {
+        "optitrack": {
+          "path": "raw/whip1_001/whip1_001.csv",
+          "sha256": "b6b7f01d81e6b7e490cd321f4fd6390207dc15ba8246de190901f9e0f47100c5",
+          "original_name": "whip1_001.csv"
+        },
+        "controller": {
+          "path": "raw/whip1_001/experiment_whip1_001.csv",
+          "sha256": "0b3dca254c83b03546c8f570b8cb202bb89efe5e2560c1adb16fab1cbd026ec6",
+          "original_name": "experiment_whip1_001.csv"
+        }
+      }
+    },
+    {
+      "trial_id": "whip1_002",
+      "sources": {
+        "optitrack": {
+          "path": "raw/whip1_002/whip1_002.csv",
+          "sha256": "4749d4e9e0d4246d2150784faf08dc9e4e964b88725fbc359a9401ed7310a7b9",
+          "original_name": "whip1_002.csv"
+        },
+        "controller": {
+          "path": "raw/whip1_002/experiment_whip1_002.csv",
+          "sha256": "b22a953e6b15c9784f35361e0816c8bfa2b0a1178cf281b882362a66438ef2e5",
+          "original_name": "experiment_whip1_002.csv"
+        }
+      }
+    },
+    {
+      "trial_id": "whip1_003",
+      "sources": {
+        "optitrack": {
+          "path": "raw/whip1_003/whip1_003.csv",
+          "sha256": "4f98624de55a5f07b5aed5d7ccd4bd31914b1654eef76b61f41441b29f41d06f",
+          "original_name": "whip1_003.csv"
+        },
+        "controller": {
+          "path": "raw/whip1_003/experiment_whip1_003.csv",
+          "sha256": "4f52038d547f2271791d41a5569afc09b7249e2b2353cbd3255cb6ddc3229fda",
+          "original_name": "experiment_whip1_003.csv"
+        }
+      }
+    }
+  ]
+}

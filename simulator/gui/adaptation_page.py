@@ -11,7 +11,7 @@ from simulator.workflow import read_json,stamp
 from .research_widgets import note,BackgroundJob
 
 
-class AdaptationPage(QWidget):
+class ForceAdaptationPage(QWidget):
     def __init__(self,root,parent=None):
         super().__init__(parent);self.root=Path(root);self.last_output=None
         layout=QVBoxLayout(self);layout.setContentsMargins(24,20,24,20)
@@ -120,3 +120,20 @@ class AdaptationPage(QWidget):
 
     def open_result(self):
         if self.last_output:QDesktopServices.openUrl(QUrl.fromLocalFile(str(self.last_output)))
+
+
+class AdaptationPage(QWidget):
+    def __init__(self, root, parent=None):
+        super().__init__(parent)
+        from PySide6.QtWidgets import QTabWidget
+        from .recording_rounds_page import RecordingRoundsPage
+        layout = QVBoxLayout(self)
+        self.tabs = QTabWidget()
+        self.recordings = RecordingRoundsPage(root)
+        self.force_tools = ForceAdaptationPage(root)
+        self.tabs.addTab(self.recordings, 'Recording rounds')
+        from .drone_residual_page import DroneResidualPage
+        self.drone_residual = DroneResidualPage(root)
+        self.tabs.addTab(self.drone_residual, 'Drone residual')
+        self.tabs.addTab(self.force_tools, 'Legacy force-log tools')
+        layout.addWidget(self.tabs)

@@ -1,0 +1,242 @@
+{
+  "schema": "legacy_whip_phases_v1",
+  "csv_start_s": 18.860148429870605,
+  "csv_end_s": 19.530173540115356,
+  "csv_duration_observed_s": 0.670025110244751,
+  "csv_samples_observed": 20,
+  "intervals": [
+    {
+      "phase": "unobserved_command",
+      "start_s": 4.0531158447265625e-05,
+      "end_s": 8.860209703445435,
+      "samples": 886,
+      "end_is_log_boundary": false
+    },
+    {
+      "phase": "pre_maneuver_fullstate_hold",
+      "start_s": 8.860209703445435,
+      "end_s": 18.860148429870605,
+      "samples": 1000,
+      "end_is_log_boundary": false
+    },
+    {
+      "phase": "csv_maneuver",
+      "start_s": 18.860148429870605,
+      "end_s": 19.530173540115356,
+      "samples": 67,
+      "end_is_log_boundary": false
+    },
+    {
+      "phase": "post_maneuver_fullstate_hold",
+      "start_s": 19.530173540115356,
+      "end_s": 21.130210638046265,
+      "samples": 160,
+      "end_is_log_boundary": false
+    },
+    {
+      "phase": "unobserved_command",
+      "start_s": 21.130210638046265,
+      "end_s": 29.390170097351074,
+      "samples": 827,
+      "end_is_log_boundary": true
+    }
+  ],
+  "csv_events": [
+    {
+      "csv_row": 0,
+      "csv_time_s": 0.0,
+      "first_observed_s": 18.860148429870605,
+      "previous_logger_row_s": 18.850165843963623,
+      "callback_time_estimate_s": 18.856013774871826,
+      "next_value_observed_s": 18.890180349349976
+    },
+    {
+      "csv_row": 1,
+      "csv_time_s": 0.03333333333333333,
+      "first_observed_s": 18.890180349349976,
+      "previous_logger_row_s": 18.880175828933716,
+      "callback_time_estimate_s": 18.889370918273926,
+      "next_value_observed_s": 18.93018388748169
+    },
+    {
+      "csv_row": 2,
+      "csv_time_s": 0.06666666666666667,
+      "first_observed_s": 18.93018388748169,
+      "previous_logger_row_s": 18.920166730880737,
+      "callback_time_estimate_s": 18.922733545303345,
+      "next_value_observed_s": 18.960214614868164
+    },
+    {
+      "csv_row": 3,
+      "csv_time_s": 0.1,
+      "first_observed_s": 18.960214614868164,
+      "previous_logger_row_s": 18.950178146362305,
+      "callback_time_estimate_s": 18.956047296524048,
+      "next_value_observed_s": 18.99018955230713
+    },
+    {
+      "csv_row": 4,
+      "csv_time_s": 0.13333333333333333,
+      "first_observed_s": 18.99018955230713,
+      "previous_logger_row_s": 18.980200052261353,
+      "callback_time_estimate_s": 18.989434242248535,
+      "next_value_observed_s": 19.030184745788574
+    },
+    {
+      "csv_row": 5,
+      "csv_time_s": 0.16666666666666666,
+      "first_observed_s": 19.030184745788574,
+      "previous_logger_row_s": 19.020206689834595,
+      "callback_time_estimate_s": 19.022727251052856,
+      "next_value_observed_s": 19.060168266296387
+    },
+    {
+      "csv_row": 6,
+      "csv_time_s": 0.2,
+      "first_observed_s": 19.060168266296387,
+      "previous_logger_row_s": 19.050175666809082,
+      "callback_time_estimate_s": 19.05604124069214,
+      "next_value_observed_s": 19.090202808380127
+    },
+    {
+      "csv_row": 7,
+      "csv_time_s": 0.23333333333333334,
+      "first_observed_s": 19.090202808380127,
+      "previous_logger_row_s": 19.080204248428345,
+      "callback_time_estimate_s": 19.089366912841797,
+      "next_value_observed_s": 19.13015651702881
+    },
+    {
+      "csv_row": 8,
+      "csv_time_s": 0.26666666666666666,
+      "first_observed_s": 19.13015651702881,
+      "previous_logger_row_s": 19.12020707130432,
+      "callback_time_estimate_s": 19.122732162475586,
+      "next_value_observed_s": 19.160176038742065
+    },
+    {
+      "csv_row": 9,
+      "csv_time_s": 0.3,
+      "first_observed_s": 19.160176038742065,
+      "previous_logger_row_s": 19.150188207626343,
+      "callback_time_estimate_s": 19.15605664253235,
+      "next_value_observed_s": 19.190176963806152
+    },
+    {
+      "csv_row": 10,
+      "csv_time_s": 0.3333333333333333,
+      "first_observed_s": 19.190176963806152,
+      "previous_logger_row_s": 19.180172204971313,
+      "callback_time_estimate_s": 19.189438104629517,
+      "next_value_observed_s": 19.23016047477722
+    },
+    {
+      "csv_row": 11,
+      "csv_time_s": 0.36666666666666664,
+      "first_observed_s": 19.23016047477722,
+      "previous_logger_row_s": 19.220155477523804,
+      "callback_time_estimate_s": 19.222718477249146,
+      "next_value_observed_s": 19.260194540023804
+    },
+    {
+      "csv_row": 12,
+      "csv_time_s": 0.4,
+      "first_observed_s": 19.260194540023804,
+      "previous_logger_row_s": 19.25016164779663,
+      "callback_time_estimate_s": 19.256060123443604,
+      "next_value_observed_s": 19.290173530578613
+    },
+    {
+      "csv_row": 13,
+      "csv_time_s": 0.43333333333333335,
+      "first_observed_s": 19.290173530578613,
+      "previous_logger_row_s": 19.280169248580933,
+      "callback_time_estimate_s": 19.28935718536377,
+      "next_value_observed_s": 19.330162525177002
+    },
+    {
+      "csv_row": 14,
+      "csv_time_s": 0.4666666666666667,
+      "first_observed_s": 19.330162525177002,
+      "previous_logger_row_s": 19.32017946243286,
+      "callback_time_estimate_s": 19.322739601135254,
+      "next_value_observed_s": 19.360164880752563
+    },
+    {
+      "csv_row": 15,
+      "csv_time_s": 0.5,
+      "first_observed_s": 19.360164880752563,
+      "previous_logger_row_s": 19.3501980304718,
+      "callback_time_estimate_s": 19.3561110496521,
+      "next_value_observed_s": 19.390177965164185
+    },
+    {
+      "csv_row": 16,
+      "csv_time_s": 0.5333333333333333,
+      "first_observed_s": 19.390177965164185,
+      "previous_logger_row_s": 19.38017201423645,
+      "callback_time_estimate_s": 19.38947892189026,
+      "next_value_observed_s": 19.430156230926514
+    },
+    {
+      "csv_row": 17,
+      "csv_time_s": 0.5666666666666667,
+      "first_observed_s": 19.430156230926514,
+      "previous_logger_row_s": 19.42015314102173,
+      "callback_time_estimate_s": 19.422759532928467,
+      "next_value_observed_s": 19.46017837524414
+    },
+    {
+      "csv_row": 18,
+      "csv_time_s": 0.6,
+      "first_observed_s": 19.46017837524414,
+      "previous_logger_row_s": 19.450157642364502,
+      "callback_time_estimate_s": 19.456144094467163,
+      "next_value_observed_s": 19.490167379379272
+    },
+    {
+      "csv_row": 19,
+      "csv_time_s": 0.6333333333333333,
+      "first_observed_s": 19.490167379379272,
+      "previous_logger_row_s": 19.48017978668213,
+      "callback_time_estimate_s": 19.489410161972046,
+      "next_value_observed_s": 19.530173540115356
+    }
+  ],
+  "pre_hold_target_m": [
+    0.0,
+    0.0,
+    1.502255342821949
+  ],
+  "post_hold_targets_m": [
+    [
+      0.5955275893211365,
+      0.005468718241900206,
+      2.188166856765747
+    ]
+  ],
+  "post_last_callback_estimate_s": 21.02278232574463,
+  "post_callback_coverage_s": 1.4926087856292725,
+  "source_post_hold_duration_s": 5,
+  "source_behavior": "Hold cf.get_position() sampled at sequence end; no return-to-start path",
+  "timing": "First observed logger row; callback estimate = row time - cmd_age is diagnostic only. Not radio/onboard actuation time.",
+  "unknown": "No fresh FullState observation; may include takeoff, landing, intervention or cache expiry. No command imputed.",
+  "phase_meaning": "Command source/target, not proof that the drone is stationary or settled",
+  "cache_tail": "A fresh cached value can outlive publishing by up to 100 ms. Phase end is an observation limit, not a verified mode-switch time.",
+  "warnings": [
+    "Observed post-hold callback coverage differs from supplied RECOVERY_TIME; do not infer the missing interval or installed script revision."
+  ],
+  "tracking_coverage_controller_s": [
+    5.705370862321315,
+    20.535370862321315
+  ],
+  "tracking_phase_counts": {
+    "csv_maneuver": 67,
+    "post_maneuver_fullstate_hold": 101,
+    "pre_maneuver_fullstate_hold": 1000,
+    "unobserved_command": 316
+  },
+  "tracking_boundary_uncertain_frames": 3,
+  "tracking_covers_complete_csv": true,
+  "boundary_uncertainty": "Previous-to-first logger-row bracket around phase transitions only; excludes unknown clock/measurement latency."
+}

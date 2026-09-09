@@ -16,7 +16,7 @@ def test_process_liveness_check_handles_current_and_missing_processes() -> None:
     assert not process_is_running(2_147_483_647)
 
 
-def test_desktop_ui_exposes_shared_task_and_two_training_workspaces() -> None:
+def test_desktop_ui_exposes_ppo_without_sac() -> None:
     from PySide6.QtWidgets import QApplication
     from simulator.gui.main_window import SimulatorMainWindow
     from simulator.rollout import load_json
@@ -24,19 +24,27 @@ def test_desktop_ui_exposes_shared_task_and_two_training_workspaces() -> None:
     ppo = load_json(ROOT / 'config/ppo.json')
     window = SimulatorMainWindow(ROOT, load_json(ROOT / 'config/model.json'),
                                  load_json(ROOT / 'config/task.json'), ppo)
-    assert window.main_tabs.count() == 5
+    assert window.main_tabs.count() == 7
+    assert window.main_tabs.widget(5) is window.mppi_page
+    assert not hasattr(window,'cem_page')
+    assert 'Testing' not in [window.main_tabs.tabText(i) for i in range(window.main_tabs.count())]
+    assert window.main_tabs.widget(4) is window.fullstate_page
     assert window.reward_page.hit_spins['maximum_tip_velocity_to_desired_direction_error_deg'].value() == 45
     assert window.reward_page.spins['time_to_success_weight_per_s'].value() == ppo['reward']['time_to_success_weight_per_s']
     assert window.training_page.start_button.text() == 'Train new policy'
-    assert window.sac_page.start_button.text() == 'Train new policy'
+    assert not hasattr(window, 'sac_page')
+    assert 'SAC' not in [window.main_tabs.tabText(i) for i in range(window.main_tabs.count())]
+    assert window.training_page.tabs.tabText(1) == 'Policies'
     window.main_tabs.setCurrentIndex(2)
     application.processEvents()
     assert window.training_page.timer.isActive()
-    assert not window.sac_page.timer.isActive()
-    assert window.training_page.viewport.viewer.backend_name == 'MATPLOTLIB FALLBACK'
-    window.main_tabs.setCurrentIndex(3)
-    assert not window.training_page.timer.isActive()
-    assert window.sac_page.timer.isActive()
+    window.navigation_buttons[4].click()
+    application.processEvents()
+    assert window.fullstate_page.active
+    assert window.shell_page_title.text() == 'Rehearsal & Export'
+    assert [window.main_tabs.tabText(i) for i in range(5)]==['Model','Recordings','PPO','Diagnostics','Rehearsal & Export']
+    assert window.training_page.tabs.tabText(2)=='Task & rewards'
+    assert window.fullstate_page.viewer is None  # Native scene is constructed when a prediction is available.
     window.close()
     application.processEvents()
 

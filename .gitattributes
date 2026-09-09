@@ -4,3 +4,20 @@
 # OptiTrack evidence required to reproduce data processing and cable validation.
 data/raw_takes/**/*.csv filter=lfs diff=lfs merge=lfs -text
 data/processed_takes/**/*.npz filter=lfs diff=lfs merge=lfs -text
+
+# Preserve immutable research snapshots, provenance hashes, and flown CSV bytes.
+data/** -text
+runs/** -text
+policies/** -text
+config/experiments/** -text
+rehearsal_csv_and_result_in_real_flight/** -text
+*.csv -text
+
+# Research snapshot binaries and recorded/derived numerical data.
+*.pt filter=lfs diff=lfs merge=lfs -text
+*.npz filter=lfs diff=lfs merge=lfs -text
+*.npy filter=lfs diff=lfs merge=lfs -text
+*.zip filter=lfs diff=lfs merge=lfs -text
+data/**/*.csv filter=lfs diff=lfs merge=lfs -text
+runs/**/*.csv filter=lfs diff=lfs merge=lfs -text
+rehearsal_csv_and_result_in_real_flight/**/*.csv filter=lfs diff=lfs merge=lfs -text

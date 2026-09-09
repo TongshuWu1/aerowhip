@@ -5,12 +5,13 @@ from .cable import DderState, FREE_ENDPOINTS
 
 
 class CudaGraphPhysics:
-    def __init__(self, model, state, dt, constants=None):
+    def __init__(self, model, state, dt, constants=None, *, linear_solvers=None):
         if not state.positions_m.is_cuda:
             raise ValueError('CUDA graph physics requires CUDA tensors.')
         if state.endpoint_orientations is not None or state.endpoint_twist_rad is not None:
             raise ValueError('Point-force graph physics requires free, position-only nodes.')
         self.dder=model.dder
+        self.linear_solvers=linear_solvers
         self.controller=model.controller
         self.q=state.positions_m.detach().clone()
         self.v=state.velocities_m_s.detach().clone()
@@ -31,6 +32,8 @@ class CudaGraphPhysics:
             DderState(self.q,self.v),self.q[:,:0],self.dt,self.constants,
             external_force_world_n=self.controller.node_forces(self.force,validate=False),
             iterative_damping=True,damping_backend='pcg32_experimental',
+            linear_solvers=self.linear_solvers,
+            analytic_bending=self.linear_solvers is not None,
             pinned_endpoints=FREE_ENDPOINTS,create_graph=False)
 
     @torch.no_grad()

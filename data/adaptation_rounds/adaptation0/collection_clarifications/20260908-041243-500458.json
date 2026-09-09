@@ -1,0 +1,13 @@
+{
+  "created_utc": "2026-09-08T04:12:43.500458+00:00",
+  "source": "User confirmation in current conversation",
+  "user_statement": "yes the take 3 have a different post hold",
+  "interpretation": "Different post-hold timing in take 3 is intentional. Preserve each take independently; duration differences are not a reason to reject data.",
+  "observed_callback_coverage_s": {
+    "whip1_001": 1.4960741996765137,
+    "whip1_002": 1.4926087856292725,
+    "whip1_003": 4.999417781829834
+  },
+  "provenance_note": "Durations are estimates from the recorded command cache, not user-reported exact timing or verified onboard transitions.",
+  "processed_version": "20260908-041031-260837"
+}

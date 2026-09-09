@@ -1,0 +1,25 @@
+{
+  "preserved": {
+    "config\\model.json": true,
+    "config\\ppo.json": true,
+    "config\\task.json": true,
+    "runs\\ppo\\20260906-201957-294110-measured-mass-seed653\\checkpoints\\best_validation.pt": true,
+    "learning/point_force_env.py": true,
+    "learning/simple_ppo.py": true,
+    "learning/training_control.py": true,
+    "learning/deployment_rollout.py": true,
+    "learning/fullstate_rollout.py": true,
+    "simulator/fullstate_execution.py": true,
+    "simulator/drone_tracking.py": true,
+    "simulator/live_flight.py": true,
+    "run_ppo.py": true,
+    "simulator/point_mass.py": true,
+    "simulator/cuda_graph_physics.py": true,
+    "simulator/cable/dder.py": true
+  },
+  "tests_passed": 16,
+  "training_status": "RUNNING",
+  "training_episodes": 55296,
+  "training_pid": 33300,
+  "production_code_changed": false
+}

@@ -1,0 +1,11 @@
+{
+  "damping_backend": "pcg32_experimental",
+  "device": "cuda",
+  "dtype": "torch.float32",
+  "node_count": 12,
+  "pinned_start_nodes": 2,
+  "position_projection_iterations": 4,
+  "production_fused_forward_active": true,
+  "projection_backend": "fixed_projection_supported_nodes",
+  "substeps": 3
+}

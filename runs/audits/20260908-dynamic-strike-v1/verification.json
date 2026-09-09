@@ -1,0 +1,68 @@
+{
+  "approach_probe": {
+    "failed": 0,
+    "final_attachment_displacement_m": [
+      [
+        0.6617082181325266,
+        -0.03550379162203783,
+        -0.0027021301411185306
+      ],
+      [
+        0.6617082181325266,
+        -0.03550379162203783,
+        -0.0027021301411185306
+      ],
+      [
+        0.6617082181325266,
+        -0.03550379162203783,
+        -0.0027021301411185306
+      ],
+      [
+        0.6617082181325266,
+        -0.03550379162203783,
+        -0.0027021301411185306
+      ]
+    ],
+    "maximum_reference_speed_m_s": [
+      0.44681180961515293,
+      0.44681180961515293,
+      0.44681180961515293,
+      0.44681180961515293
+    ],
+    "maximum_reference_tilt_deg": [
+      2.8253037254713087,
+      2.8253037254713087,
+      2.8253037254713087,
+      2.8253037254713087
+    ],
+    "meaning": "Feasible preparation only, not a successful whip or hardware validation",
+    "successes": 0
+  },
+  "config_sha256": {
+    "model": "ff9c5aeacd387357b9a9b9d83179182a7b865366aad74722b756daea72a03530",
+    "ppo": "fd9880e477d3b1386edffbdfe8bc83dc68172f9f4190116b691e09271bc43ec9",
+    "task": "545f70e61f36b738f917a5312ea7a4c0678c54f8bad1394c269085813f9013f8"
+  },
+  "device": "NVIDIA GeForce RTX 4080",
+  "optimizer_updated": true,
+  "os": "win32",
+  "reward_accounting_passed": true,
+  "training": {
+    "action_packets": 150,
+    "attempts": 16,
+    "elapsed_s": 44.546999999991385,
+    "failed": 0,
+    "mean_reward": -20.135632225999565,
+    "metrics": {
+      "approximate_kl": 0.00014793308706430308,
+      "clip_fraction": 0.0,
+      "entropy": -1.0430505275726318,
+      "epochs_completed": 4,
+      "gradient_norm": 52.396042823791504,
+      "policy_loss": -0.0006721348603604405,
+      "valid_transitions": 2400,
+      "value_loss": 443.64241790771484
+    },
+    "physics_steps": 750
+  }
+}

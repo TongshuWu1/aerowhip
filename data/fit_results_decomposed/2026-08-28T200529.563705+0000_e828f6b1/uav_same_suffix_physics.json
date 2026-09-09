@@ -1,0 +1,1129 @@
+{
+  "failed_episodes": [
+    {
+      "detail": "Non-finite UAV validation state in fig8_003__episode_000__residual_suffix.",
+      "reason": "non_finite_open_loop_uav_state",
+      "role": "validation",
+      "take_id": "fig8_003",
+      "view_id": "fig8_003__episode_000__residual_suffix"
+    }
+  ],
+  "label": "uav_same_suffix_physics",
+  "lead_time_semantics": "elapsed time from the view's single causal initialization",
+  "per_take": {
+    "fig8_001": {
+      "episode_count": 1,
+      "episodes": [
+        {
+          "duration_s": 40.38999999999999,
+          "kind": "causal_residual_suffix",
+          "lead_time": {
+            "0.1": {
+              "orientation_error_deg": 1.6159177689569861,
+              "position_error_m": 0.0038907622755585632
+            },
+            "0.25": {
+              "orientation_error_deg": 5.621300976355993,
+              "position_error_m": 0.018352161432881514
+            },
+            "0.5": {
+              "orientation_error_deg": 6.751693451130538,
+              "position_error_m": 0.024997219847394177
+            },
+            "1.0": {
+              "orientation_error_deg": 6.29927097498066,
+              "position_error_m": 0.030915238881830658
+            },
+            "2.0": {
+              "orientation_error_deg": 5.203156460516997,
+              "position_error_m": 0.03312540985588851
+            },
+            "4.0": {
+              "orientation_error_deg": 7.392570018259945,
+              "position_error_m": 0.037105601460622493
+            },
+            "8.0": {
+              "orientation_error_deg": 2.6553039172457513,
+              "position_error_m": 0.030635562227248163
+            }
+          },
+          "parent_episode_id": "fig8_001__episode_000",
+          "start_index": 245,
+          "terminal_orientation_error_deg": 3.366461927337207,
+          "terminal_position_error_m": 0.03228983496392017,
+          "view_id": "fig8_001__episode_000__residual_suffix"
+        }
+      ],
+      "lead_time": {
+        "0.1": {
+          "episode_count": 1,
+          "orientation_rmse_deg": 1.6159177689569861,
+          "position_rmse_m": 0.0038907622755585632
+        },
+        "0.25": {
+          "episode_count": 1,
+          "orientation_rmse_deg": 5.621300976355993,
+          "position_rmse_m": 0.018352161432881514
+        },
+        "0.5": {
+          "episode_count": 1,
+          "orientation_rmse_deg": 6.751693451130538,
+          "position_rmse_m": 0.024997219847394177
+        },
+        "1.0": {
+          "episode_count": 1,
+          "orientation_rmse_deg": 6.29927097498066,
+          "position_rmse_m": 0.030915238881830658
+        },
+        "2.0": {
+          "episode_count": 1,
+          "orientation_rmse_deg": 5.203156460516997,
+          "position_rmse_m": 0.03312540985588851
+        },
+        "4.0": {
+          "episode_count": 1,
+          "orientation_rmse_deg": 7.392570018259945,
+          "position_rmse_m": 0.037105601460622493
+        },
+        "8.0": {
+          "episode_count": 1,
+          "orientation_rmse_deg": 2.6553039172457513,
+          "position_rmse_m": 0.030635562227248163
+        }
+      },
+      "observation_count": 4040,
+      "orientation_rmse_deg": 5.228168408858752,
+      "position_axis_rmse_m": {
+        "x": 0.019655604726024765,
+        "y": 0.018507851937903285,
+        "z": 0.03180159986176671
+      },
+      "position_rmse_m": 0.04171600573244037,
+      "role": "training",
+      "roll_pitch_yaw_rmse_deg": {
+        "pitch": 5.014996367145434,
+        "roll": 1.42112651887274,
+        "yaw": 0.40405709198152406
+      },
+      "terminal_orientation_rmse_deg": 3.366461927337207,
+      "terminal_position_rmse_m": 0.03228983496392017
+    },
+    "fig8_002": {
+      "episode_count": 3,
+      "episodes": [
+        {
+          "duration_s": 7.100000000000001,
+          "kind": "causal_residual_suffix",
+          "lead_time": {
+            "0.1": {
+              "orientation_error_deg": 1.4725671571934973,
+              "position_error_m": 0.0020767430091751266
+            },
+            "0.25": {
+              "orientation_error_deg": 5.646011246351746,
+              "position_error_m": 0.012126164745136852
+            },
+            "0.5": {
+              "orientation_error_deg": 6.588363744692697,
+              "position_error_m": 0.018626525524780252
+            },
+            "1.0": {
+              "orientation_error_deg": 5.814256804004461,
+              "position_error_m": 0.02371744843629213
+            },
+            "2.0": {
+              "orientation_error_deg": 5.188931769890235,
+              "position_error_m": 0.025732893532258078
+            },
+            "4.0": {
+              "orientation_error_deg": 6.669848675398569,
+              "position_error_m": 0.026684725863680408
+            }
+          },
+          "parent_episode_id": "fig8_002__episode_000",
+          "start_index": 226,
+          "terminal_orientation_error_deg": 6.696089769150088,
+          "terminal_position_error_m": 0.0401197087793638,
+          "view_id": "fig8_002__episode_000__residual_suffix"
+        },
+        {
+          "duration_s": 16.14,
+          "kind": "causal_residual_suffix",
+          "lead_time": {
+            "0.1": {
+              "orientation_error_deg": 1.5430932478985087,
+              "position_error_m": 0.0072721546436118585
+            },
+            "0.25": {
+              "orientation_error_deg": 7.756841490076724,
+              "position_error_m": 0.026387420769582913
+            },
+            "0.5": {
+              "orientation_error_deg": 8.792192955186517,
+              "position_error_m": 0.04094410759391466
+            },
+            "1.0": {
+              "orientation_error_deg": 9.034032438169692,
+              "position_error_m": 0.0709591489352052
+            },
+            "2.0": {
+              "orientation_error_deg": 5.9957536806862395,
+              "position_error_m": 0.034492100808056016
+            },
+            "4.0": {
+              "orientation_error_deg": 9.548923559026418,
+              "position_error_m": 0.09094700621971046
+            },
+            "8.0": {
+              "orientation_error_deg": 13.041409944820174,
+              "position_error_m": 0.1222713878871899
+            }
+          },
+          "parent_episode_id": "fig8_002__episode_001",
+          "start_index": 947,
+          "terminal_orientation_error_deg": 2.8304299236753208,
+          "terminal_position_error_m": 0.03244957551362427,
+          "view_id": "fig8_002__episode_001__residual_suffix"
+        },
+        {
+          "duration_s": 4.299999999999997,
+          "kind": "causal_residual_suffix",
+          "lead_time": {
+            "0.1": {
+              "orientation_error_deg": 1.5618932252472484,
+              "position_error_m": 0.00600764995255452
+            },
+            "0.25": {
+              "orientation_error_deg": 7.688401981093576,
+              "position_error_m": 0.02152309654610728
+            },
+            "0.5": {
+              "orientation_error_deg": 7.032556434613493,
+              "position_error_m": 0.018955312970788903
+            },
+            "1.0": {
+              "orientation_error_deg": 8.3414364887428,
+              "position_error_m": 0.02494086707708719
+            },
+            "2.0": {
+              "orientation_error_deg": 5.6831271186398675,
+              "position_error_m": 0.018333409785112432
+            },
+            "4.0": {
+              "orientation_error_deg": 9.521395327878356,
+              "position_error_m": 0.024693941986464334
+            }
+          },
+          "parent_episode_id": "fig8_002__episode_002",
+          "start_index": 2572,
+          "terminal_orientation_error_deg": 1.824524051418062,
+          "terminal_position_error_m": 0.028219982804076043,
+          "view_id": "fig8_002__episode_002__residual_suffix"
+        }
+      ],
+      "lead_time": {
+        "0.1": {
+          "episode_count": 3,
+          "orientation_rmse_deg": 1.5263356174433107,
+          "position_rmse_m": 0.005576407225660372
+        },
+        "0.25": {
+          "episode_count": 3,
+          "orientation_rmse_deg": 7.098299277972381,
+          "position_rmse_m": 0.020869303863412014
+        },
+        "0.5": {
+          "episode_count": 3,
+          "orientation_rmse_deg": 7.531401901364629,
+          "position_rmse_m": 0.028181975856966385
+        },
+        "1.0": {
+          "episode_count": 3,
+          "orientation_rmse_deg": 7.852789036865484,
+          "position_rmse_m": 0.04553301010802947
+        },
+        "2.0": {
+          "episode_count": 3,
+          "orientation_rmse_deg": 5.632406500441846,
+          "position_rmse_m": 0.02700617671351305
+        },
+        "4.0": {
+          "episode_count": 3,
+          "orientation_rmse_deg": 8.6857314310807,
+          "position_rmse_m": 0.05654857294273273
+        },
+        "8.0": {
+          "episode_count": 1,
+          "orientation_rmse_deg": 13.041409944820174,
+          "position_rmse_m": 0.1222713878871899
+        }
+      },
+      "observation_count": 2757,
+      "orientation_rmse_deg": 6.361097548211327,
+      "position_axis_rmse_m": {
+        "x": 0.03528850964399996,
+        "y": 0.037309255495468215,
+        "z": 0.023484389605463018
+      },
+      "position_rmse_m": 0.056469248389384316,
+      "role": "training",
+      "roll_pitch_yaw_rmse_deg": {
+        "pitch": 5.751035036682222,
+        "roll": 2.4771108458835105,
+        "yaw": 1.0998932750852886
+      },
+      "terminal_orientation_rmse_deg": 4.327348678793061,
+      "terminal_position_rmse_m": 0.0339555268599861
+    },
+    "fig8_003": {
+      "episode_count": 1,
+      "episodes": [
+        {
+          "duration_s": 0.980000000000004,
+          "kind": "causal_residual_suffix",
+          "lead_time": {
+            "0.1": {
+              "orientation_error_deg": 0.8195732578933496,
+              "position_error_m": 0.0084757325974402
+            },
+            "0.25": {
+              "orientation_error_deg": 8.518757155564122,
+              "position_error_m": 0.02744101177643432
+            },
+            "0.5": {
+              "orientation_error_deg": 7.8705147562404045,
+              "position_error_m": 0.020435930525519463
+            }
+          },
+          "parent_episode_id": "fig8_003__episode_001",
+          "start_index": 5631,
+          "terminal_orientation_error_deg": 7.9347451344225615,
+          "terminal_position_error_m": 0.027167550052376574,
+          "view_id": "fig8_003__episode_001__residual_suffix"
+        }
+      ],
+      "lead_time": {
+        "0.1": {
+          "episode_count": 1,
+          "orientation_rmse_deg": 0.8195732578933496,
+          "position_rmse_m": 0.0084757325974402
+        },
+        "0.25": {
+          "episode_count": 1,
+          "orientation_rmse_deg": 8.518757155564122,
+          "position_rmse_m": 0.02744101177643432
+        },
+        "0.5": {
+          "episode_count": 1,
+          "orientation_rmse_deg": 7.8705147562404045,
+          "position_rmse_m": 0.020435930525519463
+        }
+      },
+      "observation_count": 99,
+      "orientation_rmse_deg": 6.391683157518636,
+      "position_axis_rmse_m": {
+        "x": 0.017176259952894957,
+        "y": 0.010381354902819244,
+        "z": 0.002962905816371481
+      },
+      "position_rmse_m": 0.020287317379693158,
+      "role": "validation",
+      "roll_pitch_yaw_rmse_deg": {
+        "pitch": 6.270392580626256,
+        "roll": 1.1883088163085598,
+        "yaw": 0.37878730560844465
+      },
+      "terminal_orientation_rmse_deg": 7.9347451344225615,
+      "terminal_position_rmse_m": 0.027167550052376574
+    },
+    "fig8vertical_001": {
+      "episode_count": 7,
+      "episodes": [
+        {
+          "duration_s": 11.149999999999999,
+          "kind": "causal_residual_suffix",
+          "lead_time": {
+            "0.1": {
+              "orientation_error_deg": 2.7590718336708706,
+              "position_error_m": 0.0045945345620057206
+            },
+            "0.25": {
+              "orientation_error_deg": 4.017110401217379,
+              "position_error_m": 0.017787260610951684
+            },
+            "0.5": {
+              "orientation_error_deg": 6.03673489379277,
+              "position_error_m": 0.024388718784272588
+            },
+            "1.0": {
+              "orientation_error_deg": 3.9318997020299213,
+              "position_error_m": 0.024724521208889277
+            },
+            "2.0": {
+              "orientation_error_deg": 4.834353454093381,
+              "position_error_m": 0.025952179436083765
+            },
+            "4.0": {
+              "orientation_error_deg": 6.319892295353242,
+              "position_error_m": 0.031556827806454135
+            },
+            "8.0": {
+              "orientation_error_deg": 0.9156306442983225,
+              "position_error_m": 0.03046009071882427
+            }
+          },
+          "parent_episode_id": "fig8vertical_001__episode_000",
+          "start_index": 231,
+          "terminal_orientation_error_deg": 1.0976763595843573,
+          "terminal_position_error_m": 0.02741178682579015,
+          "view_id": "fig8vertical_001__episode_000__residual_suffix"
+        },
+        {
+          "duration_s": 1.110000000000003,
+          "kind": "causal_residual_suffix",
+          "lead_time": {
+            "0.1": {
+              "orientation_error_deg": 3.483301991433109,
+              "position_error_m": 0.0017336664431848207
+            },
+            "0.25": {
+              "orientation_error_deg": 4.13993041471463,
+              "position_error_m": 0.006119701901186168
+            },
+            "0.5": {
+              "orientation_error_deg": 2.671491075922871,
+              "position_error_m": 0.010831155421523788
+            },
+            "1.0": {
+              "orientation_error_deg": 3.8984688286208558,
+              "position_error_m": 0.010723623678567863
+            }
+          },
+          "parent_episode_id": "fig8vertical_001__episode_001",
+          "start_index": 1357,
+          "terminal_orientation_error_deg": 3.7268282909564565,
+          "terminal_position_error_m": 0.013387445398416008,
+          "view_id": "fig8vertical_001__episode_001__residual_suffix"
+        },
+        {
+          "duration_s": 5.8299999999999965,
+          "kind": "causal_residual_suffix",
+          "lead_time": {
+            "0.1": {
+              "orientation_error_deg": 5.335094670047979,
+              "position_error_m": 0.0029761006271219895
+            },
+            "0.25": {
+              "orientation_error_deg": 3.8728109851803785,
+              "position_error_m": 0.014786857061698173
+            },
+            "0.5": {
+              "orientation_error_deg": 2.9549735561326615,
+              "position_error_m": 0.025269670318726508
+            },
+            "1.0": {
+              "orientation_error_deg": 3.6120152138690833,
+              "position_error_m": 0.01966524618529286
+            },
+            "2.0": {
+              "orientation_error_deg": 2.5874545022489475,
+              "position_error_m": 0.029699217000660375
+            },
+            "4.0": {
+              "orientation_error_deg": 3.105046009554633,
+              "position_error_m": 0.014540195589823574
+            }
+          },
+          "parent_episode_id": "fig8vertical_001__episode_002",
+          "start_index": 1479,
+          "terminal_orientation_error_deg": 3.859044913712129,
+          "terminal_position_error_m": 0.04692263098290854,
+          "view_id": "fig8vertical_001__episode_002__residual_suffix"
+        },
+        {
+          "duration_s": 3.0799999999999983,
+          "kind": "causal_residual_suffix",
+          "lead_time": {
+            "0.1": {
+              "orientation_error_deg": 0.9769146692394597,
+              "position_error_m": 0.0019300096156009109
+            },
+            "0.25": {
+              "orientation_error_deg": 3.0673360846235274,
+              "position_error_m": 0.007178103511794152
+            },
+            "0.5": {
+              "orientation_error_deg": 3.5698587671611546,
+              "position_error_m": 0.017589825843640737
+            },
+            "1.0": {
+              "orientation_error_deg": 3.9222159893290014,
+              "position_error_m": 0.031808107568607594
+            },
+            "2.0": {
+              "orientation_error_deg": 3.636932434323545,
+              "position_error_m": 0.021509818639431216
+            }
+          },
+          "parent_episode_id": "fig8vertical_001__episode_003",
+          "start_index": 2073,
+          "terminal_orientation_error_deg": 6.201202865860913,
+          "terminal_position_error_m": 0.054090148027088794,
+          "view_id": "fig8vertical_001__episode_003__residual_suffix"
+        },
+        {
+          "duration_s": 18.82,
+          "kind": "causal_residual_suffix",
+          "lead_time": {
+            "0.1": {
+              "orientation_error_deg": 1.4736830812410247,
+              "position_error_m": 0.006971776358121416
+            },
+            "0.25": {
+              "orientation_error_deg": 7.961713752733791,
+              "position_error_m": 0.025097045722116636
+            },
+            "0.5": {
+              "orientation_error_deg": 6.144223714427667,
+              "position_error_m": 0.022891161469820058
+            },
+            "1.0": {
+              "orientation_error_deg": 7.008966518396464,
+              "position_error_m": 0.02763691939014217
+            },
+            "2.0": {
+              "orientation_error_deg": 4.911324433982847,
+              "position_error_m": 0.059783585225260165
+            },
+            "4.0": {
+              "orientation_error_deg": 13.42390829892397,
+              "position_error_m": 0.057605527464498915
+            },
+            "8.0": {
+              "orientation_error_deg": 1.4134586501242956,
+              "position_error_m": 0.030319546473277573
+            }
+          },
+          "parent_episode_id": "fig8vertical_001__episode_004",
+          "start_index": 2392,
+          "terminal_orientation_error_deg": 5.223950024677322,
+          "terminal_position_error_m": 0.053458275396364045,
+          "view_id": "fig8vertical_001__episode_004__residual_suffix"
+        },
+        {
+          "duration_s": 9.469999999999999,
+          "kind": "causal_residual_suffix",
+          "lead_time": {
+            "0.1": {
+              "orientation_error_deg": 1.5391584562709082,
+              "position_error_m": 0.008786047029684942
+            },
+            "0.25": {
+              "orientation_error_deg": 2.4488733377860616,
+              "position_error_m": 0.03314001720016995
+            },
+            "0.5": {
+              "orientation_error_deg": 4.353906850919076,
+              "position_error_m": 0.0720462022481922
+            },
+            "1.0": {
+              "orientation_error_deg": 5.583757893141373,
+              "position_error_m": 0.0847848803557558
+            },
+            "2.0": {
+              "orientation_error_deg": 3.347786268107892,
+              "position_error_m": 0.05784850310754859
+            },
+            "4.0": {
+              "orientation_error_deg": 2.4505354391822287,
+              "position_error_m": 0.03397716064554867
+            },
+            "8.0": {
+              "orientation_error_deg": 2.3212660815307973,
+              "position_error_m": 0.03193937995697859
+            }
+          },
+          "parent_episode_id": "fig8vertical_001__episode_008",
+          "start_index": 4291,
+          "terminal_orientation_error_deg": 3.970590217545452,
+          "terminal_position_error_m": 0.03411673386843156,
+          "view_id": "fig8vertical_001__episode_008__residual_suffix"
+        },
+        {
+          "duration_s": 17.25,
+          "kind": "causal_residual_suffix",
+          "lead_time": {
+            "0.1": {
+              "orientation_error_deg": 1.5952790540938342,
+              "position_error_m": 0.0037219502825445766
+            },
+            "0.25": {
+              "orientation_error_deg": 4.172094014828821,
+              "position_error_m": 0.014136711416066275
+            },
+            "0.5": {
+              "orientation_error_deg": 4.747344206059367,
+              "position_error_m": 0.020776598746074557
+            },
+            "1.0": {
+              "orientation_error_deg": 5.334315100363507,
+              "position_error_m": 0.02662450865254892
+            },
+            "2.0": {
+              "orientation_error_deg": 4.573884289872442,
+              "position_error_m": 0.025139788764113127
+            },
+            "4.0": {
+              "orientation_error_deg": 5.247021057945405,
+              "position_error_m": 0.015989066156366395
+            },
+            "8.0": {
+              "orientation_error_deg": 1.2696340624526885,
+              "position_error_m": 0.029427404531762225
+            }
+          },
+          "parent_episode_id": "fig8vertical_001__episode_009",
+          "start_index": 5250,
+          "terminal_orientation_error_deg": 4.129073015159197,
+          "terminal_position_error_m": 0.028186517284752386,
+          "view_id": "fig8vertical_001__episode_009__residual_suffix"
+        }
+      ],
+      "lead_time": {
+        "0.1": {
+          "episode_count": 7,
+          "orientation_rmse_deg": 2.834711711069051,
+          "position_rmse_m": 0.005019258071781241
+        },
+        "0.25": {
+          "episode_count": 7,
+          "orientation_rmse_deg": 4.543058289786357,
+          "position_rmse_m": 0.019093689147603312
+        },
+        "0.5": {
+          "episode_count": 7,
+          "orientation_rmse_deg": 4.54029671799121,
+          "position_rmse_m": 0.033394630300202566
+        },
+        "1.0": {
+          "episode_count": 7,
+          "orientation_rmse_deg": 4.89675122770056,
+          "position_rmse_m": 0.03925359925215109
+        },
+        "2.0": {
+          "episode_count": 6,
+          "orientation_rmse_deg": 4.0731308543931775,
+          "position_rmse_m": 0.03993905098002551
+        },
+        "4.0": {
+          "episode_count": 5,
+          "orientation_rmse_deg": 7.256996862138591,
+          "position_rmse_m": 0.03445502908298219
+        },
+        "8.0": {
+          "episode_count": 4,
+          "orientation_rmse_deg": 1.5681590884054795,
+          "position_rmse_m": 0.030549910615484902
+        }
+      },
+      "observation_count": 6678,
+      "orientation_rmse_deg": 5.446106808910585,
+      "position_axis_rmse_m": {
+        "x": 0.02916651302191073,
+        "y": 0.008129214648001629,
+        "z": 0.03019820132494002
+      },
+      "position_rmse_m": 0.042763313434674134,
+      "role": "training",
+      "roll_pitch_yaw_rmse_deg": {
+        "pitch": 4.231434049576993,
+        "roll": 3.3337041305625723,
+        "yaw": 1.057446620557252
+      },
+      "terminal_orientation_rmse_deg": 4.28528664870162,
+      "terminal_position_rmse_m": 0.039414148398903025
+    },
+    "osc_001": {
+      "episode_count": 2,
+      "episodes": [
+        {
+          "duration_s": 14.510000000000002,
+          "kind": "causal_residual_suffix",
+          "lead_time": {
+            "0.1": {
+              "orientation_error_deg": 2.1307380406560035,
+              "position_error_m": 0.0041656674221109006
+            },
+            "0.25": {
+              "orientation_error_deg": 4.967452022827542,
+              "position_error_m": 0.01893220763454201
+            },
+            "0.5": {
+              "orientation_error_deg": 6.017772056517798,
+              "position_error_m": 0.03569813152664716
+            },
+            "1.0": {
+              "orientation_error_deg": 6.474968621486113,
+              "position_error_m": 0.016099204650108945
+            },
+            "2.0": {
+              "orientation_error_deg": 10.73696811201323,
+              "position_error_m": 0.08958173609669082
+            },
+            "4.0": {
+              "orientation_error_deg": 4.182763903374109,
+              "position_error_m": 0.13675379822447448
+            },
+            "8.0": {
+              "orientation_error_deg": 10.470953527333762,
+              "position_error_m": 0.07553861137801621
+            }
+          },
+          "parent_episode_id": "osc_001__episode_000",
+          "start_index": 80,
+          "terminal_orientation_error_deg": 6.609834290928534,
+          "terminal_position_error_m": 0.10616123407195034,
+          "view_id": "osc_001__episode_000__residual_suffix"
+        },
+        {
+          "duration_s": 3.1500000000000004,
+          "kind": "causal_residual_suffix",
+          "lead_time": {
+            "0.1": {
+              "orientation_error_deg": 2.174746843914555,
+              "position_error_m": 0.010321926353271896
+            },
+            "0.25": {
+              "orientation_error_deg": 2.8248809326375244,
+              "position_error_m": 0.06541528180369195
+            },
+            "0.5": {
+              "orientation_error_deg": 21.12292334913002,
+              "position_error_m": 0.20468625494791562
+            },
+            "1.0": {
+              "orientation_error_deg": 5.287360339028084,
+              "position_error_m": 0.12454189828732794
+            },
+            "2.0": {
+              "orientation_error_deg": 19.34307898190511,
+              "position_error_m": 0.04745624684046258
+            }
+          },
+          "parent_episode_id": "osc_001__episode_001",
+          "start_index": 1542,
+          "terminal_orientation_error_deg": 8.209611248993722,
+          "terminal_position_error_m": 0.040144004127025776,
+          "view_id": "osc_001__episode_001__residual_suffix"
+        }
+      ],
+      "lead_time": {
+        "0.1": {
+          "episode_count": 2,
+          "orientation_rmse_deg": 2.1528548990834127,
+          "position_rmse_m": 0.007870671785623033
+        },
+        "0.25": {
+          "episode_count": 2,
+          "orientation_rmse_deg": 4.040763039493437,
+          "position_rmse_m": 0.04815385539795252
+        },
+        "0.5": {
+          "episode_count": 2,
+          "orientation_rmse_deg": 15.530477638138318,
+          "position_rmse_m": 0.14691973924408
+        },
+        "1.0": {
+          "episode_count": 2,
+          "orientation_rmse_deg": 5.911065809308714,
+          "position_rmse_m": 0.08879715316207279
+        },
+        "2.0": {
+          "episode_count": 2,
+          "orientation_rmse_deg": 15.64348408665103,
+          "position_rmse_m": 0.07168327143162509
+        },
+        "4.0": {
+          "episode_count": 1,
+          "orientation_rmse_deg": 4.182763903374109,
+          "position_rmse_m": 0.13675379822447448
+        },
+        "8.0": {
+          "episode_count": 1,
+          "orientation_rmse_deg": 10.470953527333762,
+          "position_rmse_m": 0.07553861137801621
+        }
+      },
+      "observation_count": 1768,
+      "orientation_rmse_deg": 7.751830747758452,
+      "position_axis_rmse_m": {
+        "x": 0.09863561514395063,
+        "y": 0.02014901485711602,
+        "z": 0.03864137479111329
+      },
+      "position_rmse_m": 0.10783377587882709,
+      "role": "training",
+      "roll_pitch_yaw_rmse_deg": {
+        "pitch": 7.475895137919822,
+        "roll": 2.07182452928301,
+        "yaw": 0.6198467563906291
+      },
+      "terminal_orientation_rmse_deg": 7.452772175946981,
+      "terminal_position_rmse_m": 0.0802550580556456
+    },
+    "osc_002": {
+      "episode_count": 3,
+      "episodes": [
+        {
+          "duration_s": 5.34,
+          "kind": "causal_residual_suffix",
+          "lead_time": {
+            "0.1": {
+              "orientation_error_deg": 1.3480030685759115,
+              "position_error_m": 0.005155847359281661
+            },
+            "0.25": {
+              "orientation_error_deg": 5.273338163019082,
+              "position_error_m": 0.014800441423055031
+            },
+            "0.5": {
+              "orientation_error_deg": 3.695354895926305,
+              "position_error_m": 0.020711250034946362
+            },
+            "1.0": {
+              "orientation_error_deg": 4.170012936729767,
+              "position_error_m": 0.03181987266865298
+            },
+            "2.0": {
+              "orientation_error_deg": 1.8801419027961264,
+              "position_error_m": 0.03190307391578801
+            },
+            "4.0": {
+              "orientation_error_deg": 6.218257409515696,
+              "position_error_m": 0.06796558782422428
+            }
+          },
+          "parent_episode_id": "osc_002__episode_000",
+          "start_index": 151,
+          "terminal_orientation_error_deg": 3.1473105671826302,
+          "terminal_position_error_m": 0.039456154026948964,
+          "view_id": "osc_002__episode_000__residual_suffix"
+        },
+        {
+          "duration_s": 1.5700000000000003,
+          "kind": "causal_residual_suffix",
+          "lead_time": {
+            "0.1": {
+              "orientation_error_deg": 1.1320895471557,
+              "position_error_m": 0.0033967141030543167
+            },
+            "0.25": {
+              "orientation_error_deg": 3.676795638537894,
+              "position_error_m": 0.004576858650753467
+            },
+            "0.5": {
+              "orientation_error_deg": 5.08936115049882,
+              "position_error_m": 0.00994356031889609
+            },
+            "1.0": {
+              "orientation_error_deg": 9.608692368997586,
+              "position_error_m": 0.06477723625505
+            }
+          },
+          "parent_episode_id": "osc_002__episode_003",
+          "start_index": 712,
+          "terminal_orientation_error_deg": 2.389579143133302,
+          "terminal_position_error_m": 0.06972319646698731,
+          "view_id": "osc_002__episode_003__residual_suffix"
+        },
+        {
+          "duration_s": 27.15,
+          "kind": "causal_residual_suffix",
+          "lead_time": {
+            "0.1": {
+              "orientation_error_deg": 0.20670482703066698,
+              "position_error_m": 0.001971162952216951
+            },
+            "0.25": {
+              "orientation_error_deg": 2.7172143708490126,
+              "position_error_m": 0.009235921881897629
+            },
+            "0.5": {
+              "orientation_error_deg": 4.163773369357394,
+              "position_error_m": 0.011579105936413309
+            },
+            "1.0": {
+              "orientation_error_deg": 3.6751174336951378,
+              "position_error_m": 0.03182231130437527
+            },
+            "2.0": {
+              "orientation_error_deg": 4.450569041694834,
+              "position_error_m": 0.05527663882175973
+            },
+            "4.0": {
+              "orientation_error_deg": 5.39624487623835,
+              "position_error_m": 0.055492952000326765
+            },
+            "8.0": {
+              "orientation_error_deg": 2.4183844014517364,
+              "position_error_m": 0.03685579195891713
+            }
+          },
+          "parent_episode_id": "osc_002__episode_004",
+          "start_index": 880,
+          "terminal_orientation_error_deg": 2.240247431841672,
+          "terminal_position_error_m": 0.050093231452081145,
+          "view_id": "osc_002__episode_004__residual_suffix"
+        }
+      ],
+      "lead_time": {
+        "0.1": {
+          "episode_count": 3,
+          "orientation_rmse_deg": 1.0233060638908005,
+          "position_rmse_m": 0.0037419207222268622
+        },
+        "0.25": {
+          "episode_count": 3,
+          "orientation_rmse_deg": 4.029481996744873,
+          "position_rmse_m": 0.01041318002076816
+        },
+        "0.5": {
+          "episode_count": 3,
+          "orientation_rmse_deg": 4.35485374413512,
+          "position_rmse_m": 0.014853798213613833
+        },
+        "1.0": {
+          "episode_count": 3,
+          "orientation_rmse_deg": 6.408912156416147,
+          "position_rmse_m": 0.04553846041258027
+        },
+        "2.0": {
+          "episode_count": 2,
+          "orientation_rmse_deg": 3.4163210014240692,
+          "position_rmse_m": 0.045129330400015405
+        },
+        "4.0": {
+          "episode_count": 2,
+          "orientation_rmse_deg": 5.821777390768455,
+          "position_rmse_m": 0.06204348817564545
+        },
+        "8.0": {
+          "episode_count": 1,
+          "orientation_rmse_deg": 2.4183844014517364,
+          "position_rmse_m": 0.03685579195891713
+        }
+      },
+      "observation_count": 3409,
+      "orientation_rmse_deg": 3.899732286675089,
+      "position_axis_rmse_m": {
+        "x": 0.036090229887914424,
+        "y": 0.005999344856676239,
+        "z": 0.03348364136929176
+      },
+      "position_rmse_m": 0.04959486940621162,
+      "role": "training",
+      "roll_pitch_yaw_rmse_deg": {
+        "pitch": 2.991939496046353,
+        "roll": 2.4902072876994557,
+        "yaw": 0.25541771781540257
+      },
+      "terminal_orientation_rmse_deg": 2.622617067197722,
+      "terminal_position_rmse_m": 0.05455102826248773
+    },
+    "osc_003": {
+      "episode_count": 1,
+      "episodes": [
+        {
+          "duration_s": 15.399999999999999,
+          "kind": "causal_residual_suffix",
+          "lead_time": {
+            "0.1": {
+              "orientation_error_deg": 3.3085363662605984,
+              "position_error_m": 0.0015895566160540073
+            },
+            "0.25": {
+              "orientation_error_deg": 1.8386850903301983,
+              "position_error_m": 0.010211816900699236
+            },
+            "0.5": {
+              "orientation_error_deg": 2.1347114565929224,
+              "position_error_m": 0.03326684201969414
+            },
+            "1.0": {
+              "orientation_error_deg": 4.234768089101707,
+              "position_error_m": 0.09311892360449563
+            },
+            "2.0": {
+              "orientation_error_deg": 4.161265048694124,
+              "position_error_m": 0.15793482881066293
+            },
+            "4.0": {
+              "orientation_error_deg": 11.990670745236654,
+              "position_error_m": 0.06428824766183196
+            },
+            "8.0": {
+              "orientation_error_deg": 6.065710651630845,
+              "position_error_m": 0.14743792289074303
+            }
+          },
+          "parent_episode_id": "osc_003__episode_000",
+          "start_index": 232,
+          "terminal_orientation_error_deg": 8.790297261405458,
+          "terminal_position_error_m": 0.1342143853921477,
+          "view_id": "osc_003__episode_000__residual_suffix"
+        }
+      ],
+      "lead_time": {
+        "0.1": {
+          "episode_count": 1,
+          "orientation_rmse_deg": 3.3085363662605984,
+          "position_rmse_m": 0.0015895566160540073
+        },
+        "0.25": {
+          "episode_count": 1,
+          "orientation_rmse_deg": 1.8386850903301983,
+          "position_rmse_m": 0.010211816900699236
+        },
+        "0.5": {
+          "episode_count": 1,
+          "orientation_rmse_deg": 2.1347114565929224,
+          "position_rmse_m": 0.03326684201969414
+        },
+        "1.0": {
+          "episode_count": 1,
+          "orientation_rmse_deg": 4.234768089101707,
+          "position_rmse_m": 0.09311892360449563
+        },
+        "2.0": {
+          "episode_count": 1,
+          "orientation_rmse_deg": 4.161265048694124,
+          "position_rmse_m": 0.15793482881066293
+        },
+        "4.0": {
+          "episode_count": 1,
+          "orientation_rmse_deg": 11.990670745236654,
+          "position_rmse_m": 0.06428824766183196
+        },
+        "8.0": {
+          "episode_count": 1,
+          "orientation_rmse_deg": 6.065710651630845,
+          "position_rmse_m": 0.14743792289074303
+        }
+      },
+      "observation_count": 1541,
+      "orientation_rmse_deg": 12.427691448152297,
+      "position_axis_rmse_m": {
+        "x": 0.12096225287932282,
+        "y": 0.011549844688189023,
+        "z": 0.0459452039174335
+      },
+      "position_rmse_m": 0.12990853435004596,
+      "role": "validation",
+      "roll_pitch_yaw_rmse_deg": {
+        "pitch": 11.23790086950659,
+        "roll": 5.440945231404061,
+        "yaw": 3.1590780186130614
+      },
+      "terminal_orientation_rmse_deg": 8.790297261405458,
+      "terminal_position_rmse_m": 0.1342143853921477
+    }
+  },
+  "residual_statistics": null,
+  "schema": "decomposed_uav_metrics_v1",
+  "training": {
+    "attempted_take_count": 5,
+    "complete": true,
+    "episode_count": 16,
+    "failed_episode_count": 0,
+    "lead_time": {
+      "0.1": {
+        "orientation_rmse_deg": 1.931756747361434,
+        "position_rmse_m": 0.005429120467826833,
+        "take_count": 5
+      },
+      "0.25": {
+        "orientation_rmse_deg": 5.199783592309739,
+        "position_rmse_m": 0.02669878928378258,
+        "take_count": 5
+      },
+      "0.5": {
+        "orientation_rmse_deg": 8.753081287716247,
+        "position_rmse_m": 0.06977152885971184,
+        "take_count": 5
+      },
+      "1.0": {
+        "orientation_rmse_deg": 6.345709370753952,
+        "position_rmse_m": 0.053904615470855184,
+        "take_count": 5
+      },
+      "2.0": {
+        "orientation_rmse_deg": 8.145883360936667,
+        "position_rmse_m": 0.04603672885312544,
+        "take_count": 5
+      },
+      "4.0": {
+        "orientation_rmse_deg": 6.843166391135912,
+        "position_rmse_m": 0.0752498658398073,
+        "take_count": 5
+      },
+      "8.0": {
+        "orientation_rmse_deg": 7.682155765839591,
+        "position_rmse_m": 0.06911809924656681,
+        "take_count": 5
+      }
+    },
+    "orientation_rmse_deg": 5.878029910657831,
+    "position_rmse_m": 0.06456853167843832,
+    "take_count": 5,
+    "terminal_orientation_rmse_deg": 4.708388844293335,
+    "terminal_position_rmse_m": 0.051314277483673044
+  },
+  "validation": {
+    "attempted_take_count": 2,
+    "complete": false,
+    "episode_count": 2,
+    "failed_episode_count": 1,
+    "lead_time": {
+      "0.1": {
+        "orientation_rmse_deg": 2.410198457795831,
+        "position_rmse_m": 0.00609773455059137,
+        "take_count": 2
+      },
+      "0.25": {
+        "orientation_rmse_deg": 6.162385347285477,
+        "position_rmse_m": 0.02070374762848279,
+        "take_count": 2
+      },
+      "0.5": {
+        "orientation_rmse_deg": 5.766367813932225,
+        "position_rmse_m": 0.027607155181285394,
+        "take_count": 2
+      },
+      "1.0": {
+        "orientation_rmse_deg": 4.234768089101707,
+        "position_rmse_m": 0.09311892360449563,
+        "take_count": 1
+      },
+      "2.0": {
+        "orientation_rmse_deg": 4.161265048694124,
+        "position_rmse_m": 0.15793482881066293,
+        "take_count": 1
+      },
+      "4.0": {
+        "orientation_rmse_deg": 11.990670745236654,
+        "position_rmse_m": 0.06428824766183196,
+        "take_count": 1
+      },
+      "8.0": {
+        "orientation_rmse_deg": 6.065710651630845,
+        "position_rmse_m": 0.14743792289074303,
+        "take_count": 1
+      }
+    },
+    "orientation_rmse_deg": 9.881830000475244,
+    "position_rmse_m": 0.09297258344114535,
+    "take_count": 2,
+    "terminal_orientation_rmse_deg": 8.37345526924563,
+    "terminal_position_rmse_m": 0.09682865542296953
+  }
+}

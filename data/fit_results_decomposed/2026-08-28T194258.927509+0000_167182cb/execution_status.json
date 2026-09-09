@@ -1,0 +1,22 @@
+{
+  "elapsed_s": 0.16768600000068545,
+  "error": "Fewer than two finite UAV Sobol candidates were found.",
+  "error_type": "RuntimeError",
+  "fit_directory": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\fit_results_decomposed\\2026-08-28T194258.927509+0000_167182cb",
+  "protected_test_predictively_evaluated": false,
+  "schema": "milestone3c_execution_status_v1",
+  "stages": {
+    "preflight": {
+      "status": "complete",
+      "training_episodes": 21,
+      "validation_episodes": 3
+    },
+    "uav_physics_fit": {
+      "status": "running"
+    }
+  },
+  "started_utc": "2026-08-28T19:42:58.931614+00:00",
+  "status": "stopped_with_error",
+  "traceback": "Traceback (most recent call last):\n  File \"C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\run_milestone3c.py\", line 39, in main\n    output = run_decomposed_identification(\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\fitting\\decomposed.py\", line 2273, in run_decomposed_identification\n    uav_values, uav_fit = fit_uav_physics(\n                          ^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\fitting\\decomposed.py\", line 670, in fit_uav_physics\n    raise RuntimeError(\"Fewer than two finite UAV Sobol candidates were found.\")\nRuntimeError: Fewer than two finite UAV Sobol candidates were found.\n",
+  "wall_clock_limit_s": 5400.0
+}

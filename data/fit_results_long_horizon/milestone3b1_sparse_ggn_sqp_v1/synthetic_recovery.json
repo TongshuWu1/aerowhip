@@ -1,0 +1,9 @@
+{
+  "schema": "milestone3b1_synthetic_recovery_v1",
+  "status": "not_run_after_linearization_runtime_gate",
+  "same_scientific_problem_preserved": true,
+  "reason": "The required exact linearization primitive alone made a multi-iteration GGN/SQP recovery impossible within ten minutes. The hard stop was applied before launching another blind optimization.",
+  "continuity_converged": false,
+  "parameters_recovered": false,
+  "runtime_gate_passed": false
+}

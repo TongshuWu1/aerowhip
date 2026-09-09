@@ -1,0 +1,55 @@
+{
+  "criterion": "Two consecutive steps agree with autodiff and each other within 5%",
+  "passed": true,
+  "steps": [
+    {
+      "analytic": 0.00013454206792630797,
+      "epsilon": 0.001,
+      "finite_difference": -3.384003012703307e-07,
+      "passed": false,
+      "relative_error": 1.002515200683965
+    },
+    {
+      "analytic": 0.00013454206792630797,
+      "epsilon": 0.0003,
+      "finite_difference": 8.248973116265861e-06,
+      "passed": false,
+      "relative_error": 0.9386885214163349
+    },
+    {
+      "analytic": 0.00013454206792630797,
+      "epsilon": 0.0001,
+      "finite_difference": -3.5588978118672454e-06,
+      "passed": false,
+      "relative_error": 1.0264519333374342
+    },
+    {
+      "analytic": 0.00013454206792630797,
+      "epsilon": 3e-05,
+      "finite_difference": 0.000300720861464802,
+      "passed": false,
+      "relative_error": 0.5526014814171596
+    },
+    {
+      "analytic": 0.00013454206792630797,
+      "epsilon": 1e-05,
+      "finite_difference": 0.0001497141150202247,
+      "passed": false,
+      "relative_error": 0.10134012475622053
+    },
+    {
+      "analytic": 0.00013454206792630797,
+      "epsilon": 3e-06,
+      "finite_difference": 0.00013579406522856718,
+      "passed": true,
+      "relative_error": 0.009219823415344882
+    },
+    {
+      "analytic": 0.00013454206792630797,
+      "epsilon": 1e-06,
+      "finite_difference": 0.00013469750011554926,
+      "passed": true,
+      "relative_error": 0.00115393521860432
+    }
+  ]
+}

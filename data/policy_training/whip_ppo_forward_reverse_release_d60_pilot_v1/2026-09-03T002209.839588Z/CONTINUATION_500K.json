@@ -1,0 +1,12 @@
+{
+  "continuation_requested_by_user": true,
+  "completed_episodes_before_continuation": 100352,
+  "additional_episode_budget_requested": 500000,
+  "cumulative_batch_aligned_target": 600000,
+  "resume_contract": "exact checkpoint continuation including policy, value, optimizer, RNG, rolling window, and state sampler",
+  "reward_change": "none; terminal displacement weight remains 60",
+  "deployment_policy_changed": false,
+  "deployment_policy": "whip_ppo_forward_reverse_release_v1/2026-09-02T174750.625177Z/checkpoints/latest.pt",
+  "validation_safety_floor": 0.8,
+  "validation_safety_patience": 2
+}

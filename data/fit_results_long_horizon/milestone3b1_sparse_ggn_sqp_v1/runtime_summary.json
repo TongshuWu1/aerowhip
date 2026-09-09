@@ -1,0 +1,28 @@
+{
+  "schema": "milestone3b1_runtime_summary_v1",
+  "hardware": "NVIDIA GeForce RTX 4080",
+  "synthetic_segments": 3,
+  "synthetic_internal_shooting_boundaries": 2,
+  "synthetic_shooting_state_directions": 252,
+  "global_parameter_directions": 7,
+  "measurements_s": {
+    "batched_segment_forward_graph": 33.328390400041826,
+    "observation_loss": 0.004620799969416112,
+    "continuity_defect": 0.0014979999978095293,
+    "whole_problem_backward": 60.98267170001054,
+    "one_reverse_over_reverse_jvp": 193.09768359997543,
+    "one_forward_ad_jvp": 137.19127600005595,
+    "vectorized_seven_direction_jacfwd": 162.42657789995428
+  },
+  "option_a_explicit_sparse": {
+    "decision": "rejected_by_microbenchmark",
+    "reason": "The measured 162.43-s jacfwd covers only seven global directions. Explicit local SQP also needs 252 shooting-state directions on this smallest problem, plus residual Jacobians and a KKT solve."
+  },
+  "option_b_matrix_free": {
+    "decision": "rejected_by_microbenchmark",
+    "reason": "One exact forward-mode JVP costs 137.19 s. A Gauss-Newton/KKT Krylov product also needs a VJP; even three products would consume essentially the full ten-minute gate before nonlinear trial evaluations."
+  },
+  "stop_rule_applied": true,
+  "real_fit_runtime_estimated": "multiple_hours_or_worse",
+  "real_fit_launched": false
+}

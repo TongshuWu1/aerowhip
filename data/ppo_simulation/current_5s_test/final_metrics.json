@@ -1,0 +1,23 @@
+{
+  "schema": "ppo_closed_loop_simulation_metrics_v1",
+  "optimizer": "PPO",
+  "controller": "PPO_10_HZ_CLOSED_LOOP",
+  "task_classification": "PASS",
+  "success": true,
+  "checkpoint": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\policy_training\\whip_ppo_directional_displacement15_integral2_5s_2m_v1\\2026-08-31T195810.631210Z\\checkpoints\\best_validation.pt",
+  "checkpoint_episodes": -1,
+  "first_entry_marker": 10,
+  "first_entry_time_s": 3.7899999618530273,
+  "first_entry_tip_distance_m": 0.04314730688929558,
+  "first_entry_tip_speed_m_s": 8.220743179321289,
+  "first_entry_directed_speed_m_s": 7.7931342124938965,
+  "first_entry_direction_error_deg": 18.56120491027832,
+  "minimum_tip_target_distance_m": 0.040672555565834045,
+  "maximum_uav_displacement_m": 0.7156829237937927,
+  "maximum_uav_speed_m_s": 2.1524689197540283,
+  "maximum_command_acceleration_m_s2": 10.000000953674316,
+  "numerical_failure": false,
+  "elapsed_wall_time_s": 7.71515070006717,
+  "authorization": "SIMULATION_ONLY",
+  "hardware_executed": false
+}

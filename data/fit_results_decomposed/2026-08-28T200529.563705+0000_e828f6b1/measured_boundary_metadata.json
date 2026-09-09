@@ -1,0 +1,18 @@
+{
+  "attachment_offset_body_m": [
+    0.0,
+    0.0,
+    -0.05
+  ],
+  "attachment_tangent_body": [
+    0.0,
+    0.0,
+    -1.0
+  ],
+  "definition": "r0=p+R*d; r1=r0+l0*normalize(R*t)",
+  "first_edge_length_m": 0.03,
+  "interpolation": "production DDER linear substep interpolation between Motive frames",
+  "measured_cable_reset_after_initialization": false,
+  "schema": "measured_uav_boundary_v1",
+  "source": "Motive UAV position and xyzw orientation"
+}

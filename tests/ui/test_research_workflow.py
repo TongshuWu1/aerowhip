@@ -120,6 +120,13 @@ def test_ui_selects_an_externally_started_run(workspace):
     app=QApplication.instance() or QApplication([])
     page=AlgorithmTrainingPage(workspace,'PPO')
     assert page.directory==directory
+    # These controls configure a NEW run; selecting an old run must not silently
+    # replace the current workspace's new-training defaults.
+    from simulator.research_config import workspace_configs
+    defaults=workspace_configs(workspace)[2]
+    assert page.batch.value()==defaults['training']['collection_batch']
+    assert page.episodes.value()==defaults['training']['requested_episodes']
+    assert page.seed.value()==defaults['seed']
     assert not page.start_button.isEnabled()
     assert page.stop_button.isEnabled()
     assert page.progress.format().startswith('Starting')
@@ -151,8 +158,10 @@ def test_apply_baseline_versions_model_without_touching_raw_data(workspace):
     raw.write_text('preserved raw samples')
     model = read_json(workspace / 'config/model.json')
     model['point_mass']['mass_kg'] = .17
+    model['fullstate_execution'] = {'enabled': True, 'checkpoint': 'previous_geometry.pt'}
     version = apply_baseline(workspace, model)
     assert read_json(workspace / 'config/model.json')['point_mass']['mass_kg'] == .17
+    assert 'fullstate_execution' not in read_json(workspace / 'config/model.json')
     assert (workspace / 'data/baselines' / version / 'model.json').exists()
     assert raw.read_text() == 'preserved raw samples'
     fit = workspace / 'data/job'
@@ -164,6 +173,7 @@ def test_apply_baseline_versions_model_without_touching_raw_data(workspace):
         apply_baseline(workspace, changed, fit_directory=fit)
     apply_baseline(workspace, model, fit_directory=fit)
     assert read_json(workspace / 'config/model.json')['cable']['EI_n_m2'] == 4e-5
+    assert 'fullstate_execution' not in read_json(workspace / 'config/model.json')
 
 
 def test_validation_journal_keeps_actual_execution_and_reused_policy_identity(tmp_path, monkeypatch):
@@ -283,7 +293,7 @@ def test_real_short_training_writes_batch_validation_and_run_snapshot(workspace,
         assert data['positions_m'].shape[1:] == (1, 12, 3)
 
 
-def test_five_pages_and_parallel_plot_viewport(workspace):
+def test_research_pages_and_parallel_plot_viewport(workspace):
     os.environ.setdefault('QT_QPA_PLATFORM', 'offscreen')
     from PySide6.QtWidgets import QApplication
     from simulator.gui.main_window import SimulatorMainWindow, PAGE_DEFINITIONS
@@ -291,9 +301,10 @@ def test_five_pages_and_parallel_plot_viewport(workspace):
     window = SimulatorMainWindow(workspace, *[read_json(workspace / 'config' / name)
                                                for name in ('model.json', 'task.json', 'ppo.json')])
     window.show()
-    assert window.main_tabs.count() == 5
+    assert window.main_tabs.count() == 7
     assert all('MPCC' not in title for title, _ in PAGE_DEFINITIONS)
-    for index, page in ((2, window.training_page), (3, window.sac_page)):
+    assert not hasattr(window, "sac_page")
+    for index, page in ((2, window.training_page),):
         window.main_tabs.setCurrentIndex(index)
         app.processEvents()
         assert page.canvas.isVisible()
@@ -301,9 +312,11 @@ def test_five_pages_and_parallel_plot_viewport(workspace):
         assert not page.run_latest_button.isEnabled()
         assert not page.export_button.isEnabled()
         assert len(page.figure.axes[0].lines) == 0
-    protected_row = list(window.baseline_page.manifest['takes']).index('fig8vertical_002')
-    assert not window.baseline_page.table.cellWidget(protected_row, 2).isEnabled()
-    assert window.baseline_page.model_values() == read_json(workspace / 'config/model.json')
+    assert window.model_page.tabs.tabText(0)=='Model library'
+    assert not window.model_page.prepare.isEnabled()
+    assert not window.model_page.job.running
+    assert hasattr(window.recordings_page,'current')
+    assert window.fullstate_page.controls_scroll.widgetResizable()
     window.close()
     app.processEvents()
 

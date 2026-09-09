@@ -1,0 +1,70 @@
+{
+  "action": {
+    "delta_force_scale_n": [
+      2.0,
+      2.0,
+      1.6
+    ],
+    "maximum_force_norm_n": 3.2,
+    "minimum_vertical_force_n": 0.0
+  },
+  "action_std": 0.2,
+  "desired_strike_direction_world": [
+    1.0,
+    0.0,
+    0.0
+  ],
+  "device": "cuda",
+  "display_name": "M1 independent MPPI integration check",
+  "horizon_s": 2.0,
+  "initialization": "hanging_hover",
+  "iterations": 2,
+  "launch_setup": {
+    "initial_tracking_origin_m": [
+      0.0,
+      0.0,
+      1.225
+    ],
+    "target_position_m": [
+      1.5,
+      0.0,
+      1.1
+    ]
+  },
+  "maximum_height_m": 2.8,
+  "minimum_height_m": 0.08,
+  "model_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\model_candidates\\20260908-adp0-M1\\model.json",
+  "optimizer": "mppi",
+  "population": 16,
+  "random_seed": 655,
+  "representation": "independent_force_30hz_v2",
+  "reward": {
+    "directed_speed_reward_cap_m_s": 4.0,
+    "displacement_cost_scale_m": 0.35,
+    "forward_excursion_scale_m": 0.35,
+    "invalid_tip_entry_penalty": 0.0,
+    "maximum_displacement_weight": 15.0,
+    "non_tip_first_penalty": 25.0,
+    "numerical_failure_penalty": 100.0,
+    "point_backward_speed_scale_m_s": 1.0,
+    "point_displacement_integral_weight": 0.5,
+    "progress_weight": 60.0,
+    "proximity_scale_m": 0.3,
+    "relative_tip_forward_speed_scale_m_s": 4.0,
+    "strike_quality_improvement_weight": 60.0,
+    "success_bonus": 200.0,
+    "success_forward_return_bonus_weight": 0.0,
+    "success_release_bonus_weight": 0.0,
+    "terminal_displacement_weight": 0.0,
+    "time_to_success_weight_per_s": 10.0,
+    "timeout_penalty": 0.0
+  },
+  "success": {
+    "first_contact_only": true,
+    "maximum_tip_velocity_to_desired_direction_error_deg": 45.0,
+    "minimum_directed_tip_speed_m_s": 4.0,
+    "tip_must_enter_before_other_markers": true,
+    "tip_target_distance_m": 0.05
+  },
+  "temperature": 20.0
+}

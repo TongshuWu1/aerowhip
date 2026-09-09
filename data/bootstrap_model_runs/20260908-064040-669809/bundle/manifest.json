@@ -1,0 +1,21 @@
+{
+  "active_model_changed": false,
+  "coupling": "Delayed FullState -> effective loaded tracked-origin pose -> rigid attachment -> DDER cable; no added cable reaction on fitted drone",
+  "files": {
+    "cable_model.json": "11b4ce4b6dbc0c86527344a133757ce0c79e61c6f4b4772e93ab509ce3599f61",
+    "cable_residual.pt": "ef99d1d50881e8632be0860bef402a77ea0d260736a01a16551ec3b7293cb023",
+    "drone_model.json": "80f3bff25f2e6b8216e9d83d30c37f81c7d8e36b8df3bbbaf758b1ad69a3547c",
+    "drone_residual.pt": "9d81b95fe4c114c4977ef6fb79a2f8ed8faa679b9f3c0b1be189419657cad10c"
+  },
+  "flight_ready": false,
+  "initialization": "Past-only measured pose and cable for primary assessment; separate hanging-cable sensitivity",
+  "limitations": [
+    "Legacy development data; prospective new-flight assessment required",
+    "No demonstrated recovery or unflown hit-time prediction",
+    "Virtual force-to-reference and 30 Hz PPO integration remain separate work"
+  ],
+  "ppo_integrated": false,
+  "schema": "preliminary_execution_bundle_v1",
+  "source_job": "20260908-064040-669809",
+  "status": "DEVELOPMENT_CANDIDATE"
+}

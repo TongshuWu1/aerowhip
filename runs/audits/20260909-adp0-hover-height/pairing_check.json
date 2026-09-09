@@ -1,0 +1,265 @@
+{
+  "rows": [
+    {
+      "take": "whip_adp_0_001",
+      "rigid_body": "cf_7",
+      "position_columns_zero_based": [
+        6,
+        7,
+        8
+      ],
+      "direct_read_matches_production": true,
+      "independent_xyz_alignment": {
+        "offset_s": -1.034452944799245,
+        "rms_m": 0.018162338631501546
+      },
+      "production_xyz_alignment": {
+        "offset_s": -1.034452944799245,
+        "rms_m": 0.018162338631501546,
+        "half_offsets_s": [
+          -1.034459526584866,
+          -1.0249253849432602
+        ],
+        "method": "measured XYZ constant-offset least squares; no spatial fit",
+        "clock_verified": false,
+        "includes_logging_latency": true
+      },
+      "independent_minus_production_offset_s": 0.0,
+      "xy_only_alignment": {
+        "offset_s": -1.0345194251929481,
+        "rms_m": 0.014811529405848803
+      },
+      "z_only_alignment": {
+        "offset_s": -1.0253235453338247,
+        "rms_m": 0.010499558934798871
+      },
+      "exact_distinct_dynamic_csv_packets": 245,
+      "command_onset_s": 17.651411660512288,
+      "packet_onset_spread_s": 0.0007518609364822737,
+      "lowest_error_controller_pair": "whip_adp_0_001",
+      "correct_pair_is_best": true
+    },
+    {
+      "take": "whip_adp_0_002",
+      "rigid_body": "cf_7",
+      "position_columns_zero_based": [
+        6,
+        7,
+        8
+      ],
+      "direct_read_matches_production": true,
+      "independent_xyz_alignment": {
+        "offset_s": -0.034677077899310974,
+        "rms_m": 0.018991942117174254
+      },
+      "production_xyz_alignment": {
+        "offset_s": -0.034677077899311785,
+        "rms_m": 0.018991942117174254,
+        "half_offsets_s": [
+          -0.03467965232535403,
+          -0.025296528445824314
+        ],
+        "method": "measured XYZ constant-offset least squares; no spatial fit",
+        "clock_verified": false,
+        "includes_logging_latency": true
+      },
+      "independent_minus_production_offset_s": 8.118505867571457e-16,
+      "xy_only_alignment": {
+        "offset_s": -0.03468711127337281,
+        "rms_m": 0.015477963544293715
+      },
+      "z_only_alignment": {
+        "offset_s": -0.03465808123888577,
+        "rms_m": 0.011005696622357926
+      },
+      "exact_distinct_dynamic_csv_packets": 245,
+      "command_onset_s": 18.297166522343954,
+      "packet_onset_spread_s": 0.00045491854349677396,
+      "lowest_error_controller_pair": "whip_adp_0_002",
+      "correct_pair_is_best": true
+    },
+    {
+      "take": "whip_adp_0_003",
+      "rigid_body": "cf_7",
+      "position_columns_zero_based": [
+        6,
+        7,
+        8
+      ],
+      "direct_read_matches_production": true,
+      "independent_xyz_alignment": {
+        "offset_s": -0.18529857923443133,
+        "rms_m": 0.018582410498175914
+      },
+      "production_xyz_alignment": {
+        "offset_s": -0.18529857923443224,
+        "rms_m": 0.018582410498175914,
+        "half_offsets_s": [
+          -0.19430896710195197,
+          -0.1844304210226893
+        ],
+        "method": "measured XYZ constant-offset least squares; no spatial fit",
+        "clock_verified": false,
+        "includes_logging_latency": true
+      },
+      "independent_minus_production_offset_s": 9.159339953157541e-16,
+      "xy_only_alignment": {
+        "offset_s": -0.19436970124934422,
+        "rms_m": 0.015182160060212857
+      },
+      "z_only_alignment": {
+        "offset_s": -0.18514947464752135,
+        "rms_m": 0.010544371995249041
+      },
+      "exact_distinct_dynamic_csv_packets": 245,
+      "command_onset_s": 18.44549587567647,
+      "packet_onset_spread_s": 0.0012673377990708445,
+      "lowest_error_controller_pair": "whip_adp_0_003",
+      "correct_pair_is_best": true
+    },
+    {
+      "take": "whip_adp_0_004",
+      "rigid_body": "cf_7",
+      "position_columns_zero_based": [
+        6,
+        7,
+        8
+      ],
+      "direct_read_matches_production": true,
+      "independent_xyz_alignment": {
+        "offset_s": -0.004546364116778614,
+        "rms_m": 0.018219103117223936
+      },
+      "production_xyz_alignment": {
+        "offset_s": -0.004546364116777255,
+        "rms_m": 0.018219103117223936,
+        "half_offsets_s": [
+          -0.0045483160265610365,
+          -0.004449502474190127
+        ],
+        "method": "measured XYZ constant-offset least squares; no spatial fit",
+        "clock_verified": false,
+        "includes_logging_latency": true
+      },
+      "independent_minus_production_offset_s": -1.3591558434278284e-15,
+      "xy_only_alignment": {
+        "offset_s": -0.004576069391356835,
+        "rms_m": 0.014877327976318215
+      },
+      "z_only_alignment": {
+        "offset_s": -0.004486895848587009,
+        "rms_m": 0.010516244166944924
+      },
+      "exact_distinct_dynamic_csv_packets": 245,
+      "command_onset_s": 18.884059659639995,
+      "packet_onset_spread_s": 0.00041513442993235117,
+      "lowest_error_controller_pair": "whip_adp_0_004",
+      "correct_pair_is_best": true
+    },
+    {
+      "take": "whip_adp_0_005",
+      "rigid_body": "cf_7",
+      "position_columns_zero_based": [
+        6,
+        7,
+        8
+      ],
+      "direct_read_matches_production": true,
+      "independent_xyz_alignment": {
+        "offset_s": -0.3344662245192171,
+        "rms_m": 0.019059295333746472
+      },
+      "production_xyz_alignment": {
+        "offset_s": -0.3344662245192187,
+        "rms_m": 0.019059295333746472,
+        "half_offsets_s": [
+          -0.3344649034519266,
+          -0.33457099676482177
+        ],
+        "method": "measured XYZ constant-offset least squares; no spatial fit",
+        "clock_verified": false,
+        "includes_logging_latency": true
+      },
+      "independent_minus_production_offset_s": 1.609823385706477e-15,
+      "xy_only_alignment": {
+        "offset_s": -0.33451371746156927,
+        "rms_m": 0.0155139346378424
+      },
+      "z_only_alignment": {
+        "offset_s": -0.334374484328625,
+        "rms_m": 0.01107022001667168
+      },
+      "exact_distinct_dynamic_csv_packets": 245,
+      "command_onset_s": 18.514628744125368,
+      "packet_onset_spread_s": 0.0003665924072251414,
+      "lowest_error_controller_pair": "whip_adp_0_005",
+      "correct_pair_is_best": true
+    }
+  ],
+  "row_optitrack_take": [
+    "whip_adp_0_001",
+    "whip_adp_0_002",
+    "whip_adp_0_003",
+    "whip_adp_0_004",
+    "whip_adp_0_005"
+  ],
+  "column_controller_take": [
+    "whip_adp_0_001",
+    "whip_adp_0_002",
+    "whip_adp_0_003",
+    "whip_adp_0_004",
+    "whip_adp_0_005"
+  ],
+  "all_pairing_rms_cm": [
+    [
+      1.8162338631501544,
+      3.840218896700482,
+      5.342212160041197,
+      4.2325934482706,
+      4.537634071917729
+    ],
+    [
+      3.8398436998793075,
+      1.8991942117174254,
+      3.6561900880994953,
+      3.341538237337849,
+      2.9236319984945873
+    ],
+    [
+      5.392007724752272,
+      4.065058076127732,
+      1.8582410498175914,
+      4.500820223939265,
+      3.3480010733780525
+    ],
+    [
+      4.312488426302603,
+      3.4458389358517647,
+      4.507507959234512,
+      1.8219103117223936,
+      4.051053626512948
+    ],
+    [
+      4.67168643469009,
+      3.025124148902295,
+      3.1456244683025756,
+      3.9924767983700677,
+      1.905929533374647
+    ]
+  ],
+  "input_hashes": {
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\whip_adp_0_001.csv": "248dfa60b273405940f17b960c806e05fb1daf5a72d74fbef49c25e16dde9405",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\experiment_whip_adp_0_001.csv": "ff14452bee60d121acdb7f0bc8b9ba024d0dd4600038690489a00dee6bdd1122",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\whip_adp_0_002.csv": "5e154c513f0c804e8c7aa111422dbf599f2e6d14a16f879b9e57b204f7493c5c",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\experiment_whip_adp_0_002.csv": "df5043e53b2ec171502b5aca15c5b2cfade674fb878761226f819dbde706047d",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\whip_adp_0_003.csv": "04469a740982c33dc535e47594e431842bfaca1f108d82f185c1cdb840e4b9bd",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\experiment_whip_adp_0_003.csv": "5369d74e77c550712a83a5485a26d52ab6aa25f1f42dd04144cbed1e280b43a5",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\whip_adp_0_004.csv": "2d0e6f55836ed03b7a19f481a39ab96e4e93f979a7c568a68f549599b634b703",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\experiment_whip_adp_0_004.csv": "50943df6a841c64f5b6ff6a6dc9692992191c070176b8e330aceb2febce59650",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\whip_adp_0_005.csv": "114ba7d168cee070aa88238dfe1412c7adfb2837d870374e143c289003522794",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\experiment_whip_adp_0_005.csv": "e7ce3e5c8e63a9e8a0b78906ee6935a0afb6d974493e5131a5f3c2982cd50a54"
+  },
+  "inputs_unchanged": true,
+  "spatial_shift_or_rotation_applied": false,
+  "source_semantics": "Both measured XYZ streams derive from OptiTrack; logger is not independent onboard estimator telemetry."
+}

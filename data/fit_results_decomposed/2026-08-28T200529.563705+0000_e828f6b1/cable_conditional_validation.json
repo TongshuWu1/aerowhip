@@ -1,0 +1,37 @@
+{
+  "distributed_marker_rmse_m": 0.22219587464297594,
+  "episode_count": 2,
+  "lead_time": {
+    "0.1": {
+      "take_count": 2,
+      "tip_rmse_m": 0.005279570387196288
+    },
+    "0.25": {
+      "take_count": 2,
+      "tip_rmse_m": 0.012632625294449367
+    },
+    "0.5": {
+      "take_count": 2,
+      "tip_rmse_m": 0.05436414249859308
+    },
+    "1.0": {
+      "take_count": 2,
+      "tip_rmse_m": 0.04263342732273134
+    },
+    "2.0": {
+      "take_count": 2,
+      "tip_rmse_m": 0.17503227470849644
+    },
+    "4.0": {
+      "take_count": 2,
+      "tip_rmse_m": 0.2482507236012538
+    },
+    "8.0": {
+      "take_count": 2,
+      "tip_rmse_m": 0.365434917622016
+    }
+  },
+  "take_count": 2,
+  "terminal_tip_rmse_m": 0.11931853905040915,
+  "tip_rmse_m": 0.3787816129344314
+}

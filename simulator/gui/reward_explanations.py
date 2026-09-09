@@ -1,11 +1,12 @@
 """Field tooltips for reward settings and hit conditions."""
 
 FIELD_HELP = {
+    "relative_directed_speed_reward_cap_m_s": "Relative forward tip speed where the combined world × attachment-relative shaping saturates. Active only for the combined reference; does not alter the world hit threshold.",
     "maximum_displacement_weight": "Penalizes increases in the drone's maximum distance from its starting position, on hits and misses. Returning does not erase the cost, and repeating the same excursion does not add it again.",
     "progress_weight": "Total budget for improving the closest tip distance. Repeating an unchanged approach earns no extra points.",
     "strike_quality_improvement_weight": "Total budget for improving speed near the target, projected along the desired strike direction. The advanced speed-reference setting selects world velocity or velocity relative to the drone.",
     "point_displacement_integral_weight": "Charged throughout the attempt: weight × integral of the scaled displacement cost. Larger and longer attachment movements cost more.",
-    "time_to_success_weight_per_s": "Points charged per second until a valid hit, timeout, or numerical failure.",
+    "time_to_success_weight_per_s": "Points charged per second. Execution-success mode charges until the first valid predicted hit or the time limit; numerical failures also terminate. Older frozen-plan runs charge their planned duration. Prehover and recovery are excluded.",
     "success_bonus": "Paid once, only when the tip passes all hit conditions.",
     "success_forward_return_bonus_weight": "Maximum bonus on a valid hit for bringing the attachment back from its furthest forward position. The actual amount depends on the trajectory.",
     "success_release_bonus_weight": "Maximum bonus on a valid hit when the attachment moves backward and the tip moves forward relative to it. The actual amount depends on the trajectory.",

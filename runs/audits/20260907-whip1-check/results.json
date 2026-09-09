@@ -1,0 +1,150 @@
+{
+  "method": "Read-only constant-offset measured-position alignment; no model adaptation",
+  "reference": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260906-222405-804438\\plan_001\\fullstate_30hz.csv",
+  "reference_sha256": "2f53b06af9849c2ac6053b29f16eeec34f12fd2e83dfe7e2c9c144145f43f81f",
+  "sources": [
+    {
+      "file": "experiment_whip1_001.csv",
+      "size": 556001,
+      "sha256": "0b3dca254c83b03546c8f570b8cb202bb89efe5e2560c1adb16fab1cbd026ec6"
+    },
+    {
+      "file": "experiment_whip1_002.csv",
+      "size": 496064,
+      "sha256": "b22a953e6b15c9784f35361e0816c8bfa2b0a1178cf281b882362a66438ef2e5"
+    },
+    {
+      "file": "experiment_whip1_003.csv",
+      "size": 511432,
+      "sha256": "4f52038d547f2271791d41a5569afc09b7249e2b2353cbd3255cb6ddc3229fda"
+    },
+    {
+      "file": "whip1_001.csv",
+      "size": 1525558,
+      "sha256": "b6b7f01d81e6b7e490cd321f4fd6390207dc15ba8246de190901f9e0f47100c5"
+    },
+    {
+      "file": "whip1_002.csv",
+      "size": 1308762,
+      "sha256": "4749d4e9e0d4246d2150784faf08dc9e4e964b88725fbc359a9401ed7310a7b9"
+    },
+    {
+      "file": "whip1_003.csv",
+      "size": 1776045,
+      "sha256": "4f98624de55a5f07b5aed5d7ccd4bd31914b1654eef76b61f41441b29f41d06f"
+    }
+  ],
+  "results": [
+    {
+      "trial": "001",
+      "controller_rows": 3323,
+      "optitrack_rows": 1484,
+      "optitrack_time_range_s": [
+        6.24,
+        21.07
+      ],
+      "optitrack_missing_rigid_body_rows": 0,
+      "offset_controller_equals_optitrack_plus_s": 1.175202915983655,
+      "aligned_position_3d_rms_m": 0.011101311464798239,
+      "half_window_offsets_s": [
+        1.1847537487055335,
+        1.1751944473504699
+      ],
+      "controller_logger_hz": 99.99771123402633,
+      "logged_position_update_hz": 10.00012874769029,
+      "reference_unique_commands": 20,
+      "exact_reference_prefix_max_difference": 0.0,
+      "observed_reference_duration_s": 0.6690807342529297,
+      "observed_start_controller_s": 18.80992555618286,
+      "observed_stop_controller_s": 19.47900629043579,
+      "missing_reference_times_s": [
+        0.6666666666666666,
+        0.7,
+        0.7333333333333333,
+        0.7666666666666667,
+        0.8
+      ],
+      "post_sequence_command_position_m": [
+        0.5919625759124756,
+        0.0037631981540471315,
+        2.321573257446289
+      ],
+      "peak_optitrack_z_m": 2.463979,
+      "note": "Offsets match measured positions without rotation, translation or time warping; include logging latency. Not clock synchronization or tracking-error estimates."
+    },
+    {
+      "trial": "002",
+      "controller_rows": 2940,
+      "optitrack_rows": 1484,
+      "optitrack_time_range_s": [
+        6.24,
+        21.07
+      ],
+      "optitrack_missing_rigid_body_rows": 0,
+      "offset_controller_equals_optitrack_plus_s": -0.5346291376786848,
+      "aligned_position_3d_rms_m": 0.011325276146963653,
+      "half_window_offsets_s": [
+        -0.5348918379288391,
+        -0.534523419116348
+      ],
+      "controller_logger_hz": 100.00009536752259,
+      "logged_position_update_hz": 10.000319491103127,
+      "reference_unique_commands": 20,
+      "exact_reference_prefix_max_difference": 0.0,
+      "observed_reference_duration_s": 0.6691644191741943,
+      "observed_start_controller_s": 18.856013774871826,
+      "observed_stop_controller_s": 19.52517819404602,
+      "missing_reference_times_s": [
+        0.6666666666666666,
+        0.7,
+        0.7333333333333333,
+        0.7666666666666667,
+        0.8
+      ],
+      "post_sequence_command_position_m": [
+        0.5955275893211365,
+        0.005468718241900206,
+        2.188166856765747
+      ],
+      "peak_optitrack_z_m": 2.465857,
+      "note": "Offsets match measured positions without rotation, translation or time warping; include logging latency. Not clock synchronization or tracking-error estimates."
+    },
+    {
+      "trial": "003",
+      "controller_rows": 2930,
+      "optitrack_rows": 1484,
+      "optitrack_time_range_s": [
+        6.24,
+        21.07
+      ],
+      "optitrack_missing_rigid_body_rows": 0,
+      "offset_controller_equals_optitrack_plus_s": 0.035524219108078806,
+      "aligned_position_3d_rms_m": 0.009649033586761755,
+      "half_window_offsets_s": [
+        0.03510392951156248,
+        0.035527626806338204
+      ],
+      "controller_logger_hz": 100.00486397558475,
+      "logged_position_update_hz": 10.000152590218967,
+      "reference_unique_commands": 20,
+      "exact_reference_prefix_max_difference": 0.0,
+      "observed_reference_duration_s": 0.6670365333557129,
+      "observed_start_controller_s": 16.63312077522278,
+      "observed_stop_controller_s": 17.30015730857849,
+      "missing_reference_times_s": [
+        0.6666666666666666,
+        0.7,
+        0.7333333333333333,
+        0.7666666666666667,
+        0.8
+      ],
+      "post_sequence_command_position_m": [
+        0.5791568160057068,
+        0.015507432632148266,
+        2.243943691253662
+      ],
+      "peak_optitrack_z_m": 2.434984,
+      "note": "Offsets match measured positions without rotation, translation or time warping; include logging latency. Not clock synchronization or tracking-error estimates."
+    }
+  ]
+}

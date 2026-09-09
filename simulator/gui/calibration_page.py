@@ -22,7 +22,12 @@ class BaselinePage(RecordingControls):
         outer.addWidget(self.active);self.active.show()
         self.steps=QTabWidget();outer.addWidget(self.steps,1)
         self.build_recordings();self.build_setup();self.build_results()
+        from .cable_residual_page import CableResidualPage
+        self.residual_page=CableResidualPage(root)
+        self.steps.addTab(self.residual_page,'4  Cable residual')
+        self.residual_page.baseline_applied.connect(self.residual_applied)
         outer.addWidget(self.job);self.job.show()
+        self.steps.currentChanged.connect(lambda index:self.job.setVisible(index!=3))
         self.modern_ready=True
         self.refresh_fits();self.refresh();self.inspect_take()
         for widget in old:
@@ -41,8 +46,13 @@ class BaselinePage(RecordingControls):
         self.figure.set_layout_engine('constrained')
         self.record_figure=Figure(figsize=(7,2),facecolor='white');self.record_canvas=FigureCanvasQTAgg(self.record_figure)
         self.record_canvas.setMinimumHeight(150);layout.addWidget(self.record_canvas,1)
-        layout.addWidget(note('Raw recordings are preserved. The protected test cannot be selected or inspected.'))
+        layout.addWidget(note('Raw recordings are preserved. Recording roles control fitting access; historical all-data fits keep their masks and development splits in a separate audit.'))
         self.steps.addTab(page,'1  Recordings')
+
+    def residual_applied(self):
+        self.reset_inputs()
+        self.refresh()
+        self.baseline_applied.emit()
 
     def inspect_take(self):
         if not hasattr(self,'record_figure'):return super().inspect_take()
@@ -62,10 +72,13 @@ class BaselinePage(RecordingControls):
         layout.addWidget(method)
         measured=QGroupBox('Measured inputs');mf=QFormLayout(measured)
         basic={('point_mass','mass_kg'):'Drone mass',('cable','bare_cable_mass_kg'):'Bare cable mass',
-            ('recorded_data','optitrack_to_attachment_offset_body_m',2):'Tracked origin → attachment Z [m]',
-            ('cable','marker_interval_lengths_m',0):'Attachment → c1 [m]'}
+            ('recorded_data','optitrack_to_attachment_offset_body_m',2):'Top origin → attachment Z in tracking frame [m]',
+            ('cable','marker_interval_lengths_m',0):'Attachment → c1 cable arc length [m]'}
         for key,label in basic.items():mf.addRow(label,self.fields[key])
         layout.addWidget(measured)
+        layout.addWidget(note('The top-to-attachment offset rotates with the OptiTrack rigid body. '
+            'The first cable span can bend; its straight-line marker distance can be shorter than its arc length. '
+            'The tracked origin and cable attachment are separate from the unknown center of mass.'))
         self.material_note=note('');layout.addWidget(self.material_note)
         toggle=QPushButton('Edit fixed material values and remaining geometry');toggle.setCheckable(True);layout.addWidget(toggle)
         advanced=QGroupBox('Advanced fit inputs');af=QFormLayout(advanced)

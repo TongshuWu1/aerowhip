@@ -1,0 +1,23 @@
+{
+  "schema": "point_force_training_run_v1",
+  "algorithm": "PPO",
+  "display_name": "Adaptation 1 \u2014 complete model + both residuals",
+  "seed": 654,
+  "resumed_from": null,
+  "initialization": "Fresh PPO agent and optimizer; existing configured action prior retained",
+  "baseline": {
+    "candidate_source": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\historical_model_runs\\20260908-013552-736857-whip-only-drone\\candidate_bundle",
+    "development_baseline": true
+  },
+  "execution": "20 Hz frozen forces -> virtual physics + cable NN -> 30 Hz PVA -> drone response + drone NN -> cable physics + cable NN; recovery excluded",
+  "user_authorization": "Lets train the new ppo",
+  "created_at_utc": "2026-09-08T02:32:03.456093+00:00",
+  "preserved_files_sha256": {
+    "config\\model.json": "f5e0a8a57b5070aa6a31e2073730e7d9ebc3fcd21aa8a878d8b3fc50114e95e9",
+    "config\\ppo.json": "db7939a0f10089f9ed470db857a0f9ca332fc58f591aad1b7eab65b810245db4",
+    "config\\task.json": "85e0e27fc643be4bb9f350dc3f68fc3160c310ccfeda974924209c4b58e64fea",
+    "runs\\ppo\\20260906-201957-294110-measured-mass-seed653\\checkpoints\\best_validation.pt": "18f33e89fea72e683c40359853e40710f52ecb45623d53669ed6e240334078d7"
+  },
+  "target_episodes": 500000,
+  "collection_batch": 1024
+}

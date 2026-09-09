@@ -1,0 +1,36 @@
+{
+  "control_dt_s": 0.03333333333333333,
+  "desired_strike_direction_world": [
+    1.0,
+    0.0,
+    0.0
+  ],
+  "episode_duration_s": 1.0,
+  "initial_root_position_m": [
+    -1.9933450027145172,
+    -0.01287427254333901,
+    1.2
+  ],
+  "initial_root_velocity_m_s": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "reward": {
+    "angle_is_binary_success_gate_only": true,
+    "angle_shaping_weight": 0.0
+  },
+  "schema": "force_whip_task_v1",
+  "success": {
+    "first_contact_only": true,
+    "maximum_tip_velocity_to_desired_direction_error_deg": 45.0,
+    "minimum_directed_tip_speed_m_s": 4.0,
+    "tip_must_enter_before_other_markers": true,
+    "tip_target_distance_m": 0.05
+  },
+  "target_position_m": [
+    -0.5,
+    0.0,
+    1.1
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "authoritative": false,
+  "nominal_parameters": {
+    "K_R": 59.59101429997879,
+    "K_omega": 8.910098723693643,
+    "K_p": 24.63021508310789,
+    "K_v": 24.36340283220377,
+    "k_a": 1.0512255257949055
+  },
+  "residual": {
+    "architecture": "90 -> 32 -> SiLU -> 32 -> SiLU -> 3",
+    "desired_attitude_uses_residual": false,
+    "enabled": true,
+    "history_s": 0.1,
+    "history_samples": 10,
+    "input_features": [
+      "e_p[3]",
+      "e_v[3]",
+      "a_cmd[3]"
+    ],
+    "normalization_artifact": "normalization.json",
+    "normalization_canonical_sha256": "559b70e83ce109f4a82c64b74f83d3cb57c5fd1826afd36be404046b8d527008",
+    "type": "causal_fixed_history_mlp",
+    "weight_artifact": "uav_residual.pt",
+    "weight_sha256": "3819d682696d81c60959167e6e70b1d4cce587a6fc41b9cc23e7eb60c91004fc"
+  },
+  "schema": "milestone3a3_cross_motion_fold_model_v1"
+}

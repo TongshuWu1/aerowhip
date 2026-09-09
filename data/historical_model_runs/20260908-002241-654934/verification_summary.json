@@ -1,0 +1,29 @@
+{
+  "active_model_unchanged": true,
+  "flight_tested": false,
+  "hardware": "Windows / NVIDIA RTX 4080",
+  "ppo_training_started": false,
+  "runtime": "runtime_dissipative_1024.json",
+  "selected_ppo_unchanged": true,
+  "sources_and_snapshots_unchanged": true,
+  "targeted_test_groups": [
+    {
+      "log": "dissipative_tests.txt",
+      "name": "Cable, derivative and checkpoint tests",
+      "passed": 17
+    },
+    {
+      "log": "final_regression_tests.txt",
+      "name": "Historical data, export, UI and saved configuration tests",
+      "passed": 23
+    },
+    {
+      "name": "Stale combined-review rejection",
+      "passed": 1
+    },
+    {
+      "name": "Full-state execution and dynamic CPU/GPU boundary agreement",
+      "passed": 4
+    }
+  ]
+}

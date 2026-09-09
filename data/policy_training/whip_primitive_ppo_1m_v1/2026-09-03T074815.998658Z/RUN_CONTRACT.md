@@ -1,0 +1,3 @@
+# One-query target-aligned whip-primitive PPO
+
+A fresh PPO policy receives one normalized 83-D initial-state context and is queried exactly once. Its nine outputs define a forward loading excursion, terminal return fraction, backward release velocity, independently timed horizontal and vertical reversals, vertical waypoints/terminal velocity, and active duration. The decoder guarantees a backward target-axis velocity at release and emits 16 production acceleration knots. Execution uses the frozen CUDA FullState UAV, causal residual, 12-node DDER, 0.30-s analytic settle, and 2.40-s evaluation. Training uses no prior policy, CEM, demonstrations, protected data, or hardware.

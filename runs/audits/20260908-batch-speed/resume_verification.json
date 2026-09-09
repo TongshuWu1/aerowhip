@@ -1,0 +1,24 @@
+{
+  "changed_python_files": [
+    "learning/reward_plateau.py",
+    "run_ppo.py",
+    "simulator/workflow.py"
+  ],
+  "checkpoint_attempts": 7168,
+  "checkpoint_sha256": "d82934141f4e6f04175a91402c41c1a8ffe523c748a5163d438b0f0b6a6bb0f5",
+  "gradient_updates": 1044,
+  "identical_checkpoint_fields": [
+    "policy",
+    "value",
+    "policy_optimizer",
+    "value_optimizer",
+    "gradient_updates",
+    "episodes",
+    "successes",
+    "elapsed_s"
+  ],
+  "new_source_files_verified": 171,
+  "note": "Checkpoint has no saved RNG state; stochastic streams reseed on resume, so this is not bitwise uninterrupted sampling.",
+  "old_source_files_intact": 170,
+  "reward_and_physics_code_unchanged": true
+}

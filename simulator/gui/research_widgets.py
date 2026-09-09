@@ -48,8 +48,11 @@ class BackgroundJob(QWidget):
             raise ValueError('A job is already running on this page.')
         self.directory = Path(directory)
         self.directory.mkdir(parents=True, exist_ok=True)
+        environment=os.environ.copy()
+        if any(str(arg).endswith('train_ppo_isaaclab.py') for arg in command):
+            for key in ('PYTHONPATH','QT_QPA_PLATFORM_PLUGIN_PATH','QT_PLUGIN_PATH','QT_QPA_PLATFORM'):environment.pop(key,None)
         with (self.directory / 'console.log').open('ab') as stream:
-            self.process = subprocess.Popen(command, cwd=self.root, stdout=stream, stderr=subprocess.STDOUT,
+            self.process = subprocess.Popen(command, cwd=self.root, env=environment,stdout=stream, stderr=subprocess.STDOUT,
                                             creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
         self.status.setText('Running…')
         self.timer.start()
@@ -86,8 +89,16 @@ class BackgroundJob(QWidget):
 
 def load_history(directory):
     import csv
+    import json
     if directory is None:
         return []
+    full=Path(directory)/'validation_history.jsonl'
+    if full.exists():
+        rows=[]
+        for line in full.read_text(encoding='utf-8').splitlines():
+            try:rows.append(json.loads(line))
+            except ValueError:continue  # A concurrent writer may be finishing the last line.
+        return rows
     try:
         with (Path(directory) / 'validation_history.csv').open(newline='', encoding='utf-8') as stream:
             return list(csv.DictReader(stream))
@@ -97,25 +108,28 @@ def load_history(directory):
 
 def draw_learning(figure, rows, algorithm):
     figure.clear()
-    axes = figure.subplots(2, 1, sharex=True)
+    axes = figure.subplots(2, 2, sharex=True).ravel()
     color = '#2563b8' if algorithm == 'PPO' else '#da7822'
     for ax in axes:
         ax.spines[['top', 'right']].set_visible(False)
         ax.grid(axis='y', alpha=.2, linewidth=.6)
         ax.tick_params(labelsize=8)
-    axes[0].set_ylabel('Validation\nsuccess [%]', fontsize=9)
-    axes[1].set_ylabel('Mean task return', fontsize=9)
-    axes[1].set_xlabel('Simulated training attempts', fontsize=9)
+    for ax,title,ylabel in zip(axes,['Valid hits','Closest approach','Task return','Failed attempts'],['Success [%]','Median tip distance [cm]','Mean return','Attempts [%]']):
+        ax.set_title(title,fontsize=10,loc='left');ax.set_ylabel(ylabel,fontsize=8)
+    for ax in axes[2:]:ax.set_xlabel('Training attempts',fontsize=8)
     axes[0].set_ylim(0, 100)
+    axes[3].set_ylim(0, 100)
     if rows:
         x = [int(row['training_episodes']) for row in rows]
-        for key, label, style in [('success_rate', 'Valid hit', '-'),
-                                  ('hit_and_recovery_rate', 'Hit + recovery', '--')]:
-            axes[0].plot(x, [100 * float(row[key]) for row in rows], style,
-                         color=color, linewidth=1.6, marker='o', markersize=2.5, label=label)
-        axes[0].legend(frameon=False, fontsize=8, loc='lower right')
-        axes[1].plot(x, [float(row['mean_episode_reward']) for row in rows],
-                     color=color, linewidth=1.6, marker='o', markersize=2.5)
+        import numpy as np
+        for ax,key,scale in [(axes[0],'success_rate',100),(axes[1],'median_minimum_tip_distance_m',100),(axes[2],'mean_episode_reward',1)]:
+            values=[scale*float(row[key]) if row.get(key) is not None else np.nan for row in rows]
+            ax.plot(x,values,color=color,lw=1.7)
+            if not np.isfinite(values).any():ax.text(.5,.5,'Not recorded for this run',transform=ax.transAxes,ha='center',fontsize=8)
+        for key,label,c in [('numerical_failure_rate','Any model / reference failure','#dc2626'),('reference_infeasible_rate','Reference infeasible','#ea580c')]:
+            values=[100*float(row[key]) if row.get(key) is not None else np.nan for row in rows]
+            axes[3].plot(x,values,color=c,lw=1.5,label=label)
+        axes[3].legend(frameon=False,fontsize=6,loc='upper right')
     else:
         for ax in axes:
             ax.text(.5, .5, 'No validation results yet', transform=ax.transAxes,

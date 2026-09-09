@@ -1,0 +1,22 @@
+{
+  "episodes": 39936,
+  "frozen_files_verified": {
+    "20260908-163449-138254-seed656": 171,
+    "20260908-174509-301420-seed656": 172
+  },
+  "gradient_updates": 5760,
+  "initial_checkpoint_tensors_counters_and_optimizers_exact": true,
+  "initial_child_checkpoint_sha256": "efb070767cdf23077fbb5f9974e46b9de1bd75ed32709d51e3330223833e0c20",
+  "parent_checkpoint_sha256": "efb070767cdf23077fbb5f9974e46b9de1bd75ed32709d51e3330223833e0c20",
+  "successes": 50,
+  "verified_keys": [
+    "policy",
+    "value",
+    "policy_optimizer",
+    "value_optimizer",
+    "gradient_updates",
+    "episodes",
+    "successes",
+    "elapsed_s"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "command": [
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\.venv\\Scripts\\python.exe",
+    "-u",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\ppo\\20260908-160934-532739-seed656\\source_snapshot\\run_ppo.py",
+    "--train",
+    "--config-directory",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\ppo\\20260908-160934-532739-seed656\\launch_config",
+    "--device",
+    "cuda",
+    "--episodes",
+    "500000",
+    "--artifact-directory",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\ppo\\20260908-160934-532739-seed656",
+    "--batch-size",
+    "1024"
+  ],
+  "launcher_pid": 23668,
+  "run": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\ppo\\20260908-160934-532739-seed656"
+}

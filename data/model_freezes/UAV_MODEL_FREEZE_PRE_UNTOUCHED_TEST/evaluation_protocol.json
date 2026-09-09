@@ -1,0 +1,35 @@
+{
+  "aggregate": [
+    "position_rmse_m",
+    "orientation_geodesic_rmse_deg"
+  ],
+  "axis_metrics": [
+    "x_position_rmse_m",
+    "y_position_rmse_m",
+    "z_position_rmse_m"
+  ],
+  "lead_time_metrics": [
+    "position_rmse_m",
+    "orientation_geodesic_rmse_deg"
+  ],
+  "lead_times_s": [
+    0.1,
+    0.25,
+    0.5,
+    1.0
+  ],
+  "models": {
+    "A": "accepted_five_parameter_physics_baseline",
+    "C": "frozen_physics_plus_causal_residual"
+  },
+  "residual_metrics": [
+    "residual_acceleration_rms_mps2",
+    "residual_acceleration_p95_mps2"
+  ],
+  "rules": [
+    "evaluate the frozen baseline and frozen residual exactly once",
+    "do not retrain or select another checkpoint",
+    "do not recompute normalization",
+    "do not modify gains, architecture, features, history, or weights"
+  ]
+}

@@ -1,0 +1,415 @@
+{
+  "rows": [
+    {
+      "take": "whip_adp_0_001",
+      "hashes": {
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\simulation_csv\\fullstate_30hz.csv": "d54b86aa6a1584a56ce1a063d29e47cb1ca91ea89c553e818ac33505e7225452",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\whip_adp_0_001.csv": "248dfa60b273405940f17b960c806e05fb1daf5a72d74fbef49c25e16dde9405",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\experiment_whip_adp_0_001.csv": "ff14452bee60d121acdb7f0bc8b9ba024d0dd4600038690489a00dee6bdd1122",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260908-203914-039721\\rehearsal.npz": "a34e4153f67c3f2d2cfd0cd02064079e8957ae6afb876f7e3f97dbc2ed94a878",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260908-203914-039721\\rehearsal.json": "33b943fca69242dac037b8d47e8c2247e873d86277b0c472596f5c56f4a3b32c",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260908-203914-039721\\model.json": "90912ded6caceeeda40820cf30058b1f7d7f7e903743c01a7b86951cf2c6cc62",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260908-203914-039721\\task.json": "5fef563d8bf990a3585f7c18cb8306a176738f56431c514bf9bbd143f678b6de"
+      },
+      "alignment": {
+        "offset_s": -1.034452944799245,
+        "rms_m": 0.018162338631501546,
+        "half_offsets_s": [
+          -1.034459526584866,
+          -1.0249253849432602
+        ],
+        "method": "measured XYZ constant-offset least squares; no spatial fit",
+        "clock_verified": false,
+        "includes_logging_latency": true
+      },
+      "phases": {
+        "before_whip": {
+          "window_s": [
+            -0.21,
+            0.0
+          ],
+          "samples": 21,
+          "command_xyz_m": [
+            -2.0,
+            0.0,
+            1.255
+          ],
+          "measured_mean_xyz_m": [
+            -2.0016320476190477,
+            0.04153309523809524,
+            1.3278437142857145
+          ],
+          "measured_std_xyz_m": [
+            0.0003800976661697024,
+            0.001371823253392635,
+            8.749647223206704e-05
+          ],
+          "saved_prediction_mean_z_m": 1.255,
+          "prediction_kind": "saved nominal start; no pre-onset prediction exists",
+          "measured_minus_command_z_cm": 7.284371428571457,
+          "measured_minus_prediction_z_cm": 7.284371428571457,
+          "mocap_minus_logger_z_mean_mm": -0.004993292535671046,
+          "mocap_minus_logger_z_rms_mm": 0.07052551359575196
+        },
+        "final_hold": {
+          "window_s": [
+            9.2,
+            10.9
+          ],
+          "samples": 170,
+          "command_xyz_m": [
+            -2.0,
+            0.0,
+            1.255
+          ],
+          "measured_mean_xyz_m": [
+            -2.00425575882353,
+            -0.005953623529411766,
+            1.3185659588235297
+          ],
+          "measured_std_xyz_m": [
+            0.005285225505296229,
+            0.005992070501384643,
+            0.0012500420292034552
+          ],
+          "saved_prediction_mean_z_m": 1.2519757991607328,
+          "prediction_kind": "mean exact saved preflight forecast in same interval",
+          "measured_minus_command_z_cm": 6.356595882352956,
+          "measured_minus_prediction_z_cm": 6.659015966279669,
+          "mocap_minus_logger_z_mean_mm": 0.03506556196599022,
+          "mocap_minus_logger_z_rms_mm": 0.1787649620314736
+        }
+      }
+    },
+    {
+      "take": "whip_adp_0_002",
+      "hashes": {
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\simulation_csv\\fullstate_30hz.csv": "d54b86aa6a1584a56ce1a063d29e47cb1ca91ea89c553e818ac33505e7225452",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\whip_adp_0_002.csv": "5e154c513f0c804e8c7aa111422dbf599f2e6d14a16f879b9e57b204f7493c5c",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\experiment_whip_adp_0_002.csv": "df5043e53b2ec171502b5aca15c5b2cfade674fb878761226f819dbde706047d",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260908-203914-039721\\rehearsal.npz": "a34e4153f67c3f2d2cfd0cd02064079e8957ae6afb876f7e3f97dbc2ed94a878",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260908-203914-039721\\rehearsal.json": "33b943fca69242dac037b8d47e8c2247e873d86277b0c472596f5c56f4a3b32c",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260908-203914-039721\\model.json": "90912ded6caceeeda40820cf30058b1f7d7f7e903743c01a7b86951cf2c6cc62",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260908-203914-039721\\task.json": "5fef563d8bf990a3585f7c18cb8306a176738f56431c514bf9bbd143f678b6de"
+      },
+      "alignment": {
+        "offset_s": -0.034677077899311785,
+        "rms_m": 0.018991942117174254,
+        "half_offsets_s": [
+          -0.03467965232535403,
+          -0.025296528445824314
+        ],
+        "method": "measured XYZ constant-offset least squares; no spatial fit",
+        "clock_verified": false,
+        "includes_logging_latency": true
+      },
+      "phases": {
+        "before_whip": {
+          "window_s": [
+            -0.21,
+            0.0
+          ],
+          "samples": 21,
+          "command_xyz_m": [
+            -2.0,
+            0.0,
+            1.255
+          ],
+          "measured_mean_xyz_m": [
+            -1.9927390000000003,
+            0.04504880952380952,
+            1.3117957142857144
+          ],
+          "measured_std_xyz_m": [
+            0.0004819781658757251,
+            0.0009200207357418705,
+            0.00014441281530559594
+          ],
+          "saved_prediction_mean_z_m": 1.255,
+          "prediction_kind": "saved nominal start; no pre-onset prediction exists",
+          "measured_minus_command_z_cm": 5.6795714285714505,
+          "measured_minus_prediction_z_cm": 5.6795714285714505,
+          "mocap_minus_logger_z_mean_mm": 0.08723091146428927,
+          "mocap_minus_logger_z_rms_mm": 0.1372050842937925
+        },
+        "final_hold": {
+          "window_s": [
+            9.2,
+            10.9
+          ],
+          "samples": 170,
+          "command_xyz_m": [
+            -2.0,
+            0.0,
+            1.255
+          ],
+          "measured_mean_xyz_m": [
+            -1.9933057294117649,
+            0.004830394117647057,
+            1.2996445705882347
+          ],
+          "measured_std_xyz_m": [
+            0.002698186309741437,
+            0.005560112537262554,
+            0.0011687115521274308
+          ],
+          "saved_prediction_mean_z_m": 1.251975914894989,
+          "prediction_kind": "mean exact saved preflight forecast in same interval",
+          "measured_minus_command_z_cm": 4.464457058823523,
+          "measured_minus_prediction_z_cm": 4.766865569324619,
+          "mocap_minus_logger_z_mean_mm": -0.014247325134493095,
+          "mocap_minus_logger_z_rms_mm": 0.1869587751603019
+        }
+      }
+    },
+    {
+      "take": "whip_adp_0_003",
+      "hashes": {
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\simulation_csv\\fullstate_30hz.csv": "d54b86aa6a1584a56ce1a063d29e47cb1ca91ea89c553e818ac33505e7225452",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\whip_adp_0_003.csv": "04469a740982c33dc535e47594e431842bfaca1f108d82f185c1cdb840e4b9bd",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\experiment_whip_adp_0_003.csv": "5369d74e77c550712a83a5485a26d52ab6aa25f1f42dd04144cbed1e280b43a5",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260908-203914-039721\\rehearsal.npz": "a34e4153f67c3f2d2cfd0cd02064079e8957ae6afb876f7e3f97dbc2ed94a878",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260908-203914-039721\\rehearsal.json": "33b943fca69242dac037b8d47e8c2247e873d86277b0c472596f5c56f4a3b32c",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260908-203914-039721\\model.json": "90912ded6caceeeda40820cf30058b1f7d7f7e903743c01a7b86951cf2c6cc62",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260908-203914-039721\\task.json": "5fef563d8bf990a3585f7c18cb8306a176738f56431c514bf9bbd143f678b6de"
+      },
+      "alignment": {
+        "offset_s": -0.18529857923443224,
+        "rms_m": 0.018582410498175914,
+        "half_offsets_s": [
+          -0.19430896710195197,
+          -0.1844304210226893
+        ],
+        "method": "measured XYZ constant-offset least squares; no spatial fit",
+        "clock_verified": false,
+        "includes_logging_latency": true
+      },
+      "phases": {
+        "before_whip": {
+          "window_s": [
+            -0.21,
+            0.0
+          ],
+          "samples": 21,
+          "command_xyz_m": [
+            -2.0,
+            0.0,
+            1.255
+          ],
+          "measured_mean_xyz_m": [
+            -2.0203935238095236,
+            0.003970142857142857,
+            1.3010622380952381
+          ],
+          "measured_std_xyz_m": [
+            0.0010144214217285515,
+            0.0008475917304319331,
+            0.0005284703807316409
+          ],
+          "saved_prediction_mean_z_m": 1.255,
+          "prediction_kind": "saved nominal start; no pre-onset prediction exists",
+          "measured_minus_command_z_cm": 4.606223809523846,
+          "measured_minus_prediction_z_cm": 4.606223809523846,
+          "mocap_minus_logger_z_mean_mm": -0.0092433984855039,
+          "mocap_minus_logger_z_rms_mm": 0.23052024445445077
+        },
+        "final_hold": {
+          "window_s": [
+            9.2,
+            10.9
+          ],
+          "samples": 170,
+          "command_xyz_m": [
+            -2.0,
+            0.0,
+            1.255
+          ],
+          "measured_mean_xyz_m": [
+            -1.9765155588235306,
+            0.022952388235294118,
+            1.2912427882352937
+          ],
+          "measured_std_xyz_m": [
+            0.00286728055820859,
+            0.002705959464911466,
+            0.0017723352032848554
+          ],
+          "saved_prediction_mean_z_m": 1.2519759421077996,
+          "prediction_kind": "mean exact saved preflight forecast in same interval",
+          "measured_minus_command_z_cm": 3.6242788235294032,
+          "measured_minus_prediction_z_cm": 3.9266846127494315,
+          "mocap_minus_logger_z_mean_mm": -0.06779205260296367,
+          "mocap_minus_logger_z_rms_mm": 0.2340243600291929
+        }
+      }
+    },
+    {
+      "take": "whip_adp_0_004",
+      "hashes": {
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\simulation_csv\\fullstate_30hz.csv": "d54b86aa6a1584a56ce1a063d29e47cb1ca91ea89c553e818ac33505e7225452",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\whip_adp_0_004.csv": "2d0e6f55836ed03b7a19f481a39ab96e4e93f979a7c568a68f549599b634b703",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\experiment_whip_adp_0_004.csv": "50943df6a841c64f5b6ff6a6dc9692992191c070176b8e330aceb2febce59650",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260908-203914-039721\\rehearsal.npz": "a34e4153f67c3f2d2cfd0cd02064079e8957ae6afb876f7e3f97dbc2ed94a878",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260908-203914-039721\\rehearsal.json": "33b943fca69242dac037b8d47e8c2247e873d86277b0c472596f5c56f4a3b32c",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260908-203914-039721\\model.json": "90912ded6caceeeda40820cf30058b1f7d7f7e903743c01a7b86951cf2c6cc62",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260908-203914-039721\\task.json": "5fef563d8bf990a3585f7c18cb8306a176738f56431c514bf9bbd143f678b6de"
+      },
+      "alignment": {
+        "offset_s": -0.004546364116777255,
+        "rms_m": 0.018219103117223936,
+        "half_offsets_s": [
+          -0.0045483160265610365,
+          -0.004449502474190127
+        ],
+        "method": "measured XYZ constant-offset least squares; no spatial fit",
+        "clock_verified": false,
+        "includes_logging_latency": true
+      },
+      "phases": {
+        "before_whip": {
+          "window_s": [
+            -0.21,
+            0.0
+          ],
+          "samples": 21,
+          "command_xyz_m": [
+            -2.0,
+            0.0,
+            1.255
+          ],
+          "measured_mean_xyz_m": [
+            -2.0216791904761906,
+            0.05138666666666666,
+            1.3312100952380952
+          ],
+          "measured_std_xyz_m": [
+            0.00033129135774843065,
+            0.0009965709939747127,
+            0.0003506996958139372
+          ],
+          "saved_prediction_mean_z_m": 1.255,
+          "prediction_kind": "saved nominal start; no pre-onset prediction exists",
+          "measured_minus_command_z_cm": 7.62100952380953,
+          "measured_minus_prediction_z_cm": 7.62100952380953,
+          "mocap_minus_logger_z_mean_mm": -0.08499922637071941,
+          "mocap_minus_logger_z_rms_mm": 0.12523836579266048
+        },
+        "final_hold": {
+          "window_s": [
+            9.2,
+            10.9
+          ],
+          "samples": 170,
+          "command_xyz_m": [
+            -2.0,
+            0.0,
+            1.255
+          ],
+          "measured_mean_xyz_m": [
+            -1.9779066705882355,
+            0.015847047058823522,
+            1.3151059882352938
+          ],
+          "measured_std_xyz_m": [
+            0.006954314502333804,
+            0.001607974095532361,
+            0.0006270088280477654
+          ],
+          "saved_prediction_mean_z_m": 1.2519757070404,
+          "prediction_kind": "mean exact saved preflight forecast in same interval",
+          "measured_minus_command_z_cm": 6.010598823529412,
+          "measured_minus_prediction_z_cm": 6.3130281194893945,
+          "mocap_minus_logger_z_mean_mm": 0.01491588594712186,
+          "mocap_minus_logger_z_rms_mm": 0.2197712494882727
+        }
+      }
+    },
+    {
+      "take": "whip_adp_0_005",
+      "hashes": {
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\simulation_csv\\fullstate_30hz.csv": "d54b86aa6a1584a56ce1a063d29e47cb1ca91ea89c553e818ac33505e7225452",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\whip_adp_0_005.csv": "114ba7d168cee070aa88238dfe1412c7adfb2837d870374e143c289003522794",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\20260908-195207-486249-seed655_best_validation\\adp0\\flight_take\\experiment_whip_adp_0_005.csv": "e7ce3e5c8e63a9e8a0b78906ee6935a0afb6d974493e5131a5f3c2982cd50a54",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260908-203914-039721\\rehearsal.npz": "a34e4153f67c3f2d2cfd0cd02064079e8957ae6afb876f7e3f97dbc2ed94a878",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260908-203914-039721\\rehearsal.json": "33b943fca69242dac037b8d47e8c2247e873d86277b0c472596f5c56f4a3b32c",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260908-203914-039721\\model.json": "90912ded6caceeeda40820cf30058b1f7d7f7e903743c01a7b86951cf2c6cc62",
+        "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260908-203914-039721\\task.json": "5fef563d8bf990a3585f7c18cb8306a176738f56431c514bf9bbd143f678b6de"
+      },
+      "alignment": {
+        "offset_s": -0.3344662245192187,
+        "rms_m": 0.019059295333746472,
+        "half_offsets_s": [
+          -0.3344649034519266,
+          -0.33457099676482177
+        ],
+        "method": "measured XYZ constant-offset least squares; no spatial fit",
+        "clock_verified": false,
+        "includes_logging_latency": true
+      },
+      "phases": {
+        "before_whip": {
+          "window_s": [
+            -0.21,
+            0.0
+          ],
+          "samples": 21,
+          "command_xyz_m": [
+            -2.0,
+            0.0,
+            1.255
+          ],
+          "measured_mean_xyz_m": [
+            -1.9900774761904765,
+            0.03212247619047619,
+            1.3043520952380951
+          ],
+          "measured_std_xyz_m": [
+            0.00019471703989012965,
+            0.0005117328747964047,
+            0.0004965814472841657
+          ],
+          "saved_prediction_mean_z_m": 1.255,
+          "prediction_kind": "saved nominal start; no pre-onset prediction exists",
+          "measured_minus_command_z_cm": 4.935209523809525,
+          "measured_minus_prediction_z_cm": 4.935209523809525,
+          "mocap_minus_logger_z_mean_mm": 0.1023972817766233,
+          "mocap_minus_logger_z_rms_mm": 0.2180550615428899
+        },
+        "final_hold": {
+          "window_s": [
+            9.2,
+            10.9
+          ],
+          "samples": 170,
+          "command_xyz_m": [
+            -2.0,
+            0.0,
+            1.255
+          ],
+          "measured_mean_xyz_m": [
+            -1.9926055235294107,
+            0.015337947058823524,
+            1.2967814764705892
+          ],
+          "measured_std_xyz_m": [
+            0.004554159342846343,
+            0.003635506800598403,
+            0.0006353867391360086
+          ],
+          "saved_prediction_mean_z_m": 1.251975689973989,
+          "prediction_kind": "mean exact saved preflight forecast in same interval",
+          "measured_minus_command_z_cm": 4.178147647058839,
+          "measured_minus_prediction_z_cm": 4.480578649659939,
+          "mocap_minus_logger_z_mean_mm": -0.00041230429904735936,
+          "mocap_minus_logger_z_rms_mm": 0.14052580311370344
+        }
+      }
+    }
+  ],
+  "input_files_unchanged": true,
+  "no_fitting_training_or_spatial_shift": true,
+  "origin_convention": "Both measured and predicted drone positions are cf_7 tracked origins. The 55 mm cable-attachment offset is separate.",
+  "logger_limitation": "Logger stores cf.get_position(); no independently identified onboard estimator state or thrust/integrator is recorded.",
+  "fitting_initialization": "M1 fitting uses measured causal prehover state and inferred frozen effective compensation.",
+  "deployment_initialization": "Saved rehearsal and current training use ideal settled initial state with zero effective compensation."
+}

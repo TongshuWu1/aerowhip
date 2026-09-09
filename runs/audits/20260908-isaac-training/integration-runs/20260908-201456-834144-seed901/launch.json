@@ -1,0 +1,20 @@
+{
+  "command": [
+    "C:\\Users\\wts28\\env_isaaclab\\Scripts\\python.exe",
+    "-u",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\ppo\\20260908-201456-834144-seed901\\source_snapshot\\tools\\train_ppo_isaaclab.py",
+    "--train",
+    "--config-directory",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\ppo\\20260908-201456-834144-seed901\\launch_config",
+    "--device",
+    "cuda",
+    "--episodes",
+    "8",
+    "--artifact-directory",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\ppo\\20260908-201456-834144-seed901",
+    "--batch-size",
+    "4",
+    "--headless"
+  ],
+  "working_directory": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project"
+}

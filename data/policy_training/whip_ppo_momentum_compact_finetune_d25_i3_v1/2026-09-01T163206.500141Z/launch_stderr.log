@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\run_simple_ppo.py", line 844, in <module>
+    main()
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\run_simple_ppo.py", line 840, in main
+    train(config, config_path, artifact, resume=bool(arguments.resume))
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\run_simple_ppo.py", line 393, in train
+    artifact.mkdir(parents=True, exist_ok=False)
+  File "C:\Users\wts28\AppData\Local\Programs\Python\Python312\Lib\pathlib.py", line 1311, in mkdir
+    os.mkdir(self, mode)
+FileExistsError: [WinError 183] Cannot create a file when that file already exists: 'C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\policy_training\\whip_ppo_momentum_compact_finetune_d25_i3_v1\\2026-09-01T163206.500141Z'

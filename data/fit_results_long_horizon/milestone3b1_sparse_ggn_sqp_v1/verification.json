@@ -1,0 +1,19 @@
+{
+  "schema": "milestone3b1_verification_v1",
+  "status": "stopped_at_linearization_runtime_gate",
+  "scientific_model_unchanged": true,
+  "physical_episode_semantics_unchanged": true,
+  "equal_length_segments_already_batched": true,
+  "functional_force_equivalence_test_added": true,
+  "focused_tests": "21/21 passed",
+  "repository_tests": "77/77 passed in 51.55 s",
+  "python_compilation": "passed",
+  "git_diff_check": "passed_with_only_existing_line_ending_notices",
+  "synthetic_recovery_passed": false,
+  "real_fit_run": false,
+  "residual_fit_run": false,
+  "provisional_validation_run": false,
+  "fig8vertical_002_predictively_evaluated": false,
+  "mppi_run": false,
+  "pretest_freeze_created": false
+}

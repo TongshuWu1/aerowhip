@@ -1,0 +1,22 @@
+{
+  "directory": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\ppo\\20260908-080833-956336-seed655",
+  "pid": 13904,
+  "command": [
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\.venv\\Scripts\\python.exe",
+    "-u",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\ppo\\20260908-080833-956336-seed655\\source_snapshot\\run_ppo.py",
+    "--train",
+    "--config-directory",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\ppo\\20260908-080833-956336-seed655\\launch_config",
+    "--device",
+    "cuda",
+    "--episodes",
+    "500000",
+    "--artifact-directory",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\ppo\\20260908-080833-956336-seed655",
+    "--batch-size",
+    "1024"
+  ],
+  "display_name": "M0 - 30 Hz - both residuals - seed 655",
+  "authorized": "User requested UI rebuild and policy training in this turn"
+}

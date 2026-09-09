@@ -1,0 +1,105 @@
+[INFO][AppLauncher]: Using device: cuda
+[INFO][AppLauncher]: Loading experience file: C:\Users\wts28\Documents\PHD\IsaacLab\apps\isaaclab.python.headless.kit
+Loading user config located at: 'c:/users/wts28/env_isaaclab/lib/site-packages/isaacsim/kit/data/Kit/Isaac-Sim/5.1/user.config.json'
+[Info] [carb] Logging to file: c:/users/wts28/env_isaaclab/lib/site-packages/isaacsim/kit/logs/Kit/Isaac-Sim/5.1/kit_20260908_161619.log
+2026-09-08T20:16:19Z [147ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX
+2026-09-08T20:16:19Z [657ms] [Warning] [carb] Acquiring non optional plugin interface which is not listed as dependency: [omni::physx::IPhysxBenchmarks v1.0] (plugin: <default plugin>), by client: omni.physics.physx.plugin. Add it to CARB_PLUGIN_IMPL_DEPS() macro of a client.
+2026-09-08T20:16:19Z [669ms] [Warning] [omni.isaac.dynamic_control] omni.isaac.dynamic_control is deprecated as of Isaac Sim 4.5. No action is needed from end-users.
+
+|---------------------------------------------------------------------------------------------|
+| Driver Version: 610.88        | Graphics API: D3D12
+|=============================================================================================|
+| GPU | Name                             | Active | LDA | GPU Memory | Vendor-ID | LUID       |
+|     |                                  |        |     |            | Device-ID | UUID       |
+|     |                                  |        |     |            | Bus-ID    |            |
+|---------------------------------------------------------------------------------------------|
+| 0   | NVIDIA GeForce RTX 4080          | Yes: 0 |     | 16048   MB | 10de      | 794a0100.. |
+|     |                                  |        |     |            | 2704      | 0          |
+|     |                                  |        |     |            | 1         |            |
+|=============================================================================================|
+| OS: Windows 11 Pro, Version: 10.0 (25H2), Build: 26200, Kernel: 10.0.26100.9168
+| Processor: 13th Gen Intel(R) Core(TM) i7-13700K
+| Cores: 16 | Logical Cores: 24
+|---------------------------------------------------------------------------------------------|
+| Total Memory (MB): 65277 | Free Memory: 40038
+| Total Page/Swap (MB): 69373 | Free Page/Swap: 27920
+|---------------------------------------------------------------------------------------------|
+
+[36m===================================================================================================================[0m
+[36m[1m[INFO][IsaacLab]: Logging to file: C:\Users\wts28\AppData\Local\Temp\isaaclab\logs\isaaclab_2026-09-08_16-16-23.log[0m
+[36m===================================================================================================================[0m
+
+[33m16:16:23 [simulation_context.py] WARNING: The `enable_external_forces_every_iteration` parameter in the PhysxCfg is set to False. If you are experiencing noisy velocities, consider enabling this flag. You may need to slightly increase the number of velocity iterations (setting it to 1 or 2 rather than 0), together with this flag, to improve the accuracy of velocity updates.[0m
+2026-09-08T20:16:25Z [6,072ms] [Warning] [omni.physx.plugin] Physics:PointInstancer: (/World/TrainingDrones) indices array not valid
+
+2026-09-08T20:16:25Z [6,072ms] [Warning] [omni.physx.plugin] Physics:PointInstancer: (/World/TrainingTargets) indices array not valid
+
+[W908 16:16:25.000000000 Context.cpp:324] Warning: torch.backends.cuda.preferred_linalg_library is an experimental feature. If you see any error or unexpected behavior when this flag is set please file an issue on GitHub. (function operator ())
+{"status": "RUNNING", "pid": 35588, "device": "cuda", "target_episodes": 8, "collection_batch": 4, "update_guard_enabled": false, "artifact": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\ppo\\20260908-201618-619109-seed902", "episodes": 4, "success_rate": 0.0, "batch_success_rate": 0.0, "mean_episode_reward": -5.6773453924924375, "median_minimum_tip_distance_m": 1.2876890390845974, "mean_maximum_point_displacement_m": 0.28484111216161967, "mean_point_displacement_cost_integral_s": 0.12474000428145139, "numerical_failure_rate": 0.0, "nonfinite_rate": 0.0, "position_limit_rate": 0.0, "speed_limit_rate": 0.0, "non_tip_first_rate": 0.0, "invalid_tip_entry_rate": 0.0, "timeout_rate": 1.0, "curriculum_stage": "final", "curriculum_target_radius_m": 0.001, "curriculum_minimum_speed_m_s": 4.0, "curriculum_maximum_angle_deg": 45.0, "episodes_per_second": 0.40812289029252485, "elapsed_s": 9.800969499978237, "policy_loss": -0.0017929080834924171, "value_loss": 21.882431507110596, "entropy": -1.0431394577026367, "approximate_kl": 0.00010043383020580388, "clip_fraction": 0.0, "gradient_norm": 9.932143449783325, "epochs_completed": 4, "valid_transitions": 120, "gradient_updates": 4, "update_accepted": true, "guard_candidate_success_rate": "", "guard_candidate_reward": "", "guard_candidate_point_cost_s": "", "accepted_validation_reward": -0.16204958169347372, "accepted_point_cost_s": 0.003070633986520694, "policy_learning_rate": 3e-05, "rejected_updates": 0, "consecutive_cost_rejections": 0, "reward_components": {"progress": 2.1899732794048274, "strike_quality": 3.368391004562602e-05, "point_displacement_integral": -0.062370002140725696, "maximum_displacement": -7.704982353666585, "success": 0.0, "forward_return": 0.0, "release": 0.0, "non_tip_first": 0.0, "invalid_tip_entry": 0.0, "timeout": 0.0, "terminal_displacement": 0.0, "time": -0.1, "numerical_failure": 0.0, "recovery": 0.0}, "median_planning_minimum_tip_distance_m": 1.2844890286547888, "mean_planning_maximum_drone_displacement_m": 0.31374287267831613}
+{"status": "RUNNING", "pid": 35588, "device": "cuda", "target_episodes": 8, "collection_batch": 4, "update_guard_enabled": false, "artifact": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\ppo\\20260908-201618-619109-seed902", "episodes": 8, "success_rate": 0.0, "batch_success_rate": 0.0, "mean_episode_reward": -5.240490224723622, "median_minimum_tip_distance_m": 1.2370858276884902, "mean_maximum_point_displacement_m": 0.25862696435509935, "mean_point_displacement_cost_integral_s": 0.14524465673937262, "numerical_failure_rate": 0.0, "nonfinite_rate": 0.0, "position_limit_rate": 0.0, "speed_limit_rate": 0.0, "non_tip_first_rate": 0.0, "invalid_tip_entry_rate": 0.0, "timeout_rate": 1.0, "curriculum_stage": "final", "curriculum_target_radius_m": 0.001, "curriculum_minimum_speed_m_s": 4.0, "curriculum_maximum_angle_deg": 45.0, "episodes_per_second": 0.2866930876567861, "elapsed_s": 27.904404899978545, "policy_loss": -0.000839616623125039, "value_loss": 31.2383451461792, "entropy": -1.0430457592010498, "approximate_kl": 6.361077973147944e-05, "clip_fraction": 0.0, "gradient_norm": 9.098422050476074, "epochs_completed": 4, "valid_transitions": 120, "gradient_updates": 8, "update_accepted": true, "guard_candidate_success_rate": "", "guard_candidate_reward": "", "guard_candidate_point_cost_s": "", "accepted_validation_reward": -0.16204958169347372, "accepted_point_cost_s": 0.003070633986520694, "policy_learning_rate": 3e-05, "rejected_updates": 0, "consecutive_cost_rejections": 0, "reward_components": {"progress": 1.956984418350207, "strike_quality": 1.4720734894280651e-05, "point_displacement_integral": -0.07262232836968631, "maximum_displacement": -7.024867035439034, "success": 0.0, "forward_return": 0.0, "release": 0.0, "non_tip_first": 0.0, "invalid_tip_entry": 0.0, "timeout": 0.0, "terminal_displacement": 0.0, "time": -0.1, "numerical_failure": 0.0, "recovery": 0.0}, "median_planning_minimum_tip_distance_m": 1.2474713825920567, "mean_planning_maximum_drone_displacement_m": 0.29164716742942365}
+{
+  "episodes": 8,
+  "success_rate": 0.0,
+  "batch_success_rate": 0.0,
+  "mean_episode_reward": -5.240490224723622,
+  "median_minimum_tip_distance_m": 1.2370858276884902,
+  "mean_maximum_point_displacement_m": 0.25862696435509935,
+  "mean_point_displacement_cost_integral_s": 0.14524465673937262,
+  "numerical_failure_rate": 0.0,
+  "nonfinite_rate": 0.0,
+  "position_limit_rate": 0.0,
+  "speed_limit_rate": 0.0,
+  "non_tip_first_rate": 0.0,
+  "invalid_tip_entry_rate": 0.0,
+  "timeout_rate": 1.0,
+  "curriculum_stage": "final",
+  "curriculum_target_radius_m": 0.001,
+  "curriculum_minimum_speed_m_s": 4.0,
+  "curriculum_maximum_angle_deg": 45.0,
+  "episodes_per_second": 0.2866930876567861,
+  "elapsed_s": 37.284261199994944,
+  "policy_loss": -0.000839616623125039,
+  "value_loss": 31.2383451461792,
+  "entropy": -1.0430457592010498,
+  "approximate_kl": 6.361077973147944e-05,
+  "clip_fraction": 0.0,
+  "gradient_norm": 9.098422050476074,
+  "epochs_completed": 4,
+  "valid_transitions": 120,
+  "gradient_updates": 8,
+  "update_accepted": true,
+  "update_guard_enabled": false,
+  "guard_candidate_success_rate": "",
+  "guard_candidate_reward": "",
+  "guard_candidate_point_cost_s": "",
+  "accepted_validation_reward": -0.16204958169347372,
+  "accepted_point_cost_s": 0.003070633986520694,
+  "policy_learning_rate": 3e-05,
+  "rejected_updates": 0,
+  "consecutive_cost_rejections": 0,
+  "reward_components": {
+    "progress": 1.956984418350207,
+    "strike_quality": 1.4720734894280651e-05,
+    "point_displacement_integral": -0.07262232836968631,
+    "maximum_displacement": -7.024867035439034,
+    "success": 0.0,
+    "forward_return": 0.0,
+    "release": 0.0,
+    "non_tip_first": 0.0,
+    "invalid_tip_entry": 0.0,
+    "timeout": 0.0,
+    "terminal_displacement": 0.0,
+    "time": -0.1,
+    "numerical_failure": 0.0,
+    "recovery": 0.0
+  },
+  "median_planning_minimum_tip_distance_m": 1.2474713825920567,
+  "mean_planning_maximum_drone_displacement_m": 0.29164716742942365,
+  "status": "COMPLETED",
+  "pid": 35588,
+  "device": "cuda",
+  "successes": 0,
+  "target_episodes": 8,
+  "collection_batch": 4,
+  "artifact": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\ppo\\20260908-201618-619109-seed902"
+}

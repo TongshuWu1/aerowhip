@@ -1,0 +1,185 @@
+{
+  "schema": "nominal_drone_pose_bootstrap_fit_v1",
+  "scope": "Legacy whip-only nominal drone; no residual or cable fit",
+  "takes": [
+    "whip1_001",
+    "whip1_002",
+    "whip1_003"
+  ],
+  "source_version": "20260908-041031-260837",
+  "input_hashes": {
+    "inputs\\20260908-041031-260837\\processing.json": "b79d6fbe1741e19642d85360db8476351275b2ffe326523fc9224c93f43dc9f9",
+    "inputs\\20260908-041031-260837\\execution_profile.json": "60eca0cb7b3f5e171f09781accef881b62eec02f76a43b81f8b79c2807bd0bdc",
+    "inputs\\20260908-041031-260837\\geometry_model.json": "f5e0a8a57b5070aa6a31e2073730e7d9ebc3fcd21aa8a878d8b3fc50114e95e9",
+    "inputs\\20260908-041031-260837\\whip1_001\\dataset.npz": "012bdf6478d3f1d35e5f1ad6a6b3b76b3186265709b2536e24a526293c1c8d65",
+    "inputs\\20260908-041031-260837\\whip1_001\\quality.json": "6a3b9356942e4e7deb21e1c557fea0f09e27b3f3fd308bfc372aad6b92996f7b",
+    "inputs\\20260908-041031-260837\\whip1_001\\execution_phases.json": "8bb34e0d49c7d9f8d3a0ed27bccec12788904ddcd4a243895d2f368b26ab4bad",
+    "inputs\\20260908-041031-260837\\whip1_002\\dataset.npz": "1cf6dfcc327d8680efd6b8254ace05a1af7b608c6a062fc04dc59d46e1901ba3",
+    "inputs\\20260908-041031-260837\\whip1_002\\quality.json": "4aa2fca78b63dfa94da98fc8ed19725f8bfa8f570b5ef70296f6fba18e5c4b26",
+    "inputs\\20260908-041031-260837\\whip1_002\\execution_phases.json": "7bd84b84254a2c8d927b18d0e380d0343af9a7919b10feb7c42e87f36ff26d61",
+    "inputs\\20260908-041031-260837\\whip1_003\\dataset.npz": "45b5e7e4f36cf90ad776d92653c43822b352e8ead3cc6dd6da1ef347c7b68e3c",
+    "inputs\\20260908-041031-260837\\whip1_003\\quality.json": "922a665e26257042a932645fcc3cae50747c2b288c064c568c252b1fc1095be3",
+    "inputs\\20260908-041031-260837\\whip1_003\\execution_phases.json": "9d52946fc92807dbe3bb23f00871aa6fa32b2ad708b5ee71e1a049ff61264631"
+  },
+  "reviews": {
+    "whip1_001": {
+      "processed_version": "20260908-041031-260837",
+      "trial_id": "whip1_001",
+      "role": "unassigned",
+      "outcome": "unreviewed",
+      "notes": "User confirmed take 3 intentionally has a different post-hold. Preserve each take's observed commands/timing (001/002 approximately 1.5 s callback coverage, 003 approximately 5 s). Source-script duration difference is documented provenance, not grounds to exclude a take. Contact and outcomes remain unreviewed.",
+      "alignment_reviewed": false,
+      "precontact_start_s": null,
+      "precontact_end_s": null,
+      "created_utc": "2026-09-08T04:12:43.500458+00:00",
+      "training_ready": false
+    },
+    "whip1_002": {
+      "processed_version": "20260908-041031-260837",
+      "trial_id": "whip1_002",
+      "role": "unassigned",
+      "outcome": "unreviewed",
+      "notes": "User confirmed take 3 intentionally has a different post-hold. Preserve each take's observed commands/timing (001/002 approximately 1.5 s callback coverage, 003 approximately 5 s). Source-script duration difference is documented provenance, not grounds to exclude a take. Contact and outcomes remain unreviewed.",
+      "alignment_reviewed": false,
+      "precontact_start_s": null,
+      "precontact_end_s": null,
+      "created_utc": "2026-09-08T04:12:43.501458+00:00",
+      "training_ready": false
+    },
+    "whip1_003": {
+      "processed_version": "20260908-041031-260837",
+      "trial_id": "whip1_003",
+      "role": "unassigned",
+      "outcome": "unreviewed",
+      "notes": "User confirmed take 3 intentionally has a different post-hold. Preserve each take's observed commands/timing (001/002 approximately 1.5 s callback coverage, 003 approximately 5 s). Source-script duration difference is documented provenance, not grounds to exclude a take. Contact and outcomes remain unreviewed.",
+      "alignment_reviewed": false,
+      "precontact_start_s": null,
+      "precontact_end_s": null,
+      "created_utc": "2026-09-08T04:13:54.092439+00:00",
+      "training_ready": false
+    }
+  },
+  "review_sources": {
+    "whip1_001": {
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\adaptation_rounds\\adaptation0\\reviews\\20260908-041243-500458.json",
+      "sha256": "139b4ed94f356aa9973ee2fadeb7860a3cd9fcd2e401daa53a3eb054a4f4836f"
+    },
+    "whip1_002": {
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\adaptation_rounds\\adaptation0\\reviews\\20260908-041243-501458.json",
+      "sha256": "f565bdcf52b0d1a6d3736a6d142ac75e6c0e3e711ad7c1296240b324814d6c2d"
+    },
+    "whip1_003": {
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\adaptation_rounds\\adaptation0\\reviews\\20260908-041354-092439-01788840834092439100-789b24c4.json",
+      "sha256": "64e5e68c9793af71b4273a9330f0aa00ba5334235da5a0861fd63f4b368869ec"
+    }
+  },
+  "contact_review": {
+    "user_answer": "no so the optitrack k data is trimmed by me, so the take start from its take off,in midair, the take end about the landing",
+    "interpretation": "User answered no to contact/intervention during CSV maneuver; supplied files start during takeoff and end around landing.",
+    "outside_maneuver_contact_status": "Not certified by this answer"
+  },
+  "source_hashes": {
+    "experimental_data/nominal_pose_fit.py": "52482c5b24c54b8d23615cc2fa486005581cc3e2fa8fbf3e15ee0803c3cad6a3",
+    "experimental_data/drone_pose_response_data.py": "99179459badd49853bad3837f231a4c653f0b1b278d0b30ec04c7ef55da71ee8",
+    "experimental_data/drone_pose_initialization.py": "d29fb8894259a7c7d914bfe6a7da4c3b55429cfdc9a9c48b788742a36b535ac8",
+    "simulator/drone_pose_response.py": "06a3ab5ff390c3e7403597568428a2953bfa32043ad2320005ba92949d7b0fa1",
+    "simulator/geometry.py": "29bb9b610cb66b044ee433b0fbee1a0879788dffa7fbab7cd0402e253528fa21",
+    "tools/fit_nominal_drone_pose.py": "7a0a7428836685f8ba1c4c01e65d5032671c186ae8dc097316b6b32c1bf5a7c3",
+    "tests/calibration/test_nominal_pose_fit.py": "15035edfe8e546414007cb3cb21401fbf1d1bed6b73d744bf776b24a3414ab7d"
+  },
+  "fitting_order": "Position-only nominal gains/delay first; then one attitude timescale. Translation does not depend on attitude in this model.",
+  "translation_loss": "Equal-take mean XYZ squared position error over valid CSV maneuver samples only, divided by 0.05m squared, plus fixed weak gain prior",
+  "gain_names": [
+    "kp_xy",
+    "kp_z",
+    "kd_xy",
+    "kd_z",
+    "feedforward_xy",
+    "feedforward_z"
+  ],
+  "gain_lower": [
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.0,
+    0.0
+  ],
+  "gain_upper": [
+    80.0,
+    80.0,
+    20.0,
+    20.0,
+    2.0,
+    2.0
+  ],
+  "gain_prior": [
+    4.0,
+    4.0,
+    3.0,
+    3.0,
+    1.0,
+    1.0
+  ],
+  "gain_prior_scales": [
+    20.0,
+    20.0,
+    10.0,
+    10.0,
+    1.0,
+    1.0
+  ],
+  "gain_prior_weight": 0.01,
+  "position_scale_m": 0.05,
+  "gain_initializations": [
+    [
+      4.0,
+      4.0,
+      3.0,
+      3.0,
+      1.0,
+      1.0
+    ],
+    [
+      16.0,
+      16.0,
+      8.0,
+      8.0,
+      1.0,
+      1.0
+    ],
+    [
+      40.0,
+      40.0,
+      12.0,
+      12.0,
+      0.7,
+      0.7
+    ]
+  ],
+  "delay_candidates_s": [
+    0.0,
+    0.02,
+    0.04,
+    0.06,
+    0.08,
+    0.1,
+    0.12
+  ],
+  "attitude_bounds_s": [
+    0.02,
+    0.3
+  ],
+  "integration_maximum_step_s": 0.005,
+  "convergence_step_s": 0.0025,
+  "phase_scope": "Entire observed CSV maneuver; pre-hover is initialization only; first 0.5s logged post-hold is diagnostic only",
+  "mask_scope": "Saved valid measurements and manual interval plus jump/phase-boundary masks; commands/time remain complete",
+  "manual_exclusions": [],
+  "alignment": "Per-take causal pre-hover effective alignment; not measured firmware mounting",
+  "initialization": "Last measured pose before onset minus 0.1s; preceding 1s hover; compensation recomputed for each gain candidate",
+  "calibration": "Frozen archived active geometry; no COM/mass/geometry fit or extra cable reaction",
+  "assessment": "Three leave-one-whip-out development checks; final candidate on all three. Not independent paper evidence.",
+  "domain_failure_reporting": "Reject invalid attitude parameter candidates; abort on selected maneuver-domain failure; mark entire post-hold diagnostic unavailable when only extended replay fails. Never impute a recovery.",
+  "device": "CPU NumPy analytic translational sensitivities / SciPy optimizer; full pose and attitude evaluation on CUDA",
+  "model_status": "Candidate only; complete M0/PPO/export integration not finished"
+}

@@ -1,0 +1,21 @@
+{
+  "label": "Combined prediction review complete",
+  "summary": {
+    "both_residuals": {
+      "marker_rmse_m": 0.07962752647610169,
+      "tip_rmse_m": 0.12489649224788045
+    },
+    "nominal_drone_physics_cable": {
+      "marker_rmse_m": 0.07958289212128343,
+      "tip_rmse_m": 0.12407421068003391
+    },
+    "nominal_drone_residual_cable": {
+      "marker_rmse_m": 0.07967072962889865,
+      "tip_rmse_m": 0.12426471094633891
+    },
+    "residual_drone_physics_cable": {
+      "marker_rmse_m": 0.07943555981069628,
+      "tip_rmse_m": 0.12460254808137562
+    }
+  }
+}

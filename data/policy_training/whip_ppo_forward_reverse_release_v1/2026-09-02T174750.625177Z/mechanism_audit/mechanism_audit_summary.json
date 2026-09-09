@@ -1,0 +1,102 @@
+{
+  "schema": "ppo_whip_mechanism_audit_v1",
+  "created_utc": "2026-09-02T18:49:30.471466+00:00",
+  "source_artifact": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\policy_training\\whip_ppo_forward_reverse_release_v1\\2026-09-02T174750.625177Z",
+  "checkpoint": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\policy_training\\whip_ppo_forward_reverse_release_v1\\2026-09-02T174750.625177Z\\checkpoints\\best_validation.pt",
+  "checkpoint_sha256": "cae1739efdccac88bd88e7507a8c521a4f6e52978889e1bd3016ab2fa82e2c02",
+  "config_sha256": "92a3aea6e3e9206cbe57eda39ad923d3fc9ef0996dfaec0c3a0515be93c17ca6",
+  "validation_contexts": 512,
+  "successful_contexts": 477,
+  "success_rate": 0.931640625,
+  "recording_dt_s": 0.01,
+  "production_physics": "UAV + causal residual + 12-node DDER; fixed residual batch 2048",
+  "release_definition": "peak forward activation * backward UAV target-axis velocity * forward tip target-axis velocity relative to DDER root attachment",
+  "release_peak_timing_relative_to_hit_s": {
+    "count": 477,
+    "mean": 0.0,
+    "median": 0.0,
+    "p10": 0.0,
+    "p90": 0.0,
+    "minimum": 0.0,
+    "maximum": 0.0
+  },
+  "peak_release_within_0p10_s_of_hit_fraction": 1.0,
+  "peak_release_within_0p20_s_of_hit_fraction": 1.0,
+  "peak_forward_displacement_m": {
+    "count": 477,
+    "mean": 0.6210939133192258,
+    "median": 0.6176733374595642,
+    "p10": 0.5877207040786743,
+    "p90": 0.6642510771751404,
+    "minimum": 0.5120030045509338,
+    "maximum": 0.7896568179130554
+  },
+  "forward_displacement_at_hit_m": {
+    "count": 477,
+    "mean": 0.5241771157932481,
+    "median": 0.5214303135871887,
+    "p10": 0.4778036594390869,
+    "p90": 0.5757646322250366,
+    "minimum": 0.2806622385978699,
+    "maximum": 0.7225027084350586
+  },
+  "return_distance_at_hit_m": {
+    "count": 477,
+    "mean": 0.09691679752597769,
+    "median": 0.09536463022232056,
+    "p10": 0.07059932947158813,
+    "p90": 0.12197979092597962,
+    "minimum": 0.04442286491394043,
+    "maximum": 0.23134076595306396
+  },
+  "uav_forward_speed_at_hit_m_s": {
+    "count": 477,
+    "mean": -1.4444496629123167,
+    "median": -1.4494805335998535,
+    "p10": -1.6483972072601318,
+    "p90": -1.218220329284668,
+    "minimum": -1.9163188934326172,
+    "maximum": -0.8224345445632935
+  },
+  "relative_tip_forward_speed_at_hit_m_s": {
+    "count": 477,
+    "mean": 6.533041165309882,
+    "median": 6.5265607833862305,
+    "p10": 6.099837684631348,
+    "p90": 6.996528244018555,
+    "minimum": 5.484678268432617,
+    "maximum": 8.711213111877441
+  },
+  "peak_release_quality": {
+    "count": 477,
+    "mean": 0.5074624734729591,
+    "median": 0.5087261199951172,
+    "p10": 0.46388686299324033,
+    "p90": 0.5505457997322083,
+    "minimum": 0.394351989030838,
+    "maximum": 0.5959992408752441
+  },
+  "impact_release_quality": {
+    "count": 477,
+    "mean": 0.5074624734729591,
+    "median": 0.5087261199951172,
+    "p10": 0.46388686299324033,
+    "p90": 0.5505457997322083,
+    "minimum": 0.394351989030838,
+    "maximum": 0.5959992408752441
+  },
+  "impact_to_peak_release_quality_ratio": {
+    "count": 477,
+    "mean": 1.0,
+    "median": 1.0,
+    "p10": 1.0,
+    "p90": 1.0,
+    "minimum": 1.0,
+    "maximum": 1.0
+  },
+  "stored_vs_recomputed_peak_release_max_abs_error": 0.0001296401023864746,
+  "interpretation": "CURRENT_RELEASE_IS_IMPACT_COUPLED",
+  "new_cem_solves": 0,
+  "hardware_executed": false,
+  "protected_data_accessed": false
+}

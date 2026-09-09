@@ -1,0 +1,44 @@
+episodes=2048/200000 batch_success=83.301% rolling_5000=83.301% total_success=83.301% endpoint_success=83.594% episodes_per_second=94.51
+episodes=4096/200000 batch_success=81.641% rolling_5000=82.471% total_success=82.471% endpoint_success=82.739% episodes_per_second=127.15
+episodes=6144/200000 batch_success=79.346% rolling_5000=81.200% total_success=81.429% endpoint_success=81.624% episodes_per_second=145.46
+episodes=8192/200000 batch_success=79.150% rolling_5000=79.720% total_success=80.859% endpoint_success=81.018% episodes_per_second=155.64
+episodes=10240/200000 batch_success=76.904% rolling_5000=78.220% total_success=80.068% endpoint_success=80.225% episodes_per_second=162.52
+validation_episodes=10240 success=463/512
+episodes=12288/200000 batch_success=75.537% rolling_5000=76.700% total_success=79.313% endpoint_success=79.460% episodes_per_second=145.82
+episodes=14336/200000 batch_success=74.805% rolling_5000=75.720% total_success=78.669% endpoint_success=78.836% episodes_per_second=151.83
+episodes=16384/200000 batch_success=71.191% rolling_5000=73.720% total_success=77.734% endpoint_success=77.887% episodes_per_second=156.55
+episodes=18432/200000 batch_success=56.348% rolling_5000=65.780% total_success=75.358% endpoint_success=75.494% episodes_per_second=159.89
+episodes=20480/200000 batch_success=54.199% rolling_5000=58.080% total_success=73.242% endpoint_success=73.364% episodes_per_second=162.47
+validation_episodes=20480 success=314/512
+episodes=22528/200000 batch_success=48.682% rolling_5000=52.480% total_success=71.009% endpoint_success=71.125% episodes_per_second=152.43
+episodes=24576/200000 batch_success=48.779% rolling_5000=49.740% total_success=69.157% endpoint_success=69.275% episodes_per_second=155.13
+episodes=26624/200000 batch_success=48.633% rolling_5000=48.720% total_success=67.578% endpoint_success=67.691% episodes_per_second=157.55
+episodes=28672/200000 batch_success=44.238% rolling_5000=46.620% total_success=65.911% endpoint_success=66.019% episodes_per_second=159.85
+episodes=30720/200000 batch_success=44.922% rolling_5000=45.160% total_success=64.512% endpoint_success=64.613% episodes_per_second=162.12
+validation_episodes=30720 success=278/512
+episodes=32768/200000 batch_success=43.164% rolling_5000=43.940% total_success=63.177% endpoint_success=63.272% episodes_per_second=155.56
+episodes=34816/200000 batch_success=43.066% rolling_5000=43.420% total_success=61.994% endpoint_success=62.086% episodes_per_second=157.38
+episodes=36864/200000 batch_success=43.701% rolling_5000=43.120% total_success=60.978% endpoint_success=61.065% episodes_per_second=159.20
+episodes=38912/200000 batch_success=46.582% rolling_5000=44.960% total_success=60.220% endpoint_success=60.303% episodes_per_second=160.81
+episodes=40960/200000 batch_success=44.092% rolling_5000=44.980% total_success=59.414% endpoint_success=59.492% episodes_per_second=162.31
+validation_episodes=40960 success=229/512
+episodes=43008/200000 batch_success=39.893% rolling_5000=42.320% total_success=58.484% endpoint_success=58.559% episodes_per_second=157.23
+episodes=45056/200000 batch_success=36.963% rolling_5000=39.900% total_success=57.506% endpoint_success=57.579% episodes_per_second=158.46
+episodes=47104/200000 batch_success=32.764% rolling_5000=35.580% total_success=56.430% endpoint_success=56.505% episodes_per_second=159.69
+episodes=49152/200000 batch_success=37.891% rolling_5000=35.540% total_success=55.658% endpoint_success=55.729% episodes_per_second=160.83
+episodes=51200/200000 batch_success=38.525% rolling_5000=37.240% total_success=54.973% endpoint_success=55.043% episodes_per_second=161.88
+validation_episodes=51200 success=214/512
+{
+  "status": "STOPPED_BY_USER",
+  "episodes": 51200,
+  "requested_episodes": 200000,
+  "successes": 28146,
+  "endpoint_successes": 28182,
+  "legacy_scientific_successes": 0,
+  "success_rate": 0.5497265625,
+  "rolling_success_rate": 0.3724,
+  "rolling_window_episodes": 5000,
+  "episodes_per_second": 156.36385152275378,
+  "elapsed_s": 327.4414098999696,
+  "latest_durable_checkpoint_episodes": 51200
+}

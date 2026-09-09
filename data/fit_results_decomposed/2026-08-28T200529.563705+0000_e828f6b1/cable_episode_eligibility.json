@@ -1,0 +1,154 @@
+{
+  "physical_episode_boundaries_modified": false,
+  "schema": "decomposed_cable_episode_eligibility_v1",
+  "threshold_m": 0.01,
+  "training": [
+    {
+      "accepted": true,
+      "initialization_rmse_m": 0.006622272077947855,
+      "take_id": "fig8_001",
+      "view_id": "fig8_001__episode_000__full"
+    },
+    {
+      "accepted": true,
+      "initialization_rmse_m": 0.0070881228893995285,
+      "take_id": "fig8_002",
+      "view_id": "fig8_002__episode_000__full"
+    },
+    {
+      "accepted": true,
+      "initialization_rmse_m": 0.006618640851229429,
+      "take_id": "fig8_002",
+      "view_id": "fig8_002__episode_001__full"
+    },
+    {
+      "accepted": true,
+      "initialization_rmse_m": 0.008105785585939884,
+      "take_id": "fig8_002",
+      "view_id": "fig8_002__episode_002__full"
+    },
+    {
+      "accepted": true,
+      "initialization_rmse_m": 0.006295517086982727,
+      "take_id": "fig8vertical_001",
+      "view_id": "fig8vertical_001__episode_000__full"
+    },
+    {
+      "accepted": true,
+      "initialization_rmse_m": 0.006589158438146114,
+      "take_id": "fig8vertical_001",
+      "view_id": "fig8vertical_001__episode_001__full"
+    },
+    {
+      "accepted": true,
+      "initialization_rmse_m": 0.006720671430230141,
+      "take_id": "fig8vertical_001",
+      "view_id": "fig8vertical_001__episode_002__full"
+    },
+    {
+      "accepted": true,
+      "initialization_rmse_m": 0.004930648487061262,
+      "take_id": "fig8vertical_001",
+      "view_id": "fig8vertical_001__episode_003__full"
+    },
+    {
+      "accepted": true,
+      "initialization_rmse_m": 0.004821759182959795,
+      "take_id": "fig8vertical_001",
+      "view_id": "fig8vertical_001__episode_004__full"
+    },
+    {
+      "accepted": true,
+      "initialization_rmse_m": 0.005342587828636169,
+      "take_id": "fig8vertical_001",
+      "view_id": "fig8vertical_001__episode_005__full"
+    },
+    {
+      "accepted": true,
+      "initialization_rmse_m": 0.004924466833472252,
+      "take_id": "fig8vertical_001",
+      "view_id": "fig8vertical_001__episode_006__full"
+    },
+    {
+      "accepted": true,
+      "initialization_rmse_m": 0.005411283578723669,
+      "take_id": "fig8vertical_001",
+      "view_id": "fig8vertical_001__episode_007__full"
+    },
+    {
+      "accepted": true,
+      "initialization_rmse_m": 0.005594196729362011,
+      "take_id": "fig8vertical_001",
+      "view_id": "fig8vertical_001__episode_008__full"
+    },
+    {
+      "accepted": true,
+      "initialization_rmse_m": 0.006756567396223545,
+      "take_id": "fig8vertical_001",
+      "view_id": "fig8vertical_001__episode_009__full"
+    },
+    {
+      "accepted": true,
+      "initialization_rmse_m": 0.006697337608784437,
+      "take_id": "osc_001",
+      "view_id": "osc_001__episode_000__full"
+    },
+    {
+      "accepted": true,
+      "initialization_rmse_m": 0.006950254552066326,
+      "take_id": "osc_001",
+      "view_id": "osc_001__episode_001__full"
+    },
+    {
+      "accepted": true,
+      "initialization_rmse_m": 0.005939984228461981,
+      "take_id": "osc_002",
+      "view_id": "osc_002__episode_000__full"
+    },
+    {
+      "accepted": true,
+      "initialization_rmse_m": 0.006317393854260445,
+      "take_id": "osc_002",
+      "view_id": "osc_002__episode_001__full"
+    },
+    {
+      "accepted": true,
+      "initialization_rmse_m": 0.006313283462077379,
+      "take_id": "osc_002",
+      "view_id": "osc_002__episode_002__full"
+    },
+    {
+      "accepted": true,
+      "initialization_rmse_m": 0.006180525291711092,
+      "take_id": "osc_002",
+      "view_id": "osc_002__episode_003__full"
+    },
+    {
+      "accepted": true,
+      "initialization_rmse_m": 0.005759805906563997,
+      "take_id": "osc_002",
+      "view_id": "osc_002__episode_004__full"
+    }
+  ],
+  "validation": [
+    {
+      "accepted": true,
+      "initialization_rmse_m": 0.002617212710902095,
+      "take_id": "fig8_003",
+      "view_id": "fig8_003__episode_000__full"
+    },
+    {
+      "accepted": false,
+      "detail": "initialization_rmse=0.011709 exceeds 0.01 m",
+      "reason": "cable_initialization_rmse_gate",
+      "take_id": "fig8_003",
+      "view_id": "fig8_003__episode_001__full"
+    },
+    {
+      "accepted": true,
+      "initialization_rmse_m": 0.006193939130753279,
+      "take_id": "osc_003",
+      "view_id": "osc_003__episode_000__full"
+    }
+  ]
+}

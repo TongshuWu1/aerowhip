@@ -1,0 +1,156 @@
+{
+  "active_unchanged": true,
+  "archived_reproduction_max_position_difference_m": 0.0,
+  "candidate": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\historical_model_runs\\20260908-013552-736857-whip-only-drone\\candidate_bundle\\model.json",
+  "executed_prefix_new_vs_old_packet_position_rmse_m": 0.0006748142465182885,
+  "export_mapping": "New virtual attachment positions minus initial world attachment offset; old CSV used exactly as logged.",
+  "hardware": "NVIDIA GeForce RTX 4080",
+  "independent_test": false,
+  "initialization": "Virtual: unchanged archived plan state. Execution: causal measured cable and attachment state; no subsequent measurement feedback.",
+  "interpretation": "Current all-data candidate: historical commands are in-sample validation. New CSV is a counterfactual, not the flown input.",
+  "ppo_started": false,
+  "source_csv_sha256": "2f53b06af9849c2ac6053b29f16eeec34f12fd2e83dfe7e2c9c144145f43f81f",
+  "source_plan": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260906-222405-804438\\plan_001",
+  "source_plan_sha256": "a4e92b07a80df6f29f2f89293be80ff9e735d60127f8ff17448ab9b3eb8f6c83",
+  "takes": {
+    "whip1_001": {
+      "historical_packet_match_max_abs": 0.0,
+      "last_csv_state_s": 0.66,
+      "metrics": {
+        "actual_logged_csv_both_residuals": {
+          "attachment": {
+            "maximum_m": 0.40420458994511743,
+            "rmse_m": 0.27971131861692433,
+            "valid_frames": 67
+          },
+          "tip": {
+            "maximum_m": 0.4706709120507374,
+            "rmse_m": 0.20414544805038107,
+            "valid_frames": 67
+          }
+        },
+        "new_virtual_plan": {
+          "tip": {
+            "maximum_m": 0.5274763614168596,
+            "rmse_m": 0.19038326406025638,
+            "valid_frames": 67
+          }
+        },
+        "old_virtual_plan": {
+          "tip": {
+            "maximum_m": 0.5093732089765447,
+            "rmse_m": 0.18735846830234698,
+            "valid_frames": 67
+          }
+        },
+        "same_force_new_csv_both_residuals": {
+          "attachment": {
+            "maximum_m": 0.4039227021512714,
+            "rmse_m": 0.27948446135812954,
+            "valid_frames": 67
+          },
+          "tip": {
+            "maximum_m": 0.4719627826726487,
+            "rmse_m": 0.20690031675261886,
+            "valid_frames": 67
+          }
+        }
+      },
+      "packet_count": 20,
+      "start_frame": 1140
+    },
+    "whip1_002": {
+      "historical_packet_match_max_abs": 0.0,
+      "last_csv_state_s": 0.66,
+      "metrics": {
+        "actual_logged_csv_both_residuals": {
+          "attachment": {
+            "maximum_m": 0.3938096013386751,
+            "rmse_m": 0.2726828932088116,
+            "valid_frames": 67
+          },
+          "tip": {
+            "maximum_m": 0.4386703122509672,
+            "rmse_m": 0.1910060201951623,
+            "valid_frames": 67
+          }
+        },
+        "new_virtual_plan": {
+          "tip": {
+            "maximum_m": 0.4797097774985483,
+            "rmse_m": 0.17533363077689446,
+            "valid_frames": 67
+          }
+        },
+        "old_virtual_plan": {
+          "tip": {
+            "maximum_m": 0.4600937484479653,
+            "rmse_m": 0.17159334791214065,
+            "valid_frames": 67
+          }
+        },
+        "same_force_new_csv_both_residuals": {
+          "attachment": {
+            "maximum_m": 0.39356751419459546,
+            "rmse_m": 0.2724407125812513,
+            "valid_frames": 67
+          },
+          "tip": {
+            "maximum_m": 0.4402372099819995,
+            "rmse_m": 0.19402858498038422,
+            "valid_frames": 67
+          }
+        }
+      },
+      "packet_count": 20,
+      "start_frame": 1316
+    },
+    "whip1_003": {
+      "historical_packet_match_max_abs": 0.0,
+      "last_csv_state_s": 0.65,
+      "metrics": {
+        "actual_logged_csv_both_residuals": {
+          "attachment": {
+            "maximum_m": 0.38618421518436197,
+            "rmse_m": 0.26844822828041237,
+            "valid_frames": 66
+          },
+          "tip": {
+            "maximum_m": 0.43652458063215416,
+            "rmse_m": 0.1847772890575707,
+            "valid_frames": 66
+          }
+        },
+        "new_virtual_plan": {
+          "tip": {
+            "maximum_m": 0.5301699081631364,
+            "rmse_m": 0.20165672214162922,
+            "valid_frames": 66
+          }
+        },
+        "old_virtual_plan": {
+          "tip": {
+            "maximum_m": 0.5128967261959287,
+            "rmse_m": 0.19884781093708123,
+            "valid_frames": 66
+          }
+        },
+        "same_force_new_csv_both_residuals": {
+          "attachment": {
+            "maximum_m": 0.3856196454946224,
+            "rmse_m": 0.26798269335617564,
+            "valid_frames": 66
+          },
+          "tip": {
+            "maximum_m": 0.43759101626070096,
+            "rmse_m": 0.18730408277876032,
+            "valid_frames": 66
+          }
+        }
+      },
+      "packet_count": 20,
+      "start_frame": 1037
+    }
+  },
+  "timing": "Use original observed packet timing. Exclude every state at or after first post-maneuver hold."
+}

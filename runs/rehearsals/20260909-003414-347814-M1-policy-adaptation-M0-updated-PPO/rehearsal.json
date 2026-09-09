@@ -1,0 +1,163 @@
+{
+  "checkpoint": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\ppo\\20260909-003414-738407-seed655\\checkpoints\\best_validation.pt",
+  "checkpoint_sha256": "08c893d82fe6ce5b7d7b6ffbded048fe982e8fad040e465e739ddb5ad8416e10",
+  "command_rate_hz": 30,
+  "execution": "Take off; hold for 10 s; play complete CSV once at native timestamps; land. Offline artifact only.",
+  "force_rate_hz": 30,
+  "frame": "World XYZ, metres; FullState position refers to unshifted OptiTrack tracked origin",
+  "initial_attachment_m": [
+    -1.9933450027145172,
+    -0.01287427254333901,
+    1.2
+  ],
+  "initial_state": "Ideal settled level hover, zero velocity/bias, hanging planning cable",
+  "initial_tracking_origin_m": [
+    -2.0,
+    0.0,
+    1.255
+  ],
+  "minimum_tip_distance_m": 0.0326788474298472,
+  "predicted_hit_time_s": 0.9400000000000001,
+  "predicted_valid_hit": true,
+  "prediction_valid_through_s": 11.233333333333334,
+  "preflight_hold_s": 10.0,
+  "recovery": {
+    "approach_coefficients_normalized": [
+      [
+        -2.7384100516891015,
+        0.30781584683784313,
+        1.6549999999999998
+      ],
+      [
+        1.4832696719766245,
+        -0.6183202803428377,
+        -0.8034937599149243
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        -1.515517514968732,
+        0.6317632136785948,
+        0.8209625594895467
+      ],
+      [
+        0.7900066004764742,
+        -0.3293245401750546,
+        -0.42795007931939594
+      ],
+      [
+        -0.019348705795264785,
+        0.0080657600014543,
+        0.010481279744773512
+      ]
+    ],
+    "approach_position_m": [
+      -2.7384100516891015,
+      0.30781584683784313,
+      1.6549999999999998
+    ],
+    "approach_velocity_m_s": [
+      0.2889486373980437,
+      -0.12045200266418915,
+      -0.15652475842498526
+    ],
+    "brake_end_s": 2.066666666666667,
+    "hold_s": 3.0,
+    "hover_position_m": [
+      -2.0,
+      0.0,
+      1.255
+    ],
+    "maximum_tilt_limit_deg": 45.0,
+    "phase_description": "Moving curved turn/descent, slow approach, stationary final hold",
+    "return_end_s": 7.200000000000001,
+    "return_s": 5.133333333333334,
+    "schema": "curved_moving_recovery_v1",
+    "settings": {
+      "approach_distance_m": 0.8,
+      "approach_height_m": 0.4,
+      "approach_speed_m_s": 0.35,
+      "hold_s": 3.0,
+      "maximum_descent_speed_m_s": 1.25,
+      "maximum_downward_acceleration_m_s2": 3.5,
+      "maximum_horizontal_acceleration_m_s2": 5.0,
+      "maximum_specific_force_m_s2": 18.28571428571429,
+      "maximum_speed_m_s": 5.0,
+      "maximum_tilt_deg": 45.0,
+      "maximum_turn_s": 8.0,
+      "minimum_specific_vertical_m_s2": 2.0,
+      "minimum_turn_s": 1.0
+    },
+    "stationary_braking_waypoint": false,
+    "total_duration_s": 10.200000000000001,
+    "turn_coefficients_normalized": [
+      [
+        -1.5544183627459942,
+        0.6214141913491784,
+        2.109329361466314
+      ],
+      [
+        -3.9078113785777644,
+        1.6290220671128328,
+        3.512710171306734
+      ],
+      [
+        -7.453356007915512,
+        -5.339399160443115,
+        -2.310362090264685
+      ],
+      [
+        31.578377336624868,
+        4.103818188896298,
+        -17.394530368729583
+      ],
+      [
+        -31.682560097196983,
+        -0.02458474863193194,
+        25.7211440164397
+      ],
+      [
+        10.28135845812228,
+        -0.6824546914454187,
+        -9.983291090218476
+      ]
+    ],
+    "turn_end_s": 2.066666666666667,
+    "turn_metrics": {
+      "minimum_az_m_s2": -3.459782963927818,
+      "minimum_height_m": 1.655000000000002,
+      "minimum_specific_vertical_m_s2": 6.346867036072181,
+      "minimum_vz_m_s": -1.1116453671211073,
+      "peak_height_m": 2.671051527952231,
+      "peak_horizontal_acceleration_m_s2": 4.293270064627458,
+      "peak_specific_force_m_s2": 11.518950992026866,
+      "peak_speed_m_s": 2.6984371695571108
+    },
+    "vehicle_limits_verified": false
+  },
+  "recovery_empirically_validated": false,
+  "recovery_prediction_complete": true,
+  "reference_feasible": true,
+  "reference_metrics": {
+    "maximum_reference_specific_force_m_s2": 15.326596658882504,
+    "maximum_reference_speed_m_s": 2.6983512551245803,
+    "maximum_reference_tilt_deg": 42.929346438148414,
+    "minimum_reference_specific_vertical_m_s2": 6.347381829573221
+  },
+  "schema": "research_fullstate_30hz_v1",
+  "scored_duration_s": 1.0,
+  "source_job": "20260908-064040-669809",
+  "target_position_m": [
+    -1.0,
+    0.0,
+    1.1
+  ],
+  "termination_mode": "frozen_virtual_plan",
+  "total_duration_s": 11.233333333333333,
+  "training_export_prefix_max_difference_m": 0.0,
+  "virtual_force_csv": "Virtual simulator input, including gravity; not a direct drone force command",
+  "whip_end_s": 1.0
+}

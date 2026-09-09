@@ -1,0 +1,55 @@
+{
+  "feature_names": [
+    "position_error_x",
+    "position_error_y",
+    "position_error_z",
+    "velocity_error_x",
+    "velocity_error_y",
+    "velocity_error_z",
+    "command_acceleration_x",
+    "command_acceleration_y",
+    "command_acceleration_z"
+  ],
+  "mean": [
+    -0.0027199956338954945,
+    3.975983871461383e-05,
+    -0.022395946365502413,
+    0.002662110149029919,
+    -6.664604014482102e-05,
+    0.022043192958935382,
+    0.007185132401373143,
+    -0.01060829165939956,
+    0.0
+  ],
+  "raw_standard_deviation": [
+    0.01720726200969264,
+    0.011445305914949161,
+    0.007242564852042697,
+    0.01840562896391415,
+    0.017230500033318517,
+    0.007555463993194306,
+    0.5485320015954986,
+    1.0942957098154136,
+    0.0
+  ],
+  "sample_count": 25700,
+  "schema": "milestone3a2_training_feature_normalization_v1",
+  "source": "accepted_nominal_baseline_rollouts_training_takes_only",
+  "standard_deviation": [
+    0.01720726200969264,
+    0.011445305914949161,
+    0.007242564852042697,
+    0.01840562896391415,
+    0.017230500033318517,
+    0.007555463993194306,
+    0.5485320015954986,
+    1.0942957098154136,
+    0.001
+  ],
+  "standard_deviation_floor": 0.001,
+  "training_takes": [
+    "fig8_001",
+    "fig8_002"
+  ],
+  "validation_used": false
+}

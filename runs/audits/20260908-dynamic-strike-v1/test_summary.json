@@ -1,0 +1,17 @@
+{
+  "elapsed_s": 42.62,
+  "legacy_parity": "legacy_parity.json",
+  "passed": 49,
+  "separate_gpu_preflight": "verification.json",
+  "tests": [
+    "tests/physics/test_dynamic_strike_reward.py",
+    "tests/physics/test_point_force_env.py",
+    "tests/training/test_research_pipeline.py",
+    "tests/ui/test_reward_ui_diagnostics.py",
+    "tests/ui/test_dynamic_strike_ui.py",
+    "tests/ui/test_multidrone.py",
+    "tests/training/test_live_scene.py",
+    "tests/training/test_training_stop.py",
+    "tests/training/test_reward_plateau.py"
+  ]
+}

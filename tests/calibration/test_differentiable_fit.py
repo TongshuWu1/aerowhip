@@ -143,12 +143,16 @@ def test_versioned_neural_baseline_loads_and_changes_runtime(tmp_path):
         apply_baseline(tmp_path, model, fit_directory=job, include_residual=True)
 
 
-def test_live_compilation_retains_neural_correction(tmp_path):
+@pytest.mark.parametrize('learn_drag', [False, True])
+def test_live_compilation_retains_neural_correction(tmp_path, learn_drag):
     from simulator.point_mass import ForceControlledPointCable
     from simulator.live_flight import prepare_live_physics
     cable, _, _ = fixture()
     payload = json.loads((Path(__file__).parents[2] / 'config/model.json').read_text())
-    network = MotionResidual(cable.node_count).double()
+    network = MotionResidual(cable.node_count, learn_drag=learn_drag,
+                            initial_drag_s_inv=payload['cable']['external_drag_s_inv']).double()
+    if learn_drag:
+        payload['cable']['external_drag_s_inv'] = 0
     with torch.no_grad():
         network.net[-1].bias.fill_(.1)
     path = tmp_path / 'residual.pt'

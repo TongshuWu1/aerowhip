@@ -1,0 +1,79 @@
+{
+  "model_parameter_and_residual_identity_passed": true,
+  "training_runtime_core_unchanged": true,
+  "core_files_checked": [
+    "simulator/research_pose.py",
+    "simulator/research_execution.py",
+    "simulator/research_physics.py",
+    "simulator/research_reference.py",
+    "learning/research_rollout.py",
+    "simulator/drone_pose_response.py",
+    "simulator/drone_pose_residual.py"
+  ],
+  "timing_sensitivity": [
+    {
+      "take": "whip_adp_1_001",
+      "saved_ghost_axis_rms_m": [
+        0.18450162115891,
+        0.04080844869802994,
+        0.06344361428082965
+      ],
+      "mean_measured_minus_prediction_m": [
+        -0.1510289708553148,
+        0.03604571677450715,
+        -0.05178582631764047
+      ],
+      "-0.01": 0.19642314710452996,
+      "0": 0.19932704254169922,
+      "0.01": 0.20418983502645738
+    },
+    {
+      "take": "whip_adp_1_002",
+      "saved_ghost_axis_rms_m": [
+        0.20894757598377517,
+        0.016179561741166415,
+        0.05701201215177654
+      ],
+      "mean_measured_minus_prediction_m": [
+        -0.17688476690515184,
+        -0.005386738304606141,
+        -0.04368721474418745
+      ],
+      "-0.01": 0.21375304681808716,
+      "0": 0.21718940410900808,
+      "0.01": 0.22258278488266378
+    },
+    {
+      "take": "whip_adp_1_003",
+      "saved_ghost_axis_rms_m": [
+        0.20443446148132202,
+        0.041120821209308975,
+        0.04817649137421415
+      ],
+      "mean_measured_minus_prediction_m": [
+        -0.18422328392893214,
+        0.037140045203755766,
+        -0.041103584890113724
+      ],
+      "-0.01": 0.21181948837938533,
+      "0": 0.21402183369744265,
+      "0.01": 0.21926273340791708
+    },
+    {
+      "take": "whip_adp_1_004",
+      "saved_ghost_axis_rms_m": [
+        0.2245523878115883,
+        0.018695834602758688,
+        0.07371953184437945
+      ],
+      "mean_measured_minus_prediction_m": [
+        -0.19270981278369767,
+        0.017432368453874133,
+        -0.05963829252579708
+      ],
+      "-0.01": 0.2342156360536138,
+      "0": 0.2370820079186401,
+      "0.01": 0.24306169672074635
+    }
+  ]
+}

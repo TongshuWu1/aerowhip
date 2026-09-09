@@ -82,7 +82,7 @@ def test_whole_system_force_balance_includes_point_and_cable_mass() -> None:
     np.testing.assert_allclose(force, expected)
 
 
-def test_real_take_build_has_new_contract_and_protects_test(tmp_path: Path) -> None:
+def test_real_take_build_has_new_contract_and_honors_explicit_protected_split(tmp_path: Path) -> None:
     manifest = build_force_dataset(take_id="osc_001", output_root=tmp_path)
     assert manifest["summary"]["take_count"] == 1
     with np.load(tmp_path / "osc_001" / "take.npz", allow_pickle=False) as take:
@@ -95,5 +95,11 @@ def test_real_take_build_has_new_contract_and_protects_test(tmp_path: Path) -> N
         (tmp_path / "osc_001" / "metadata.json").read_text(encoding="utf-8")
     )
     assert metadata["force_estimation"]["status"] == "estimated_not_measured"
+    # The user now admits all historical takes. Test the preserved protection
+    # contract using an explicit historical split, without editing live roles.
+    historical = json.loads((ROOT / 'data/dataset_manifest.json').read_text())
+    historical['takes']['fig8vertical_002']['role'] = 'untouched_test'
+    manifest_path = tmp_path / 'historical_manifest.json'
+    manifest_path.write_text(json.dumps(historical))
     with pytest.raises(ValueError, match="protected_untouched_test"):
-        build_force_dataset(take_id="fig8vertical_002", output_root=tmp_path)
+        build_force_dataset(take_id="fig8vertical_002", output_root=tmp_path, manifest_path=manifest_path)

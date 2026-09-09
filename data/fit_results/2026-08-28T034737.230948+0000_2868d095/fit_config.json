@@ -1,0 +1,83 @@
+{
+  "active_parameters": [
+    "K_p",
+    "K_v",
+    "k_a",
+    "K_R",
+    "K_omega"
+  ],
+  "active_stage": "Stage A - UAV only",
+  "cable_loss_weight": 0.0,
+  "command_semantics": {
+    "command_angular_velocity_frame": "unresolved_nonblocking_because_all_samples_are_zero",
+    "command_quaternion_interpretation": "heading_yaw_reference_for_current_dataset",
+    "configuration": "default_user_confirmed_external_files_unavailable",
+    "firmware": "stock_unmodified_user_confirmed_exact_version_unknown",
+    "flight_stack_location": "external_computer_not_available_in_repository",
+    "model_scope": "effective_closed_loop_recorded_command_to_measured_uav_motion",
+    "vehicle_type": "medium"
+  },
+  "fixed_parameters": {
+    "Cb": 3.872983346207417e-08,
+    "EI": 2e-06
+  },
+  "initialization_history_frames": 5,
+  "joint_weights": {
+    "cable": 1.0,
+    "uav_orientation": 1.0,
+    "uav_position": 1.0
+  },
+  "maximum_initialization_rmse_m": 0.01,
+  "normalization_scales": {
+    "cable_position_m": 0.05,
+    "uav_orientation_rad": 0.2,
+    "uav_position_m": 0.05
+  },
+  "optimizer": {
+    "adam_iterations_per_stage": 100,
+    "gradient_clip": 10.0,
+    "learning_rate": 0.02,
+    "seed": 42,
+    "sobol_candidates_per_stage": 32
+  },
+  "parameter_bounds_provisional": {
+    "Cb": [
+      1e-10,
+      1.5e-05
+    ],
+    "EI": [
+      1e-08,
+      0.0004
+    ],
+    "K_R": [
+      1.0,
+      80.0
+    ],
+    "K_omega": [
+      0.5,
+      30.0
+    ],
+    "K_p": [
+      1.0,
+      60.0
+    ],
+    "K_v": [
+      0.5,
+      30.0
+    ],
+    "k_a": [
+      0.1,
+      2.0
+    ]
+  },
+  "prediction_horizon_s": 1.0,
+  "robust_cable_scale_m": 0.002,
+  "schema": "aerial_cable_joint_fit_config_v1",
+  "validation_lead_times_s": [
+    0.1,
+    0.25,
+    0.5,
+    1.0
+  ],
+  "window_stride_s": 0.25
+}

@@ -1,0 +1,60 @@
+[
+  {
+    "best_score": -17.215228030452767,
+    "closest_tip_m": 0.8463049945385952,
+    "effective_sample_size": 10.651029813674562,
+    "evaluated_candidates": 18,
+    "feasible_fraction": 1.0,
+    "iteration": 1,
+    "maximum_weight": 0.16108097542316385,
+    "model_feasible_fraction": 1.0,
+    "proposal_samples": 16,
+    "reward_components": {
+      "forward_return": 0.0,
+      "invalid_tip_entry": 0.0,
+      "maximum_displacement": -26.563259269758564,
+      "non_tip_first": 0.0,
+      "numerical_failure": 0.0,
+      "point_displacement_integral": -0.6606360100899815,
+      "progress": 7.950577178984428,
+      "recovery": 0.0,
+      "release": 0.0,
+      "strike_quality": 0.010958234677460441,
+      "success": 0.0,
+      "terminal_displacement": 0.0,
+      "time": -20.0,
+      "timeout": 0.0
+    },
+    "success_fraction": 0.0,
+    "temperature": 20.0
+  },
+  {
+    "best_score": -9.540790989784293,
+    "closest_tip_m": 0.25138331495085425,
+    "effective_sample_size": 1.0083845102148319,
+    "evaluated_candidates": 18,
+    "feasible_fraction": 1.0,
+    "iteration": 2,
+    "maximum_weight": 0.995831026795104,
+    "model_feasible_fraction": 1.0,
+    "proposal_samples": 16,
+    "reward_components": {
+      "forward_return": 0.0,
+      "invalid_tip_entry": 0.0,
+      "maximum_displacement": -31.090342153639995,
+      "non_tip_first": 0.0,
+      "numerical_failure": 0.0,
+      "point_displacement_integral": -0.7954256786383457,
+      "progress": 15.312121855395581,
+      "recovery": 0.0,
+      "release": 0.0,
+      "strike_quality": 0.1981320421649866,
+      "success": 0.0,
+      "terminal_displacement": 0.0,
+      "time": -20.0,
+      "timeout": 0.0
+    },
+    "success_fraction": 0.0,
+    "temperature": 20.0
+  }
+]

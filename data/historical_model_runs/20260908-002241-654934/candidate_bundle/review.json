@@ -1,0 +1,182 @@
+{
+  "cable_directory": "cable_dissipative_complete",
+  "checks": {
+    "cable_marker_improves": true,
+    "cable_tip_improves": true,
+    "combined_marker_improves": true,
+    "combined_tip_improves": true,
+    "drone_attachment_improves": true,
+    "final_cable_nn_selected": true,
+    "improves_previous_cable_marker": true,
+    "improves_previous_cable_tip": false
+  },
+  "combined": {
+    "both_residuals": {
+      "marker_rmse_m": 0.06274705677125846,
+      "tip_rmse_m": 0.0951249189185961
+    },
+    "nominal_drone_physics_cable": {
+      "marker_rmse_m": 0.07747913706802584,
+      "tip_rmse_m": 0.12136635462532977
+    },
+    "nominal_drone_residual_cable": {
+      "marker_rmse_m": 0.06298062776524628,
+      "tip_rmse_m": 0.09540676378067636
+    },
+    "residual_drone_physics_cable": {
+      "marker_rmse_m": 0.07701732152702416,
+      "tip_rmse_m": 0.1211726990987886
+    }
+  },
+  "combined_directory": "combined_dissipative_complete",
+  "equal_take": {
+    "cable_physics_marker_m": 0.045275598761870414,
+    "cable_physics_tip_m": 0.07592791643747328,
+    "cable_residual_marker_m": 0.0368610913286849,
+    "cable_residual_tip_m": 0.0625116648067135,
+    "drone_nominal_m": 0.029329605185687443,
+    "drone_residual_m": 0.027320072120919973
+  },
+  "historical_whip_comparison": {
+    "marker_rmse_m": {
+      "candidate": 0.04308569424462013,
+      "previous": 0.04174610745035446
+    },
+    "tip_rmse_m": {
+      "candidate": 0.07685832931996746,
+      "previous": 0.0727485540105734
+    }
+  },
+  "independent_test": false,
+  "limitations": [
+    "Cable NN gains may be small; do not equate training fit with improved real hitting.",
+    "Effective drone model includes fixed cable loading; one-way cable boundary, not separately identified motor physics.",
+    "Cable stiffness is weakly identified: fold estimates span many orders of magnitude for very small objective differences. These are effective predictive parameters, not measured material constants.",
+    "Recovery is exported as the existing gentle reference, not included in the learned strike objective.",
+    "All historical takes are development data; next frozen-policy flights provide prospective assessment."
+  ],
+  "per_take": [
+    {
+      "cable_physics_marker_m": 0.024128624533353765,
+      "cable_physics_tip_m": 0.03894085240834842,
+      "cable_residual_marker_m": 0.020067840112666782,
+      "cable_residual_tip_m": 0.0320510098433065,
+      "drone_nominal_m": 0.011807687255538454,
+      "drone_residual_m": 0.009773517265675474,
+      "fold": 1,
+      "take": "fig8_001"
+    },
+    {
+      "cable_physics_marker_m": 0.021426799402867434,
+      "cable_physics_tip_m": 0.03510722842554678,
+      "cable_residual_marker_m": 0.018849305669504202,
+      "cable_residual_tip_m": 0.02994362548045568,
+      "drone_nominal_m": 0.01584480827711815,
+      "drone_residual_m": 0.01683198272857871,
+      "fold": 1,
+      "take": "fig8vertical_001"
+    },
+    {
+      "cable_physics_marker_m": 0.08512865004122676,
+      "cable_physics_tip_m": 0.14601146554037833,
+      "cable_residual_marker_m": 0.05330848463411749,
+      "cable_residual_tip_m": 0.0947760113551054,
+      "drone_nominal_m": 0.030640349707332818,
+      "drone_residual_m": 0.03244930926867338,
+      "fold": 1,
+      "take": "osc_001"
+    },
+    {
+      "cable_physics_marker_m": 0.036505402300557994,
+      "cable_physics_tip_m": 0.06154308545437951,
+      "cable_residual_marker_m": 0.04146162003707171,
+      "cable_residual_tip_m": 0.07264604718364302,
+      "drone_nominal_m": 0.03749717019441083,
+      "drone_residual_m": 0.030985066342286715,
+      "fold": 1,
+      "take": "whip1_001"
+    },
+    {
+      "cable_physics_marker_m": 0.03751721290490876,
+      "cable_physics_tip_m": 0.06524260540409633,
+      "cable_residual_marker_m": 0.020359943487700382,
+      "cable_residual_tip_m": 0.03509937063432707,
+      "drone_nominal_m": 0.017777951674104613,
+      "drone_residual_m": 0.01582674947641357,
+      "fold": 2,
+      "take": "fig8_002"
+    },
+    {
+      "cable_physics_marker_m": 0.025843973193274108,
+      "cable_physics_tip_m": 0.043899668254905024,
+      "cable_residual_marker_m": 0.02263308871435812,
+      "cable_residual_tip_m": 0.036313157061130974,
+      "drone_nominal_m": 0.024092931906368416,
+      "drone_residual_m": 0.0236252340583408,
+      "fold": 2,
+      "take": "fig8vertical_002"
+    },
+    {
+      "cable_physics_marker_m": 0.027973038912424943,
+      "cable_physics_tip_m": 0.04544017685463211,
+      "cable_residual_marker_m": 0.018614937958966925,
+      "cable_residual_tip_m": 0.031002804175847734,
+      "drone_nominal_m": 0.014169214529954626,
+      "drone_residual_m": 0.01685718725593128,
+      "fold": 2,
+      "take": "osc_002"
+    },
+    {
+      "cable_physics_marker_m": 0.04585286695976425,
+      "cable_physics_tip_m": 0.07789400845318518,
+      "cable_residual_marker_m": 0.051157836440424306,
+      "cable_residual_tip_m": 0.09297879926302095,
+      "drone_nominal_m": 0.06081095353658953,
+      "drone_residual_m": 0.05245601632700622,
+      "fold": 2,
+      "take": "whip1_002"
+    },
+    {
+      "cable_physics_marker_m": 0.024659429027172594,
+      "cable_physics_tip_m": 0.03606868127947324,
+      "cable_residual_marker_m": 0.02335165082455718,
+      "cable_residual_tip_m": 0.035161450192564926,
+      "drone_nominal_m": 0.02734308495929613,
+      "drone_residual_m": 0.022780890842480254,
+      "fold": 3,
+      "take": "fig8_003"
+    },
+    {
+      "cable_physics_marker_m": 0.12464154639554352,
+      "cable_physics_tip_m": 0.20658805765043547,
+      "cable_residual_marker_m": 0.09913845913173289,
+      "cable_residual_tip_m": 0.16499475543304598,
+      "drone_nominal_m": 0.056357359310310905,
+      "drone_residual_m": 0.051822740152816335,
+      "fold": 3,
+      "take": "osc_003"
+    },
+    {
+      "cable_physics_marker_m": 0.04435404270948042,
+      "cable_physics_tip_m": 0.07847125108682569,
+      "cable_residual_marker_m": 0.03652883760443385,
+      "cable_residual_tip_m": 0.06266128225140022,
+      "drone_nominal_m": 0.026284145691537364,
+      "drone_residual_m": 0.027112099611916973,
+      "fold": 3,
+      "take": "whip1_003"
+    }
+  ],
+  "previous_calibration_comparison": {
+    "marker_rmse_m": {
+      "candidate": 0.03576928003758866,
+      "previous": 0.036149702251599095
+    },
+    "tip_rmse_m": {
+      "candidate": 0.061544529320739394,
+      "previous": 0.06135929257463813
+    }
+  },
+  "selection": "Fit-only selection within each whole-take fold; final all-data refit",
+  "status": "REVIEW_REQUIRED"
+}

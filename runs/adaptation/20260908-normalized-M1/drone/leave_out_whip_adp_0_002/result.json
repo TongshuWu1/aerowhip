@@ -1,0 +1,164 @@
+{
+  "heldout": [
+    "whip_adp_0_002"
+  ],
+  "results": {
+    "whip_adp_0_001": {
+      "position": {
+        "complete": {
+          "maximum_m": 0.3679149311775419,
+          "mean_m": 0.14630083694271467,
+          "rmse_m": 0.17636163330448712,
+          "samples": 300
+        },
+        "early_recovery": {
+          "maximum_m": 0.3679149311775419,
+          "mean_m": 0.19549394423115365,
+          "rmse_m": 0.2126955453741949,
+          "samples": 200
+        },
+        "late_recovery_hold": {
+          "maximum_m": null,
+          "mean_m": null,
+          "rmse_m": null,
+          "samples": 0
+        },
+        "whip": {
+          "maximum_m": 0.09970684928590078,
+          "mean_m": 0.04791462236583666,
+          "rmse_m": 0.05321171921134199,
+          "samples": 100
+        }
+      },
+      "training_runtime_max_abs_difference_m": 8.050662030356648e-06,
+      "whip_attitude_rmse_deg": 4.240114789805093
+    },
+    "whip_adp_0_002": {
+      "position": {
+        "complete": {
+          "maximum_m": 0.3449623137998427,
+          "mean_m": 0.14822346592708993,
+          "rmse_m": 0.1747603936626501,
+          "samples": 300
+        },
+        "early_recovery": {
+          "maximum_m": 0.3449623137998427,
+          "mean_m": 0.19623167619995197,
+          "rmse_m": 0.2100336444020654,
+          "samples": 200
+        },
+        "late_recovery_hold": {
+          "maximum_m": null,
+          "mean_m": null,
+          "rmse_m": null,
+          "samples": 0
+        },
+        "whip": {
+          "maximum_m": 0.11708901756322274,
+          "mean_m": 0.05220704538136587,
+          "rmse_m": 0.05826939177429946,
+          "samples": 100
+        }
+      },
+      "training_runtime_max_abs_difference_m": 8.133845355029479e-06,
+      "whip_attitude_rmse_deg": 4.106293792388713
+    },
+    "whip_adp_0_003": {
+      "position": {
+        "complete": {
+          "maximum_m": 0.3393173710503615,
+          "mean_m": 0.15901070027889944,
+          "rmse_m": 0.18631021876727633,
+          "samples": 300
+        },
+        "early_recovery": {
+          "maximum_m": 0.3393173710503615,
+          "mean_m": 0.21247856859052064,
+          "rmse_m": 0.2244954515115593,
+          "samples": 200
+        },
+        "late_recovery_hold": {
+          "maximum_m": null,
+          "mean_m": null,
+          "rmse_m": null,
+          "samples": 0
+        },
+        "whip": {
+          "maximum_m": 0.10584186217793419,
+          "mean_m": 0.052074963655657086,
+          "rmse_m": 0.05777609672324135,
+          "samples": 100
+        }
+      },
+      "training_runtime_max_abs_difference_m": 8.087683691648806e-06,
+      "whip_attitude_rmse_deg": 4.117951908965398
+    },
+    "whip_adp_0_004": {
+      "position": {
+        "complete": {
+          "maximum_m": 0.40706929225998956,
+          "mean_m": 0.1586126230369601,
+          "rmse_m": 0.1956775342680152,
+          "samples": 300
+        },
+        "early_recovery": {
+          "maximum_m": 0.40706929225998956,
+          "mean_m": 0.21132909875077485,
+          "rmse_m": 0.23604075677654707,
+          "samples": 200
+        },
+        "late_recovery_hold": {
+          "maximum_m": null,
+          "mean_m": null,
+          "rmse_m": null,
+          "samples": 0
+        },
+        "whip": {
+          "maximum_m": 0.10396675942816862,
+          "mean_m": 0.05317967160933064,
+          "rmse_m": 0.058639700991228394,
+          "samples": 100
+        }
+      },
+      "training_runtime_max_abs_difference_m": 8.187316591357074e-06,
+      "whip_attitude_rmse_deg": 4.3470010613865036
+    },
+    "whip_adp_0_005": {
+      "position": {
+        "complete": {
+          "maximum_m": 0.3174700018852704,
+          "mean_m": 0.1534558001188542,
+          "rmse_m": 0.17629992649070092,
+          "samples": 300
+        },
+        "early_recovery": {
+          "maximum_m": 0.3174700018852704,
+          "mean_m": 0.2031271900618983,
+          "rmse_m": 0.21164100752867027,
+          "samples": 200
+        },
+        "late_recovery_hold": {
+          "maximum_m": null,
+          "mean_m": null,
+          "rmse_m": null,
+          "samples": 0
+        },
+        "whip": {
+          "maximum_m": 0.12463160850292826,
+          "mean_m": 0.05411302023276608,
+          "rmse_m": 0.06050752107282472,
+          "samples": 100
+        }
+      },
+      "training_runtime_max_abs_difference_m": 8.021620783615901e-06,
+      "whip_attitude_rmse_deg": 3.6961723011321106
+    }
+  },
+  "selected_update": 80,
+  "training": [
+    "whip_adp_0_001",
+    "whip_adp_0_003",
+    "whip_adp_0_004",
+    "whip_adp_0_005"
+  ]
+}

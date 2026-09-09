@@ -7,7 +7,7 @@ import time
 import numpy as np
 from PySide6.QtCore import Qt, QTimer, QThread, Signal
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QFormLayout, QLabel, QFrame,
-    QPushButton, QComboBox, QSpinBox, QDoubleSpinBox, QSplitter, QFileDialog, QProgressBar)
+    QPushButton, QComboBox, QSpinBox, QDoubleSpinBox, QSplitter, QFileDialog, QProgressBar, QLineEdit, QTabWidget, QCheckBox,QScrollArea)
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 
@@ -44,10 +44,12 @@ class PolicyViewport(QWidget):
         self.execute.setEnabled(False)
         self.execute.setToolTip('Execute the learned force sequence once, then return to PID hover.')
         self.execute.clicked.connect(self.execute_policy)
+        self.execute.hide()
         controls.addWidget(self.execute)
         self.stop = QPushButton('Stop flight')
         self.stop.setEnabled(False)
         self.stop.clicked.connect(self.stop_flight)
+        self.stop.hide()
         controls.addWidget(self.stop)
         self.camera = QComboBox()
         self.camera.addItems(['Perspective', 'Side XZ', 'Top XY', 'Front YZ'])
@@ -55,7 +57,7 @@ class PolicyViewport(QWidget):
         controls.addWidget(self.camera)
         controls.addStretch()
         self.outer.addLayout(controls)
-        self.status = note('Initial drone + cable state → one force sequence → PID recovery')
+        self.status = note('Saved validation trajectory · one frozen open-loop strike')
         self.outer.addWidget(self.status)
         self.timer = QTimer(self)
         self.timer.setInterval(33)
@@ -92,7 +94,7 @@ class PolicyViewport(QWidget):
         self.playing = False
         self.play.setEnabled(False)
         self.source.setText('First validation trial · waiting for results from this run')
-        self.status.setText('Initial drone + cable state → one force sequence → PID recovery')
+        self.status.setText('Saved validation trajectory · one frozen open-loop strike')
 
     def load_trial(self, path, record):
         if self.worker is not None:
@@ -104,7 +106,9 @@ class PolicyViewport(QWidget):
                 raise ValueError('This is not a recorded training validation trial.')
             self.arrays = {key: data[key].copy() for key in data.files if key != 'metadata'}
         step = int(record['training_episodes'])
-        self.source.setText(f'Actual validation · trial 1 · {step:,} training attempts · policy {record["checkpoint_sha256"][:8]}')
+        self.source.setText(f'Simulation validation · trial 1 · {step:,} attempts · policy {record["checkpoint_sha256"][:8]}')
+        outcomes=read_json(Path(path).parent.parent/record['trial_outcomes'],[]) if record.get('trial_outcomes') else []
+        self.metadata['first_trial_failed']=bool(outcomes and outcomes[0].get('failure'))
         if record.get('evaluation_reused'):
             self.source.setText(self.source.text() + '\nUnchanged policy · prior validation reused')
         self.source.setToolTip(f'Evaluation {record["evaluation_id"]}\nScenario set {record["scenario_id"]}')
@@ -117,6 +121,9 @@ class PolicyViewport(QWidget):
             return
         self.ensure_viewer()
         meta = self.metadata
+        native=meta.get('evaluation_mode')=='30hz_frozen_reference_tracked_pose_and_cable_whip_only'
+        self.viewer.set_live_flight(not native)
+        self.viewer.set_show_force(not native)
         self.viewer.set_target(meta['target_position_m'], meta['desired_strike_direction_world'], meta['target_radius_m'])
         q = self.arrays['positions_m'][:, 0]
         if hasattr(self.viewer, 'plotter'):
@@ -217,6 +224,8 @@ class PolicyViewport(QWidget):
                                      q[:index+1, 0], q[:index+1, -1])
             phase = 'Open-loop strike' if self.arrays['striking'][index, 0] else 'PID recovery'
             hit = 'valid hit' if self.arrays['hit'][index, 0] else 'no valid hit'
+            if self.metadata.get('first_trial_failed'):
+                phase='Invalid attempt';hit='model / reference failure'
             if not self.metadata['first_trial_planned']:
                 phase = 'Plan refused'
             self.status.setText(f'{times[index]:.2f} s · {phase} · {hit} · planned cutoff {self.metadata["cutoff_s"]:.2f} s')
@@ -225,15 +234,27 @@ class PolicyViewport(QWidget):
 
 
 class AlgorithmTrainingPage(QWidget):
+    checkpoint_requested = Signal(str)
+    live_scene_requested = Signal(str)
+
     def __init__(self, root, algorithm, parent=None):
         super().__init__(parent)
         self.root, self.algorithm = Path(root), algorithm.upper()
         self.config = read_json(self.root / 'config' / f'{algorithm.lower()}.json')
+        if algorithm.upper()=='PPO':
+            from simulator.research_config import workspace_configs
+            self.config=workspace_configs(root)[2]
         self.directory = None
         self.last_record = None
         self.history_signature = None
         self.active = False
-        outer = QVBoxLayout(self)
+        self.resume_checkpoint = None
+        layout = QVBoxLayout(self)
+        self.tabs = QTabWidget()
+        layout.addWidget(self.tabs)
+        training_tab = QWidget()
+        self.tabs.addTab(training_tab, 'Training')
+        outer = QVBoxLayout(training_tab)
         outer.setContentsMargins(20, 16, 20, 18)
         outer.setSpacing(10)
         self.model_note=note('');outer.addWidget(self.model_note)
@@ -256,6 +277,32 @@ class AlgorithmTrainingPage(QWidget):
         self.stop_button.clicked.connect(self.stop_training)
         toolbar.addWidget(self.stop_button)
         outer.addLayout(toolbar)
+        self.setup_button=QPushButton('Configure new run / continuation');self.setup_button.setCheckable(True);outer.addWidget(self.setup_button)
+        self.setup=QWidget();setup_layout=QVBoxLayout(self.setup);setup_layout.setContentsMargins(12,8,12,8)
+        self.setup_scroll=QScrollArea();self.setup_scroll.setWidgetResizable(True);self.setup_scroll.setMaximumHeight(245)
+        self.setup_scroll.setWidget(self.setup);outer.addWidget(self.setup_scroll)
+        self.setup_scroll.hide();self.setup_button.toggled.connect(self.setup_scroll.setVisible)
+        naming = QHBoxLayout()
+        naming.addWidget(QLabel('New run name'))
+        self.run_name = QLineEdit()
+        self.run_name.setPlaceholderText('e.g. Adaptation 1 — cable model update')
+        self.run_name.setMaxLength(120)
+        naming.addWidget(self.run_name, 1)
+        setup_layout.addLayout(naming)
+        model_row=QHBoxLayout();model_row.addWidget(QLabel('Model for new run'))
+        self.training_model=QComboBox();self.training_model.addItem('Keep checkpoint / workspace model',None)
+        if self.algorithm=='PPO':
+            for path in sorted((self.root/'data/model_candidates').glob('*/model.json')):
+                if read_json(path,{}).get('adaptation',{}).get('training'):
+                    self.training_model.addItem(path.parent.name,str(path.resolve()))
+        model_row.addWidget(self.training_model,1);setup_layout.addLayout(model_row)
+        setup_layout.addWidget(note('Selecting an adapted model creates a new run with that model and fresh optimizer/convergence history. It keeps the checkpoint task, reward, architecture and 30 Hz timing.'))
+        self.live_scene = QCheckBox('Train inside Isaac Lab — live model environment (native 30 Hz)')
+        self.live_scene.setToolTip('PPO and calibrated drone/cable physics run in the Isaac Lab process. Shows each batch while it is stepped. Uncheck for project-only training.')
+        self.live_scene.setChecked(self.algorithm=='PPO')
+        setup_layout.addWidget(self.live_scene)
+        self.resume_note = note('Continue latest creates a new run and preserves the source run.')
+        setup_layout.addWidget(self.resume_note)
         settings = QHBoxLayout()
         self.seed, self.episodes, self.batch = QSpinBox(), QSpinBox(), QSpinBox()
         for spin, maximum, value in ((self.seed, 2147483646, self.config['seed']),
@@ -275,7 +322,7 @@ class AlgorithmTrainingPage(QWidget):
         self.advanced_button = QPushButton('Algorithm settings')
         self.advanced_button.setCheckable(True)
         settings.addWidget(self.advanced_button)
-        outer.addLayout(settings)
+        setup_layout.addLayout(settings)
         self.advanced = QFrame()
         advanced_layout = QHBoxLayout(self.advanced)
         self.hyperparameters = {}
@@ -294,7 +341,7 @@ class AlgorithmTrainingPage(QWidget):
             advanced_layout.addLayout(form)
         self.advanced.hide()
         self.advanced_button.toggled.connect(self.advanced.setVisible)
-        outer.addWidget(self.advanced)
+        setup_layout.addWidget(self.advanced)
         self.progress = QProgressBar()
         self.progress.setRange(0, 1000)
         self.progress.setValue(0)
@@ -329,7 +376,7 @@ class AlgorithmTrainingPage(QWidget):
         flight = QVBoxLayout(flight_panel)
         heading = QHBoxLayout()
         heading.addWidget(QLabel('Policy in 3D'), 1)
-        self.run_latest_button = QPushButton('Run latest policy')
+        self.run_latest_button = QPushButton('Open in rehearsal')
         self.run_latest_button.setObjectName('secondaryButton')
         self.run_latest_button.clicked.connect(self.run_latest)
         heading.addWidget(self.run_latest_button)
@@ -337,11 +384,17 @@ class AlgorithmTrainingPage(QWidget):
         self.viewport = PolicyViewport(root, self.algorithm)
         flight.addWidget(self.viewport, 1)
         self.split.addWidget(flight_panel)
-        self.split.setSizes([390, 650])
+        self.split.setSizes([520, 520])
         outer.addWidget(self.split, 1)
         self.job = BackgroundJob(root)
         self.job.finished.connect(lambda _: self.refresh())
         outer.addWidget(self.job)
+        from .policy_library_page import PolicyLibraryPage
+        self.library = PolicyLibraryPage(root)
+        self.tabs.addTab(self.library, 'Policies')
+        self.library.use_requested.connect(self.checkpoint_requested.emit)
+        self.library.continue_requested.connect(self.choose_resume_checkpoint)
+        self.tabs.currentChanged.connect(lambda _: self.viewport.set_active(self.active and self.tabs.currentIndex() == 0))
         self.timer = QTimer(self)
         self.timer.setInterval(2000)
         self.timer.timeout.connect(self.refresh)
@@ -349,7 +402,7 @@ class AlgorithmTrainingPage(QWidget):
 
     def set_page_active(self, active):
         self.active = active
-        self.viewport.set_active(active)
+        self.viewport.set_active(active and self.tabs.currentIndex() == 0)
         if active:
             self.refresh()
             self.timer.start()
@@ -357,8 +410,24 @@ class AlgorithmTrainingPage(QWidget):
             self.timer.stop()
 
     def select_run(self):
+        self.resume_checkpoint = None
+        if hasattr(self, 'resume_note'):
+            self.resume_note.setText('Continue latest creates a new run and preserves the source run.')
+            self.resume_button.setText('Continue latest')
         selected = self.runs.currentData()
         self.directory = Path(selected) if selected else None
+        if self.directory is not None and hasattr(self, 'batch') and not (self.root/'config/research_workspace.json').exists():
+            filename = f'{self.algorithm.lower()}.json'
+            saved = read_json(self.directory/'launch_config'/filename,
+                              read_json(self.directory/filename, {}))
+            settings = saved.get('training', {})
+            for key, field in (('collection_batch', self.batch), ('requested_episodes', self.episodes)):
+                if key in settings:
+                    field.setValue(int(settings[key]))
+            if 'seed' in saved:
+                self.seed.setValue(int(saved['seed']))
+            if 'device' in settings:
+                self.device.setCurrentText(settings['device'])
         self.last_record = self.history_signature = None
         if hasattr(self, 'viewport') and self.viewport.thread is not None:
             self.viewport.stop_flight()
@@ -386,29 +455,19 @@ class AlgorithmTrainingPage(QWidget):
             self.runs.blockSignals(False)
             self.select_run()
         self.refresh_results()
+        self.library.refresh()
 
     def refresh_results(self):
-        model_path=self.directory/'launch_config/model.json' if self.directory else self.root/'config/model.json'
-        saved=read_json(model_path,{})
-        settings_path=self.directory/'launch_config/ppo.json' if self.directory else self.root/'config/ppo.json'
-        protocol=read_json(settings_path,{})
-        scope='XYZ' if protocol.get('ppo',{}).get('stochastic_action_indices')==[0,1,2] else 'configured axes'
-        mode='Refinement guard on' if protocol.get('update_guard',{}).get('enabled') else 'Acquisition · rollback guard off'
-        self.model_note.setText(('Selected run uses its saved model' if self.directory else 'New run uses the active baseline')+
-            f' · cable drag {saved.get("cable",{}).get("external_drag_s_inv",0):g}/s. '
-            'Applying another baseline does not change an existing policy run.')
-        if self.algorithm=='PPO':
-            acceleration=(f' · GPU graph replay · {protocol.get("training",{}).get("collection_batch",0):,} parallel environments'
-                          if protocol.get('cuda_graph_physics') else '')
-            self.model_note.setText(self.model_note.text()+f'\n{mode} · {scope} forces · near-hover initial states'+acceleration)
-        else:
-            sac_path=self.directory/'launch_config/sac.json' if self.directory else self.root/'config/sac.json'
-            sac=read_json(sac_path,{})
-            axes=sac.get('sac',{}).get('stochastic_action_indices',[])
-            scope=''.join('XYZ'[axis] for axis in axes)
-            acceleration=' · GPU graph replay' if protocol.get('cuda_graph_physics') else ''
-            initialization=' · searched strike initialization' if (sac.get('bootstrap') or {}).get('enabled') else ''
-            self.model_note.setText(self.model_note.text()+f'\nSAC · {scope} forces · {sac.get("training",{}).get("collection_batch",0):,} parallel environments'+acceleration+initialization)
+        from simulator.research_config import workspace_configs
+        current_model,_,current_ppo=workspace_configs(self.root)
+        saved=read_json(self.directory/'model.json',read_json(self.directory/'launch_config/model.json',{})) if self.directory else current_model
+        protocol=read_json(self.directory/'ppo.json',read_json(self.directory/'launch_config/ppo.json',{})) if self.directory else current_ppo
+        native=saved.get('fullstate_execution',{}).get('schema')=='tracked_pose_execution_v1'
+        label=lambda m: ('adapted '+str(m['adaptation'].get('round','model'))) if m.get('adaptation',{}).get('training') else 'M0'
+        selected=label(saved)+' / 30 Hz / both residuals' if native else 'legacy model / original timing'
+        choice=self.training_model.currentData()
+        next_model=Path(choice).parent.name if choice else 'checkpoint model on continuation; workspace model on fresh training'
+        self.model_note.setText(f'Selected run: {selected}.\nNext run: {next_model}. Whip objective; each run freezes its own model and settings.')
         status = read_json(self.directory / 'status.json', {}) if self.directory else {}
         state = status.get('status', 'READY')
         running = state in ('STARTING', 'RUNNING', 'STOPPING') and process_is_running(int(status.get('pid', 0)))
@@ -450,7 +509,7 @@ class AlgorithmTrainingPage(QWidget):
             self.batch_progress.setToolTip(f'{status.get("collection_batch",0):,} parallel attempts in this batch. Last progress update {age}s ago. Steps measure simulation progress, not completed attempts.')
         exists = self.directory is not None and (self.directory / 'checkpoints/latest.pt').exists()
         self.start_button.setEnabled(not (running or own_running))
-        self.resume_button.setEnabled(exists and not (running or own_running))
+        self.resume_button.setEnabled((bool(self.resume_checkpoint) or exists) and not (running or own_running))
         stop_pending=self.directory is not None and (self.directory/'STOP_REQUESTED').exists()
         self.stop_button.setEnabled((running or (own_running and self.directory == self.job.directory)) and not stop_pending)
         if running and stop_pending:
@@ -467,12 +526,16 @@ class AlgorithmTrainingPage(QWidget):
         if record:
             metadata = read_json(self.directory / 'run.json', {})
             seed = metadata.get('seed', read_json(self.directory / f'{self.algorithm.lower()}.json', {}).get('seed', '—'))
+            recovery_text=('recovery not scored' if saved.get('fullstate_execution',{}).get('enabled') else
+                f'{100*record["hit_and_recovery_rate"]:.1f}% hit + recovery')
             self.metrics.setText(f'Seed {seed} · validation · {100*record["success_rate"]:.1f}% valid hit · '
-                f'{100*record["hit_and_recovery_rate"]:.1f}% hit + recovery · '
+                f'{recovery_text} · '
                 f'{record["mean_episode_reward"]:.2f} task return · {record["episodes"]} trials')
             measurements=[]
             for key,label,unit in (
                 ('mean_impact_speed_m_s','Impact speed','m/s'),
+                ('mean_hit_relative_tip_directed_speed_m_s','Forward tip speed relative to attachment','m/s'),
+                ('mean_hit_attachment_directed_speed_m_s','Attachment forward speed at hit','m/s'),
                 ('mean_hit_time_s','Hit time','s'),
                 ('mean_maximum_execution_drone_displacement_m','Max. drone travel','m')):
                 value=record.get(key)
@@ -484,6 +547,8 @@ class AlgorithmTrainingPage(QWidget):
                 f'{label} {100*record.get(key,0):.1f}%' for key,label in
                 [('nonfinite_rate','nonfinite state'),('position_limit_rate','position limit'),('speed_limit_rate','speed limit')])+
                 '\nImpact speed and time are means over valid hits. Maximum drone travel is the mean of each trial’s peak distance, including PID recovery.')
+            if saved.get('fullstate_execution',{}).get('enabled'):
+                self.metrics.setToolTip(self.metrics.toolTip().replace('including PID recovery','during the frozen whip; recovery is not scored'))
             if self.active and record['record_id'] != self.last_record:
                 try:
                     if self.viewport.load_trial(self.directory / record['replay'], record):
@@ -491,29 +556,57 @@ class AlgorithmTrainingPage(QWidget):
                 except (OSError, ValueError, KeyError) as error:
                     self.viewport.status.setText(f'Could not load validation trial: {error}')
         else:
-            self.metrics.setText('Validation: — valid hit · — hit + recovery · — task return')
+            self.metrics.setText('Validation: waiting for the first saved evaluation')
         if 'nonfinite_rate' in status:
             self.metrics.setText(self.metrics.text()+'\nLast training batch: '+', '.join(
                 f'{label} {100*status.get(key,0):.1f}%' for key,label in
-                [('nonfinite_rate','nonfinite'),('position_limit_rate','position limit'),('speed_limit_rate','speed limit')]))
+                [('numerical_failure_rate','total failures'),('nonfinite_rate','nonfinite'),('position_limit_rate','position limit'),('speed_limit_rate','speed limit')]))
+
+    def choose_resume_checkpoint(self, checkpoint):
+        directory = str(Path(checkpoint).parent.parent)
+        index = self.runs.findData(directory)
+        if index < 0:
+            self.job.status.setText('Refresh the run list before continuing this policy.')
+            return
+        self.runs.setCurrentIndex(index)
+        self.resume_checkpoint = Path(checkpoint)
+        self.resume_button.setText('Continue selected checkpoint')
+        self.resume_note.setText(f'Continue from: {Path(checkpoint).name} · {self.runs.currentText()}. Set a new run name and total target attempts, then click Continue.')
+        self.tabs.setCurrentIndex(0)
+        self.setup_button.setChecked(True)
+        self.refresh_results()
 
     def start_training(self, resume):
         try:
-            checkpoint = self.directory / 'checkpoints/latest.pt' if resume and self.directory else None
+            if not self.setup_button.isChecked():
+                self.setup_button.setChecked(True)
+                self.job.status.setText('Set the run name and training budget, then start the new run.');return
+            if self.job.running:
+                raise ValueError('Stop the current training job before starting another.')
+            checkpoint = (self.resume_checkpoint or self.directory / 'checkpoints/latest.pt') if resume and self.directory else None
             if resume:
-                status = read_json(self.directory / 'status.json', {})
-                if self.episodes.value() <= int(status.get('episodes', 0)):
-                    raise ValueError('Set target attempts above the current run count to continue.')
+                import torch
+                if checkpoint is None or not checkpoint.is_file():
+                    raise ValueError('Select an existing checkpoint to continue.')
+                payload = torch.load(checkpoint, map_location='cpu', weights_only=False)
+                if self.episodes.value() <= int(payload.get('episodes', 0)):
+                    raise ValueError('Set total target attempts above the selected checkpoint count to continue.')
             overrides = {key: int(spin.value()) if key in ('update_epochs', 'updates_per_collection') else spin.value()
                          for key, spin in self.hyperparameters.items()}
+            backend={'type':'project'}
+            if self.live_scene.isChecked():
+                isaac=Path(read_json(self.root/'config/multidrone_viewer.json',{}).get('isaac_python',str(Path.home()/'env_isaaclab/Scripts/python.exe')))
+                if not isaac.is_file():raise ValueError('Set the Isaac Python path in Multi-drone scene before starting a live run.')
+                backend=dict(type='isaaclab_model',python=str(isaac),headless=False,render_stride=5)
             directory, command = prepare_training(self.root, self.algorithm, seed=self.seed.value(),
                 episodes=self.episodes.value(), batch=self.batch.value(), device=self.device.currentText(),
-                overrides=overrides, resume=checkpoint)
+                overrides=overrides,resume=checkpoint,run_name=self.run_name.text(),live_scene=False,training_backend=backend,
+                model_path=self.training_model.currentData())
             self.job.start(directory, command)
             self.directory = directory
             self.refresh()
-            self.job.status.setText('Training uses the saved baseline and task. Validation runs after each batch.')
-        except (OSError, ValueError, KeyError) as error:
+            self.job.status.setText('Isaac Lab is starting the live training environment; see the job log.' if self.live_scene.isChecked() else 'Training uses the saved baseline and task. Validation runs after each batch.')
+        except (OSError, ValueError, KeyError, RuntimeError) as error:
             self.job.status.setText(str(error))
 
     def stop_training(self):
@@ -525,6 +618,9 @@ class AlgorithmTrainingPage(QWidget):
 
     def run_latest(self):
         try:
+            if self.directory is not None:
+                self.checkpoint_requested.emit(str((self.directory/'checkpoints/latest.pt').resolve()))
+                return
             self.viewport.start_latest(self.directory)
             self.last_record = None
             self.refresh_results()

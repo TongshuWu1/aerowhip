@@ -1,0 +1,231 @@
+{
+  "source_sha256": "200cf0dbeb073d665bfbdf5532d4ef53c459d4407eed40d7075cabcb0b151491",
+  "scope": "Sampled at measurement times; not event/substep extrema or measured physical thrust",
+  "interpretation": "a_O is at a non-COM tracking origin. a_O+g is an approximate attitude construction, not identified motor thrust. A negative Z here does not establish measured vehicle inversion or negative motor thrust.",
+  "results": {
+    "final_all_three": {
+      "whip1_001": {
+        "csv_maneuver": {
+          "sample_count": 67,
+          "command_az_min_m_s2": -4.635719301917902,
+          "modeled_origin_az_min_m_s2": -11.460378715623778,
+          "samples_specific_z_negative": 1,
+          "effective_command_frame_tilt_max_deg": 101.67692279873617,
+          "effective_command_frame_step_max_deg": 178.85512648358593
+        },
+        "post_maneuver_fullstate_hold": {
+          "sample_count": 50,
+          "command_az_min_m_s2": -4.635719301917902,
+          "modeled_origin_az_min_m_s2": -11.408421370045478,
+          "samples_specific_z_negative": 3,
+          "effective_command_frame_tilt_max_deg": 102.06004204474458,
+          "effective_command_frame_step_max_deg": 174.01322532222943
+        }
+      },
+      "whip1_002": {
+        "csv_maneuver": {
+          "sample_count": 67,
+          "command_az_min_m_s2": -4.635719301917902,
+          "modeled_origin_az_min_m_s2": -11.455059635143243,
+          "samples_specific_z_negative": 1,
+          "effective_command_frame_tilt_max_deg": 101.74654613926826,
+          "effective_command_frame_step_max_deg": 179.03351556977358
+        },
+        "post_maneuver_fullstate_hold": {
+          "sample_count": 50,
+          "command_az_min_m_s2": -4.635719301917902,
+          "modeled_origin_az_min_m_s2": -11.40573665081315,
+          "samples_specific_z_negative": 2,
+          "effective_command_frame_tilt_max_deg": 102.17057031367177,
+          "effective_command_frame_step_max_deg": 169.57684906666546
+        }
+      },
+      "whip1_003": {
+        "csv_maneuver": {
+          "sample_count": 66,
+          "command_az_min_m_s2": -1.2214502764888948,
+          "modeled_origin_az_min_m_s2": -6.65543569875346,
+          "samples_specific_z_negative": 0,
+          "effective_command_frame_tilt_max_deg": 58.0142900767956,
+          "effective_command_frame_step_max_deg": 35.31862155824225
+        },
+        "post_maneuver_fullstate_hold": {
+          "sample_count": 50,
+          "command_az_min_m_s2": -4.635719301917902,
+          "modeled_origin_az_min_m_s2": -11.453024333477865,
+          "samples_specific_z_negative": 3,
+          "effective_command_frame_tilt_max_deg": 102.35334668020505,
+          "effective_command_frame_step_max_deg": 179.52051460344734
+        }
+      }
+    },
+    "leave_out_whip1_001": {
+      "whip1_001": {
+        "csv_maneuver": {
+          "sample_count": 67,
+          "command_az_min_m_s2": -4.635719301917902,
+          "modeled_origin_az_min_m_s2": -11.608803180389506,
+          "samples_specific_z_negative": 1,
+          "effective_command_frame_tilt_max_deg": 104.26339771318862,
+          "effective_command_frame_step_max_deg": 179.63221563188637
+        },
+        "post_maneuver_fullstate_hold": {
+          "sample_count": 50,
+          "command_az_min_m_s2": -4.635719301917902,
+          "modeled_origin_az_min_m_s2": -11.545540735971931,
+          "samples_specific_z_negative": 3,
+          "effective_command_frame_tilt_max_deg": 104.15451345312344,
+          "effective_command_frame_step_max_deg": 177.75043994494592
+        }
+      },
+      "whip1_002": {
+        "csv_maneuver": {
+          "sample_count": 67,
+          "command_az_min_m_s2": -4.635719301917902,
+          "modeled_origin_az_min_m_s2": -11.600690430435927,
+          "samples_specific_z_negative": 1,
+          "effective_command_frame_tilt_max_deg": 104.17593399388122,
+          "effective_command_frame_step_max_deg": 179.33977065801724
+        },
+        "post_maneuver_fullstate_hold": {
+          "sample_count": 50,
+          "command_az_min_m_s2": -4.635719301917902,
+          "modeled_origin_az_min_m_s2": -11.539919408910228,
+          "samples_specific_z_negative": 3,
+          "effective_command_frame_tilt_max_deg": 104.08645278795812,
+          "effective_command_frame_step_max_deg": 141.20563114146398
+        }
+      },
+      "whip1_003": {
+        "csv_maneuver": {
+          "sample_count": 66,
+          "command_az_min_m_s2": -1.2214502764888948,
+          "modeled_origin_az_min_m_s2": -6.70856540458127,
+          "samples_specific_z_negative": 0,
+          "effective_command_frame_tilt_max_deg": 55.08062556949474,
+          "effective_command_frame_step_max_deg": 34.99794368273326
+        },
+        "post_maneuver_fullstate_hold": {
+          "sample_count": 50,
+          "command_az_min_m_s2": -4.635719301917902,
+          "modeled_origin_az_min_m_s2": -11.595223416410004,
+          "samples_specific_z_negative": 4,
+          "effective_command_frame_tilt_max_deg": 104.09632112005377,
+          "effective_command_frame_step_max_deg": 178.61700676069145
+        }
+      }
+    },
+    "leave_out_whip1_002": {
+      "whip1_001": {
+        "csv_maneuver": {
+          "sample_count": 67,
+          "command_az_min_m_s2": -4.635719301917902,
+          "modeled_origin_az_min_m_s2": -11.789315732922091,
+          "samples_specific_z_negative": 1,
+          "effective_command_frame_tilt_max_deg": 103.85208700057343,
+          "effective_command_frame_step_max_deg": 179.03899493845626
+        },
+        "post_maneuver_fullstate_hold": {
+          "sample_count": 50,
+          "command_az_min_m_s2": -4.635719301917902,
+          "modeled_origin_az_min_m_s2": -11.721421850245441,
+          "samples_specific_z_negative": 3,
+          "effective_command_frame_tilt_max_deg": 104.14439001002125,
+          "effective_command_frame_step_max_deg": 149.54728658642867
+        }
+      },
+      "whip1_002": {
+        "csv_maneuver": {
+          "sample_count": 67,
+          "command_az_min_m_s2": -4.635719301917902,
+          "modeled_origin_az_min_m_s2": -11.787659846387688,
+          "samples_specific_z_negative": 1,
+          "effective_command_frame_tilt_max_deg": 103.94263858368555,
+          "effective_command_frame_step_max_deg": 179.16341569965263
+        },
+        "post_maneuver_fullstate_hold": {
+          "sample_count": 50,
+          "command_az_min_m_s2": -4.635719301917902,
+          "modeled_origin_az_min_m_s2": -11.722687593511974,
+          "samples_specific_z_negative": 4,
+          "effective_command_frame_tilt_max_deg": 104.28115338813839,
+          "effective_command_frame_step_max_deg": 112.77947464775558
+        }
+      },
+      "whip1_003": {
+        "csv_maneuver": {
+          "sample_count": 66,
+          "command_az_min_m_s2": -1.2214502764888948,
+          "modeled_origin_az_min_m_s2": -6.961020881900308,
+          "samples_specific_z_negative": 0,
+          "effective_command_frame_tilt_max_deg": 60.937179373962,
+          "effective_command_frame_step_max_deg": 37.15540902854431
+        },
+        "post_maneuver_fullstate_hold": {
+          "sample_count": 50,
+          "command_az_min_m_s2": -4.635719301917902,
+          "modeled_origin_az_min_m_s2": -11.790562805278984,
+          "samples_specific_z_negative": 5,
+          "effective_command_frame_tilt_max_deg": 104.49709807782,
+          "effective_command_frame_step_max_deg": 179.49842346997994
+        }
+      }
+    },
+    "leave_out_whip1_003": {
+      "whip1_001": {
+        "csv_maneuver": {
+          "sample_count": 67,
+          "command_az_min_m_s2": -4.635719301917902,
+          "modeled_origin_az_min_m_s2": -11.203738452225835,
+          "samples_specific_z_negative": 1,
+          "effective_command_frame_tilt_max_deg": 99.45395921588002,
+          "effective_command_frame_step_max_deg": 179.1284324634549
+        },
+        "post_maneuver_fullstate_hold": {
+          "sample_count": 50,
+          "command_az_min_m_s2": -4.635719301917902,
+          "modeled_origin_az_min_m_s2": -11.355654043364375,
+          "samples_specific_z_negative": 3,
+          "effective_command_frame_tilt_max_deg": 103.09215325760943,
+          "effective_command_frame_step_max_deg": 172.65156602244056
+        }
+      },
+      "whip1_002": {
+        "csv_maneuver": {
+          "sample_count": 67,
+          "command_az_min_m_s2": -4.635719301917902,
+          "modeled_origin_az_min_m_s2": -11.175532388648605,
+          "samples_specific_z_negative": 1,
+          "effective_command_frame_tilt_max_deg": 99.41152664112808,
+          "effective_command_frame_step_max_deg": 179.1324880995071
+        },
+        "post_maneuver_fullstate_hold": {
+          "sample_count": 50,
+          "command_az_min_m_s2": -4.635719301917902,
+          "modeled_origin_az_min_m_s2": -11.309882192185933,
+          "samples_specific_z_negative": 2,
+          "effective_command_frame_tilt_max_deg": 101.98630775476902,
+          "effective_command_frame_step_max_deg": 173.09302371896123
+        }
+      },
+      "whip1_003": {
+        "csv_maneuver": {
+          "sample_count": 66,
+          "command_az_min_m_s2": -1.2214502764888948,
+          "modeled_origin_az_min_m_s2": -6.565136900266699,
+          "samples_specific_z_negative": 0,
+          "effective_command_frame_tilt_max_deg": 58.386626549077945,
+          "effective_command_frame_step_max_deg": 33.59677073941933
+        },
+        "post_maneuver_fullstate_hold": {
+          "sample_count": 50,
+          "command_az_min_m_s2": -4.635719301917902,
+          "modeled_origin_az_min_m_s2": -11.29181186260924,
+          "samples_specific_z_negative": 3,
+          "effective_command_frame_tilt_max_deg": 102.06665072360377,
+          "effective_command_frame_step_max_deg": 179.16430929694178
+        }
+      }
+    }
+  }
+}

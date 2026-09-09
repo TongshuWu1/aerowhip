@@ -1,0 +1,37 @@
+{
+  "grid_shape": [
+    8,
+    8
+  ],
+  "initial_cb_bounds": [
+    1e-10,
+    1.5e-05
+  ],
+  "initial_ei_bounds": [
+    1e-08,
+    0.004
+  ],
+  "lead_times_s": [
+    0.1,
+    0.25,
+    0.5,
+    0.7,
+    1.0,
+    2.0,
+    4.0,
+    8.0
+  ],
+  "maximum_boundary_extensions": 1,
+  "maximum_local_refinements": 1,
+  "methodology": "milestone3c1_12node_measured_boundary_grid_v1",
+  "protected_take": "fig8vertical_002",
+  "schema": "milestone3c1_12node_fit_config_v1",
+  "task_horizon_acceptance_thresholds": {
+    "distributed_marker_rmse_m": 0.15,
+    "tip_rmse_m": 0.125,
+    "uav_orientation_rmse_deg": 20.0,
+    "uav_position_rmse_m": 0.05
+  },
+  "uav_and_residual_source": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\model_freezes\\MODEL_FREEZE_DECOMPOSED_PRETEST",
+  "wall_clock_limit_s": 1800.0
+}

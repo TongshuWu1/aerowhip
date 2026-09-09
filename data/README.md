@@ -1,5 +1,7 @@
 # Data
 
+`historical_model_runs/20260908-002241-654934/` contains the authorized pooled development fit using all eight preliminary recordings and three historical whips. Its `audit.json`, `protocol.json`, input checksums and separate cable/drone masks preserve the measurement-selection record. `fig8vertical_002` is now authorized for this fit; old study snapshots retain their original split. See `../docs/HISTORICAL_MODEL_FITTING.md`. A fitted candidate is not automatically the active model or evidence of improved hitting.
+
 `raw_takes/` and `processed_takes/` are immutable real measurements. The processed files contain synchronized 100 Hz drone pose, ten cable markers, and historical FullState commands. They contain no direct thrust or motor-force measurement.
 
 The active numerical model is `../config/model.json`; its `parameter_source`
@@ -45,3 +47,9 @@ Measurements, derived datasets, fitted reports and local audit outputs are not
 included in the source-only release. Keep originals immutable and select any
 public data artifact separately. Ignore rules do not remove previously tracked
 data or its Git history; see [publication preparation](../docs/PUBLICATION.md).
+
+
+Full-state experiment rounds are organized under `adaptation_rounds/`. Start with
+`adaptation_rounds/adaptation0/round.json` and see `../docs/RECORDING_ROUNDS.md`.
+Original recordings and processed versions are kept locally under the existing
+data Git exclusion. No model adaptation has been performed on adaptation0.

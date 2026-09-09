@@ -1,0 +1,39 @@
+{
+  "action_std": 0.05,
+  "desired_strike_direction_world": [
+    1.0,
+    0.0,
+    0.0
+  ],
+  "device": "cuda",
+  "display_name": "M1 MPPI direct-force integration check",
+  "horizon_s": 1.0,
+  "iterations": 2,
+  "launch_setup": {
+    "initial_tracking_origin_m": [
+      0.0,
+      0.0,
+      1.225
+    ],
+    "target_position_m": [
+      1.5,
+      0.0,
+      1.1
+    ]
+  },
+  "maximum_height_m": 2.8,
+  "minimum_height_m": 0.08,
+  "model_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\model_candidates\\20260908-adp0-M1\\model.json",
+  "optimizer": "mppi",
+  "population": 16,
+  "random_seed": 655,
+  "representation": "ppo_force_30hz_v1",
+  "success": {
+    "first_contact_only": true,
+    "maximum_tip_velocity_to_desired_direction_error_deg": 45.0,
+    "minimum_directed_tip_speed_m_s": 4.0,
+    "tip_must_enter_before_other_markers": true,
+    "tip_target_distance_m": 0.05
+  },
+  "temperature": 20.0
+}

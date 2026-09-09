@@ -1,0 +1,19 @@
+{
+  "status": "IMPLEMENTED_UNFITTED_NOT_ACTIVE",
+  "tests_passed": 29,
+  "test_files": [
+    "tests/physics/test_drone_pose_response.py",
+    "tests/calibration/test_drone_pose_response_data.py",
+    "tests/calibration/test_drone_pose_initialization.py",
+    "tests/calibration/test_geometry_conventions.py",
+    "tests/calibration/test_drone_residual.py"
+  ],
+  "platform": "Windows-11-10.0.26200-SP0",
+  "gpu": "NVIDIA GeForce RTX 4080",
+  "protected_files_verified": 133,
+  "three_native_command_recording_probes_finite": true,
+  "model_fitted": false,
+  "ppo_started": false,
+  "documentation_sha256": "238a6d6098078b9406fc349a78b98e685e81bf5e765b28606a43e67dd4699b33",
+  "audit_sha256": "b839023bb3a4785f1852c2623d3b9a1d55ba7a245327734661745734af3b9605"
+}

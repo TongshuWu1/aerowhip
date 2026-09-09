@@ -1,0 +1,43 @@
+{
+  "nominal": {
+    "alignment": "prehover_effective_alignment",
+    "fit_protocol_sha256": "c16daddc92e95db28d2dacaa8e52623d18f8bdc038e80de1a64b4848a16bca3a",
+    "geometry": [
+      0.0066549972854827175,
+      -0.01287427254333901,
+      -0.055
+    ],
+    "has_drone_residual": false,
+    "parameters": {
+      "attitude_acceleration_scale_xy": 1.0818153317667594,
+      "attitude_acceleration_scale_z": 0.5845219911003341,
+      "attitude_drive_model": "independent_scale_v3",
+      "attitude_time_constant_s": 0.02000027882043141,
+      "delay_s": 0.06,
+      "feedforward_xy": 0.34631341369496915,
+      "feedforward_z": 1.9290114893200754,
+      "gravity_m_s2": 9.80665,
+      "kd_xy": 4.107826423271454,
+      "kd_z": 1.8805823061324303,
+      "kp_xy": 11.448091219149061,
+      "kp_z": 20.83851969128258
+    },
+    "reference_point": "cf_7 tracking origin",
+    "schema": "nominal_loaded_drone_pose_candidate_v3",
+    "selected": false,
+    "training_takes": [
+      "whip1_002",
+      "whip1_003"
+    ]
+  },
+  "residual": {
+    "checkpoint": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\bootstrap_model_runs\\20260908-064040-669809\\drone\\leave_out_whip1_001\\drone_residual.pt",
+    "schema": "drone_pose_residual_v1",
+    "sha256": "f00f833b063e6195ae431896f9558097dc3a1b8e3a35e7cffe9c3e34f5acb80c",
+    "specification": {
+      "acceleration_limit": 0.5,
+      "hidden": 16
+    },
+    "target": "Additional realized origin acceleration; no direct injection into attitude drive"
+  }
+}

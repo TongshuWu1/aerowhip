@@ -1,0 +1,20 @@
+{
+  "acceleration_limit_m_s2": 0.5,
+  "batch_windows_per_take": 2,
+  "device": "cuda",
+  "evaluate_every": 12,
+  "evaluation_horizons_s": [
+    2.0,
+    5.0
+  ],
+  "evaluation_windows_per_take": 4,
+  "gradient_clip": 1.0,
+  "hidden": 32,
+  "learning_rate": 0.0005,
+  "penalty": 0.001,
+  "schema": "preliminary_cable_residual_v1",
+  "seed": 1729,
+  "training_horizon_s": 0.05,
+  "training_windows_per_take": 24,
+  "updates": 24
+}

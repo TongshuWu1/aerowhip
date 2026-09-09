@@ -1,0 +1,44 @@
+{
+  "changed_source_hashes": {
+    "deployment\\curved_recovery.py": "e14a88fab56d03ff64feab7eb419a643f37c786748495662a3721813c10a46af",
+    "deployment\\research_rehearsal.py": "befa28ccd134ea05be53f9c5da9826f09d60555e90801cda7c410546c129b230",
+    "simulator\\gui\\rehearsal_workspace.py": "8522ab04354c89ca348c01d388e1c8812cef48aba9f8eaf9c862a4a5a95ccc97"
+  },
+  "exact_whip_commands_and_prediction": true,
+  "hardware": "Windows / RTX 4080",
+  "old_artifacts_unchanged": true,
+  "production_export_matches_gpu_audit_exactly": true,
+  "recovery_prediction_complete": true,
+  "reference_metrics": {
+    "maximum_reference_specific_force_m_s2": 15.291674711573048,
+    "maximum_reference_speed_m_s": 2.7304174859506127,
+    "maximum_reference_tilt_deg": 42.02453417416039,
+    "minimum_reference_specific_vertical_m_s2": 6.372617408180689
+  },
+  "results": {
+    "curved": {
+      "command_peak_z_m": 2.9634285586943925,
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260908-143530-158718",
+      "predicted_peak_time_s": 1.5466666666666669,
+      "predicted_peak_z_m": 2.72372146506346,
+      "total_duration_s": 11.233333333333333
+    },
+    "original": {
+      "command_peak_z_m": 3.4257237199832997,
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260908-181353-400309",
+      "predicted_peak_time_s": 2.486666666666667,
+      "predicted_peak_z_m": 3.444863246663002,
+      "total_duration_s": 16.5
+    },
+    "stopped_recovery": {
+      "command_peak_z_m": 2.9274748118177203,
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals\\20260908-182453-378266",
+      "predicted_peak_time_s": 2.3266666666666667,
+      "predicted_peak_z_m": 3.079700032057501,
+      "total_duration_s": 15.733333333333333
+    }
+  },
+  "targeted_tests_passed": 42,
+  "training_frozen_files_verified": 174,
+  "training_status": "RUNNING"
+}
