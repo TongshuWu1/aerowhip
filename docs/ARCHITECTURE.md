@@ -1,35 +1,40 @@
-# Architecture
+# Current architecture
 
-## Online strike contract
+The active application generates offline aerial-whip trajectories using desired
+tracked-origin position, velocity and acceleration (PVA) at 30 Hz. Bounded XYZ
+jerk integrates into consistent next P/V/A knots; exact held packets and fitted
+delay drive the loaded-drone pose response plus its bounded neural residual.
+Rotated attachment geometry supplies the boundary for DDER plus the cable residual.
 
-The planner starts from estimated drone-attachment and cable-node positions/velocities. PPO or SAC is queried along a private simulator rollout. It produces a finite sequence of world-frame forces and a cutoff before execution. The command sequence runs once; the actual cable and hit measurements do not change its commands or timing. PID hover recovery follows the frozen cutoff.
+MPPI branches complete simulated state, optimizes a rolling 2 s lookahead, commits
+one action and repeats. Its current task requires forward aircraft pull followed
+by backward release at directed tip contact. The final sequence is frozen before
+physical execution; onboard position/attitude feedback remains separate.
 
-Policy commands are held at 20 Hz; physics advances at 100 Hz with twelve internal DDER substeps. The exported physics-rate force trace may repeat the same held command. The final hold can end before the next 50 ms boundary. A real controller must honor the agreed timing contract.
+The current cascade is an effective loaded-system predictor. Explicit cable reaction
+is not added again to the empirical aircraft response. It is not an independently
+identified motor/battery/rigid-body simulator.
 
-## Code boundaries
-
-| Component | Main locations |
+| Component | Main source |
 |---|---|
-| DDER cable and constraints | `simulator/cable/` |
-| Coupled point mass and force accounting | `simulator/point_mass.py` |
-| Shared observations, rewards and strict contact scoring | `learning/point_force_env.py` |
-| PPO / SAC implementations | `learning/simple_ppo.py`, `learning/simple_sac.py` |
-| Nominal planning and independent execution | `learning/deployment_rollout.py`, `simulator/strike_plan.py` |
-| Live simulation and hover recovery | `simulator/live_flight.py` |
-| Preliminary recording processing and fitting | `experimental_data/` |
-| Flight import, replay and physical candidates | `experimental_data/flight_trials.py`, `experimental_data/flight_adaptation.py` |
-| Transport-neutral ROS/controller logging sink | `experimental_data/flight_recorder.py` |
-| Local force correction without actor retraining | `learning/strike_adaptation.py` |
-| Desktop application | `simulator/gui/main_window.py` |
+| Jerk and command geometry | `simulator/pva_commands.py`, `simulator/geometry.py` |
+| Shared PVA environment, task and contact | `learning/pva_env.py`, `learning/pva_tick_graph.py` |
+| MPPI and immutable jobs | `planning/mppi_receding.py`, `planning/pva_job.py` |
+| PPO implementation | `learning/simple_ppo.py` |
+| Loaded aircraft and residual | `simulator/drone_pose_response.py`, `research_pose.py`, `drone_pose_residual.py` |
+| Cable and residual | `simulator/cable/dder.py`, `residual.py`, `simulator/research_physics.py` |
+| Fitting and acceleration | `experimental_data/current_adaptation_fit.py`, `pva_bootstrap.py`, `cuda_cable_fit.py`, `cuda_drone_fit.py` |
+| Recovery and export | `deployment/pva_rehearsal.py`, `curved_recovery.py` |
+| Measurements and exact forecasts | `experimental_data/adaptation_check.py`, `hover_calibration.py` |
+| Desktop entry | `run_simulation.py`, `simulator/gui/pva_main_window.py` |
 
-The current five-page interface uses the shared PPO/SAC training workspace. The superseded training/replay pages and MPCC artifact reader have been removed. Small process-status and experiment-source helpers live in their own modules.
+PPO and MPPI own independent settings and run directories. Legacy force/SAC/CEM
+artifacts remain compatible with their historical code and are not reinterpreted
+as jerk policies. New PVA PPO infrastructure does not establish a matched trained
+baseline for current MPPI.
 
-## Between-trial adaptation
+The UI has six pages: Models & fitting, Recordings, PPO, MPPI, Rehearsals,
+Flight comparison. Saved runs can be inspected without starting another job.
 
-Measured-attachment replay isolates cable prediction from aircraft tracking error. Independent force-driven replay checks the coupled result under the current force-response assumption. The first flight adaptation fitter changes cable drag within bounds while retaining the baseline geometry, masses, stiffness and internal damping. It uses whole-trial validation and does not apply a candidate automatically.
-
-The sequence optimizer refines a recorded force sequence locally and rescores first contact and PID recovery. It does not retrain actor weights. Its exports are marked as simulation candidates: controller-response identification, independent uncertainty validation and actual next-launch state binding are still required.
-
-## Physical and research limits
-
-The aircraft model contains translation and cable reaction, not a verified attitude/motor/Lee-controller implementation. The current force bounds are provisional simulation bounds. Cable positions do not fully determine material twist. Synthetic mismatch recovery and simulation success do not demonstrate real-flight adaptation. The proposed NN residual is not part of the default flight update workflow.
+See [direct PVA details](DIRECT_PVA_WORKFLOW.md), the [paper technical handoff](PAPER_WRITING_HANDOFF.md),
+and [current status](../HANDOFF.md). Historical architecture is in the archive.

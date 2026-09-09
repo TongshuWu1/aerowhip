@@ -14,9 +14,20 @@ if __name__=='__main__':
     parser=argparse.ArgumentParser();parser.add_argument('--output',type=Path,default=ROOT/'runs/audits/pva-ui')
     parser.add_argument('--rehearsal',type=Path);args=parser.parse_args()
     out=args.output;out.mkdir(parents=True,exist_ok=True)
-    app=QApplication([]);app.setStyle('Fusion');window=PVAResearchWindow(ROOT);window.show();errors=[]
+    app=QApplication([]);app.setStyle('Fusion');window=PVAResearchWindow(ROOT);window.show();errors=[];startup={}
     def capture(index):
         try:
+            if index==0:
+                startup.update(page=window.main_tabs.currentIndex(),rehearsal=str(window.inspector.directory),
+                    camera=window.inspector.camera.currentText(),speed=window.inspector.speed.currentText(),
+                    frame=window.inspector.timeline.value())
+                if window.inspector.viewer is not None:
+                    window.inspector.viewer.plotter.render()
+                    window.inspector.viewer.plotter.screenshot(str(out/'startup-render.png'))
+                    startup['viewer_ready']=True
+                    startup['viewport_size']=[window.inspector.viewer.width(),window.inspector.viewer.height()]
+                    if min(startup['viewport_size'])<100:raise ValueError('Startup replay viewport did not lay out')
+                window.grab().save(str(out/'startup-replay.png'))
             window.main_tabs.setCurrentIndex(index);app.processEvents()
             if index==4 and window.rehearsals.count():
                 if args.rehearsal:
@@ -51,7 +62,7 @@ if __name__=='__main__':
         except Exception as e:errors.append(dict(page=index,error=str(e)))
         if index<5:QTimer.singleShot(600,lambda:capture(index+1))
         else:
-            atomic_json(out/'result.json',dict(errors=errors,platform=app.platformName(),pages=6,started_jobs=False,
+            atomic_json(out/'result.json',dict(errors=errors,platform=app.platformName(),pages=6,started_jobs=False,startup=startup,
                 rendered_rehearsal=str(window.inspector.directory) if window.inspector.arrays is not None else None))
             window.close();QTimer.singleShot(300,app.quit)
     QTimer.singleShot(600,lambda:capture(0));app.exec()

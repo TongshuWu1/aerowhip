@@ -64,7 +64,7 @@ class RehearsalWorkspace(QWidget):
         self.table=QTableWidget();self.table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers);self.table.verticalHeader().hide();dl.addWidget(self.table)
         whip=QWidget();wl=QVBoxLayout(whip);self.views.addTab(whip,'Pull and release')
         self.whip_figure=Figure(figsize=(9,7),layout='constrained',facecolor='white');self.whip_canvas=FigureCanvasQTAgg(self.whip_figure);wl.addWidget(self.whip_canvas)
-        self.whip_note=note('Saved modeled motion along the strike direction. Positive velocity is forward toward the target.');wl.addWidget(self.whip_note)
+        self.whip_note=note('Saved modeled motion: positive velocity is toward the target. A bend moving upward in the bottom plot travels toward the tip. Cyan marks the strongest bend above 0.05 rad; this is a shape diagnostic, not measured energy transfer.');wl.addWidget(self.whip_note)
         self.views.setTabVisible(3,False)
         self.status=note('Ready · GPU planning runs in an isolated process.');layout.addWidget(self.status)
         self.job=BackgroundJob(root);self.job.finished.connect(self.finished);self.job.progress.connect(self.job_progress);layout.addWidget(self.job)
@@ -156,6 +156,8 @@ class RehearsalWorkspace(QWidget):
             f'predicted {"valid hit" if m["predicted_valid_hit"] else "miss"} · closest tip {m["minimum_tip_distance_m"]*100:.1f} cm. Recovery prediction is unvalidated.')
         if not m['recovery_prediction_complete']:self.status.setText(self.status.text()+f' Prediction stopped at {m["prediction_valid_through_s"]:.2f} s after a model-domain failure.')
         self.status.setText(self.status.text()+(' Task requires forward pull then backward release.' if m.get('pullback',{}).get('required') else ' Saved tip-hit criteria did not require backward release.'))
+        if m.get('wave',{}).get('required'):
+            self.status.setText(self.status.text()+f' Travelling-bend stages: {m["wave"]["completed_stages"]}/3.')
         for w in [self.save,self.package,self.open,self.play]:w.setEnabled(True)
         self.timeline.setRange(0,len(self.arrays['prediction_time_s'])-1);self.timeline.setValue(0)
         self.draw_plots();self.fill_table()
@@ -174,6 +176,7 @@ class RehearsalWorkspace(QWidget):
         self.viewer.update_state(q,np.zeros(3),q[:1],q[-1:],
             tracked_origin_m=self.arrays['origin_positions_m'][0],tracked_rotation=self.arrays['origin_rotations'][0],render=False)
         self.viewer.set_live_flight(True);self.viewer_host.addWidget(self.viewer)
+        self.viewer.show()
         # Frame the complete saved trajectory once. Presets then keep this
         # extent; replay and scrubbing never chase the moving drone with a zoom.
         points=np.vstack((self.arrays['cable_positions_m'].reshape(-1,3),

@@ -104,10 +104,13 @@ def test_launch_snapshots_isolate_algorithms_and_future_edits(workspace):
     assert read_json(sac / 'launch_config/sac.json')['seed'] == 19
     assert sha256_file(workspace / 'config/ppo.json') == before
     assert read_json(ppo / 'launch_config/ppo.json')['validation']['every_episodes'] == 8
-    task = read_json(workspace / 'config/task.json')
+    pointer=read_json(workspace/'config/research_workspace.json',{})
+    task_path=workspace/pointer.get('config_directory','config')/'task.json'
+    task = read_json(task_path)
+    original_target_x=task['target_position_m'][0]
     task['target_position_m'][0] = 2
-    atomic_json(workspace / 'config/task.json', task)
-    assert read_json(ppo / 'launch_config/task.json')['target_position_m'][0] == 1
+    atomic_json(task_path, task)
+    assert read_json(ppo / 'launch_config/task.json')['target_position_m'][0] == original_target_x
     assert '--config-directory' in command
 
 

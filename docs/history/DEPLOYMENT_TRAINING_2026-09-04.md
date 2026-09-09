@@ -60,4 +60,4 @@ failure data. There are no retained PPO/SAC performance results for the paper.
 Refused plans count against overall success. Different evaluation batch sizes
 currently produce different seeded scenarios. For a paper comparison, save an
 explicit common validation scenario set and reserve a separate test set.
-See [the paper experiment protocol](../PAPER_EXPERIMENT_PROTOCOL.md).
+See [the paper experiment protocol](20260909-doc-cleanup/PAPER_EXPERIMENT_PROTOCOL.md).

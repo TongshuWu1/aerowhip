@@ -66,6 +66,12 @@ class PVAPlannerPage(QWidget):
         if method=='mppi':
             self.pullback=QCheckBox('Require forward pull, then backward drone motion at contact')
             self.pullback.setChecked(self.cfg['task'].get('require_pullback',False));form.addRow(self.pullback)
+            from learning.whip_wave import DEFAULTS
+            self.wave=QCheckBox('Require a travelling bend before tip contact')
+            self.wave.setChecked(self.cfg['task'].get('require_wave',False));form.addRow(self.wave)
+            for key,value in DEFAULTS.items():
+                self.cfg['task'].setdefault(key,value)
+                self.number(form,key.replace('wave_','Bend ').replace('_',' '),('task',key),.001,3.14,.01)
             for key,label,value in (
                 ('minimum_pull_distance_m','Forward pull distance [m]',.25),
                 ('minimum_pull_speed_m_s','Forward pull speed [m/s]',1.),
@@ -84,6 +90,7 @@ class PVAPlannerPage(QWidget):
                 'displacement':'Drone displacement cost [reward / m²·s]','jerk':'Normalized jerk cost [reward / s]',
                 'proximity_scale_m':'Speed-shaping distance [m]',
                 'pull_phase':'Forward-pull progress reward','reverse_phase':'Backward-release progress reward',
+                'wave_progress':'Travelling-bend progress reward',
                 'minimum_origin_z_m':'Minimum drone height [m]','maximum_origin_z_m':'Maximum drone height [m]',
                 'minimum_cable_z_m':'Minimum cable height [m]','maximum_specific_force_m_s2':'Maximum specific acceleration [m/s²]',
                 'minimum_specific_vertical_m_s2':'Minimum upward specific acceleration [m/s²]',
@@ -104,12 +111,23 @@ class PVAPlannerPage(QWidget):
                 'terminal_command_speed':'Terminal command-speed cost','terminal_command_acceleration':'Terminal command-acceleration cost'}
             for key,value in self.cfg[section].items():
                 if section=='mppi' and key in ('mode','horizon_s','initialization'):continue
+                if section=='mppi' and key=='noise_scales':
+                    row=QHBoxLayout();fields=[]
+                    for scale in value:
+                        spin=QDoubleSpinBox();spin.setDecimals(3);spin.setRange(.001,3.);spin.setValue(scale)
+                        fields.append(spin);row.addWidget(spin)
+                    self.fields[(section,key)]=fields;form.addRow('Mixed exploration noise scales',row)
+                    continue
                 upper=10000000 if isinstance(value,int) else (0.999 if key=='noise_correlation' else 1. if key=='control_prior' else 10000)
                 lower=0 if key in ('seed','iterations') or isinstance(value,float) else 1
                 self.number(form,labels.get(key,key.replace('_',' ').capitalize()),(section,key),lower,upper,1 if isinstance(value,int) else .01,integer=isinstance(value,int))
+                if section=='mppi' and key=='noise_std' and self.cfg['mppi'].get('noise_scales'):
+                    self.fields[(section,key)].setEnabled(False)
+                    self.fields[(section,key)].setToolTip('The mixed exploration scales above replace this single-scale setting.')
                 if section=='mppi' and key=='iterations':self.fields[(section,key)].setSpecialValueText('No limit')
             if section=='mppi':
                 self.initialization=QComboBox();self.initialization.addItem('Zero jerk','zero');self.initialization.addItem('Forward/backward jerk guesses','pullback')
+                self.initialization.addItem('Varied whip pulse timing and lift','wave')
                 self.initialization.setCurrentIndex(self.initialization.findData(self.cfg['mppi'].get('initialization','zero')))
                 form.addRow('Initial proposal',self.initialization)
                 v.addWidget(note('Each lookahead optimizes until plateau or manual stop, then advances one 30 Hz command. The maneuver continues until a hit, failure or its separate safety limit. Terminal guidance is separate from actual strike reward.'))
@@ -178,6 +196,7 @@ class PVAPlannerPage(QWidget):
         cfg['task']['first_contact_only']=self.first_contact.isChecked()
         if self.method=='mppi':
             cfg['task']['require_pullback']=self.pullback.isChecked()
+            cfg['task']['require_wave']=self.wave.isChecked()
             cfg['mppi']['initialization']=self.initialization.currentData()
         if self.method=='mppi' and cfg['mppi'].get('mode')=='receding':cfg['mppi']['horizon_s']=self.horizon.value()/30
         else:cfg['task']['duration_s']=self.horizon.value()/30
@@ -225,7 +244,9 @@ class PVAPlannerPage(QWidget):
         for i,p in enumerate(self.runs):
             identity=read_json(p/'identity.json',{});status=read_json(p/'status.json',{})
             values=[identity.get('name',p.name),model_label(p/'model.json'),status.get('status','unknown'),str(status.get('attempts',status.get('iteration',status.get('iterations','—')))),p.name]
-            if self.method=='mppi':values.append('Forward/backward whip' if read_json(p/'settings.json',{}).get('task',{}).get('require_pullback') else 'Tip-hit task')
+            if self.method=='mppi':
+                task=read_json(p/'settings.json',{}).get('task',{})
+                values.append('Travelling bend + pullback' if task.get('require_wave') else 'Forward/backward whip' if task.get('require_pullback') else 'Tip-hit task')
             for j,v in enumerate(values):self.library.setItem(i,j,QTableWidgetItem(v))
         if self.runs:
             self.library.selectRow(self.runs.index(selected) if selected in self.runs else 0)

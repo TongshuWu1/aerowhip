@@ -1,0 +1,123 @@
+{
+  "action": {
+    "jerk_limit_m_s3": [
+      60.0,
+      60.0,
+      60.0
+    ]
+  },
+  "command_contract": "bounded_jerk_pva_30hz_v1",
+  "device": "cuda",
+  "launch": {
+    "origin_m": [
+      -2.0,
+      0.0,
+      1.255
+    ],
+    "start_radius_m": 0.0,
+    "target_m": [
+      -1.0,
+      0.0,
+      1.1
+    ],
+    "target_radius_m": 0.0
+  },
+  "limits": {
+    "maximum_origin_z_m": 2.8,
+    "maximum_specific_force_m_s2": 18.28571428571429,
+    "maximum_speed_m_s": 5.0,
+    "maximum_tilt_deg": 60.0,
+    "minimum_cable_z_m": 0.02,
+    "minimum_origin_z_m": 0.96,
+    "minimum_specific_vertical_m_s2": 2.0
+  },
+  "method": "mppi",
+  "model_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\model_candidates\\20260908-normalized-M1\\model.json",
+  "mppi": {
+    "control_prior": 0.0,
+    "horizon_s": 2.0,
+    "initial_minimum_iterations": 20,
+    "initial_patience": 12,
+    "initialization": "wave",
+    "iterations": 0,
+    "minimum_iterations": 5,
+    "mode": "receding",
+    "noise_correlation": 0.9,
+    "noise_scales": [
+      0.05,
+      0.15,
+      0.35
+    ],
+    "noise_std": 0.05,
+    "patience": 4,
+    "samples": 1024,
+    "seed": 656,
+    "strike_exit_acceleration": 1.0,
+    "strike_exit_climb": 5.0,
+    "strike_exit_speed": 0.5,
+    "temperature": 1.0,
+    "terminal_anchor": 0.0,
+    "terminal_command_acceleration": 0.0,
+    "terminal_command_speed": 0.0,
+    "terminal_distance": 0.0,
+    "terminal_velocity": 0.0
+  },
+  "performance": {
+    "fast_geometry": true,
+    "fast_solve": true,
+    "fused_ticks": true
+  },
+  "reward": {
+    "displacement": 5.0,
+    "failure": 100.0,
+    "invalid_contact": 25.0,
+    "jerk": 0.02,
+    "progress": 20.0,
+    "proximity_scale_m": 0.35,
+    "pull_phase": 20.0,
+    "reverse_phase": 40.0,
+    "strike_quality": 60.0,
+    "success": 200.0,
+    "time_per_s": 5.0,
+    "wave_progress": 120.0
+  },
+  "schema": "pva_planner_settings_v1",
+  "task": {
+    "duration_s": 5.0,
+    "first_contact_only": true,
+    "maximum_angle_deg": 45.0,
+    "minimum_backward_distance_m": 0.1,
+    "minimum_backward_speed_m_s": 0.5,
+    "minimum_directed_speed_m_s": 4.0,
+    "minimum_pull_distance_m": 0.25,
+    "minimum_pull_speed_m_s": 1.0,
+    "require_pullback": true,
+    "require_wave": true,
+    "strike_direction": [
+      1.0,
+      0.0,
+      0.0
+    ],
+    "target_radius_m": 0.05,
+    "wave_distal_angle_rad": 0.65,
+    "wave_distal_start": 0.75,
+    "wave_dwell_s": 0.04,
+    "wave_middle_angle_rad": 0.35,
+    "wave_proximal_angle_rad": 0.2,
+    "wave_proximal_end": 0.45
+  },
+  "training": {
+    "batch_size": 1024,
+    "entropy_coefficient": 0.01,
+    "epochs": 4,
+    "evaluate_every_updates": 5,
+    "hidden_dim": 256,
+    "learning_rate": 0.0003,
+    "maximum_attempts": 500000,
+    "minibatch_size": 8192,
+    "minimum_attempts": 20480,
+    "plateau_attempts": 20480,
+    "relative_improvement": 0.005,
+    "seed": 655
+  }
+}

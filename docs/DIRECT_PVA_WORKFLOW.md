@@ -3,14 +3,15 @@
 9 September 2026. Active branch: `twin-rewrite`. User authorized a fresh normalized-adp0 bootstrap, direct PVA PPO/MPPI and a UI overhaul. PhysX work remains paused in the separate Simulator worktree.
 
 Latest scope: fitting and PPO are stopped while the user investigates drone
-tracking. MPPI continues with frozen historical normalized M1 for simulation
-diagnostics. The fresh M0 is unfinished and has not been published.
+tracking. MPPI verification with frozen historical normalized M1 is complete;
+no further diagnostics restart automatically. The fresh M0 is unfinished and
+has not been published. Read [HANDOFF.md](../HANDOFF.md) for current status.
 
 Latest task correction: MPPI must perform a forward pull followed by backward
 drone release before the tip hits. A forward-only fast contact is insufficient.
 Read docs/MPPI_PULLBACK_20260909.md for the explicit ordered motion thresholds,
-new phase rewards and verified2s simulation. The1.2s tip-hit result below is a
-historical precursor under the earlier task, not validation of this whip.
+new phase rewards and verified2s simulation. Historical tip-only results are documented in the archive; they do not
+validate the current forward-pull/backward-release task.
 
 ## Commands and model
 
@@ -90,7 +91,7 @@ PPO defaults retain the flown neighborhood: start [-2,0,1.255] m, target
 [-1,0,1.1] m, one second, each launch/target radius 5 cm. On9 September the
 user changed MPPI to these same central positions, then explicitly clarified
 that the horizon means rolling MPPI lookahead, not the entire whip. Following
-authorized comparisons, the active lookahead is now1.2s. MPPI uses exact
+authorized comparisons, the active lookahead is now2s. MPPI uses exact
 initial/target coordinates (zero randomization radius).
 Earlier MPPI artifacts preserve their original [0,0,1.225] → [1.5,0,1.1] setup.
 These different tasks are not a controlled PPO-versus-MPPI benchmark.
@@ -104,6 +105,9 @@ clipped independently into inconsistent P/V/A. Feasibility limits remain
 provisional model-envelope checks, not identified actuator limits.
 
 ## Fresh preliminary model
+
+This fit stopped during full-whip cable-NN fitting at update 105, before plateau.
+Weights and optimizer state are retained; the description below records its method.
 
 `runs/adaptation/20260909-pva-M0-bootstrap` uses only five normalized cf7/adp0
 flights and their actual command receipts. Original OptiTrack/controller CSVs,
@@ -123,8 +127,8 @@ about 11–19 ms after the one-second whip; its few boundary samples are retaine
 in the frozen physical-fit record. The NN objective below uses an exact mask.
 
 An initial short-window cable-NN attempt lowered its own objective but worsened
-complete-whip prediction. It is preserved and superseded. The active cable NN
-uses full-whip BPTT with loss exactly over 0–1 s; padded output samples outside
+complete-whip prediction. It is preserved and superseded. The stopped cable-NN
+stage uses full-whip BPTT with loss exactly over 0–1 s; padded output samples outside
 that interval have zero weight. Measured attachment motion isolates cable
 identification. The final combined check uses predicted attachment motion and
 no measurement corrections after initialization.
@@ -156,7 +160,6 @@ computed against the held command. Individual PPO episode values are retained
 in `episodes.csv`, and can be overlaid on the progress plots.
 Orange curves show deterministic evaluation reward/success; automatic PPO
 stopping uses that evaluation reward, while blue curves show training batches.
-Runs started by the overnight workflow appear without reopening the UI.
 
 CSV export contains whip, continuous recovery and final hold. Near-settled
 endpoints use a gentle local return, avoiding an unnecessary large turning loop.

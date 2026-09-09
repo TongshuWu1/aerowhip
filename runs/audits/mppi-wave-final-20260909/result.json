@@ -1,0 +1,208 @@
+{
+  "acceptance": {
+    "best_failed": false,
+    "best_minimum_tip_distance_m": 0.026881371697345783,
+    "best_reward": 447.4593000305041,
+    "best_success": true,
+    "candidate_sha256": "81780cd30e125e5aa3b209516f65e8b474f2d251167b3dad3a026b28fcba6890",
+    "command_steps": 41,
+    "evidence": "Historical normalized M1 simulation only; no new optimizer in derived job",
+    "iterations": 0,
+    "lookahead_s": 2.0,
+    "maneuver_duration_s": 1.3666666666666667,
+    "parent_run": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260909-155433-585040",
+    "planner_mode": "mppi_full_candidate_acceptance_v1",
+    "scored_duration_s": 1.3333812480379457,
+    "stop_reason": "accepted_independently_replayed_full_candidate"
+  },
+  "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260909-160208-467697",
+  "metadata": {
+    "checkpoint": null,
+    "checkpoint_sha256": null,
+    "command_contract": "bounded_jerk_pva_30hz_v1",
+    "command_height_range_m": [
+      1.255,
+      2.2771621708247967
+    ],
+    "command_semantics": "Desired OptiTrack tracked-origin P/V/A, kinematic acceleration, 30 Hz zero-order hold, no force or mass compensation",
+    "csv_sha256": "62b624d38084321d244820a2fe4b845859dbdc892e3274d881030e81689a735e",
+    "evidence": "Fitted model simulation only; real flight performance remains to be measured",
+    "execution": "Take off; hold 10 s at saved start; execute complete CSV at saved timestamps; land. Offline artifact, no flight sender.",
+    "initial_tracking_origin_m": [
+      -2.0,
+      0.0,
+      1.255
+    ],
+    "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260909-160208-467697",
+    "lookahead_s": 2.0,
+    "minimum_predicted_cable_height_m": 0.24750000000000005,
+    "minimum_tip_distance_m": 0.026881371697345783,
+    "plan_sha256": "03754aec548d71dc75f02e409132daeebc352e7082e6b0fe29327c4028444d6d",
+    "planner": "MPPI PVA",
+    "planner_mode": "receding",
+    "predicted_drone_height_range_m": [
+      1.255,
+      2.3265343487725274
+    ],
+    "predicted_hit_time_s": 1.3333812480379457,
+    "predicted_valid_hit": true,
+    "prediction_valid_through_s": 10.5,
+    "pullback": {
+      "backward_travel_at_contact_m": 0.13271902816807335,
+      "backward_travel_m": 0.15319754627538762,
+      "contact_evaluation": "Linear interpolation within the intersected physics interval, consistent with sphere-entry timing",
+      "drone_forward_speed_at_contact_m_s": -0.6238072834815526,
+      "drone_forward_speed_at_handover_m_s": -0.6036885424818366,
+      "note": "Physical simulated tracked-origin motion, not command reversal; criteria evaluated at the hit, values here at the next 30 Hz handover boundary",
+      "peak_forward_displacement_m": 0.7418120596464606,
+      "pull_completed": true,
+      "required": true,
+      "reverse_completed": true,
+      "tip_forward_speed_at_contact_m_s": 5.216773866378204
+    },
+    "recovery": {
+      "approach_coefficients_normalized": [
+        [
+          -2.4785882985642846,
+          -0.6410563473497031,
+          1.6549999999999998
+        ],
+        [
+          0.9613567786617587,
+          1.2877119371233519,
+          -0.8034937599149243
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          -0.982257686327706,
+          -1.3157081492430802,
+          0.8209625594895467
+        ],
+        [
+          0.5120297508298002,
+          0.6858502867412687,
+          -0.42795007931939594
+        ],
+        [
+          -0.012540544599568304,
+          -0.016797727271837117,
+          0.010481279744773512
+        ]
+      ],
+      "approach_position_m": [
+        -2.4785882985642846,
+        -0.6410563473497031,
+        1.6549999999999998
+      ],
+      "approach_velocity_m_s": [
+        0.18727729454449843,
+        0.2508529747642893,
+        -0.15652475842498526
+      ],
+      "brake_end_s": 1.0,
+      "height_bounds_m": [
+        0.96,
+        2.8
+      ],
+      "hold_s": 3.0,
+      "hover_position_m": [
+        -2.0,
+        0.0,
+        1.255
+      ],
+      "maximum_tilt_limit_deg": 60.0,
+      "phase_description": "Moving curved turn/descent, slow approach, stationary final hold",
+      "return_end_s": 6.133333333333334,
+      "return_s": 5.133333333333334,
+      "schema": "curved_moving_recovery_v1",
+      "settings": {
+        "approach_distance_m": 0.8,
+        "approach_height_m": 0.4,
+        "approach_speed_m_s": 0.35,
+        "hold_s": 3.0,
+        "maximum_descent_speed_m_s": 5.0,
+        "maximum_downward_acceleration_m_s2": 7.806649999999999,
+        "maximum_horizontal_acceleration_m_s2": 18.28571428571429,
+        "maximum_specific_force_m_s2": 18.28571428571429,
+        "maximum_speed_m_s": 5.0,
+        "maximum_tilt_deg": 60.0,
+        "maximum_turn_s": 8.0,
+        "minimum_specific_vertical_m_s2": 2.0,
+        "minimum_turn_s": 1.0
+      },
+      "stationary_braking_waypoint": false,
+      "total_duration_s": 9.133333333333333,
+      "turn_coefficients_normalized": [
+        [
+          -1.4594974431471113,
+          -0.23912150665719067,
+          2.2048845640994768
+        ],
+        [
+          -0.46133823270743607,
+          -0.617950341116565,
+          -0.1856685835732145
+        ],
+        [
+          2.9055003791319325,
+          -0.866527351698076,
+          0.2609149951551719
+        ],
+        [
+          -16.888489473500886,
+          1.2845237958113351,
+          -4.5414800913210485
+        ],
+        [
+          21.623099168805368,
+          0.24180864971096572,
+          6.449991469397045
+        ],
+        [
+          -8.197862697146148,
+          -0.44378959340017243,
+          -2.5336423537574295
+        ]
+      ],
+      "turn_end_s": 1.0,
+      "turn_metrics": {
+        "minimum_az_m_s2": -2.268070195441637,
+        "minimum_height_m": 1.6550000000000007,
+        "minimum_specific_vertical_m_s2": 7.538579804558363,
+        "minimum_vz_m_s": -0.8979407493323545,
+        "peak_height_m": 2.2048845640994768,
+        "peak_horizontal_acceleration_m_s2": 7.092215293148528,
+        "peak_specific_force_m_s2": 14.045696037920662,
+        "peak_speed_m_s": 2.233141922643856
+      },
+      "vehicle_limits_verified": false
+    },
+    "recovery_empirically_validated": false,
+    "recovery_prediction_complete": true,
+    "reference_feasible": true,
+    "schema": "pva_fullstate_30hz_v1",
+    "scored_duration_s": 1.3333812480379457,
+    "target_position_m": [
+      -1.0,
+      0.0,
+      1.1
+    ],
+    "total_duration_s": 10.5,
+    "training_export_cable_max_difference_m": 7.37854222165879e-13,
+    "training_export_prefix_max_difference_m": 2.886579864025407e-15,
+    "wave": {
+      "completed_stages": 3,
+      "completion_time_s": 1.3,
+      "definition": "Dominant local bend persists through proximal, middle, distal material bands before contact; kinematic proxy only",
+      "required": true
+    },
+    "whip_end_s": 1.3666666666666667
+  },
+  "package": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\audits\\mppi-wave-final-20260909\\MPPI-wave-simulation.zip",
+  "parent_run": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260909-155433-585040",
+  "rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\20260909-160208-467697-mppi-wave"
+}

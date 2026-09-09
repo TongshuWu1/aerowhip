@@ -37,14 +37,19 @@
     "control_prior": 0.0,
     "horizon_s": 2.0,
     "initial_minimum_iterations": 20,
-    "initial_patience": 15,
-    "initialization": "pullback",
+    "initial_patience": 12,
+    "initialization": "wave",
     "iterations": 0,
-    "minimum_iterations": 3,
+    "minimum_iterations": 5,
     "mode": "receding",
-    "noise_correlation": 0.7,
+    "noise_correlation": 0.9,
+    "noise_scales": [
+      0.05,
+      0.15,
+      0.35
+    ],
     "noise_std": 0.05,
-    "patience": 3,
+    "patience": 4,
     "samples": 1024,
     "seed": 656,
     "strike_exit_acceleration": 1.0,
@@ -62,13 +67,14 @@
     "failure": 100.0,
     "invalid_contact": 25.0,
     "jerk": 0.02,
-    "progress": 60.0,
+    "progress": 20.0,
     "proximity_scale_m": 0.35,
     "pull_phase": 20.0,
     "reverse_phase": 40.0,
     "strike_quality": 60.0,
     "success": 200.0,
-    "time_per_s": 10.0
+    "time_per_s": 5.0,
+    "wave_progress": 120.0
   },
   "schema": "pva_planner_settings_v1",
   "task": {
@@ -81,12 +87,19 @@
     "minimum_pull_distance_m": 0.25,
     "minimum_pull_speed_m_s": 1.0,
     "require_pullback": true,
+    "require_wave": true,
     "strike_direction": [
       1.0,
       0.0,
       0.0
     ],
-    "target_radius_m": 0.05
+    "target_radius_m": 0.05,
+    "wave_distal_angle_rad": 0.65,
+    "wave_distal_start": 0.75,
+    "wave_dwell_s": 0.04,
+    "wave_middle_angle_rad": 0.35,
+    "wave_proximal_angle_rad": 0.2,
+    "wave_proximal_end": 0.45
   },
   "training": {
     "batch_size": 1024,

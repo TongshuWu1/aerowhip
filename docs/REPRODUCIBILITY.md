@@ -1,24 +1,33 @@
-# Reproducibility and data availability
+# Reproducibility and evidence
 
-The source bundle contains physics, learning, recording interfaces, tests, a numerical baseline and an embedded CEM action prior. It contains no raw recordings, processed trajectories, fitted-data reports, policy checkpoints or private Git history. Real experimental data and trained-policy results therefore cannot be reproduced from source alone.
+The development branch includes explicitly committed research data, models,
+checkpoints, source snapshots, saved plans, CSVs and audits. Many numerical/binary
+files use Git LFS: run `git lfs pull` after retrieving the branch. New files under
+`runs/`, `data/` and `policies/` remain opt-in through existing ignore rules.
 
-The bundled baseline retains the numerical physical values from the development configuration. Machine-specific provenance paths are removed. The manifest records original and bundled configuration hashes and each transformation. The embedded CEM prior is part of initialization, not a pretrained PPO/SAC actor; its preceding search used 8,192 attempts and must be counted separately in comparisons.
+For each reported result retain the actual source/configuration, model and residual
+hashes, seed, initial state, task/reward/termination definition, optimizer history,
+command timestamps, complete recovery and validation selection procedure. For real
+flights also retain raw measurements, masks, clock/frame mapping, sent commands,
+vehicle identity and the exact original saved forecast.
 
-The portable bundle uses `device=auto`, 64 environments, a smaller SAC replay buffer and proportionate updates per collection for development. Those defaults are **not** the workstation's 32,768-environment comparison protocol. The physical model, action vectors, reward weights, task and timing are preserved. Match saved experiment settings before claiming reproduction of a reported run.
+Current example: [MPPI result record](MPPI_PULLBACK_20260909.md). Its final portable
+CSV and all saved arrays regenerate exactly in the recorded environment. Its
+continuation timing excludes the parent's optimization and cannot be reported as
+a cold solve. The latest relevant suite passed 73 tests on Windows/RTX 4080;
+see [paper handoff](PAPER_WRITING_HANDOFF.md) for the exact test list and metrics.
 
-## Evidence to retain for an experiment
+Distinguish simulation success, reference feasibility, modeled recovery, exact
+software replay, prediction error against recorded motion, and prospective physical
+performance. They are different outcomes. Current direct-PVA MPPI is simulation-only.
+New PVA PPO has no trained matched performance baseline.
 
-- Exact source snapshot, dependency versions and random seeds.
-- Model/task/algorithm settings, initialization prior and any preceding search budget.
-- Complete training-attempt records, validation scenarios and checkpoint hashes.
-- Validation-selection/early-stopping rules and any mid-run changes.
-- Final evaluation cases, including failures and recovery outcomes.
-- For physical flights: original tracking, sent commands, controller telemetry, clock/frame mappings and event evidence.
+Split data by complete takes/sessions. Hover-normalized Z uses retrospective pre/post
+data and must be disclosed. No renamed historical test becomes independent after
+being used for development. Missing datasets/CUDA may produce explicit test skips;
+report those separately from passes.
 
-Split data by whole recordings, not adjacent windows. Protected tests stay excluded from development. An empty dataset manifest in the source bundle is deliberate; do not substitute synthetic data while labeling the outcome as measured flight performance.
-
-The maintained test suite includes both synthetic checks and local-data checks. The documented smoke subset is self-contained. For a source-only checkout, local-data tests are skipped with explicit reasons by `tests/conftest.py`; the absence of data must not be reported as a passing physical validation.
-
-## Research claims
-
-The current simulation comparison uses one training seed and a searched prior. PPO was manually stopped before SAC's maximum budget. It is not a replicated, fixed-budget algorithm ranking. Real-flight deployment/adaptation and cross-task transfer remain unvalidated. Author, ownership, data-sharing and licensing decisions are pending; consult [publication preparation](PUBLICATION.md).
+The legacy source-only release builder is a separate packaging path with its own
+force-era assumptions; it is not a verified portable release of the current PVA
+application. Use a saved PVA rehearsal package for the documented exact replay.
+See [PUBLICATION.md](PUBLICATION.md) before preparing a separate public artifact.

@@ -1,6 +1,6 @@
 # Adapting the drone–cable simulator from real flights
 
-Implementation follow-up: the user subsequently authorized the optional residual extension and differentiable execution mode. See [implementation and verification](DIFFERENTIABLE_EXECUTION_AND_RESIDUAL.md), including a legacy damping-switch sensitivity discovered during full-whip testing and a separately versioned numerical regularization. The review below describes the original M0 and research rationale; no adp0 fit or deployment-model replacement has occurred.
+Implementation follow-up: the user subsequently authorized the optional residual extension and differentiable execution mode. See [implementation and verification](history/20260909-doc-cleanup/DIFFERENTIABLE_EXECUTION_AND_RESIDUAL.md), including a legacy damping-switch sensitivity discovered during full-whip testing and a separately versioned numerical regularization. The review below describes the original M0 and research rationale; no adp0 fit or deployment-model replacement has occurred.
 
 ## Recommendation
 

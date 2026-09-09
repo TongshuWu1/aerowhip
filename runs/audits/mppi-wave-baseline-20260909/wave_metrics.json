@@ -1,0 +1,23 @@
+{
+  "criteria": {
+    "wave_distal_angle_rad": 0.5,
+    "wave_distal_start": 0.75,
+    "wave_dwell_s": 0.04,
+    "wave_middle_angle_rad": 0.25,
+    "wave_proximal_angle_rad": 0.15,
+    "wave_proximal_end": 0.45
+  },
+  "evidence": "Saved model geometry; kinematic travelling-bend proxy, not energy-transfer or flight proof",
+  "maximum_local_turn_angle_rad": 0.6210882692617142,
+  "peak_forward_tip_speed_m_s": 5.176056351510161,
+  "peak_tip_speed_m_s": 5.484711221796326,
+  "predicted_valid_hit": true,
+  "retrospective_diagnostic": true,
+  "stage_completion_times_s": [
+    0.8600000000000001,
+    1.04,
+    1.1600000000000001
+  ],
+  "stages_before_contact": 3,
+  "task_required_wave": false
+}

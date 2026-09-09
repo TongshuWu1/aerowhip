@@ -122,6 +122,7 @@ class PVAEnvironment:
         # Structural rest lengths, free pivot and no privileged measured cable state.
         lengths=self.tensor(self.engine.cable.rest_lengths_m)
         distance=torch.cat((lengths.new_zeros(1),lengths.cumsum(0)))
+        self.wave_material=distance[1:-1]/distance[-1]
         q=root[:,None]+torch.stack((torch.zeros_like(distance),torch.zeros_like(distance),-distance),-1)[None]
         self.state=DderState(q,torch.zeros_like(q));self.initial_state=self.state
         self.initial_pose=self.pose
@@ -131,6 +132,9 @@ class PVAEnvironment:
         self.success=torch.zeros_like(self.active);self.failed=torch.zeros_like(self.active);self.contact=torch.zeros_like(self.active)
         self.pull_ready=torch.zeros_like(self.active);self.reverse_ready=torch.zeros_like(self.active)
         self.pull_peak=self.origin0.new_zeros(b);self.pull_credit=self.pull_peak.clone();self.reverse_credit=self.pull_peak.clone()
+        self.wave_stage=torch.zeros(b,device=self.device,dtype=torch.long)
+        self.wave_dwell=self.pull_peak.clone();self.wave_credit=self.pull_peak.clone()
+        self.wave_completion_time=self.pull_peak.new_full((b,),float('inf'))
         self.total=self.origin0.new_zeros(b);self.minimum_distance=(q[:,-1]-self.target).norm(dim=-1)
         self.initial_distance=self.minimum_distance.clone();self.best_quality=self.total.clone()
         self.termination_time=self.total.new_full((b,),self.steps*self.control_dt)
@@ -165,7 +169,8 @@ class PVAEnvironment:
         self.state=DderState(expand(source.state.positions_m),expand(source.state.velocities_m_s))
         for name in ('active','success','failed','contact','minimum_distance','initial_distance','best_quality',
                      'termination_time','cutoff','origin0','target','total','command','hover',
-                     'pull_ready','reverse_ready','pull_peak','pull_credit','reverse_credit'):
+                     'pull_ready','reverse_ready','pull_peak','pull_credit','reverse_credit',
+                     'wave_stage','wave_dwell','wave_credit','wave_completion_time'):
             setattr(self,name,expand(getattr(source,name)))
         self.evolving=expand(getattr(source,'evolving',source.active))
         self.packets=[expand(p) for p in source.packets]
@@ -191,6 +196,7 @@ class PVAEnvironment:
         weights=self.settings['reward'];limits=self.settings['limits'];task=self.settings['task']
         running=self.active.clone();previous=self.state
         previous_origin=self.pose.position;previous_velocity=self.pose.velocity;previous_pull_ready=self.pull_ready.clone()
+        previous_wave_ready=self.wave_stage>=3
         pose_ok=self._pose_advance(left,right)
         root=self.pose.position+torch.einsum('bij,j->bi',self.pose.rotation,self.offset_tensor)
         candidate=self.cable_stepper(self.state,root)
@@ -219,6 +225,10 @@ class PVAEnvironment:
         if task.get('require_pullback',False):
             phase_reward,pullback_allowed=update_pullback(self,running);reward+=phase_reward
             quality*=pullback_allowed
+        if task.get('require_wave',False):
+            from learning.whip_wave import update
+            reward+=update(self,running,clock_left+self.dt)
+            quality*=previous_wave_ready
         reward+=running*(weights['progress']*progress+weights['strike_quality']*(quality-self.best_quality).clamp_min(0))
         self.minimum_distance=torch.where(running,torch.minimum(self.minimum_distance,dist),self.minimum_distance)
         self.best_quality=torch.where(running,torch.maximum(self.best_quality,quality),self.best_quality)
@@ -238,6 +248,10 @@ class PVAEnvironment:
         else:contact_speed=v[:,-1].norm(dim=-1)
         angle_ok=directed/contact_speed.clamp_min(1e-12)>=math.cos(math.radians(task['maximum_angle_deg']))
         hit=entered&(tip<other)&first_allowed&(directed>=task['minimum_directed_speed_m_s'])&angle_ok&pullback_allowed
+        if task.get('require_wave',False):
+            # Conservative causal check: all stages must finish BEFORE the
+            # contact interval; interval-end evidence cannot qualify an early hit.
+            hit&=previous_wave_ready
         any_contact=running&torch.isfinite(entry).any(-1)
         invalid_contact=any_contact&~hit&~self.contact
         self.contact|=any_contact;self.success|=hit;self.active&=~hit
@@ -247,7 +261,8 @@ class PVAEnvironment:
         ended=hit|invalid
         self.termination_time=torch.where(ended,clock_left+torch.where(hit,tip.clamp(0,1)*self.dt,torch.zeros_like(tip)),self.termination_time)
         self.cutoff=torch.where(ended,clock_cutoff,self.cutoff)
-        if trace:self.frames.append(dict(time_s=right,origin=self.pose.position.clone(),rotation=self.pose.rotation.clone(),cable=q.clone()))
+        if trace:self.frames.append(dict(time_s=right,origin=self.pose.position.clone(),rotation=self.pose.rotation.clone(),cable=q.clone(),
+            origin_velocity=self.pose.velocity.clone(),cable_velocity=v.clone()))
         return reward
 
     @torch.no_grad()

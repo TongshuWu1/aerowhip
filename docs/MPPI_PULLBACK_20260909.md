@@ -1,5 +1,78 @@
 # Forward-pull / backward-release whipping task
 
+## Current extension: travelling bend
+
+The latest user request focuses on MPPI; PPO exploration/training is a separate
+problem and remains stopped. Active `config/pva/mppi.json` now enables `require_wave`.
+The original completed result below already has a bend moving toward the tip;
+it was previously assessed only through carrier reversal and target contact.
+The new objective explicitly measures stronger bending and ordered propagation.
+
+`learning/whip_wave.py` measures the local turning angle between neighboring
+segments and the material coordinate of its maximum. After forward pull has
+qualified, that maximum must persist for 0.04 s in each ordered region: proximal
+coordinate <0.45, middle 0.45–0.75, distal >=0.75. Active minimum local angles are
+0.20, 0.35 and 0.65 rad respectively. Regions use rest-length coordinates from
+attachment to tip. Completion must precede the contact interval; post-contact
+samples cannot qualify an early hit. Three phase rewards total at most 120 and
+cannot be collected again by oscillating. First-contact, speed/direction, pullback
+and complete command/model envelope checks remain in force.
+
+This is a **kinematic travelling-bend proxy**, not a proof of mechanical energy
+transfer or a tapered-whip crack. It rejects a rigid swing and a stationary bend,
+but coarse dominant-peak tracking cannot prove that every stage belongs to one
+continuous physical wave. Thresholds are engineering choices for this cable mesh.
+Inspect full shape sequences and tip velocities as well as the scalar acceptance.
+
+New cold run `20260909-155433-585040` uses a 2 s lookahead and 1,024 samples plus
+the deterministic mean, with native bounded jerk and unchanged physical limits.
+Initialization screens 1,025 pulse sequences with varied preparation, reversal,
+and vertical-lift timing. Equal-sized interleaved Gaussian groups use latent
+standard deviations 0.05/0.15/0.35 with temporal correlation 0.9. This mixture uses
+zero control prior; nonzero prior is rejected because the existing single-Gaussian
+likelihood correction does not apply. Importance weighting is retained, not an
+elite/CEM update. Later windows use minimum five iterations and four stale
+iterations; first window minimum 20, patience 12. There is no fixed optimizer
+time/iteration cap. The separate maneuver safety limit remains five seconds.
+Closest-distance weight is reduced 60→20 and time cost 10→5 points/s to reduce
+pressure against preparation. PPO settings, models and historical outputs are unchanged.
+
+Inspect shapes without regenerating saved ghosts using `tools/audit_whip_wave.py`.
+The baseline audit is `runs/audits/mppi-wave-baseline-20260909`; setup provenance is
+`runs/audits/mppi-wave-setup-20260909`.
+
+### Accepted wave plan
+
+Completed derived plan `20260909-160208-467697` accepts the independently replayed
+full proposal captured after four parent commands. It has 41 actions / 1.36667 s
+and a modeled hit at 1.33338125 s, minimum distance 2.68814 cm. Ordered bend stages
+complete at 0.81333, 1.15333, 1.30000 s. Peak local turning angle is 0.79806 rad
+(earlier result 0.62109 rad); peak tip speed 5.78353 m/s. Drone backward speed at
+contact is 0.62381 m/s, tip forward speed 5.21677 m/s, backward travel 0.132719 m.
+The complete 10.5 s recovery/hold CSV passes the saved envelope and exact portable
+replay; modeled drone peak height is 2.32653 m. This uses more height than the old
+result and has no new physical validation.
+
+The parent rolling run is STOPPED at 13 committed commands after 97 completed
+iterations / 508.99 s. It first found a predicted valid wave hit at iteration 17 /
+94.69 s. Its rolling loop did not finish. The accepted full candidate is a separate
+result with explicit source/hash provenance; no new optimizer runs in that derived
+job. Do not interpret its zero iterations as free planning or the parent stop as a
+fixed planning-time cap. `tools/finalize_mppi_candidate.py` accepts only a replayed
+valid hit that also passes complete recovery and export. It does not stop the parent.
+The parent was explicitly stopped after these checks passed.
+
+[Final audit](../runs/audits/mppi-wave-final-20260909/result.json),
+[portable verification](../runs/audits/mppi-wave-final-20260909/verification.json),
+[animation](../runs/audits/mppi-wave-final-20260909/motion/wave.gif), and
+[shape/velocity plot](../runs/audits/mppi-wave-final-20260909/motion/wave.png).
+28 targeted tests pass on Windows/RTX 4080, including wave ordering/persistence,
+rejection of rigid/stationary bends, CUDA branch parity, contact causality, and
+independent GUI settings. A stale legacy snapshot test was corrected to edit the
+actual configured source task instead of assuming a hard-coded historical target.
+
+## Historical hit-and-reversal task and result
+
 The user clarified that a fast tip contact alone is insufficient. The intended
 motion is forward carrier motion to load the cable, then backward carrier
 motion while the cable continues forward toward the target. The previous1.2s

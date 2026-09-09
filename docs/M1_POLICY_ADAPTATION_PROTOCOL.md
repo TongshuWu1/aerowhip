@@ -1,6 +1,10 @@
 # M1 policy adaptation: research protocol
 
-Status: the authorized paired study and its rehearsal/export audit are COMPLETED. Both arms received exactly 20,480 additional attempts. Do not restart or extend automatically. MPPI is paused. **Real M1 policy performance remains unknown until new flights.**
+Historical force-PPO study: the authorized paired study and its rehearsal/export
+audit are COMPLETED. Both arms received exactly 20,480 additional attempts. Do not
+restart or extend automatically. This protocol preserves the study's original
+method; see [HANDOFF.md](../HANDOFF.md) for current MPPI and PVA status.
+**Real M1 policy performance remains unknown until new flights.**
 
 Use the retained flown PPO as initialization for a new M1 PPO run. This is continued policy optimization in an updated simulator. Real logs fit the physical model and residuals; PPO receives fresh simulated rollouts. The real aircraft still executes the exported 30 Hz FullState CSV, not the neural policy online.
 

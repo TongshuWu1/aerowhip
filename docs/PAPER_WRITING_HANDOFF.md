@@ -8,6 +8,14 @@ The implementation snapshot immediately preceding this document is commit `74d7c
 
 ## 1. Start here: what this project actually studies
 
+**Later MPPI update:** the travelling-bend experiment and accepted plan
+`20260909-160208-467697` are recorded in [the current MPPI task record](MPPI_PULLBACK_20260909.md).
+It adds ordered persistent bend progression before tip contact and broader MPPI
+sampling. Its full proposal was accepted after independent replay/recovery checks;
+the parent receding loop was stopped. Treat it as historical-model simulation,
+not energy-transfer proof, new flight evidence, or a matched PPO comparison.
+The numerical discussion below retains the earlier result's original semantics.
+
 The project concerns **dynamic aerial manipulation of a flexible cable by a quadrotor**. The intended maneuver is a whip: the aircraft first moves forward, then moves backward while the cable continues forward and its distal tip reaches a target with sufficient directed speed. The user's physical intuition is to load the cable motion and then release it so motion propagates toward the tip. The implemented task presently verifies the ordered motion and tip-contact conditions; it does not yet quantify energy transfer or establish a physical wave-propagation mechanism experimentally.
 
 The broader research question is:

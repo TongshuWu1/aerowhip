@@ -36,6 +36,21 @@ def test_new_window_is_six_page_direct_pva_workflow():
     assert [name for name,_ in PAGES]==['Models & fitting','Recordings','PPO','MPPI','Rehearsals','Flight comparison']
 
 
+def test_wave_setup_keeps_mixture_scales_and_task_controls(tmp_path):
+    os.environ.setdefault('QT_QPA_PLATFORM','offscreen')
+    from PySide6.QtWidgets import QApplication
+    from simulator.gui.pva_workspace import PVAPlannerPage
+    from learning.whip_wave import DEFAULTS
+    app=QApplication.instance() or QApplication([])
+    cfg=load_settings(tmp_path,'mppi');cfg['task'].update(DEFAULTS,require_wave=True)
+    cfg['mppi'].update(initialization='wave',noise_scales=[.05,.15,.35])
+    atomic_json(settings_path(tmp_path,'mppi'),cfg)
+    page=PVAPlannerPage(tmp_path,'mppi');saved=page.collect()
+    assert saved['task']['require_wave'] and saved['mppi']['initialization']=='wave'
+    assert saved['mppi']['noise_scales']==[.05,.15,.35]
+    page.shutdown();page.close();app.processEvents()
+
+
 def test_campaign_run_appears_without_reopening_ui_and_evaluation_reward_is_visible(tmp_path):
     os.environ.setdefault('QT_QPA_PLATFORM','offscreen')
     from PySide6.QtWidgets import QApplication

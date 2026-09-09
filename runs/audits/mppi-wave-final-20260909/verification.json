@@ -1,0 +1,46 @@
+{
+  "accepted_job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260909-160208-467697",
+  "csv_identical": true,
+  "evidence": "Windows/RTX 4080; exact saved-package replay; simulation only",
+  "maximum_array_differences": {
+    "cable_positions_m": 0.0,
+    "cable_velocities_m_s": 0.0,
+    "command_phase": 0.0,
+    "command_time_s": 0.0,
+    "commands": 0.0,
+    "jerk_m_s3": 0.0,
+    "jerk_time_s": 0.0,
+    "origin_positions_m": 0.0,
+    "origin_rotations": 0.0,
+    "origin_velocities_m_s": 0.0,
+    "prediction_time_s": 0.0,
+    "target_position_m": 0.0
+  },
+  "package_provenance_added": true,
+  "package_runtime_csv_arrays_unchanged_after_provenance_addition": true,
+  "parent_elapsed_s": 508.9901442000046,
+  "parent_iterations": 97,
+  "parent_status": {
+    "command_step": 13,
+    "error": "Stopped by request at a rollout/update boundary",
+    "iteration": 97,
+    "lookahead_s": 2.0,
+    "maneuver_time_s": 0.43333333333333335,
+    "pid": 25896,
+    "stage": "MPPI lookahead optimization",
+    "status": "stopped",
+    "window_iteration": 2
+  },
+  "ppo_settings_sha256": "195562600bff1b6b05d5fd1cbf5ab7391d9ca5260dd106339984d33b4db71c75",
+  "ppo_settings_unchanged": true,
+  "source_tests": [
+    "test_whip_wave.py",
+    "test_pullback_contract.py",
+    "test_mppi_receding.py",
+    "test_pva_contract.py",
+    "test_pva_export.py",
+    "test_pva_workflow.py",
+    "test_research_workflow.py::test_launch_snapshots_isolate_algorithms_and_future_edits"
+  ],
+  "targeted_tests_passed": 28
+}

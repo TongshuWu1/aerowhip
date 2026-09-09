@@ -1,0 +1,16 @@
+{
+  "best_failed": false,
+  "best_minimum_tip_distance_m": 0.026881371697345783,
+  "best_reward": 447.4593000305041,
+  "best_success": true,
+  "candidate_sha256": "81780cd30e125e5aa3b209516f65e8b474f2d251167b3dad3a026b28fcba6890",
+  "command_steps": 41,
+  "evidence": "Historical normalized M1 simulation only; no new optimizer in derived job",
+  "iterations": 0,
+  "lookahead_s": 2.0,
+  "maneuver_duration_s": 1.3666666666666667,
+  "parent_run": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260909-155433-585040",
+  "planner_mode": "mppi_full_candidate_acceptance_v1",
+  "scored_duration_s": 1.3333812480379457,
+  "stop_reason": "accepted_independently_replayed_full_candidate"
+}

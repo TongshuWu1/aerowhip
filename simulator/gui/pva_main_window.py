@@ -66,6 +66,25 @@ class PVAResearchWindow(QMainWindow):
         self.main_tabs.currentChanged.connect(self.page_changed);self.rehearsal_tabs.currentChanged.connect(lambda _:self.page_changed(self.main_tabs.currentIndex()))
         self.ppo_page.changed.connect(self.refresh_rehearsals);self.mppi_page.changed.connect(self.refresh_rehearsals)
         self.refresh_rehearsals();self.page_changed(0)
+        if (self.root/'config/pva/replay.json').is_file():QTimer.singleShot(200,self.restore_replay)
+
+    def restore_replay(self):
+        """Open the explicitly saved replay selection without generating a job."""
+        selection=read_json(self.root/'config/pva/replay.json',{})
+        path=Path(selection.get('rehearsal',''))
+        path=(path if path.is_absolute() else self.root/path).resolve()
+        index=self.rehearsals.findData(str(path))
+        if index<0:return  # The selected artifact may be absent in a source-only checkout.
+        self.rehearsals.setCurrentIndex(index);self.open_rehearsal();self.main_tabs.setCurrentIndex(4)
+        if self.inspector.arrays is None:return
+        self.inspector.camera.setCurrentText(selection.get('camera','Side XZ'))
+        self.inspector.speed.setCurrentText(selection.get('speed','0.25×'))
+        import numpy as np
+        times=self.inspector.arrays['prediction_time_s']
+        frame=int(np.argmin(np.abs(times-float(selection.get('time_s',0.)))))
+        self.inspector.timeline.setValue(frame)
+        QTimer.singleShot(100,lambda:self.inspector.draw_frame(frame) if self.inspector.arrays is not None else None)
+        self.rehearsal_status.setText('Saved replay loaded. Press Play to inspect the original predicted whip and recovery.')
 
     def select_model(self,path,method='ppo'):
         page=self.ppo_page if method=='ppo' else self.mppi_page;page.select_model(path);self.main_tabs.setCurrentWidget(page)
