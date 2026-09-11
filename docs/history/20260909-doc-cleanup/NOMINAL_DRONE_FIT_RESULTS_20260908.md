@@ -11,7 +11,7 @@ and predicts the other post-holds poorly. No drone NN, cable fit or PPO ran.
 Run: `data/nominal_drone_runs/20260908-060710-079793-legacy-whip-nominal-pose`.
 Status: `NOMINAL_FIT_ASSESSED_MODEL_LIMITATIONS`, `deployment_ready=false`.
 Protocol: [nominal fitting](NOMINAL_DRONE_FITTING.md).
-Plot: [measured and predicted trajectories](../../../data/nominal_drone_runs/20260908-060710-079793-legacy-whip-nominal-pose/nominal_fit_review.png).
+Plot: measured and predicted trajectories (historical artifact, no longer included in this checkout).
 
 ## What was fitted and what data were used
 

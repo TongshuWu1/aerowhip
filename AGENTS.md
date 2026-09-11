@@ -1,7 +1,7 @@
 # AeroWhip project instructions
 
-Read `HANDOFF.md` first, then `docs/PAPER_EXPERIMENT_PROTOCOL.md` for the active
-study and `docs/PAPER_WRITING_HANDOFF.md` for manuscript scope. Historical notes
+Read `HANDOFF.md` first, then `docs/paper/PAPER_EXPERIMENT_PROTOCOL.md` for the active
+study and `docs/paper/PAPER_WRITING_HANDOFF.md` for manuscript scope. Historical notes
 do not override the user's latest decisions or establish live job status.
 
 - Preserve the current selected models/policies, physical calibration, recent

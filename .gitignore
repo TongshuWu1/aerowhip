@@ -10,7 +10,7 @@ tmp/
 /archive/
 /results/
 /dist/
-/runs/
+/runs/**
 /policies/**
 !/policies/README.md
 # Newly generated research artifacts stay opt-in. The user-authorized September 9
@@ -21,3 +21,15 @@ tmp/
 /data/**
 !/data/README.md
 !/data/dataset_manifest.json
+
+# Clear canonical locations; generated artifacts remain opt-in.
+/data/flight_batches/**
+!/data/flight_batches/README.md
+/exports/**
+!/exports/README.md
+/third_party/natnet/
+!/runs/README.md
+# Local compatibility links to moved artifacts (never duplicate into Git).
+/rehearsal_csv_and_result_in_real_flight/
+/policies/
+/output/

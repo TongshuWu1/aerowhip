@@ -50,7 +50,7 @@ class SystemComparisonPage(QWidget):
         self.refresh()
 
     def open_document(self):
-        QDesktopServices.openUrl(QUrl.fromLocalFile(str(self.root/'docs/M0_M1_M2_SYSTEM_COMPARISON.md')))
+        QDesktopServices.openUrl(QUrl.fromLocalFile(str(self.root/'docs/development/M0_M1_M2_SYSTEM_COMPARISON.md')))
 
     def refresh(self):
         self.report=None

@@ -4,9 +4,9 @@
 
 The two-residual approach is a defensible development model, but this audit found several concrete issues that should be corrected before treating the current PPO as a deployment candidate. The most important are inadequate maneuver coverage in the drone fit, missing feasibility checks, and a discrepancy between the training prediction and the Full State preview. Training was left running. No reward, physics, residual weights, controller, logger, or active configuration was changed during this audit.
 
-Evidence is in [the audit folder](../../../runs/audits/20260908-025749-theory-code-audit), particularly `probe_evidence.json`, the copied policy/configuration snapshot, and `snapshot_prediction.npz`. The reproducible main probe is [tools/audit_complete_model.py](../../../tools/audit_complete_model.py). The policy snapshot contains 28,672 training episodes; subsequent checkpoints may differ. All numerical probes used Windows and an RTX 4080. This was a focused review of the complete training/identification/export route and its supporting tests, not certification of every repository file or the remote flight system.
+Evidence is in the audit folder (historical artifact, no longer included in this checkout), particularly `probe_evidence.json`, the copied policy/configuration snapshot, and `snapshot_prediction.npz`. The reproducible main probe is tools/audit_complete_model.py (historical script, no longer included). The policy snapshot contains 28,672 training episodes; subsequent checkpoints may differ. All numerical probes used Windows and an RTX 4080. This was a focused review of the complete training/identification/export route and its supporting tests, not certification of every repository file or the remote flight system.
 
-![Window coverage and command demands](../../../runs/audits/20260908-025749-theory-code-audit/audit_findings.png)
+Window coverage and command demands (historical artifact, no longer included in this checkout)
 
 **1. High priority — the drone fit mostly misses the maneuver. Confirmed from saved fitting windows.**
 

@@ -18,8 +18,8 @@ Historical M0/M1/M2 trials are development evidence; the planned new study uses
 ## Start here
 
 - [Current decisions and evidence boundaries](HANDOFF.md)
-- [Paper-writing handoff](docs/PAPER_WRITING_HANDOFF.md)
-- [One-day experiment protocol](docs/PAPER_EXPERIMENT_PROTOCOL.md)
+- [Paper-writing handoff](docs/paper/PAPER_WRITING_HANDOFF.md)
+- [One-day experiment protocol](docs/paper/PAPER_EXPERIMENT_PROTOCOL.md)
 - [Architecture and source map](docs/ARCHITECTURE.md)
 - [Documentation index](docs/README.md)
 
@@ -39,7 +39,7 @@ repository root using the existing environment:
 .venv/Scripts/python.exe run_simulation.py
 ```
 
-See [installation](docs/INSTALL.md) for environment setup. Opening the interface
+See [installation](docs/setup/INSTALL.md) for environment setup. Opening the interface
 does not start training, fitting or planning.
 
 The separate **`deployment` branch** provides the five-page operator app,
@@ -62,9 +62,11 @@ import the baseline separately. Neither version sends commands to the aircraft.
 | `tools/` | Workflow and analysis entry points |
 | `tests/` | Physics, fitting, flight, training and UI checks |
 | `docs/` | Active paper and implementation guides |
-| `data/`, `rehearsal_csv_and_result_in_real_flight/` | Measurements and imported recordings |
+| `data/` | Preliminary takes and paired flight batches in `data/flight_batches/` |
 | `runs/` | Fitted models, saved commands, original forecasts and audit evidence |
-| `output/` | Exported paper figures/PDFs and their provenance |
+| `exports/` | CSVs and bundles handed to the separate flight program |
+| `paper/figures/` | Manuscript figures and provenance sidecars |
+| `third_party/` | Optional locally installed SDKs |
 
 Retained evidence focuses on the current work and the recent M0/M1/M2 lineage,
 including the preliminary inputs and calibration required to reproduce it.
@@ -72,9 +74,11 @@ Obsolete measurements, failed legacy runs and superseded guides are outside the
 active paper workspace. Saved evidence retains its original model, settings,
 source and data identities.
 Do not regenerate an old forecast with a newer model and call it the original.
-Use the [reproducibility guide](docs/REPRODUCIBILITY.md) when transferring research
+Use the [reproducibility guide](docs/setup/REPRODUCIBILITY.md) when transferring research
 assets; ordinary generated outputs are not necessarily tracked by Git.
 
 For checks, see [the test guide](tests/README.md) and run the subset relevant to a
 change. Report the actual environment tested. Existing Windows/RTX 4080 checks
 do not establish Ubuntu/RTX 5080 validation.
+
+See the [folder map](docs/FOLDER_MAP.md) for renamed paths and where to save each kind of file.

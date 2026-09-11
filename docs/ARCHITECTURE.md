@@ -70,6 +70,6 @@ predictions with common causal initialization are separate diagnostic artifacts.
 Preserve raw coordinates, marker masks, timestamp provenance and source hashes.
 Historical force/20 Hz checkpoints retain their original semantics.
 
-See [the experiment protocol](PAPER_EXPERIMENT_PROTOCOL.md),
-[frozen fitting method](FROZEN_SYSTEM_IDENTIFICATION.md) and
-[geometry conventions](GEOMETRY_COORDINATE_CONVENTIONS.md) for details and limits.
+See [the experiment protocol](paper/PAPER_EXPERIMENT_PROTOCOL.md),
+[frozen fitting method](methods/FROZEN_SYSTEM_IDENTIFICATION.md) and
+[geometry conventions](methods/GEOMETRY_COORDINATE_CONVENTIONS.md) for details and limits.

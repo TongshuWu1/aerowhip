@@ -14,13 +14,13 @@ import re
 import zipfile
 
 ROOT=Path(__file__).resolve().parents[1]
-PACKAGES=('simulator','learning','planning','experimental_data','tools','tests','deployment','policies')
-GUIDES=('README.md','INSTALL.md','ARCHITECTURE.md','REPRODUCIBILITY.md','PUBLICATION.md',
-        'CONTROLLER_INTERFACE_REVIEW.md','LAB_SETUP.md','PAPER_WRITING_HANDOFF.md',
-        'PAPER_READINESS_REVIEW.md','SIM_REAL_EVALUATION.md','M0_TO_M1_ADAPTATION.md',
-        'DIRECT_PVA_WORKFLOW.md','FUTURE_ADAPTATION_FITTING.md','M2_PPO_MPPI_MATCH.md',
-        'PAPER_EXPERIMENT_PROTOCOL.md','FROZEN_SYSTEM_IDENTIFICATION.md',
-        'DRONE_COMMAND_CHAIN_AUDIT.md','DRONE_RESPONSE_ADAPTATION.md')
+PACKAGES=('simulator','learning','planning','experimental_data','tools','tests','deployment')
+GUIDES=('README.md','setup/INSTALL.md','ARCHITECTURE.md','setup/REPRODUCIBILITY.md','setup/PUBLICATION.md',
+        'setup/CONTROLLER_INTERFACE_REVIEW.md','setup/LAB_SETUP.md','paper/PAPER_WRITING_HANDOFF.md',
+        'paper/PAPER_READINESS_REVIEW.md','methods/SIM_REAL_EVALUATION.md','development/M0_TO_M1_ADAPTATION.md',
+        'methods/DIRECT_PVA_WORKFLOW.md','methods/FUTURE_ADAPTATION_FITTING.md','development/M2_PPO_MPPI_MATCH.md',
+        'paper/PAPER_EXPERIMENT_PROTOCOL.md','methods/FROZEN_SYSTEM_IDENTIFICATION.md',
+        'methods/DRONE_COMMAND_CHAIN_AUDIT.md','methods/DRONE_RESPONSE_ADAPTATION.md')
 CONFIGS=('model','task','ppo','sac','cable_fit')
 
 
@@ -155,15 +155,17 @@ def build(root,output):
                  'requirements.txt','pytest.ini','.editorconfig','.github/workflows/smoke.yml','tests/README.md',
                  'HANDOFF.md'):
         add(name)
+    for name in ('exports/README.md','paper/README.md','third_party/README.md'):
+        if (root/name).is_file():add(name)
     for name in guide_paths(root):add(name)
-    files['README.md']=b'''# AeroWhip research source\n\nThis source-only candidate contains the current PVA planner, fitting, comparison\nand desktop UI. No fitted model, flight command, forecast or recording is bundled.\nInstall using docs/INSTALL.md, then run `python run_simulation.py`. Review your\ndata and prepare a model before planning. No job starts automatically.\n\nRead docs/PAPER_WRITING_HANDOFF.md and docs/PAPER_READINESS_REVIEW.md for the method\nand evidence limits. Experiment paths in these guides refer to separately held\nresearch artifacts. Legacy numerical backends remain for compatibility tests;\nthey are not the selected experiment. See PUBLICATION_METADATA.json for release\nstatus. This package does not reproduce reported trajectories without their\nseparately reviewed model, source snapshot and exact command assets.\n'''
-    files['docs/FLIGHT_ADAPTATION_QUICKSTART.md']=(root/'docs/FLIGHT_ADAPTATION_QUICKSTART.md').read_bytes()
+    files['README.md']=b'''# AeroWhip research source\n\nThis source-only candidate contains the current PVA planner, fitting, comparison\nand desktop UI. No fitted model, flight command, forecast or recording is bundled.\nInstall using docs/setup/INSTALL.md, then run `python run_simulation.py`. Review your\ndata and prepare a model before planning. No job starts automatically.\n\nRead docs/paper/PAPER_WRITING_HANDOFF.md and docs/paper/PAPER_READINESS_REVIEW.md for the method\nand evidence limits. Experiment paths in these guides refer to separately held\nresearch artifacts. Legacy numerical backends remain for compatibility tests;\nthey are not the selected experiment. See PUBLICATION_METADATA.json for release\nstatus. This package does not reproduce reported trajectories without their\nseparately reviewed model, source snapshot and exact command assets.\n'''
+    files['docs/setup/FLIGHT_ADAPTATION_QUICKSTART.md']=(root/'docs/setup/FLIGHT_ADAPTATION_QUICKSTART.md').read_bytes()
     files['.gitignore']=b'__pycache__/\n*.py[cod]\n.venv/\n.pytest_cache/\n.idea/\n/runs/\n/results/\n/dist/\n/archive/\n/data/**\n!/data/README.md\n!/data/dataset_manifest.json\n'
     files['.gitattributes']=b'* text=auto\n*.py text eol=lf\n*.json text eol=lf\n*.md text eol=lf\n'
     configs,original=portable_configs(root)
     for name,value in configs.items():files[f'config/{name}.json']=encoded(value)
     files['data/dataset_manifest.json']=encoded(dict(schema='aerial_cable_dataset_manifest_v1',takes={}))
-    files['data/README.md']=b'No real recordings, derived datasets, or checkpoints are included. Import your own reviewed flight logs. See ../docs/REPRODUCIBILITY.md.\n'
+    files['data/README.md']=b'No real recordings, derived datasets, or checkpoints are included. Import your own reviewed flight logs. See ../docs/setup/REPRODUCIBILITY.md.\n'
     # Record limits explicitly, rather than inserting invented authors/license/DOI.
     files['PUBLICATION_METADATA.json']=encoded(dict(status='review_candidate',license=None,authors=[],paper_doi=None,
         scope='source only; no claim of real-flight validation',required_before_public_release=[

@@ -133,7 +133,7 @@ def main():
     result = dict(schema='system_comparison_v1', evidence='Development study; three flown models, two adaptation updates. No parameter selection in this audit.',
         models=[], flights={}, datasets={}, metrics=METRICS, device=torch.cuda.get_device_name(), os=platform.platform(),
         aggregation='Equal take means of Euclidean RMS, not pooled frames. No confidence interval from correlated frames.',
-        source_hashes={}, report_document='docs/M0_M1_M2_SYSTEM_COMPARISON.md')
+        source_hashes={}, report_document='docs/development/M0_M1_M2_SYSTEM_COMPARISON.md')
     engines = {}
     for i,name in enumerate(IDS):
         m = models[name]; path = Path(m['model']); value = read_json(path)

@@ -6,7 +6,7 @@ from reportlab.lib.pagesizes import A4,landscape
 from reportlab.lib.colors import HexColor
 from pypdf import PdfReader,PdfWriter,Transformation
 ROOT=Path(__file__).resolve().parents[1]
-TMP=ROOT/'tmp/pdfs/M1_take004_whip';OUT=ROOT/'output/pdf'
+TMP=ROOT/'tmp/pdfs/M1_take004_whip';OUT=ROOT/'paper/figures'
 d=json.loads((TMP/'figure_data.json').read_text())
 W,H=landscape(A4);stream=io.BytesIO();c=canvas.Canvas(stream,pagesize=(W,H))
 ink=HexColor('#213146');muted=HexColor('#667589');blue=HexColor('#2764b4');orange=HexColor('#d96728')

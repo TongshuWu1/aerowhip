@@ -3,8 +3,8 @@
 Updated 11 September 2026. Project/repository name: **AeroWhip / `aerowhip`**.
 Paper title: **AeroWhip: Aerial Cable Whipping through Iterative Model Refinement**.
 
-Read [the paper handoff](docs/PAPER_WRITING_HANDOFF.md) and
-[experiment protocol](docs/PAPER_EXPERIMENT_PROTOCOL.md) for current decisions.
+Read [the paper handoff](docs/paper/PAPER_WRITING_HANDOFF.md) and
+[experiment protocol](docs/paper/PAPER_EXPERIMENT_PROTOCOL.md) for current decisions.
 They supersede older proposals for new preliminary collection, a refitted M0,
 multiple targets, 90 final flights or binary 5 cm paper outcomes.
 
@@ -32,8 +32,8 @@ The historical flown lineage is **M0 → M1-full → M2-frozen-refit-v1**, with
 5/5/3 development takes. The gain-only M1 is a sibling, not the full update;
 the original full M2 and its frozen refit have the same model signature.
 These observations informed system design and are not an untouched final test.
-Read [the development comparison](docs/M0_M1_M2_SYSTEM_COMPARISON.md) and
-[the frozen staged method](docs/FROZEN_SYSTEM_IDENTIFICATION.md), retaining their
+Read [the development comparison](docs/development/M0_M1_M2_SYSTEM_COMPARISON.md) and
+[the frozen staged method](docs/methods/FROZEN_SYSTEM_IDENTIFICATION.md), retaining their
 study-specific qualifications and original reporting windows.
 
 M0's retained command is
@@ -77,3 +77,16 @@ The 11 September 2026 cleanup removed 5,669 obsolete or generated files
 (78,039,454 bytes) across 153 reviewed paths. All 10,874 retained evidence files
 matched their pre-cleanup hashes; the recent M0–M2 lineage, required preliminary/
 calibration inputs and selected PPO/MPPI remain intact.
+
+## Folder organization
+
+Current recordings are in `data/flight_batches/`, handoff exports in `exports/`,
+paper illustrations in `paper/figures/`, and the optional SDK in
+`third_party/natnet/`. Documentation is grouped under `docs/setup`,
+`docs/methods`, `docs/paper` and `docs/development`. See
+[the folder map](docs/FOLDER_MAP.md).
+
+Only paths and guides changed during organization; frozen experiment/config
+bytes and model identities are preserved. Local compatibility links retain old
+data/figure paths used inside historical evidence. New code uses the canonical
+locations and does not depend on Windows links for new studies.

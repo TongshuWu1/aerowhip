@@ -169,6 +169,6 @@ attachment position by less than 0.20 mm across these assessments.
 
 The run preserves protocol/source/input copies, masks, frozen translation,
 attitude searches, all fold predictions, CPU/GPU parity, timestep convergence,
-transition audit and comparison data. [Plot](../../../data/nominal_drone_runs/20260908-062555-496491-legacy-whip-nominal-pose/nominal_fit_review.png).
+transition audit and comparison data. Plot (historical artifact, no longer included in this checkout).
 All 133 protected raw/model/policy/config files remain unchanged. The old
 candidate and its failed checks remain available. PPO and SAC stay stopped.

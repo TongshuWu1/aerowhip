@@ -1,5 +1,6 @@
 """Read-only flight comparison; never generates or fits a new prediction."""
 from pathlib import Path
+from experimental_data.paths import flight_batch_root
 import time as clock
 import numpy as np
 from PySide6.QtCore import Qt, QThread, Signal, QTimer
@@ -116,7 +117,7 @@ class AdaptationCheckPage(QWidget):
         self.takes.setCurrentIndex(index);return True
 
     def open_batch(self):
-        path = QFileDialog.getExistingDirectory(self,'Open batch containing simulation_csv and flight_take',str(self.root/'rehearsal_csv_and_result_in_real_flight'))
+        path = QFileDialog.getExistingDirectory(self,'Open batch containing simulation_csv and flight_take',str(flight_batch_root(self.root)))
         if path:
             if not self.library_selector.select_batch(path):
                 self.status.setText('This folder is not a flight batch in the project library. Import it through Recordings first.')

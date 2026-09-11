@@ -1,5 +1,6 @@
 """Source-preserving preparation of arbitrary-duration PVA preliminary motions."""
 from pathlib import Path
+from .paths import flight_batch_root
 from copy import deepcopy
 import shutil
 import numpy as np
@@ -70,7 +71,7 @@ def prepare(job,root,*,cable_velocity_weight_tau_s=None):
     model=read(job/'source_candidate/model.json');model['provenance'].update(fit_state='Native global OptiTrack; no retrospective height normalization',source_drone='cf_3')
     save(job/'source_candidate/model.json',model)
     names=['figure8_001','figure8_002','osci_001','osci_002','vertical_figure8_001']
-    batch=root/'rehearsal_csv_and_result_in_real_flight/preliminary1';summary={};windows=[];protected={}
+    batch=flight_batch_root(root)/'preliminary1';summary={};windows=[];protected={}
     for name in names:
         mp=batch/(name+'.csv');cp=batch/('experiment_'+name+'.csv')
         protected[str(mp)]=sha256_file(mp);protected[str(cp)]=sha256_file(cp)

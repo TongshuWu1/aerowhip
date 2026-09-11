@@ -258,7 +258,7 @@ class RehearsalWorkspace(QWidget):
 
     def save_csv(self):
         if self.metadata.get('preview_only'):return
-        path,_=QFileDialog.getSaveFileName(self,'Save complete 30 Hz trajectory',str(self.root/'policies/fullstate_30hz.csv'),'CSV (*.csv)')
+        path,_=QFileDialog.getSaveFileName(self,'Save complete 30 Hz trajectory',str(self.root/'exports/fullstate_30hz.csv'),'CSV (*.csv)')
         if path:
             try:shutil.copy2(self.directory/'fullstate_30hz.csv',path);self.status.setText('Complete CSV saved: '+path)
             except OSError as e:self.status.setText('CSV save failed: '+str(e))
@@ -266,7 +266,7 @@ class RehearsalWorkspace(QWidget):
     def export_package(self):
         if self.metadata.get('preview_only'):return
         if self.metadata.get('schema')=='pva_fullstate_30hz_v1':
-            path,_=QFileDialog.getSaveFileName(self,'Export PVA trajectory bundle',str(self.root/'policies'/('PVA-'+stamp()+'.zip')),'ZIP (*.zip)')
+            path,_=QFileDialog.getSaveFileName(self,'Export PVA trajectory bundle',str(self.root/'exports'/('PVA-'+stamp()+'.zip')),'ZIP (*.zip)')
             if path:
                 from deployment.pva_rehearsal import export_package
                 try:export_package(self.directory,Path(path));self.status.setText('PVA command, model and prediction bundle saved: '+path)
@@ -274,7 +274,7 @@ class RehearsalWorkspace(QWidget):
             return
         cem=self.metadata.get('schema') in ('cem_fullstate_30hz_v1','mppi_fullstate_30hz_v1','mppi_force_fullstate_30hz_v1')
         prefix=self.metadata.get('optimizer','cem').upper()+'-' if cem else 'PPO-30Hz-'
-        path,_=QFileDialog.getSaveFileName(self,'Export trajectory bundle',str(self.root/'policies'/(prefix+stamp()+'.zip')),'ZIP (*.zip)')
+        path,_=QFileDialog.getSaveFileName(self,'Export trajectory bundle',str(self.root/'exports'/(prefix+stamp()+'.zip')),'ZIP (*.zip)')
         if path:
             if cem:from planning.cem_run import export_package
             else:from deployment.research_rehearsal import export_package

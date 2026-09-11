@@ -1,11 +1,19 @@
 # AeroWhip documentation
 
+See the [folder map](FOLDER_MAP.md) for data, exports and run locations.
+
+- `setup/`: installation, lab setup and transfer.
+- `methods/`: model, fitting, geometry and evaluation definitions.
+- `paper/`: writing, protocol, literature and publication readiness.
+- `development/`: retained exploratory results and diagnostics.
+- `history/`: necessary older technical references.
+
 ## Write the paper and run the study
 
 1. [Current handoff](../HANDOFF.md): project scope, evidence boundaries and jobs.
-2. [Paper-writing handoff](PAPER_WRITING_HANDOFF.md): contribution, method and
+2. [Paper-writing handoff](paper/PAPER_WRITING_HANDOFF.md): contribution, method and
    minimal figures/results to prepare.
-3. [One-day experiment protocol](PAPER_EXPERIMENT_PROTOCOL.md): retained M0,
+3. [One-day experiment protocol](paper/PAPER_EXPERIMENT_PROTOCOL.md): retained M0,
    new 20-flight chain, fixed roles and continuous-distance analysis.
 4. [Architecture](ARCHITECTURE.md): current source and workflow map.
 
@@ -17,13 +25,13 @@ research checkout keeps the broader six-page interface and development evidence.
 
 | Topic | Guide |
 |---|---|
-| Staged full-model fitting | [Frozen system identification](FROZEN_SYSTEM_IDENTIFICATION.md) |
-| Command generation and execution | [Direct PVA workflow](DIRECT_PVA_WORKFLOW.md) |
-| Loaded-UAV response | [Nominal drone pose response](NOMINAL_DRONE_POSE_RESPONSE.md) |
-| Reference points and transforms | [Geometry and coordinates](GEOMETRY_COORDINATE_CONVENTIONS.md) |
-| Data review and provenance | [Data lifecycle](DATA_LIFECYCLE_AND_RECORDING_GUIDE.md) |
-| Environment | [Installation](INSTALL.md) |
-| Research asset transfer | [Reproducibility](REPRODUCIBILITY.md) |
+| Staged full-model fitting | [Frozen system identification](methods/FROZEN_SYSTEM_IDENTIFICATION.md) |
+| Command generation and execution | [Direct PVA workflow](methods/DIRECT_PVA_WORKFLOW.md) |
+| Loaded-UAV response | [Nominal drone pose response](methods/NOMINAL_DRONE_POSE_RESPONSE.md) |
+| Reference points and transforms | [Geometry and coordinates](methods/GEOMETRY_COORDINATE_CONVENTIONS.md) |
+| Data review and provenance | [Data lifecycle](methods/DATA_LIFECYCLE_AND_RECORDING_GUIDE.md) |
+| Environment | [Installation](setup/INSTALL.md) |
+| Research asset transfer | [Reproducibility](setup/REPRODUCIBILITY.md) |
 | Test scope | [Tests](../tests/README.md) |
 
 These references retain experiment-specific implementation detail. Their dated
@@ -32,17 +40,17 @@ Frozen copies inside completed jobs remain unchanged.
 
 ## Development evidence and literature
 
-- [M0/M1/M2 system comparison](M0_M1_M2_SYSTEM_COMPARISON.md): existing 5/5/3
+- [M0/M1/M2 system comparison](development/M0_M1_M2_SYSTEM_COMPARISON.md): existing 5/5/3
   development takes, original forecasts and common-flight diagnostics.
-- [Full adaptation](FULL_MODEL_ADAPTATION.md) and
-  [M2 regression analysis](M2_REGRESSION_ANALYSIS.md): what the model updates
+- [Full adaptation](methods/FULL_MODEL_ADAPTATION.md) and
+  [M2 regression analysis](development/M2_REGRESSION_ANALYSIS.md): what the model updates
   changed and why component improvement does not guarantee complete improvement.
-- [Whole-system audit](PAPER_PIPELINE_AUDIT.md): implementation and literature
+- [Whole-system audit](paper/PAPER_PIPELINE_AUDIT.md): implementation and literature
   review. Its former expanded experiment proposal is superseded.
-- [Current literature review and paper framing](ICRA_2027_RELATED_WORK_AND_FRAMING.md),
-  [detailed literature notes](RELATED_PAPERS_DETAILED_REVIEW.md) and
-  [bibliography](related_papers.bib): check primary sources when writing claims.
-- [M2 PPO exploration](M2_PPO_PERSISTENT_EXPLORATION.md): separate development
+- [Current literature review and paper framing](paper/ICRA_2027_RELATED_WORK_AND_FRAMING.md),
+  [detailed literature notes](paper/RELATED_PAPERS_DETAILED_REVIEW.md) and
+  [bibliography](paper/related_papers.bib): check primary sources when writing claims.
+- [M2 PPO exploration](development/M2_PPO_PERSISTENT_EXPLORATION.md): separate development
   work; consult actual run status before describing it.
 
 The active documentation retains methods and recent evidence needed for the
