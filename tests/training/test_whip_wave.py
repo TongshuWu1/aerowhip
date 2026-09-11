@@ -57,7 +57,7 @@ def test_wave_and_mixture_validation_preserves_separate_ppo_contract():
     from learning.pva_env import defaults
     from planning.pva_job import validate_settings
     cfg=defaults('ppo');cfg['task'].update(DEFAULTS,require_wave=True)
-    with pytest.raises(ValueError,match='requires MPPI'):validate_settings(cfg)
+    with pytest.raises(ValueError,match='requires pullback'):validate_settings(cfg)
     cfg=defaults('mppi');cfg['mppi'].update(noise_scales=[.05,.15,.35],control_prior=.5)
     with pytest.raises(ValueError,match='zero control prior'):validate_settings(cfg)
 

@@ -8,6 +8,7 @@ from simulator.workflow import read_json
 from experimental_data.adaptation_rounds import write_json
 from experimental_data.adaptation_check import discover_batches,flight_names,recorded_alignment,sha256
 from .research_widgets import note
+from .flight_generation_selector import FlightGenerationSelector
 
 
 class FlightBatchPage(QWidget):
@@ -15,11 +16,12 @@ class FlightBatchPage(QWidget):
 
     def __init__(self,root):
         super().__init__();self.root=Path(root);layout=QVBoxLayout(self)
-        layout.addWidget(note('Flight batches · normalized OptiTrack state for evaluation; controller logs supply commands and timing. Stored clock alignment and vertical correction are shown separately.'))
-        row=QHBoxLayout();self.batches=QComboBox();row.addWidget(self.batches,1)
-        refresh=QPushButton('Refresh batches');refresh.clicked.connect(self.refresh);row.addWidget(refresh)
+        layout.addWidget(note('Flight batches · raw global OptiTrack measurements by default; controller logs supply commands and timing. Any stored height correction is an optional retrospective diagnostic.'))
+        self.library_selector=FlightGenerationSelector(self.root);layout.addWidget(self.library_selector)
+        self.batches=self.library_selector.batches
+        row=QHBoxLayout()
         folder=QPushButton('Open batch folder');folder.clicked.connect(self.open_folder);row.addWidget(folder);layout.addLayout(row)
-        self.table=QTableWidget(0,5);self.table.setHorizontalHeaderLabels(['Flight pair','Clock offset [s]','Timing source / action needed','Applied Z correction [cm]','Normalization'])
+        self.table=QTableWidget(0,5);self.table.setHorizontalHeaderLabels(['Flight pair','Clock offset [s]','Timing source / action needed','Optional Z correction [cm]','Diagnostic calibration'])
         self.table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
@@ -36,13 +38,11 @@ class FlightBatchPage(QWidget):
         row=QHBoxLayout();self.save=QPushButton('Save reviewed alignment');self.save.clicked.connect(self.save_alignment);row.addWidget(self.save)
         self.compare=QPushButton('Compare flight in 3D');self.compare.setObjectName('primaryButton');self.compare.clicked.connect(self.open_comparison);row.addWidget(self.compare);layout.addLayout(row)
         self.status=note('');layout.addWidget(self.status)
-        self.batches.currentIndexChanged.connect(self.load_batch);self.table.itemSelectionChanged.connect(self.selection_changed)
+        self.library_selector.session_changed.connect(self.load_batch);self.table.itemSelectionChanged.connect(self.selection_changed)
         self.refresh()
 
     def refresh(self):
-        previous=self.batches.currentData();self.batches.blockSignals(True);self.batches.clear()
-        for p in discover_batches(self.root):self.batches.addItem(f'{p.parent.name} / {p.name}',str(p))
-        self.batches.setCurrentIndex(max(0,self.batches.findData(previous)));self.batches.blockSignals(False);self.load_batch()
+        self.library_selector.refresh()
 
     def selected(self):
         i=self.table.currentRow();item=self.table.item(i,0) if i>=0 else None
@@ -51,7 +51,7 @@ class FlightBatchPage(QWidget):
     def load_batch(self):
         self.table.setRowCount(0);self.reviewed.setChecked(False)
         p=self.batches.currentData()
-        if not p:return
+        if not p:self.status.setText(self.library_selector.summary.text());self.compare.setEnabled(False);return
         p=Path(p);names=flight_names(p);self.table.setRowCount(len(names))
         for i,name in enumerate(names):
             try:
@@ -63,10 +63,11 @@ class FlightBatchPage(QWidget):
                 calibration=load_calibration(p,name)
                 if calibration:
                     values.extend([f'{-100*calibration["bias_z_m"]:+.2f}',calibration.get('mode','Stored correction')])
-                else:values.extend(['Not set','Needs hover calibration'])
+                else:values.extend(['None','Raw XYZ; calibration not required'])
             except (ValueError,OSError,KeyError) as error:values.extend(['Unavailable',str(error)])
             for j,v in enumerate(values):self.table.setItem(i,j,QTableWidgetItem(v))
         self.table.resizeRowsToContents();self.status.setText(f'{len(names)} paired flights. Keep unpaired raw files; they are not ready for comparison.')
+        self.compare.setEnabled(bool(names))
         if names:self.table.selectRow(0)
 
     def selection_changed(self):

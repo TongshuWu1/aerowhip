@@ -18,18 +18,23 @@ from simulator.research_config import snapshot_assets
 from simulator.pva_commands import SCHEMA
 from learning.pva_env import PVAEnvironment,defaults
 from learning.simple_ppo import SimplePPOAgent,PPORollout
+from planning.ppo_progress import evaluation_better
 
 ROOT=Path(__file__).resolve().parents[1]
 CHECKPOINT_SCHEMA='jerk_pva_ppo_checkpoint_v1'
 
 
-def freeze_model_assets(model,directory):
+def freeze_model_assets(model,directory,*,source_root=None,portable=False):
     """Portable component paths, including historical absolute NN references."""
-    frozen=snapshot_assets(model,directory)
+    frozen=snapshot_assets(model,directory,source_root=source_root)
     component=Path(frozen['fullstate_execution']['checkpoint'])
     payload=read_json(component);payload['residual']['checkpoint']='drone_residual.pt'
     atomic_json(component,payload)
     frozen['fullstate_execution']['sha256']=sha256_file(component)
+    if portable:
+        frozen['fullstate_execution']['checkpoint']='assets/drone_model.json'
+        if frozen.get('motion_residual',{}).get('enabled'):
+            frozen['motion_residual']['checkpoint']='assets/cable_residual.pt'
     return frozen
 
 
@@ -51,6 +56,14 @@ def load_settings(root,method):
 
 
 def validate_settings(cfg):
+    from learning.pva_ppo_rollout import decision_steps
+    decision_steps(cfg)
+    from learning.ppo_trajectory_reward import validate
+    validate(cfg)
+    from learning.pva_success import criterion
+    criterion(cfg['task'])
+    from learning.two_target_whip import validate as validate_targets
+    validate_targets(cfg)
     if cfg['command_contract']!=SCHEMA or cfg['method'] not in ('ppo','mppi'):raise ValueError('Direct PVA settings required')
     if not math.isclose(cfg['task']['duration_s']*30,round(cfg['task']['duration_s']*30),abs_tol=1e-8):raise ValueError('Maneuver duration must contain whole 30 Hz intervals')
     def finite_tree(x):
@@ -65,8 +78,19 @@ def validate_settings(cfg):
         if len(cfg['launch'][k])!=3:raise ValueError('XYZ launch required')
     if any(v<0 for v in cfg['reward'].values()):raise ValueError('Reward weights/scales must be nonnegative')
     if cfg['reward']['proximity_scale_m']<=0:raise ValueError('Positive proximity scale required')
+    if cfg['reward'].get('early_hit_scale_s',1.)<=0:raise ValueError('Positive early-hit time scale required')
+    if cfg['reward'].get('impact_scale_m_s',4.)<=0:raise ValueError('Positive impact speed scale required')
     if cfg['mppi']['samples']<2 or cfg['mppi']['temperature']<=0 or cfg['mppi']['noise_std']<=0 or not 0<=cfg['mppi']['noise_correlation']<1:raise ValueError('Invalid MPPI sampling parameters')
     if cfg['training']['batch_size']<2:raise ValueError('PPO needs at least two environments')
+    if not 0<cfg['training'].get('gae_lambda',.95)<=1:raise ValueError('GAE lambda must be in (0,1]')
+    if cfg['training'].get('reward_scale',1.)<=0:raise ValueError('PPO reward scale must be positive')
+    if not -10<=cfg['training'].get('initial_log_std',-.5)<=1:raise ValueError('PPO initial log std must be in [-10,1]')
+    if cfg['reward'].get('brake_progress',0.) and cfg.get('observation_contract')!='pva_whip_phase_v3':
+        raise ValueError('Brake progress requires observable v3 brake credit')
+    if cfg['reward'].get('joint_strike',0.) and (cfg['method']!='ppo' or not cfg['task'].get('require_wave') or cfg.get('observation_contract')!='pva_whip_phase_v3'):
+        raise ValueError('Joint strike shaping requires PPO with observable v3 wave/pullback state')
+    if cfg['method']=='ppo' and cfg['reward'].get('reach_progress',0.) and cfg.get('observation_contract') not in ('pva_whip_phase_v2','pva_whip_phase_v3'):
+        raise ValueError('PPO reach progress requires observable whip phase history')
     for key in ('samples','minimum_iterations','patience'):
         value=cfg['mppi'][key]
         if isinstance(value,bool) or not isinstance(value,int) or value<1:raise ValueError('MPPI '+key+' must be a positive integer')
@@ -86,9 +110,16 @@ def validate_settings(cfg):
         for key in ('minimum_pull_distance_m','minimum_pull_speed_m_s','minimum_backward_distance_m','minimum_backward_speed_m_s'):
             if cfg['task'][key]<=0:raise ValueError('Pullback criterion '+key+' must be positive')
     s=cfg['mppi']
+    selection=s.get('selection_criterion','legacy_v1')
+    if selection not in ('legacy_v1','tip_contact_then_score_v1'):raise ValueError('Unknown MPPI candidate selection criterion')
+    if selection=='tip_contact_then_score_v1' and (cfg['method']!='mppi' or s.get('mode')!='open_loop'
+            or s.get('parameterization')!='control_points' or cfg['task'].get('success_criterion') not in ('tip_contact_v1','ordered_two_target_v1')):
+        raise ValueError('Contact-priority selection requires offline control-point MPPI with tip-contact success')
     if cfg['task'].get('require_wave',False):
-        if cfg['method']!='mppi' or not cfg['task'].get('require_pullback',False):
-            raise ValueError('Travelling-bend task currently requires MPPI with pullback')
+        if not cfg['task'].get('require_pullback',False):
+            raise ValueError('Travelling-bend task requires pullback')
+        if cfg['method']=='ppo' and cfg.get('observation_contract') not in ('pva_whip_phase_v2','pva_whip_phase_v3'):
+            raise ValueError('PPO travelling-bend task requires observable whip phase history')
         task=cfg['task']
         if not 0<task['wave_proximal_end']<task['wave_distal_start']<1:raise ValueError('Ordered wave bands required')
         for key in ('wave_proximal_angle_rad','wave_middle_angle_rad','wave_distal_angle_rad','wave_dwell_s'):
@@ -97,6 +128,19 @@ def validate_settings(cfg):
         if not s['noise_scales'] or any(v<=0 for v in s['noise_scales']):raise ValueError('Positive noise scales required')
         if s.get('control_prior',0)!=0:raise ValueError('Mixture sampling currently requires zero control prior')
     if s.get('mode','open_loop') not in ('open_loop','receding'):raise ValueError('Unknown MPPI mode')
+    if s.get('parameterization')=='control_points':
+        if cfg['method']!='mppi' or s.get('mode')!='open_loop' or s.get('control_prior',0)!=0:
+            raise ValueError('Control-point search requires offline MPPI with zero control prior')
+        if not 2<=s.get('support_points',0)<=round(cfg['task']['duration_s']*30):raise ValueError('Invalid control-point count')
+        if s.get('proposal_count',0)<1 or s['samples']%s['proposal_count']:raise ValueError('Samples must divide between proposals')
+        if not 0<s.get('target_ess_fraction',0)<1:raise ValueError('Invalid target effective sample fraction')
+        if s.get('proposal_parameterization')=='timed_baselines_v1':
+            if cfg.get('trajectory_objective',{}).get('schema')!='preferred_fold_v1':raise ValueError('Timed proposals require the preferred-fold objective')
+            if s['proposal_count']<2:raise ValueError('Timed search must retain both baseline families')
+            knots=s.get('timing_source_knots',[])
+            if len(knots)!=4 or knots[0]!=0 or knots[-1]!=1 or any(b<=a for a,b in zip(knots,knots[1:])):raise ValueError('Three ordered source timing phases required')
+            for key in ('timing_noise_scales','strength_noise_scales'):
+                if len(s.get(key,[]))!=len(s['control_point_noise_scales']) or any(x<=0 for x in s[key]):raise ValueError('Positive matching timing/strength noise scales required')
     if s.get('initialization','zero') not in ('zero','pullback','wave'):raise ValueError('Unknown MPPI initialization')
     if s.get('mode')=='receding':
         h=s['horizon_s']
@@ -107,13 +151,25 @@ def validate_settings(cfg):
         if any(s.get(k,0)<0 for k in ('strike_exit_speed','strike_exit_climb','strike_exit_acceleration')):raise ValueError('Strike exit costs must be nonnegative')
 
 
-def prepare(root,settings,name,*,checkpoint=None):
+def configured_development_review(cfg,source):
+    review=cfg.get('development_model_review',{})
+    if review and review.get('model_sha256')==sha256_file(source):
+        return review.get('reason')
+    return None
+
+
+def prepare(root,settings,name,*,checkpoint=None,development_review=None):
     root=Path(root).resolve();cfg=deepcopy(settings);validate_settings(cfg)
     cfg.setdefault('performance',dict(fused_ticks=True,fast_solve=True,fast_geometry=True))
     source=Path(cfg['model_path']);source=source if source.is_absolute() else root/source
     model=read_json(source)
-    if model.get('provenance',{}).get('fit_complete') is False:raise ValueError('Model fit checks have not completed; wait for its published candidate')
+    development_review=development_review or configured_development_review(cfg,source)
+    if development_review is not None and (not isinstance(development_review,str) or not development_review.strip()):
+        raise ValueError('A documented development review must identify the simulation-only use')
+    if model.get('provenance',{}).get('fit_complete') is False and not development_review:
+        raise ValueError('Model fit checks have not completed; wait for its published candidate or provide an explicit simulation development review')
     for key in ('motion_residual','fullstate_execution'):
+        if model.get(key,{}).get('enabled') is False:continue
         p=Path(model[key]['checkpoint']);model[key]['checkpoint']=str(p if p.is_absolute() else source.parent/p)
     resume=None
     if checkpoint:
@@ -121,21 +177,31 @@ def prepare(root,settings,name,*,checkpoint=None):
         if resume.get('schema')!=CHECKPOINT_SCHEMA:raise ValueError('Historical force PPO cannot initialize a jerk/PVA policy')
         old=read_json(checkpoint.parent.parent/'settings.json')
         if old['command_contract']!=cfg['command_contract']:raise ValueError('Action semantics changed')
+        from learning.pva_ppo_rollout import decision_steps
+        if decision_steps(old)!=decision_steps(cfg):raise ValueError('Policy timing changed; start a fresh policy')
     stamp=datetime.now().strftime('%Y%m%d-%H%M%S-%f')
     directory=root/'runs'/('ppo_pva' if cfg['method']=='ppo' else 'mppi_pva')/stamp
     directory.mkdir(parents=True);(directory/'checkpoints').mkdir()
     model=freeze_model_assets(model,directory);cfg['model_path']=str(source.resolve())
+    from learning.ppo_trajectory_reward import freeze_reference
+    if cfg.get('ppo_objective'):
+        reference=Path(cfg['ppo_objective']['reference_source'])
+        cfg['ppo_objective']['reference_source']=str(reference if reference.is_absolute() else root/reference)
+    freeze_reference(cfg,directory)
     atomic_json(directory/'model.json',model);atomic_json(directory/'settings.json',cfg)
     atomic_json(directory/'identity.json',dict(name=name.strip() or f'{cfg["method"].upper()} PVA',method=cfg['method'],
+        success_criterion=cfg['task'].get('success_criterion','legacy_strike_v1'),
         model_source=str(source),model_source_sha256=sha256_file(source),command_contract=SCHEMA,
-        source_checkpoint=str(checkpoint) if checkpoint else None,evidence='simulation only'))
+        source_checkpoint=str(checkpoint) if checkpoint else None,
+        source_checkpoint_sha256=sha256_file(checkpoint) if checkpoint else None,evidence='simulation only',
+        development_review=development_review))
     if resume is not None:shutil.copy2(checkpoint,directory/'resume.pt')
     snapshot=directory/'source_snapshot'
     for folder in ('learning','planning','simulator','deployment','experimental_data','tools'):
         for path in (root/folder).rglob('*.py'):
             if '__pycache__' not in path.parts:
                 target=snapshot/path.relative_to(root);target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(path,target)
-    atomic_json(directory/'source_manifest.json',{str(p.relative_to(snapshot)):sha256_file(p) for p in snapshot.rglob('*.py')})
+    atomic_json(directory/'source_manifest.json',{p.relative_to(snapshot).as_posix():sha256_file(p) for p in snapshot.rglob('*.py')})
     atomic_json(directory/'status.json',dict(status='prepared',stage='ready',attempts=0))
     return directory,[sys.executable,'-u',str(snapshot/'tools/run_pva.py'),'--job',str(directory)]
 
@@ -143,17 +209,21 @@ def prepare(root,settings,name,*,checkpoint=None):
 def make_agent(env,cfg):
     s=cfg['training']
     agent=SimplePPOAgent(env.observation_dim,3,device=env.device,hidden_dim=s['hidden_dim'],
-        learning_rate=s['learning_rate'],entropy_coefficient=s['entropy_coefficient'],gamma=1.,gae_lambda=.95)
+        learning_rate=s['learning_rate'],entropy_coefficient=s['entropy_coefficient'],gamma=1.,gae_lambda=s.get('gae_lambda',.95),
+        initial_log_std=s.get('initial_log_std',-.5))
     agent.fused_metrics=True
     return agent
 
 
-def load_policy(checkpoint,env,cfg,*,optimizer=False):
+def load_policy(checkpoint,env,cfg,*,optimizer=False,policy_only=False):
     payload=torch.load(checkpoint,map_location=env.device,weights_only=False)
     if payload.get('schema')!=CHECKPOINT_SCHEMA or payload.get('command_contract')!=SCHEMA:raise ValueError('Select a direct PVA PPO checkpoint')
     if payload['observation_dim']!=env.observation_dim:raise ValueError('Policy observation contract differs from this model/command delay')
-    agent=make_agent(env,cfg);agent.policy.load_state_dict(payload['policy']);agent.value.load_state_dict(payload['value'])
-    if optimizer:
+    from learning.pva_ppo_rollout import decision_steps
+    if payload.get('policy_control_steps',1)!=decision_steps(cfg):raise ValueError('Checkpoint policy timing differs from settings')
+    agent=make_agent(env,cfg);agent.policy.load_state_dict(payload['policy'])
+    if not policy_only:agent.value.load_state_dict(payload['value'])
+    if optimizer and not policy_only:
         agent.policy_optimizer.load_state_dict(payload['policy_optimizer']);agent.value_optimizer.load_state_dict(payload['value_optimizer'])
         for opt in (agent.policy_optimizer,agent.value_optimizer):
             for group in opt.param_groups:group['lr']=cfg['training']['learning_rate']
@@ -161,8 +231,11 @@ def load_policy(checkpoint,env,cfg,*,optimizer=False):
 
 
 def save_checkpoint(path,agent,env,attempts):
+    from learning.pva_ppo_rollout import decision_steps
     payload=agent.checkpoint();payload.update(schema=CHECKPOINT_SCHEMA,command_contract=SCHEMA,
-        observation_dim=env.observation_dim,attempts=attempts,action_units='normalized XYZ jerk; multiply by saved m/s^3 bounds')
+        policy_control_steps=decision_steps(env.settings),
+        observation_dim=env.observation_dim,observation_contract=env.settings.get('observation_contract','pva_v1'),
+        attempts=attempts,action_units='normalized XYZ jerk; multiply by saved m/s^3 bounds')
     temp=path.with_suffix('.tmp');torch.save(payload,temp);temp.replace(path)
 
 
@@ -174,26 +247,46 @@ def progress(job,**state):
 def ppo(job,model,cfg):
     s=cfg['training'];seed=s['seed'];torch.manual_seed(seed);torch.set_num_threads(4)
     env=PVAEnvironment(model,cfg,root=job,batch_size=s['batch_size'],device=cfg['device'])
-    agent=load_policy(job/'resume.pt',env,cfg,optimizer=True) if (job/'resume.pt').exists() else make_agent(env,cfg)
+    agent=load_policy(job/'resume.pt',env,cfg,optimizer=True,policy_only=s.get('reset_value_on_resume',False)) if (job/'resume.pt').exists() else make_agent(env,cfg)
     generator=torch.Generator(device=env.device).manual_seed(seed)
-    evaluation=PVAEnvironment(model,cfg,root=job,batch_size=min(128,s['batch_size']),device=cfg['device'])
+    varied=cfg['launch'].get('start_radius_m',0)>0 or cfg['launch'].get('target_radius_m',0)>0
+    evaluation=PVAEnvironment(model,cfg,root=job,batch_size=min(128,s['batch_size']) if varied else 1,device=cfg['device'])
     rollout=PPORollout.allocate(env.steps,env.batch_size,env.observation_dim,3,device=env.device)
     history=[];episodes=[];best=-math.inf;anchor=-math.inf;last_improvement=0;reason='safety_ceiling';attempts=0
+    best_success=anchor_success=-math.inf;success_priority=s.get('success_priority',False)
     start=time.perf_counter();update=0
     while attempts<s['maximum_attempts']:
-        progress(job,stage='PPO rollout',attempts=attempts,update=update,success=history[-1]['success'] if history else None)
-        obs=env.reset(randomize=True,generator=generator)
-        for k in range(env.steps):
-            action,lp,val=agent.act(obs)
-            following,reward,done,mask=env.step(action)
-            rollout.observations[k]=obs;rollout.actions[k]=action;rollout.log_probabilities[k]=lp
-            rollout.values[k]=val;rollout.rewards[k]=reward;rollout.dones[k]=done;rollout.masks[k]=mask
-            obs=following
-        metrics=agent.update(rollout,minibatch_size=s['minibatch_size'],epochs=s['epochs'],generator=generator)
+        phases={k:history[-1][k] for k in ('pull_fraction','release_fraction','wave_complete_fraction','mean_release_reach_fraction') if history and k in history[-1]}
+        progress(job,stage='PPO rollout',attempts=attempts,update=update,success=history[-1]['success'] if history else None,**phases)
+        from learning.pva_ppo_rollout import collect,decision_steps
+        collected,result=collect(env,agent,rollout,generator=generator)
+        metrics=agent.update(collected,minibatch_size=s['minibatch_size'],epochs=s['epochs'],generator=generator)
         attempts+=env.batch_size;update+=1
         row=dict(update=update,attempts=attempts,reward=float(env.total.mean()),success=float(env.success.double().mean()),
             failures=float(env.failed.double().mean()),minimum_tip_distance_m=float(env.minimum_distance.mean()),
             elapsed_s=time.perf_counter()-start,**asdict(metrics))
+        row['policy_control_steps']=decision_steps(cfg)
+        if 'objective_terms' in result:
+            row.update({'objective_'+key:float(value.mean()) for key,value in result['objective_terms'].items()})
+        row.update(tip_contact_fraction=float(env.tip_contact.double().mean()),
+            invalid_contact_fraction=float((env.contact&~env.success).double().mean()))
+        if bool(env.success.any()):
+            # Preserve one successful sampled trajectory per update for an
+            # independent replay. This is not the updated deterministic policy.
+            index=int(torch.where(env.success,env.total,-torch.inf).argmax())
+            count=int(env.cutoff[index]);samples=job/'sampled_hits';samples.mkdir(exist_ok=True)
+            path=samples/f'update-{update:06d}.npz'
+            np.savez_compressed(path,normalized_jerk=torch.stack(env.actions[:count],1)[index].cpu().numpy(),
+                origin_m=env.origin0[index].cpu().numpy(),target_m=env.target[index].cpu().numpy())
+            atomic_json(path.with_suffix('.json'),dict(update=update,attempts=attempts,row=index,
+                reward=float(env.total[index]),contact_time_s=float(env.termination_time[index]),
+                kind='Sampled training trajectory before this policy update; deterministic evaluation is separate'))
+        if cfg['task'].get('require_wave',False):
+            row.update(pull_fraction=float(env.pull_ready.double().mean()),
+                release_fraction=float(env.reverse_ready.double().mean()),
+                wave_complete_fraction=float((env.wave_stage>=3).double().mean()),
+                mean_wave_progress=float(env.wave_credit.mean()),mean_release_reach_fraction=float(env.reach_credit.mean()))
+            if cfg.get('observation_contract')=='pva_whip_phase_v3':row['mean_brake_progress']=float(env.brake_credit.mean())
         # One row per attempted episode is kept for the requested episode plots.
         with (job/'episodes.csv').open('a',encoding='utf-8') as stream:
             if attempts==env.batch_size:stream.write('attempt,reward,success,failed,duration_s,minimum_tip_distance_m\n')
@@ -203,17 +296,34 @@ def ppo(job,model,cfg):
             evaluation.reset(randomize=True,generator=torch.Generator(device=env.device).manual_seed(seed+1000))
             result=evaluation.rollout(policy=agent.deterministic_action)
             score=float(result['reward'].mean());row.update(evaluation_reward=score,evaluation_success=float(result['success'].double().mean()))
-            if score>best:
-                best=score;save_checkpoint(job/'checkpoints/best.pt',agent,env,attempts)
-            threshold=max(abs(anchor)*s['relative_improvement'],.1) if math.isfinite(anchor) else 0
-            if not math.isfinite(anchor) or score>anchor+threshold:anchor=score;last_improvement=attempts
+            if 'objective_terms' in result:
+                row.update({'evaluation_objective_'+key:float(value.mean()) for key,value in result['objective_terms'].items()})
+            row['evaluation_scenarios']=evaluation.batch_size
+            row.update(evaluation_failures=float(result['failed'].double().mean()),
+                evaluation_minimum_tip_distance_m=float(result['minimum_tip_distance_m'].mean()),
+                evaluation_duration_s=float(result['duration_s'].mean()),
+                evaluation_tip_contact_fraction=float(evaluation.tip_contact.double().mean()),
+                evaluation_invalid_contact_fraction=float((evaluation.contact&~evaluation.success).double().mean()))
+            if cfg['task'].get('require_wave',False):
+                row.update(evaluation_pull_fraction=float(evaluation.pull_ready.double().mean()),
+                    evaluation_release_fraction=float(evaluation.reverse_ready.double().mean()),
+                    evaluation_wave_complete_fraction=float((evaluation.wave_stage>=3).double().mean()),
+                    evaluation_mean_release_reach_fraction=float(evaluation.reach_credit.mean()))
+                if cfg.get('observation_contract')=='pva_whip_phase_v3':row['evaluation_mean_brake_progress']=float(evaluation.brake_credit.mean())
+            rate=row['evaluation_success']
+            if evaluation_better(score,rate,best,best_success,success_priority=success_priority):
+                best=score;best_success=rate;save_checkpoint(job/'checkpoints/best.pt',agent,env,attempts)
+                atomic_json(job/'checkpoints/best_evaluation.json',dict(attempts=attempts,reward=score,success=rate,
+                    selection='hit rate then reward' if success_priority else 'reward'))
+            if evaluation_better(score,rate,anchor,anchor_success,relative=s['relative_improvement'],success_priority=success_priority):
+                anchor=score;anchor_success=rate;last_improvement=attempts
             if attempts>=s['minimum_attempts'] and attempts-last_improvement>=s['plateau_attempts']:reason='reward_plateau'
         history.append(row);atomic_json(job/'history.json',history)
         save_checkpoint(job/'checkpoints/latest.pt',agent,env,attempts)
         progress(job,stage='PPO update complete',**row)
         if reason=='reward_plateau':break
     if not (job/'checkpoints/best.pt').exists():save_checkpoint(job/'checkpoints/best.pt',agent,env,attempts)
-    atomic_json(job/'result.json',dict(attempts=attempts,stop_reason=reason,best_evaluation_reward=best,evidence='simulation development scenarios'))
+    atomic_json(job/'result.json',dict(attempts=attempts,stop_reason=reason,best_evaluation_reward=best,best_evaluation_success=best_success,evidence='simulation development scenarios'))
     return dict(attempts=attempts,stop_reason=reason,checkpoint=str(job/'checkpoints/best.pt'))
 
 
@@ -222,6 +332,9 @@ def whiten(values,rho):
 
 
 def mppi(job,model,cfg):
+    if cfg['mppi'].get('parameterization')=='control_points':
+        from planning.mppi_trajectory import optimize
+        return optimize(job,model,cfg)
     if cfg['mppi'].get('mode')=='receding':
         from planning.mppi_receding import optimize
         return optimize(job,model,cfg)
@@ -282,6 +395,10 @@ def run(job):
     except BaseException as exc:
         if started:
             state=read_json(job/'status.json',{});state.update(status='stopped' if isinstance(exc,InterruptedError) else 'failed',error=str(exc))
+            if isinstance(exc,InterruptedError) and read_json(job/'settings.json',{}).get('method')=='ppo':
+                history=read_json(job/'history.json',[])
+                if history and history[-1].get('attempts',0)>state.get('attempts',0):
+                    state.update(history[-1]);state['stage']='Stopped after completed update'
             atomic_json(job/'status.json',state)
         raise
     finally:lock.unlink(missing_ok=True)

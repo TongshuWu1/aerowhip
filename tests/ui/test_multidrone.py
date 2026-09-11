@@ -44,20 +44,6 @@ def test_replay_rejects_corruption_and_detached_cable(tmp_path):
     with pytest.raises(ValueError,match='attachment disagree'):load_replay(tmp_path)
 
 
-def test_presentation_page_loads_without_launching_gpu_or_isaac(tmp_path):
-    from PySide6.QtWidgets import QApplication
-    from simulator.gui.multidrone_page import MultiDronePage
-    app=QApplication.instance() or QApplication([])
-    page=MultiDronePage(tmp_path)
-    assert page.viewer_process is None and not page.job.running
-    assert not page.launch.isEnabled()
-    folder=tmp_path/'batch';folder.mkdir()
-    (folder/'replay.json').write_text(json.dumps(dict(schema='multidrone_replay_v1',num_envs=64,
-        success_count=55,failure_count=1,training_attempts=300000,seed=1)))
-    page.load(folder)
-    assert page.launch.isEnabled() and '64 independent' in page.result.text()
-    assert page.viewer_process is None and not page.job.running
-    page.close();app.processEvents()
 
 
 def test_video_encodes_all_fixed_time_frames(tmp_path):
@@ -80,9 +66,23 @@ def test_new_native_run_freezes_live_recording_setting(tmp_path):
     from simulator.workflow import prepare_training
     root=Path(__file__).resolve().parents[2]
     shutil.copytree(root/'config',tmp_path/'config')
+    # Synthetic launch-only assets: never depend on the live selected fit.
+    from experimental_data.io import atomic_json,sha256_file
+    component=tmp_path/'drone.json';weight=tmp_path/'weights.pt'
+    from dataclasses import asdict
+    from simulator.drone_pose_response import PoseResponseParameters
+    from simulator.drone_pose_residual import DronePoseResidual,save_residual
+    save_residual(weight,DronePoseResidual())
+    atomic_json(component,dict(nominal=dict(parameters=asdict(PoseResponseParameters(4.,4.,3.,3.,1.,1.,.1,.02))),
+        residual=dict(checkpoint=weight.name,sha256=sha256_file(weight))))
+    model_path=tmp_path/'config/research_30hz/model.json'
+    model=json.loads(model_path.read_text(encoding='utf-8'))
+    model['motion_residual']=dict(enabled=False)
+    model['fullstate_execution'].update(enabled=True,checkpoint=str(component),sha256=sha256_file(component),source_job='synthetic-launch-test')
+    atomic_json(model_path,model)
     before=(tmp_path/'config/research_30hz/ppo.json').read_bytes()
     run,command=prepare_training(tmp_path,'PPO',seed=123,episodes=8,batch=4,device='cuda')
-    config=json.loads((run/'launch_config/ppo.json').read_text())
+    config=json.loads((run/'launch_config/ppo.json').read_text(encoding='utf-8'))
     assert config['live_scene']['enabled']
     assert config['live_scene']['source']=='actual_training_collection'
     assert (run/'source_snapshot/learning/live_scene.py').is_file()

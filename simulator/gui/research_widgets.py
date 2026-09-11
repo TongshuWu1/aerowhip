@@ -14,6 +14,12 @@ def note(text):
     return label
 
 
+def style_axes(axes):
+    import numpy as np
+    for ax in np.asarray(axes,dtype=object).flat:
+        ax.spines[['top','right']].set_visible(False);ax.grid(alpha=.15);ax.tick_params(labelsize=8)
+
+
 class BackgroundJob(QWidget):
     finished = Signal(int)
     progress = Signal(dict)

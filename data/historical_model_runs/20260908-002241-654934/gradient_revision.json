@@ -1,9 +1,0 @@
-{
-  "prior_failed_cable_output": "cable",
-  "reason": "Finite difference convergence demonstrated; use epsilon 1e-4 and 3e-5, both must pass original 5% criterion. No optimizer, data, selection, or physical search change.",
-  "revised_output": "cable_verified",
-  "source_hashes": {
-    "experimental_data/cable_residual_fit.py": "15b53d4845721721f275f3950d3943b25f7327216b22e319146db37f9f80b6d2",
-    "experimental_data/historical_fit.py": "00f10e4c53524611c14840ddca34c55c7bffbc781c623fe08274ea79246e35be"
-  }
-}

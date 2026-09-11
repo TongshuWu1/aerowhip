@@ -204,8 +204,22 @@ def test_cuda_captured_inference_matches_differentiable_prediction():
 def test_candidate_preparation_is_unfitted_and_preserves_source(tmp_path):
     from tools.prepare_residual_candidate import prepare
     from experimental_data.io import sha256_file
-    source=ROOT/'config/research_30hz/model.json'
-    old=json.loads(source.read_text())
+    from dataclasses import asdict
+    from simulator.drone_pose_residual import DronePoseResidual,save_residual
+    from simulator.cable.residual import MotionResidual
+    from experimental_data.differentiable_fit import save_weights
+    from experimental_data.io import atomic_json
+    # Synthetic saved components; the active structural template is intentionally unfitted.
+    old=json.loads((ROOT/'config/research_30hz/model.json').read_text(encoding='utf-8'))
+    cable_weight=tmp_path/'cable.pt';save_weights(cable_weight,MotionResidual(12,mode='dissipative').double())
+    drone_weight=tmp_path/'drone.pt';save_residual(drone_weight,DronePoseResidual().double())
+    drone=tmp_path/'drone.json'
+    atomic_json(drone,dict(nominal=dict(parameters=asdict(PoseResponseParameters(4.,4.,3.,3.,1.,1.,.1,.02))),
+        residual=dict(checkpoint=drone_weight.name,sha256=sha256_file(drone_weight))))
+    old['motion_residual']=dict(enabled=True,checkpoint=str(cable_weight),sha256=sha256_file(cable_weight))
+    old['fullstate_execution'].update(enabled=True,checkpoint=str(drone),sha256=sha256_file(drone),source_job='synthetic-preservation-test')
+    old['cable']['external_drag_s_inv']=0.
+    source=tmp_path/'source.json';atomic_json(source,old)
     paths=[source,Path(old['motion_residual']['checkpoint']),Path(old['fullstate_execution']['checkpoint'])]
     before={p:sha256_file(p) for p in paths}
     folder=tmp_path/'candidate'
@@ -213,7 +227,7 @@ def test_candidate_preparation_is_unfitted_and_preserves_source(tmp_path):
     assert manifest['status']=='UNFITTED' and not manifest['trained']
     assert not manifest['selected_for_deployment']
     assert before=={p:sha256_file(p) for p in paths}
-    payload=json.loads((folder/'model.json').read_text())
+    payload=json.loads((folder/'model.json').read_text(encoding='utf-8'))
     loaded=ResearchExecutionModel.from_mapping(payload,trainable_residuals=True)
     assert loaded.physics.motion_residual.mode=='dissipative_plus_acceleration'
     assert torch.count_nonzero(loaded.physics.motion_residual.correction_head.weight)==0

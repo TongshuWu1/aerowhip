@@ -46,11 +46,44 @@ def diagnostics(arrays,metadata,settings):
         peak_tip_speed_m_s=float(np.linalg.norm(v[:,-1],axis=-1).max()),
         peak_forward_tip_speed_m_s=float((v[:,-1]@axis).max()),
         criteria={k:cfg[k] for k in DEFAULTS},predicted_valid_hit=metadata.get('predicted_valid_hit',False))
+    report.update(drone_peak_height_m=float(origin[:,2].max()),
+        drone_peak_forward_approach_m=float(displacement.max()),
+        cable_rest_length_m=float(sum(lengths)),
+        drone_max_vertical_excursion_m=float(np.abs(origin[:,2]-settings['launch']['origin_m'][2]).max()))
+    hit=metadata.get('predicted_hit_time_s')
+    if hit is not None:
+        full_t=arrays['prediction_time_s']
+        interpolate=lambda data:np.array([np.interp(hit,full_t,column) for column in data.reshape(len(full_t),-1).T]).reshape(data.shape[1:])
+        cq=interpolate(arrays['cable_positions_m']);cv=interpolate(arrays['cable_velocities_m_s'])[-1]
+        co=interpolate(arrays['origin_positions_m'])
+        extension=float((cq[-1]-cq[0])@axis)
+        report.update(forward_cable_reach_at_contact_m=extension,
+            forward_cable_reach_fraction_at_contact=extension/sum(lengths),
+            drone_position_at_contact_m=co.tolist(),attachment_position_at_contact_m=cq[0].tolist(),
+            drone_target_distance_at_contact_m=float(np.linalg.norm(co-settings['launch']['target_m'])),
+            drone_peak_sideways_excursion_m=float(np.linalg.norm((origin-np.asarray(settings['launch']['origin_m'])-displacement[:,None]*axis)[:,:2],axis=-1).max()))
+        ce=np.diff(cq[-4:],axis=0);ce/=np.linalg.norm(ce,axis=-1,keepdims=True)
+        report.update(tip_elevation_at_contact_deg=float(np.degrees(np.arctan2(cv[2],np.linalg.norm(cv[:2])))),
+            tip_vertical_velocity_at_contact_m_s=float(cv[2]),
+            distal_rms_elevation_at_contact_deg=float(np.degrees(np.arcsin(np.sqrt(np.mean(ce[:,2]**2))))))
     return report,(t,q,v,angles,location,material,drone_speed,axis)
 
 
 def render(output,arrays,metadata,settings,*,animate=True):
     report,(t,q,v,angles,location,material,drone_speed,axis)=diagnostics(arrays,metadata,settings)
+    origins=arrays['origin_positions_m'][:len(t)]
+    hit=metadata.get('predicted_hit_time_s')
+    if hit is not None and t[-1]<hit<=arrays['prediction_time_s'][-1]:
+        full_t=arrays['prediction_time_s']
+        def at_contact(data):
+            return np.array([np.interp(hit,full_t,column) for column in data.reshape(len(full_t),-1).T]).reshape(data.shape[1:])
+        cq=at_contact(arrays['cable_positions_m']);cv=at_contact(arrays['cable_velocities_m_s'])
+        edge=np.diff(cq,axis=0);tangent=edge/np.maximum(np.linalg.norm(edge,axis=-1,keepdims=True),1e-12)
+        ca=np.arctan2(np.linalg.norm(np.cross(tangent[:-1],tangent[1:]),axis=-1),np.clip((tangent[:-1]*tangent[1:]).sum(-1),-1,1))
+        t=np.r_[t,hit];q=np.concatenate((q,cq[None]));v=np.concatenate((v,cv[None]))
+        angles=np.concatenate((angles,ca[None]));location=np.r_[location,material[ca.argmax()]]
+        drone_speed=np.r_[drone_speed,at_contact(arrays['origin_velocities_m_s'])@axis]
+        origins=np.concatenate((origins,at_contact(arrays['origin_positions_m'])[None]))
     figure=Figure(figsize=(12,7),layout='constrained');grid=figure.add_gridspec(2,2,width_ratios=[1,1.7])
     axes=[figure.add_subplot(grid[:,0]),figure.add_subplot(grid[0,1]),figure.add_subplot(grid[1,1])]
     selected=np.linspace(max(0,len(t)//3),len(t)-1,7).astype(int)
@@ -68,6 +101,26 @@ def render(output,arrays,metadata,settings,*,animate=True):
     axes[2].axhline(0,color='gray',lw=.6);axes[2].legend();axes[2].set(xlabel='Time [s]',ylabel='Forward speed [m/s]')
     for time in report['stage_completion_times_s']:axes[1].axvline(time,color='cyan',ls=':',lw=1)
     figure.savefig(output/'wave.png',dpi=150)
+    # Side view alone conceals the sideways swing. Keep a plan view alongside
+    # attachment-relative reach and aircraft approach for outward-cast audits.
+    cast=Figure(figsize=(12,8),layout='constrained');cg=cast.add_gridspec(2,2)
+    side=cast.add_subplot(cg[0,0]);top=cast.add_subplot(cg[0,1]);reach=cast.add_subplot(cg[1,:])
+    lateral=np.cross(np.array([0.,0.,1.]),axis)
+    lateral=lateral/max(np.linalg.norm(lateral),1e-12)
+    for i,c in zip(selected,colors):
+        side.plot(q[i]@axis,q[i,:,2],'-o',ms=3,color=c,label=f'{t[i]:.2f} s')
+        top.plot(q[i]@axis,q[i]@lateral,'-o',ms=3,color=c)
+    side.plot(target@axis,target[2],'rx',ms=10);top.plot(target@axis,target@lateral,'rx',ms=10)
+    side.set(xlabel='Strike axis [m]',ylabel='Height [m]',title='Side view');side.legend(fontsize=8,ncol=2)
+    top.set(xlabel='Strike axis [m]',ylabel='Sideways position [m]',title='Top view')
+    for view in (side,top):view.set_aspect('equal',adjustable='box');view.grid(alpha=.2)
+    length=report['cable_rest_length_m'];extension=(q[:,-1]-q[:,0])@axis
+    approach=(origins-np.asarray(settings['launch']['origin_m']))@axis
+    reach.plot(t,extension,label='Cable forward reach from attachment')
+    reach.plot(t,approach,label='Drone forward displacement')
+    reach.axhline(length,ls=':',color='gray',label=f'Cable rest length ({length:.3f} m)')
+    reach.set(xlabel='Time [s]',ylabel='Distance [m]',title='Frozen-model simulation — reach versus carrier approach')
+    reach.legend();reach.grid(alpha=.2);cast.savefig(output/'cast.png',dpi=150)
     if animate:
         fig=Figure(figsize=(7,5),layout='constrained');ax=fig.subplots()
         x=q@axis;line,=ax.plot([],[],'-o',color='#ea580c',ms=4);drone,=ax.plot([],[],'s',color='#2563eb',ms=9)
@@ -75,7 +128,7 @@ def render(output,arrays,metadata,settings,*,animate=True):
         ax.set(xlim=(min(x.min(),target@axis)-.15,max(x.max(),target@axis)+.15),
             ylim=(q[:,:,2].min()-.15,q[:,:,2].max()+.15),xlabel='Strike axis [m]',ylabel='Height [m]')
         ax.set_aspect('equal');ax.grid(alpha=.2)
-        frames=np.arange(0,len(t),3)
+        frames=np.r_[np.arange(0,len(t),3),np.full(6,len(t)-1)]
         def draw(i):
             line.set_data(x[i],q[i,:,2]);drone.set_data([x[i,0]],[q[i,0,2]])
             ax.set_title(f'Model simulation | {t[i]:.2f} s | quarter speed')

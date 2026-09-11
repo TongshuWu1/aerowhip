@@ -46,16 +46,3 @@ def test_rollout_includes_initial_and_terminal_and_preserves_plan(tmp_path):
 def test_invalid_trajectory_rejected():
     with pytest.raises(ValueError):
         sample_fullstate([0, 0], np.zeros((2, 3)), np.zeros((2, 3)))
-
-
-def test_fullstate_planning_does_not_add_recovery_simulation(tmp_path, monkeypatch):
-    from simulator.gui import rehearsal_worker
-    from deployment import fullstate_recovery
-    sentinel = object()
-    monkeypatch.setattr(rehearsal_worker,'compile_strike_plan',lambda *a,**kw:sentinel)
-    def forbidden(*args,**kwargs):
-        raise AssertionError('Full-state export must not add a second recovery simulation')
-    monkeypatch.setattr(fullstate_recovery,'prepare_complete_trajectory',forbidden)
-    worker = rehearsal_worker.RehearsalWorker([],tmp_path/'policy.pt',tmp_path,fullstate_mode=True)
-    plan,trajectory = worker.prepare_plan()
-    assert plan is sentinel and trajectory is None

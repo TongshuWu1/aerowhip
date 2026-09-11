@@ -10,8 +10,6 @@ os.environ.setdefault("QT_API", "pyside6")
 
 from PySide6.QtWidgets import QApplication
 
-from simulator.rollout import load_json
-
 from .main_window import SimulatorMainWindow
 
 
@@ -24,11 +22,6 @@ def main() -> int:
     application.setApplicationName("Aerial Cable Research Simulator")
     application.setStyle('Fusion')
     application.setOrganizationName("Aerial Cable Research")
-    window = SimulatorMainWindow(
-        project_root,
-        load_json(project_root / "config" / "model.json"),
-        load_json(project_root / "config" / "task.json"),
-        load_json(project_root / "config" / "ppo.json"),
-    )
+    window = SimulatorMainWindow(project_root)
     window.show()
     return application.exec() if owns_application else 0

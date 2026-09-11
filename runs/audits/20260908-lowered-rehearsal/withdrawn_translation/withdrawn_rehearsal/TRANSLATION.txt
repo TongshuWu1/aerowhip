@@ -1,7 +1,0 @@
-The complete command, start, target and predicted scene were translated together.
-Incremental XYZ shift [m]: [0.0, 0.0, -0.3]
-Use actual tracked-origin hover [m]: [-0.0067, 0.0129, 1.255]
-Use actual target [m]: [1.0, 0.0, 1.0999999999999999]
-PPO weights, forces, velocity, acceleration, yaw and timing are unchanged.
-Prediction is translated using model symmetry, not a new measured flight.
-Re-running PPO at the lower coordinates is a different operation and may change the maneuver.

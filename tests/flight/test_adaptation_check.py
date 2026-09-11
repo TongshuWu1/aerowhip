@@ -28,6 +28,17 @@ def test_missing_observations_and_time_gaps_are_not_bridged():
     np.testing.assert_allclose(out[5],[.085]*3)
 
 
+def test_command_onset_rejects_negative_age_and_ambiguous_repeated_values():
+    ref=np.zeros(20,dtype=[('time_s',float)]+[(f'v{i}',float) for i in range(11)])
+    ref['time_s']=np.arange(20)/30;ref['v0']=np.arange(20);ref['v6']=1
+    c=np.zeros(20,dtype=[('time_s',float),('cmd_age',float),('cmd_valid',float)]+[(n,float) for n in COMMAND_COLUMNS])
+    c['time_s']=10+ref['time_s'];c['cmd_valid']=1;c['cmd_age']=-.01
+    for i,n in enumerate(COMMAND_COLUMNS):c[n]=ref[f'v{i}']
+    with pytest.raises(ValueError,match='No valid'):command_onset(c,ref)
+    c['cmd_age']=0;ref['v0']=1;c[COMMAND_COLUMNS[0]]=1
+    with pytest.raises(ValueError,match='Too few matching'):command_onset(c,ref)
+
+
 def test_rehearsal_requires_exact_flown_csv(tmp_path):
     ref=tmp_path/'flight.csv'; ref.write_text('flown')
     saved=tmp_path/'saved'; saved.mkdir(); (saved/'fullstate_30hz.csv').write_text('other')
@@ -116,3 +127,11 @@ def test_replay_measurement_and_errors_use_optitrack_only(tmp_path,monkeypatch):
     np.testing.assert_allclose(result['drone_error'],np.sqrt(29))
     assert np.isnan(result['measured_cable'][5,5]).all()
     np.testing.assert_array_equal(result['predicted_origin'],np.zeros((20,3)))
+    # The batch must choose its frozen prediction even when no folder is passed.
+    protocol=batch/'protocol.json'
+    protocol.write_text(json.dumps(dict(rehearsal=str(saved),forecast_sha256=ac.sha256(saved/'rehearsal.npz'))))
+    implicit=ac.load_comparison(tmp_path,batch,'take')
+    assert implicit['rehearsal']==saved
+    assert str(protocol) in implicit['hashes']
+    protocol.write_text(json.dumps(dict(rehearsal=str(saved),forecast_sha256='wrong')))
+    with pytest.raises(ValueError,match='frozen forecast'):ac.load_comparison(tmp_path,batch,'take')

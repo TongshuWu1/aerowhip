@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 import hashlib
+import csv
 import io
 import json
 from pathlib import Path
@@ -75,11 +76,18 @@ def classify_csv(path: str | Path) -> str:
     return "unknown"
 
 
-def resolve_raw_pair(directory: str | Path) -> tuple[Path, Path]:
-    folder = Path(directory)
+def resolve_raw_pair(directory: str | Path, *, allow_pva=False, filenames=None) -> tuple[Path, Path]:
+    folder = Path(directory).resolve()
     classified: dict[str, list[Path]] = {"logger": [], "motive": [], "unknown": []}
-    for path in sorted(folder.glob("*.csv")):
-        classified[classify_csv(path)].append(path)
+    paths=sorted(folder.glob('*.csv')) if filenames is None else [folder/name for name in filenames]
+    for path in paths:
+        if path.resolve().parent!=folder or path.suffix.lower()!='.csv':raise ValueError('Choose CSV files directly inside the source take folder')
+        kind=classify_csv(path)
+        if allow_pva and kind=='unknown':
+            with path.open(encoding='utf-8-sig',newline='') as stream:fields=set(next(csv.reader(stream),[]))
+            required={'time_s','x','y','z','cmd_age','cmd_valid',*('cmd_'+n for n in ('x','y','z','vx','vy','vz','ax','ay','az','yaw','yaw_rate'))}
+            if required<=fields:kind='logger'
+        classified[kind].append(path)
     if len(classified["logger"]) != 1 or len(classified["motive"]) != 1:
         detail = ", ".join(
             f"{kind}={[item.name for item in values]}"

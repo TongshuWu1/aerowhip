@@ -1,8 +1,0 @@
-{
-  "drone_origin_fit_retained": true,
-  "geometry": "Same train-only lateral geometry fit in each fold as cable stage",
-  "reason": "For the combined model predict the cable attachment directly, using measured quaternion only for target construction and initial world offset. This avoids assuming fixed attitude during whip and avoids double cable loading.",
-  "reference_input": "Logged cf7 PVA with initialization-only attachment position offset",
-  "reference_target": "Measured cf7 position plus rotated calibrated attachment offset",
-  "source_sha256": "c11f42cc2c4cf08a5b6235f04bc57df52fde200969aaab1e42b2841fe672d66c"
-}

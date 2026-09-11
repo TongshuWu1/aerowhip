@@ -1,9 +1,9 @@
 {
-  "schema": "current_experiment_hardware_v1",
+  "cable_assembly_mass_kg": 0.017,
+  "drone_mass_kg": 0.145,
   "drone_rigid_body": "auto_single_cf",
-  "drone_mass_kg": 0.153,
-  "cable_assembly_mass_kg": 0.018,
-  "total_mass_kg": 0.171,
-  "source": "User: replacement identical cf3 drone weighs 153 g; cable assembly unchanged at 18 g",
-  "scope": "Current hardware observation; historical M0 model, saved policy and repeat-flight CSV remain unchanged"
+  "schema": "current_experiment_hardware_v1",
+  "scope": "Fresh unseen-system experiment; historical models and flight artifacts are archived, not relabelled",
+  "source": "User measurement: repaired drone 145 g, cable assembly 17 g; all geometry unchanged",
+  "total_mass_kg": 0.162
 }

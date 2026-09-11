@@ -1,0 +1,18 @@
+{
+  "note": "Current uncommitted first-party implementation included; source/config identities preserved in review evidence. Original research workspace unchanged.",
+  "original_config_sha256": {
+    "cable_fit": "b1d6b4a37f11bf86d9c461436737bf1c6cd0597389711eb47be899f589173c1a",
+    "current_vehicle": "ecb83e60cf0772bc443309d8308ff46b6de54db00fc0295925d1f7ad59d50d6b",
+    "model": "97d588ca50621fe01d1d6dad034adf4b99f762fff56670514f7c33cbfba63cd6",
+    "ppo": "73fa46e0f8edd11aaf2c4dd7553488c4d2d484ce17dd8c2130bd5319e1a7308d",
+    "pva/mppi": "dd44fee18cf3770b69ceea7a452b0ec395e6f540014bb7a6da84b371a130d82e",
+    "pva/ppo": "fd0091fd2059d65f1134d1e2ff52990d19778b80d07743d229d925dd05bd7b33",
+    "research_30hz/model": "392301afe8ddf1b3e62683466405dc4bb9597136f467cdc8cda92df90dfae031",
+    "research_30hz/ppo": "72a27a24c67e1243d828d252202128d4666417e90874caabbe17ced4480ca474",
+    "research_30hz/task": "e7066b620da636604747a03094a01176af929cf9f023aa94e16c6cf7d107735f",
+    "sac": "c6cae495e30b82ecdd97a14527ff27142ea2064c0094db9c82a211ad5051ce33",
+    "task": "759065d4d364d6a6f5a0ebfa75a506be8b8bcc802b4c177b70264c757721769e"
+  },
+  "source_commit": "7941e6bcacdfef3a1a51acd6962b69ebf60c078d",
+  "source_date": "2026-09-11"
+}

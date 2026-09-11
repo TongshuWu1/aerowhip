@@ -23,12 +23,14 @@ def stamp():
     return datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S-%f')
 
 
-def import_take(root, source):
+def import_take(root, source, *, take_name=None, filenames=None):
     source = Path(source).resolve()
-    name = source.name
+    name = take_name or source.name
     if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_-]*', name):
         raise ValueError('Use a folder name containing letters, digits, underscores or hyphens.')
-    pair = resolve_raw_pair(source)
+    experiment=read_json(Path(root)/'config/experiment.json',{})
+    fresh=experiment.get('schema')=='unseen_system_experiment_v1'
+    pair = resolve_raw_pair(source,allow_pva=fresh,filenames=filenames)
     destination = Path(root) / 'data/raw_takes' / name
     if destination.exists():
         raise ValueError(f'{name} already exists. Existing raw recordings are preserved.')
@@ -37,6 +39,12 @@ def import_take(root, source):
     paths = pair.values() if isinstance(pair, dict) else pair
     for path in paths:
         shutil.copy2(path, destination / Path(path).name)
+    if fresh:
+        atomic_json(destination/'experiment.json',dict(experiment_id=experiment['id'],
+            hardware=read_json(Path(root)/'config/current_vehicle.json'),
+            source_directory=str(source),sources={p.name:sha256_file(p) for p in destination.glob('*.csv')},
+            files=dict(controller=pair[0].name,optitrack=pair[1].name),
+            stage='preliminary',reviewed_for_fitting=False))
     manifest_path = Path(root) / 'data/dataset_manifest.json'
     manifest = read_json(manifest_path)
     manifest['takes'][name] = dict(enabled=True, role='training', note='Imported preliminary recording.',

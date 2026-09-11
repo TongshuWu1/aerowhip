@@ -124,7 +124,7 @@ class PoseResponseState:
                 raise ValueError('State must be finite, with one dtype/device')
         if self.position.dtype not in (torch.float32,torch.float64):
             raise ValueError('Use float32 or float64 states')
-        if self.alignment_provenance not in ('explicit_calibration','prehover_effective_alignment'):
+        if self.alignment_provenance not in ('explicit_calibration','prehover_effective_alignment','causal_motion_effective_alignment'):
             raise ValueError('Alignment provenance must be explicit; firmware axes are not assumed')
 
 

@@ -13,9 +13,12 @@ import re
 import zipfile
 
 ROOT=Path(__file__).resolve().parents[1]
-PACKAGES=('simulator','learning','experimental_data','tools','tests','deployment')
+PACKAGES=('simulator','learning','planning','experimental_data','tools','tests','deployment','policies')
 GUIDES=('INSTALL.md','ARCHITECTURE.md','REPRODUCIBILITY.md','PUBLICATION.md',
-        'CONTROLLER_INTERFACE_REVIEW.md','LAB_SETUP.md')
+        'CONTROLLER_INTERFACE_REVIEW.md','LAB_SETUP.md','PAPER_WRITING_HANDOFF.md',
+        'PAPER_READINESS_REVIEW.md','SIM_REAL_EVALUATION.md','M0_TO_M1_ADAPTATION.md',
+        'DIRECT_PVA_WORKFLOW.md','FUTURE_ADAPTATION_FITTING.md','PPO_MPPI_OBJECTIVE.md',
+        'DRONE_COMMAND_CHAIN_AUDIT.md','DRONE_RESPONSE_ADAPTATION.md')
 CONFIGS=('model','task','ppo','sac','cable_fit')
 
 
@@ -33,18 +36,38 @@ def portable_configs(root):
     model['cable'].pop('previous_parameter_source',None)
     model['cable']['parameter_source']='bundled physical values; original fit data not distributed'
     for name in ('ppo','sac'):
-        prior=result[name].get('bootstrap')
-        if prior and prior.get('enabled'):
-            if not prior.get('actions'):raise ValueError('Prior is not self-contained')
-            prior['source']='embedded CEM action prior; preceding search used 8192 attempts'
+        # Compatibility configurations are retained for independent legacy tests.
+        # Never distribute a local selected prior as a fresh-system default.
+        result[name]['bootstrap']={'enabled':False}
         result[name]['training']['device']='auto'
         result[name]['training']['collection_batch']=64
-    result['ppo']['curriculum']['meaning']='Disabled; exact task with the embedded searched force prior'
+    result['ppo']['curriculum']['meaning']='Disabled; compatibility configuration, not the selected PVA experiment'
     # GPU comparison settings remain documented in the original config hashes.
     # Smaller defaults avoid allocating a workstation-size buffer on first use.
     result['sac']['sac']['replay_capacity']=65536
     result['sac']['sac']['updates_per_collection']=16
     result['baseline']=dict(version='bundled-physical-baseline',model_sha256=canonical(model))
+    for name in ('research_30hz/model','research_30hz/task','research_30hz/ppo','current_vehicle','pva/ppo','pva/mppi'):
+        value=json.loads((root/f'config/{name}.json').read_text(encoding='utf-8'))
+        original[name]=canonical(value);result[name]=value
+    structural=result['research_30hz/model']
+    if structural.get('motion_residual',{}).get('enabled') or structural.get('fullstate_execution',{}).get('enabled'):
+        raise ValueError('Source release requires an unfitted structural template; fitted models need separate reviewed assets')
+    for method in ('ppo','mppi'):
+        result['pva/'+method]['device']='auto'
+        result['pva/'+method]['model_path']=''
+        result['pva/'+method].pop('development_model_review',None)
+    objective=result['pva/ppo'].get('ppo_objective')
+    if objective:
+        # The reference is a separately reviewed research asset, like the model.
+        # Keep its checksum but never distribute a workstation path/authorization.
+        objective['reference_source']='config/pva/wave_reference.npz'
+        objective['source_mppi_run']='separately held selected MPPI run; see source settings checksum'
+    result['research_workspace']=dict(schema='research_workspace_v1',config_directory='config/research_30hz',
+        bundle=None,model_label='Unfitted structural template',selected_by_user=False)
+    result['experiment']=dict(schema='unseen_system_experiment_v1',preliminary_batch=None,fit_job=None,
+        status='Collect and review data before fitting; no flight or model selected')
+    result['evaluation/campaign']=dict(schema='model_evolution_v1',models=[],flights=[])
     return result,original
 
 
@@ -70,8 +93,7 @@ def build(root,output):
                  'requirements.txt','pytest.ini','.editorconfig','.github/workflows/smoke.yml','tests/README.md'):
         add(name)
     for name in GUIDES:add('docs/'+name)
-    readme=root/'docs/release/README.md'
-    files['README.md']=(readme if readme.exists() else root/'README.md').read_bytes()
+    files['README.md']=b'''# Aerial whip research source\n\nThis source-only candidate contains the current PVA planner, fitting, comparison\nand desktop UI. No fitted model, flight command, forecast or recording is bundled.\nInstall using docs/INSTALL.md, then run `python run_simulation.py`. Review your\ndata and prepare a model before planning. No job starts automatically.\n\nRead docs/PAPER_WRITING_HANDOFF.md and docs/PAPER_READINESS_REVIEW.md for the method\nand evidence limits. Experiment paths in these guides refer to separately held\nresearch artifacts. Legacy numerical backends remain for compatibility tests;\nthey are not the selected experiment. See PUBLICATION_METADATA.json for release\nstatus. This package does not reproduce reported trajectories without their\nseparately reviewed model, source snapshot and exact command assets.\n'''
     files['docs/FLIGHT_ADAPTATION_QUICKSTART.md']=(root/'docs/FLIGHT_ADAPTATION_QUICKSTART.md').read_bytes()
     files['.gitignore']=b'__pycache__/\n*.py[cod]\n.venv/\n.pytest_cache/\n.idea/\n/runs/\n/results/\n/dist/\n/archive/\n/data/**\n!/data/README.md\n!/data/dataset_manifest.json\n'
     files['.gitattributes']=b'* text=auto\n*.py text eol=lf\n*.json text eol=lf\n*.md text eol=lf\n'
@@ -99,7 +121,8 @@ def build(root,output):
         files={name:dict(sha256=digest(raw),bytes=len(raw)) for name,raw in sorted(files.items())},
         original_config_sha256=original,bundled_config_sha256={name:canonical(value) for name,value in configs.items()},
         transformations=['Removed local provenance paths; preserved physical/reward/action values',
-            'Embedded prior retained; bootstrap.source is provenance, not a required file',
+            'Compatibility force priors disabled; current PVA and structural configurations included',
+            'No selected model, replay, flight package, evaluation candidate or fit job is distributed',
             'Device auto and collection batch64; SAC replay65536 and16 updates/collection for smaller development runs',
             'Empty dataset manifest; no raw data, fit reports or checkpoints; no Git history'],
         byte_count=sum(len(raw) for raw in files.values()),scan_findings=[],

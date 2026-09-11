@@ -19,7 +19,7 @@ from deployment.pva_rehearsal import generate,export_package
 ROOT=Path(__file__).resolve().parents[1]
 
 
-def finalize(parent,candidate,output):
+def finalize(parent,candidate,output,*,name='MPPI wave - accepted full candidate (simulation)'):
     parent=parent.resolve();candidate=candidate.resolve();output=output.resolve()
     output.mkdir(parents=True,exist_ok=False)
     cfg=read_json(parent/'settings.json')
@@ -28,7 +28,7 @@ def finalize(parent,candidate,output):
     with np.load(candidate) as z:sequence=z['normalized_jerk'].copy()
     if sequence.ndim!=2 or sequence.shape[1]!=3 or not np.isfinite(sequence).all() or np.abs(sequence).max()>1:
         raise ValueError('Finite bounded XYZ jerk candidate required')
-    job,_=prepare(ROOT,cfg,'MPPI wave - accepted full candidate (simulation)')
+    job,_=prepare(ROOT,cfg,name)
     identity=read_json(job/'identity.json');identity.update(acceptance='independent_full_candidate_replay',
         parent_run=str(parent),candidate_source=str(candidate),candidate_sha256=sha256_file(candidate),
         note='New plan accepted from a rolling MPPI proposal. Parent rolling loop did not complete; no optimizer runs in this derived job.')
@@ -66,4 +66,5 @@ def finalize(parent,candidate,output):
 if __name__=='__main__':
     p=argparse.ArgumentParser();p.add_argument('--parent',type=Path,required=True)
     p.add_argument('--candidate',type=Path,required=True);p.add_argument('--output',type=Path,required=True)
-    a=p.parse_args();finalize(a.parent,a.candidate,a.output)
+    p.add_argument('--name',default='MPPI wave - accepted full candidate (simulation)')
+    a=p.parse_args();finalize(a.parent,a.candidate,a.output,name=a.name)

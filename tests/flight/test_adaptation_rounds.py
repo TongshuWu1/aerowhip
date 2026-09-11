@@ -128,3 +128,12 @@ def test_reviews_do_not_collide_on_same_clock_tick(tmp_path,monkeypatch):
     assert b.name>a.name
     assert json.loads(a.read_text())['notes']=='first'
     assert json.loads(b.read_text())['notes']=='second'
+
+
+def test_archived_round_rejects_processing_before_reading_metadata(tmp_path):
+    import pytest
+    from experimental_data.adaptation_rounds import process_round
+    folder=tmp_path/'archived';folder.mkdir()
+    (folder/'round.json').write_text('invalid metadata must never be read')
+    (folder/'ARCHIVED.json').write_text('{}')
+    with pytest.raises(ValueError,match='archived'):process_round(folder)

@@ -1,23 +1,32 @@
 __pycache__/
 *.py[cod]
 .venv/
-.idea/
-# Share portable PyCharm launch configurations; machine-specific settings stay in .idea.
 .pytest_cache/
 .ruff_cache/
-.natnet_download/
-tmp/
-/archive/
-/results/
+.test_artifacts/
+.idea/
+.DS_Store
 /dist/
-/runs/
-/policies/**
-!/policies/README.md
-# Newly generated research artifacts stay opt-in. The user-authorized September 9
-# snapshot explicitly tracks existing data, models, runs, and policy packages.
-# Downloaded SDKs and regenerable live_scene feeds are not snapshot artifacts.
-# Local measurements and fitted artifacts are distributed separately unless approved.
-# This does not untrack existing files or remove Git history.
+/tmp/
+/artifacts/
+/private_bundles/
+/workspace/**
+!/workspace/README.md
+/experiments/**
+!/experiments/README.md
+/exports/**
+!/exports/README.md
+/runs/**
+!/runs/README.md
+/results/
 /data/**
 !/data/README.md
 !/data/dataset_manifest.json
+/policies/**
+!/policies/README.md
+/config/evaluation/history/
+/config/evaluation/campaign.json
+/config/pva/flight_selection.json
+/config/pva/flight_replay.json
+/config/pva/replay.json
+/rehearsal_csv_and_result_in_real_flight/

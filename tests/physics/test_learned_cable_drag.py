@@ -17,6 +17,9 @@ ROOT = Path(__file__).resolve().parents[2]
 def models():
     torch.set_num_threads(1)
     original = read_json(ROOT/'config/model.json')
+    # Exercise a nonzero physical damping coefficient independently of the live
+    # unfitted template (zero drag makes the softplus gradient test degenerate).
+    original['cable']['external_drag_s_inv']=.3
     baseline = ForceControlledPointCable.from_mapping(original)
     payload = deepcopy(original)
     payload['cable']['external_drag_s_inv'] = 0

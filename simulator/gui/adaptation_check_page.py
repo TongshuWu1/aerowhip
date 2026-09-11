@@ -6,7 +6,8 @@ from PySide6.QtCore import Qt, QThread, Signal, QTimer
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
     QComboBox, QFileDialog, QSlider, QCheckBox, QDoubleSpinBox, QTabWidget)
 from .research_widgets import note
-from experimental_data.adaptation_check import discover_batches, flight_names, load_comparison
+from experimental_data.adaptation_check import load_comparison
+from .flight_generation_selector import FlightGenerationSelector
 
 
 class ComparisonLoader(QThread):
@@ -28,34 +29,35 @@ class AdaptationCheckPage(QWidget):
         self.root = Path(root); self.data = None; self.viewer = None; self.worker = None
         self.active = False; self.playing = False; self.rehearsal = None
         layout = QVBoxLayout(self)
-        row = QHBoxLayout(); layout.addLayout(row)
-        row.addWidget(QLabel('Adaptation'))
-        self.batches = QComboBox(); self.batches.setMinimumWidth(270); row.addWidget(self.batches,1)
-        self.refresh = QPushButton('Refresh'); row.addWidget(self.refresh)
-        self.browse = QPushButton('Open batch…'); row.addWidget(self.browse)
+        self.library_selector=FlightGenerationSelector(self.root);layout.addWidget(self.library_selector)
+        self.batches=self.library_selector.batches;self.refresh=self.library_selector.refresh_button
         row2 = QHBoxLayout(); layout.addLayout(row2)
-        self.takes = QComboBox(); row2.addWidget(QLabel('Flight')); row2.addWidget(self.takes,1)
-        self.reference = QPushButton('Choose saved prediction…'); row2.addWidget(self.reference)
-        self.load = QPushButton('Load flight'); row2.addWidget(self.load)
+        self.takes = QComboBox(); row2.addWidget(QLabel('Real-flight take')); row2.addWidget(self.takes,1)
+        self.load = QPushButton('Load real flight + ghost'); row2.addWidget(self.load)
+        self.details=QCheckBox('Details');row2.addWidget(self.details)
+        self.advanced=QWidget();advanced_layout=QVBoxLayout(self.advanced);advanced_layout.setContentsMargins(0,0,0,0)
+        row=QHBoxLayout();advanced_layout.addLayout(row)
+        self.browse=QPushButton('Open batch…');row.addWidget(self.browse)
+        self.reference=QPushButton('Choose another saved prediction…');row.addWidget(self.reference);row.addStretch()
+        layout.addWidget(self.advanced);self.advanced.hide();self.details.toggled.connect(self.advanced.setVisible)
         self.status = note('Select a batch and load a flight. Its saved prediction is matched by the executed CSV.'); layout.addWidget(self.status)
         self.flight_legend=note('Solid orange: OptiTrack measurement · Blue ghost: saved predicted execution, not the commanded PVA. World XYZ in metres. Missing markers remain gaps.')
         layout.addWidget(self.flight_legend)
         self.normalize_height=QCheckBox('Show hover-normalized Z (diagnostic; not raw flight performance)')
-        self.normalize_height.setEnabled(False);self.normalize_height.toggled.connect(self.apply_height_view);layout.addWidget(self.normalize_height)
-        self.normalize_height.hide()  # Normalized is now the sole evaluation view.
+        self.normalize_height.setEnabled(False);self.normalize_height.toggled.connect(self.apply_height_view);advanced_layout.addWidget(self.normalize_height)
         self.views = QTabWidget(); layout.addWidget(self.views,1)
         self.scene_page = QWidget(); self.scene_layout = QVBoxLayout(self.scene_page); self.scene_layout.setContentsMargins(0,0,0,0)
+        self.empty_scene=QLabel('Choose a model generation, plan and real-flight take.');self.empty_scene.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.empty_scene.setWordWrap(True);self.empty_scene.setStyleSheet('color:#64748b;font-size:18px;padding:32px;')
+        self.scene_layout.addWidget(self.empty_scene,1)
         self.views.addTab(self.scene_page,'3D comparison')
         from matplotlib.figure import Figure
         from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
         self.figure = Figure(figsize=(9,5), tight_layout=True); self.canvas = FigureCanvasQTAgg(self.figure)
         self.views.addTab(self.canvas,'Errors over time')
-        from .adaptation_progress_page import AdaptationProgressPage
-        self.progress_page=AdaptationProgressPage(root)
-        self.views.addTab(self.progress_page,'Adaptation progress')
         options = QHBoxLayout(); layout.addLayout(options)
         self.measured = QCheckBox('Measured'); self.measured.setChecked(True)
-        self.ghost = QCheckBox('Prediction'); self.ghost.setChecked(True)
+        self.ghost = QCheckBox('Plan ghost'); self.ghost.setChecked(True)
         self.trails = QCheckBox('Trails'); self.trails.setChecked(True)
         for widget in (self.measured,self.ghost,self.trails): options.addWidget(widget); widget.toggled.connect(self.redraw)
         options.addWidget(QLabel('Ghost opacity'))
@@ -68,6 +70,7 @@ class AdaptationCheckPage(QWidget):
         self.play = QPushButton('Play'); self.play.clicked.connect(self.toggle_play); transport.addWidget(self.play)
         self.strike = QPushButton('Predicted strike'); self.strike.clicked.connect(self.jump_strike); transport.addWidget(self.strike)
         self.whip = QCheckBox('Whip only'); transport.addWidget(self.whip); self.whip.toggled.connect(self.set_range)
+        self.loop = QCheckBox('Loop'); transport.addWidget(self.loop)
         self.speed = QComboBox()
         for value in (.25,.5,1.,2.): self.speed.addItem(f'{value:g}×',value)
         self.speed.setCurrentIndex(2); transport.addWidget(self.speed)
@@ -76,42 +79,47 @@ class AdaptationCheckPage(QWidget):
         self.time_label = QLabel('0.000 s'); transport.addWidget(self.time_label)
         self.metrics = note(''); layout.addWidget(self.metrics)
         self.timer = QTimer(self); self.timer.setInterval(33); self.timer.timeout.connect(self.tick)
-        self.refresh.clicked.connect(self.refresh_batches); self.browse.clicked.connect(self.open_batch)
+        self.browse.clicked.connect(self.open_batch)
         self.reference.clicked.connect(self.choose_reference); self.load.clicked.connect(self.load_flight)
-        self.batches.currentIndexChanged.connect(self.batch_changed)
+        self.library_selector.session_changed.connect(self.batch_changed)
         self.takes.currentIndexChanged.connect(self.clear_result)
         self.views.currentChanged.connect(self.redraw)
         self.flight_controls=[self.status,self.flight_legend,self.metrics]+[
             group.itemAt(i).widget() for group in (row,row2,options,transport)
             for i in range(group.count()) if group.itemAt(i).widget() is not None]
-        self.views.currentChanged.connect(self.switch_view)
-        self.refresh_batches(); self.clear_result()
+        self.refresh_batches()
         self.whip.setChecked(True)
 
-    def switch_view(self,index):
-        for widget in self.flight_controls:widget.setVisible(index!=2)
-        if index==2:
-            self.pause()
-            if self.progress_page.real.data is None:self.progress_page.real.refresh()
-
     def refresh_batches(self):
-        previous = self.batches.currentData(); self.batches.blockSignals(True); self.batches.clear()
-        for folder in discover_batches(self.root): self.batches.addItem(f'{folder.parent.name} / {folder.name}',str(folder))
-        index = self.batches.findData(previous)
-        self.batches.setCurrentIndex(max(index,0)); self.batches.blockSignals(False); self.batch_changed()
+        self.library_selector.refresh()
 
     def batch_changed(self):
-        self.rehearsal = None; self.reference.setText('Choose saved prediction…')
+        self.rehearsal = None; self.reference.setText('Choose another saved prediction…')
         self.takes.clear()
-        if self.batches.currentData(): self.takes.addItems(flight_names(self.batches.currentData()))
+        session=self.library_selector.selected_session()
+        for take in session['takes'] if session else []:
+            number=take['name'].rsplit('_',1)[-1]
+            self.takes.addItem(f'Take {number} · {take["role"].capitalize()}',take['name'])
+            self.takes.setItemData(self.takes.count()-1,take['name'],Qt.ItemDataRole.ToolTipRole)
         self.clear_result()
+        self.status.setVisible(bool(session))
+        if not session:
+            self.status.setText(self.library_selector.summary.text());self.empty_scene.setText(self.library_selector.summary.text())
+        elif not session['takes']:
+            self.status.setText('No recorded takes for this plan yet.');self.empty_scene.setText('This model has a saved plan. Its measured flights will appear here after recording.')
+        self.load.setEnabled(bool(session and session['takes']))
+
+    def select_flight(self,batch,take):
+        if not self.library_selector.select_batch(batch):return False
+        index=self.takes.findData(take)
+        if index<0:return False
+        self.takes.setCurrentIndex(index);return True
 
     def open_batch(self):
         path = QFileDialog.getExistingDirectory(self,'Open batch containing simulation_csv and flight_take',str(self.root/'rehearsal_csv_and_result_in_real_flight'))
         if path:
-            index = self.batches.findData(path)
-            if index < 0: self.batches.addItem(Path(path).parent.name+' / '+Path(path).name,path); index = self.batches.count()-1
-            self.batches.setCurrentIndex(index)
+            if not self.library_selector.select_batch(path):
+                self.status.setText('This folder is not a flight batch in the project library. Import it through Recordings first.')
 
     def choose_reference(self):
         path = QFileDialog.getExistingDirectory(self,'Choose original saved rehearsal (must match CSV)',str(self.root/'runs/rehearsals'))
@@ -121,20 +129,25 @@ class AdaptationCheckPage(QWidget):
     def clear_result(self, *_):
         self.pause(); self.data = None
         if self.viewer is not None: self.viewer.close(); self.viewer.deleteLater(); self.viewer = None
+        self.empty_scene.setText('Select a take, then load its real flight and original plan ghost.');self.empty_scene.show()
+        self.flight_legend.hide()
         self.figure.clear(); self.canvas.draw_idle(); self.timeline.setRange(0,0)
         self.play.setEnabled(False); self.strike.setEnabled(False); self.metrics.setText(''); self.time_label.setText('—')
         self.status.setText('Ready to load selected flight; no comparison loaded.')
 
     def load_flight(self):
-        if self.worker is not None or not self.takes.currentText(): return
+        if self.worker is not None or not self.takes.currentData(): return
+        self.status.show()
         self.clear_result(); self.status.setText('Matching CSV and aligning measured drone logs…')
         self.set_loading(True)
-        self.worker = ComparisonLoader(self.root, self.batches.currentData(), self.takes.currentText(), self.rehearsal, self)
+        self.worker = ComparisonLoader(self.root, self.batches.currentData(), self.takes.currentData(), self.rehearsal, self)
         self.worker.loaded.connect(self.loaded); self.worker.failed.connect(self.failed); self.worker.finished.connect(self.worker_finished)
         self.worker.start()
 
     def set_loading(self, busy):
-        for widget in (self.batches,self.takes,self.refresh,self.browse,self.reference,self.load): widget.setEnabled(not busy)
+        self.library_selector.setEnabled(not busy)
+        for widget in (self.takes,self.browse,self.reference): widget.setEnabled(not busy)
+        self.load.setEnabled(not busy and self.takes.count()>0)
 
     def worker_finished(self):
         self.worker.deleteLater(); self.worker = None; self.set_loading(False)
@@ -142,34 +155,33 @@ class AdaptationCheckPage(QWidget):
     def failed(self, message): self.status.setText('Could not load: '+message)
 
     def loaded(self, data):
-        from experimental_data.hover_calibration import normalized_evaluation
-        try:normalized_evaluation(data)
-        except ValueError as error:
-            self.failed(str(error));return
+        self.empty_scene.hide()
+        self.status.show();self.flight_legend.show()
         self.raw_data=data
         self.normalize_height.blockSignals(True);self.normalize_height.setChecked(False);self.normalize_height.blockSignals(False)
         self.normalize_height.setEnabled('hover_normalized' in data)
-        self.data = normalized_evaluation(data)
-        self.flight_legend.setText('Hover-normalized OptiTrack motion · orange measured motion · blue original saved prediction. All displayed errors use normalized Z.')
+        self.data = dict(data,evaluation_frame='raw_global_xyz')
+        self.flight_legend.setText('Raw global OptiTrack XYZ · orange measured motion · blue original saved prediction. No height correction applied.')
         a = data['alignment']; start,end = data['tracking_span']
         coverage = 'complete whip' if start<=0 and end>=data['metadata']['whip_end_s'] else 'WARNING: incomplete whip coverage'
-        self.status.setText(f"{data['take']} · {coverage} · tracking {start:.2f} to {end:.2f} s relative to CSV\n"
+        self.status.setToolTip(f"{data['take']} · {coverage} · tracking {start:.2f} to {end:.2f} s relative to CSV\n"
             f"Saved prediction: {data['rehearsal'].name} · exact CSV match · measured state: OptiTrack {data.get('drone_rigid_body') or ''}. "
             f"Clock alignment: {a['method']}; offset {a['offset_s']:.6f} s. Controller log: commands/timing only.")
+        timing='synchronized clocks' if a.get('clock_verified') else 'estimated clock alignment'
+        self.status.setText(f"{data['take']} · {coverage} · original MPPI/PVA forecast · exact CSV match · {timing}")
         self.play.setEnabled(True); self.strike.setEnabled(data['metadata'].get('predicted_hit_time_s') is not None)
         self.set_range(); self.draw_plots(); self.redraw()
-        # A valid per-batch calibration is the user's default working view.
-        # Keep raw data untouched so toggling/reloading never applies it twice.
-        self.normalize_height.setChecked('hover_normalized' in data)
 
     def apply_height_view(self,enabled):
         if not hasattr(self,'raw_data') or self.data is None:return
         from experimental_data.hover_calibration import normalized_evaluation
-        self.data=normalized_evaluation(self.raw_data)
-        bias=self.raw_data['height_calibration']['bias_z_m']
-        self.flight_legend.setText(f'Hover-normalized evaluation: drone and all cable Z minus {bias*100:.2f} cm. Ghost/reference target unchanged. All displayed errors use this normalization.')
-        if self.raw_data['height_calibration'].get('mode')=='constant_per_take':
-            self.flight_legend.setText(self.flight_legend.text()+' Per-take constant correction; hover drift remains and is recorded in calibration warnings.')
+        if enabled:
+            self.data=normalized_evaluation(self.raw_data)
+            bias=self.raw_data['height_calibration']['bias_z_m']
+            self.flight_legend.setText(f'Retrospective hover-normalized diagnostic: Z minus {bias*100:.2f} cm. Not raw flight performance; original forecast unchanged.')
+        else:
+            self.data=dict(self.raw_data,evaluation_frame='raw_global_xyz')
+            self.flight_legend.setText('Raw global OptiTrack XYZ · orange measured motion · blue original saved prediction. No height correction applied.')
         self.draw_plots();self.redraw()
 
     def set_range(self, *_):
@@ -236,7 +248,10 @@ class AdaptationCheckPage(QWidget):
         now=clock.monotonic(); self.play_time+=(now-self.last_tick)*self.speed.currentData(); self.last_tick=now
         index=int(np.searchsorted(self.data['time'],self.play_time,side='right')-1)
         self.timeline.setValue(min(max(index,0),self.timeline.maximum()))
-        if index>=self.timeline.maximum(): self.pause()
+        if index>=self.timeline.maximum():
+            if self.loop.isChecked():
+                self.timeline.setValue(0);self.play_time=self.data['time'][0];self.last_tick=now
+            else:self.pause()
 
     def set_page_active(self, active):
         self.active = active
@@ -245,7 +260,6 @@ class AdaptationCheckPage(QWidget):
 
     def shutdown(self):
         self.pause()
-        if not self.progress_page.shutdown():return False
         if self.worker is not None:
             if self.worker.isRunning(): return False
         if self.viewer is not None: self.viewer.close(); self.viewer = None

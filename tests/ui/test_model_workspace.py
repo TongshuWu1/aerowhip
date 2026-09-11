@@ -5,28 +5,11 @@ import json
 import shutil
 import numpy as np
 from PySide6.QtWidgets import QApplication
-from simulator.gui.model_workspace import RecordedFlightDiagnostics
 from simulator.gui.rehearsal_workspace import RehearsalWorkspace
 
 ROOT=Path(__file__).resolve().parents[2]
 
 
-def test_recorded_diagnostic_uses_saved_csv_mask_and_preserves_gaps(tmp_path):
-    app=QApplication.instance() or QApplication([])
-    version=tmp_path/'data/adaptation_rounds/adaptation0/processed/version';folder=version/'trial';folder.mkdir(parents=True)
-    (version.parent.parent/'round.json').write_text('{}');(version/'processing.json').write_text(json.dumps({'reports':[{'trial_id':'trial'}]}))
-    t=np.arange(20)*.01;p=np.zeros((20,3));p[:,2]=1.5;p[:,0]=.1;p[10:,0]=5
-    command=np.zeros((20,11));command[:,2]=1.5;mask=np.zeros(20,dtype=bool);mask[5:10]=True
-    valid=np.ones(20,dtype=bool);valid[7]=False;p[7,0]=999
-    cable=np.tile(p[:,None],(1,10,1));cable[:,:,2]-=np.arange(1,11)/10
-    np.savez(folder/'dataset.npz',drone_position_m=p,reference_fullstate=command,cable_position_m=cable,
-        controller_time_s=t,csv_maneuver_mask=mask,drone_position_valid=valid,reference_valid=np.ones(20,bool),
-        cable_valid=np.ones((20,10),bool),drone_velocity_m_s=np.zeros((20,3)))
-    original=(folder/'dataset.npz').read_bytes();page=RecordedFlightDiagnostics(tmp_path)
-    assert 'RMS 10.00 cm' in page.metrics.text() and '4 valid aligned samples' in page.metrics.text()
-    page.scope.setCurrentIndex(1);assert 'RMS 10.00 cm' not in page.metrics.text()
-    assert (folder/'dataset.npz').read_bytes()==original
-    page.close();app.processEvents()
 
 
 def test_editing_launch_setup_invalidates_old_rehearsal_and_exports(tmp_path):

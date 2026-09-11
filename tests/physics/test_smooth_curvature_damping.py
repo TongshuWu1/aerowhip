@@ -14,12 +14,13 @@ def cable(angle):
 
 
 @pytest.mark.parametrize('angle',[0.,math.acos(1-1e-7),.001])
-def test_smooth_damping_gradient_at_straight_and_legacy_switch(angle):
+@pytest.mark.parametrize('regularization',[2e-7,2e-5])
+def test_smooth_damping_gradient_at_straight_and_legacy_switch(angle,regularization):
     a=torch.tensor(angle,dtype=torch.float64,requires_grad=True)
     v=torch.linspace(-.2,.3,18,dtype=a.dtype).reshape(1,6,3)
     def loss(a):
         q=cable(a);j,affine,weight=_curvature_rate_jacobian_impl(q,q.new_full((5,),.1),None,None,
-            frame_regularization=2e-7)
+            frame_regularization=regularization)
         rate=(j@v.flatten(1)[...,None])[...,0]+affine
         return (weight*rate.square()).sum()
     gradient=torch.autograd.grad(loss(a),a)[0]
@@ -29,11 +30,12 @@ def test_smooth_damping_gradient_at_straight_and_legacy_switch(angle):
     torch.testing.assert_close(gradient,finite_difference,rtol=2e-5,atol=1e-6)
 
 
-def test_regularized_damping_is_dissipative_translation_free_and_rotation_equivariant():
+@pytest.mark.parametrize('regularization',[2e-7,2e-5])
+def test_regularized_damping_is_dissipative_translation_free_and_rotation_equivariant(regularization):
     q=cable(torch.tensor(.0005,dtype=torch.float64))
     v=torch.linspace(-.2,.3,18,dtype=q.dtype).reshape_as(q)
     def force(q,v):
-        j,affine,w=_curvature_rate_jacobian_impl(q,q.new_full((5,),.1),None,None,frame_regularization=2e-7)
+        j,affine,w=_curvature_rate_jacobian_impl(q,q.new_full((5,),.1),None,None,frame_regularization=regularization)
         return -(j.transpose(-1,-2)@(w*((j@v.flatten(1)[...,None])[...,0]+affine))[...,None]).reshape_as(q)
     f=force(q,v)
     assert (f*v).sum()<=0

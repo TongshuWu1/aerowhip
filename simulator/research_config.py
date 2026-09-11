@@ -84,13 +84,19 @@ def validate_research_contract(model,task,config):
         if config['deployment'].get(key,0)!=0:raise ValueError(f'{key} is not modeled by this fitted FullState execution path.')
 
 
-def snapshot_assets(model, directory):
+def snapshot_assets(model, directory, *, source_root=None):
     """A training run owns its model weights, independently of active pointers."""
     model=deepcopy(model);directory=Path(directory).resolve();assets=directory/'assets';assets.mkdir()
-    residual=model['motion_residual'];source=Path(residual['checkpoint'])
-    if sha256_file(source)!=residual['sha256']:raise ValueError('Cable residual changed')
-    shutil.copy2(source,assets/'cable_residual.pt');residual['checkpoint']=str(assets/'cable_residual.pt')
-    execution=model['fullstate_execution'];source=Path(execution['checkpoint'])
+    base=Path(source_root).resolve() if source_root is not None else Path.cwd()
+    def source_path(value):
+        path=Path(value)
+        return path if path.is_absolute() else base/path
+    residual=model['motion_residual']
+    if residual.get('enabled') is not False:
+        source=source_path(residual['checkpoint'])
+        if sha256_file(source)!=residual['sha256']:raise ValueError('Cable residual changed')
+        shutil.copy2(source,assets/'cable_residual.pt');residual['checkpoint']=str(assets/'cable_residual.pt')
+    execution=model['fullstate_execution'];source=source_path(execution['checkpoint'])
     if sha256_file(source)!=execution['sha256']:raise ValueError('Drone model changed')
     payload=read_json(source);weight=source.parent/payload['residual']['checkpoint']
     if sha256_file(weight)!=payload['residual']['sha256']:raise ValueError('Drone residual changed')

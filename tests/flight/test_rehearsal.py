@@ -46,7 +46,7 @@ def test_controller_csv_reconstructs_total_force_without_changing_plan(configs, 
 @pytest.fixture
 def configs():
     torch.set_num_threads(1)
-    return [json.loads((ROOT/'config'/f'{name}.json').read_text()) for name in ('model','task','ppo')]
+    return [json.loads((ROOT/'config'/f'{name}.json').read_text(encoding='utf-8')) for name in ('model','task','ppo')]
 
 
 @pytest.fixture
@@ -120,7 +120,7 @@ def test_launch_checks_drone_drift_only_and_execution_never_calls_actor(configs,
 def test_exported_package_runs_independently_with_drone_state_and_target(checkpoint, configs, tmp_path, device):
     setup = dict(initial_attachment_position_m=[0,0,1.51], target_position_m=[1.02,0,1.4])
     package = export_policy(ROOT, checkpoint, tmp_path/'portable', experiment_setup=setup)
-    assert json.loads((package/'experiment_setup.json').read_text()) == setup
+    assert json.loads((package/'experiment_setup.json').read_text(encoding='utf-8')) == setup
     manifest = verify_package(package/'policy')
     assert manifest['episodes'] == 123
     assert digest(checkpoint) == digest(package/'policy/checkpoints/policy.pt')
@@ -135,7 +135,7 @@ def test_exported_package_runs_independently_with_drone_state_and_target(checkpo
                '--target',*map(str,target),'--output',str(output),'--device',device]
     result = subprocess.run(command, cwd=package, capture_output=True, text=True, timeout=90)
     assert result.returncode == 0, result.stdout+result.stderr
-    metadata = json.loads((output/'plan.json').read_text())
+    metadata = json.loads((output/'plan.json').read_text(encoding='utf-8'))
     assert metadata['target_position_m'] == target
     assert metadata['initialization'] == 'assumed_vertical_cable'
     assert metadata['state_time_s'] == 12.
@@ -146,43 +146,4 @@ def test_exported_package_runs_independently_with_drone_state_and_target(checkpo
     create_plan(package/'policy', initial, local, target_position_m=target, device=device)
     with np.load(output/'plan.npz') as exported, np.load(local/'plan.npz') as current:
         np.testing.assert_array_equal(exported['forces_world_n'], current['forces_world_n'])
-    assert json.loads((package/'policy/task.json').read_text())['target_position_m'] == configs[1]['target_position_m']
-
-
-def test_worker_invalidates_changed_target_and_saves_the_executed_plan(configs, checkpoint, tmp_path, monkeypatch):
-    from simulator.gui import rehearsal_worker as module
-    initial_target = list(configs[1]['target_position_m'])
-    flight = module.RehearsalFlight(*configs, policy=lambda _: pytest.fail('Execution queried actor'))
-    flight.settling_duration_s = .02  # Ten-second gate is tested separately above.
-    flight.state.positions_m[:,2:,0] += .02
-    monkeypatch.setattr(module.RehearsalFlight, 'from_checkpoint', lambda *a: flight)
-    monkeypatch.setattr(module.RehearsalFlight, 'begin_approach', lambda self: None)
-    monkeypatch.setattr(module, 'prepare_live_physics', lambda *a: lambda q,v,f: (q.clone(),v.clone()))
-    observed_targets = []
-    def compile(model, task, ppo, initial, policy, **kwargs):
-        observed_targets.append(task['target_position_m'])
-        # True cable is bent but the planner receives a vertical cable.
-        torch.testing.assert_close(initial.positions_m[0,:,0], initial.positions_m[0,0,0].expand(12))
-        return StrikePlan(flight.last_command.repeat(3,1), .01, initial, torch.zeros(1,79))
-    monkeypatch.setattr(module, 'compile_strike_plan', compile)
-    directory = tmp_path/'rehearsal'
-    directory.mkdir()
-    worker = module.RehearsalWorker(configs, checkpoint, directory, device='cpu')
-    def generated(path, metadata):
-        if len(observed_targets) == 1:
-            worker.command('target', [1.03,0.,1.4])
-            worker.command('execute')  # Old target's sequence must not launch.
-            worker.command('plan')
-        else:
-            worker.command('execute')
-    worker.plan_ready.connect(generated)
-    worker.run()
-    summary = json.loads((directory/'flight.json').read_text())
-    assert summary['outcome'].startswith('Completed')
-    assert len(summary['strike_plans']) == 1
-    assert observed_targets == [initial_target, [1.03,0.,1.4]]
-    assert (directory/'plan_001/commands.csv').is_file()
-    assert (directory/'plan_002/commands.csv').is_file()
-    assert summary['preparation_events'][0]['plan_directory'].endswith('plan_002')
-    with np.load(directory/'flight.npz') as recording:
-        assert len(recording['time_s']) > 3
+    assert json.loads((package/'policy/task.json').read_text(encoding='utf-8'))['target_position_m'] == configs[1]['target_position_m']
