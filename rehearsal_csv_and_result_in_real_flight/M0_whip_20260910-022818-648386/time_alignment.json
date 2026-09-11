@@ -1,0 +1,157 @@
+{
+  "whip_m0_001": {
+    "offset_s": 0.48197866842251846,
+    "source": "Measured OptiTrack XYZ matched to controller-cached OptiTrack XYZ; evidence: C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M0-whip-intake-20260910\\intake.json",
+    "clock_verified": false,
+    "rmse_m": 0.0012622935680389941,
+    "chunks": [
+      {
+        "offset_s": 0.48484903077788283,
+        "rmse_m": 0.0010802207299622627,
+        "samples": 45
+      },
+      {
+        "offset_s": 0.4698237954914514,
+        "rmse_m": 0.001228757963424363,
+        "samples": 45
+      },
+      {
+        "offset_s": 0.4822917562367722,
+        "rmse_m": 0.0013839600245304333,
+        "samples": 45
+      },
+      {
+        "offset_s": 0.47912078352379034,
+        "rmse_m": 0.0012195238555231201,
+        "samples": 44
+      }
+    ],
+    "limitation": "Estimated stream alignment; cache/transport latency is not independently known. Fitted command delay is effective, not measured actuator latency.",
+    "optitrack_sha256": "74b928f2add86275ea43427289579e9fd9f16b6c491fd27656380c0b9c452275",
+    "controller_sha256": "bbe3d63f16d34beced2ee82bb342eb3514c769af38347d77ac4ba7eaf5c673f7"
+  },
+  "whip_m0_002": {
+    "offset_s": -1.334829745170443,
+    "source": "Measured OptiTrack XYZ matched to controller-cached OptiTrack XYZ; evidence: C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M0-whip-intake-20260910\\intake.json",
+    "clock_verified": false,
+    "rmse_m": 0.0014159674502894572,
+    "chunks": [
+      {
+        "offset_s": -1.328398443629627,
+        "rmse_m": 0.0011802244833704451,
+        "samples": 48
+      },
+      {
+        "offset_s": -1.3384742696384888,
+        "rmse_m": 0.0007432329274745253,
+        "samples": 48
+      },
+      {
+        "offset_s": -1.335073920662106,
+        "rmse_m": 0.0022302483540716325,
+        "samples": 47
+      },
+      {
+        "offset_s": -1.3319482966543583,
+        "rmse_m": 0.0009481337219135096,
+        "samples": 47
+      }
+    ],
+    "limitation": "Estimated stream alignment; cache/transport latency is not independently known. Fitted command delay is effective, not measured actuator latency.",
+    "optitrack_sha256": "a542e77af7d786afe8c4f0e07fa1ae5faa655bbea666958a9797a573d173c9e7",
+    "controller_sha256": "6bbc447fcaa7ccdd887a0777e81f1f3f6079d18407daa0462c692a76304f4db2"
+  },
+  "whip_m0_003": {
+    "offset_s": -0.30802951595709543,
+    "source": "Measured OptiTrack XYZ matched to controller-cached OptiTrack XYZ; evidence: C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M0-whip-intake-20260910\\intake.json",
+    "clock_verified": false,
+    "rmse_m": 0.0014543961880665332,
+    "chunks": [
+      {
+        "offset_s": -0.31004708144133736,
+        "rmse_m": 0.0013543534414806354,
+        "samples": 49
+      },
+      {
+        "offset_s": -0.3259284176415278,
+        "rmse_m": 0.0010595130536938777,
+        "samples": 49
+      },
+      {
+        "offset_s": -0.30800525930739425,
+        "rmse_m": 0.002049842952976224,
+        "samples": 49
+      },
+      {
+        "offset_s": -0.30446530094346524,
+        "rmse_m": 0.0009989603534272466,
+        "samples": 48
+      }
+    ],
+    "limitation": "Estimated stream alignment; cache/transport latency is not independently known. Fitted command delay is effective, not measured actuator latency.",
+    "optitrack_sha256": "4b8ed09d4e2fd3c78c9da9fb827b9a45c3ddd06e921b65d6318ab18138494359",
+    "controller_sha256": "7668a171cd402fca9fc11354051147c4c4915c078c09283bc47ded00c0e266b4"
+  },
+  "whip_m0_004": {
+    "offset_s": -0.5023299428986892,
+    "source": "Measured OptiTrack XYZ matched to controller-cached OptiTrack XYZ; evidence: C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M0-whip-intake-20260910\\intake.json",
+    "clock_verified": false,
+    "rmse_m": 0.0015118764881634794,
+    "chunks": [
+      {
+        "offset_s": -0.501081504324509,
+        "rmse_m": 0.001057065057272284,
+        "samples": 46
+      },
+      {
+        "offset_s": -0.5152243171609172,
+        "rmse_m": 0.0012472708263500858,
+        "samples": 46
+      },
+      {
+        "offset_s": -0.5012821504327398,
+        "rmse_m": 0.0020304790901932704,
+        "samples": 45
+      },
+      {
+        "offset_s": -0.5098213668639104,
+        "rmse_m": 0.0011674624579201657,
+        "samples": 45
+      }
+    ],
+    "limitation": "Estimated stream alignment; cache/transport latency is not independently known. Fitted command delay is effective, not measured actuator latency.",
+    "optitrack_sha256": "65a70933d5be883ec2289223e331319fd36ef8cfa25c0433adc0ba3cbe11db57",
+    "controller_sha256": "63620541230566740c5242a087fdf5d9047fcb4a17665bd9fda659a81e987a40"
+  },
+  "whip_m0_005": {
+    "offset_s": -0.43381517157679383,
+    "source": "Measured OptiTrack XYZ matched to controller-cached OptiTrack XYZ; evidence: C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M0-whip-intake-20260910\\intake.json",
+    "clock_verified": false,
+    "rmse_m": 0.00190100766169325,
+    "chunks": [
+      {
+        "offset_s": -0.4243079183555033,
+        "rmse_m": 0.0008825129881605082,
+        "samples": 48
+      },
+      {
+        "offset_s": -0.4258069259578493,
+        "rmse_m": 0.0010638561042676487,
+        "samples": 48
+      },
+      {
+        "offset_s": -0.43460650891355407,
+        "rmse_m": 0.0030954936555423057,
+        "samples": 48
+      },
+      {
+        "offset_s": -0.4237195743497283,
+        "rmse_m": 0.0011915393137855203,
+        "samples": 47
+      }
+    ],
+    "limitation": "Estimated stream alignment; cache/transport latency is not independently known. Fitted command delay is effective, not measured actuator latency.",
+    "optitrack_sha256": "94a68c8c6a933f66b6b1fb7fee8ce50bcee1dcf6b9f204ef30b75955edee62c7",
+    "controller_sha256": "cbfbec7b8e412adc3142e4a07088c8d62d0f567c010a2bacde4d29d69cd89492"
+  }
+}

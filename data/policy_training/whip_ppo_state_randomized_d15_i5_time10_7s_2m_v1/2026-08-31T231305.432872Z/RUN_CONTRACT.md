@@ -1,3 +1,0 @@
-# Task-whip PPO reward study — 7-second episode
-
-Training uses 25% exact canonical states and 75% physically propagated training-bank states balanced across state-distance strata. Every 10,240 episodes, the deterministic policy is evaluated on the same 256 held-out, physically varied, physically propagated initial states. Training and validation both use the production UAV + causal residual + 12-node DDER simulator. The policy action is 3-D acceleration plus roll/pitch/yaw body rates. The reported success requires the single first target entry to be tip-first with speed and direction; entry timestep is diagnostic only and numerical UAV limits are smooth costs. No CEM, protected data, or hardware is used. A STOP_REQUESTED file causes a checkpointed cooperative stop.

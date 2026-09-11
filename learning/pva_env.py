@@ -14,6 +14,7 @@ from simulator.research_pose import settled_initial,PoseStepper
 from simulator.research_physics import ResearchPhysics
 from simulator.research_reference import reference_packet_validity
 from simulator.pva_commands import SCHEMA,integrate_jerk,sphere_entry
+from learning.pva_success import criterion,contact_success,TIP_CONTACT,TWO_TARGET
 
 
 def defaults(method='ppo'):
@@ -36,9 +37,10 @@ def defaults(method='ppo'):
         mppi=dict(samples=1024,iterations=0 if method=='mppi' else 100,temperature=10.,noise_std=.5,noise_correlation=.7,
             minimum_iterations=20,patience=15,seed=656),device='cuda')
     if method=='mppi':
+        cfg['task']['success_criterion']=TIP_CONTACT
         cfg['task'].update(duration_s=5.,require_pullback=True,minimum_pull_distance_m=.25,minimum_pull_speed_m_s=1.,
             minimum_backward_distance_m=.1,minimum_backward_speed_m_s=.5)
-        cfg['reward'].update(pull_phase=20.,reverse_phase=40.)
+        cfg['reward'].update(pull_phase=20.,reverse_phase=40.,impact=200.,impact_scale_m_s=4.)
         cfg['mppi'].update(mode='receding',initialization='pullback',horizon_s=2.,noise_std=.05,temperature=1.,minimum_iterations=3,patience=3,
             initial_minimum_iterations=20,initial_patience=15,control_prior=0.,
             terminal_distance=0.,terminal_velocity=0.,terminal_anchor=0.,terminal_command_speed=0.,terminal_command_acceleration=0.,
@@ -62,6 +64,14 @@ def update_pullback(env,running):
     new_backward=torch.where(running,torch.maximum(env.reverse_credit,backward),env.reverse_credit)
     reward=weights.get('pull_phase',0.)*(new_forward-env.pull_credit)+weights.get('reverse_phase',0.)*(new_backward-env.reverse_credit)
     env.pull_credit,env.reverse_credit=new_forward,new_backward
+    if weights.get('brake_progress',0.):
+        # Credit actual deceleration continuously, before reverse speed/distance
+        # crosses the release threshold. A monotone account prevents farming.
+        brake=((task['minimum_pull_speed_m_s']-speed)/(
+            task['minimum_pull_speed_m_s']+task['minimum_backward_speed_m_s'])).clamp(0,1)
+        credit=torch.where(running&env.pull_ready,torch.maximum(env.brake_credit,brake),env.brake_credit)
+        reward+=weights['brake_progress']*(credit-env.brake_credit)
+        env.brake_credit=credit
     env.reverse_ready|=running&(backward>=1)
     # Returning forward after a token reversal cannot satisfy the new task.
     allowed=env.pull_ready&(backward_distance>=task['minimum_backward_distance_m'])&(speed<=-task['minimum_backward_speed_m_s'])
@@ -77,7 +87,8 @@ class PVAEnvironment:
         # CPU remains the checked tensor reference; specialized solvers require CUDA.
         fast_solve=fast_solve and torch.device(device).type=='cuda'
         self.fused_ticks=fused_ticks and graph and torch.device(device).type=='cuda';self.tick_graphs={}
-        self.model_config=deepcopy(model);self.settings=deepcopy(settings);self.device=torch.device(device)
+        self.model_config=deepcopy(model);self.settings=deepcopy(settings);self.device=torch.device(device);self.root=root
+        criterion(self.settings['task'])
         if settings.get('command_contract')!=SCHEMA:raise ValueError('PVA action contract required; a force checkpoint cannot be reinterpreted')
         self.batch_size=int(batch_size);self.engine=ResearchExecutionModel.from_mapping(model,root=root,device=device)
         self.dt=self.engine.dt_s;self.control_dt=1/30;self.stride=round(self.control_dt/self.dt)
@@ -121,6 +132,7 @@ class PVAEnvironment:
         self.pose=settled_initial(root,torch.zeros_like(root),self.engine.offset)
         # Structural rest lengths, free pivot and no privileged measured cable state.
         lengths=self.tensor(self.engine.cable.rest_lengths_m)
+        self.cable_length=lengths.sum()
         distance=torch.cat((lengths.new_zeros(1),lengths.cumsum(0)))
         self.wave_material=distance[1:-1]/distance[-1]
         q=root[:,None]+torch.stack((torch.zeros_like(distance),torch.zeros_like(distance),-distance),-1)[None]
@@ -130,16 +142,26 @@ class PVAEnvironment:
         self.hover=self.command.clone();self.packets=[self.command.clone()];self.actions=[]
         self.index=0;self.active=torch.ones(b,device=self.device,dtype=torch.bool)
         self.success=torch.zeros_like(self.active);self.failed=torch.zeros_like(self.active);self.contact=torch.zeros_like(self.active)
+        self.tip_contact=torch.zeros_like(self.active)
         self.pull_ready=torch.zeros_like(self.active);self.reverse_ready=torch.zeros_like(self.active)
         self.pull_peak=self.origin0.new_zeros(b);self.pull_credit=self.pull_peak.clone();self.reverse_credit=self.pull_peak.clone()
         self.wave_stage=torch.zeros(b,device=self.device,dtype=torch.long)
         self.wave_dwell=self.pull_peak.clone();self.wave_credit=self.pull_peak.clone()
+        self.reach_credit=self.pull_peak.clone()
+        self.brake_credit=self.pull_peak.clone()
         self.wave_completion_time=self.pull_peak.new_full((b,),float('inf'))
         self.total=self.origin0.new_zeros(b);self.minimum_distance=(q[:,-1]-self.target).norm(dim=-1)
         self.initial_distance=self.minimum_distance.clone();self.best_quality=self.total.clone()
+        self.encounter_time=self.total.clone();self.encounter_distance=self.minimum_distance.clone()
+        self.encounter_q=q.clone();self.encounter_tip_velocity=q[:,-1].new_zeros(b,3)
+        self.hit_tip_velocity=self.encounter_tip_velocity.clone()
+        self.encounter_drone_velocity=self.encounter_tip_velocity.clone();self.encounter_origin=self.origin0.clone()
+        self.encounter_backward=self.total.clone();self.encounter_tip_first=self.active.clone().zero_()
         self.termination_time=self.total.new_full((b,),self.steps*self.control_dt)
         self.cutoff=torch.full((b,),self.steps,device=self.device,dtype=torch.long)
         self.frames=[]
+        from learning.two_target_whip import initialize
+        initialize(self)
         return self.observation()
 
     def observation(self):
@@ -156,6 +178,14 @@ class PVAEnvironment:
         if self.settings['task'].get('require_pullback',False):
             obs=torch.cat((obs,torch.stack((self.pull_ready.double(),self.reverse_ready.double(),self.pull_peak,
                 self.pull_credit,self.reverse_credit),1).float()),1)
+        if self.settings.get('observation_contract') in ('pva_whip_phase_v2','pva_whip_phase_v3'):
+            # Ordered reward/hit history is part of the state seen by PPO.
+            phase=torch.stack((self.wave_stage/3,
+                (self.wave_dwell/self.settings['task']['wave_dwell_s']).clamp(0,1),
+                self.wave_credit,self.reach_credit),1).float()
+            obs=torch.cat((obs,phase),1)
+        if self.settings.get('observation_contract')=='pva_whip_phase_v3':
+            obs=torch.cat((obs,self.brake_credit[:,None].float()),1)
         return obs
 
     @torch.no_grad()
@@ -167,12 +197,15 @@ class PVAEnvironment:
         names=('position','velocity','rotation','omega_tracking','compensation','rotation_command_from_tracking')
         self.pose=replace(source.pose,**{name:expand(getattr(source.pose,name)) for name in names})
         self.state=DderState(expand(source.state.positions_m),expand(source.state.velocities_m_s))
-        for name in ('active','success','failed','contact','minimum_distance','initial_distance','best_quality',
+        for name in ('active','success','failed','contact','tip_contact','minimum_distance','initial_distance','best_quality',
                      'termination_time','cutoff','origin0','target','total','command','hover',
                      'pull_ready','reverse_ready','pull_peak','pull_credit','reverse_credit',
-                     'wave_stage','wave_dwell','wave_credit','wave_completion_time'):
+                     'wave_stage','wave_dwell','wave_credit','wave_completion_time','reach_credit','brake_credit'):
             setattr(self,name,expand(getattr(source,name)))
         self.evolving=expand(getattr(source,'evolving',source.active))
+        from planning.whip_objective import ENCOUNTER_FIELDS
+        for name in ENCOUNTER_FIELDS:setattr(self,name,expand(getattr(source,name)))
+        for name in self.extra_tick_fields:setattr(self,name,expand(getattr(source,name)))
         self.packets=[expand(p) for p in source.packets]
         self.actions=[expand(a) for a in source.actions]
         self.index=source.index;self.frames=[]
@@ -196,6 +229,7 @@ class PVAEnvironment:
         weights=self.settings['reward'];limits=self.settings['limits'];task=self.settings['task']
         running=self.active.clone();previous=self.state
         previous_origin=self.pose.position;previous_velocity=self.pose.velocity;previous_pull_ready=self.pull_ready.clone()
+        previous_pull_peak=self.pull_peak.clone()
         previous_wave_ready=self.wave_stage>=3
         pose_ok=self._pose_advance(left,right)
         root=self.pose.position+torch.einsum('bij,j->bi',self.pose.rotation,self.offset_tensor)
@@ -229,12 +263,23 @@ class PVAEnvironment:
             from learning.whip_wave import update
             reward+=update(self,running,clock_left+self.dt)
             quality*=previous_wave_ready
-        reward+=running*(weights['progress']*progress+weights['strike_quality']*(quality-self.best_quality).clamp_min(0))
+        quality_weight=weights['strike_quality']
+        if weights.get('joint_strike',0.):
+            from learning.ppo_strike import joint_quality
+            backward=self.pull_peak-((self.pose.position-self.origin0)*self.direction).sum(-1)
+            quality=joint_quality(dist,v[:,-1],self.pose.velocity,backward,self.pull_ready,
+                self.wave_credit,self.direction,task,weights['proximity_scale_m'])
+            quality_weight=weights['joint_strike']
+        reward+=running*(weights['progress']*progress+quality_weight*(quality-self.best_quality).clamp_min(0))
         self.minimum_distance=torch.where(running,torch.minimum(self.minimum_distance,dist),self.minimum_distance)
         self.best_quality=torch.where(running,torch.maximum(self.best_quality,quality),self.best_quality)
         entry=sphere_entry(previous.positions_m,q,self.target,task['target_radius_m'])
+        if self.settings.get('trajectory_objective',{}).get('schema')=='preferred_fold_v1':
+            from planning.whip_objective import record_encounter
+            record_encounter(self,previous,previous_origin,previous_velocity,q,v,entry,fraction,running,clock_left,previous_pull_peak)
         tip=entry[:,-1];other=entry[:,:-1].amin(-1)
         entered=running&torch.isfinite(tip);first_allowed=~self.contact if task['first_contact_only'] else torch.ones_like(running)
+        self.tip_contact|=entered
         if task.get('require_pullback',False):
             fraction=tip.clamp(0,1)[:,None]
             contact_origin=previous_origin+fraction*(self.pose.position-previous_origin)
@@ -252,14 +297,53 @@ class PVAEnvironment:
             # Conservative causal check: all stages must finish BEFORE the
             # contact interval; interval-end evidence cannot qualify an early hit.
             hit&=previous_wave_ready
+        hit=contact_success(task,running,tip,hit)
+        if criterion(task)==TWO_TARGET:
+            from learning.two_target_whip import advance
+            hit,tip=advance(self,previous,q,v,running,clock_left)
+        from learning.pva_success import record_hit_velocity
+        self.hit_tip_velocity=record_hit_velocity(previous.velocities_m_s[:,-1],v[:,-1],tip,hit,self.hit_tip_velocity)
         any_contact=running&torch.isfinite(entry).any(-1)
         invalid_contact=any_contact&~hit&~self.contact
+        if criterion(task) in (TIP_CONTACT,TWO_TARGET):invalid_contact=torch.zeros_like(hit)
         self.contact|=any_contact;self.success|=hit;self.active&=~hit
+        terminal_contact=invalid_contact&task['first_contact_only'] if (
+            self.settings['method']=='ppo' and self.settings['training'].get('terminate_invalid_contact',False)) else torch.zeros_like(hit)
+        # A rejected first contact makes success impossible under this task.
+        # Stop PPO credit collection here instead of rewarding a later release.
+        self.active&=~terminal_contact;self.evolving&=~terminal_contact
         reward+=hit*weights['success']-invalid_contact*weights['invalid_contact']
         duration=torch.where(hit,tip.clamp(0,1)*self.dt,self.total.new_full(self.total.shape,self.dt))
+        duration=torch.where(terminal_contact,entry.amin(-1).clamp(0,1)*self.dt,duration)
+        if any(weights.get(k,0.) for k in ('vertical_excursion','vertical_tip_velocity','vertical_tip_alignment','horizontal_contact')):
+            from learning.horizontal_strike import cost_rate,contact_bonus
+            reward-=running*duration*cost_rate(q,v,self.pose.position,self.origin0,self.target,self.pull_ready,weights)
+            # Soft contact quality is evaluated at the same interpolated entry
+            # as hit detection. Infinite no-contact fractions are safely clamped.
+            blend=tip.clamp(0,1)[:,None,None]
+            contact_q=previous.positions_m+blend*(q-previous.positions_m)
+            contact_v=previous.velocities_m_s+blend*(v-previous.velocities_m_s)
+            reward+=hit*contact_bonus(contact_q,contact_v,weights)
+        if any(weights.get(k,0.) for k in ('drone_approach','lateral_excursion','near_target_reach','outward_contact')):
+            from learning.horizontal_strike import reach_cost_rate,reach_contact_bonus
+            reward-=running*duration*reach_cost_rate(q,self.pose.position,self.origin0,self.target,
+                self.pull_ready,self.direction,self.cable_length,weights)
+            blend=tip.clamp(0,1)[:,None,None]
+            contact_q=previous.positions_m+blend*(q-previous.positions_m)
+            reward+=hit*reach_contact_bonus(contact_q,self.direction,self.cable_length,weights)
+        if weights.get('reach_progress',0.):
+            from learning.horizontal_strike import outward_reach
+            # One bounded credit account: oscillating the cable cannot collect
+            # the same reach reward repeatedly. Only forward-tip release counts.
+            releasing=running&self.pull_ready&((self.pose.velocity*self.direction).sum(-1)<0)&((v[:,-1]*self.direction).sum(-1)>0)
+            reach=outward_reach(q,self.direction,self.cable_length)
+            credit=torch.where(releasing,torch.maximum(self.reach_credit,reach),self.reach_credit)
+            reward+=weights['reach_progress']*(credit-self.reach_credit)
+            self.reach_credit=credit
         reward-=running*(weights['time_per_s']*duration+weights['displacement']*(self.pose.position-self.origin0).square().sum(-1)*duration)
-        ended=hit|invalid
-        self.termination_time=torch.where(ended,clock_left+torch.where(hit,tip.clamp(0,1)*self.dt,torch.zeros_like(tip)),self.termination_time)
+        ended=hit|invalid|terminal_contact
+        terminal_fraction=torch.where(terminal_contact,entry.amin(-1),tip).clamp(0,1)
+        self.termination_time=torch.where(ended,clock_left+torch.where(hit|terminal_contact,terminal_fraction*self.dt,torch.zeros_like(tip)),self.termination_time)
         self.cutoff=torch.where(ended,clock_cutoff,self.cutoff)
         if trace:self.frames.append(dict(time_s=right,origin=self.pose.position.clone(),rotation=self.pose.rotation.clone(),cable=q.clone(),
             origin_velocity=self.pose.velocity.clone(),cable_velocity=v.clone()))
@@ -271,8 +355,22 @@ class PVAEnvironment:
         action=action.to(device=self.device,dtype=torch.float64)
         if action.shape!=(self.batch_size,3) or not bool(torch.isfinite(action).all()) or bool((action.abs()>1+1e-6).any()):raise ValueError('Finite normalized bounded XYZ jerk action required')
         mask=self.active.clone();self.evolving=mask.clone();weights=self.settings['reward'];limits=self.settings['limits'];task=self.settings['task']
+        if weights.get('early_hit',0.):
+            from learning.pva_success import hit_time_bonus
+            previous_hit_bonus=hit_time_bonus(weights,self.success,self.failed,self.termination_time)
+        if weights.get('impact',0.):
+            from learning.pva_success import impact_bonus
+            previous_impact_bonus=impact_bonus(weights,self.success,self.failed,self.hit_tip_velocity,self.direction)
         reward=self.total.new_zeros(self.batch_size)
         next_command=integrate_jerk(self.command,action*self.limit,self.control_dt)
+        if weights.get('command_speed',0.):
+            # Soft cost with no added speed cutoff or action clipping.
+            speed_ratio=next_command[:,3:6].norm(dim=-1)/limits['maximum_speed_m_s']
+            reward-=mask*weights['command_speed']*speed_ratio.pow(4)*self.control_dt
+        if weights.get('command_acceleration',0.):
+            specific=next_command[:,6:9]+next_command.new_tensor([0.,0.,9.80665])
+            utilization=specific.norm(dim=-1)/limits['maximum_specific_force_m_s2']
+            reward-=mask*weights['command_acceleration']*utilization.pow(8)*self.control_dt
         packet_ok,_=reference_packet_validity(next_command[:,None],limits);packet_ok=packet_ok[:,0]
         packet_ok&=(next_command[:,2]>=limits['minimum_origin_z_m'])&(next_command[:,2]<=limits['maximum_origin_z_m'])
         # Reject infeasible next knots explicitly; no clipping to inconsistent P/V/A.
@@ -291,17 +389,40 @@ class PVAEnvironment:
         self.actions.append(action.clone());self.command=torch.where(self.evolving[:,None],next_command,self.command)
         self.packets.append(self.command.clone());self.index+=1
         if self.index>=self.steps:self.active.zero_()
+        if weights.get('early_hit',0.):
+            # Difference of terminal credit: count once and revoke if invalidated.
+            reward+=hit_time_bonus(weights,self.success,self.failed,self.termination_time)-previous_hit_bonus
+        if weights.get('impact',0.):
+            reward+=impact_bonus(weights,self.success,self.failed,self.hit_tip_velocity,self.direction)-previous_impact_bonus
         self.total+=reward
         return self.observation(),reward.float()[:,None],(~self.active).float()[:,None],mask.float()[:,None]
 
     @torch.no_grad()
-    def rollout(self,policy=None,actions=None,*,trace=False,max_steps=None):
+    def rollout(self,policy=None,actions=None,*,trace=False,max_steps=None,observer=None):
         if (policy is None)==(actions is None):raise ValueError('Supply one policy or action sequence')
         count=self.steps-self.index if max_steps is None else min(int(max_steps),self.steps-self.index)
         if count<1:raise ValueError('Rollout needs at least one remaining interval')
+        from learning.ppo_trajectory_reward import enabled,TrajectoryReward
+        objective=TrajectoryReward(self) if enabled(self.settings) else None
+        from learning.pva_ppo_rollout import decision_steps
+        repeat=decision_steps(self.settings) if policy is not None else 1
+        if policy is not None and self.index%repeat:
+            raise ValueError('Policy rollout must start at a decision boundary')
+        if observer is not None:observer(self)
         for i in range(count):
-            self.step(policy(self.observation()) if policy is not None else actions[:,i],trace=trace)
+            if policy is not None and i%repeat==0:held_action=policy(self.observation())
+            self.step(held_action if policy is not None else actions[:,i],trace=trace)
+            if objective is not None:objective.observe(self)
+            if observer is not None:observer(self)
             if not bool(self.active.any()):break
-        return dict(reward=self.total.clone(),success=self.success.clone(),failed=self.failed.clone(),
+        result=self.result()
+        return objective.finish(self,result) if objective is not None else result
+
+    def result(self):
+        extra={}
+        if self.extra_tick_fields:
+            extra=dict(target_hits=self.target_hits.clone()&~self.failed[:,None],target_hit_times_s=self.target_hit_times.clone(),
+                target_minimum_distances_m=self.target_minimum_distances.clone(),target_hit_velocities_m_s=self.target_hit_velocities.clone())
+        return dict(**extra,reward=self.total.clone(),success=self.success.clone(),failed=self.failed.clone(),
             minimum_tip_distance_m=self.minimum_distance.clone(),duration_s=self.termination_time.clone(),
             cutoffs=self.cutoff.clone(),packets=torch.stack(self.packets,1),actions=torch.stack(self.actions,1))

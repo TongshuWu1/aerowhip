@@ -12,8 +12,7 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from simulator.workflow import read_json,stamp
 from simulator.research_config import workspace_configs
-from .research_widgets import note,BackgroundJob
-from .model_workspace import style_axes
+from .research_widgets import note,BackgroundJob,style_axes
 
 
 class RehearsalWorkspace(QWidget):
@@ -39,7 +38,7 @@ class RehearsalWorkspace(QWidget):
                 spin.setStyleSheet('font-size: 9pt; padding-left: 4px;')
                 column=QVBoxLayout();column.addWidget(QLabel(axis));column.addWidget(spin);form.addLayout(column)
             cl.addLayout(form)
-        cl.addWidget(note('Settled level hover · zero initial velocity\nHanging cable · 10 s pre-hold\nTarget fixed when the plan is frozen\nNew rehearsals: unchanged whip → curved recovery → slow approach → hold'))
+        self.launch_note=note('Settled level hover · zero initial velocity\nHanging cable · 10 s pre-hold\nTarget fixed when the plan is frozen\nNew rehearsals: unchanged whip → curved recovery → slow approach → hold');cl.addWidget(self.launch_note)
         self.start=QPushButton('Generate rehearsal');self.start.setObjectName('primaryButton');self.start.clicked.connect(self.generate);cl.addWidget(self.start)
         self.progress=QProgressBar();self.progress.setRange(0,1000);self.progress.setValue(0);cl.addWidget(self.progress)
         self.save=QPushButton('Save complete CSV…');self.save.clicked.connect(self.save_csv);self.save.setEnabled(False);cl.addWidget(self.save)
@@ -68,22 +67,12 @@ class RehearsalWorkspace(QWidget):
         self.views.setTabVisible(3,False)
         self.status=note('Ready · GPU planning runs in an isolated process.');layout.addWidget(self.status)
         self.job=BackgroundJob(root);self.job.finished.connect(self.finished);self.job.progress.connect(self.job_progress);layout.addWidget(self.job)
-        legacy=QWidget();ll=QVBoxLayout(legacy);self.tabs.addTab(legacy,'Legacy policies')
-        ll.addWidget(note('Preserved 20 Hz checkpoints keep their original model and rehearsal semantics. They cannot be retimed into a new 30 Hz policy.'))
-        load=QPushButton('Open legacy rehearsal');self.legacy_open=load;ll.addWidget(load)
-        def open_legacy():
-            if self.legacy is None:
-                from .fullstate_page import FullStatePage
-                self.legacy=FullStatePage(root);self.legacy.flight_finished.connect(self.flight_finished.emit);ll.addWidget(self.legacy,1);load.hide()
-            self.legacy.set_page_active(self.active)
-        load.clicked.connect(open_legacy)
         self.tabs.currentChanged.connect(lambda _:self.set_page_active(self.active))
         self.timer=QTimer(self);self.timer.setInterval(33);self.timer.timeout.connect(self.tick)
         if inspection_only:
             for i in range(row.count()):
                 if row.itemAt(i).widget():row.itemAt(i).widget().hide()
             self.policy_note.hide();self.start.hide();self.job.hide();self.progress.hide()
-            self.tabs.setTabVisible(1,False)
             for spin in self.start_spins+self.target_spins:spin.setEnabled(False)
             self.package.setText('Export trajectory ZIP…')
             self.views.setTabText(1,'PVA and tracking')
@@ -145,23 +134,35 @@ class RehearsalWorkspace(QWidget):
 
     def load_result(self,directory):
         self.directory=Path(directory);self.metadata=read_json(self.directory/'rehearsal.json')
-        if self.metadata.get('schema') not in ('research_fullstate_30hz_v1','cem_fullstate_30hz_v1','mppi_fullstate_30hz_v1','mppi_force_fullstate_30hz_v1','pva_fullstate_30hz_v1'):raise ValueError('Select a completed native 30 Hz rehearsal folder.')
+        if self.metadata.get('schema') not in ('research_fullstate_30hz_v1','cem_fullstate_30hz_v1','mppi_fullstate_30hz_v1','mppi_force_fullstate_30hz_v1','pva_fullstate_30hz_v1','pva_policy_preview_v1'):raise ValueError('Select a saved native 30 Hz rehearsal folder.')
         if self.metadata.get('planner') and not self.inspection_only:raise ValueError('Open optimized results in their planner page → Rehearsal & Export.')
         with np.load(self.directory/'rehearsal.npz',allow_pickle=False) as data:self.arrays={k:data[k].copy() for k in data.files}
         m=self.metadata;self.progress.setValue(1000)
+        self.launch_note.setText('Settled level hover · zero initial velocity\nHanging cable · saved launch and target\n'+
+            ('Deterministic policy through termination\nPreview has no recovery or flight CSV' if m.get('preview_only') else
+             'Hold 10 s before execution\nFrozen whip → curved recovery → slow approach → hold'))
+        self.time_note.setText('Blue: commanded tracked origin · orange: predicted whip'+('' if m.get('preview_only') else ' · green: predicted recovery'))
         for spins,values in [(self.start_spins,m['initial_tracking_origin_m']),(self.target_spins,m['target_position_m'])]:
             for spin,value in zip(spins,values):spin.blockSignals(True);spin.setValue(value);spin.blockSignals(False)
         self.result_label=(m['planner'] if m.get('planner') else 'Policy '+m['checkpoint_sha256'][:8])
         self.status.setText(f'{self.result_label} · whip {m["whip_end_s"]:.2f} s · total CSV {m["total_duration_s"]:.2f} s · '
             f'predicted {"valid hit" if m["predicted_valid_hit"] else "miss"} · closest tip {m["minimum_tip_distance_m"]*100:.1f} cm. Recovery prediction is unvalidated.')
-        if not m['recovery_prediction_complete']:self.status.setText(self.status.text()+f' Prediction stopped at {m["prediction_valid_through_s"]:.2f} s after a model-domain failure.')
+        if m.get('target_positions_m'):
+            closest=' / '.join(f'{100*d:.1f} cm' for d in m['target_minimum_distances_m'])
+            self.status.setText(f'MPPI two-target whip · {sum(m["target_hits"])}/2 ordered tip hits · closest T1 / T2: {closest} · complete CSV {m["total_duration_s"]:.2f} s. Simulation only.')
+            self.time_note.setText('T1 green → T2 purple · two distinct virtual targets · one continuous whip')
+        if m.get('preview_only'):
+            snapshot=m['policy_snapshot']
+            self.status.setText(f'{snapshot["source_run_name"]} · {snapshot["checkpoint_choice"]} at {snapshot["checkpoint_attempts"]:,} attempts · {m["outcome"]} · closest tip {m["minimum_tip_distance_m"]*100:.1f} cm. Policy preview only; no recovery or flight CSV.')
+        elif not m['recovery_prediction_complete']:self.status.setText(self.status.text()+f' Prediction stopped at {m["prediction_valid_through_s"]:.2f} s after a model-domain failure.')
         self.status.setText(self.status.text()+(' Task requires forward pull then backward release.' if m.get('pullback',{}).get('required') else ' Saved tip-hit criteria did not require backward release.'))
         if m.get('wave',{}).get('required'):
             self.status.setText(self.status.text()+f' Travelling-bend stages: {m["wave"]["completed_stages"]}/3.')
         for w in [self.save,self.package,self.open,self.play]:w.setEnabled(True)
+        if m.get('preview_only'):self.save.setEnabled(False);self.package.setEnabled(False)
         self.timeline.setRange(0,len(self.arrays['prediction_time_s'])-1);self.timeline.setValue(0)
         self.draw_plots();self.fill_table()
-        available=all(key in self.arrays for key in ('origin_velocities_m_s','cable_velocities_m_s'))
+        available=len(self.arrays['prediction_time_s'])>1 and all(key in self.arrays for key in ('origin_velocities_m_s','cable_velocities_m_s'))
         self.views.setTabVisible(3,available)
         if available:
             from deployment.whip_diagnostics import draw
@@ -172,6 +173,9 @@ class RehearsalWorkspace(QWidget):
         if self.viewer is not None or self.arrays is None:return
         from .viewer_3d import create_viewer
         task=read_json(self.directory/'task.json');self.viewer=create_viewer(self.arrays['cable_positions_m'][0],self.arrays['target_position_m'],task['desired_strike_direction_world'],task['success']['tip_target_distance_m'],self)
+        if 'target_positions_m' in self.arrays:
+            from .whip_targets import add_targets
+            add_targets(self.viewer,self.arrays['target_positions_m'],task['success']['tip_target_distance_m'])
         q=self.arrays['cable_positions_m'][0]
         self.viewer.update_state(q,np.zeros(3),q[:1],q[-1:],
             tracked_origin_m=self.arrays['origin_positions_m'][0],tracked_rotation=self.arrays['origin_rotations'][0],render=False)
@@ -181,6 +185,7 @@ class RehearsalWorkspace(QWidget):
         # extent; replay and scrubbing never chase the moving drone with a zoom.
         points=np.vstack((self.arrays['cable_positions_m'].reshape(-1,3),
             self.arrays['origin_positions_m'],self.arrays['commands'][:,:3],self.arrays['target_position_m']))
+        if 'target_positions_m' in self.arrays:points=np.vstack((points,self.arrays['target_positions_m']))
         bounds=np.column_stack((points.min(axis=0)-.2,points.max(axis=0)+.2)).ravel()
         bounds[4]=min(bounds[4],0.)
         self.viewer.set_scene_bounds(bounds);self.viewer.set_camera_preset(self.camera.currentText())
@@ -198,13 +203,16 @@ class RehearsalWorkspace(QWidget):
             if not getattr(self,'_reference_source',None)==str(self.directory):
                 task=read_json(self.directory/'task.json')
                 self.viewer.set_target(a['target_position_m'],task['desired_strike_direction_world'],task['success']['tip_target_distance_m'],render=False)
-                self.viewer.plotter.add_mesh(pv.lines_from_points(a['commands'][:,:3]),color='#2563eb',line_width=2,name='FullStateReference',render=False,reset_camera=False)
+                if len(a['commands'])>1:self.viewer.plotter.add_mesh(pv.lines_from_points(a['commands'][:,:3]),color='#2563eb',line_width=2,name='FullStateReference',render=False,reset_camera=False)
                 self._origin_mesh=pv.PolyData(a['origin_positions_m'][index:index+1].copy())
                 self.viewer.plotter.add_mesh(self._origin_mesh,color='#0f172a',point_size=12,render_points_as_spheres=True,name='TrackedOrigin',render=False,reset_camera=False)
                 self._reference_source=str(self.directory)
             self._origin_mesh.points=a['origin_positions_m'][index:index+1].copy();self._origin_mesh.Modified()
         self.viewer.render()
         self.scene_note.setText(f'{t:.2f} s · {"Frozen whip" if phase==1 else "Recovery / final hold — unvalidated"} · tracking-frame glyph and cable attachment · {self.result_label}')
+        if 'target_hit_times_s' in a:
+            from .whip_targets import progress_text
+            self.scene_note.setText(self.scene_note.text()+' · '+progress_text(t,a['target_hit_times_s']))
 
     def toggle_play(self):
         if self.arrays is None:return
@@ -236,8 +244,9 @@ class RehearsalWorkspace(QWidget):
         self.plot_note.setText('Virtual force includes gravity; it is simulator input only.' if force else
             ('Bounded XYZ jerk integrates to desired P/V/A. Commands are held at 30 Hz. Dashed lines show predicted drone motion; tracking error uses the held command. Recovery has no new flight evidence.' if direct else
              'Saved P/V/A commands and fitted drone prediction. Tracking error uses the held command. Recovery is not empirically validated.'))
+        if self.metadata.get('preview_only'):self.plot_note.setText('Frozen deterministic PPO policy. Desired P/V/A and modeled motion through termination; no recovery or flight CSV.')
         for ax,title,unit in zip(axes,['Virtual total force' if force else 'Commanded velocity','Origin position (dashed = predicted)','Commanded acceleration','Speed and prediction error'],['N' if force else 'm/s','m','m/s²','Commanded speed [m/s]']):
-            ax.set(title=title,xlabel='CSV time [s]',ylabel=unit);ax.axvline(self.metadata['whip_end_s'],color='#94a3b8',ls=':',lw=1);ax.legend(fontsize=7,frameon=False)
+            ax.set(title=title,xlabel='Time [s]' if self.metadata.get('preview_only') else 'CSV time [s]',ylabel=unit);ax.axvline(self.metadata['whip_end_s'],color='#94a3b8',ls=':',lw=1);ax.legend(fontsize=7,frameon=False)
         style_axes(axes);self.canvas.draw_idle()
 
     def fill_table(self):
@@ -248,12 +257,14 @@ class RehearsalWorkspace(QWidget):
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
 
     def save_csv(self):
+        if self.metadata.get('preview_only'):return
         path,_=QFileDialog.getSaveFileName(self,'Save complete 30 Hz trajectory',str(self.root/'policies/fullstate_30hz.csv'),'CSV (*.csv)')
         if path:
             try:shutil.copy2(self.directory/'fullstate_30hz.csv',path);self.status.setText('Complete CSV saved: '+path)
             except OSError as e:self.status.setText('CSV save failed: '+str(e))
 
     def export_package(self):
+        if self.metadata.get('preview_only'):return
         if self.metadata.get('schema')=='pva_fullstate_30hz_v1':
             path,_=QFileDialog.getSaveFileName(self,'Export PVA trajectory bundle',str(self.root/'policies'/('PVA-'+stamp()+'.zip')),'ZIP (*.zip)')
             if path:
@@ -283,13 +294,12 @@ class RehearsalWorkspace(QWidget):
         self.active=active and self.tabs.currentIndex()==0
         if self.active:self.ensure_viewer();self.draw_frame(self.timeline.value())
         else:self.playing=False;self.timer.stop();self.play.setText('Play')
-        if self.legacy:self.legacy.set_page_active(active and self.tabs.currentIndex()==1)
 
     def shutdown(self):
         self.playing=False;self.timer.stop()
         if self.viewer is not None:self.viewer.close();self.viewer=None
         # Generation is a detached offline job and can finish after closing the UI.
-        return self.legacy.shutdown() if self.legacy else True
+        return True
 
     def clear_result(self):
         self.views.setTabVisible(3,False)

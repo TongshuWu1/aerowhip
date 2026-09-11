@@ -10,15 +10,15 @@
   "device": "cuda",
   "launch": {
     "origin_m": [
-      -2.0,
+      0.0,
       0.0,
       1.255
     ],
     "start_radius_m": 0.0,
     "target_m": [
-      -1.0,
+      1.25,
       0.0,
-      1.1
+      1.0
     ],
     "target_radius_m": 0.0
   },
@@ -32,7 +32,7 @@
     "minimum_specific_vertical_m_s2": 2.0
   },
   "method": "mppi",
-  "model_path": "data/model_candidates/20260908-normalized-M1/model.json",
+  "model_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\20260909-preliminary1-M0-v2\\candidate\\model.json",
   "mppi": {
     "control_prior": 0.0,
     "horizon_s": 2.0,
@@ -44,9 +44,9 @@
     "mode": "receding",
     "noise_correlation": 0.9,
     "noise_scales": [
-      0.05,
-      0.15,
-      0.35
+      0.01,
+      0.03,
+      0.09
     ],
     "noise_std": 0.05,
     "patience": 4,
@@ -62,11 +62,23 @@
     "terminal_distance": 0.0,
     "terminal_velocity": 0.0
   },
+  "performance": {
+    "fast_geometry": true,
+    "fast_solve": true,
+    "fused_ticks": true
+  },
   "reward": {
+    "impact": 200.0,
+    "impact_scale_m_s": 4.0,
     "displacement": 5.0,
+    "drone_approach": 180.0,
     "failure": 100.0,
+    "horizontal_contact": 320.0,
     "invalid_contact": 25.0,
     "jerk": 0.02,
+    "lateral_excursion": 180.0,
+    "near_target_reach": 120.0,
+    "outward_contact": 1000.0,
     "progress": 20.0,
     "proximity_scale_m": 0.35,
     "pull_phase": 20.0,
@@ -74,6 +86,9 @@
     "strike_quality": 60.0,
     "success": 200.0,
     "time_per_s": 5.0,
+    "vertical_excursion": 300.0,
+    "vertical_tip_alignment": 80.0,
+    "vertical_tip_velocity": 160.0,
     "wave_progress": 120.0
   },
   "schema": "pva_planner_settings_v1",
@@ -93,6 +108,7 @@
       0.0,
       0.0
     ],
+    "success_criterion": "tip_contact_v1",
     "target_radius_m": 0.05,
     "wave_distal_angle_rad": 0.65,
     "wave_distal_start": 0.75,
@@ -114,5 +130,8 @@
     "plateau_attempts": 20480,
     "relative_improvement": 0.005,
     "seed": 655
+  },
+  "visualization": {
+    "live_mppi": true
   }
 }

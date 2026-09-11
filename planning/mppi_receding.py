@@ -34,8 +34,9 @@ def terminal_value(env,settings):
     return torch.where(env.failed,torch.zeros_like(cost),torch.where(env.success,-exit_cost,-cost))
 
 
-def shift_proposal(mean):
-    return torch.cat((mean[1:],torch.zeros_like(mean[:1])),0)
+def shift_proposal(mean,tail=None):
+    """Append an editable latent guess; it is never a committed command."""
+    return torch.cat((mean[1:],torch.zeros_like(mean[:1]) if tail is None else tail.reshape(1,3)),0)
 
 
 def pullback_seed_bank(env,horizon):
@@ -119,6 +120,8 @@ def optimize(job,model,cfg):
     candidates=PVAEnvironment(model,cfg,root=job,batch_size=samples+1,device=cfg['device'])
     rng=torch.Generator(device=actual.device).manual_seed(s['seed'])
     history=[];windows=[];total_iterations=0;start=time.perf_counter()
+    from .mppi_live import RolloutCapture,series,publish as publish_live
+    live_enabled=cfg.get('visualization',{}).get('live_mppi',True);seed_sequence=None
     progress(job,stage='Initializing MPPI proposal',command_step=0,maneuver_time_s=0.)
     if (job/'continuation.npz').exists():
         with np.load(job/'continuation.npz') as data:prefix=data['prefix'];proposal=data['proposal']
@@ -133,11 +136,19 @@ def optimize(job,model,cfg):
                 actual_minimum_tip_distance_m=float(actual.minimum_distance[0]),stop_reason='preserved_prefix'))
         mean=torch.atanh(actual.tensor(proposal));initialization=dict(type='preserved_prefix',command_steps=len(prefix))
         publish_plan(job,actual,mean,False);atomic_json(job/'windows.json',windows)
+    elif (job/'initial_proposal.npz').exists():
+        with np.load(job/'initial_proposal.npz') as data:proposal=data['normalized_jerk']
+        if proposal.ndim!=2 or proposal.shape[1]!=3 or not horizon<=len(proposal)<=actual.steps or not np.isfinite(proposal).all() or np.abs(proposal).max()>=1:
+            raise ValueError('Initial proposal must contain bounded jerk spanning the horizon, within the maneuver length')
+        seed_sequence=torch.atanh(actual.tensor(proposal));mean=seed_sequence[:horizon].clone()
+        initialization=dict(type='editable_saved_proposal',committed_prefix_steps=0,
+            seed_command_steps=len(proposal),lookahead_command_steps=horizon,
+            note='All actions remain free; future seed commands enter as editable tail guesses as the horizon advances; no historical command prefix is committed')
     else:mean,initialization=initialize_proposal(actual,candidates,s,horizon)
     if initialization:atomic_json(job/'initialization.json',initialization)
     while bool(actual.active[0]):
         count=min(horizon,actual.steps-actual.index);best=-math.inf;best_latent=None
-        anchor=-math.inf;last_improvement=0;iteration=0;reason='iteration_ceiling'
+        anchor=-math.inf;last_improvement=0;iteration=0;reason='iteration_ceiling';best_preview=None
         minimum=s.get('initial_minimum_iterations',s['minimum_iterations']) if actual.index==0 else s['minimum_iterations']
         patience=s.get('initial_patience',s['patience']) if actual.index==0 else s['patience']
         baseline=float(actual.total[0])
@@ -149,7 +160,8 @@ def optimize(job,model,cfg):
             rho=s['noise_correlation']
             latent=mean[None]+noise;evaluated=torch.cat((latent,mean[None]),0);actions=torch.tanh(evaluated)
             candidates.branch_from(actual)
-            result=candidates.rollout(actions=actions,max_steps=count)
+            capture=RolloutCapture() if live_enabled else None
+            result=candidates.rollout(actions=actions,max_steps=count,**({'observer':capture} if capture is not None else {}))
             score=result['reward']-baseline+terminal_value(candidates,s)
             if not bool(torch.isfinite(score).all()):raise ValueError('Nonfinite MPPI lookahead scores')
             feasible=~result['failed']
@@ -164,6 +176,7 @@ def optimize(job,model,cfg):
             value,index=score.max(0);index=int(index)
             if float(value)>best:
                 best=float(value);best_latent=evaluated[index].clone()
+                if capture is not None:best_preview=series(capture,index,total_iterations,score,result,f'Best so far · iteration {total_iterations}')
                 best_metrics=dict(predicted_hit=bool(result['success'][index]),predicted_failed=bool(result['failed'][index]),
                     predicted_distance_m=float(result['minimum_tip_distance_m'][index]))
             if not math.isfinite(anchor) or best>anchor+max(.1,abs(anchor)*.005):anchor=best;last_improvement=iteration
@@ -174,13 +187,21 @@ def optimize(job,model,cfg):
             if cfg['task'].get('require_wave',False):
                 row.update(wave_complete_fraction=float((candidates.wave_stage[:-1]==3).double().mean()),
                     best_candidate_wave_stages=int(candidates.wave_stage[index]))
+            if capture is not None:
+                try:row['live_snapshot_seconds']=publish_live(job,actual,capture,score,result,best_preview,total_iterations)
+                except OSError as exc:
+                    # A display/file-sharing failure must not discard a valid plan.
+                    print('Live 3D snapshot unavailable: '+str(exc),flush=True)
+                del capture
             history.append(row);atomic_json(job/'history.json',history)
             if iteration>=minimum and iteration-last_improvement>=patience:reason='reward_plateau';break
         # Candidate predictions never become state. Apply only the first selected
         # action to the independent actual simulator, retaining delay/history.
         progress(job,stage='Committing next 30 Hz command',iteration=total_iterations,command_step=actual.index)
         actual.step(torch.tanh(best_latent[:1]),trace=True)
-        mean=shift_proposal(best_latent)
+        tail_index=actual.index+horizon-1
+        tail=seed_sequence[tail_index] if seed_sequence is not None and tail_index<len(seed_sequence) else None
+        mean=shift_proposal(best_latent,tail)
         complete=not bool(actual.active[0]);publish_plan(job,actual,mean,complete)
         window=dict(command_step=actual.index,time_s=actual.index/30,iterations=iteration,stop_reason=reason,
             actual_reward=float(actual.total[0]),actual_success=bool(actual.success[0]),actual_failed=bool(actual.failed[0]),

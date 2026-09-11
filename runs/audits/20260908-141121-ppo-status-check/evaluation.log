@@ -1,2 +1,0 @@
-[W908 10:11:40.000000000 Context.cpp:448] Warning: torch.backends.cuda.preferred_linalg_library is an experimental feature. If you see any error or unexpected behavior when this flag is set please file an issue on GitHub. (function operator ())
-{"training_episodes": 167936, "success_rate": 0.76953125, "nominal_success_rate": 1.0, "median_minimum_tip_distance_m": 0.04018433215908579, "nonfinite_rate": 0.0, "reference_infeasible_rate": 0.0, "pose_domain_failure_rate": 0.0, "runtime_s": 11.397715099999914}

@@ -1,8 +1,0 @@
-{
-  "reason": "Initial unrestricted NN failed to replace removed external damping and final fit was worse than original. Change inductive structure to a zero-initialized, NN-only, velocity-dependent dissipative correction. No 0.3/s initialization or scalar parameter. First test fitting feasibility on pooled training data; new cross-take checks required before application.",
-  "settings_sha256": "cf2e3f1f6a93670f1c586bbecab02634f057b9781d9e819bb55191276cba1f08",
-  "source_sha256": {
-    "experimental_data/historical_fit.py": "676db1c2807a08a9ab4ee69396e0d3e3580a8231326a6d33f5b0cf90834686f9",
-    "simulator/cable/residual.py": "1bda95e9cba7af7b47f18b76394033f56a0524389213b4a43f6c8a88622a66f2"
-  }
-}

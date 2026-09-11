@@ -1,5 +1,12 @@
 # Colleague's force-controller script review
 
+**Historical force-only experiment. Do not apply its gain-disabling or force-to-
+acceleration procedure to the current learned PVA workflow.** Current identification
+models the loaded drone with its existing closed-loop controller. Read the
+[current drone-command audit](DRONE_COMMAND_CHAIN_AUDIT.md) for the selected CSV
+and remaining sender verification. The original reviewed script below is not
+the verified sender for that experiment.
+
 Reviewed September 6, 2026: `force_controller.py` supplied from Downloads.
 The original file was not modified or run against ROS/hardware. This is a
 Crazyswarm2/ROS 2 experiment script selecting onboard Mellinger controller ID 2,

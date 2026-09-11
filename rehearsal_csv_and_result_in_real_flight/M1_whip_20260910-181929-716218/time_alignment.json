@@ -1,0 +1,157 @@
+{
+  "whip_m1_001": {
+    "chunks": [
+      {
+        "offset_s": -1.071284167037158,
+        "rmse_m": 0.0006294075556138026,
+        "samples": 43
+      },
+      {
+        "offset_s": -1.0686803638196065,
+        "rmse_m": 0.001267852822802357,
+        "samples": 43
+      },
+      {
+        "offset_s": -1.066961693240653,
+        "rmse_m": 0.0011505285310313786,
+        "samples": 42
+      },
+      {
+        "offset_s": -1.0668469797446296,
+        "rmse_m": 0.0009677930252233022,
+        "samples": 42
+      }
+    ],
+    "clock_verified": false,
+    "controller_sha256": "f4253329a5f9022730ead15db157d7a6843905a54c44706ab42260cde4a2186b",
+    "limitation": "Estimated stream alignment; cache/transport latency is not independently known. Fitted command delay is effective, not measured actuator latency.",
+    "offset_s": -1.0674002102447315,
+    "optitrack_sha256": "a2ceaa231bbe4d2f3264ab76c6c194921cf36c8797091b70867fcd5ed04e0073",
+    "rmse_m": 0.0010465770900627625,
+    "source": "Measured OptiTrack XYZ matched to controller-cached OptiTrack XYZ; evidence: C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M1-whip-intake-20260910\\intake.json"
+  },
+  "whip_m1_002": {
+    "chunks": [
+      {
+        "offset_s": 1.0676446603842171,
+        "rmse_m": 0.0008529357214187889,
+        "samples": 32
+      },
+      {
+        "offset_s": 1.095449315134627,
+        "rmse_m": 0.002768234905740728,
+        "samples": 31
+      },
+      {
+        "offset_s": 1.0911355386970645,
+        "rmse_m": 0.0006736415103656212,
+        "samples": 31
+      },
+      {
+        "offset_s": 1.0998708283157557,
+        "rmse_m": 0.0009463813593485378,
+        "samples": 31
+      }
+    ],
+    "clock_verified": false,
+    "controller_sha256": "4908d91ad1425697d36a9fc41251e9904f46843a71bfab68f3e20a5086d69210",
+    "limitation": "Estimated stream alignment; cache/transport latency is not independently known. Fitted command delay is effective, not measured actuator latency.",
+    "offset_s": 1.0942177802660444,
+    "optitrack_sha256": "b44900f147bc7b430f8a361b0deb0dbe112d71f7774ff66dcf76dc7ed017aee9",
+    "rmse_m": 0.0017020517301244383,
+    "source": "Measured OptiTrack XYZ matched to controller-cached OptiTrack XYZ; evidence: C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M1-whip-intake-20260910\\intake.json"
+  },
+  "whip_m1_003": {
+    "chunks": [
+      {
+        "offset_s": -0.17672579556256815,
+        "rmse_m": 0.0005058308148481083,
+        "samples": 31
+      },
+      {
+        "offset_s": -0.1673248445959137,
+        "rmse_m": 0.0011845847422116155,
+        "samples": 31
+      },
+      {
+        "offset_s": -0.17051492389278503,
+        "rmse_m": 0.0011081095212822209,
+        "samples": 30
+      },
+      {
+        "offset_s": -0.16004803308457408,
+        "rmse_m": 0.0010673600748873377,
+        "samples": 30
+      }
+    ],
+    "clock_verified": false,
+    "controller_sha256": "1a3c1743282c33d3be749cf01f1236c0351f4893895c62a758711b4f7a7a575a",
+    "limitation": "Estimated stream alignment; cache/transport latency is not independently known. Fitted command delay is effective, not measured actuator latency.",
+    "offset_s": -0.16820427015324382,
+    "optitrack_sha256": "4df4a7ea554bbcbd299223b714729ae552f94533d7cd229672386a5f5d676caf",
+    "rmse_m": 0.0010882601378328707,
+    "source": "Measured OptiTrack XYZ matched to controller-cached OptiTrack XYZ; evidence: C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M1-whip-intake-20260910\\intake.json"
+  },
+  "whip_m1_004": {
+    "chunks": [
+      {
+        "offset_s": -0.6068755679159489,
+        "rmse_m": 0.0007089116322515689,
+        "samples": 32
+      },
+      {
+        "offset_s": -0.6130056816116835,
+        "rmse_m": 0.002184228694062848,
+        "samples": 32
+      },
+      {
+        "offset_s": -0.6174232893216786,
+        "rmse_m": 0.002403987954357864,
+        "samples": 31
+      },
+      {
+        "offset_s": -0.6051800263464425,
+        "rmse_m": 0.0009423141168486317,
+        "samples": 31
+      }
+    ],
+    "clock_verified": false,
+    "controller_sha256": "fc1efc2d1c2d221f660ffe10d10f8b21fb8e18d7b5f84038412517b13a6de620",
+    "limitation": "Estimated stream alignment; cache/transport latency is not independently known. Fitted command delay is effective, not measured actuator latency.",
+    "offset_s": -0.6151131736270607,
+    "optitrack_sha256": "d5f3e4c69feea22ce4ea97c3261341cb45e08167357b9081d821c422a9e7b1b5",
+    "rmse_m": 0.001843112921513072,
+    "source": "Measured OptiTrack XYZ matched to controller-cached OptiTrack XYZ; evidence: C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M1-whip-intake-20260910\\intake.json"
+  },
+  "whip_m1_005": {
+    "chunks": [
+      {
+        "offset_s": -0.5456947677788825,
+        "rmse_m": 0.0008281322058091327,
+        "samples": 35
+      },
+      {
+        "offset_s": -0.5476504741810684,
+        "rmse_m": 0.0014466693265041365,
+        "samples": 35
+      },
+      {
+        "offset_s": -0.5567781145376474,
+        "rmse_m": 0.002474344505188772,
+        "samples": 35
+      },
+      {
+        "offset_s": -0.545981585152557,
+        "rmse_m": 0.0008262384037988474,
+        "samples": 35
+      }
+    ],
+    "clock_verified": false,
+    "controller_sha256": "8fd9d88be18de9541c08b3aaaa36f3ce7f4d4aa34539c18366f2296ac739aef7",
+    "limitation": "Estimated stream alignment; cache/transport latency is not independently known. Fitted command delay is effective, not measured actuator latency.",
+    "offset_s": -0.5521220185724648,
+    "optitrack_sha256": "002c69d2ddcec31c518b31b7ac8b215bec38882993cf16813bbca723751b8cb0",
+    "rmse_m": 0.001925320891438417,
+    "source": "Measured OptiTrack XYZ matched to controller-cached OptiTrack XYZ; evidence: C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M1-whip-intake-20260910\\intake.json"
+  }
+}

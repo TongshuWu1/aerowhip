@@ -24,7 +24,7 @@ def test_position_packets_estimate_causal_velocity_and_hold_duplicate_timestamps
 
 
 def test_hundred_hz_tracking_and_twenty_hz_controller_with_partial_cutoff():
-    configs = [json.loads((ROOT/'config'/f'{name}.json').read_text()) for name in ('model','task','ppo')]
+    configs = [json.loads((ROOT/'config'/f'{name}.json').read_text(encoding='utf-8')) for name in ('model','task','ppo')]
     flight = TrackingRehearsalFlight(*configs,policy=lambda _:pytest.fail('Actor queried during execution'),
         physics=lambda q,v,f:(q.clone(),v.clone()))
     calls = []

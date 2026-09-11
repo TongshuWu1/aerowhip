@@ -24,73 +24,7 @@
     "zero_action": "exact hanging hover force"
   },
   "bootstrap": {
-    "actions": [
-      [
-        0.7993160486221313,
-        0.0,
-        0.398320734500885
-      ],
-      [
-        0.5555974245071411,
-        0.0,
-        0.3505104184150696
-      ],
-      [
-        0.15491145849227905,
-        0.0,
-        0.30080074071884155
-      ],
-      [
-        -0.30416643619537354,
-        0.0,
-        0.24940098822116852
-      ],
-      [
-        -0.6141148805618286,
-        0.0,
-        0.15255941450595856
-      ],
-      [
-        -0.6865454912185669,
-        0.0,
-        -0.12810003757476807
-      ],
-      [
-        -0.7475075721740723,
-        0.0,
-        -0.38963982462882996
-      ],
-      [
-        -0.7980332374572754,
-        0.0,
-        -0.6005090475082397
-      ],
-      [
-        -0.7840757369995117,
-        0.0,
-        -0.6822627782821655
-      ],
-      [
-        -0.6491082310676575,
-        0.0,
-        -0.6398767232894897
-      ]
-    ],
-    "enabled": true,
-    "phase_control_steps": [
-      2,
-      2,
-      2,
-      2,
-      2,
-      2,
-      2,
-      2,
-      2,
-      2
-    ],
-    "source": "C:\\Users\\wts28\\Documents\\PHD\\Projects\\PRISMS\\Sim2Real2SimWhip\\data\\reward_tuning_20260905\\seed_evaluation_1s\\source_sequence.pt",
-    "total_control_steps": 20
+    "enabled": false
   },
   "cuda_graph_physics": true,
   "curriculum": {
@@ -209,7 +143,7 @@
     "directed_speed_reward_cap_m_s": 4.0,
     "directed_speed_shaping_reference": "world",
     "displacement_cost_scale_m": 0.35,
-    "equation": "+ 60 × Δ(best normalized tip progress) + 60 × Δ(best near-target world target-directed tip-speed quality) + 200 × first valid hit − 0.5 × ∫ log1p((point displacement / 0.35 m)²) dt + 0 × successful return quality + 0 × successful release quality − 25 × non-tip-first − 0 × invalid tip entry − 0 × timeout − 20 × successful terminal displacement cost − 15 × log1p((maximum drone displacement / 0.35 m)²) − 0.1 × elapsed seconds − 100 × numerical failure + 0 × impact-angle quality",
+    "equation": "+ 60 Ã— Î”(best normalized tip progress) + 60 Ã— Î”(best near-target world target-directed tip-speed quality) + 200 Ã— first valid hit âˆ’ 0.5 Ã— âˆ« log1p((point displacement / 0.35 m)Â²) dt + 0 Ã— successful return quality + 0 Ã— successful release quality âˆ’ 25 Ã— non-tip-first âˆ’ 0 Ã— invalid tip entry âˆ’ 0 Ã— timeout âˆ’ 20 Ã— successful terminal displacement cost âˆ’ 15 Ã— log1p((maximum drone displacement / 0.35 m)Â²) âˆ’ 0.1 Ã— elapsed seconds âˆ’ 100 Ã— numerical failure + 0 Ã— impact-angle quality",
     "forward_excursion_scale_m": 0.35,
     "invalid_tip_entry_penalty": 0.0,
     "maximum_displacement_weight": 15.0,

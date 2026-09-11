@@ -76,6 +76,34 @@ def packet_receipts(c, reference, onset):
     return times,values
 
 
+def causal_history_indices(times,cutoff,history_s):
+    """Cover the requested past duration, ending strictly before the cutoff."""
+    times=np.asarray(times)
+    if not np.isfinite(history_s) or history_s<=0:raise ValueError('Positive cable history required')
+    end=int(np.searchsorted(times,cutoff,side='left'))-1
+    if end<0:raise ValueError('Missing causal cable history')
+    start=int(np.searchsorted(times,times[end]-history_s+1e-9,side='right'))-1
+    if start<0 or end-start<10 or times[end]-times[start]<history_s-1e-8:
+        raise ValueError('Missing causal cable history')
+    ids=np.arange(start,end+1);dt=np.diff(times[ids])
+    if not np.isfinite(times[ids]).all() or np.any(dt<=0) or dt.max()>1.5*np.median(dt):
+        raise ValueError('Missing causal cable history')
+    return ids
+
+
+def endpoint_velocity(times,values,weight_tau_s=None):
+    """Causal quadratic endpoint derivative, optionally emphasizing recent data."""
+    times=np.asarray(times);values=np.asarray(values)
+    duration=times[-1]-times[0];x=(times-times[-1])/duration
+    design=np.c_[np.ones(len(x)),x,x*x]
+    if weight_tau_s is None:weights=np.ones(len(x))
+    else:
+        if not np.isfinite(weight_tau_s) or weight_tau_s<=0:raise ValueError('Positive velocity weight time constant required')
+        weights=np.exp((times-times[-1])/(2*weight_tau_s))
+    row=(np.linalg.pinv(design*weights[:,None])[1]*weights)/duration
+    return np.einsum('t,t...->...',row,values)
+
+
 def nodes_from_sites(sites, cable):
     parts=[sites[...,:1,:]]
     for i,n in enumerate(cable.interval_subdivisions):
@@ -225,13 +253,18 @@ class Trial:
         site[:,0]=p+np.einsum('tij,j->ti',r,self.offset)
         return p,r,site
 
-    def cable_state(self,physics,*,cutoff=None):
-        d=self.data;ids=d['pre_indices'] if cutoff is None else np.flatnonzero(d['time']<cutoff)[-11:]
+    def cable_state(self,physics,*,cutoff=None,history_s=None,velocity_weight_tau_s=None):
+        d=self.data
+        if history_s is None:ids=d['pre_indices'] if cutoff is None else np.flatnonzero(d['time']<cutoff)[-11:]
+        else:
+            end=float(d['time'][d['pre_indices'][-1]])
+            ids=causal_history_indices(d['time'],np.nextafter(end,np.inf) if cutoff is None else cutoff,history_s)
+            if not d['pose_valid'][ids].all():raise ValueError('Missing causal cable history')
         if len(ids)<11 or not np.isfinite(d['sites'][ids]).all() or not d['marker_valid'][ids].all():
             raise ValueError('Missing causal cable history')
-        t=d['time'][ids];x=(t-t[-1])/(t[-1]-t[0]);w=np.linalg.pinv(np.c_[np.ones(len(x)),x,x*x])[1]/(t[-1]-t[0])
+        t=d['time'][ids]
         nodes=nodes_from_sites(d['sites'][ids],CableConfiguration.from_mapping(self.model['cable']))
         q=torch.tensor(nodes[-1: ],dtype=torch.float64,device=self.device)
-        v=torch.tensor(np.einsum('t,tnc->nc',w,nodes)[None],dtype=q.dtype,device=q.device)
+        v=torch.tensor(endpoint_velocity(t,nodes,velocity_weight_tau_s)[None],dtype=q.dtype,device=q.device)
         with torch.no_grad():state=project_state(physics,q,v)
         return state,float(t[-1]),float((state.positions_m-q).abs().max())

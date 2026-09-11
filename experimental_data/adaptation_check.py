@@ -45,12 +45,16 @@ def command_onset(controller, reference):
     """Reception-time estimate from unique moving PVA packets; never align to target."""
     values = np.column_stack([reference[n] for n in reference.dtype.names[1:]])
     commands = np.column_stack([controller[n] for n in COMMAND_COLUMNS])
-    good = np.isfinite(commands).all(axis=1) & np.isfinite(controller['cmd_age']) & (controller['cmd_valid'] > .5)
+    good = (np.isfinite(commands).all(axis=1) & np.isfinite(controller['cmd_age']) &
+            (controller['cmd_age'] >= 0) & (controller['cmd_valid'] > .5))
     if not good.any():
         raise ValueError('No valid FullState commands in controller log.')
     distance, ids = cKDTree(values).query(commands[good])
+    # Repeated command values cannot uniquely identify a CSV knot.
+    _,inverse,counts=np.unique(values,axis=0,return_inverse=True,return_counts=True)
+    unique=counts[inverse]==1
     dynamic = np.linalg.norm(values[:, 3:9], axis=1) > 1e-5
-    mask = (distance < 1e-8) & dynamic[ids]
+    mask = (distance < 1e-8) & dynamic[ids] & unique[ids]
     indices = ids[mask]
     if len(np.unique(indices)) < 10:
         raise ValueError('Too few matching dynamic command packets to identify CSV timing.')
@@ -121,7 +125,19 @@ def load_comparison(root, batch, take, selected_rehearsal=None):
     if take not in flight_names(batch):
         raise ValueError('Select a paired flight in this batch.')
     csv_path = batch / 'simulation_csv/fullstate_30hz.csv'
+    # Identical commands can have several saved predictions. Prefer this batch's
+    # frozen forecast, rather than whichever matching rehearsal sorts first.
+    bound_forecast = None
+    protocol_path = batch / 'protocol.json'
+    if selected_rehearsal is None and protocol_path.exists():
+        protocol = json.loads(protocol_path.read_text())
+        if protocol.get('rehearsal'):
+            selected_rehearsal = Path(protocol['rehearsal'])
+            if not selected_rehearsal.is_absolute(): selected_rehearsal = Path(root)/selected_rehearsal
+            bound_forecast = protocol.get('forecast_sha256')
     rehearsal = find_rehearsal(root, csv_path, selected_rehearsal)
+    if bound_forecast is not None and sha256(rehearsal/'rehearsal.npz') != bound_forecast:
+        raise ValueError('Saved prediction differs from the batch frozen forecast.')
     paths = [csv_path, batch/'flight_take'/f'{take}.csv', batch/'flight_take'/f'experiment_{take}.csv',
              *[rehearsal/name for name in ('rehearsal.npz', 'rehearsal.json', 'model.json', 'task.json')]]
     if (batch/'time_alignment.json').exists():
@@ -130,6 +146,7 @@ def load_comparison(root, batch, take, selected_rehearsal=None):
         paths.append(paths[1].with_suffix('.tracking.json'))
     if (batch/'height_calibration.json').exists():
         paths.append(batch/'height_calibration.json')
+    if bound_forecast is not None: paths.append(protocol_path)
     hashes = {str(p): sha256(p) for p in paths}
     metadata = json.loads((rehearsal/'rehearsal.json').read_text())
     model = json.loads((rehearsal/'model.json').read_text())

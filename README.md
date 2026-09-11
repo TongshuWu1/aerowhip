@@ -1,6 +1,6 @@
 # Sim → Real → Sim aerial whipping
 
-The current workflow generates **desired position, velocity and acceleration at 30 Hz**, using either PPO or independent MPPI. Bounded XYZ jerk integrates into a consistent P/V/A reference. The fitted loaded-drone model and drone NN predict tracked-origin motion; its rotated cable attachment drives DDER and the cable NN. There is no virtual-force planning stage in new PVA jobs.
+The current workflow generates **desired position, velocity and acceleration at 30 Hz**, using either PPO or independent MPPI-inspired trajectory search. Bounded XYZ jerk integrates into a consistent P/V/A reference. The fitted loaded-drone response and residual predict tracked-origin motion; its rotated attachment drives the discrete cable model. The selected development M0 uses scalar cable damping with its cable neural residual disabled.
 
 Generation is offline and open loop. Start from a settled hover with an assumed hanging cable, freeze the complete command sequence, then export whip + smooth recovery + final hold. The real controller continues to use cmdFullState. Saved predictions are matched to actual flights using their exact CSV, not regenerated with a later model.
 
@@ -10,14 +10,17 @@ For manuscript work or onboarding a separate writing agent, start with the detai
 
 ## Start here
 
-For the current Windows/Ubuntu lab transfer, read [HANDOFF.md](HANDOFF.md) and
-[lab setup](docs/LAB_SETUP.md). Fitting and PPO remain stopped; the latest MPPI
-result is completed historical-model simulation. Deployment packages retain their
-saved action/model semantics; the real flight interface still needs verification.
+Read [HANDOFF.md](HANDOFF.md) and the [theory and paper-readiness audit](docs/PAPER_READINESS_REVIEW.md).
+The selected development-M0 MPPI trajectory and original forecast are frozen for
+prospective measurement. A separate [PPO trial with the shared MPPI objective](docs/PPO_MPPI_OBJECTIVE.md)
+has completed its first training trial from scratch. Fitting, MPPI and flight execution remain stopped. No real M1/M2
+or physical adaptation improvement has been established. Windows/RTX 4080 checks
+do not establish Ubuntu or other-hardware validation.
 
 For a new environment, start with [installation](docs/INSTALL.md). For a source-only
-research release, see [publication preparation](docs/PUBLICATION.md). The older
-source-only release builder has not been verified for the complete current PVA workflow.
+research release, see [publication preparation](docs/PUBLICATION.md). The source
+exporter includes current PVA planning and an empty model/flight catalog; fitted
+models and experiment artifacts require separate reviewed packaging.
 
 ```powershell
 .venv/Scripts/python.exe run_simulation.py

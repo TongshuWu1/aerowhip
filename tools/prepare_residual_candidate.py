@@ -14,7 +14,7 @@ import torch
 from experimental_data.differentiable_fit import save_weights
 from experimental_data.io import atomic_json, sha256_file
 from simulator.cable.residual import MotionResidual, with_acceleration_correction
-from simulator.research_config import snapshot_assets
+from planning.pva_job import freeze_model_assets
 
 
 def prepare(source,output,*,acceleration_limit,frame_regularization=None):
@@ -42,7 +42,7 @@ def prepare(source,output,*,acceleration_limit,frame_regularization=None):
     candidate=with_acceleration_correction(net,acceleration_limit=acceleration_limit)
     source_hash=sha256_file(source)
     output.mkdir(parents=True)
-    model=snapshot_assets(model,output)
+    model=freeze_model_assets(model,output)
     weight=output/'assets/cable_residual.pt'
     shutil.copy2(weight,output/'assets/cable_damping_source.pt')
     save_weights(weight,candidate)

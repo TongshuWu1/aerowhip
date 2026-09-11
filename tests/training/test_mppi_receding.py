@@ -69,6 +69,7 @@ def test_predictions_do_not_stop_committed_maneuver_and_manual_stop_keeps_partia
     monkeypatch.setattr(planner,'PVAEnvironment',Environment)
     monkeypatch.setattr(planner,'terminal_value',lambda env,s:torch.zeros_like(env.total))
     cfg=defaults('mppi');cfg['task']['duration_s']=.5
+    cfg['visualization']={'live_mppi':False}
     cfg['mppi'].update(initialization='zero',horizon_s=.4,samples=2,minimum_iterations=1,patience=1)
     cfg['mppi'].update(initial_minimum_iterations=5,initial_patience=2)
     result=planner.optimize(tmp_path,{},cfg)
@@ -96,6 +97,22 @@ def test_predictions_do_not_stop_committed_maneuver_and_manual_stop_keeps_partia
     assert read_json(resumed/'history.json')[0]['command_step']==5
     assert all(row['reused_prefix'] for row in read_json(resumed/'windows.json')[:5])
     with np.load(resumed/'plan.npz') as data:np.testing.assert_array_equal(data['normalized_jerk'][:5],0.)
+
+    # A longer seed must slide through a shorter lookahead without extending
+    # the actual rollout or silently discarding its later release commands.
+    seeded=tmp_path/'seeded';seeded.mkdir();seed=np.linspace(-.2,.2,45).reshape(15,3)
+    np.savez(seeded/'initial_proposal.npz',normalized_jerk=seed)
+    counts=[]
+    class SeedEnvironment(Environment):
+        def rollout(self,actions,max_steps):
+            counts.append(max_steps)
+            assert actions.shape[1]==12
+            return super().rollout(actions,max_steps)
+    monkeypatch.setattr(planner,'PVAEnvironment',SeedEnvironment)
+    monkeypatch.setattr(planner,'sample_noise',lambda actual,s,samples,horizon,rng:torch.zeros(samples,horizon,3,dtype=torch.float64))
+    planner.optimize(seeded,{},cfg)
+    assert max(counts)==12 and read_json(seeded/'initialization.json')['seed_command_steps']==15
+    with np.load(seeded/'plan.npz') as data:np.testing.assert_allclose(data['normalized_jerk'],seed[:14],atol=1e-15)
 
 
 def test_strike_exit_guidance_penalizes_climbing_accelerating_handover_without_changing_hit():

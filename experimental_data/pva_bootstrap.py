@@ -49,29 +49,35 @@ def cold_seed(folder):
         acceleration_limit=.5,mode='dissipative_plus_acceleration',damping_limit_s_inv=2.).double()
     save_weights(folder/'cable_residual.pt',residual)
     execution=deepcopy(original['fullstate_execution'])
-    execution.update(checkpoint='drone_model.json',sha256=sha256_file(folder/'drone_model.json'),
+    execution.update(enabled=True,checkpoint='drone_model.json',sha256=sha256_file(folder/'drone_model.json'),
         reference='bounded_jerk_pva_30hz_v1',source_job=None)
     model=dict(schema='loaded_drone_cable_pva_model_v1',cable=cable,
         fullstate_execution=execution,recorded_data=original['recorded_data'],
         simulation=original['simulation'],mass_measurement=original['mass_measurement'],
         motion_residual=dict(enabled=True,checkpoint='cable_residual.pt',sha256=sha256_file(folder/'cable_residual.pt'),
             specification=residual.specification(),drag_mode='nn_only'),
-        provenance=dict(learned_prior=False,source_drone='cf_7',fit_state='hover_normalized_optitrack',
+        provenance=dict(learned_prior=False,source_drone='From each recorded take; no assumed vehicle identity',fit_state='hover_normalized_optitrack',
             geometry='Existing measured lengths and tracking-to-attachment convention preserved',
-            mass_distribution='Provisional structural distribution retained; total 18 g measured',
+            mass_distribution=f'Provisional structural distribution retained; total {original["mass_measurement"]["cable_assembly_mass_kg"]*1000:g} g measured',
             nominal_estimates='Kp=10, Kd=5, feedforward=1, attitude tau=.08 s, delay=.02 s, EI=Cb=1e-6',
             cable_boundary='Predicted rotated attachment; loaded drone response includes effective cable loading'))
     save(folder/'model.json',model)
     return folder/'model.json'
 
 
-def prepare_job(job,batch=BATCH):
+def prepare_job(job,batch=None):
+    experiment=read(ROOT/'config/experiment.json') if (ROOT/'config/experiment.json').exists() else {}
+    if batch is None and experiment.get('schema')=='unseen_system_experiment_v1':
+        selected=experiment.get('preliminary_batch')
+        if not selected:raise ValueError('Collect and review the new preliminary recordings first; no historical batch is selected.')
+        batch=ROOT/selected
+    if batch is None:batch=BATCH
     job=Path(job).resolve()
     seed=cold_seed(job.parent/(job.name+'-cold-seed'))
     prepare(job,Path(batch),seed)
     protocol=read(job/'protocol.json')
     protocol.update(schema='normalized_adp0_cold_pva_bootstrap_v1',seed=20260909,
-        training='All five current normalized cf7/adp0 flights; no old data or learned model prior',
+        training=f'Only the explicitly selected normalized batch {Path(batch).name}; no old data or learned model prior',
         heldout='None. Training diagnostics only; next new flights provide prospective evaluation.',
         phases={'whip':[0,1]},fit_phase_weights={'whip':1.},
         stopping={'drone':dict(minimum=80,check_every=10,patience=5,relative=.005,ceiling=2000),

@@ -87,9 +87,11 @@ def validate_research_contract(model,task,config):
 def snapshot_assets(model, directory):
     """A training run owns its model weights, independently of active pointers."""
     model=deepcopy(model);directory=Path(directory).resolve();assets=directory/'assets';assets.mkdir()
-    residual=model['motion_residual'];source=Path(residual['checkpoint'])
-    if sha256_file(source)!=residual['sha256']:raise ValueError('Cable residual changed')
-    shutil.copy2(source,assets/'cable_residual.pt');residual['checkpoint']=str(assets/'cable_residual.pt')
+    residual=model['motion_residual']
+    if residual.get('enabled') is not False:
+        source=Path(residual['checkpoint'])
+        if sha256_file(source)!=residual['sha256']:raise ValueError('Cable residual changed')
+        shutil.copy2(source,assets/'cable_residual.pt');residual['checkpoint']=str(assets/'cable_residual.pt')
     execution=model['fullstate_execution'];source=Path(execution['checkpoint'])
     if sha256_file(source)!=execution['sha256']:raise ValueError('Drone model changed')
     payload=read_json(source);weight=source.parent/payload['residual']['checkpoint']

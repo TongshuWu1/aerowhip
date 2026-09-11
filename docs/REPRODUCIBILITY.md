@@ -11,11 +11,11 @@ command timestamps, complete recovery and validation selection procedure. For re
 flights also retain raw measurements, masks, clock/frame mapping, sent commands,
 vehicle identity and the exact original saved forecast.
 
-Current example: [MPPI result record](MPPI_PULLBACK_20260909.md). Its final portable
-CSV and all saved arrays regenerate exactly in the recorded environment. Its
-continuation timing excludes the parent's optimization and cannot be reported as
-a cold solve. The latest relevant suite passed 73 tests on Windows/RTX 4080;
-see [paper handoff](PAPER_WRITING_HANDOFF.md) for the exact test list and metrics.
+Current example: the selected package `runs/flight_packages/20260910-022818-648386`.
+Its command CSV and original forecast are frozen and checksummed. See
+[paper handoff](PAPER_WRITING_HANDOFF.md) for exact identities and evidence limits.
+The current code/release audit is `runs/audits/paper-readiness-cleanup-20260910`;
+its reported tests must be distinguished from experimental validation.
 
 Distinguish simulation success, reference feasibility, modeled recovery, exact
 software replay, prediction error against recorded motion, and prospective physical
@@ -27,7 +27,8 @@ data and must be disclosed. No renamed historical test becomes independent after
 being used for development. Missing datasets/CUDA may produce explicit test skips;
 report those separately from passes.
 
-The legacy source-only release builder is a separate packaging path with its own
-force-era assumptions; it is not a verified portable release of the current PVA
-application. Use a saved PVA rehearsal package for the documented exact replay.
+The source-only builder includes current PVA code with no selected learned assets.
+An isolated-directory UI smoke test checks imports and empty-state behavior using
+the existing interpreter; this is not a fresh installation test. Use the frozen
+experiment package and source snapshot for the selected result's exact provenance.
 See [PUBLICATION.md](PUBLICATION.md) before preparing a separate public artifact.

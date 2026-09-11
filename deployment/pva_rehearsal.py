@@ -107,20 +107,27 @@ def generate(job,output,*,checkpoint=None,origin=None,target=None,device='cuda',
     cable_difference=float(np.max(np.abs(positions[1:prefix+1]-streamed_q)))
     if cable_difference>1e-8:raise AssertionError(f'PVA training/export cable mismatch: {cable_difference}')
     output.mkdir(parents=True);saved=freeze_model_assets(model,output)
+    from learning.ppo_trajectory_reward import freeze_reference
+    freeze_reference(cfg,output,source_root=job)
     atomic_json(output/'model.json',saved);atomic_json(output/'settings.json',cfg)
     atomic_json(output/'task.json',dict(desired_strike_direction_world=cfg['task']['strike_direction'],
-        target_position_m=cfg['launch']['target_m'],success=dict(tip_target_distance_m=cfg['task']['target_radius_m'])))
+        target_position_m=cfg['launch']['target_m'],
+        **(dict(target_positions_m=cfg['task']['target_sequence_m']) if env.extra_tick_fields else {}),
+        success=dict(tip_target_distance_m=cfg['task']['target_radius_m'])))
     with (output/'fullstate_30hz.csv').open('w',newline='',encoding='utf-8') as stream:
         writer=csv.writer(stream);writer.writerow(FIELDS);writer.writerows(np.c_[times,packets])
     jerk=result['actions'][0,:cutoff].cpu().numpy()*np.asarray(cfg['action']['jerk_limit_m_s3'])
     with (output/'jerk_30hz.csv').open('w',newline='',encoding='utf-8') as stream:
         writer=csv.writer(stream);writer.writerow(['time_s','jx_m_s3','jy_m_s3','jz_m_s3']);writer.writerows(np.c_[np.arange(len(jerk))/30,jerk])
     n=len(positions)
+    target_arrays={}
+    if env.extra_tick_fields:target_arrays=dict(target_positions_m=env.target_centers.cpu().numpy(),
+        target_hit_times_s=env.target_hit_times[0].cpu().numpy())
     np.savez_compressed(output/'rehearsal.npz',command_time_s=times,commands=packets,command_phase=phases,
         prediction_time_s=grid[:n],cable_positions_m=positions,cable_velocities_m_s=np.asarray(velocities),origin_positions_m=pose['position_origin_m'][0,:n].cpu().numpy(),
         origin_velocities_m_s=pose['velocity_origin_m_s'][0,:n].cpu().numpy(),
         origin_rotations=pose['rotation_tracking_to_world'][0,:n].cpu().numpy(),target_position_m=cfg['launch']['target_m'],
-        jerk_time_s=np.arange(len(jerk))/30,jerk_m_s3=jerk)
+        jerk_time_s=np.arange(len(jerk))/30,jerk_m_s3=jerk,**target_arrays)
     metadata=dict(schema='pva_fullstate_30hz_v1',command_contract=SCHEMA,planner=cfg['method'].upper()+' PVA',
         planner_mode=cfg.get('mppi',{}).get('mode','open_loop') if cfg['method']=='mppi' else 'ppo',
         lookahead_s=cfg.get('mppi',{}).get('horizon_s') if cfg['method']=='mppi' else None,
@@ -142,7 +149,7 @@ def generate(job,output,*,checkpoint=None,origin=None,target=None,device='cuda',
     if cfg['task'].get('require_pullback',False):
         forward_speed=(env.pose.velocity[0]*env.direction).sum()
         position=((env.pose.position-env.origin0)*env.direction).sum(-1)[0]
-        metadata['pullback']=dict(required=True,pull_completed=bool(env.pull_ready[0]),reverse_completed=bool(env.reverse_ready[0]),
+        metadata['pullback']=dict(required=cfg['task'].get('success_criterion','legacy_strike_v1') not in ('tip_contact_v1','ordered_two_target_v1'),pull_completed=bool(env.pull_ready[0]),reverse_completed=bool(env.reverse_ready[0]),
             peak_forward_displacement_m=float(env.pull_peak[0]),backward_travel_m=float(env.pull_peak[0]-position),
             drone_forward_speed_at_handover_m_s=float(forward_speed),
             note='Physical simulated tracked-origin motion, not command reversal; criteria evaluated at the hit, values here at the next 30 Hz handover boundary')
@@ -157,9 +164,17 @@ def generate(job,output,*,checkpoint=None,origin=None,target=None,device='cuda',
                 backward_travel_at_contact_m=peak-float(np.interp(hit,grid[:n],projected)),
                 contact_evaluation='Linear interpolation within the intersected physics interval, consistent with sphere-entry timing')
     if cfg['task'].get('require_wave',False):
-        metadata['wave']=dict(required=True,completed_stages=int(env.wave_stage[0]),
+        metadata['wave']=dict(required=cfg['task'].get('success_criterion','legacy_strike_v1') not in ('tip_contact_v1','ordered_two_target_v1'),completed_stages=int(env.wave_stage[0]),
             completion_time_s=float(env.wave_completion_time[0]) if bool(torch.isfinite(env.wave_completion_time[0])) else None,
             definition='Dominant local bend persists through proximal, middle, distal material bands before contact; kinematic proxy only')
+    metadata['success_criterion']=cfg['task'].get('success_criterion','legacy_strike_v1')
+    metadata['success_meaning']=('Tip enters the target sphere; speed, reversal and wave are diagnostics, not pass/fail gates.'
+        if metadata['success_criterion']=='tip_contact_v1' else 'Historical composite strike requirements in saved settings.')
+    if env.extra_tick_fields:
+        from learning.two_target_whip import details
+        metadata.update(details(env,0),target_positions_m=cfg['task']['target_sequence_m'],
+            planner='MPPI PVA · two targets',
+            success_meaning='Tip enters two distinct virtual target spheres in order, in one continuous maneuver; no state reset or collision response.')
     atomic_json(output/'rehearsal.json',metadata)
     if checkpoint:
         (output/'checkpoints').mkdir();shutil.copy2(checkpoint,output/'checkpoints/policy.pt')
@@ -174,7 +189,10 @@ def export_package(directory,destination):
     meta=read_json(directory/'rehearsal.json')
     if meta['schema']!='pva_fullstate_30hz_v1':raise ValueError('Direct PVA rehearsal required')
     if sha256_file(directory/'fullstate_30hz.csv')!=meta['csv_sha256']:raise ValueError('Saved command CSV changed')
-    model=read_json(directory/'model.json');model['motion_residual']['checkpoint']='assets/cable_residual.pt';model['fullstate_execution']['checkpoint']='assets/drone_model.json'
+    model=read_json(directory/'model.json')
+    if model['motion_residual'].get('enabled') is not False:
+        model['motion_residual']['checkpoint']='assets/cable_residual.pt'
+    model['fullstate_execution']['checkpoint']='assets/drone_model.json'
     snapshot=Path(meta['job'])/'source_snapshot'
     if not snapshot.is_dir():raise ValueError('Original run source snapshot is missing; cannot export a reproducible policy bundle')
     with zipfile.ZipFile(destination,'w',zipfile.ZIP_DEFLATED) as archive:

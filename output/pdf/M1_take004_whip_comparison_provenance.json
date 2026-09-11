@@ -1,0 +1,41 @@
+{
+  "builder_sha256": "f5d8de1f7c60bf0414a7eaa7f6fc6778b05b1d5e75602099a4a3c96068a17d13",
+  "drone_rms_cm": 5.939340822607385,
+  "model_id": "M1-full",
+  "nearest_cm": 5.872554713296077,
+  "nearest_time_s": 1.1771537265108118,
+  "protected_hashes": {
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\M1_whip_20260910-181929-716218\\flight_take\\experiment_whip_m1_004.csv": "fc1efc2d1c2d221f660ffe10d10f8b21fb8e18d7b5f84038412517b13a6de620",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\M1_whip_20260910-181929-716218\\flight_take\\whip_m1_004.csv": "d5f3e4c69feea22ce4ea97c3261341cb45e08167357b9081d821c422a9e7b1b5",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\M1_whip_20260910-181929-716218\\flight_take\\whip_m1_004.tracking.json": "7434a74f56da057ebbc7fdd7502a45b0e03b80e7457086bc1e4ecb7c946decb2",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\M1_whip_20260910-181929-716218\\protocol.json": "de43951b88d67002710daff63a4dee4a8727e065bc7e8af0ddf79356ca1644bc",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\M1_whip_20260910-181929-716218\\simulation_csv\\fullstate_30hz.csv": "a3928d2dfddfc28dec869006fb5e17bab63a6f104b2e04ad9bb92bbef7eefd4d",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\M1_whip_20260910-181929-716218\\time_alignment.json": "0ea45a46cc10a558263af28c37b4a46be6b76bfc8b72dffb71ed3f400f1126a3",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\20260910-181929-716218-M1-full-whip\\fullstate_30hz.csv": "a3928d2dfddfc28dec869006fb5e17bab63a6f104b2e04ad9bb92bbef7eefd4d",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\20260910-181929-716218-M1-full-whip\\model.json": "c2ca5ae0f40d61d42ccf673c57d494eb665b8423726b22e8d128d142af816872",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\20260910-181929-716218-M1-full-whip\\rehearsal.json": "37b6ef0fe5d195bba2d1475aaabdfe3ae48dd25b6be9dddc349d1128b4e0c42c",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\20260910-181929-716218-M1-full-whip\\rehearsal.npz": "f0e57258842430befc8be6e3d954665d7aae24d66ea9a08f337b4c435ef8ae3b",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\20260910-181929-716218-M1-full-whip\\task.json": "24b7bf18140567ce5756ffb27e18b5ea107db9e7cc1294c72ad7e0e5e679be49"
+  },
+  "rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\20260910-181929-716218-M1-full-whip",
+  "residual": "measured minus original preflight predicted position; not neural-network output",
+  "samples": 120,
+  "selection": "Lowest original-forecast tip RMS of 13 reviewed development takes; full tip and approach coverage required.",
+  "snapshots": [
+    {
+      "masked_sites": [],
+      "time_s": 0.2960954623389238
+    },
+    {
+      "masked_sites": [],
+      "time_s": 0.7760954623389225
+    },
+    {
+      "masked_sites": [],
+      "time_s": 1.176095462338921
+    }
+  ],
+  "take": "whip_m1_004",
+  "tip_rms_cm": 5.451584336219438,
+  "whip_end_s": 1.2
+}

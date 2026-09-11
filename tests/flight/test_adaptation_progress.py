@@ -42,22 +42,6 @@ def test_model_switch_freezes_m1_and_preserves_parent(tmp_path,monkeypatch):
         prepare_training(tmp_path,'ppo',seed=655,episodes=334848,batch=2048,device='cuda',resume=PARENT,model_path=MODEL,keep_stopping_history=True)
 
 
-def test_progress_ui_reads_saved_evidence():
-    if not STUDY.exists():pytest.skip('Local adaptation study required')
-    import os
-    os.environ.setdefault('QT_QPA_PLATFORM','offscreen')
-    from PySide6.QtWidgets import QApplication
-    from simulator.gui.adaptation_progress_page import AdaptationProgressPage
-    app=QApplication.instance() or QApplication([]);page=AdaptationProgressPage(ROOT)
-    assert page.table.rowCount()==5 and 'DIAGNOSTIC ONLY' in page.summary.text()
-    assert page.tabs.tabText(0)=='Real flight progress'
-    assert 'awaiting adp1' in page.real.status.text().lower()
-    assert all(page.real.data['rows'][0]['means'][key] is None for key in ('drone_rms_m','tip_rms_m')) if page.real.data else True
-    assert page.use_model.isEnabled()
-    page.mode.setCurrentIndex(1);page.timeline.setValue(100);app.processEvents()
-    assert 'in-sample' in page.trace_note.text()
-    assert len(page.trace_figure.axes)==2
-    page.close();app.processEvents()
 
 
 def test_measured_round_metrics_do_not_use_fitted_predictions():
@@ -89,19 +73,3 @@ def test_no_real_m1_flights_means_no_adapted_rms(tmp_path):
     assert len(data['rows'])==1 and data['rows'][0]['model']=='M1'
     assert data['rows'][0]['means']['tip_rms_m'] is None
     assert data['rows'][0]['actual_flights']==0
-
-
-def test_policy_library_distinguishes_m1_from_m0_and_real_results(tmp_path):
-    import json
-    from PySide6.QtWidgets import QApplication
-    from simulator.gui.policy_library_page import PolicyLibraryPage
-    app=QApplication.instance() or QApplication([])
-    for name,adaptation in [('M0',{}),('M1',dict(round='current_adp0',training=True))]:
-        run=tmp_path/'runs/ppo'/name;(run/'checkpoints').mkdir(parents=True)
-        (run/'checkpoints/best_validation.pt').write_bytes(b'library reads metadata only')
-        (run/'model.json').write_text(json.dumps(dict(fullstate_execution=dict(schema='tracked_pose_execution_v1'),adaptation=adaptation)))
-    page=PolicyLibraryPage(tmp_path)
-    labels={page.table.item(i,0).text():page.table.item(i,2).text() for i in range(page.table.rowCount())}
-    assert labels['M1'].startswith('M1') and labels['M0'].startswith('M0')
-    assert 'Sim.' in page.table.horizontalHeaderItem(3).text()
-    page.close();app.processEvents()

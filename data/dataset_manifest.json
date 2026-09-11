@@ -1,60 +1,60 @@
 {
-  "historical_fit_authorized": true,
+  "experiment_id": "20260909-unseen-145g-17g",
+  "historical_fit_authorized": false,
   "schema": "aerial_cable_dataset_manifest_v1",
   "takes": {
-    "fig8_001": {
+    "preliminary1_figure8_001": {
+      "controller_format": "pva_controller_v1",
       "enabled": true,
       "episode_breaks_s": [],
-      "note": "User authorized all historical takes for development fitting. Rotating whole-take checks and exclusion masks are recorded in data/historical_model_runs/20260908-002241-654934. No protected historical test remains.",
+      "fit_job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\20260909-preliminary1-M0-v2",
+      "note": "New preliminary1 pair imported unchanged; excluded from fitting until clock alignment, masks and data roles are reviewed.",
+      "notes": "Reviewed preliminary1; native coordinates, measured-stream clock alignment, explicit masks; immutable fit windows saved in job",
+      "reviewed_for_fitting": true,
       "role": "training",
       "segments": []
     },
-    "fig8_002": {
+    "preliminary1_figure8_002": {
+      "controller_format": "pva_controller_v1",
       "enabled": true,
       "episode_breaks_s": [],
-      "note": "User authorized all historical takes for development fitting. Rotating whole-take checks and exclusion masks are recorded in data/historical_model_runs/20260908-002241-654934. No protected historical test remains.",
+      "fit_job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\20260909-preliminary1-M0-v2",
+      "note": "New preliminary1 pair imported unchanged; excluded from fitting until clock alignment, masks and data roles are reviewed.",
+      "notes": "Reviewed preliminary1; native coordinates, measured-stream clock alignment, explicit masks; immutable fit windows saved in job",
+      "reviewed_for_fitting": true,
+      "role": "validation",
+      "segments": []
+    },
+    "preliminary1_osci_001": {
+      "controller_format": "pva_controller_v1",
+      "enabled": true,
+      "episode_breaks_s": [],
+      "fit_job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\20260909-preliminary1-M0-v2",
+      "note": "New preliminary1 pair imported unchanged; excluded from fitting until clock alignment, masks and data roles are reviewed.",
+      "notes": "Reviewed preliminary1; native coordinates, measured-stream clock alignment, explicit masks; immutable fit windows saved in job",
+      "reviewed_for_fitting": true,
       "role": "training",
       "segments": []
     },
-    "fig8_003": {
+    "preliminary1_osci_002": {
+      "controller_format": "pva_controller_v1",
       "enabled": true,
       "episode_breaks_s": [],
-      "note": "User authorized all historical takes for development fitting. Rotating whole-take checks and exclusion masks are recorded in data/historical_model_runs/20260908-002241-654934. No protected historical test remains.",
+      "fit_job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\20260909-preliminary1-M0-v2",
+      "note": "New preliminary1 pair imported unchanged; excluded from fitting until clock alignment, masks and data roles are reviewed.",
+      "notes": "Reviewed preliminary1; native coordinates, measured-stream clock alignment, explicit masks; immutable fit windows saved in job",
+      "reviewed_for_fitting": true,
       "role": "training",
       "segments": []
     },
-    "fig8vertical_001": {
+    "preliminary1_vertical_figure8_001": {
+      "controller_format": "pva_controller_v1",
       "enabled": true,
       "episode_breaks_s": [],
-      "note": "User authorized all historical takes for development fitting. Rotating whole-take checks and exclusion masks are recorded in data/historical_model_runs/20260908-002241-654934. No protected historical test remains.",
-      "role": "training",
-      "segments": []
-    },
-    "fig8vertical_002": {
-      "enabled": true,
-      "episode_breaks_s": [],
-      "note": "User authorized all historical takes for development fitting. Rotating whole-take checks and exclusion masks are recorded in data/historical_model_runs/20260908-002241-654934. No protected historical test remains.",
-      "role": "training",
-      "segments": []
-    },
-    "osc_001": {
-      "enabled": true,
-      "episode_breaks_s": [],
-      "note": "User authorized all historical takes for development fitting. Rotating whole-take checks and exclusion masks are recorded in data/historical_model_runs/20260908-002241-654934. No protected historical test remains.",
-      "role": "training",
-      "segments": []
-    },
-    "osc_002": {
-      "enabled": true,
-      "episode_breaks_s": [],
-      "note": "User authorized all historical takes for development fitting. Rotating whole-take checks and exclusion masks are recorded in data/historical_model_runs/20260908-002241-654934. No protected historical test remains.",
-      "role": "training",
-      "segments": []
-    },
-    "osc_003": {
-      "enabled": true,
-      "episode_breaks_s": [],
-      "note": "User authorized all historical takes for development fitting. Rotating whole-take checks and exclusion masks are recorded in data/historical_model_runs/20260908-002241-654934. No protected historical test remains.",
+      "fit_job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\20260909-preliminary1-M0-v2",
+      "note": "New preliminary1 pair imported unchanged; excluded from fitting until clock alignment, masks and data roles are reviewed.",
+      "notes": "Reviewed preliminary1; native coordinates, measured-stream clock alignment, explicit masks; immutable fit windows saved in job",
+      "reviewed_for_fitting": true,
       "role": "training",
       "segments": []
     }

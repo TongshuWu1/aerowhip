@@ -23,6 +23,9 @@ def run(stage,job,batch=None):
     if stage=='prepare':
         if job.exists():raise ValueError('Use a new job name; existing inputs are immutable.')
         batch=Path(batch).resolve()
+        from simulator.workflow import read_json
+        if read_json(batch/'protocol.json',{}).get('schema')=='prospective_whip_adaptation_v1':
+            raise ValueError('Use tools/adapt_whip.py for the reviewed raw-coordinate whip workflow; this legacy fitter normalizes height and trains neural models.')
         names=flight_names(batch)
         if len(names)!=5:raise ValueError('The current fitter requires exactly five paired flights. Collect/review the M0 repeat first.')
         original=ROOT/'runs/rehearsals/20260908-203914-039721/fullstate_30hz.csv'

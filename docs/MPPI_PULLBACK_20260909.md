@@ -1,5 +1,195 @@
 # Forward-pull / backward-release whipping task
 
+## Farther and lower target trial
+
+The user requested a farther and slightly lower target. Trial
+`20260909-172921-966356` moves the target from [-1,0,1.1] to [-0.75,0,1.0] m:
+horizontal start-to-target distance increases from 1.0 to 1.25 m and target
+height drops by 0.10 m. The tracked-origin start remains [-2,0,1.255] m.
+Reward, model, task qualifications, limits and 2 s/1,024-candidate sampling are
+unchanged from the accepted outward-cast configuration. The previous accepted
+actions initialize a fully editable proposal in a fresh frozen job; old commands,
+forecasts and targets are not translated or relabeled. PPO and fitting stay stopped.
+Audit: `runs/audits/mppi-farther-20260909-172921-966356`.
+
+Accepted full candidate `20260909-173305-488091` independently passes the hit,
+recovery and export checks. Parent stopped at 42 iterations (238.69 s) and four
+committed actions; its rolling loop did not finish. The derived job performs no
+new optimization and inherits warm-start search cost. Hit time is 1.288116 s,
+minimum tip distance 4.1154 cm, wave completion 1.253333 s; 39 commands end the
+whip at 1.3 s. Full CSV/recovery lasts 10.433333 s. Exact portable replay passes
+for CSV bytes and all 12 arrays, Windows/RTX 4080. This is a target-only trial;
+existing reward/model/limit/sampling settings and PPO settings were checked unchanged.
+
+| Metric | Previous target | Farther/lower target |
+| --- | ---: | ---: |
+| Forward cable reach at contact | 0.716519 m | 0.712673 m |
+| Forward drone displacement at contact | 0.218577 m | 0.474605 m |
+| Peak forward drone displacement | 0.588776 m | 0.739561 m |
+| Sampled peak sideways displacement | 0.033162 m | 0.110629 m |
+| Distal RMS elevation at contact | 51.93° | 47.74° |
+| Tip velocity elevation at contact | +17.07° | +17.09° |
+
+The farther target is reached mostly through increased carrier approach, not
+more cable extension. At contact the drone retreats at 1.469089 m/s and the tip
+advances at 4.008100 m/s: only 0.0081 m/s above the unchanged speed requirement.
+Do not claim a robust hit or a solved horizontal whip. Same historical normalized
+M1 simulation only. Active MPPI target and selected exact rehearsal now use the
+new result, Side XZ/quarter speed/1.03 s. Previous rehearsal and all original
+commands/forecasts remain intact. No worker remains and no restart is scheduled.
+Accepted audit, animation, package, verification and adoption snapshots are under
+the trial audit's `accepted` directory.
+
+## Outward cast objective
+
+The user clarified that the intended whip unfurls toward a target beyond the
+carrier's approach, rather than bringing the drone close and swinging down or
+sideways. Horizontal tip velocity alone does not capture that task.
+The saved horizontal candidate reaches forward only 0.420545 m from its actual
+rotated attachment (44.15% of 0.9525 m rest length), with 0.730285 m peak carrier
+advance toward a target initially 1 m ahead. Its contact tracked origin is
+[-1.484455, 0.471579, 1.796314] m, revealing the sideways component.
+
+Authorized trial `20260909-170755-303192` adds four optional soft terms in
+`learning/horizontal_strike.py`. Forward reach is the attachment-to-tip vector
+projected on the requested strike direction, divided by structural rest length
+and clipped to [0,1]. Carrier translation cannot improve this feature.
+Contact receives 1000 times squared reach; near the target after forward
+preparation, the running cost is 120 times squared reach shortfall times the
+existing Gaussian proximity factor. Forward drone displacement and horizontal
+sideways displacement receive squared running costs of 180 each (points/m²/s).
+The previous horizontal-contact bonus is reduced from 320 to 80; previous
+vertical excursion/alignment/velocity costs stay 80/80/40. These preferences
+allow folding during preparation and do not impose a straight cable throughout.
+
+Same start, target, historical normalized M1, task checks, physical limits,
+two-second lookahead and 1,024-sample mixture. No new hard height or reach bounds.
+Initialization is the previous accepted sequence with every action editable.
+PPO and fitting remain stopped. Do not compare raw scores across objectives or
+claim a travelling-bend proxy proves mechanical energy transfer. Compare actual
+forward extension, carrier approach, top/side geometry, speed and modeled hit.
+The audit now includes `cast.png` to expose sideways motion and plot cable reach
+against carrier advance. Targeted tests: 22 passed, Windows/RTX 4080.
+
+First trial stopped at 31 iterations/three committed commands. Its saved full
+proposal reaches 0.553195 m forward (58.08%), versus 0.420545 m before; peak
+carrier approach is 0.693238 m and sideways excursion 0.249497 m. Contact velocity
+elevation worsens to +20.65°. Refinement `20260909-171100-183874` keeps the objective
+but changes the sampling mixture from [.05,.15,.35] to [.01,.03,.09], since broad
+noise rejects approximately 95% of trajectories and rarely samples another hit.
+The entire proposal remains editable. This changes sampling, not physics or task
+qualification. Per-sample nominal hits are not policy success probabilities.
+
+The fine-sampling parent stopped at 69 iterations/four committed commands. Its
+latest saved proposal reaches 0.713970 m (74.96%), with 0.610556 m peak drone
+advance and 0.096585 m sampled sideways excursion. Contact tip elevation is
++31.42°, so the reach improvement carries an upward-velocity tradeoff. Balance
+trial `20260909-171728-339853` increases vertical excursion cost to 300, vertical
+tip-velocity cost to 160 and horizontal contact bonus to 320. Reach weights and
+all hard limits stay unchanged. It starts from that full editable proposal.
+
+The audit renderer now appends the interpolated contact endpoint and holds it
+briefly in animations; previously, the sampled animation could stop visibly
+short of contact. It reads saved arrays and does not regenerate old forecasts.
+The independent bend-stage diagnostic still uses the pre-contact sampled history.
+
+### Accepted outward-cast improvement
+
+Accepted full candidate `20260909-172103-268459` is a separate derived job from
+the balance trial's saved proposal. All three parents are stopped: 31, 69 and
+45 iterations, with 3, 4 and 4 committed commands respectively. Their receding
+loops did not finish. Independent full-proposal replay, recovery and package
+verification passed. Do not report the derived job's zero new iterations as a
+zero-cost solve; these trials consumed approximately 793 s of optimizer time,
+plus the earlier warm-start searches and separate validation/export work.
+
+| Metric | Previous horizontal rehearsal | Accepted outward cast |
+| --- | ---: | ---: |
+| Forward reach from attachment at contact | 0.420545 m (44.15%) | 0.716519 m (75.23%) |
+| Peak forward drone displacement | 0.730285 m | 0.588776 m |
+| Forward drone displacement at contact | 0.515545 m | 0.218577 m |
+| Sampled peak sideways drone displacement | 0.465441 m | 0.033162 m |
+| Pre-contact peak drone height | 2.188726 m | 2.105445 m |
+| Tip velocity elevation at contact | -1.26° | +17.07° |
+| Distal cable RMS elevation at contact | 51.82° | 51.93° |
+
+The new hit occurs at 1.234274 s (minimum tip distance 3.3087 cm), after bend
+completion at 1.206667 s. At interpolated contact, drone forward velocity is
+-1.905981 m/s and tip forward velocity +4.102264 m/s, with 0.370199 m backward
+travel from the drone's forward peak. The 38-command whip ends at 1.266667 s;
+complete recovery/CSV is 10.4 s. Same historical normalized M1, start and target.
+Full package replay reproduces the CSV byte-for-byte and all 12 arrays exactly.
+27 targeted reward/contract/planner/export/UI tests passed on Windows/RTX 4080.
+
+This increases outward reach and removes most sideways swing, but still includes
+substantial climb and a steep distal cable. It is not a solved horizontal whip,
+proof of energy transfer, or physical flight validation. Impact forward speed is
+only slightly above the unchanged 4 m/s criterion; no robustness claim is made.
+
+`config/pva/mppi.json` now adopts the final weights and [.01,.03,.09] noise
+mixture for future launches. No new hard bounds; task/launch/limits are unchanged.
+PPO settings were checked unchanged by SHA256. The new exact rehearsal is selected
+in `config/pva/replay.json` at 1.03 s, Side XZ, quarter speed. Previous artifacts
+are preserved. Audit, motion, comparison views, package and adoption snapshots:
+`runs/audits/mppi-outward-20260909-171728-339853/accepted`.
+
+## Horizontal-strike reward trial
+
+The user requested a more horizontal outward strike and explicitly rejected a
+new hard height band. Trial `20260909-162950-671240` keeps every existing task,
+feasibility limit, launch coordinate, model and sampling setting unchanged.
+The previous wave sequence initializes an editable proposal; no prefix is fixed.
+PPO and fitting remain stopped. Trial settings are frozen in its run directory;
+the prior selectable result remains intact.
+
+`learning/horizontal_strike.py` adds four optional, purely soft reward terms:
+20 times squared vertical drone displacement per second; 40 times vertical tip
+velocity fraction squared per second; 40 times mean squared vertical tangent
+component of the last three cable segments per second; and up to 160 extra points
+for horizontal contact. The latter bonus is the product of horizontal fractions
+of distal alignment and tip velocity, evaluated at interpolated contact.
+The two near-strike costs are multiplied by the existing Gaussian target-proximity
+factor and require completed forward preparation. Vertical displacement remains
+available at finite cost. None of these terms alters hit qualification or the
+allowed workspace. GPU/eager parity preserves the previous modeled hit.
+
+Two trials are now complete. First parent `20260909-162950-671240` was stopped
+at 42 iterations/four committed actions. Its full proposal initialized the second
+parent `20260909-163336-614991`, increasing vertical excursion to 80, alignment
+to 80 and contact bonus to 320; velocity cost remains 40. Every action remained
+editable. Second parent stopped at 40 iterations/three committed actions after
+independent full-proposal strike/recovery/export acceptance. Neither rolling loop
+completed. Two-second lookahead, 1,024 samples, existing convergence stopping and
+all physical/task limits stayed unchanged; there was no fixed planning-time cap.
+
+| Pre-contact/contact metric | Saved baseline | First trial preview | Accepted second trial |
+| --- | ---: | ---: | ---: |
+| Tip velocity elevation at contact | +18.04° | -9.02° | -1.26° |
+| Distal cable RMS elevation at contact | 58.15° | 51.57° | 51.82° |
+| Drone peak height | 2.327 m | 2.289 m | 2.189 m |
+| Three bend stages before modeled valid hit | Yes | Yes | Yes |
+
+Distal RMS elevation means asin(sqrt(mean squared vertical tangent component))
+over the last three segments. Positive velocity elevation means upward motion.
+This improves horizontal tip motion and modestly reduces climb; the cable is
+still steep. It does not establish a horizontal whip or physical flight success.
+Scores across these different reward weights are not comparable.
+
+Accepted derived job `20260909-163646-375180` uses 38 actions (1.266667 s), hit
+time 1.263487 s, minimum tip distance 3.7583 cm, and bend completion at 1.24 s.
+Full recovery/CSV lasts 10.4 s. Rehearsal:
+`runs/rehearsals_pva/20260909-163646-375180-mppi-wave`.
+Audit/animation/package: `runs/audits/mppi-horizontal-20260909-163336-614991/accepted`.
+The derived job does no new optimization; optimization cost belongs to both
+warm-start parents and the original baseline search. Active MPPI defaults remain
+unchanged. The user subsequently selected the accepted second
+trial in Rehearsals (Side XZ, quarter speed, 1.03 s), preserving the baseline.
+New controls default to zero in MPPI.
+Targeted reward, wave, pullback, receding-horizon and export tests: 21 passed on
+Windows/RTX 4080. No fitting/PPO/heartbeat was restarted.
+Portable package replay reproduces the complete CSV byte-for-byte and all 12
+saved arrays exactly; see `accepted/verification.json` in the audit directory.
+
 ## Current extension: travelling bend
 
 The latest user request focuses on MPPI; PPO exploration/training is a separate

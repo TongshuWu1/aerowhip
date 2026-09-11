@@ -1,9 +1,0 @@
-Traceback (most recent call last):
-  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\run_simple_ppo.py", line 1261, in <module>
-    main()
-  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\run_simple_ppo.py", line 1257, in main
-    train(config, config_path, artifact, resume=bool(arguments.resume))
-  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\run_simple_ppo.py", line 699, in train
-    + f"progress-shaping reference is {progress_reference}; hard success "
-                                       ^^^^^^^^^^^^^^^^^^
-NameError: name 'progress_reference' is not defined

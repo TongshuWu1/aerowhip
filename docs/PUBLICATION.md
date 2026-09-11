@@ -6,7 +6,7 @@ Before public distribution, the authors need to confirm project ownership, autho
 
 ## Two different release scopes
 
-1. **Source-only release:** `tools/build_source_release.py` is an older source-review builder with an explicit allowlist, file-hash manifest and archive checksum. Its scope predates the complete current direct-PVA workflow. Review/update its allowlist and validate the resulting bundle before using it as a current paper artifact.
+1. **Source-only release:** `tools/build_source_release.py` includes the current PVA planner, fitting, comparison and UI packages with unfitted structural templates and an empty model/flight catalog. It has a file-hash manifest and archive checksum. Tests open the exported UI outside the live checkout. It does not include the fitted assets needed to reproduce a selected trajectory.
 2. **Experiment artifact:** separately select the frozen source/configuration, models, approved datasets and raw metrics needed for a specific claim. Include data/checkpoint availability, acquisition/search budgets, validation selection and environment details. This has not been assembled or approved for public distribution yet.
 
 The development repository was committed and pushed with selected research
@@ -14,7 +14,7 @@ artifacts and Git LFS assets on 9 September 2026. This development snapshot and
 a curated paper release have different scopes. Ignore rules do not remove tracked
 files or their history; select and document the evidence needed for each paper claim.
 
-## Legacy source-review builder
+## Source-review builder
 
 ```powershell
 python tools/build_source_release.py --output dist/source-review-new

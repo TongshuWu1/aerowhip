@@ -12,23 +12,24 @@ import torch
 from simulator.cable import DderState
 from simulator.research_physics import ResearchPhysics
 from simulator.research_pose import tensor_midpoint
+from planning.whip_objective import ENCOUNTER_FIELDS
 
 POSE=('position','velocity','rotation','omega_tracking','compensation','rotation_command_from_tracking')
-FIELDS=('active','evolving','success','failed','contact','minimum_distance','initial_distance',
+FIELDS=('active','evolving','success','failed','contact','tip_contact','minimum_distance','initial_distance',
         'best_quality','termination_time','cutoff','origin0','target','total',
         'pull_ready','reverse_ready','pull_peak','pull_credit','reverse_credit',
-        'wave_stage','wave_dwell','wave_credit','wave_completion_time')
+        'wave_stage','wave_dwell','wave_credit','wave_completion_time','reach_credit','brake_credit')+ENCOUNTER_FIELDS
 
 
 def state_values(env):
     return (*(getattr(env.pose,n) for n in POSE),env.state.positions_m,env.state.velocities_m_s,
-            *(getattr(env,n) for n in FIELDS))
+            *(getattr(env,n) for n in FIELDS+getattr(env,'extra_tick_fields',())))
 
 
 def set_state(env,values):
     env.pose=replace(env.pose,**dict(zip(POSE,values[:6])))
     env.state=DderState(*values[6:8])
-    for name,value in zip(FIELDS,values[8:]):setattr(env,name,value)
+    for name,value in zip(FIELDS+getattr(env,'extra_tick_fields',()),values[8:]):setattr(env,name,value)
 
 
 def schedule(env,left,right):
