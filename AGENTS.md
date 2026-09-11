@@ -48,3 +48,7 @@ do not override the user's latest decisions or establish live job status.
 
 Keep these instructions concise. Completed-job snapshots can retain older
 instructions for provenance; they do not override this active file.
+
+Maintain only `main` and `deployment` as active branches. Keep their shared
+numerical/workflow source synchronized while preserving branch-specific defaults
+and raw evidence. Read `docs/GIT_WORKFLOW.md` before changing branches.

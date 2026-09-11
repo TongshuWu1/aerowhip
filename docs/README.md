@@ -21,6 +21,13 @@ The `deployment` branch contains the operator app and its `docs/LAB_RUNBOOK.md`.
 Use its setup and validation guides for the colleague's lab transfer. This
 research checkout keeps the broader six-page interface and development evidence.
 
+## Lab operator guides
+
+Start the five-page app with `python run_lab.py`. Follow the
+[operator runbook](lab/LAB_RUNBOOK.md), [lab setup](lab/INSTALL.md), and
+[validation record](lab/VALIDATION.md). The `deployment` branch retains the
+curated lab defaults; `main` also includes these tools alongside research.
+
 ## Technical references
 
 | Topic | Guide |

@@ -33,3 +33,10 @@ tmp/
 /rehearsal_csv_and_result_in_real_flight/
 /policies/
 /output/
+
+# Lab runtime directories remain local on both branches.
+/workspace/**
+!/workspace/README.md
+/experiments/**
+!/experiments/README.md
+/private_bundles/

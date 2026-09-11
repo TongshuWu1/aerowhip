@@ -1,6 +1,7 @@
 """Model generations, same-flight diagnostics, and prospective flight evidence."""
 from datetime import datetime
 from pathlib import Path
+import sys
 import numpy as np
 from PySide6.QtCore import Qt, QUrl, Signal, QTimer
 from PySide6.QtGui import QDesktopServices
@@ -251,7 +252,7 @@ class ModelEvolutionPage(QWidget):
         out=self.root/'runs/evaluation'/datetime.now().strftime('%Y%m%d-%H%M%S-%f')
         # Log folder differs from immutable result folder, created by the worker.
         log=out.parent/(out.name+'-process')
-        command=[str(self.root/'.venv/Scripts/python.exe'),'-u','tools/evaluate_models.py','evaluate','--job',path,
+        command=[sys.executable,'-u','tools/evaluate_models.py','evaluate','--job',path,
                  '--models',*[m['id'] for m in self.catalog['models']],'--output',str(out),'--device','cuda']
         self.output=out;self.job.show();self.job.start(log,command);self.run.setEnabled(False);self.stop.setEnabled(True)
         self.progress.setRange(0,0);self.progress.setFormat('Preparing reviewed data…')

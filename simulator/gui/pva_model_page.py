@@ -1,5 +1,6 @@
 """Model lineage, reviewed preliminary fitting and essential evidence."""
 from pathlib import Path
+import sys
 from PySide6.QtCore import Signal,QTimer,QUrl
 from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import (QWidget,QVBoxLayout,QHBoxLayout,QLabel,QPushButton,QComboBox,QTabWidget,
@@ -120,7 +121,7 @@ class PVAModelPage(QWidget):
             script=job/'code_snapshot/tools/fit_preliminary.py'
             if not script.exists():
                 self.fit_status.setText('Reviewed fit source snapshot is missing. No job was started.');return
-            command=[str(self.root/'.venv/Scripts/python.exe'),'-u',str(script),'--job',str(job)]
+            command=[sys.executable,'-u',str(script),'--job',str(job)]
             self.active_fit=job;self.worker.start(self.root/'runs/model_jobs'/stamp(),command);self.fit_start.setEnabled(False);return
         self.fit_status.setText('Prepare a reviewed preliminary job first. The retired normalized bootstrap cannot be launched here.')
 

@@ -99,7 +99,7 @@ def compare(root,batch,output):
     return rows
 
 
-def prepare(root,batch,comparison,review_path,job,*,full_model=False):
+def prepare(root,batch,comparison,review_path,job,*,full_model=False,diagnostics_only=False):
     """Freeze reviewed whole takes and raw masks; never change M0 or fit roles."""
     batch=Path(batch).resolve();comparison=Path(comparison).resolve();job=Path(job).resolve()
     p=protocol(batch);review=read_json(review_path);source_hashes=read_json(comparison/'source_hashes.json')
@@ -115,7 +115,9 @@ def prepare(root,batch,comparison,review_path,job,*,full_model=False):
         source_hashes.update(response['diagnostic_hashes'])
         p['response_update']=response
         p['model_update']='drone nominal feedforward_xy only; cable, delay, feedback, attitude, geometry and residual fixed'
-    if not any(r['role']=='adaptation' for r in chosen.values()):raise ValueError('Assign at least one whole adaptation take')
+    if diagnostics_only:
+        if not chosen or any(r['role']!='validation' for r in chosen.values()):raise ValueError('Diagnostic preparation requires only whole validation takes')
+    elif not any(r['role']=='adaptation' for r in chosen.values()):raise ValueError('Assign at least one whole adaptation take')
     for name,r in chosen.items():
         planned=p.get('planned_roles',{}).get(name)
         if planned is not None and r['role']!=planned:raise ValueError(name+': role differs from the predeclared whole-take split')
@@ -130,7 +132,7 @@ def prepare(root,batch,comparison,review_path,job,*,full_model=False):
     if model.get('motion_residual',{}).get('enabled') and not full_model:
         raise ValueError('Scalar preparation requires cable NN disabled; use full-model preparation for a learned parent')
     job.mkdir(parents=True,exist_ok=False);(job/'source_candidate').mkdir()
-    saved=freeze_model_assets(model,job/'source_candidate');atomic_json(job/'source_candidate/model.json',saved)
+    saved=freeze_model_assets(model,job/'source_candidate',source_root=Path(p['rehearsal']));atomic_json(job/'source_candidate/model.json',saved)
     report=read_json(comparison/'report.json');prepared={}
     for name,r in chosen.items():
         m=read_optitrack(batch/'flight_take'/f'{name}.csv')
@@ -153,7 +155,7 @@ def prepare(root,batch,comparison,review_path,job,*,full_model=False):
         if not np.allclose(hold,hold[:1],atol=1e-8,rtol=0) or np.max(np.abs(hold[:,3:9]))>1e-8:
             raise ValueError(name+': drone initializer requires the recorded preflight hold')
         whip_end=read_json(Path(p['rehearsal'])/'rehearsal.json')['whip_end_s']
-        stop=min(float(r['free_motion_end_s']),whip_end)
+        stop=float(r['free_motion_end_s']) if diagnostics_only else min(float(r['free_motion_end_s']),whip_end)
         if stop>t[-1]:raise ValueError(name+': incomplete reviewed free-motion interval')
         # Validate actual command support including delay, all receipt/gap edges.
         delay=read_json(Path(saved['fullstate_execution']['checkpoint']))['nominal']['parameters']['delay_s']
@@ -168,7 +170,7 @@ def prepare(root,batch,comparison,review_path,job,*,full_model=False):
     parent_generation=model.get('provenance',{}).get('generation_index',0)
     if p.get('parent_generation',parent_generation)!=parent_generation:raise ValueError('Protocol and frozen model generation disagree')
     p.update(parent_generation=parent_generation,takes=prepared,comparison=str(comparison),review_path=str(Path(review_path).resolve()),
-        preparation_scope='full_model' if full_model else 'scalar',
+        preparation_scope='full_model' if full_model else 'scalar',diagnostics_only=diagnostics_only,
         evidence=f'M{parent_generation+1} development; training takes cannot independently validate the updated model')
     atomic_json(job/'protocol.json',p);shutil.copy2(review_path,job/'review.json')
     shutil.copy2(comparison/'report.json',job/'frozen_M0_comparison.json')
@@ -180,7 +182,7 @@ def prepare(root,batch,comparison,review_path,job,*,full_model=False):
             if not source.is_file() or source.suffix not in ('.py','.cu','.cuh','.h','.cpp'):continue
             relative=source.relative_to(root);dest=job/'source_snapshot'/relative
             dest.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(source,dest)
-            code_hashes[str(relative)]=sha256_file(dest)
+            code_hashes[relative.as_posix()]=sha256_file(dest)
     atomic_json(job/'code_hashes.json',code_hashes)
     files={str(f):sha256_file(f) for folder in (job/'inputs',job/'source_candidate') for f in folder.rglob('*') if f.is_file()}
     files.update({str(job/n):sha256_file(job/n) for n in ('protocol.json','review.json','frozen_M0_comparison.json','source_hashes.json','code_hashes.json')})

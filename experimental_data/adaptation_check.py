@@ -15,8 +15,10 @@ def sha256(path):
 
 
 def discover_batches(root):
-    return sorted({p.parent.parent for folder in flight_batch_roots(root)
-                   for p in folder.rglob('simulation_csv/fullstate_30hz.csv')})
+    recorded={p.parent.parent for folder in flight_batch_roots(root)
+              for p in folder.rglob('simulation_csv/fullstate_30hz.csv')}
+    lab={p.parent.parent for p in (Path(root)/'experiments').glob('*/batches/*/simulation_csv/fullstate_30hz.csv')}
+    return sorted(recorded|lab)
 
 
 def flight_names(batch):

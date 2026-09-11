@@ -42,8 +42,9 @@ repository root using the existing environment:
 See [installation](docs/setup/INSTALL.md) for environment setup. Opening the interface
 does not start training, fitting or planning.
 
-The separate **`deployment` branch** provides the five-page operator app,
-`setup_lab.py`, `run_lab.py`, and its `docs/LAB_RUNBOOK.md`. It keeps studies and
+Both branches include the five-page operator app (`python run_lab.py`).
+The **`deployment` branch** provides its curated lab defaults,
+`setup_lab.py`, `run_lab.py`, and the [operator runbook](docs/lab/LAB_RUNBOOK.md). It keeps studies and
 generated CSVs in the checkout; exports go to `exports/<study>/<generation>/`.
 The private colleague bundle contains the retained M0/preliminary assets. These
 assets are not included in the source-only branch, so a source-only user must
@@ -82,3 +83,5 @@ change. Report the actual environment tested. Existing Windows/RTX 4080 checks
 do not establish Ubuntu/RTX 5080 validation.
 
 See the [folder map](docs/FOLDER_MAP.md) for renamed paths and where to save each kind of file.
+
+Only `main` and `deployment` are active branches. Read the [Git workflow](docs/GIT_WORKFLOW.md) before moving between their checkouts.

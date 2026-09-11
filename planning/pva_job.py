@@ -24,13 +24,17 @@ ROOT=Path(__file__).resolve().parents[1]
 CHECKPOINT_SCHEMA='jerk_pva_ppo_checkpoint_v1'
 
 
-def freeze_model_assets(model,directory):
+def freeze_model_assets(model,directory,*,source_root=None,portable=False):
     """Portable component paths, including historical absolute NN references."""
-    frozen=snapshot_assets(model,directory)
+    frozen=snapshot_assets(model,directory,source_root=source_root)
     component=Path(frozen['fullstate_execution']['checkpoint'])
     payload=read_json(component);payload['residual']['checkpoint']='drone_residual.pt'
     atomic_json(component,payload)
     frozen['fullstate_execution']['sha256']=sha256_file(component)
+    if portable:
+        frozen['fullstate_execution']['checkpoint']='assets/drone_model.json'
+        if frozen.get('motion_residual',{}).get('enabled'):
+            frozen['motion_residual']['checkpoint']='assets/cable_residual.pt'
     return frozen
 
 
@@ -197,7 +201,7 @@ def prepare(root,settings,name,*,checkpoint=None,development_review=None):
         for path in (root/folder).rglob('*.py'):
             if '__pycache__' not in path.parts:
                 target=snapshot/path.relative_to(root);target.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(path,target)
-    atomic_json(directory/'source_manifest.json',{str(p.relative_to(snapshot)):sha256_file(p) for p in snapshot.rglob('*.py')})
+    atomic_json(directory/'source_manifest.json',{p.relative_to(snapshot).as_posix():sha256_file(p) for p in snapshot.rglob('*.py')})
     atomic_json(directory/'status.json',dict(status='prepared',stage='ready',attempts=0))
     return directory,[sys.executable,'-u',str(snapshot/'tools/run_pva.py'),'--job',str(directory)]
 

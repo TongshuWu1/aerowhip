@@ -21,7 +21,7 @@ from planning.pva_job import freeze_model_assets
 
 def save_model(model,engine,folder,job,*,cable_parameters=None,cable_net=None):
     folder=Path(folder);folder.mkdir(parents=True,exist_ok=False)
-    m=freeze_model_assets(deepcopy(model),folder)
+    m=freeze_model_assets(deepcopy(model),folder,source_root=Path(job)/'source_candidate')
     dp=Path(m['fullstate_execution']['checkpoint']);d=read_json(dp)
     save_residual(dp.parent/'drone_residual.pt',engine.drone.residual)
     d['nominal']['parameters']=asdict(engine.drone.parameters)
@@ -203,6 +203,7 @@ def register(job,comparison):
 
 
 def fit(job,device='cuda'):
+    if read_json(Path(job)/'protocol.json').get('diagnostics_only'):raise ValueError('Final diagnostic recordings cannot enter a fit')
     if device!='cuda' or not torch.cuda.is_available():raise ValueError('Full adaptation requires the reviewed CUDA runtime')
     job=Path(job).resolve();model,p,engine=data.load(job,device);contract=p['full_update'];started=time.perf_counter()
     (job/'fit').mkdir(exist_ok=False);torch.set_num_threads(4);torch.manual_seed(contract['seed'])

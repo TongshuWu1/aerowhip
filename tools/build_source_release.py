@@ -157,6 +157,8 @@ def build(root,output):
         add(name)
     for name in ('exports/README.md','paper/README.md','third_party/README.md'):
         if (root/name).is_file():add(name)
+    for name in ('run_lab.py','setup_lab.py','start_lab.cmd','start_lab.sh'):
+        if (root/name).is_file():add(name)
     for name in guide_paths(root):add(name)
     files['README.md']=b'''# AeroWhip research source\n\nThis source-only candidate contains the current PVA planner, fitting, comparison\nand desktop UI. No fitted model, flight command, forecast or recording is bundled.\nInstall using docs/setup/INSTALL.md, then run `python run_simulation.py`. Review your\ndata and prepare a model before planning. No job starts automatically.\n\nRead docs/paper/PAPER_WRITING_HANDOFF.md and docs/paper/PAPER_READINESS_REVIEW.md for the method\nand evidence limits. Experiment paths in these guides refer to separately held\nresearch artifacts. Legacy numerical backends remain for compatibility tests;\nthey are not the selected experiment. See PUBLICATION_METADATA.json for release\nstatus. This package does not reproduce reported trajectories without their\nseparately reviewed model, source snapshot and exact command assets.\n'''
     files['docs/setup/FLIGHT_ADAPTATION_QUICKSTART.md']=(root/'docs/setup/FLIGHT_ADAPTATION_QUICKSTART.md').read_bytes()

@@ -342,7 +342,7 @@ class PVAPlannerPage(QWidget):
         if self.job.running:return
         try:
             cfg=self.collect();directory,command=prepare(self.root,cfg,self.run_name.text(),checkpoint=self.resume_checkpoint if self.method=='ppo' else None)
-            command[0]=str(self.root/'.venv/Scripts/python.exe')
+            command[0]=sys.executable
             self.current_run=directory;self.job.start(directory,command);self.run.setEnabled(False);self.tabs.setCurrentIndex(1)
             self.refresh_library()
         except (OSError,ValueError,KeyError) as e:self.setup_note.setText('Could not start: '+str(e))
@@ -540,7 +540,7 @@ class PVAPlannerPage(QWidget):
         if self.method=='mppi' and not (p/'plan.npz').exists():self.library_note.setText('Plan not yet available.');return
         self.rehearsal_output=self.root/'runs/rehearsals_pva'/(stamp()+'-'+self.method)
         tool=p/'source_snapshot/tools/rehearse_pva.py'
-        command=[str(self.root/'.venv/Scripts/python.exe'),'-u',str(tool),'--job',str(p),'--output',str(self.rehearsal_output)]
+        command=[sys.executable,'-u',str(tool),'--job',str(p),'--output',str(self.rehearsal_output)]
         if self.method=='ppo':command.extend(['--checkpoint',str(checkpoint)])
         self.rehearsal_note.setText('Generating from the selected run’s frozen launch and model: '+read_json(p/'identity.json')['name'])
         self.rehearsal_job.start(self.root/'runs/pva_jobs'/stamp(),command);self.tabs.setCurrentIndex(3);self.inspector.clear_result()
@@ -567,7 +567,7 @@ class PVAPlannerPage(QWidget):
             self.policy_preview_note.setText(message);self.library_note.setText(message);self.rehearsal_note.setText(message);return
         self.preview_context=(Path(p),choice,complete)
         self.rehearsal_output=self.root/'runs/rehearsals_pva'/(work.name+('-ppo' if complete else '-ppo-preview'))
-        command=[str(self.root/'.venv/Scripts/python.exe'),'-u',str(work/'snapshot/source_snapshot/tools/rehearse_ppo_snapshot.py'),
+        command=[sys.executable,'-u',str(work/'snapshot/source_snapshot/tools/rehearse_ppo_snapshot.py'),
             '--job',str(work/'snapshot'),'--output',str(self.rehearsal_output)]
         if complete:command.append('--complete')
         message=f'{provenance["source_run_name"]} · {choice} · {provenance["checkpoint_attempts"]:,} saved attempts · generating…'

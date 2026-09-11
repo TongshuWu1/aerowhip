@@ -37,6 +37,7 @@ def default_contract():
 def prepare(job,whip_source,preliminary_source,contract=None):
     job=Path(job).resolve();src=Path(whip_source).resolve();pre=Path(preliminary_source).resolve()
     c=contract or default_contract()
+    if read_json(src/'protocol.json').get('diagnostics_only'):raise ValueError('Final diagnostic recordings cannot enter a fit')
     if c.get('schema')!=FULL_SCHEMA:raise ValueError('Expected full-model contract')
     for name in ('prepared_hashes.json','source_hashes.json'):verify_hashes(read_json(src/name))
     # Parent source snapshot is evidence, not an assertion that later GUI code is identical.
@@ -45,18 +46,25 @@ def prepare(job,whip_source,preliminary_source,contract=None):
     if pp.get('normalization_applied') is not False:raise ValueError('Raw preliminary inputs required')
     windows=read_json(pre/'windows.json');train=[w for w in windows if w['role']=='training']
     if {w['take'] for w in train}!=set(pp['training_takes']):raise ValueError('Preliminary role mismatch')
-    frozen=read_json(pre/'protected_before.json');sources=read_json(src/'source_hashes.json')
+    # Portable imports use POSIX separators on every OS. Compare path keys
+    # consistently without changing either the preserved hashes or raw bytes.
+    frozen={}
+    for original,h in read_json(pre/'protected_before.json').items():
+        key=original.replace('\\','/')
+        if key in frozen and frozen[key]!=h:raise ValueError('Conflicting preliminary source hashes')
+        frozen[key]=h
+    sources=read_json(src/'source_hashes.json')
     all_takes=pp['training_takes']+pp['validation_takes']
     for take in all_takes:
         provenance=read_json(pre/'inputs'/take/'provenance.json')
         for filename,h in provenance['source_hashes'].items():
-            path=str(Path(pp['source_batch'])/filename)
+            path=(Path(pp['source_batch'])/filename).as_posix()
             if frozen.get(path)!=h:raise ValueError('Preliminary raw provenance mismatch')
             sources[path]=h
     verify_hashes(sources)
     job.mkdir(parents=True,exist_ok=False);shutil.copytree(src/'inputs',job/'inputs')
     (job/'source_candidate').mkdir()
-    model=freeze_model_assets(read_json(src/'source_candidate/model.json'),job/'source_candidate')
+    model=freeze_model_assets(read_json(src/'source_candidate/model.json'),job/'source_candidate',source_root=src/'source_candidate')
     atomic_json(job/'source_candidate/model.json',model)
     # Preserve the original raw-whip review as a separate immutable source.
     shutil.copy2(src/'review.json',job/'review.json')
@@ -100,7 +108,7 @@ def prepare(job,whip_source,preliminary_source,contract=None):
         for f in (ROOT/base).rglob('*'):
             if not f.is_file() or f.suffix not in ('.py','.cu','.cuh','.h','.cpp'):continue
             rel=f.relative_to(ROOT);dest=job/'source_snapshot'/rel;dest.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(f,dest)
-            code[str(rel)]=sha256_file(f)
+            code[rel.as_posix()]=sha256_file(f)
     atomic_json(job/'code_hashes.json',code)
     files={str(f):sha256_file(f) for d in ('inputs','replay','prior_whip','source_candidate') for f in (job/d).rglob('*') if f.is_file()}
     files.update({str(job/n):sha256_file(job/n) for n in ('protocol.json','review.json','source_hashes.json','code_hashes.json')})

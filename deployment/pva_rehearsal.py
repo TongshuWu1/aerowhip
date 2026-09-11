@@ -106,7 +106,7 @@ def generate(job,output,*,checkpoint=None,origin=None,target=None,device='cuda',
     streamed_q=torch.stack([f['cable'] for f in env.frames[:prefix]],1)[0].cpu().numpy()
     cable_difference=float(np.max(np.abs(positions[1:prefix+1]-streamed_q)))
     if cable_difference>1e-8:raise AssertionError(f'PVA training/export cable mismatch: {cable_difference}')
-    output.mkdir(parents=True);saved=freeze_model_assets(model,output)
+    output.mkdir(parents=True);saved=freeze_model_assets(model,output,source_root=job)
     from learning.ppo_trajectory_reward import freeze_reference
     freeze_reference(cfg,output,source_root=job)
     atomic_json(output/'model.json',saved);atomic_json(output/'settings.json',cfg)

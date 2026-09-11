@@ -32,8 +32,9 @@ def safe_name(name):
     return name
 
 
-def read_optitrack(path, drone_label=None):
-    safe_name(Path(path).stem)
+def read_optitrack(path, drone_label=None, *, allow_external_filename=False):
+    if 'fig8vertical_002' in str(path).lower():raise ValueError('Protected recording cannot enter adaptation')
+    if not allow_external_filename:safe_name(Path(path).stem)
     with Path(path).open(newline='', encoding='utf-8-sig') as stream:
         rows = list(csv.reader(stream))
     meta = dict(zip(rows[0][::2], rows[0][1::2]))
@@ -83,8 +84,9 @@ def validate_times(t):
         raise ValueError('Need at least three strictly increasing finite timestamps')
 
 
-def read_controller(path, *, commands_only=False):
-    safe_name(Path(path).stem)
+def read_controller(path, *, commands_only=False, allow_external_filename=False):
+    if 'fig8vertical_002' in str(path).lower():raise ValueError('Protected recording cannot enter adaptation')
+    if not allow_external_filename:safe_name(Path(path).stem)
     c = np.genfromtxt(path, delimiter=',', names=True, encoding='utf-8-sig')
     required = ['time_s','cmd_age','cmd_valid',*COMMAND_COLUMNS]
     if not commands_only:

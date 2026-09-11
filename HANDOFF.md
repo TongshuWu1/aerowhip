@@ -24,7 +24,7 @@ multiple targets, 90 final flights or binary 5 cm paper outcomes.
   for historical artifacts; do not reinterpret older force/20 Hz policies.
 - The main research UI has six pages. The `deployment` branch has the five-page
   operator workflow and its own setup/runbook. Ubuntu/RTX 5080 is the planned lab
-  machine, not a validated environment. See that branch's `docs/VALIDATION.md`.
+  machine, not a validated environment. See `docs/lab/VALIDATION.md`.
 
 ## Existing evidence
 
@@ -90,3 +90,11 @@ Only paths and guides changed during organization; frozen experiment/config
 bytes and model identities are preserved. Local compatibility links retain old
 data/figure paths used inside historical evidence. New code uses the canonical
 locations and does not depend on Windows links for new studies.
+
+## Branches after consolidation
+
+`main` is the canonical research checkout, with both research and lab launchers.
+`deployment` keeps portable empty defaults and the guided lab entry point.
+The shared first-party numerical and workflow source is synchronized.
+The old `twin-rewrite` and `Simulator` branch histories are retained by merges;
+the paused Isaac prototype is historical only. See `docs/GIT_WORKFLOW.md`.
