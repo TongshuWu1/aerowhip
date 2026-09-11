@@ -44,13 +44,28 @@ The dataset manifest is empty; generated data/models/runs remain ignored by Git.
 
 ## Next step
 
-Set up an independent **Isaac Lab / PhysX drone and passive cable**, collect new
+The independent **Isaac Lab / PhysX drone and passive cable** now has a separate
+runner. From this checkout, run:
+
+```sh
+python launch_isaac_simulation.py --trajectory figure8
+python launch_isaac_simulation.py --trajectory circle
+```
+
+It opens its own Isaac window with the **153 g drone + 18 g cable**, physical
+motor control, passive cable reaction, and command/measured trails. PyCharm run
+configurations are provided. See [launch instructions and modeling limits](docs/ISAAC_PHYSX_RUNNER.md).
+The default uses the user's braided nylon paracord specification with separate
+bend/twist resistance, marker mass geometry and distributed aerodynamic loads.
+See [paracord assumptions and numerical checks](docs/PARACORD_MODEL.md).
+
+Next, connect synthetic recording to the fitting pipeline, collect new
 preliminary data, and fit a new **M0**. Then train a new policy, execute its
 FullState sequence in that plant, record new takes, and perform adaptation.
 
-This port does not implement that new PhysX plant or collect data. The existing
-Isaac Lab integration still hosts our external model, and must not be called an
-independent PhysX experiment. The inherited five-take adaptation runner is kept;
+The older Isaac Lab training integration still hosts our external model; it is
+distinct from the independent `isaac_simulation/` plant. Synthetic runner logs
+are not yet a Motive/controller-log adapter. The inherited five-take adaptation runner is kept;
 it still needs the preliminary/synthetic-data workflow before being used to fit
 new M0. No fit, policy training, or flight execution was launched during the port.
 

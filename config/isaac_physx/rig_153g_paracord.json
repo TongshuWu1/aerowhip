@@ -1,0 +1,115 @@
+{
+  "schema": "independent_physx_paracord_v2",
+  "provenance": "Independent synthetic plant. Engineering estimates, not fitted to experimental recordings.",
+  "physics": {
+    "rate_hz": 1200,
+    "controller_rate_hz": 300,
+    "command_rate_hz": 30,
+    "logging_rate_hz": 100,
+    "render_rate_hz": 30,
+    "position_iterations": 32,
+    "velocity_iterations": 8
+  },
+  "drone": {
+    "mass_kg": 0.153,
+    "inertia_kg_m2": [
+      0.00022,
+      0.00022,
+      0.00038
+    ],
+    "visual_scale": 1.8,
+    "motor_xy_m": 0.052,
+    "maximum_motor_thrust_n": 0.8,
+    "motor_time_constant_s": 0.025,
+    "yaw_moment_per_thrust_m": 0.007,
+    "attachment_body_m": [
+      0,
+      0,
+      -0.03
+    ],
+    "linear_drag_n_s_m": [
+      0.025,
+      0.025,
+      0.035
+    ],
+    "tracked_origin_body_m": [
+      0,
+      0,
+      0.025
+    ]
+  },
+  "cable": {
+    "length_m": 0.9525,
+    "diameter_m": 0.0035,
+    "segments": 32,
+    "bare_mass_kg": 0.008,
+    "marker_mass_kg": 0.001,
+    "marker_distances_m": [
+      0.063,
+      0.15,
+      0.25,
+      0.35,
+      0.45,
+      0.55,
+      0.65,
+      0.7525,
+      0.8525,
+      0.9525
+    ],
+    "air_density_kg_m3": 1.225,
+    "crossflow_drag_coefficient": 1.2,
+    "self_collision": true,
+    "marker_radius_m": 0.006,
+    "axial_skin_drag_coefficient": 0.02,
+    "marker_drag_coefficient": 0.47,
+    "contact_friction": 0.35,
+    "wind_world_m_s": [
+      0,
+      0,
+      0
+    ],
+    "rod_material": {
+      "bending_rigidity_n_m2": 1e-07,
+      "torsional_rigidity_n_m2": 7e-08,
+      "bend_relaxation_time_s": 0.2,
+      "twist_relaxation_time_s": 0.3
+    },
+    "material": "braided nylon paracord (user confirmed)",
+    "parameter_status": "Length and mass preserved; 3.5 mm diameter, marker dimensions/mass split, and effective stiffness/damping are estimates, not measurements.",
+    "axial_model": "inextensible; native stretch prototype rejected for numerical drift"
+  },
+  "controller": {
+    "position_kp": [
+      4,
+      4,
+      7
+    ],
+    "velocity_kd": [
+      3.5,
+      3.5,
+      4.5
+    ],
+    "position_ki": [
+      0.2,
+      0.2,
+      0.8
+    ],
+    "integral_limit_m_s": 0.5,
+    "attitude_frequency_rad_s": 20,
+    "attitude_damping_ratio": 1.0,
+    "maximum_tilt_deg": 35
+  },
+  "trajectory": {
+    "start_position_m": [
+      0,
+      0,
+      1.5
+    ],
+    "radius_m": 0.55,
+    "period_s": 10,
+    "ramp_s": 2,
+    "hold_s": 10,
+    "final_hold_s": 3,
+    "cycles": 1
+  }
+}
