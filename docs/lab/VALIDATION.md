@@ -45,10 +45,9 @@ development flight loaded and closed cleanly. Offscreen flight inspection used
 error plots; native VTK 3D rendering requires an interactive OpenGL surface and
 was not established by this check.
 
-The checks used the existing development environment; a fresh dependency install
-was not performed. The Windows/Ubuntu CI workflow is included but has not run on
-GitHub. The original 495 copied source/config files were rehashed and unchanged
-in the research checkout.
+The initial packaging checks used the existing development environment rather
+than a fresh dependency install. The original 495 copied source/config files
+were rehashed and unchanged in the research checkout at that stage.
 
 Retained identities:
 
@@ -74,6 +73,13 @@ All 10,874 retained research evidence files matched their saved hashes, and
 documentation links were checked in both checkouts. Source/private release
 builders now include the default processing configuration and label references
 to separately held research assets instead of emitting broken links.
+
+GitHub subsequently installed dependencies and passed the software checks on
+both Windows and Ubuntu CPU runners for
+[main at 25938b0](https://github.com/TongshuWu1/aerowhip/actions/runs/34657316265)
+and [deployment at 4538fbc](https://github.com/TongshuWu1/aerowhip/actions/runs/34657315778).
+These checks cover the synchronized implementation; they do not validate the
+colleague's RTX 5080, graphical session, fitted dynamics or aircraft execution.
 
 ## Destination checks
 
