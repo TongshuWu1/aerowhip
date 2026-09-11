@@ -1,67 +1,103 @@
-# Sim → Real → Sim aerial whipping
+# AeroWhip
 
-A force-controlled drone point coupled to a DDER cable, with PPO/SAC maneuver planning and between-flight model adaptation.
+**AeroWhip: Aerial Cable Whipping through Iterative Model Refinement**
 
-The current strike is **open-loop**: estimate the initial drone and cable state, generate one force sequence, execute it once, then return to PID hover at the frozen cutoff. Cable/hit feedback does not alter the sequence during execution. Commands are **20 Hz**, physics is **100 Hz**, and the maximum strike horizon is **1 second**. Exact current physics, rewards and limits live in `config/`; existing runs retain their own snapshots.
+[Project repository](https://github.com/TongshuWu1/aerowhip)
 
-The real Lee-controller interface and force response are not yet validated. Adaptation exports are simulation candidates, not hardware-authorized commands.
+A desktop workflow for planning a cable whip, exporting its PVA commands,
+reviewing recorded flights, and refining the model between experiments.
+The app exports files; your existing flight program executes them.
 
-## Start here
+**Start the lab app with `run_lab.py`. No Codex session is required.**
 
-For the current Windows/Ubuntu lab transfer, read [HANDOFF.md](HANDOFF.md) and
-[lab setup](docs/LAB_SETUP.md). The selected PPO can be transferred without retraining.
-The [small deployment package](deployment/README.md) plans offline; the real ROS
-controller bridge remains to be implemented and verified with the colleague.
+## Quick start
 
-For a new environment, start with [installation](docs/INSTALL.md). For a source-only
-research release, see [publication preparation](docs/PUBLICATION.md). The release
-builder creates a portable review bundle without copying recordings, checkpoints,
-internal history or the current Git repository.
+Use Python 3.12. On the Ubuntu/NVIDIA lab computer:
 
-```powershell
-.venv/Scripts/python.exe run_simulation.py
+```sh
+python3 setup_lab.py --device cuda
+sh start_lab.sh
 ```
 
-The UI has five pages: **Data & Calibration**, **Task & Rewards**, **PPO**, **SAC**, and **Real-world Updates**. PPO/SAC each have their own validation plots and 3D replay. The adaptation page imports flight data, compares replay, fits a physical candidate, and refines a force sequence without changing actor weights.
+On Windows:
 
-- [Tomorrow’s flight/adaptation guide](docs/FLIGHT_ADAPTATION_QUICKSTART.md)
-- [Current decisions and active comparison](docs/PROJECT_CONTEXT.md)
-- [Research proposal](docs/RESEARCH_PROPOSAL_ADAPTIVE_AERIAL_WHIP.md)
-- [Documentation index](docs/README.md)
-- [Architecture](docs/ARCHITECTURE.md)
-- [Reproducibility and data availability](docs/REPRODUCIBILITY.md)
-- [Command-line tools](tools/README.md)
+```powershell
+py -3.12 setup_lab.py --device cuda
+.\start_lab.cmd
+```
 
-## Repository layout
+Setup creates `.venv/` inside this checkout. It installs the pinned desktop
+dependencies and the official PyTorch CUDA 12.8 build. For a machine used only
+to inspect data/UI, use `--device cpu`; the full fitting path requires CUDA.
 
-| Folder | Purpose |
+The **private lab handoff ZIP** includes the retained M0 baseline and preliminary
+inputs. Extract the entire ZIP, run setup, and open the app. A source-only checkout
+instead starts with an empty baseline: use **Import baseline** and select the
+retained-M0 bundle supplied with the experiment. Never copy an old virtual
+environment between operating systems.
+
+See [installation and troubleshooting](docs/INSTALL.md) if setup needs attention.
+
+## Run the experiment
+
+1. Create a named experiment using the retained M0.
+2. Export the M0 CSV. Execute it with the external flight program and import each
+   controller/OptiTrack recording pair into its assigned take.
+3. Review the recordings, then run the M1 update and its MPPI plan.
+4. Collect and review the five M1 takes, then run the M2 update and plan.
+5. Complete the five interleaved M0/M2 pairs and export the comparison.
+
+The app assigns three adaptation takes and two operational-validation takes in
+each update batch. Final comparison recordings are never used for fitting.
+The primary result is **minimum 3D tip-to-target distance**, with prediction RMS
+reported separately. There is no binary 5 cm success requirement.
+
+Keep the existing M0 and preliminary data. The new collection has **20 whip
+executions at one target**. Follow the [one-day operator runbook](docs/LAB_RUNBOOK.md)
+for the exact sequence and recording review.
+
+## Where files go
+
+| Folder | Contents |
 |---|---|
-| `config/` | Active model, task and algorithm defaults |
-| `simulator/` | DDER physics, point-force dynamics, replay and desktop UI |
-| `learning/` | PPO/SAC, rewards, open-loop execution and sequence correction |
-| `experimental_data/` | Recording processing, calibration and flight adaptation |
-| `tools/` | Current workflow commands, evaluation and research utilities |
-| `tests/` | Checks grouped into physics, calibration, training, flight and UI |
-| `docs/` | Current guides and research design; dated reports in `docs/history/` |
-| `data/` | Raw recordings, processed data, physical baselines and flight imports |
-| `runs/` | Training checkpoints and per-run validation records |
-| `results/` | Comparison studies, immutable source snapshots and plots |
+| `workspace/baseline/` | Verified retained M0, original forecast, preliminary replay inputs |
+| `experiments/<study>/` | Take schedule, recording pairs, review decisions and study ledger |
+| `exports/<study>/<generation>/` | The exact CSV and accompanying frozen export files |
+| `runs/` | Fitting, planning, rehearsal and evaluation outputs, with logs |
+| `config/` | Portable source defaults and local catalogs |
+| `deployment/` | Guided lab app, workflow and baseline packaging |
+| `simulator/`, `planning/`, `experimental_data/`, `learning/` | Numerical and research implementations |
+| `tests/` | Isolated verification; no hardware is required for the deployment subset |
 
-Generated runs, results and caches are excluded from ordinary Git/search discovery. Raw recordings, active fit dependencies, selected policies, current training runs and the original CEM prior are preserved.
+Everything needed for a study stays inside the checkout. Copy the whole folder
+when transferring a study, excluding `.venv/` and rebuilding it on the destination.
+Do not move or edit a job while it is running. Generated/private experiment files
+are excluded from source control; the private handoff archive includes the
+baseline explicitly.
 
-## Run checks
+## Check the computer
 
-```powershell
-.venv/Scripts/python.exe run_tests.py physics
-.venv/Scripts/python.exe run_tests.py flight
-.venv/Scripts/python.exe run_tests.py training ui
-.venv/Scripts/python.exe run_tests.py
+```sh
+.venv/bin/python tools/check_lab.py --compute --require-cuda --require-baseline
 ```
 
-With no group, all maintained tests run. See [the test guide](tests/README.md) for scope. Some calibration, GPU and training integration checks are intentionally slower.
+On Windows use `.venv\Scripts\python.exe` instead. This checks dependencies,
+CUDA, a small float64 tensor operation and baseline integrity. It does not run a
+fit, planner or flight. [Validation notes](docs/VALIDATION.md) distinguish completed
+Windows checks from the remaining Ubuntu/RTX 5080 check.
 
-## Reproducibility
+## Research and reproduction
 
-Each training run keeps its model/task/algorithm settings, checkpoints and validation history. The active comparison also freezes its source. Applying a new baseline or changing UI settings affects future runs rather than rewriting existing experiments. Historical reports document the settings at the time; the current configuration and project context take precedence.
+The guided app wraps the existing staged identification and offline MPPI code.
+`python run_simulation.py` opens the advanced research interface, including PPO;
+it is not required for the colleague's experiment. The historical
+`--headless` option runs a different force-model diagnostic and is not the lab
+startup test.
 
-Legacy UI pages, MPCC code/configuration, the duplicate launcher, one-off experiment scripts and obsolete tests have been removed from the working tree. Retired artifacts and the older source-review bundle are outside this repository, in the sibling `Sim2Real2SimWhip-retired-20260906` directory; `moved.json` there records their original locations. The current interface uses only the five research pages described above.
+Read [method and evidence notes](docs/REPRODUCIBILITY.md). Preserving the original
+M0 retains its disabled cable residual; the later full updates add that capacity.
+The M0-to-M2 experiment therefore evaluates the complete refinement procedure.
+
+This branch provides software and CSV exports. It does not implement the external
+aircraft sender or establish vehicle-specific execution limits. The operator uses
+the laboratory's existing execution, measurement and launch procedures.

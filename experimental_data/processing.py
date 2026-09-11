@@ -88,7 +88,7 @@ def _coordinate_audit(
 
 
 def _processing_fingerprint(
-    source_hashes: dict[str, str], config: dict[str, object]
+    source_hashes: dict[str, str], config: dict[str, object], model_config: dict[str, object]
 ) -> str:
     processor_sources = (
         "io.py", "logger.py", "motive.py", "sync.py", "quality.py", "processing.py"
@@ -96,11 +96,16 @@ def _processing_fingerprint(
     processor_hashes = {
         name: sha256_file(PACKAGE_ROOT / name) for name in processor_sources
     }
+    processor_hashes['../simulator/geometry.py'] = sha256_file(PROJECT_ROOT/'simulator/geometry.py')
     return canonical_json_hash(
         {
             "source_hashes": source_hashes,
             "processing_config": config,
             "processor_source_hashes": processor_hashes,
+            "quality_geometry": {
+                "offset_tracking_m": model_config['recorded_data']['optitrack_to_attachment_offset_body_m'],
+                "cable_arc_lengths_m": model_config['cable']['marker_interval_lengths_m'],
+            },
         }
     )
 
@@ -152,11 +157,13 @@ def process_take(
     take_id = folder.name
     logger_path, motive_path = resolve_raw_pair(folder)
     config = load_config(config_path)
+    model_config = json.loads(
+        (PROJECT_ROOT / 'config/model.json').read_text(encoding='utf-8'))
     source_hashes = {
         logger_path.name: sha256_file(logger_path),
         motive_path.name: sha256_file(motive_path),
     }
-    fingerprint = _processing_fingerprint(source_hashes, config)
+    fingerprint = _processing_fingerprint(source_hashes, config, model_config)
     output = Path(processed_root) / take_id
     metadata_path = output / "metadata.json"
     take_path = output / "take.npz"
@@ -220,9 +227,6 @@ def process_take(
         raise ValueError("Nonidentity source transforms require an explicit quaternion transform implementation.")
     from simulator.cable import CableConfiguration
 
-    model_config = json.loads(
-        (PROJECT_ROOT / "config" / "model.json").read_text(encoding="utf-8")
-    )
     cable_configuration = CableConfiguration.from_mapping(model_config["cable"])
     flags, quality_report = evaluate_quality(
         arrays,
@@ -340,7 +344,15 @@ def process_take(
         "cable_label_mapping": {f"c{index+1}": label for index, label in enumerate(config["cable_labels"])},  # type: ignore[arg-type]
         "motive_field_mapping": motive.field_mapping,
         "coordinate_transform": transform,
-        "quaternion_convention": "Motive header X,Y,Z,W; normalized sign-continuous active body-to-world",
+        "quaternion_convention": "Motive header X,Y,Z,W; normalized sign-continuous active tracking-rigid-body-to-world",
+        "reference_geometry": {
+            "tracked_point": "cf_7 rigid-body origin at the top marker plane",
+            "attachment_offset_tracking_m": model_config['recorded_data']['optitrack_to_attachment_offset_body_m'],
+            "attachment_to_c1_arc_length_m": cable_configuration.marker_interval_lengths_m[0],
+            "attachment_position": "tracked_position + R_tracking_to_world * offset_tracking",
+            "firmware_body_frame_equivalence": "not established by this recording parser",
+            "center_of_mass": "not inferred",
+        },
         "command_semantics": command_semantics,
         "processed_command_fields": {
             "p_cmd_m": "command_position_m",
@@ -357,7 +369,7 @@ def process_take(
         "processing_config_sha256": canonical_json_hash(config),
         "processor_source_sha256": {
             name: sha256_file(PACKAGE_ROOT / name)
-            for name in ("io.py", "logger.py", "motive.py", "sync.py", "quality.py", "processing.py")
+            for name in ("io.py", "logger.py", "motive.py", "sync.py", "quality.py", "processing.py", "../simulator/geometry.py")
         },
         "processing_fingerprint": fingerprint,
         "processed_take_sha256": take_hash,

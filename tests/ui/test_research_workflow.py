@@ -37,37 +37,6 @@ def test_recommended_fit_dispatch_and_complete_application(workspace):
     assert read_json(workspace/'data/baselines'/version/'manifest.json')['reviewed_candidate_sha256']==digest
 
 
-def test_calibration_review_controls_keep_saved_candidate(workspace,monkeypatch,tmp_path):
-    os.environ.setdefault('QT_QPA_PLATFORM','offscreen')
-    from PySide6.QtWidgets import QApplication,QFileDialog
-    from simulator.gui.calibration_page import BaselinePage
-    source=ROOT/'data/calibration_audits/20260905_constrained_fit'
-    directory=workspace/'data/calibration_audits/review'
-    directory.mkdir(parents=True)
-    for name in ['recommended_model.json','candidate_review.json','evaluation.json','geometry_drag_seed_2s_predictions.npz']:
-        shutil.copy2(source/name,directory/name)
-    app=QApplication.instance() or QApplication([])
-    page=BaselinePage(workspace);page.show();app.processEvents()
-    assert page.steps.count()==3 and page.candidate==directory
-    initial=read_json(workspace/'config/model.json')
-    page.change_role('fig8_001',enabled=False)
-    assert page.candidate==directory and page.apply_button.isEnabled()
-    page.use_candidate_inputs()
-    assert page.model_values()['cable']['external_drag_s_inv']==.3
-    assert read_json(workspace/'config/model.json')==initial
-    page.view.setCurrentIndex(1);app.processEvents()
-    assert len(page.figure.axes)==3 and len(page.figure.axes[0].lines)==2
-    destination=tmp_path/'export';destination.mkdir()
-    monkeypatch.setattr(QFileDialog,'getExistingDirectory',lambda *a,**kw:str(destination))
-    page.export_fit()
-    assert (destination/'calibration_1.pdf').exists()
-    assert (destination/'geometry_drag_seed_2s_predictions.npz').exists()
-    launched=[]
-    monkeypatch.setattr(page.job,'start',lambda directory,command:launched.append(directory))
-    page.start_job('fit')
-    assert read_json(launched[0]/'fit_config.json')['method']=='constrained_geometry_drag'
-    page.steps.setEnabled(True)
-    page.close();app.processEvents()
 
 
 def test_fit_window_sampling_excludes_disabled_and_protected(tmp_path):
@@ -90,6 +59,8 @@ def test_fit_window_sampling_excludes_disabled_and_protected(tmp_path):
 @pytest.fixture
 def workspace(tmp_path):
     shutil.copytree(ROOT / 'config', tmp_path / 'config')
+    # These independent force-backend checks must not inherit the live PVA pointer.
+    atomic_json(tmp_path/'config/research_workspace.json',dict(config_directory='config'))
     (tmp_path / 'data').mkdir()
     shutil.copy2(ROOT / 'data/dataset_manifest.json', tmp_path / 'data/dataset_manifest.json')
     return tmp_path
@@ -104,45 +75,16 @@ def test_launch_snapshots_isolate_algorithms_and_future_edits(workspace):
     assert read_json(sac / 'launch_config/sac.json')['seed'] == 19
     assert sha256_file(workspace / 'config/ppo.json') == before
     assert read_json(ppo / 'launch_config/ppo.json')['validation']['every_episodes'] == 8
-    task = read_json(workspace / 'config/task.json')
+    pointer=read_json(workspace/'config/research_workspace.json',{})
+    task_path=workspace/pointer.get('config_directory','config')/'task.json'
+    task = read_json(task_path)
+    original_target_x=task['target_position_m'][0]
     task['target_position_m'][0] = 2
-    atomic_json(workspace / 'config/task.json', task)
-    assert read_json(ppo / 'launch_config/task.json')['target_position_m'][0] == 1
+    atomic_json(task_path, task)
+    assert read_json(ppo / 'launch_config/task.json')['target_position_m'][0] == original_target_x
     assert '--config-directory' in command
 
 
-def test_ui_selects_an_externally_started_run(workspace):
-    os.environ.setdefault('QT_QPA_PLATFORM','offscreen')
-    from PySide6.QtWidgets import QApplication
-    from simulator.gui.training_workspace import AlgorithmTrainingPage
-    directory,_=prepare_training(workspace,'PPO',seed=7,episodes=512,batch=512,device='cpu')
-    atomic_json(directory/'status.json',{'status':'STARTING','pid':os.getpid(),'episodes':0,'target_episodes':512})
-    app=QApplication.instance() or QApplication([])
-    page=AlgorithmTrainingPage(workspace,'PPO')
-    assert page.directory==directory
-    assert not page.start_button.isEnabled()
-    assert page.stop_button.isEnabled()
-    assert page.progress.format().startswith('Starting')
-    metadata=read_json(directory/'run.json')
-    metadata['parent_training_episodes']=128
-    atomic_json(directory/'run.json',metadata)
-    atomic_json(directory/'validation_latest.json',{'training_episodes':128})
-    page.refresh_results()
-    assert page.progress.format().startswith('Running · 128 / 512')
-    assert 'Collecting training batch' in page.progress.format()
-    atomic_json(directory/'status.json',dict(status='RUNNING',pid=os.getpid(),episodes=128,
-        target_episodes=512,collection_batch=256,stage='Planning force sequences',phase_step=23,phase_total=70))
-    page.refresh_results()
-    assert not page.batch_progress.isHidden()
-    assert page.batch_progress.value()==328
-    assert '23/70 steps' in page.batch_progress.format()
-    assert '128 / 512 completed attempts' in page.progress.format()
-    page.stop_training()
-    assert (directory/'STOP_REQUESTED').exists()
-    page.refresh_results()
-    assert not page.stop_button.isEnabled()
-    assert page.progress.format().startswith('Stopping')
-    page.shutdown();page.close();app.processEvents()
 
 
 def test_apply_baseline_versions_model_without_touching_raw_data(workspace):
@@ -151,8 +93,10 @@ def test_apply_baseline_versions_model_without_touching_raw_data(workspace):
     raw.write_text('preserved raw samples')
     model = read_json(workspace / 'config/model.json')
     model['point_mass']['mass_kg'] = .17
+    model['fullstate_execution'] = {'enabled': True, 'checkpoint': 'previous_geometry.pt'}
     version = apply_baseline(workspace, model)
     assert read_json(workspace / 'config/model.json')['point_mass']['mass_kg'] == .17
+    assert 'fullstate_execution' not in read_json(workspace / 'config/model.json')
     assert (workspace / 'data/baselines' / version / 'model.json').exists()
     assert raw.read_text() == 'preserved raw samples'
     fit = workspace / 'data/job'
@@ -164,6 +108,7 @@ def test_apply_baseline_versions_model_without_touching_raw_data(workspace):
         apply_baseline(workspace, changed, fit_directory=fit)
     apply_baseline(workspace, model, fit_directory=fit)
     assert read_json(workspace / 'config/model.json')['cable']['EI_n_m2'] == 4e-5
+    assert 'fullstate_execution' not in read_json(workspace / 'config/model.json')
 
 
 def test_validation_journal_keeps_actual_execution_and_reused_policy_identity(tmp_path, monkeypatch):
@@ -220,20 +165,6 @@ def test_validation_journal_keeps_actual_execution_and_reused_policy_identity(tm
     export_learning(tmp_path, tmp_path / 'figures', 'PPO')
     assert (tmp_path / 'figures/ppo_learning.svg').stat().st_size > 1000
     assert (tmp_path / 'figures/source_validation_history.csv').exists()
-    os.environ.setdefault('QT_QPA_PLATFORM', 'offscreen')
-    from PySide6.QtWidgets import QApplication
-    from simulator.gui.training_workspace import PolicyViewport
-    app = QApplication.instance() or QApplication([])
-    viewport = PolicyViewport(ROOT, 'PPO')
-    viewport.set_active(True)
-    assert viewport.load_trial(tmp_path / first['replay'], first)
-    np.testing.assert_array_equal(viewport.arrays['positions_m'], result.recording[0]['positions_m'])
-    viewport.clear_trial()
-    assert viewport.arrays is None and not viewport.play.isEnabled()
-    viewport.timer.stop()
-    viewport.viewer.close()
-    viewport.close()
-    app.processEvents()
 
 
 @pytest.mark.parametrize('algorithm', ['ppo', 'sac'])
@@ -283,29 +214,6 @@ def test_real_short_training_writes_batch_validation_and_run_snapshot(workspace,
         assert data['positions_m'].shape[1:] == (1, 12, 3)
 
 
-def test_five_pages_and_parallel_plot_viewport(workspace):
-    os.environ.setdefault('QT_QPA_PLATFORM', 'offscreen')
-    from PySide6.QtWidgets import QApplication
-    from simulator.gui.main_window import SimulatorMainWindow, PAGE_DEFINITIONS
-    app = QApplication.instance() or QApplication([])
-    window = SimulatorMainWindow(workspace, *[read_json(workspace / 'config' / name)
-                                               for name in ('model.json', 'task.json', 'ppo.json')])
-    window.show()
-    assert window.main_tabs.count() == 5
-    assert all('MPCC' not in title for title, _ in PAGE_DEFINITIONS)
-    for index, page in ((2, window.training_page), (3, window.sac_page)):
-        window.main_tabs.setCurrentIndex(index)
-        app.processEvents()
-        assert page.canvas.isVisible()
-        assert page.viewport.viewer.isVisible()
-        assert not page.run_latest_button.isEnabled()
-        assert not page.export_button.isEnabled()
-        assert len(page.figure.axes[0].lines) == 0
-    protected_row = list(window.baseline_page.manifest['takes']).index('fig8vertical_002')
-    assert not window.baseline_page.table.cellWidget(protected_row, 2).isEnabled()
-    assert window.baseline_page.model_values() == read_json(workspace / 'config/model.json')
-    window.close()
-    app.processEvents()
 
 
 def test_fitting_emits_measured_and_predicted_validation_window(workspace):

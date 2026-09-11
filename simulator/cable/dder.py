@@ -351,6 +351,9 @@ def _curvature_rate_jacobian_impl(
     rest_lengths: torch.Tensor,
     endpoint_orientations: torch.Tensor | None,
     endpoint_orientation_rates: torch.Tensor | None,
+    *,
+    frame_regularization: float = 0.0,
+    vectorized: bool = False,
 ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """Return ``J, r, w`` for ``0.5 * Cb * ||J v + r||_w^2``."""
 
@@ -411,6 +414,24 @@ def _curvature_rate_jacobian_impl(
         identity_batch = identity[None].expand(previous.shape[0], -1, -1)
         tangent_difference = previous - following
         normal = torch.linalg.cross(previous, following, dim=-1)
+        if frame_regularization>0:
+            # Versioned smooth transition at an unobservable straight-rod bend
+            # plane. Algebraically combine the weight and normal projection so
+            # no normalized zero vector or hard rank switch is differentiated.
+            # This is a regularized damping model, not identical legacy physics.
+            normal_squared=normal.square().sum(dim=-1)
+            regularized=normal_squared+frame_regularization
+            coefficient=-2.0/torch.clamp(1.0+(previous*following).sum(dim=-1),
+                min=128.0*torch.finfo(positions.dtype).eps)
+            bent_previous=(coefficient[...,None,None]*normal[..., :,None]
+                *torch.linalg.cross(normal,previous,dim=-1)[...,None,:]/regularized[...,None,None])
+            bent_following=(coefficient[...,None,None]*normal[..., :,None]
+                *torch.linalg.cross(following,normal,dim=-1)[...,None,:]/regularized[...,None,None])
+            straight_inverse=.5*(identity_batch-previous[..., :,None]*previous[...,None,:])
+            corotation=_skew_matrix(curvature)
+            weight=(frame_regularization/regularized)[...,None,None]
+            return (bent_previous+weight*(derivative_previous+corotation@straight_inverse@_skew_matrix(previous)),
+                bent_following+weight*(derivative_following+corotation@straight_inverse@_skew_matrix(following)))
         # On unit-tangent variations, removing the pair's rigid spin leaves
         # only the rate of 2*tan(theta/2), along its binormal. Evaluate this
         # directly: the equivalent angular pseudoinverse divides by 1-cos(theta)
@@ -438,6 +459,21 @@ def _curvature_rate_jacobian_impl(
             torch.where(bent, bent_previous, derivative_previous + corotation @ spin_previous),
             torch.where(bent, bent_following, derivative_following + corotation @ spin_following),
         )
+
+    if vectorized and endpoint_orientations is None:
+        # Evaluate independent interior vertices in the batch dimension instead
+        # of launching the same geometry algebra once per cable vertex.
+        count=node_count-2
+        dp,df=objective_curvature_derivatives(tangents[:,:-1].reshape(-1,3),tangents[:,1:].reshape(-1,3))
+        previous=(dp@tangent_rate_blocks[:,:-1].reshape(-1,3,3)).reshape(batch,count,3,3)
+        following=(df@tangent_rate_blocks[:,1:].reshape(-1,3,3)).reshape(batch,count,3,3)
+        jacobian=positions.new_zeros(batch,count,3,node_count,3)
+        index=torch.arange(count,device=positions.device)
+        jacobian[:,index,:,index,:]=-previous.transpose(0,1)
+        jacobian[:,index,:,index+1,:]=(previous-following).transpose(0,1)
+        jacobian[:,index,:,index+2,:]=following.transpose(0,1)
+        weights=(2.0/(rest_lengths[:-1]+rest_lengths[1:]))[None].expand(batch,-1).repeat_interleave(3,dim=1)
+        return jacobian.reshape(batch,3*count,3*node_count),positions.new_zeros(batch,3*count),weights
 
     zero_block = torch.zeros(
         (batch, 3, 3), dtype=positions.dtype, device=positions.device
@@ -523,6 +559,9 @@ def _implicit_bending_damping_velocity(
     conjugate_gradient_iterations: int | None = None,
     damping_backend: str = "pcg60_reference",
     pinned_endpoints: PinnedEndpointMask = TWO_PINNED_ENDPOINTS,
+    linear_solvers=None,
+    frame_regularization: float = 0.0,
+    vectorized=False,
 ) -> torch.Tensor:
     """Backward-Euler solve for exact Kelvin--Voigt curvature damping.
 
@@ -540,6 +579,14 @@ def _implicit_bending_damping_velocity(
     )
 
     selected_backend = validate_damping_backend(damping_backend)
+    if linear_solvers is not None:
+        if frame_regularization!=0:
+            raise ValueError('Legacy fused damping does not implement curvature frame regularization')
+        if (selected_backend != 'pcg32_experimental' or pinned_endpoints != FREE_ENDPOINTS
+                or endpoint_orientations is not None):
+            raise ValueError('Fused rehearsal damping requires free isotropic nodes and 32 PCG iterations.')
+        return linear_solvers.damping(positions, undamped_velocity, boundary_velocity,
+                                 rest_lengths, masses, substep_dt, damping)
     batch, node_count, _ = positions.shape
     boundary_count = int(pinned_endpoints[0]) + int(pinned_endpoints[1])
     if boundary_velocity.shape != (batch, boundary_count, 3):
@@ -548,7 +595,8 @@ def _implicit_bending_damping_velocity(
             "the selected pinned endpoints."
         )
     fixed_runtime_damping = (
-        positions.is_cuda
+        frame_regularization==0
+        and positions.is_cuda
         and positions.dtype == torch.float32
         and positions.shape[1] in (11, 12, 21, 31)
         and pinned_endpoints in (START_PINNED_FREE_END, CLAMPED_START_FREE_END)
@@ -586,7 +634,8 @@ def _implicit_bending_damping_velocity(
         elif selected_backend == "block_banded_direct_experimental":
             conjugate_gradient_iterations = None
     jacobian, affine, weight = _curvature_rate_jacobian_impl(
-        positions, rest_lengths, endpoint_orientations, endpoint_orientation_rates
+        positions, rest_lengths, endpoint_orientations, endpoint_orientation_rates,
+        frame_regularization=frame_regularization,vectorized=vectorized,
     )
     free_start = int(pinned_endpoints[0])
     free_stop = node_count - int(pinned_endpoints[1])
@@ -1007,6 +1056,10 @@ def solve_symmetric_tridiagonal_dense(
     system = torch.diag_embed(diagonal)
     system = system + torch.diag_embed(off_diagonal, offset=1)
     system = system + torch.diag_embed(off_diagonal, offset=-1)
+    if system.is_cuda and torch.cuda.is_current_stream_capturing():
+        # Same dense solve, with asynchronous status during a captured graph.
+        # Runtime callers reject nonfinite/invalid trajectories after replay.
+        return torch.linalg.solve_ex(system, right_hand_side.unsqueeze(-1), check_errors=False).result.squeeze(-1)
     return torch.linalg.solve(system, right_hand_side.unsqueeze(-1)).squeeze(-1)
 
 
@@ -1067,6 +1120,8 @@ def momentum_project_lengths(
         if dense_solve
         else solve_symmetric_tridiagonal
     )
+    if dense_solve == 'cuda_tridiagonal':
+        from .cuda_tridiagonal import solve
     value = clamp_boundary(positions)
     epsilon = 64.0 * torch.finfo(value.dtype).eps
     for _ in range(iterations):
@@ -1160,6 +1215,8 @@ def momentum_project_velocities(
         if dense_solve
         else solve_symmetric_tridiagonal
     )
+    if dense_solve == 'cuda_tridiagonal':
+        from .cuda_tridiagonal import solve
     multiplier = solve(
         diagonal + regularization,
         off_diagonal,
@@ -1196,8 +1253,11 @@ class DderParameters:
     substeps: int = 2
     constraint_iterations: int = 8
     external_drag_node_weights: tuple[float, ...] | None = None
+    curvature_frame_regularization: float = 0.0
 
     def __post_init__(self) -> None:
+        if not math.isfinite(self.curvature_frame_regularization) or self.curvature_frame_regularization<0:
+            raise ValueError('Curvature frame regularization must be finite and nonnegative')
         if self.node_count < 6:
             raise ValueError("Pinned-endpoint DDER requires at least six vertices.")
         positive = (
@@ -1284,6 +1344,13 @@ class DderRuntimeConstants:
 
 class DderModel:
     """Batched CUDA transition for a straight, isotropic, inextensible cable."""
+
+    def _drag_rates(self, reference, nominal, node_weights):
+        rates = nominal[:, None, None] * node_weights[None, :, None]
+        learned = getattr(self.motion_residual, 'drag_rates', None)
+        if learned is not None:
+            rates = rates + learned(reference)[None, :, None]
+        return rates
 
     def __init__(self, parameters: DderParameters) -> None:
         self.parameters = parameters
@@ -1714,6 +1781,7 @@ class DderModel:
                 rest_lengths,
                 endpoint_orientations,
                 endpoint_orientation_rates,
+                frame_regularization=self.parameters.curvature_frame_regularization,
             )
             rate = (
                 jacobian @ velocity.reshape(velocity.shape[0], -1, 1)
@@ -2022,11 +2090,11 @@ class DderModel:
             if self.motion_residual is not None:
                 acceleration = acceleration + self.motion_residual(q, v)
             undamped_v = (v + substep_dt * acceleration) * torch.exp(
-                -external_drag[:, None, None] * substep_dt * q.new_tensor(
+                -self._drag_rates(q, external_drag, q.new_tensor(
                     self.parameters.external_drag_node_weights
                     if self.parameters.external_drag_node_weights is not None
                     else (1.,) * self.parameters.node_count
-                )[None, :, None]
+                )) * substep_dt
             )
             predicted_v = _implicit_bending_damping_velocity(
                 q,
@@ -2039,6 +2107,7 @@ class DderModel:
                 orientations,
                 orientation_rate,
                 pinned_endpoints=pinned_endpoints,
+                frame_regularization=self.parameters.curvature_frame_regularization,
             )
             predicted_q = q + substep_dt * predicted_v
             predicted_q = _replace_pinned_values(
@@ -2126,6 +2195,8 @@ class DderModel:
         functional_force_autograd: bool = False,
         dense_constraint_solve: bool = False,
         analytic_bending: bool = False,
+        linear_solvers=None,
+        vectorized_curvature=False,
     ) -> DderState:
         """Fixed-shape inference update.
 
@@ -2218,8 +2289,8 @@ class DderModel:
             if self.motion_residual is not None:
                 acceleration = acceleration + self.motion_residual(q, v)
             undamped_v = (v + substep_dt * acceleration) * torch.exp(
-                -constants.external_drag_s_inv[:, None, None] * substep_dt
-                * constants.external_drag_node_weights[None, :, None]
+                -self._drag_rates(q, constants.external_drag_s_inv,
+                                 constants.external_drag_node_weights) * substep_dt
             )
             predicted_v = _implicit_bending_damping_velocity(
                 q,
@@ -2238,6 +2309,9 @@ class DderModel:
                 ),
                 damping_backend=damping_backend,
                 pinned_endpoints=pinned_endpoints,
+                linear_solvers=linear_solvers,
+                frame_regularization=self.parameters.curvature_frame_regularization,
+                vectorized=vectorized_curvature,
             )
             predicted_q = q + substep_dt * predicted_v
             predicted_q = _replace_pinned_values(
@@ -2259,7 +2333,12 @@ class DderModel:
                 and not boundary_velocity.requires_grad
                 and os.environ.get("CABLE_TWIN_FUSED_FIXED_PROJECTION", "1") != "0"
             )
-            if fixed_runtime_projection:
+            if linear_solvers is not None:
+                if pinned_endpoints != FREE_ENDPOINTS or self.parameters.constraint_iterations != 4:
+                    raise ValueError('Fused rehearsal projection requires free nodes and four iterations.')
+                next_q, v = linear_solvers.project(predicted_q, q, constants.rest_lengths_m,
+                    constants.masses_kg, boundary, boundary_velocity, substep_dt[:,0,0])
+            elif fixed_runtime_projection:
                 from .cuda_fixed_pcg import fixed_projection_supported_nodes
 
                 next_q, v = fixed_projection_supported_nodes(

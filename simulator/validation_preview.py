@@ -83,7 +83,8 @@ def record_trials(model, task, shared, agent, *, device, check_cancel=lambda: No
     arrays["time_s"] = np.arange(len(positions), dtype=np.float64) * env.physics_dt_s
     result = dict(
         validation_seed=int(settings["validation_seed"]), trials=TRIAL_COUNT,
-        target_position_m=task["target_position_m"],
+        target_position_m=env.target[0].cpu().tolist(),
+        trial_target_positions_m=env.target.cpu().tolist(),
         desired_strike_direction_world=task["desired_strike_direction_world"],
         target_radius_m=task["success"]["tip_target_distance_m"],
         recovery_duration_s=float(settings["recovery_duration_s"]),

@@ -191,8 +191,9 @@ class LiveFlight:
             raise ValueError("Invalid one-shot force sequence.")
         # This check happens before force control, never during the strike.
         deployment = self.environment.ppo_config.get('deployment', {})
-        if (float((self.state.positions_m - plan.initial_state.positions_m).norm(dim=-1).max()) > float(deployment.get('launch_position_drift_m', .04))
-                or float((self.state.velocities_m_s - plan.initial_state.velocities_m_s).norm(dim=-1).max()) > float(deployment.get('launch_velocity_drift_m_s', .15))):
+        launch_state = self.launch_state()
+        if (float((launch_state.positions_m - plan.initial_state.positions_m).norm(dim=-1).max()) > float(deployment.get('launch_position_drift_m', .04))
+                or float((launch_state.velocities_m_s - plan.initial_state.velocities_m_s).norm(dim=-1).max()) > float(deployment.get('launch_velocity_drift_m_s', .15))):
             raise ValueError("Initial state changed while preparing the strike; settle and try again.")
         self.initial_observation = plan.initial_observation.clone()
         self.force_sequence = plan.forces_world_n.detach().clone()
@@ -209,6 +210,19 @@ class LiveFlight:
                            "forces_world_n": plan.forces_world_n.tolist(),
                            "initial_positions_m": plan.initial_state.positions_m[0].tolist(),
                            "initial_velocities_m_s": plan.initial_state.velocities_m_s[0].tolist()})
+
+    def launch_state(self) -> DderState:
+        """Measured launch state; specialized rehearsals may assume cable geometry."""
+        return self.state
+
+    def is_settled(self) -> bool:
+        root_error = (self.state.positions_m[:, 0] - self.hover_position).norm()
+        cable_error = (self.state.positions_m - self.state.positions_m[:, :1] - self.hanging_offsets).norm(dim=-1).max()
+        return (float(root_error) < .03 and float(cable_error) < .04
+                and float(self.state.velocities_m_s.norm(dim=-1).max()) < .15)
+
+    def normal_command(self):
+        return self.pid.command(self.state, self.dt_s)
 
     def return_to_hover(self, reason="Manual return") -> None:
         self.phase = self.RECOVER
@@ -246,7 +260,7 @@ class LiveFlight:
             # policy inference, or hit result feeds back into this sequence.
             self.last_command = self.force_sequence[self.strike_steps:self.strike_steps + 1]
         else:
-            self.last_command = self.pid.command(self.state, self.dt_s)
+            self.last_command = self.normal_command()
         previous = self.state
         if self.physics is None:
             transition = self.model.step_runtime(previous, self.last_command, self.dt_s)
@@ -272,9 +286,7 @@ class LiveFlight:
                 self.return_to_hover("Sequence complete")
                 self.message = f"Single strike finished at {self.sequence_duration_s:.2f} s — PID recovery"
         else:
-            root_error = (self.state.positions_m[:, 0] - self.hover_position).norm()
-            cable_error = (self.state.positions_m - self.state.positions_m[:, :1] - self.hanging_offsets).norm(dim=-1).max()
-            settled = float(root_error) < .03 and float(cable_error) < .04 and float(self.state.velocities_m_s.norm(dim=-1).max()) < .15
+            settled = self.is_settled()
             self.settled_s = self.settled_s + self.dt_s if settled else 0.
             if self.settled_s >= .5:
                 self.phase = self.HOVER

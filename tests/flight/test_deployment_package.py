@@ -62,3 +62,36 @@ def test_manifest_rejects_mutation_and_missing_critical_file(tmp_path):
     del files['task.json']; path.write_text(json.dumps(manifest))
     with pytest.raises(ValueError, match='Incomplete'):
         verify_package(tmp_path)
+
+
+@pytest.mark.parametrize('learn_drag', [False, True])
+def test_export_includes_applied_cable_residual(tmp_path, learn_drag):
+    import shutil
+    from deployment.package import export_policy, digest
+    from simulator.cable import CableConfiguration
+    from simulator.cable.residual import MotionResidual
+    from experimental_data.differentiable_fit import save_weights
+    root=tmp_path/'project'
+    run=root/'runs/ppo/test'
+    (run/'checkpoints').mkdir(parents=True)
+    model=json.loads((ROOT/'config/model.json').read_text())
+    relative=Path('data/baselines/example/motion_residual.pt')
+    (root/relative).parent.mkdir(parents=True)
+    network=MotionResidual(CableConfiguration.from_mapping(model['cable']).node_count,
+        learn_drag=learn_drag, initial_drag_s_inv=model['cable']['external_drag_s_inv']).double()
+    if learn_drag:
+        model['cable']['external_drag_s_inv'] = 0
+    save_weights(root/relative,network)
+    model['motion_residual']=dict(enabled=True,checkpoint=relative.as_posix(),sha256=digest(root/relative))
+    (run/'model.json').write_text(json.dumps(model))
+    for name in ('task','ppo'):
+        shutil.copy2(ROOT/f'config/{name}.json',run/f'{name}.json')
+    (root/'requirements').mkdir();(root/'requirements/headless.txt').write_text('')
+    (root/'deployment').mkdir();(root/'deployment/TESTING_README.md').write_text('test')
+    torch.save(dict(schema='force_ppo_checkpoint_v1',episodes=0),run/'checkpoints/latest.pt')
+    destination=tmp_path/'export'
+    export_policy(root,run/'checkpoints/latest.pt',destination)
+    assert digest(destination/relative)==digest(root/relative)
+    ForceControlledPointCable.from_mapping(json.loads((destination/'policy/model.json').read_text()),root=destination)
+    manifest=json.loads((destination/'TRANSFER_MANIFEST.json').read_text())
+    assert relative.as_posix() in manifest['files']

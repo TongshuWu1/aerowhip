@@ -22,6 +22,7 @@ class CableConfiguration:
     substeps: int
     constraint_iterations: int
     external_drag_s_inv: float = 0.0
+    curvature_frame_regularization: float = 0.0
 
     def __post_init__(self) -> None:
         lengths = tuple(float(value) for value in self.marker_interval_lengths_m)
@@ -56,6 +57,8 @@ class CableConfiguration:
             raise ValueError("DDER solver counts must be positive.")
         if not math.isfinite(self.external_drag_s_inv) or self.external_drag_s_inv < 0:
             raise ValueError("External drag rate must be finite and non-negative.")
+        if not math.isfinite(self.curvature_frame_regularization) or self.curvature_frame_regularization<0:
+            raise ValueError('Curvature frame regularization must be finite and nonnegative')
         object.__setattr__(self, "marker_interval_lengths_m", lengths)
         object.__setattr__(self, "moving_marker_masses_kg", marker_masses)
         object.__setattr__(self, "gravity_m_s2", gravity)
@@ -75,6 +78,7 @@ class CableConfiguration:
             substeps=int(payload["substeps"]),
             constraint_iterations=int(payload["constraint_iterations"]),
             external_drag_s_inv=float(payload.get("external_drag_s_inv", 0.0)),
+            curvature_frame_regularization=float(payload.get('curvature_frame_regularization',0.0)),
         )
 
     @property
@@ -160,6 +164,7 @@ class CableConfiguration:
             vertex_masses_kg=self.vertex_masses_kg,
             substeps=self.substeps,
             constraint_iterations=self.constraint_iterations,
+            curvature_frame_regularization=self.curvature_frame_regularization,
         )
 
 

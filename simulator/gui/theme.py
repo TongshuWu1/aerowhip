@@ -10,6 +10,10 @@ from PySide6.QtWidgets import QFrame, QLabel, QVBoxLayout, QWidget
 
 
 APP_STYLE = """
+QLabel#pipelineBanner {
+    color: #1e40af; background: #eaf1ff; border: 1px solid #d5e3ff;
+    border-radius: 8px; padding: 14px; font-weight: 600;
+}
 QMainWindow, QWidget#applicationShell, QTabWidget::pane {
     background: #f5f7fb;
 }
@@ -103,13 +107,17 @@ QLabel#metricDetail {
     color: #64748b;
     font-size: 8.5pt;
 }
-QPushButton, QComboBox, QDoubleSpinBox, QSpinBox {
+QPushButton, QComboBox, QDoubleSpinBox, QSpinBox, QLineEdit {
     background: white;
     color: #172033;
     border: 1px solid #cbd5e1;
     border-radius: 6px;
     min-height: 30px;
     padding: 3px 11px;
+}
+QPlainTextEdit, QTextEdit {
+    background: white; color: #172033; border: 1px solid #cbd5e1;
+    selection-background-color: #2563eb; selection-color: white;
 }
 QPushButton:hover, QComboBox:hover, QDoubleSpinBox:hover, QSpinBox:hover {
     border-color: #2563eb;

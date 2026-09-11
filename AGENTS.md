@@ -1,11 +1,24 @@
-# Project instructions for the next coding agent
+# Deployment branch maintenance
 
-Read `HANDOFF.md` first; it is the current research and deployment decision record.
+Read HANDOFF.md and README.md first. This branch provides a desktop workflow for
+the preserved M0 â†’ new M1 â†’ new M2 experiment. The research checkout and original
+evidence are separate; never modify or delete them as deployment cleanup.
 
-- Preserve the user's selected PPO, saved experiment configurations, active physical calibration and original measurements. Keep the five-page workflow and 20 Hz open-loop strike semantics unless the user requests a methodological change.
-- Do not inspect, evaluate, plot, fit or tune against the protected `fig8vertical_002` recording. Copying it opaquely for the authorized private lab transfer is permitted.
-- PPO and SAC were intentionally stopped. Do not restart training/supervisors automatically. The selected checkpoint hash is in the handoff.
-- Offline planning/export is not flight authorization. No ROS flight sender is implemented or validated. Ask for actual vehicle/interface details rather than inventing frames, firmware parameters or topic names.
-- Preserve raw logs, failed trials and immutable study snapshots. Do not change rewards, physics or report selected validation as independent paper evidence during deployment work.
-- Do not reset the working tree or rewrite Git history as cleanup. Superseded artifacts were moved outside the repo; permanent deletion was blocked by approval review, so do not retry via another mechanism.
-- Prefer targeted existing tests and record what hardware/OS was actually tested. Do not claim Ubuntu/4080/5080 validation from a Windows/5090 run.
+- Preserve retained M0, preliminary train/holdout roles, original measurements,
+  selected policies and frozen CSV/forecast bytes. Never access protected
+  fig8vertical_002.
+- New whip batches use 001/002/004 for adaptation and 003/005 for operational
+  validation. Final M0/M2 pairs are never training data.
+- Primary reporting is continuous minimum 3D tip-to-target distance. Do not change
+  physics, rewards or fitting definitions as a UI or portability fix.
+- All runtime files belong inside this checkout. Use pathlib and the current
+  interpreter, not workstation paths or Windows-only interpreter assumptions.
+- Exports are 30 Hz desired PVA CSVs. This application does not communicate with,
+  arm or control an aircraft. Keep the actual flight program separate.
+- Fit, search and training require explicit operator actions. Startup, refresh,
+  health checks and import must not launch those jobs.
+- Preserve immutable inputs, failed runs, model ancestry and preflight forecasts.
+  Test changes with isolated fixtures. Record the actual OS/GPU tested; Windows
+  checks do not establish Ubuntu/RTX 5080 validation.
+- Keep the lab interface concise. Advanced research tools can remain available
+  without becoming required steps for the colleague.

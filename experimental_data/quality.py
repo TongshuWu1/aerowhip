@@ -3,19 +3,11 @@
 from __future__ import annotations
 
 import numpy as np
+from simulator.geometry import normalized_rotations_xyzw, attachment_positions
 
 
 def quaternion_to_rotation_matrix_xyzw(quaternion: np.ndarray) -> np.ndarray:
-    q = np.asarray(quaternion, dtype=np.float64)
-    x, y, z, w = np.moveaxis(q, -1, 0)
-    return np.stack(
-        (
-            1 - 2 * (y*y + z*z), 2 * (x*y-z*w), 2 * (x*z+y*w),
-            2 * (x*y+z*w), 1 - 2 * (x*x+z*z), 2 * (y*z-x*w),
-            2 * (x*z-y*w), 2 * (y*z+x*w), 1 - 2 * (x*x+y*y),
-        ),
-        axis=-1,
-    ).reshape(q.shape[:-1] + (3, 3))
+    return normalized_rotations_xyzw(quaternion)[0]
 
 
 def _transition_frames(values: np.ndarray) -> np.ndarray:
@@ -72,17 +64,19 @@ def evaluate_quality(
             axis=1,
         )
     )
-    rotation = quaternion_to_rotation_matrix_xyzw(arrays["uav_orientation_xyzw"])
-    offset = np.asarray(attachment_offset_body_m, dtype=np.float64)
-    connector = uav + np.einsum("tij,j->ti", rotation, offset)
+    connector, pose_valid = attachment_positions(uav, arrays["uav_orientation_xyzw"],
+                                                attachment_offset_body_m)
     sites = np.concatenate((connector[:, None], marker), axis=1)
-    site_valid = np.concatenate((uav_valid[:, None], marker_valid), axis=1)
+    site_valid = np.concatenate(((uav_valid & pose_valid)[:, None], marker_valid), axis=1)
     interval_valid = site_valid[:, :-1] & site_valid[:, 1:]
     measured_interval = np.linalg.norm(np.diff(sites, axis=1), axis=2)
     interval_error = np.abs(measured_interval - np.asarray(interval_lengths_m)[None])
+    chord_excess = np.maximum(measured_interval - np.asarray(interval_lengths_m)[None], 0.)
+    # A flexible cable's chord can be shorter than its arc length. Only excess
+    # length is inconsistent; bending must not be rejected as bad geometry.
     geometry_invalid = np.any(
         interval_valid
-        & (interval_error > float(quality_config["maximum_interval_length_error_m"])),
+        & (chord_excess > float(quality_config["maximum_interval_length_error_m"])),
         axis=1,
     )
     marker_dropout = ~np.all(marker_valid, axis=1)
@@ -92,9 +86,10 @@ def evaluate_quality(
         & np.isfinite(arrays["command_age_s"])
         & (arrays["command_age_s"] > float(quality_config["maximum_command_age_s"]))
     )
-    critical = (~uav_valid) | uav_jump | marker_jump | geometry_invalid
+    critical = (~uav_valid) | (~pose_valid) | uav_jump | marker_jump | geometry_invalid
     flags = {
         "quality_uav_invalid": ~uav_valid,
+        "quality_pose_invalid": ~pose_valid,
         "quality_uav_jump": uav_jump,
         "quality_marker_dropout": marker_dropout,
         "quality_marker_jump": marker_jump,
@@ -122,5 +117,7 @@ def evaluate_quality(
         ],
         "flagged_frame_counts": {name: int(np.count_nonzero(mask)) for name, mask in flags.items() if name != "auto_frame_valid"},
         "maximum_measured_interval_error_m": float(np.nanmax(np.where(interval_valid, interval_error, np.nan))),
+        "geometry_rule": "chord <= cable arc length + configured tolerance; shorter chords are allowed",
+        "maximum_measured_chord_excess_m": float(np.nanmax(np.where(interval_valid, chord_excess, np.nan))),
     }
     return flags, report

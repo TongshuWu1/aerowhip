@@ -857,8 +857,8 @@ def _specialized_mechanics_source(
         raise ValueError(
             f"Specialized mechanics generation supports {SUPPORTED_FIXED_NODE_COUNTS}."
         )
-    if pinned_start_nodes not in (1, 2):
-        raise ValueError("Fixed mechanics supports one or two pinned start nodes.")
+    if pinned_start_nodes not in (0, 1, 2):
+        raise ValueError("Mechanics source supports zero, one or two pinned start nodes.")
     degrees_of_freedom = 3 * (node_count - pinned_start_nodes)
     residual_count = 3 * (node_count - 2)
     iteration_count = (
@@ -958,7 +958,7 @@ extern "C" __device__ __forceinline__ double block_sum(
     return warp_totals[0];
 }
 """
-    if pinned_start_nodes == 2:
+    if pinned_start_nodes != 1:
         old_assembly = r"""    const long long q_base = (long long)system_index * N * 3;
     if (lane == 0) {
 #pragma unroll
@@ -1140,6 +1140,8 @@ extern "C" __device__ __forceinline__ double block_sum(
         }
     }"""
         source = source.replace(velocity_reset, velocity_reset_new)
+    if pinned_start_nodes == 0:
+        source = source.replace('constexpr int P = 2;', 'constexpr int P = 0;')
     return block_sum + source
 
 

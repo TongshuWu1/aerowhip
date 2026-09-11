@@ -1,43 +1,90 @@
-# Installation
+# Install and launch
 
-For the current private lab bundles and PyCharm/Ubuntu instructions, start with
-[lab setup](LAB_SETUP.md). The selected-policy bundle differs from a source-only release.
+Use **Python 3.12** on Linux or Windows; the bootstrap also accepts Python 3.13.
+The current direct-dependency versions are recorded in
+[deployment constraints](../requirements/deployment-constraints.txt).
+These are tested local versions, not a transitive lockfile or a completed test
+on every operating system.
 
-The development workstation uses Windows and Python 3.12. The tested direct-package inventory is in `requirements/environment.windows-py312.json`. It records one observed environment, not a complete cross-platform lockfile. Hardware deployment and ROS are not part of this installer.
+## Ubuntu / NVIDIA workstation
 
-## Create an isolated environment
+Open a terminal in this repository and run:
 
-From the extracted source directory on Windows:
-
-```powershell
-py -3.12 -m venv .venv
-.venv/Scripts/python.exe -m pip install --upgrade pip
-.venv/Scripts/python.exe -m pip install -r requirements.txt
+```sh
+python3 --version
+python3 setup_lab.py --device cuda
+sh start_lab.sh
 ```
 
-For headless computation without the desktop dependencies, install `requirements/headless.txt` instead. Python's [venv documentation](https://docs.python.org/3/library/venv.html) describes virtual environment creation and activation; the commands above use the environment's interpreter directly.
+If your default Python is older, invoke an installed Python 3.12 explicitly.
+Python's venv module is required; on Ubuntu its package is normally
+`python3-venv`. Use a graphical desktop session for the UI.
 
-For NVIDIA training, choose the wheel appropriate to the machine using the [official PyTorch installation selector](https://pytorch.org/get-started/locally/). Do not assume an installation has GPU support solely because a GPU is present. The recorded development wheel is `2.11.0+cu128`; its exact availability and platform compatibility must be checked when recreating the environment.
+The installer creates a local environment, installs PyTorch 2.11.0 from the
+official CUDA 12.8 wheel index, then installs the desktop dependencies.
+The PyTorch project lists this [Linux/Windows installation combination](https://pytorch.org/get-started/previous-versions/).
+Its [Blackwell support announcement](https://pytorch.org/blog/pytorch-2-7/)
+explains why the CUDA 12.8 wheel family is appropriate for RTX 50-series hardware.
+A working NVIDIA driver is still required on the host.
 
-```powershell
-.venv/Scripts/python.exe -c "import torch; print(torch.__version__); print(torch.cuda.is_available())"
-```
-
-No packages are downloaded or installed by launching the simulator itself.
-
-## First run
-
-```powershell
-.venv/Scripts/python.exe run_simulation.py --headless --device cpu --duration 0.05
-.venv/Scripts/python.exe run_simulation.py
-```
-
-The first command performs a short hanging-hover simulation and reports numerical status. The second opens the desktop interface. A source-only release has an empty recording table and no trained checkpoints; these are expected states.
-
-Run the self-contained smoke tests with:
+## Windows / NVIDIA workstation
 
 ```powershell
-.venv/Scripts/python.exe -m pytest tests/physics/test_point_mass.py tests/training/test_early_stop_comparison.py tests/flight/test_flight_adaptation.py -q
+py -3.12 setup_lab.py --device cuda
+.\start_lab.cmd
 ```
 
-The full development suite also includes GPU tests and checks tied to separately held experimental recordings. Those checks do not establish fresh-install support when the data are absent. See [reproducibility](REPRODUCIBILITY.md). The GitHub workflow runs the CPU smoke subset; adding its YAML does not mean a remote CI run has occurred.
+Paths containing spaces are supported. The launchers find their own repository
+directory and do not depend on the terminal's current directory.
+
+## Inspection on a computer without CUDA
+
+```sh
+python3 setup_lab.py --device cpu
+sh start_lab.sh
+```
+
+The desktop, import and inspection functions can be used without a GPU.
+The current full model-fitting implementation requires CUDA. The app must
+report that restriction rather than silently use a different fitting method.
+
+## Verify before the lab day
+
+Linux:
+
+```sh
+.venv/bin/python tools/check_lab.py --compute --require-cuda --require-baseline
+```
+
+Windows:
+
+```powershell
+.venv\Scripts\python.exe tools/check_lab.py --compute --require-cuda --require-baseline
+```
+
+For a source-only checkout, first import the retained-M0 baseline bundle through
+the app. The private handoff ZIP already includes it.
+
+## If something needs attention
+
+- **Wrong Python version:** create the environment using Python 3.12. Do not copy
+  the developer's Windows environment onto Ubuntu.
+- **CUDA unavailable:** inspect the health-check output and `nvidia-smi`. Check
+  the installed driver and that the environment uses the CUDA wheel, not a CPU
+  wheel. Use the [official PyTorch installation guide](https://pytorch.org/get-started/locally/)
+  for your platform.
+- **Qt cannot load xcb:** install the system libraries named in Qt's error output.
+  On common Ubuntu installations, `libxcb-cursor0` and `libxkbcommon-x11-0`
+  are frequent missing runtime dependencies. See the
+  [Qt Linux requirements](https://doc.qt.io/qt-6/linux-requirements.html).
+- **No display:** run in a desktop session. Remote/headless inspection uses
+  `tools/lab.py` and `tools/check_lab.py`; no display is required for those.
+- **Missing or changed baseline files:** re-import the original bundle into a
+  fresh checkout. Do not edit hashes to make a modified asset pass.
+- **Interrupted setup:** rerun the same setup command. It reuses the local
+  environment; it does not delete experiment data.
+- **Fit/planner job fails:** keep its log and input files. The log path is shown
+  by the app. Do not replace a failed result with a historical model.
+
+The installer downloads dependencies only when explicitly run. Opening the app
+does not install software, fit a model or start a planner.

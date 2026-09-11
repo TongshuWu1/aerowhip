@@ -10,7 +10,19 @@ import time
 
 import torch
 
+from simulator.artifact_io import replace_with_retry
+
 _stop_context = ContextVar('training_stop_context', default=None)
+_runtime_pump = ContextVar('training_runtime_pump', default=None)
+
+
+def set_runtime_pump(callback):
+    """Optional in-process application event pump; ordinary training has none."""
+    return _runtime_pump.set(callback)
+
+
+def reset_runtime_pump(token):
+    _runtime_pump.reset(token)
 
 
 class TrainingStopped(Exception):
@@ -18,6 +30,8 @@ class TrainingStopped(Exception):
 
 
 def check_training_stop():
+    pump=_runtime_pump.get()
+    if pump is not None:pump()
     context = _stop_context.get()
     if context is None:
         return
@@ -34,7 +48,7 @@ def finish_stopped(artifact):
     checkpoint = torch.load(latest, map_location='cpu', weights_only=False)
     temporary = artifact / 'checkpoints/terminal.pt.tmp'
     shutil.copyfile(latest, temporary)
-    os.replace(temporary, artifact / 'checkpoints/terminal.pt')
+    replace_with_retry(temporary, artifact / 'checkpoints/terminal.pt')
     path = artifact / 'status.json'
     status = json.loads(path.read_text(encoding='utf-8'))
     # In-flight metrics may refer to an unsaved update; keep only run identity.
@@ -49,7 +63,7 @@ def finish_stopped(artifact):
         status['successes'] = int(checkpoint['successes'])
     temporary = path.with_suffix('.json.tmp')
     temporary.write_text(json.dumps(status, indent=2)+'\n', encoding='utf-8')
-    os.replace(temporary,path)
+    replace_with_retry(temporary,path)
     return status
 
 

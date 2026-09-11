@@ -1,8 +1,10 @@
 """Train a model-based strike planner against independent, open-loop execution.
 
-The actor only sees a nominal model initialized from one state estimate. All
-commands and their cutoffs are frozen before the separate plant is advanced.
-Plant contact is used for scoring, never for selecting commands or stopping.
+The actor only sees a nominal model initialized from one state estimate.
+Candidate commands are generated before the separate execution prediction.
+Legacy modes use a frozen virtual-model cutoff; native execution-success mode
+ends its scored episode at the predicted hit and exports that prefix offline.
+No measured execution feedback enters action generation.
 """
 
 from dataclasses import dataclass, replace
@@ -24,6 +26,7 @@ class DeploymentBatch:
     force_gain: torch.Tensor
     force_lag_s: torch.Tensor
     nominal: torch.Tensor
+    target_position_m: torch.Tensor | None = None
 
 
 def sample_batch(env, settings, generator) -> DeploymentBatch:
@@ -36,8 +39,21 @@ def sample_batch(env, settings, generator) -> DeploymentBatch:
         return (2 * torch.rand((size, columns), device=env.device, dtype=env.dtype,
                                generator=generator) - 1) * float(width) * varied
 
+    def ball(radius):
+        radius = float(radius)
+        if not math.isfinite(radius) or radius < 0:
+            raise ValueError('Position randomization radius must be finite and nonnegative')
+        if radius == 0:
+            return torch.zeros((size, 3), device=env.device, dtype=env.dtype)
+        direction = torch.randn((size, 3), device=env.device, dtype=env.dtype, generator=generator)
+        direction = direction / direction.norm(dim=-1, keepdim=True).clamp_min(1e-12)
+        distance = torch.rand((size, 1), device=env.device, dtype=env.dtype, generator=generator).pow(1/3)
+        return direction * distance * radius * varied
+
     root = env._batch_vector(env.task_config["initial_root_position_m"])
-    root = root + noise(settings["initial_position_m"])
+    spherical_start = 'initial_position_radius_m' in settings
+    root = root + (ball(settings['initial_position_radius_m']) if spherical_start
+                   else noise(settings["initial_position_m"]))
     velocity = env._batch_vector(env.task_config["initial_root_velocity_m_s"])
     velocity = velocity + noise(settings["initial_velocity_m_s"])
     tilt = noise(math.radians(settings["initial_cable_tilt_deg"]), 2)
@@ -60,24 +76,42 @@ def sample_batch(env, settings, generator) -> DeploymentBatch:
             angular_speed[:, None].expand_as(offsets), offsets)
         return DderState(position[:, None] + offsets, velocities)
 
-    estimate = state(root, velocity, tilt, omega, bend)
-    truth = state(root + noise(settings["state_position_error_m"]),
+    position_error = noise(settings['state_position_error_m'])
+    # New spherical experiments bound the physical start; estimation error is
+    # applied to the estimate. Legacy cube-based experiments retain their law.
+    estimate = state(root + position_error if spherical_start else root,
+                     velocity, tilt, omega, bend)
+    truth = state(root if spherical_start else root + position_error,
                   velocity + noise(settings["state_velocity_error_m_s"]),
                   tilt + noise(math.radians(settings["state_cable_tilt_error_deg"]), 2),
                   omega, bend + bend_error)
+    if settings.get('planning_cable_state')=='hanging':
+        estimate=state(root+position_error if spherical_start else root,velocity,
+            torch.zeros_like(tilt),torch.zeros_like(omega),torch.zeros_like(bend))
     lag = torch.rand((size, 1), device=env.device, dtype=env.dtype, generator=generator)
+    # No extra RNG draws for legacy, fixed-target configurations.
+    target = env._batch_vector(env.task_config['target_position_m']) + ball(settings.get('target_position_radius_m', 0.))
     return DeploymentBatch(estimate, truth,
                            1 + noise(settings["stiffness_fraction"], 1)[:, 0],
                            1 + noise(settings["damping_fraction"], 1)[:, 0],
                            1 + noise(settings["force_gain_fraction"]),
                            lag * float(settings["force_lag_max_s"]) * varied,
-                           varied[:, 0] == 0)
+                           varied[:, 0] == 0, target)
 
 
 @torch.no_grad()
 def plan_batch(env, agent, batch, rollout=None, *, progress=None):
+    terminal_execution = env.ppo_config['deployment'].get('termination') == 'execution_success_or_timeout'
+    env.ignore_contact_termination = terminal_execution
+    target = batch.target_position_m if batch.target_position_m is not None else env._batch_vector(env.task_config['target_position_m'])
+    env.target = target.detach().clone()
     observation = env.reset(batch.estimate)
     forces = []
+    if terminal_execution:
+        env._virtual_reference_positions = [batch.estimate.positions_m[:,0].clone()]
+        env._virtual_reference_velocities = [batch.estimate.velocities_m_s[:,0].clone()]
+        env._planning_failure_steps = torch.full((env.batch_size,), env.control_step_count*env.physics_steps_per_control+1,
+            device=env.device,dtype=torch.long)
     attempt_cutoffs=torch.zeros(env.batch_size,device=env.device,dtype=torch.long)
     if rollout is not None:
         for name in ("observations", "actions", "rewards", "dones", "masks",
@@ -87,6 +121,11 @@ def plan_batch(env, agent, batch, rollout=None, *, progress=None):
     def record(_state, force, _reaction):
         nonlocal attempt_cutoffs
         forces.append(force.clone())
+        if terminal_execution:
+            env._virtual_reference_positions.append(_state.positions_m[:,0].clone())
+            env._virtual_reference_velocities.append(_state.velocities_m_s[:,0].clone())
+            env._planning_failure_steps=torch.where(env.failed & (env._planning_failure_steps>len(forces)),
+                torch.full_like(env._planning_failure_steps,len(forces)),env._planning_failure_steps)
         attempt_cutoffs=torch.where((attempt_cutoffs==0)&~env.active,
             torch.full_like(attempt_cutoffs,len(forces)),attempt_cutoffs)
 
@@ -116,11 +155,16 @@ def plan_batch(env, agent, batch, rollout=None, *, progress=None):
     if not env.ppo_config['deployment'].get('require_predicted_success',True):
         attempt_cutoffs=torch.where(attempt_cutoffs>0,attempt_cutoffs,
             torch.full_like(attempt_cutoffs,len(forces)))
-        cutoffs=torch.where(env.failed,torch.zeros_like(attempt_cutoffs),attempt_cutoffs)
+        cutoffs=attempt_cutoffs if terminal_execution else torch.where(env.failed,torch.zeros_like(attempt_cutoffs),attempt_cutoffs)
     from simulator.strike_sequence import freeze_followthrough
-    return freeze_followthrough(torch.stack(forces),cutoffs,dt_s=env.physics_dt_s,
+    frozen,cutoffs=freeze_followthrough(torch.stack(forces),cutoffs,dt_s=env.physics_dt_s,
         maximum_steps=round(env.task_config['episode_duration_s']/env.physics_dt_s),
-        duration_s=env.ppo_config['deployment'].get('strike_followthrough_s',0.))
+        duration_s=0. if terminal_execution else env.ppo_config['deployment'].get('strike_followthrough_s',0.))
+    if env.model_config.get('fullstate_execution',{}).get('schema')=='tracked_pose_execution_v1':
+        from simulator.research_reference import packet_cutoffs
+        frozen,cutoffs=packet_cutoffs(frozen,cutoffs,env.physics_steps_per_control,
+            round(env.task_config['episode_duration_s']/env.physics_dt_s))
+    return frozen,cutoffs
 
 
 @torch.no_grad()
@@ -130,9 +174,13 @@ def execute_batch(nominal, batch, forces, cutoffs, settings, *, trace=None, prog
     The ordinary task environment is only a first-hit reward accumulator. Its
     frozen terminal state never feeds the independently evolving physical state.
     """
+    if nominal.model_config.get('fullstate_execution', {}).get('enabled'):
+        from .fullstate_rollout import execute_fullstate_batch
+        return execute_fullstate_batch(nominal,batch,forces,cutoffs,settings,trace=trace,progress=progress)
     score = PointForceWhipEnvironment(nominal.model_config, nominal.task_config,
                                      nominal.ppo_config, batch_size=nominal.batch_size,
                                      device=nominal.device)
+    score.target = (batch.target_position_m if batch.target_position_m is not None else nominal.target).detach().clone()
     score.reset(batch.truth)
     score.set_success_condition(target_radius_m=nominal.target_radius_m,
                                 minimum_directed_speed_m_s=nominal.minimum_directed_speed_m_s,
@@ -277,6 +325,8 @@ def execute_batch(nominal, batch, forces, cutoffs, settings, *, trace=None, prog
         "planning_invalid_tip_entry": nominal.episode_invalid_tip_entry.clone(),
         "planning_tip_entry_speed": nominal.episode_first_tip_directed_speed.clone(),
         "planning_tip_entry_angle": nominal.episode_first_tip_angle.clone(),
+        **{f'target_{axis}_m': score.target[:, i].clone() for i, axis in enumerate('xyz')},
+        **{f'initial_attachment_{axis}_m': batch.truth.positions_m[:, 0, i].clone() for i, axis in enumerate('xyz')},
     }
     score.execution_state = state
     return score
@@ -287,19 +337,42 @@ def collect_deployment_rollout(environment, agent, rollout=None, *, generator=No
     settings = environment.ppo_config["deployment"]
     batch = sample_batch(environment, settings, generator)
     forces, cutoffs = plan_batch(environment, agent, batch, rollout, progress=progress)
+    live_recorder = None
+    if rollout is not None and getattr(environment, '_live_scene_context', None):
+        from .live_scene import TrainingSceneRecorder
+        live_recorder = TrainingSceneRecorder(environment._live_scene_context)
+        if recorder is not None:
+            raise ValueError('Training scene and evaluation recorders must not share a collection.')
+        recorder = live_recorder
     if recorder is not None:
         recorder.begin(environment, batch, cutoffs)
     score = execute_batch(environment, batch, forces, cutoffs, settings,
                           trace=recorder.trace if recorder is not None else None, progress=progress)
+    if hasattr(score, 'terminal_steps') and recorder is not None:
+        recorder.cutoff = float(score.terminal_steps[0]) * environment.physics_dt_s
     if rollout is not None:
-        # Monte Carlo credit for the whole plan, including its PID recovery.
+        if hasattr(score, 'terminal_steps'):
+            trim_terminal_rollout(rollout, score.terminal_steps, environment.physics_steps_per_control)
+        # Monte Carlo credit for the configured execution objective. Native
+        # hit-termination mode credits only its terminal prefix; recovery is excluded.
         # gamma=gae_lambda=1 avoids adding an implicit preference for fast hits.
         final_steps = rollout.masks[:, :, 0].sum(0).long() - 1
         rollout.rewards[final_steps, torch.arange(environment.batch_size, device=environment.device), 0] = score.episode_reward.float()
+    if live_recorder is not None:
+        live_recorder.publish(agent, score, rollout, forces)
     for name, value in vars(score).items():
-        if name.startswith("episode_") or name in ("failed", "deployment"):
+        if name.startswith("episode_") or name in ("failed", "deployment", "displacement_allowance_m"):
             setattr(environment, name, value)
     return score
+
+
+def trim_terminal_rollout(rollout, terminal_steps, steps_per_control):
+    """Only commands generated before the execution terminal event receive credit."""
+    lengths=((terminal_steps+steps_per_control-1)//steps_per_control).clamp_min(1)
+    lengths=torch.minimum(lengths,rollout.masks[:,:,0].sum(0).long())
+    live=torch.arange(len(rollout.masks),device=lengths.device)[:,None]<lengths[None]
+    rollout.masks.mul_(live[:,:,None]);rollout.rewards.zero_();rollout.dones.zero_()
+    rollout.dones[lengths-1,torch.arange(len(lengths),device=lengths.device),0]=1.
 
 
 @torch.no_grad()
@@ -321,6 +394,7 @@ def evaluate_deployment(model, task, config, agent, *, episodes, batch_size, dev
                 'estimate_velocities_m_s': batch.estimate.velocities_m_s,
                 'truth_positions_m': batch.truth.positions_m,
                 'truth_velocities_m_s': batch.truth.velocities_m_s,
+                'target_position_m': env.target.clone(),
                 **{key: getattr(batch, key) for key in ('stiffness_scale', 'damping_scale',
                                                        'force_gain', 'force_lag_s', 'nominal')}}
 
@@ -345,6 +419,10 @@ def evaluate_deployment(model, task, config, agent, *, episodes, batch_size, dev
             "invalid_tip": score.episode_invalid_tip_entry, "timeout": score.episode_timed_out,
             "failure": score.failed, "reward": score.episode_reward,
             "impact_speed": score.episode_impact_speed,
+            "hit_tip_directed_speed": score.episode_hit_tip_directed_speed,
+            "hit_relative_tip_directed_speed": score.episode_hit_relative_tip_directed_speed,
+            "hit_attachment_directed_speed": score.episode_hit_attachment_directed_speed,
+            "displacement_allowance_m": score.displacement_allowance_m,
             **{'reward_'+key:value for key,value in score.episode_component_sums.items()},
             "nonfinite": score.episode_nonfinite, "position_limit": score.episode_position_limit,
             "speed_limit": score.episode_speed_limit,
@@ -386,6 +464,8 @@ def evaluate_deployment(model, task, config, agent, *, episodes, batch_size, dev
         "mean_point_displacement_cost_integral_s": mean("cost_integral"),
         "mean_hit_time_s": float(hits.mean()) if len(hits) else None,
         "mean_impact_speed_m_s": float(data['impact_speed'][data['success']].mean()) if bool(data['success'].any()) else None,
+        **{f'mean_{key}_m_s': float(data[key][data['success']].mean()) if bool(data['success'].any()) else None
+           for key in ('hit_tip_directed_speed', 'hit_relative_tip_directed_speed', 'hit_attachment_directed_speed')},
         "median_planning_minimum_tip_distance_m": float(data['planning_minimum_tip_distance_m'].median()),
         "mean_planning_maximum_drone_displacement_m": mean('planning_maximum_drone_displacement_m'),
         "planning_non_tip_first_rate": mean('planning_non_tip_first'),
@@ -395,11 +475,24 @@ def evaluate_deployment(model, task, config, agent, *, episodes, batch_size, dev
         "reward_components": {key.removeprefix('reward_'):mean(key) for key in data if key.startswith('reward_')},
     })
     first = recorders[0]
+    if model.get('fullstate_execution',{}).get('schema')=='tracked_pose_execution_v1':
+        result['evaluation_mode']='30hz_frozen_reference_tracked_pose_and_cable_whip_only'
+        result['reference_infeasible_rate']=mean('reference_infeasible')
+        result['pose_domain_failure_rate']=mean('pose_domain_failure')
+        result['mean_maximum_reference_tilt_deg']=mean('maximum_reference_tilt_deg')
+        result['mean_maximum_reference_speed_m_s']=mean('maximum_reference_speed_m_s')
+        result['mean_reference_position_correction_m']=mean('reference_position_correction_m')
+        if 'termination_time_s' in data:
+            result['mean_termination_time_s']=mean('termination_time_s')
+            result['termination_mode']='execution_success_or_timeout'
     arrays = {key: torch.stack(values).cpu().numpy() for key, values in (
         ('positions_m', first.positions), ('velocities_m_s', first.velocities), ('commanded_force_world_n', first.commands),
         ('hit', first.hits), ('striking', first.striking))}
-    arrays['time_s'] = np.arange(len(first.positions)) * first.dt
-    result.recording = (arrays, dict(target_position_m=task['target_position_m'],
+    if config['deployment'].get('termination')=='execution_success_or_timeout':
+        end=round(first.cutoff/first.dt)+1
+        arrays={key:value[:end] for key,value in arrays.items()}
+    arrays['time_s'] = np.arange(len(arrays['positions_m'])) * first.dt
+    result.recording = (arrays, dict(target_position_m=first.scenarios['target_position_m'][0].cpu().tolist(),
         desired_strike_direction_world=task['desired_strike_direction_world'],
         target_radius_m=task['success']['tip_target_distance_m'], cutoff_s=first.cutoff,
         first_trial_success=bool(data['success'][0]),

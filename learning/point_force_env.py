@@ -179,6 +179,35 @@ def near_target_speed_quality(
     return proximity * normalized_speed
 
 
+def near_target_world_relative_quality(distance_m, world_speed_m_s, relative_speed_m_s,
+                                       *, proximity_scale_m, world_cap_m_s, relative_cap_m_s):
+    """Credit requires both forward world motion and motion relative to the root.
+
+    Retreating under a stationary tip cannot earn this quality; translating a
+    motionless cable cannot either. This encourages dynamic strikes, but is not
+    a classification of a travelling whip wave versus a pendulum swing.
+    """
+    world = near_target_speed_quality(distance_m, world_speed_m_s,
+        proximity_scale_m=proximity_scale_m, directed_speed_cap_m_s=world_cap_m_s)
+    relative = near_target_speed_quality(torch.zeros_like(distance_m), relative_speed_m_s,
+        proximity_scale_m=proximity_scale_m, directed_speed_cap_m_s=relative_cap_m_s)
+    return world * relative
+
+
+def required_reach_allowance(initial_root_m, target_m, cable_length_m, target_radius_m, margin_m):
+    """Triangle-inequality lower bound plus explicit preparation margin, per row.
+
+    The bound assumes a fully extended cable; it is not a dynamic reachability
+    guarantee. The margin is a reward choice, not a fitted physical parameter.
+    """
+    reach = torch.linalg.vector_norm(target_m - initial_root_m, dim=-1)
+    return (reach - cable_length_m - target_radius_m).clamp_min(0.) + margin_m
+
+
+def excursion_cost(displacement_m, allowance_m, scale_m):
+    return torch.log1p(((displacement_m - allowance_m).clamp_min(0.) / scale_m).square())
+
+
 def forward_return_quality(
     peak_forward_displacement_m: torch.Tensor,
     current_forward_displacement_m: torch.Tensor,
@@ -308,7 +337,10 @@ class PointForceWhipEnvironment:
         if batch_size < 1:
             raise ValueError("batch_size must be positive.")
         self.model = ForceControlledPointCable.from_mapping(model_config)
-        if device.type=='cuda' and ppo_config.get('cuda_graph_physics', False):
+        if model_config.get('fullstate_execution',{}).get('schema')=='tracked_pose_execution_v1':
+            from simulator.research_physics import install_runtime
+            install_runtime(self.model,graph=bool(ppo_config.get('cuda_graph_physics',False)))
+        elif device.type=='cuda' and ppo_config.get('cuda_graph_physics', False):
             from simulator.cuda_graph_physics import install_graph_runtime
             install_graph_runtime(self.model)
         self.model_config = model_config
@@ -365,8 +397,18 @@ class PointForceWhipEnvironment:
         )[None]
         self.reward_weights = PointForceRewardWeights.from_mapping(ppo_config["reward"])
         self.speed_shaping_reference=ppo_config['reward'].get('directed_speed_shaping_reference','attachment_relative')
-        if self.speed_shaping_reference not in ('world','attachment_relative'):
+        if self.speed_shaping_reference not in ('world','attachment_relative','world_and_attachment_relative'):
             raise ValueError('Unknown speed shaping reference.')
+        reward = ppo_config['reward']
+        self.relative_speed_cap_m_s = float(reward.get('relative_directed_speed_reward_cap_m_s', 6.))
+        self.displacement_allowance_mode = reward.get('displacement_allowance_mode', 'none')
+        self.displacement_allowance_margin_m = float(reward.get('displacement_allowance_margin_m', 0.))
+        if not math.isfinite(self.relative_speed_cap_m_s) or self.relative_speed_cap_m_s <= 0:
+            raise ValueError('Relative speed cap must be finite and positive.')
+        if self.displacement_allowance_mode not in ('none', 'required_reach_plus_margin'):
+            raise ValueError('Unknown displacement allowance mode.')
+        if not math.isfinite(self.displacement_allowance_margin_m) or self.displacement_allowance_margin_m < 0:
+            raise ValueError('Preparation margin must be finite and nonnegative.')
         numerical = ppo_config["numerical_limits"]
         self.numerical_position_limit_m = float(numerical["absolute_position_m"])
         self.numerical_speed_limit_m_s = float(numerical["node_speed_m_s"])
@@ -417,6 +459,12 @@ class PointForceWhipEnvironment:
             )
             root = self.state.positions_m[:, 0]
         self.initial_root_position = root.clone()
+        self.displacement_allowance_m = torch.zeros(self.batch_size, dtype=self.dtype, device=self.device)
+        if self.displacement_allowance_mode == 'required_reach_plus_margin':
+            self.displacement_allowance_m = required_reach_allowance(root, self.target,
+                self.model.cable_configuration.length_m,
+                float(self.task_config['success']['tip_target_distance_m']),
+                self.displacement_allowance_margin_m)
         self.initial_tip_distance = torch.linalg.vector_norm(
             self.state.positions_m[:, -1] - self.target, dim=-1
         )
@@ -440,6 +488,9 @@ class PointForceWhipEnvironment:
         self.episode_component_sums = {name: torch.zeros_like(self.best_progress)
             for name in PointForceRewardComponents.__dataclass_fields__}
         self.episode_impact_speed = torch.full_like(self.best_progress,torch.nan)
+        self.episode_hit_tip_directed_speed = torch.full_like(self.best_progress, torch.nan)
+        self.episode_hit_relative_tip_directed_speed = torch.full_like(self.best_progress, torch.nan)
+        self.episode_hit_attachment_directed_speed = torch.full_like(self.best_progress, torch.nan)
         self.episode_first_tip_directed_speed = torch.full_like(self.best_progress,torch.nan)
         self.episode_first_tip_angle = torch.full_like(self.best_progress,torch.nan)
         self.episode_point_displacement_integral_m_s = torch.zeros_like(
@@ -637,6 +688,12 @@ class PointForceWhipEnvironment:
                     self.reward_weights.directed_speed_cap_m_s
                 ),
             )
+            if self.speed_shaping_reference == 'world_and_attachment_relative':
+                strike_quality = near_target_world_relative_quality(tip_distance,
+                    (tip_velocity * self.desired_direction).sum(-1), relative_tip_directed_speed,
+                    proximity_scale_m=self.reward_weights.proximity_scale_m,
+                    world_cap_m_s=self.reward_weights.directed_speed_cap_m_s,
+                    relative_cap_m_s=self.relative_speed_cap_m_s)
             improved_strike = (
                 torch.maximum(self.best_strike_quality, strike_quality)
                 - self.best_strike_quality
@@ -654,12 +711,8 @@ class PointForceWhipEnvironment:
             root_displacement_norm = torch.linalg.vector_norm(
                 root_displacement, dim=-1
             )
-            displacement_cost = torch.log1p(
-                torch.square(
-                    root_displacement_norm
-                    / self.reward_weights.displacement_cost_scale_m
-                )
-            )
+            displacement_cost = excursion_cost(root_displacement_norm,
+                self.displacement_allowance_m, self.reward_weights.displacement_cost_scale_m)
             active_dt = self.physics_dt_s * accepted.to(self.dtype)
             self.episode_point_displacement_integral_m_s += (
                 root_displacement_norm * active_dt
@@ -672,14 +725,14 @@ class PointForceWhipEnvironment:
                 self.reward_weights.point_displacement_integral
                 * displacement_cost_integral_increment
             )
-            previous_maximum_cost = torch.log1p((self.episode_maximum_point_displacement /
-                self.reward_weights.displacement_cost_scale_m).square())
+            previous_maximum_cost = excursion_cost(self.episode_maximum_point_displacement,
+                self.displacement_allowance_m, self.reward_weights.displacement_cost_scale_m)
             self.episode_maximum_point_displacement = torch.maximum(
                 self.episode_maximum_point_displacement,
                 root_displacement_norm * accepted.to(self.dtype),
             )
-            maximum_cost = torch.log1p((self.episode_maximum_point_displacement /
-                self.reward_weights.displacement_cost_scale_m).square())
+            maximum_cost = excursion_cost(self.episode_maximum_point_displacement,
+                self.displacement_allowance_m, self.reward_weights.displacement_cost_scale_m)
             components['maximum_displacement'] -= self.reward_weights.maximum_displacement * (maximum_cost-previous_maximum_cost)
             forward_displacement = (
                 root_displacement * self.desired_direction
@@ -712,6 +765,8 @@ class PointForceWhipEnvironment:
             success_now = (
                 endpoint_entry
                 & ~self.episode_non_tip_first
+                & ~self.episode_success
+                & ~(self.episode_invalid_tip_entry & self.first_contact_only)
                 & tip_velocity_strike_gate(
                     tip_velocity,
                     self.desired_direction,
@@ -795,14 +850,21 @@ class PointForceWhipEnvironment:
             self.episode_success |= success_now
             self.episode_impact_speed = torch.where(success_now,
                 tip_velocity.norm(dim=-1),self.episode_impact_speed)
+            self.episode_hit_tip_directed_speed = torch.where(success_now, directed,
+                self.episode_hit_tip_directed_speed)
+            self.episode_hit_relative_tip_directed_speed = torch.where(success_now, relative_tip_directed_speed,
+                self.episode_hit_relative_tip_directed_speed)
+            self.episode_hit_attachment_directed_speed = torch.where(success_now, point_forward_speed,
+                self.episode_hit_attachment_directed_speed)
             self.episode_non_tip_first |= non_tip_now
             self.episode_invalid_tip_entry |= invalid_tip_now
             success_this_control |= success_now
             non_tip_this_control |= non_tip_now
             invalid_tip_this_control |= invalid_tip_now
-            done_this_control |= success_now
-            self.active &= ~success_now
-            if self.first_contact_only:
+            if not getattr(self, 'ignore_contact_termination', False):
+                done_this_control |= success_now
+                self.active &= ~success_now
+            if self.first_contact_only and not getattr(self, 'ignore_contact_termination', False) and getattr(self, 'terminate_on_invalid_contact', True):
                 invalid_contact = non_tip_now | invalid_tip_now
                 done_this_control |= invalid_contact
                 self.active &= ~invalid_contact

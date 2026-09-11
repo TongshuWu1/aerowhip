@@ -28,13 +28,13 @@ def _model() -> tuple[dict[str, object], CableConfiguration, DderModel]:
 
 def test_model_contract_uses_measured_point_and_cable_mass() -> None:
     payload, cable, _ = _model()
-    assert payload["point_mass"]["mass_kg"] == 0.159
+    assert payload["point_mass"]["mass_kg"] == 0.145
     assert payload["point_force_controller"]["dimensions"] == 3
     assert payload["point_force_controller"]["application_node"] == 0
     assert payload["cable"]["attachment"] == "dynamic_shared_node_0_free_pivot"
     assert cable.node_count == 12
     assert cable.length_m == 0.9525
-    assert abs(cable.total_dynamic_mass_kg - 0.01609091) < 1.0e-12
+    assert abs(cable.total_dynamic_mass_kg - 0.017) < 1.0e-12
     # Calibration coefficients are editable/versioned; they are not topology constants.
     assert payload["cable"]["EI_n_m2"] > 0
     assert payload["cable"]["Cb_n_m2_s"] >= 0

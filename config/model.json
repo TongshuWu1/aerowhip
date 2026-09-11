@@ -1,12 +1,12 @@
 {
   "cable": {
-    "Cb_n_m2_s": 3.752308484268439e-05,
-    "EI_n_m2": 2.8399396688594252e-08,
+    "Cb_n_m2_s": 1e-06,
+    "EI_n_m2": 1e-06,
     "attachment": "dynamic_shared_node_0_free_pivot",
-    "bare_cable_mass_kg": 0.007,
+    "bare_cable_mass_kg": 0.007395479808164983,
     "constraint_iterations": 4,
     "diameter_m": 0.0035,
-    "external_drag_s_inv": 0.3,
+    "external_drag_s_inv": 0.0,
     "gravity_m_s2": [
       0.0,
       0.0,
@@ -25,19 +25,18 @@
       0.1
     ],
     "moving_marker_masses_kg": [
-      0.000909091,
-      0.000909091,
-      0.000909091,
-      0.000909091,
-      0.000909091,
-      0.000909091,
-      0.000909091,
-      0.000909091,
-      0.000909091,
-      0.000909091
+      0.0009604520191835018,
+      0.0009604520191835018,
+      0.0009604520191835018,
+      0.0009604520191835018,
+      0.0009604520191835018,
+      0.0009604520191835018,
+      0.0009604520191835018,
+      0.0009604520191835018,
+      0.0009604520191835018,
+      0.0009604520191835018
     ],
-    "parameter_source": "data/baselines/20260905-181108-847814/manifest.json",
-    "previous_parameter_source": "C:\\Users\\wts28\\Documents\\PHD\\Projects\\PRISMS\\Sim2Real2SimWhip\\data\\calibration_audits\\20260905_constrained_fit\\geometry_drag_seed_model.json",
+    "parameter_source": "bundled physical values; original fit data not distributed",
     "segments_per_marker_interval": [
       2,
       1,
@@ -58,6 +57,13 @@
     "commanded_force": "acts_only_on_shared_node_0",
     "gravity": "acts_on_point_mass_and_every_cable_vertex"
   },
+  "mass_measurement": {
+    "cable_assembly_mass_kg": 0.017,
+    "distribution": "Provisional proportional scaling of existing cable/marker distribution to 17 g; geometry unchanged",
+    "drone_mass_kg": 0.145,
+    "source": "User measurement: repaired drone 145 g, cable assembly 17 g; all geometry unchanged",
+    "total_mass_kg": 0.162
+  },
   "point_force_controller": {
     "application_node": 0,
     "dimensions": 3,
@@ -68,8 +74,14 @@
   },
   "point_mass": {
     "degrees_of_freedom": 3,
-    "mass_kg": 0.159,
+    "mass_kg": 0.145,
     "state_location": "shared_cable_node_0"
+  },
+  "provenance": {
+    "fit_complete": false,
+    "label": "Unseen system 145 g + 17 g - unfitted structure",
+    "learned_prior": false,
+    "stage": "awaiting_preliminary_recordings"
   },
   "recorded_data": {
     "optitrack_to_attachment_offset_body_m": [

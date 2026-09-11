@@ -424,23 +424,30 @@ class SimplePPOAgent:
                     clip_fraction = (
                         torch.abs(ratio - 1.0) > self.clip_ratio
                     ).float().mean()
-                values = (
-                    float(policy_loss.detach()),
-                    float(value_loss.detach()),
-                    float(entropy_mean.detach()),
-                    float(approximate_kl.detach()),
-                    float(clip_fraction.detach()),
-                    max(
-                        float(torch.as_tensor(policy_gradient_norm).detach()),
-                        float(torch.as_tensor(value_gradient_norm).detach()),
-                    ),
-                )
+                if getattr(self, 'fused_metrics', False):
+                    # One device-to-host transfer preserves the same per-batch
+                    # finite/KL decisions, instead of synchronizing six times.
+                    values = torch.stack((policy_loss.detach(),value_loss.detach(),entropy_mean.detach(),
+                        approximate_kl.detach(),clip_fraction.detach(),torch.maximum(
+                            torch.as_tensor(policy_gradient_norm).detach(),torch.as_tensor(value_gradient_norm).detach()))).cpu().tolist()
+                else:
+                    values = (
+                        float(policy_loss.detach()),
+                        float(value_loss.detach()),
+                        float(entropy_mean.detach()),
+                        float(approximate_kl.detach()),
+                        float(clip_fraction.detach()),
+                        max(
+                            float(torch.as_tensor(policy_gradient_norm).detach()),
+                            float(torch.as_tensor(value_gradient_norm).detach()),
+                        ),
+                    )
                 if not all(math.isfinite(item) for item in values):
                     raise FloatingPointError("PPO update produced a non-finite metric.")
                 for name, item in zip(totals, values, strict=True):
                     totals[name] += item
                 update_count += 1
-                if float(approximate_kl) > 1.5 * self.target_kl:
+                if values[3] > 1.5 * self.target_kl:
                     stop_for_kl = True
                     break
             epochs_completed = epoch + 1

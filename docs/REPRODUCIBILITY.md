@@ -1,24 +1,58 @@
-# Reproducibility and data availability
+# Method and reproducibility
 
-The source bundle contains physics, learning, recording interfaces, tests, a numerical baseline and an embedded CEM action prior. It contains no raw recordings, processed trajectories, fitted-data reports, policy checkpoints or private Git history. Real experimental data and trained-policy results therefore cannot be reproduced from source alone.
+The main deployment method is a cascaded loaded-UAV response and distributed
+cable model, staged regularized identification, and offline MPPI-inspired
+whole-maneuver planning. Onboard UAV tracking feedback remains active; the cable
+task follows frozen 30 Hz desired PVA commands.
 
-The bundled baseline retains the numerical physical values from the development configuration. Machine-specific provenance paths are removed. The manifest records original and bundled configuration hashes and each transformation. The embedded CEM prior is part of initialization, not a pretrained PPO/SAC actor; its preceding search used 8,192 attempts and must be counted separately in comparisons.
+The lab app organizes the existing method. It does not implement a new fitting
+algorithm, online cable-feedback MPC, or an aircraft sender.
 
-The portable bundle uses `device=auto`, 64 environments, a smaller SAC replay buffer and proportionate updates per collection for development. Those defaults are **not** the workstation's 32,768-environment comparison protocol. The physical model, action vectors, reward weights, task and timing are preserved. Match saved experiment settings before claiming reproduction of a reported run.
+## Preserved evidence
 
-## Evidence to retain for an experiment
+The baseline bundle retains original M0 model/weight identities, the exact CSV
+and original preflight prediction, and preliminary replay inputs. Imported
+provenance records source identities; portable derived metadata resolves assets
+inside the destination checkout.
 
-- Exact source snapshot, dependency versions and random seeds.
-- Model/task/algorithm settings, initialization prior and any preceding search budget.
-- Complete training-attempt records, validation scenarios and checkpoint hashes.
-- Validation-selection/early-stopping rules and any mid-run changes.
-- Final evaluation cases, including failures and recovery outcomes.
-- For physical flights: original tracking, sent commands, controller telemetry, clock/frame mappings and event evidence.
+A study binds its take roles, raw bytes, review decisions, parent models, fitting
+jobs, planned commands and forecasts. Preserve failures and intermediate records.
+Do not regenerate an old forecast with a newer model and call it the original.
 
-Split data by whole recordings, not adjacent windows. Protected tests stay excluded from development. An empty dataset manifest in the source bundle is deliberate; do not substitute synthetic data while labeling the outcome as measured flight performance.
+The baseline cable residual is disabled, while the full M1/M2 updates enable it.
+A preserved-M0 study evaluates the complete refinement procedure including this
+capacity difference. M1/M2 matched prediction is a same-class comparison.
 
-The maintained test suite includes both synthetic checks and local-data checks. The documented smoke subset is self-contained. For a source-only checkout, local-data tests are skipped with explicit reasons by `tests/conftest.py`; the absence of data must not be reported as a passing physical validation.
+## Reporting
 
-## Research claims
+Use continuous observed minimum 3D target distance over 0â€“1.5 s as the main task
+endpoint. Do not equate it with full trajectory RMS. Keep missing coverage
+visible, and do not interpolate across large tracking gaps.
 
-The current simulation comparison uses one training seed and a searched prior. PPO was manually stopped before SAC's maximum budget. It is not a replicated, fixed-budget algorithm ranking. Real-flight deployment/adaptation and cross-task transfer remain unvalidated. Author, ownership, data-sharing and licensing decisions are pending; consult [publication preparation](PUBLICATION.md).
+Original nominal-start forecasts measure operational prediction. Common-history
+postflight replays compare frozen models on identical observations and commands.
+Both are useful; they are separate measurements.
+
+The existing 13 historical whip takes are development evidence. The deployment
+study collects new whip recordings while retaining the existing preliminary
+baseline. Final comparison recordings stay outside fitting and tuning.
+
+## Source and assets
+
+The deployment branch contains runnable source and portable defaults. Local data
+and generated jobs are ignored by Git. The private colleague ZIP also contains
+the verified baseline. A public source release requires a separately distributed
+baseline/data artifact to reproduce the retained model's recorded trajectories.
+
+Use tools/build_lab_release.py to package the current source, optionally including
+the verified baseline for private lab transfer. It does not export Git history,
+old studies, caches or virtual environments.
+
+The numerical implementation remains in simulator/, planning/, learning/ and
+experimental_data/. Legacy force/PPO/SAC entry points remain for research
+compatibility and are not the main lab workflow. No selected PPO/SAC job restarts
+when the app opens.
+
+See docs/VALIDATION.md for the actual checks and their limits. A passing GUI or
+packaging test does not establish physical accuracy, paper success or validation
+on an untested GPU.

@@ -141,8 +141,12 @@ def test_invalid_tip_entry_is_recorded_but_episode_continues_until_timeout() -> 
     assert result.components.invalid_tip_entry.item() == -ppo["reward"][
         "invalid_tip_entry_penalty"
     ]
-    result = environment.step(torch.zeros((1, 3)))
-    assert result.newly_invalid_tip_entry.item() is False
+    for step in range(1, environment.control_step_count):
+        result = environment.step(torch.zeros((1, 3)))
+        assert result.newly_invalid_tip_entry.item() is False
+        if step < environment.control_step_count - 1:
+            assert not result.newly_timed_out.item()
+            assert not result.done.item()
     assert result.newly_timed_out.item() is True
     assert result.done.item() == 1.0
 
@@ -150,9 +154,13 @@ def test_invalid_tip_entry_is_recorded_but_episode_continues_until_timeout() -> 
 def test_short_point_force_rollout_updates_ppo() -> None:
     from run_ppo import build_agent, collect_rollout
 
+    torch.set_num_threads(1)
     model, task, ppo = _configs()
     task = copy.deepcopy(task)
     task["episode_duration_s"] = 0.2
+    # This case checks rollout-to-update accounting; full PID recovery has
+    # separate coverage. Keep this isolated training smoke test short.
+    ppo['deployment']['recovery_duration_s'] = .05
     device = torch.device("cpu")
     environment = PointForceWhipEnvironment(
         model, task, ppo, batch_size=4, device=device
@@ -172,5 +180,5 @@ def test_short_point_force_rollout_updates_ppo() -> None:
         epochs=2,
         generator=torch.Generator().manual_seed(9),
     )
-    assert metrics.valid_transitions == 8
+    assert metrics.valid_transitions == environment.control_step_count * environment.batch_size
     assert torch.isfinite(rollout.rewards).all()

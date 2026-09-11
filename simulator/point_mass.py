@@ -115,6 +115,10 @@ class ForceControlledPointCable:
             if not path.is_absolute():
                 path = (Path(root) if root is not None else Path(__file__).resolve().parents[1]) / path
             result.dder.motion_residual = FrozenMotionResidual(path, residual['sha256'])
+            if ((result.dder.motion_residual.payload['specification'].get('learn_drag', False)
+                    or residual.get('drag_mode') == 'nn_only')
+                    and cable.external_drag_s_inv != 0):
+                raise ValueError('Learned cable drag requires zero separate external drag to avoid double-counting.')
             if result.dder.motion_residual.payload['specification']['node_count'] != cable.node_count:
                 raise ValueError('Residual node count does not match the physical cable.')
         return result

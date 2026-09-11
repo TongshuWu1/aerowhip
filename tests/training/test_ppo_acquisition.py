@@ -1,4 +1,5 @@
 from copy import deepcopy
+from pathlib import Path
 import torch
 from learning.point_force_env import PointForceWhipEnvironment
 from learning.deployment_rollout import sample_batch
@@ -11,6 +12,8 @@ def test_training_stops_at_exact_budget_with_partial_batch(tmp_path, monkeypatch
     from run_ppo import train
     from simulator.workflow import atomic_json, read_json
     torch.set_num_threads(1)
+    write_active = run_ppo.write_active_run
+    monkeypatch.setattr(run_ppo, 'write_active_run', lambda _root, path: write_active(tmp_path, path))
     updates=[]
     original=run_ppo._atomic_json
     def capture(path,payload):
@@ -20,6 +23,8 @@ def test_training_stops_at_exact_budget_with_partial_batch(tmp_path, monkeypatch
     monkeypatch.setattr(run_ppo,'_atomic_json',capture)
     m, t, c = deepcopy(load_configs())
     t['episode_duration_s'] = 0.2
+    # The saved one-second action prior cannot describe this shortened fixture.
+    c['bootstrap'] = None
     c['deployment']['enabled'] = False
     c['validation']['enabled'] = False
     c['ppo']['update_epochs'] = 1
@@ -31,6 +36,7 @@ def test_training_stops_at_exact_budget_with_partial_batch(tmp_path, monkeypatch
     status = read_json(output / 'status.json')
     assert status['status'] == 'COMPLETED'
     assert status['episodes'] == 4
+    assert Path((tmp_path / 'runs/ppo/ACTIVE_RUN.txt').read_text().strip()) == output
     assert any(row.get('phase_step',0)>0 and row['episodes']==0 for row in updates)
     assert any(row.get('stage')=='Updating PPO' for row in updates)
     import csv

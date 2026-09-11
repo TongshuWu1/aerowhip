@@ -15,8 +15,19 @@ def save_attempts(directory, score, completed, elapsed_s):
         impact_speed_m_s=array(score.episode_impact_speed),
         hit_time_s=array(score.episode_hit_time_s),
         numerical_failure=array(score.failed))
+    for field, attr in (
+        ('hit_tip_directed_speed_m_s', 'episode_hit_tip_directed_speed'),
+        ('hit_relative_tip_directed_speed_m_s', 'episode_hit_relative_tip_directed_speed'),
+        ('hit_attachment_directed_speed_m_s', 'episode_hit_attachment_directed_speed'),
+        ('hit_attachment_displacement_m', 'episode_terminal_point_displacement')):
+        if hasattr(score, attr):
+            data[field] = np.where(data['success'], array(getattr(score, attr)), np.nan)
+    if hasattr(score, 'displacement_allowance_m'):
+        data['displacement_allowance_m'] = array(score.displacement_allowance_m)
     deployment=getattr(score,'deployment',{})
-    for name in ('joint_success','recovered','maximum_execution_drone_displacement_m','nominal'):
+    for name in ('joint_success','recovered','maximum_execution_drone_displacement_m','nominal',
+                 'target_x_m','target_y_m','target_z_m',
+                 'initial_attachment_x_m','initial_attachment_y_m','initial_attachment_z_m'):
         if name in deployment:data[name]=array(deployment[name])
     path=folder/f'{completed:010d}.npz';temporary=path.with_suffix('.tmp')
     with temporary.open('wb') as stream:np.savez_compressed(stream,**data)
