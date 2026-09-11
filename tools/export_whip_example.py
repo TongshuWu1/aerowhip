@@ -17,7 +17,7 @@ from experimental_data.adaptation_check import load_comparison
 from experimental_data.whip_adaptation import verify_hashes
 from experimental_data.system_comparison import load_review
 
-OUT=ROOT/'output/pdf';OUT.mkdir(parents=True,exist_ok=True)
+OUT=ROOT/'paper/figures';OUT.mkdir(parents=True,exist_ok=True)
 TMP=ROOT/'tmp/pdfs/M1_take004_whip';TMP.mkdir(parents=True,exist_ok=True)
 review=load_review(ROOT)
 # Select globally among reviewed flights by the original, prospective tip RMS.

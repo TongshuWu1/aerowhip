@@ -57,7 +57,7 @@ class ModelEvolutionPage(QWidget):
         refresh=QPushButton('Refresh');refresh.clicked.connect(self.refresh);row.addWidget(refresh)
         register=QPushButton('Add completed fit…');register.clicked.connect(self.register_fit);row.addWidget(register)
         flight=QPushButton('Add flight comparison…');flight.clicked.connect(self.register_flight);row.addWidget(flight)
-        guide=QPushButton('Evaluation guide');guide.clicked.connect(lambda:QDesktopServices.openUrl(QUrl.fromLocalFile(str(self.root/'docs/SIM_REAL_EVALUATION.md'))));row.addWidget(guide)
+        guide=QPushButton('Evaluation guide');guide.clicked.connect(lambda:QDesktopServices.openUrl(QUrl.fromLocalFile(str(self.root/'docs/methods/SIM_REAL_EVALUATION.md'))));row.addWidget(guide)
         row.addStretch()
         self.status=note('');layout.addWidget(self.status)
         self.models=table(['Model','Parent','Evidence','Damping [/s]','Identity']);self.models.setMaximumHeight(155);layout.addWidget(self.models)

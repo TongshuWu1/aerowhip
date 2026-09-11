@@ -9,6 +9,7 @@ import argparse
 import json
 from pathlib import Path, PureWindowsPath
 import shutil
+import subprocess
 import sys
 import zipfile
 
@@ -17,13 +18,14 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from deployment.lab_seed import BASE, load_baseline, read, safe_relative, sha256, write
+from tools.build_source_release import portable_guide_links
 
 PACKAGES = ('deployment', 'simulator', 'planning', 'learning', 'experimental_data', 'tools', 'tests')
 SOURCE_SUFFIXES = {'.py', '.svg', '.cu', '.cuh', '.cpp', '.h'}
 ROOT_REQUIRED = ('README.md', 'run_lab.py', 'setup_lab.py', 'start_lab.cmd', 'start_lab.sh',
                  'requirements.txt', 'pytest.ini')
-ROOT_OPTIONAL = ('AGENTS.md', 'HANDOFF.md', 'SOURCE_SNAPSHOT.json', '.editorconfig',
-                 '.gitattributes', '.github/workflows/deployment.yml',
+ROOT_OPTIONAL = ('AGENTS.md', 'HANDOFF.md', 'SOURCE_SNAPSHOT.json', 'SOURCE_INTEGRATION.json', '.editorconfig',
+                 '.gitattributes', '.github/workflows/smoke.yml',
                  'run_simulation.py', 'run_ppo.py', 'run_sac.py', 'run_tests.py')
 CONFIGS = ('model.json', 'task.json', 'ppo.json', 'sac.json', 'cable_fit.json', 'baseline.json',
            'current_vehicle.json', 'research_workspace.json', 'experiment.json',
@@ -32,6 +34,17 @@ CONFIGS = ('model.json', 'task.json', 'ppo.json', 'sac.json', 'cable_fit.json', 
 REQUIRED_IMPLEMENTATION = ('deployment/lab_gui.py', 'deployment/lab_seed.py', 'tools/check_lab.py',
                            'deployment/lab_workflow.py', 'tools/lab.py')
 RELEASE_SCHEMA = 'deployment_lab_release_v1'
+
+
+def _git_revision(root):
+    if not (root / '.git').exists():
+        return None
+    try:
+        result = subprocess.run(['git', '-C', str(root), 'rev-parse', 'HEAD'],
+                                capture_output=True, text=True, timeout=10)
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    return result.stdout.strip() if result.returncode == 0 else None
 
 
 def _local_configuration(value, route='config'):
@@ -154,9 +167,12 @@ def build(root, output, *, include_baseline=False):
     for file in (root / 'requirements').glob('*'):
         if file.is_file() and file.suffix in ('.txt', '.json'):
             selected.add(file.relative_to(root).as_posix())
-    # Deployment checkout docs are already curated; historical nested diaries stay excluded.
-    for file in (root / 'docs').glob('*.md'):
-        selected.add(file.relative_to(root).as_posix())
+    if (root / 'experimental_data/default_processing.json').is_file():
+        selected.add('experimental_data/default_processing.json')
+    # Include the organized guides used by both application entry points.
+    for file in (root / 'docs').rglob('*'):
+        if file.is_file() and file.suffix in ('.md', '.bib'):
+            selected.add(file.relative_to(root).as_posix())
     for name in ('workspace', 'experiments', 'exports', 'runs', 'data', 'tests', 'deployment', 'tools'):
         if (root / name / 'README.md').is_file():
             selected.add(name + '/README.md')
@@ -184,14 +200,27 @@ def build(root, output, *, include_baseline=False):
         '/workspace/**\n!/workspace/README.md\n/experiments/**\n!/experiments/README.md\n'
         '/exports/**\n!/exports/README.md\n/runs/**\n!/runs/README.md\n/private_bundles/\n'
         '/tmp/\n/dist/\n/data/**\n!/data/README.md\n!/data/dataset_manifest.json\n', encoding='utf-8')
+    # Guides may cite research assets deliberately absent from the lab archive.
+    # Rewrite only documentation, never baseline files or numerical inputs.
+    documents = {p.relative_to(output).as_posix(): b''
+                 for p in output.rglob('*') if p.is_file()}
+    for name in documents:
+        if name.endswith('.md') and not name.startswith(BASE + '/'):
+            documents[name] = (output / name).read_bytes()
+    portable_guide_links(root, documents)
+    for name, raw in documents.items():
+        if name.endswith('.md') and not name.startswith(BASE + '/'):
+            (output / name).write_bytes(raw)
     manifest = dict(schema=RELEASE_SCHEMA, created_utc=datetime.now(timezone.utc).isoformat(),
         includes_private_baseline=bool(include_baseline),
         scope='Private colleague application with retained M0/preliminary seed' if include_baseline else
               'Source application; import a separately provided baseline before creating a study',
         m0_signature=baseline['m0_signature'] if baseline else None,
         entrypoint='run_lab.py', setup='setup_lab.py', offline_only=True,
-        source_commit=read(root / 'SOURCE_SNAPSHOT.json').get('source_commit') if (root / 'SOURCE_SNAPSHOT.json').is_file() else None,
+        source_commit=_git_revision(root),
+        source_snapshot_commit=read(root / 'SOURCE_SNAPSHOT.json').get('source_commit') if (root / 'SOURCE_SNAPSHOT.json').is_file() else None,
         transformations=['Empty study, flight selection and recording catalogs',
+                        'Documentation links to absent research evidence labeled separately held',
                         'Source planner selections cleared; no job starts automatically',
                         'Retained baseline copied byte-for-byte only when explicitly requested'],
         limitations=['No environment installation or Ubuntu/GPU validation is implied by packaging',

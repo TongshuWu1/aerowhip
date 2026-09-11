@@ -83,7 +83,7 @@ def run(folder):
             '--checkpoint',str(job/'checkpoints/best.pt'),'--output',str(output)]
         execute(command,'Best PVA policy rehearsal')
         from deployment.pva_rehearsal import export_package
-        destination=ROOT/'policies'/('M0-PVA-'+job.name+'.zip');destination.parent.mkdir(exist_ok=True)
+        destination=ROOT/'exports'/('M0-PVA-'+job.name+'.zip');destination.parent.mkdir(exist_ok=True)
         export_package(output,destination)
         atomic_json(folder/'status.json',dict(status='completed',training_job=str(job),rehearsal=str(output),package=str(destination),
             evidence='Simulation only; review in UI before new flight collection'))

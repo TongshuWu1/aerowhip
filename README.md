@@ -36,7 +36,7 @@ instead starts with an empty baseline: use **Import baseline** and select the
 retained-M0 bundle supplied with the experiment. Never copy an old virtual
 environment between operating systems.
 
-See [installation and troubleshooting](docs/INSTALL.md) if setup needs attention.
+See [installation and troubleshooting](docs/lab/INSTALL.md) if setup needs attention.
 
 ## Run the experiment
 
@@ -53,7 +53,7 @@ The primary result is **minimum 3D tip-to-target distance**, with prediction RMS
 reported separately. There is no binary 5 cm success requirement.
 
 Keep the existing M0 and preliminary data. The new collection has **20 whip
-executions at one target**. Follow the [one-day operator runbook](docs/LAB_RUNBOOK.md)
+executions at one target**. Follow the [one-day operator runbook](docs/lab/LAB_RUNBOOK.md)
 for the exact sequence and recording review.
 
 ## Where files go
@@ -83,7 +83,7 @@ baseline explicitly.
 
 On Windows use `.venv\Scripts\python.exe` instead. This checks dependencies,
 CUDA, a small float64 tensor operation and baseline integrity. It does not run a
-fit, planner or flight. [Validation notes](docs/VALIDATION.md) distinguish completed
+fit, planner or flight. [Validation notes](docs/lab/VALIDATION.md) distinguish completed
 Windows checks from the remaining Ubuntu/RTX 5080 check.
 
 ## Research and reproduction
@@ -94,10 +94,13 @@ it is not required for the colleague's experiment. The historical
 `--headless` option runs a different force-model diagnostic and is not the lab
 startup test.
 
-Read [method and evidence notes](docs/REPRODUCIBILITY.md). Preserving the original
+Read [method and evidence notes](docs/lab/REPRODUCIBILITY.md). Preserving the original
 M0 retains its disabled cable residual; the later full updates add that capacity.
 The M0-to-M2 experiment therefore evaluates the complete refinement procedure.
 
 This branch provides software and CSV exports. It does not implement the external
 aircraft sender or establish vehicle-specific execution limits. The operator uses
 the laboratory's existing execution, measurement and launch procedures.
+
+Only `main` and `deployment` are active branches. Shared application code is synchronized;
+this branch retains portable lab defaults. See [the Git workflow](docs/GIT_WORKFLOW.md).

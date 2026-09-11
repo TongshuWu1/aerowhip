@@ -1077,7 +1077,7 @@ class LabWindow(QMainWindow):
             self.error('This folder is not available yet. Complete its workflow step first.')
 
     def open_guide(self):
-        for name in ('docs/LAB_RUNBOOK.md', 'docs/LAB_GUIDE.md', 'docs/OPERATOR_GUIDE.md', 'README.md'):
+        for name in ('docs/lab/LAB_RUNBOOK.md', 'docs/LAB_RUNBOOK.md', 'README.md'):
             if (self.root / name).is_file():
                 self.open_path(name)
                 return

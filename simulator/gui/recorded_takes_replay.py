@@ -10,6 +10,7 @@ from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg,NavigationToolba
 from simulator.workflow import read_json
 from simulator.geometry import normalized_rotations_xyzw
 from experimental_data.adaptation_rounds import read_optitrack
+from experimental_data.paths import flight_batch_roots
 from .research_widgets import note
 
 
@@ -21,8 +22,9 @@ def discover_takes(root):
         for path in paths:
             if path.is_file():found[str(path.resolve())]=dict(label=folder.name,role=meta.get('fit_role','unassigned'),drone=meta.get('drone_label'))
     # Include failed/excluded raw flights too; display never grants fit eligibility.
-    for path in sorted((root/'rehearsal_csv_and_result_in_real_flight').glob('**/flight_take/*.csv')):
-        if not path.name.startswith('experiment_'):found[str(path.resolve())]=dict(label=path.parent.parent.name+' / '+path.stem,role='flight recording')
+    for folder in flight_batch_roots(root):
+        for path in sorted(folder.glob('**/flight_take/*.csv')):
+            if not path.name.startswith('experiment_'):found[str(path.resolve())]=dict(label=path.parent.parent.name+' / '+path.stem,role='flight recording')
     return found
 
 

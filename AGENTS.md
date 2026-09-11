@@ -1,7 +1,7 @@
 # Deployment branch maintenance
 
 Read HANDOFF.md and README.md first. This branch provides a desktop workflow for
-the preserved M0 â†’ new M1 â†’ new M2 experiment. The research checkout and original
+the preserved M0  to  new M1  to  new M2 experiment. The research checkout and original
 evidence are separate; never modify or delete them as deployment cleanup.
 
 - Preserve retained M0, preliminary train/holdout roles, original measurements,
@@ -22,3 +22,6 @@ evidence are separate; never modify or delete them as deployment cleanup.
   checks do not establish Ubuntu/RTX 5080 validation.
 - Keep the lab interface concise. Advanced research tools can remain available
   without becoming required steps for the colleague.
+
+Maintain `main` and `deployment` as the two active branches. Keep shared source
+synchronized and retain portable lab defaults during merges. See docs/GIT_WORKFLOW.md.

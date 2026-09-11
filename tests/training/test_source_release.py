@@ -44,6 +44,7 @@ def test_release_excludes_local_artifacts_and_has_verifiable_hashes(tmp_path):
     assert not (output/'.git').exists()
     assert (output/'planning/mppi_trajectory.py').is_file()
     assert (output/'tools/adapt_whip.py').is_file()
+    assert (output/'experimental_data/default_processing.json').read_bytes() == (ROOT/'experimental_data/default_processing.json').read_bytes()
     assert (output/'simulator/gui/model_evolution_page.py').is_file()
     assert not (output/'config/pva/flight_selection.json').exists()
     assert not (output/'config/pva/replay.json').exists()

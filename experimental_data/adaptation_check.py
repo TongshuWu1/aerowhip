@@ -1,5 +1,6 @@
 """Read-only comparison of a flown FullState CSV with its saved prediction."""
 from pathlib import Path
+from .paths import flight_batch_roots
 import hashlib
 import json
 import numpy as np
@@ -14,10 +15,10 @@ def sha256(path):
 
 
 def discover_batches(root):
-    folder = Path(root) / 'rehearsal_csv_and_result_in_real_flight'
-    legacy={p.parent.parent for p in folder.rglob('simulation_csv/fullstate_30hz.csv')}
+    recorded={p.parent.parent for folder in flight_batch_roots(root)
+              for p in folder.rglob('simulation_csv/fullstate_30hz.csv')}
     lab={p.parent.parent for p in (Path(root)/'experiments').glob('*/batches/*/simulation_csv/fullstate_30hz.csv')}
-    return sorted(legacy|lab)
+    return sorted(recorded|lab)
 
 
 def flight_names(batch):
