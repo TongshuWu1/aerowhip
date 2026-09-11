@@ -1,5 +1,12 @@
 # Fresh unseen-system MPPI adaptation check
 
+This is a retained development record, not the current collection checklist.
+Read [HANDOFF](../HANDOFF.md) and [the current experiment protocol](PAPER_EXPERIMENT_PROTOCOL.md)
+for retained-M0 collection and current job status. During the 11 September
+cleanup, the retired two-target/swing-and-settle outputs referenced below were
+removed. Their old paths and availability statements are historical; they are
+not runnable examples or evidence included in the active paper workspace.
+
 ## PPO recovery sequence - 11 September 2026
 
 User requested the same post-whip recovery for PPO as MPPI. Shared recovery
@@ -97,8 +104,10 @@ and T2 [1.40,+0.15,1.00] m, start [0,0,1.255]. Jobs
 T1 only. Latest closest T2 is 23.04 cm, not a hit. Ordered-contact backend
 continues physics after T1; no state reset or collision response. Completion-v2
 reward emphasizes both-target progress, with impact credit only after both.
-Live/rehearsal show both markers and honest 1/2 status. Latest complete review
-CSV/replay is `runs/rehearsals_pva/20260911-133519-124817-M2-two-target-whip`.
+The development live/rehearsal view showed both markers and 1/2 status. Its
+review CSV/replay was stored at
+`runs/rehearsals_pva/20260911-133519-124817-M2-two-target-whip`; this retired
+output was removed during the 11 September cleanup.
 54 tests, CUDA/eager/branch parity, independent contact/export/recovery and
 native Qt/VTK checks pass. 2,559 protected files unchanged. No fit, promotion,
 physical flight or selected-single-target change. Do not duplicate these jobs.

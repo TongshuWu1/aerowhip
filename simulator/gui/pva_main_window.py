@@ -20,7 +20,7 @@ PAGES=[('Models & fitting','Choose the model, monitor fitting, and inspect the e
 
 class PVAResearchWindow(QMainWindow):
     def __init__(self,project_root,*legacy_configs):
-        super().__init__();self.root=Path(project_root);load_application_font();self.setWindowTitle('Aerial Cable Research · PVA')
+        super().__init__();self.root=Path(project_root);load_application_font();self.setWindowTitle('AeroWhip Research · PVA')
         self.resize(1520,960);self.setMinimumSize(1180,760);self.setStyleSheet(APP_STYLE)
         palette=self.palette()
         for role,color in ((QPalette.ColorRole.Window,'#f5f7fb'),(QPalette.ColorRole.WindowText,'#172033'),

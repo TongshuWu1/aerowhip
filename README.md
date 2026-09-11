@@ -1,77 +1,80 @@
-# Sim → Real → Sim aerial whipping
+# AeroWhip
 
-The current workflow generates **desired position, velocity and acceleration at 30 Hz**, using either PPO or independent MPPI-inspired trajectory search. Bounded XYZ jerk integrates into a consistent P/V/A reference. The fitted loaded-drone response and residual predict tracked-origin motion; its rotated attachment drives the discrete cable model. The selected development M0 uses scalar cable damping with its cable neural residual disabled.
+**AeroWhip: Aerial Cable Whipping through Iterative Model Refinement**
 
-Generation is offline and open loop. Start from a settled hover with an assumed hanging cable, freeze the complete command sequence, then export whip + smooth recovery + final hold. The real controller continues to use cmdFullState. Saved predictions are matched to actual flights using their exact CSV, not regenerated with a later model.
+Repository: [TongshuWu1/aerowhip](https://github.com/TongshuWu1/aerowhip).
 
-Read [the current PVA design](docs/DIRECT_PVA_WORKFLOW.md) and [current status](HANDOFF.md). Historical force policies and old 20/30 Hz workflows remain preserved; their checkpoints cannot be reinterpreted as jerk policies. Independent Isaac/PhysX development is paused.
+AeroWhip combines a loaded-UAV response model, distributed cable dynamics and
+offline trajectory planning. Recorded flights refine the model between trials;
+each planned maneuver is exported as a frozen 30 Hz position, velocity and
+acceleration (PVA) CSV for the laboratory's separate flight program.
 
-For manuscript work or onboarding a separate writing agent, start with the detailed [paper-writing handoff](docs/PAPER_WRITING_HANDOFF.md): technical method, equations, candidate contributions, experiment lineage, verified results, limitations, and source/artifact links.
+The paper studies the complete plan–fly–measure–refine loop. Its main outcome is
+continuous minimum 3D tip-to-target distance, supported by prediction error on
+common recordings. The existing M0 and preliminary recordings are retained.
+Historical M0/M1/M2 trials are development evidence; the planned new study uses
+20 executions at one target.
 
 ## Start here
 
-Read [HANDOFF.md](HANDOFF.md) and the [theory and paper-readiness audit](docs/PAPER_READINESS_REVIEW.md).
-The selected development-M0 MPPI trajectory and original forecast are frozen for
-prospective measurement. A separate [PPO trial with the shared MPPI objective](docs/PPO_MPPI_OBJECTIVE.md)
-has completed its first training trial from scratch. Fitting, MPPI and flight execution remain stopped. No real M1/M2
-or physical adaptation improvement has been established. Windows/RTX 4080 checks
-do not establish Ubuntu or other-hardware validation.
+- [Current decisions and evidence boundaries](HANDOFF.md)
+- [Paper-writing handoff](docs/PAPER_WRITING_HANDOFF.md)
+- [One-day experiment protocol](docs/PAPER_EXPERIMENT_PROTOCOL.md)
+- [Architecture and source map](docs/ARCHITECTURE.md)
+- [Documentation index](docs/README.md)
 
-For a new environment, start with [installation](docs/INSTALL.md). For a source-only
-research release, see [publication preparation](docs/PUBLICATION.md). The source
-exporter includes current PVA planning and an empty model/flight catalog; fitted
-models and experiment artifacts require separate reviewed packaging.
+## Research and lab versions
+
+The main research checkout keeps six pages: **Models & fitting**, **Recordings**,
+**PPO**, **MPPI**, **Rehearsals**, and **Flight comparison**. Run it from the
+repository root using the existing environment:
+
+```sh
+# Linux
+.venv/bin/python run_simulation.py
+```
 
 ```powershell
+# Windows
 .venv/Scripts/python.exe run_simulation.py
 ```
 
-The UI has six pages: **Models & fitting**, **Recordings**, **PPO**, **MPPI**, **Rehearsals**, and **Flight comparison**. PPO and MPPI own separate setup files, run libraries and rehearsal/export tabs. Model-fit diagnostics are distinct from prospective measured-flight results. Older documents below describe preserved historical stages; the current PVA design and HANDOFF take precedence.
+See [installation](docs/INSTALL.md) for environment setup. Opening the interface
+does not start training, fitting or planning.
 
-- [Flight/adaptation workflow](docs/FLIGHT_ADAPTATION_QUICKSTART.md)
-- [Current decisions and completed simulation](HANDOFF.md)
-- [Research proposal](docs/RESEARCH_PROPOSAL_ADAPTIVE_AERIAL_WHIP.md)
-- [Documentation index](docs/README.md)
-- [Architecture](docs/ARCHITECTURE.md)
-- [Reproducibility and data availability](docs/REPRODUCIBILITY.md)
-- [Command-line tools](tools/README.md)
+The separate **`deployment` branch** provides the five-page operator app,
+`setup_lab.py`, `run_lab.py`, and its `docs/LAB_RUNBOOK.md`. It keeps studies and
+generated CSVs in the checkout; exports go to `exports/<study>/<generation>/`.
+The private colleague bundle contains the retained M0/preliminary assets. These
+assets are not included in the source-only branch, so a source-only user must
+import the baseline separately. Neither version sends commands to the aircraft.
 
 ## Repository layout
 
-| Folder | Purpose |
+| Path | Purpose |
 |---|---|
-| `config/` | Active model, task and algorithm defaults |
-| `simulator/` | DDER physics, modeled drone response, replay and desktop UI |
-| `learning/` | PPO, rewards and execution; preserved legacy learning code |
-| `planning/` | Independent MPPI optimization and saved-plan generation |
-| `deployment/` | Rehearsal, recovery, CSV export and portable replay |
-| `experimental_data/` | Recording processing, calibration and flight adaptation |
-| `tools/` | Current workflow commands, evaluation and research utilities |
-| `tests/` | Checks grouped into physics, calibration, training, flight and UI |
-| `docs/` | Current guides and research design; dated reports in `docs/history/` |
-| `data/` | Raw recordings, processed data, physical baselines and flight imports |
-| `runs/` | Training checkpoints and per-run validation records |
-| `results/` | Comparison studies, immutable source snapshots and plots |
+| `config/` | Active configuration and experiment catalogs |
+| `simulator/` | Loaded-aircraft response, geometry, cable physics and research UI |
+| `planning/` | Offline MPPI search, PPO trajectory generation and immutable jobs |
+| `learning/` | Shared PVA environment, objectives and learning implementations |
+| `experimental_data/` | Recording review, staged fitting and model comparison |
+| `deployment/` | Saved rehearsal, recovery and CSV export |
+| `tools/` | Workflow and analysis entry points |
+| `tests/` | Physics, fitting, flight, training and UI checks |
+| `docs/` | Active paper and implementation guides |
+| `data/`, `rehearsal_csv_and_result_in_real_flight/` | Measurements and imported recordings |
+| `runs/` | Fitted models, saved commands, original forecasts and audit evidence |
+| `output/` | Exported paper figures/PDFs and their provenance |
 
-Ignore rules exclude ordinary generated output and caches. Selected research
-artifacts are explicitly tracked, including Git LFS assets; use the reproducibility
-guide when transferring the project. Raw recordings and historical outputs are preserved.
+Retained evidence focuses on the current work and the recent M0/M1/M2 lineage,
+including the preliminary inputs and calibration required to reproduce it.
+Obsolete measurements, failed legacy runs and superseded guides are outside the
+active paper workspace. Saved evidence retains its original model, settings,
+source and data identities.
+Do not regenerate an old forecast with a newer model and call it the original.
+Use the [reproducibility guide](docs/REPRODUCIBILITY.md) when transferring research
+assets; ordinary generated outputs are not necessarily tracked by Git.
 
-## Run checks
-
-```powershell
-.venv/Scripts/python.exe run_tests.py physics
-.venv/Scripts/python.exe run_tests.py flight
-.venv/Scripts/python.exe run_tests.py training ui
-.venv/Scripts/python.exe run_tests.py
-```
-
-With no group, all maintained tests run. See [the test guide](tests/README.md) for scope. Some calibration, GPU and training integration checks are intentionally slower.
-
-## Reproducibility
-
-Saved runs retain their model/task/algorithm settings, checkpoints and validation
-history. Exported experiments retain the exact command CSV and prediction used
-before flight. Changing defaults affects future jobs rather than rewriting past
-experiments. See [reproducibility](docs/REPRODUCIBILITY.md) for evidence boundaries
-and [historical documentation](docs/history/README.md) for superseded reports.
+For checks, see [the test guide](tests/README.md) and run the subset relevant to a
+change. Report the actual environment tested. Existing Windows/RTX 4080 checks
+do not establish Ubuntu/RTX 5080 validation.

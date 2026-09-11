@@ -14,7 +14,7 @@ Geometry-only revision, 8 September 2026 UTC. No model fitting, residual trainin
 | COM | Physical center of mass | Location is unknown; do not identify it with O or A |
 | B | Firmware/IMU body frame | Do not infer a T-to-B rotation from the attachment height; inspect actual setup before using firmware angular data |
 
-Reported ruler dimensions are approximately **55 mm vertically from the top reference plane to A**, then **63 mm of cable arc length from A to C1**. The historical calibration record is `docs/history/CALIBRATION_AUDIT_20260905.md`. These were not remeasured in this revision. A 63 mm arc can have a shorter straight-line chord when bent. Neither distance includes the other. Marker-center versus cable-centerline placement remains a measurement limitation.
+Reported ruler dimensions are approximately **55 mm vertically from the top reference plane to A**, then **63 mm of cable arc length from A to C1**. These dimensions were reported during the September 2026 calibration work; the superseded calibration note is no longer distributed in this checkout. They were not independently remeasured in this revision. A 63 mm arc can have a shorter straight-line chord when bent. Neither distance includes the other. Marker-center versus cable-centerline placement remains a measurement limitation.
 
 Preserved active offset O-to-A expressed in T: `[0.0066549972854827175, -0.01287427254333901, -0.055]` m.
 

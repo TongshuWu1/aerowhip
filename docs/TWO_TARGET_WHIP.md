@@ -1,5 +1,11 @@
 # Two-target continuous-whip development trial
 
+Historical technical record. The two-target planner, rehearsal and audit outputs
+named here were removed in the user-authorized 11 September 2026 cleanup.
+The numerical descriptions below record the original development review; its
+output paths are no longer available in this checkout. The current paper uses
+[one target and continuous distance](PAPER_EXPERIMENT_PROTOCOL.md).
+
 The user requested one continuous sweep through two distinct targets, not two
 separately initialized strokes. The original selected single-target M2 flight
 remains `20260910-211435-608306`; these are separate development trials.
@@ -49,13 +55,13 @@ and v1 semantics are retained; this is not a matched model-adaptation result.
 
 ## Replay and verification
 
-Latest replay: `runs/rehearsals_pva/20260911-133519-124817-M2-two-target-whip`.
-It contains the exact new PVA CSV, full independent forecast and checked smooth
-recovery (10.2333 s total), explicitly labeled **1/2 hits**. It is saved for review,
-not selected as a successful two-target flight. The app's Live 3D search and
+Former replay (removed): `runs/rehearsals_pva/20260911-133519-124817-M2-two-target-whip`.
+It contained the exact new PVA CSV, full independent forecast and checked smooth
+recovery (10.2333 s total), explicitly labeled **1/2 hits**. It was saved for
+review and was never selected as a successful two-target flight. The app's Live 3D search and
 Rehearsal and export show both target markers and separate contact status.
 
-Audits: `runs/audits/two-target-whip-20260911` and
+Former audits (removed): `runs/audits/two-target-whip-20260911` and
 `runs/audits/two-target-completion-20260911`. Fifty-four focused tests pass;
 CUDA/eager/branch state checks pass including physical continuation after T1;
 the original single-target score differs only by 3.7e-10. Independent NumPy
@@ -71,5 +77,5 @@ PAPER_EXPERIMENT_PROTOCOL.md.
 
 The user subsequently asked about a different Y, then confirmed the current
 positions are fine. The proposed T2 Y=+0.30 trial was cancelled after bounded
-seed preflight, before any optimizer job was prepared or started. Its audit is
+seed preflight, before any optimizer job was prepared or started. Its former audit (removed) was
 `runs/audits/two-target-y030-20260911`; it is not a completed MPPI trial.
