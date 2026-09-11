@@ -1,4 +1,8 @@
-# Aerial Whip Lab
+# AeroWhip
+
+**AeroWhip: Aerial Cable Whipping through Iterative Model Refinement**
+
+[Project repository](https://github.com/TongshuWu1/aerowhip)
 
 A desktop workflow for planning a cable whip, exporting its PVA commands,
 reviewing recorded flights, and refining the model between experiments.

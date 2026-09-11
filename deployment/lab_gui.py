@@ -110,7 +110,7 @@ class LabWindow(QMainWindow):
         self.log_path = None
         self.replay_dialog = None
         load_application_font()
-        self.setWindowTitle('Cable Whip Lab')
+        self.setWindowTitle('AeroWhip · Lab')
         self.resize(1450, 930)
         self.setMinimumSize(1120, 680)
         screen = QApplication.primaryScreen()
@@ -143,7 +143,7 @@ class LabWindow(QMainWindow):
         sidebar.setFixedWidth(215)
         nav = QVBoxLayout(sidebar)
         nav.setContentsMargins(17, 29, 17, 22)
-        brand = QLabel('CABLE WHIP\nLAB')
+        brand = QLabel('AeroWhip\nLAB')
         brand.setObjectName('brandTitle')
         nav.addWidget(brand)
         sub = QLabel('PLAN  /  RECORD  /  REFINE')
@@ -1115,8 +1115,8 @@ def main(root=None):
     owns_application = application is None
     if application is None:
         application = QApplication([sys.argv[0]])
-    application.setApplicationName('Cable Whip Lab')
-    application.setOrganizationName('Aerial Cable Research')
+    application.setApplicationName('AeroWhip')
+    application.setOrganizationName('AeroWhip')
     application.setStyle('Fusion')
     window = LabWindow(root)
     window.show()
