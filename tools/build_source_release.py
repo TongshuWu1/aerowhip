@@ -29,7 +29,7 @@ def digest(raw):return hashlib.sha256(raw).hexdigest()
 def canonical(value):return digest(json.dumps(value,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode())
 
 
-MARKDOWN_LINK=re.compile(r'(?<!!)\[([^\]\n]+)\]\(([^)\n]+)\)')
+MARKDOWN_LINK=re.compile(r'!?\[([^\]\n]+)\]\(([^)\n]+)\)')
 
 
 def local_guide_target(root,document,link):
@@ -85,7 +85,8 @@ def portable_guide_links(root,files):
                 return f'{match.group(1)} (`{relative}`, not included in this source-only release)'
             portable=posixpath.relpath(relative,posixpath.dirname(document) or '.')+anchor
             if ' ' in portable:portable='<'+portable+'>'
-            return f'[{match.group(1)}]({portable})'
+            prefix='!' if match.group(0).startswith('!') else ''
+            return f'{prefix}[{match.group(1)}]({portable})'
         files[document]=MARKDOWN_LINK.sub(replace,raw.decode('utf-8')).encode('utf-8')
 
 
@@ -151,6 +152,8 @@ def build(root,output):
             if path.is_file() and path.suffix in ('.py','.svg'):add(path.relative_to(root))
     for path in sorted((root/'requirements').glob('*')):
         if path.suffix in ('.txt','.json'):add(path.relative_to(root))
+    if (root/'experimental_data/default_processing.json').is_file():
+        add('experimental_data/default_processing.json')
     for name in ('run_simulation.py','run_ppo.py','run_sac.py','run_tests.py',
                  'requirements.txt','pytest.ini','.editorconfig','.github/workflows/smoke.yml','tests/README.md',
                  'HANDOFF.md'):

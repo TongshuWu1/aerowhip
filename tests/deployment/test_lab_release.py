@@ -21,6 +21,11 @@ def application(root):
     write(root / 'config/experiment.json', dict(fit_job='C:/old/fit'))
     write(root / 'config/evaluation/campaign.json', dict(models=['old private model'], flights=['old trial']))
     write(root / 'data/dataset_manifest.json', dict(takes={'private': 'source data'}))
+    write(root / 'experimental_data/default_processing.json', dict(processed_schema='test_default'))
+    (root / 'docs/lab').mkdir(parents=True)
+    (root / 'docs/lab/LAB_RUNBOOK.md').write_text(
+        '[Processing defaults](../../experimental_data/default_processing.json)\n'
+        '![Historical figure](../../runs/private.png)\n', encoding='utf-8')
     return root
 
 
@@ -55,6 +60,11 @@ def test_source_release_is_clean_and_clears_local_selection(tmp_path):
     assert json.loads((output / 'config/experiment.json').read_text())['fit_job'] is None
     assert json.loads((output / 'config/evaluation/campaign.json').read_text())['flights'] == []
     assert json.loads((output / 'data/dataset_manifest.json').read_text())['takes'] == {}
+    assert json.loads((output / 'experimental_data/default_processing.json').read_text())['processed_schema'] == 'test_default'
+    guide = (output / 'docs/lab/LAB_RUNBOOK.md').read_text()
+    assert '(../../experimental_data/default_processing.json)' in guide
+    assert '![Historical figure]' not in guide
+    assert 'runs/private.png' in guide and 'not included' in guide
     with zipfile.ZipFile(result['archive']) as archive:
         assert 'run_lab.py' in archive.namelist()
         assert 'tools/lab.py' in archive.namelist()

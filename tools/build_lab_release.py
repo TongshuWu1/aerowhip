@@ -18,6 +18,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from deployment.lab_seed import BASE, load_baseline, read, safe_relative, sha256, write
+from tools.build_source_release import portable_guide_links
 
 PACKAGES = ('deployment', 'simulator', 'planning', 'learning', 'experimental_data', 'tools', 'tests')
 SOURCE_SUFFIXES = {'.py', '.svg', '.cu', '.cuh', '.cpp', '.h'}
@@ -166,6 +167,8 @@ def build(root, output, *, include_baseline=False):
     for file in (root / 'requirements').glob('*'):
         if file.is_file() and file.suffix in ('.txt', '.json'):
             selected.add(file.relative_to(root).as_posix())
+    if (root / 'experimental_data/default_processing.json').is_file():
+        selected.add('experimental_data/default_processing.json')
     # Include the organized guides used by both application entry points.
     for file in (root / 'docs').rglob('*'):
         if file.is_file() and file.suffix in ('.md', '.bib'):
@@ -197,6 +200,17 @@ def build(root, output, *, include_baseline=False):
         '/workspace/**\n!/workspace/README.md\n/experiments/**\n!/experiments/README.md\n'
         '/exports/**\n!/exports/README.md\n/runs/**\n!/runs/README.md\n/private_bundles/\n'
         '/tmp/\n/dist/\n/data/**\n!/data/README.md\n!/data/dataset_manifest.json\n', encoding='utf-8')
+    # Guides may cite research assets deliberately absent from the lab archive.
+    # Rewrite only documentation, never baseline files or numerical inputs.
+    documents = {p.relative_to(output).as_posix(): b''
+                 for p in output.rglob('*') if p.is_file()}
+    for name in documents:
+        if name.endswith('.md') and not name.startswith(BASE + '/'):
+            documents[name] = (output / name).read_bytes()
+    portable_guide_links(root, documents)
+    for name, raw in documents.items():
+        if name.endswith('.md') and not name.startswith(BASE + '/'):
+            (output / name).write_bytes(raw)
     manifest = dict(schema=RELEASE_SCHEMA, created_utc=datetime.now(timezone.utc).isoformat(),
         includes_private_baseline=bool(include_baseline),
         scope='Private colleague application with retained M0/preliminary seed' if include_baseline else
@@ -206,6 +220,7 @@ def build(root, output, *, include_baseline=False):
         source_commit=_git_revision(root),
         source_snapshot_commit=read(root / 'SOURCE_SNAPSHOT.json').get('source_commit') if (root / 'SOURCE_SNAPSHOT.json').is_file() else None,
         transformations=['Empty study, flight selection and recording catalogs',
+                        'Documentation links to absent research evidence labeled separately held',
                         'Source planner selections cleared; no job starts automatically',
                         'Retained baseline copied byte-for-byte only when explicitly requested'],
         limitations=['No environment installation or Ubuntu/GPU validation is implied by packaging',

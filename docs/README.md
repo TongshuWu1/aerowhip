@@ -17,7 +17,7 @@ See the [folder map](FOLDER_MAP.md) for data, exports and run locations.
    new 20-flight chain, fixed roles and continuous-distance analysis.
 4. [Architecture](ARCHITECTURE.md): current source and workflow map.
 
-The `deployment` branch contains the operator app and its `docs/LAB_RUNBOOK.md`.
+The `deployment` branch contains the operator app and its `docs/lab/LAB_RUNBOOK.md`.
 Use its setup and validation guides for the colleague's lab transfer. This
 research checkout keeps the broader six-page interface and development evidence.
 

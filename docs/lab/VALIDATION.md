@@ -67,6 +67,14 @@ their original Git versions. No experiment fitting or training was started.
 The retired Isaac prototype separately passed its 12 CPU math tests. Its source
 and history are retained without activating it as the paper simulator.
 
+After synchronizing deployment and correcting release resources, the same
+104-test subset passed again in the deployment checkout. The dependency,
+retained-baseline and CUDA float64 checks also passed on Windows/RTX 4080.
+All 10,874 retained research evidence files matched their saved hashes, and
+documentation links were checked in both checkouts. Source/private release
+builders now include the default processing configuration and label references
+to separately held research assets instead of emitting broken links.
+
 ## Destination checks
 
 Ubuntu/RTX 5080 has not been exercised by this Windows run. On the colleague's
