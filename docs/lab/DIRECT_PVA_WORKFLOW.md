@@ -52,7 +52,7 @@ marker gaps, frame conventions and clock evidence. First compare the flight
 against its original frozen forecast. Then diagnose errors using identical
 causal initialization and explicit observation masks.
 
-Use [M0→M1 adaptation](../methods/M0_TO_M1_ADAPTATION.md) for the reviewed raw-data steps and
+Use [M0→M1 adaptation](../development/M0_TO_M1_ADAPTATION.md) for the reviewed raw-data steps and
 [evaluation protocol](../methods/SIM_REAL_EVALUATION.md) for M0/M1/M2 comparisons. The model
 library and retrospective fit loss are not evidence of prospective improvement.
 Candidate fitting, registration, selection and a subsequent physical test are

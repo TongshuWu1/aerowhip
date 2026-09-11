@@ -1,7 +1,7 @@
 # AeroWhip export and compatibility modules
 
 For the current operator workflow, use the **`deployment` branch** and its
-`README.md`, `setup_lab.py` and `docs/LAB_RUNBOOK.md`. The main research app is
+`README.md`, `setup_lab.py` and `docs/lab/LAB_RUNBOOK.md`. The main research app is
 introduced in the [repository README](../README.md). It generates complete
 30 Hz desired-PVA CSVs for the laboratory's separate flight program.
 
