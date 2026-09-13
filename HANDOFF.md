@@ -112,3 +112,12 @@ were checked on Windows / RTX 4080. These are not Ubuntu/5080 validation or
 physical collision-clearance certification. There is no validated flight sender.
 Do not inspect or evaluate the protected fig8vertical_002 recording. Preserve
 raw data and frozen source hashes; cleanup is not authorization to refit or fly.
+
+## Manuscript experiments update
+
+The live Dropbox main.tex now includes the experiments section and quantitative
+abstract results from all five takes per batch. It discloses the post-hoc
+M2_002/004 subset separately and labels M1 model-selection predictions as
+development evidence. Local Tectonic QA compiled to eight pages; all pages
+were visually checked. Source and metric provenance are in
+`docs/paper/EXPERIMENTS_REVISION_20260913.json`. Cloud synchronization is unverified.

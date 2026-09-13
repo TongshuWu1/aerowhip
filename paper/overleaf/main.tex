@@ -61,7 +61,10 @@ local command correction toward the original planned tip trajectory
 at fixed times.
 We evaluate prediction accuracy and the utility of the refined
 model for physical reference tracking and target approach.
-\Tony{Add quantitative findings after completing the final physical experiments.}
+Across three batches of five flights, mean tip-reference RMSE
+decreases from 18.09 to 13.28\,cm. Target error at the planned
+strike time decreases from 24.12 to 11.18\,cm after the first
+update and rises to 13.10\,cm after the second.
 \end{abstract}
 
 \IEEEpeerreviewmaketitle
@@ -903,10 +906,166 @@ by measured attachment motion. It is not jointly optimized during
 the staged fits.
 
 The updated predictor returns to command correction or subsequent
-MPPI planning. We evaluate prediction accuracy on held-out
-executions and assess command correction through physical
+MPPI planning. Development recordings assess prediction accuracy,
+and subsequent executions assess command correction through physical
 reference tracking and target approach. Original commands and
 their preflight forecasts are preserved across model updates.
+
+\section{Experiments}
+\label{sec:experiments}
+
+The experiments examine whether model refinement and command
+correction bring the physical cable motion closer to a fixed
+simulated reference. One target and one initial whipping plan
+are used throughout, so changes in performance are measured
+against the same desired trajectory and timing.
+
+\subsection{Setup and Refinement Protocol}
+\label{subsec:experimental_setup}
+
+The platform comprises a 145\,g quadrotor and a 17\,g cable
+assembly, including tracking markers. The cable length is
+0.9525\,m. OptiTrack records vehicle pose and cable-marker
+positions, and controller logs record the executed commands.
+The tracked vehicle origin starts at $(0,0,1.4)$\,m, with
+$\mathbf p_{\mathrm{tar}}=(1.25,0,1.25)^\top$\,m and
+$\mathbf e=(1,0,0)^\top$. Commands are supplied at 30\,Hz;
+cable measurements do not modify them during execution.
+
+The predictor uses $N=12$ cable nodes and produces rollout
+samples at 150\,Hz. The command spline has 12 control points
+over $T=1.5$\,s. Correction tracks the original reference through
+$T_h=34/30$\,s, with weights
+$(w_{\mathrm{tip}},w_q,w_d)=(1,0.1,0.01)$
+in~\eqref{eq:reference_tracking_cost}. Each exported sequence
+also includes braking, return to launch, and a final hold.
+
+Five executions were collected for each of three successive
+model--command pairs, denoted M0, M1, and M2. M0 uses the
+preliminary model and initial plan. M0 measurements refine
+$\mathcal M_1$, which corrects the original commands. M1
+measurements then refine $\mathcal M_2$, which corrects the
+M1 commands toward the same M0 reference. No new MPPI search
+or change of target is introduced between batches.
+
+In each of the M0 and M1 batches, recordings 1, 2, and 4
+contribute to fitting alongside earlier data. Recordings 3
+and 5 support development checks; the two M1 recordings also
+support M2 model selection. They are therefore not independent
+test data. The selected M2 retains the M1 vehicle network,
+updates the nominal vehicle response and cable model, and
+is frozen before the five M2 flights. No M2 recording is
+used for fitting or command correction. All 15 executions
+remain in the primary physical comparison.
+
+\subsection{Evaluation Metrics}
+\label{subsec:experimental_metrics}
+
+Physical tracking is evaluated against the original predictions
+$\mathbf r_{\mathrm{tip}}^0(t)$ and $\mathbf p_q^0(t)$, rather
+than predictions regenerated after each model update.
+For $n$ valid measurement times $t_j\in[0,T_h]$, tip-reference
+error is
+\[
+E_{\mathrm{tip}}=
+\sqrt{\frac{1}{n}\sum_{j=1}^{n}
+\|\mathbf r_{\mathrm{tip}}^{\mathrm{meas}}(t_j)
+-\mathbf r_{\mathrm{tip}}^0(t_j)\|_2^2}.
+\]
+The reference is interpolated at these timestamps.
+Replacing the tip positions by measured and reference vehicle
+positions defines $E_q$. Both are three-dimensional RMSEs.
+Clock offsets are estimated from measured vehicle streams;
+trajectories are not shifted to improve target agreement or
+spatially aligned to the reference.
+
+Target approach is measured by $d_{\min}$ from
+\eqref{eq:target_distance} over $[0,1.5]$\,s and by
+$d_\star=\|\mathbf r_{\mathrm{tip}}^{\mathrm{meas}}(t_\star)
+-\mathbf p_{\mathrm{tar}}\|_2$ at the original planned strike
+time $t_\star=1.11725$\,s. These distinguish proximity from
+arrival at the planned time. Tip speed at $t_\star$ is estimated
+from local derivatives of measured positions. No binary hit
+threshold is imposed. Missing observations are masked, and
+statistics are computed per execution before taking the
+batch mean and sample standard deviation.
+
+\subsection{Physical Reference Tracking and Target Approach}
+\label{subsec:physical_results}
+
+\begin{table}[t]
+\centering
+\caption{Physical performance: mean $\pm$ sample standard
+deviation over five executions per batch. Distances are in cm;
+tip speed is in m/s. All batches track the same M0 reference.}
+\label{tab:physical_performance}
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Metric & M0 & M1 & M2 \\
+\midrule
+$d_\star$ & $24.12\pm6.94$ & $11.18\pm4.04$ & $13.10\pm7.52$ \\
+$d_{\min}$ & $14.73\pm6.02$ & $7.83\pm1.82$ & $8.60\pm6.55$ \\
+$E_{\mathrm{tip}}$ & $18.09\pm1.80$ & $16.06\pm2.34$ & $13.28\pm2.60$ \\
+$E_q$ & $15.66\pm3.58$ & $11.17\pm2.87$ & $12.63\pm5.65$ \\
+Tip speed & $5.98\pm0.53$ & $5.85\pm0.32$ & $5.82\pm0.79$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:physical_performance} shows that the first
+refinement substantially improves target approach: mean
+$d_\star$ decreases from 24.12 to 11.18\,cm, and mean
+$d_{\min}$ decreases from 14.73 to 7.83\,cm. Tip-reference
+RMSE decreases more modestly, from 18.09 to 16.06\,cm.
+The second refinement reduces it further to 13.28\,cm,
+a 17.4\% reduction relative to M1. Mean tip speed remains
+similar across batches.
+
+Target accuracy does not improve monotonically. M2 has larger
+mean $d_\star$ and $d_{\min}$ than M1, and the sample standard
+deviation of $d_\star$ increases from 4.04 to 7.52\,cm.
+Thus, improved average trajectory tracking does not ensure
+a more accurate or repeatable target approach. This distinction
+also reflects the correction objective, which penalizes
+trajectory error over an interval rather than target error alone.
+
+\noindent\emph{Exploratory subset.}
+After reviewing the outcomes, M2 recordings 2 and 4 were
+selected for an additional analysis. Their mean $d_\star$,
+$d_{\min}$, and $E_{\mathrm{tip}}$ are 6.17, 4.41, and
+10.57\,cm, respectively; mean tip speed is 5.84\,m/s.
+Hardware defects in recordings 1, 3, and 5 were suspected
+but not independently established. These two selected
+executions therefore do not replace the five-trial result
+or establish typical M2 performance.
+
+\subsection{Model Prediction and Limitations}
+\label{subsec:prediction_results}
+
+On the two M1 development recordings used for model selection,
+the selected M2 reduces mean vehicle-prediction RMSE from
+7.46 to 6.72\,cm and command-driven tip-prediction RMSE from
+9.95 to 8.46\,cm relative to M1. These comparisons use the
+same recorded commands, observation masks, and initial states
+estimated from preceding measurements. They diagnose model
+selection; they are neither independent test results nor
+tracking errors relative to the planned motion.
+
+The physical study comprises successive batches at one target,
+not randomized paired trials. Planning assumes a stationary
+hanging cable, whereas small tip motions were observed by the
+operator during real hover. The resulting initial-state
+mismatch may affect repeatability. Propeller airflow is a
+possible explanation for this motion, but its contribution
+to the measured errors has not been isolated.
+Timing uncertainty also matters: for M2 recording 2,
+perturbing clock alignment by $\pm10$\,ms changes $d_\star$
+from 2.64\,cm to 6.80--7.15\,cm. The results support improved
+tracking of this fixed reference, while broader robustness
+and the sources of trial-to-trial variability remain open.
+
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
