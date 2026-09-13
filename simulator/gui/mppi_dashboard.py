@@ -43,8 +43,10 @@ def snapshot(status,settings,history,windows):
         patience=s.get('initial_patience',s.get('patience')) if receding and step==0 else s.get('patience'),
         stale=done_iteration-improved_at if current else 0,minimum_done=done_iteration,
         duration=settings.get('task',{}).get('duration_s'),maneuver=status.get('maneuver_time_s',status.get('maneuver_duration_s',committed.get('time_s',step/30))),
-        distance=metrics.get('predicted_distance_m',metrics.get('best_minimum_tip_distance_m')),
-        hit_fraction=metrics.get('success'),failures=metrics.get('failures'),ess=metrics.get('effective_samples'),
+        distance=metrics.get('strike_distance_m',metrics.get('predicted_distance_m',metrics.get('best_minimum_tip_distance_m'))),
+        directed_speed=metrics.get('directed_tip_speed_m_s',status.get('directed_tip_speed_m_s')),
+        speed_gain=metrics.get('rewarded_tip_speed_m_s',status.get('rewarded_tip_speed_m_s')),
+        hit_fraction=metrics.get('accepted_fraction',metrics.get('success')),failures=(1-metrics['physics_valid_fraction'] if 'physics_valid_fraction' in metrics else metrics.get('failures')),ess=metrics.get('effective_samples'),
         committed_distance=committed.get('actual_minimum_tip_distance_m',status.get('best_minimum_tip_distance_m')),
         wave=metrics.get('best_candidate_wave_stages'),receding=receding)
 
@@ -54,11 +56,11 @@ class MPPIDashboard(QWidget):
         super().__init__();self.setMinimumHeight(340);body=QVBoxLayout(self);body.setContentsMargins(0,0,0,0)
         self.heading=QLabel('Select a run to see live MPPI statistics');self.heading.setStyleSheet('font-size:15pt;font-weight:650');body.addWidget(self.heading)
         self.context=QLabel();self.context.setWordWrap(True);body.addWidget(self.context)
-        grid=QGridLayout();body.addLayout(grid);self.values={}
+        grid=QGridLayout();body.addLayout(grid);self.values={};self.labels={}
         for i,(key,label) in enumerate([('iteration','Total iterations'),('elapsed','Recorded elapsed'),('seconds','Last iteration'),('distance','Best lookahead tip distance'),
             ('hit_fraction','Sampled valid hits'),('failures','Sampled infeasible'),('ess','Effective samples'),('step','Committed commands')]):
             card=QFrame();card.setMinimumHeight(70);card.setStyleSheet('QFrame {background:#f4f7fc;border-radius:7px;}');layout=QVBoxLayout(card)
-            title=QLabel(label);title.setStyleSheet('color:#526278;font-size:9pt');layout.addWidget(title)
+            title=QLabel(label);title.setStyleSheet('color:#526278;font-size:9pt');layout.addWidget(title);self.labels[key]=title
             value=QLabel('—');value.setStyleSheet('font-size:17pt;font-weight:650;color:#172b4d');layout.addWidget(value)
             self.values[key]=value;grid.addWidget(card,i//4,i%4)
         self.maneuver_label=QLabel();body.addWidget(self.maneuver_label);self.maneuver=QProgressBar();self.maneuver.setTextVisible(False);body.addWidget(self.maneuver)
@@ -68,16 +70,25 @@ class MPPIDashboard(QWidget):
     def update_run(self,status,settings,history,windows,age=None):
         data=snapshot(status,settings,history,windows);s=settings.get('mppi',{})
         headings={'running':'Optimizing','completed':'Finished','stopped':'Stopped','failed':'Failed','prepared':'Ready'}
-        self.heading.setText(headings.get(data['state'],'Waiting')+' · '+(data['stage'] or status.get('stop_reason','MPPI')))
+        self.heading.setText(headings.get(data['state'],'Waiting')+' · '+(data['stage'] or status.get('stop_reason','MPPI').replace('_',' ')))
         self.context.setText(f'{s.get("horizon_s","—")} s lookahead · {s.get("samples","—")} parallel samples · {settings.get("device","—")} · '+
             ('no iteration limit' if not s.get('iterations') else f'{s["iterations"]} iterations per lookahead'))
-        offline=s.get('parameterization')=='control_points'
+        offline=s.get('mode')=='open_loop'
         if offline:self.context.setText(f'{data["duration"]:g} s complete whip · {s["samples"]} samples · {s["support_points"]} control points · {s["proposal_count"]} proposals · adaptive temperature')
+        spline=settings.get('command_contract')=='position_spline_pva_30hz_v1'
+        gain_mode=settings.get('trajectory_objective',{}).get('speed_metric')=='tip_gain_over_root'
+        for key,label in [('distance','Best scored strike distance' if spline else 'Best lookahead tip distance'),
+                          ('hit_fraction','Feasible strike candidates' if spline else 'Sampled valid hits'),
+                          ('step',('Rewarded tip-speed gain' if gain_mode else 'Forward tip speed at strike') if spline else 'Committed commands')]:self.labels[key].setText(label)
+        if spline:
+            data['step']=data['speed_gain'] if gain_mode else data['directed_speed']
+            data['iteration']=data['minimum_done']
         for key,value in self.values.items():
             x=data[key]
             if x is None or not math.isfinite(float(x)):text='—'
             elif key in ('hit_fraction','failures'):text=f'{100*x:.1f}%'
-            elif key=='distance':text=f'{100*x:.1f} cm'
+            elif key=='distance':text=f'{100*x:.2f} cm'
+            elif key=='step' and spline:text=f'{x:.2f} m/s'
             elif key=='elapsed':text=f'{int(x)//60:d}m {int(x)%60:02d}s'
             elif key=='seconds':text=f'{x:.2f} s'
             elif key=='ess':text=f'{x:.1f}'
@@ -93,10 +104,32 @@ class MPPIDashboard(QWidget):
         actual='—' if data['committed_distance'] is None else f'{100*data["committed_distance"]:.1f} cm'
         text=f'Committed path closest tip: {actual}. Sampled hits and lookahead distances describe proposals, not the committed result.'
         if offline:
-            text='Optimizing the complete motion from the same start; no commands are committed during search.'
+            text=('Complete motion optimized from the saved start.' if data['state']=='completed' else 'Optimizing the complete motion from the same start; no commands are committed during search.')
             latest=history[-1] if history else {}
             parts=latest.get('objective_components',{})
             if parts:text+=' Best score contributions: '+', '.join(f'{k} {v:+.1f}' for k,v in parts.items())+'.'
         if age is not None and data['state']=='running':text+=f' Last status/history write {age:.0f} s ago.'
         if status.get('error'):text+=' '+status['error']
+        if settings.get('command_contract')=='position_spline_pva_30hz_v1' and settings.get('trajectory_objective',{}).get('schema')=='targeted_fold_strike_v1':
+            self.context.setText(f'{data["duration"]:g} s full whip · 12 spline points / 9 adjustable · {s["samples"]} candidates · {s["iterations"]} iterations')
+            self.work_label.setText(f'Completed iteration {data["iteration"]} / {s["iterations"]}')
+            self.work.setRange(0,s['iterations']);self.work.setValue(int(data['iteration']))
+            latest=history[-1] if history else {}
+            text+=(' Travelling fold is required.' if settings.get('fold_requirement','required')=='required' else ' Fold propagation is diagnostic only.')+' Recovery: brake, return, hold.'
+            angle=latest.get('strike_angle_deg');limit=settings.get('trajectory_objective',{}).get('maximum_strike_angle_deg')
+            if angle is not None:text+=f' Strike angle: {angle:.1f} deg'+(f' / {limit:g} deg maximum.' if limit is not None else '.')
+            if settings.get('trajectory_objective',{}).get('prefer_aligned_strike',False):text+=' Smaller angles receive more speed credit.'
+            gain=latest.get('rewarded_tip_speed_m_s');root=latest.get('root_forward_speed_m_s')
+            if gain is not None and settings.get('trajectory_objective',{}).get('speed_metric')=='tip_gain_over_root':text+=f' Tip forward speed: {data["directed_speed"]:.2f} m/s; root forward speed: {root:.2f} m/s.'
+            minimum_gain=settings.get('trajectory_objective',{}).get('minimum_tip_speed_gain_m_s')
+            if minimum_gain is not None:text+=f' Required speed gain: {minimum_gain:g} m/s.'
+            if latest.get('best_score') is None:
+                text+=' No feasible strike candidate yet.'
+                sampled=latest.get('best_sampled_speed_gain_m_s')
+                if sampled is not None:text+=f' Best sampled gain: {sampled:.2f} m/s (exploration only).'
+        if settings.get('trajectory_objective',{}).get('schema')=='preferred_fold_v1':
+            self.labels['distance'].setText('Closest tip distance')
+            self.labels['hit_fraction'].setText('Sampled valid tip contacts')
+            text+=' Original M0 cable-shape objective; smooth alignment reward, no angle cutoff. Smooth brake, return and hover.'
+            self.work_label.setText(f'Completed {data["minimum_done"]} updates; plateau {data["stale"]} / {data["patience"]}')
         self.detail.setText(text)

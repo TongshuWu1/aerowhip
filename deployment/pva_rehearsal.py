@@ -18,8 +18,11 @@ from planning.pva_job import load_policy,freeze_model_assets
 from deployment.research_rehearsal import complete_packets,FIELDS
 
 
-def complete_pva_packets(whip,hover,limits=None):
+def complete_pva_packets(whip,hover,limits=None,*,recovery_settings=None,jerk_limits=None):
     """Avoid a large turning detour when the maneuver already ends near hover."""
+    if recovery_settings is not None:
+        from deployment.braking_recovery import complete_packets as brake_return
+        return brake_return(whip,hover,limits,jerk_limits,recovery_settings)
     from deployment.curved_recovery import coefficients,evaluate,permitted,DEFAULTS
     options=None
     if limits is not None:
@@ -56,10 +59,22 @@ def generate(job,output,*,checkpoint=None,origin=None,target=None,device='cuda',
         if cfg['launch']['origin_m']!=frozen['origin_m'] or cfg['launch']['target_m']!=frozen['target_m']:
             raise ValueError('MPPI launch changed: optimize a new plan before rehearsing')
     if output.exists():raise FileExistsError('Use a new rehearsal folder')
+    from planning.position_spline import SCHEMA as SPLINE_SCHEMA, PositionSpline, replay as replay_spline
+    spline_mode=cfg.get('command_contract')==SPLINE_SCHEMA
     if cfg['method']=='mppi':
         with np.load(job/'plan.npz') as data:
             if 'plan_complete' in data and not bool(data['plan_complete']):raise ValueError('Receding MPPI plan is partial; finish the maneuver before export')
-            saved_actions=data['normalized_jerk'].copy()
+            if spline_mode:
+                free=data['position_control_points_m'].copy()
+                if free.shape!=(9,3) or not np.isfinite(free).all():raise ValueError('Finite nine-point spline required')
+                spline=PositionSpline(cfg['task']['duration_s'])
+                saved_packets,jerk=spline.decode(torch.tensor(free),cfg['launch']['origin_m'])
+                if not bool(spline.jerk_valid(torch.tensor(free),cfg['launch']['origin_m'],torch.tensor(cfg['action']['jerk_limit_m_s3']))):
+                    raise ValueError('Spline exceeds the continuous jerk envelope')
+                if not np.allclose(data['command_packets'],saved_packets.numpy(),atol=1e-10,rtol=0):
+                    raise ValueError('Saved spline packets differ from its control points')
+                saved_actions=jerk.numpy()/np.asarray(cfg['action']['jerk_limit_m_s3'])
+            else:saved_actions=data['normalized_jerk'].copy()
             if 'committed_steps' in data and int(data['committed_steps'])!=len(saved_actions):raise ValueError('Saved committed plan length differs')
         if saved_actions.ndim!=2 or saved_actions.shape[1]!=3 or not len(saved_actions) or not np.isfinite(saved_actions).all() or np.abs(saved_actions).max()>1+1e-6:
             raise ValueError('Saved plan requires finite bounded XYZ jerk actions')
@@ -70,21 +85,31 @@ def generate(job,output,*,checkpoint=None,origin=None,target=None,device='cuda',
     else:
         if len(saved_actions)>env.steps:raise ValueError('Saved plan exceeds its frozen maneuver time limit')
         actions=env.tensor(saved_actions)[None]
-        result=env.rollout(actions=actions,trace=True,max_steps=len(saved_actions))
+        result=replay_spline(env,env.tensor(free)[None],trace=True) if spline_mode else env.rollout(actions=actions,trace=True,max_steps=len(saved_actions))
         if bool(env.active.any()):raise ValueError('Saved plan ends before a modeled hit or maneuver time limit; no CSV exported')
     if bool(result['failed'][0]):raise ValueError('Whip fails the command, workspace or model envelope; no CSV exported')
-    if env.targeted_strike and not bool(result['fold_valid'][0]):
+    from planning.strike_objective import requires_fold, strike_direction_allowed, strike_angle_deg, uses_templates, rewarded_speed, strike_speed_allowed
+    if env.targeted_strike and requires_fold(cfg) and not bool(result['fold_valid'][0]):
         raise ValueError('No verified travelling fold before the strike event; no CSV exported')
+    if env.targeted_strike and 'maximum_strike_angle_deg' in cfg['trajectory_objective']:
+        if not bool(env.strike_valid[0]) or not bool(strike_direction_allowed(env.strike_velocity,env.direction,cfg['trajectory_objective'])[0]):
+            raise ValueError('No scored strike within the saved direction cone; no CSV exported')
+    if env.targeted_strike and 'minimum_tip_speed_gain_m_s' in cfg['trajectory_objective']:
+        if not bool(env.strike_valid[0]) or not bool(strike_speed_allowed(env.strike_velocity,env.direction,cfg['trajectory_objective'],env.strike_root_velocity)[0]):
+            raise ValueError('No strike meets the saved minimum tip speed gain; no CSV exported')
     cutoff=int(result['cutoffs'][0]);whip=result['packets'][0,:cutoff+1].cpu().numpy()
     if len(whip)<2:raise ValueError('Empty maneuver')
     if progress:progress('Appending smooth recovery',0,1)
-    times,packets,phases,recovery=complete_pva_packets(whip,np.asarray(cfg['launch']['origin_m']),cfg['limits'])
+    times,packets,phases,recovery=complete_pva_packets(whip,np.asarray(cfg['launch']['origin_m']),cfg['limits'],
+        recovery_settings=cfg.get('recovery'),jerk_limits=cfg['action']['jerk_limit_m_s3'])
     valid,metrics=reference_packet_validity(env.tensor(packets)[None],cfg['limits'])
     if not bool(valid.all()):raise ValueError('Complete recovery exceeds the saved PVA command envelope')
     if packets[:,2].max()>cfg['limits']['maximum_origin_z_m']+1e-8 or packets[:,2].min()<cfg['limits']['minimum_origin_z_m']-1e-8:
         raise ValueError('Complete recovery exceeds the saved height envelope; whip is preserved, CSV not exported')
     count=round(times[-1]/env.dt);grid=np.arange(count+1)*env.dt
-    pose=env.engine.drone.predict(env.initial_pose,env.tensor(packets)[None],times,grid,env.engine.offset,graph=True,hover_command=env.hover)
+    pose=env.engine.drone.predict(env.initial_pose,env.tensor(packets)[None],times,grid,env.engine.offset,graph=True,hover_command=env.hover,maximum_tilt_deg=cfg['limits']['maximum_tilt_deg'])
+    if not bool(pose['valid'].all()):
+        raise ValueError('Complete prediction exceeds the attitude or model envelope; no CSV exported')
     prefix=min(cutoff*env.stride,len(env.frames))
     streamed=torch.stack([f['origin'] for f in env.frames[:prefix]],1)
     difference=float((streamed-pose['position_origin_m'][:,1:prefix+1]).abs().max())
@@ -115,7 +140,7 @@ def generate(job,output,*,checkpoint=None,origin=None,target=None,device='cuda',
     atomic_json(output/'task.json',dict(desired_strike_direction_world=cfg['task']['strike_direction'],
         target_position_m=cfg['launch']['target_m'],
         **(dict(target_positions_m=cfg['task']['target_sequence_m']) if env.extra_tick_fields else {}),
-        **(dict(target_marker_radius_m=.02,acceptance='Travelling fold before the scored strike event; continuous distance and speed',
+        **(dict(target_marker_radius_m=.02,acceptance=('Travelling fold before the scored strike event; continuous distance and speed' if requires_fold(cfg) else 'Feasible targeted strike; continuous distance and speed; fold diagnostic only'),
                 objective=cfg['trajectory_objective'],fold_constraint=cfg['fold_constraint'])
            if env.targeted_strike else dict(success=dict(tip_target_distance_m=cfg['task']['target_radius_m'])))))
     with (output/'fullstate_30hz.csv').open('w',newline='',encoding='utf-8') as stream:
@@ -132,7 +157,7 @@ def generate(job,output,*,checkpoint=None,origin=None,target=None,device='cuda',
         origin_velocities_m_s=pose['velocity_origin_m_s'][0,:n].cpu().numpy(),
         origin_rotations=pose['rotation_tracking_to_world'][0,:n].cpu().numpy(),target_position_m=cfg['launch']['target_m'],
         jerk_time_s=np.arange(len(jerk))/30,jerk_m_s3=jerk,**target_arrays)
-    metadata=dict(schema='pva_fullstate_30hz_v1',command_contract=SCHEMA,planner=cfg['method'].upper()+' PVA',
+    metadata=dict(schema='pva_fullstate_30hz_v1',command_contract=cfg.get('command_contract',SCHEMA),planner=cfg['method'].upper()+' PVA',
         planner_mode=cfg.get('mppi',{}).get('mode','open_loop') if cfg['method']=='mppi' else 'ppo',
         lookahead_s=cfg.get('mppi',{}).get('horizon_s') if cfg['method']=='mppi' else None,
         plan_sha256=sha256_file(job/'plan.npz') if cfg['method']=='mppi' else None,
@@ -144,19 +169,31 @@ def generate(job,output,*,checkpoint=None,origin=None,target=None,device='cuda',
         command_height_range_m=[float(packets[:,2].min()),float(packets[:,2].max())],
         predicted_drone_height_range_m=[float(origin_z.min()),float(origin_z.max())],
         minimum_predicted_cable_height_m=float(positions[:,:,2].min()),
-        recovery_empirically_validated=False,reference_feasible=True,training_export_prefix_max_difference_m=difference,
+        recovery_empirically_validated=False,reference_feasible=True,predicted_attitude_checked=True,
+        maximum_predicted_tilt_limit_deg=cfg['limits']['maximum_tilt_deg'],training_export_prefix_max_difference_m=difference,
         training_export_cable_max_difference_m=cable_difference,
         csv_sha256=sha256_file(output/'fullstate_30hz.csv'),
         command_semantics='Desired OptiTrack tracked-origin P/V/A, kinematic acceleration, 30 Hz zero-order hold, no force or mass compensation',
         execution='Take off; hold 10 s at saved start; execute complete CSV at saved timestamps; land. Offline artifact, no flight sender.',
         evidence='Fitted model simulation only; real flight performance remains to be measured')
+    if spline_mode:
+        metadata.update(trajectory_representation=SPLINE_SCHEMA,jerk_csv_semantics='Analytic spline jerk sampled at interval midpoints; diagnostic only, not the source of PVA packets')
     if env.targeted_strike:
         metadata.pop('predicted_valid_hit');metadata.pop('predicted_hit_time_s')
-        shutil.copy2(job/'proposal_baselines.npz',output/'proposal_baselines.npz')
-        metadata.update(predicted_fold_valid=True,fold_completed_time_s=float(env.fold_completed_time_s[0]),
+        if uses_templates(cfg):shutil.copy2(job/'proposal_baselines.npz',output/'proposal_baselines.npz')
+        metadata.update(predicted_fold_valid=bool(result['fold_valid'][0]),fold_requirement=cfg.get('fold_requirement','required'),
+            fold_completed_time_s=float(env.fold_completed_time_s[0]) if bool(torch.isfinite(env.fold_completed_time_s[0])) else None,
             objective_schema=cfg['trajectory_objective']['schema'],
-            proposal_baselines_sha256=sha256_file(output/'proposal_baselines.npz'),
+            initialization=cfg['mppi'].get('initialization','templates'),
+            proposal_baselines_sha256=sha256_file(output/'proposal_baselines.npz') if uses_templates(cfg) else None,
             strike_time_s=float(env.strike_time[0]),strike_distance_m=float(env.strike_distance[0]),
+            strike_angle_deg=float(strike_angle_deg(env.strike_velocity[0],env.direction)),
+            maximum_strike_angle_deg=cfg['trajectory_objective'].get('maximum_strike_angle_deg'),
+            speed_metric=cfg['trajectory_objective'].get('speed_metric','absolute_tip_speed'),
+            minimum_tip_speed_gain_m_s=cfg['trajectory_objective'].get('minimum_tip_speed_gain_m_s'),
+            root_forward_speed_m_s=float((env.strike_root_velocity[0]*env.direction).sum()),
+            rewarded_tip_speed_m_s=float(rewarded_speed(env.strike_velocity[0],env.direction,cfg['trajectory_objective'],env.strike_root_velocity[0])),
+            root_velocity_m_s=env.strike_root_velocity[0].cpu().tolist(),
             directed_tip_speed_m_s=float((env.strike_velocity[0]*env.direction).sum()),
             closest_approach_time_s=float(env.encounter_time[0]))
     if cfg['task'].get('require_pullback',False):
@@ -184,7 +221,7 @@ def generate(job,output,*,checkpoint=None,origin=None,target=None,device='cuda',
     metadata['success_meaning']=('Tip enters the target sphere; speed, reversal and wave are diagnostics, not pass/fail gates.'
         if metadata['success_criterion']=='tip_contact_v1' else 'Historical composite strike requirements in saved settings.')
     if env.targeted_strike:
-        metadata['success_meaning']='Predicted travelling fold before the scored encounter; neither a hit label nor measured impact energy.'
+        metadata['success_meaning']=('Predicted travelling fold before the scored encounter' if requires_fold(cfg) else 'Feasible scored strike; travelling fold is diagnostic only')+'; neither a hit label nor measured impact energy.'
     if env.extra_tick_fields:
         from learning.two_target_whip import details
         metadata.update(details(env,0),target_positions_m=cfg['task']['target_sequence_m'],

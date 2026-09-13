@@ -1,4 +1,4 @@
-"""Targeted strike objective and a separate travelling-fold acceptance test.
+"""Targeted strike objective with separately reported travelling-fold diagnostics.
 
 Development implementation. This measures pre-contact kinematics, not impact
 energy transferred to an object. No archived shape or vehicle-reversal reward
@@ -21,11 +21,19 @@ FOLD = dict(material_samples=21, half_window_fraction=0.10,
             minimum_observations=4)
 FIELDS = ('fold_tracking', 'fold_last_s', 'fold_count', 'fold_completed',
           'fold_completed_time_s', 'encounter_fold_valid', 'strike_value',
-          'strike_distance', 'strike_velocity', 'strike_time', 'strike_valid')
+          'strike_distance', 'strike_velocity', 'strike_root_velocity', 'maximum_directional_speed_gain', 'strike_time', 'strike_valid', 'strike_fold_valid')
 
 
 def enabled(settings):
     return settings.get('trajectory_objective', {}).get('schema') == SCHEMA
+
+
+def uses_templates(settings):
+    return settings.get('mppi',{}).get('initialization','templates')!='from_scratch'
+
+
+def requires_fold(settings):
+    return settings.get('fold_requirement','required')=='required'
 
 
 def default_objective():
@@ -34,12 +42,17 @@ def default_objective():
 
 def validate_settings(cfg):
     from simulator.pva_commands import SCHEMA as COMMAND_SCHEMA
-    if cfg.get('method') != 'mppi' or cfg.get('command_contract') != COMMAND_SCHEMA:
+    from planning.position_spline import SCHEMA as SPLINE_SCHEMA
+    spline=cfg.get('command_contract')==SPLINE_SCHEMA
+    if cfg.get('method') != 'mppi' or cfg.get('command_contract') not in (COMMAND_SCHEMA,SPLINE_SCHEMA):
         raise ValueError('Targeted fold strikes require offline PVA MPPI')
     if 'reward' in cfg or cfg.get('ppo_objective'):
         raise ValueError('Legacy reward dictionaries cannot enter the new strike objective')
+    if cfg.get('fold_requirement','required') not in ('required','diagnostic_only'):
+        raise ValueError('Fold requirement must be required or diagnostic_only')
     objective = cfg['trajectory_objective']; fold = cfg['fold_constraint']
-    if set(objective) != set(OBJECTIVE) or set(fold) != set(FOLD):
+    optional = {'lateral_weight', 'lateral_scale_m', 'speed_proximity_scale_m', 'maximum_strike_angle_deg', 'prefer_aligned_strike', 'speed_metric', 'minimum_tip_speed_gain_m_s'}
+    if not set(OBJECTIVE) <= set(objective) or set(objective)-set(OBJECTIVE)-optional or set(fold) != set(FOLD):
         raise ValueError('Use the explicit targeted-strike objective and fold settings')
     def finite(x):
         if isinstance(x, dict): return all(finite(v) for v in x.values())
@@ -48,8 +61,25 @@ def validate_settings(cfg):
     if not finite(cfg): raise ValueError('Settings must be finite')
     for key in ('distance_scale_m', 'speed_scale_m_s'):
         if objective[key] <= 0: raise ValueError('Strike scales must be positive')
+    if objective.get('speed_proximity_scale_m', objective['distance_scale_m']) <= 0:
+        raise ValueError('Positive speed proximity scale required')
+    if 'maximum_strike_angle_deg' in objective and not 0 < objective['maximum_strike_angle_deg'] <= 90:
+        raise ValueError('Maximum strike angle must be in (0, 90] degrees')
+    if objective.get('speed_metric','absolute_tip_speed') not in ('absolute_tip_speed','tip_gain_over_root'):
+        raise ValueError('Unknown strike speed metric')
+    if 'minimum_tip_speed_gain_m_s' in objective:
+        if objective.get('speed_metric')!='tip_gain_over_root' or objective['minimum_tip_speed_gain_m_s']<=0:
+            raise ValueError('Positive minimum tip speed gain requires the root-relative speed metric')
+    if not isinstance(objective.get('prefer_aligned_strike',False),bool):
+        raise ValueError('Aligned-strike preference must be boolean')
+    if objective.get('prefer_aligned_strike',False) and 'maximum_strike_angle_deg' not in objective:
+        raise ValueError('Aligned-strike preference requires a maximum strike angle')
     if objective['intensity_weight'] <= 0 or objective['jerk_weight'] < 0:
         raise ValueError('Positive strike intensity and nonnegative smoothness weights required')
+    if objective.get('lateral_weight', 0) < 0 or objective.get('lateral_scale_m', 1) <= 0:
+        raise ValueError('Lateral weight must be nonnegative and its distance scale positive')
+    if objective.get('lateral_weight', 0) > 0 and sum(x*x for x in cfg['task']['strike_direction'][:2]) <= 0:
+        raise ValueError('Lateral preference requires a horizontal strike direction')
     task = cfg['task']; s = cfg['mppi']; limits = cfg['limits']
     if set(task) != {'duration_s', 'strike_direction', 'success_criterion'} or task['success_criterion'] != SCHEMA:
         raise ValueError('The new task has no legacy contact, speed, reversal, or wave gates')
@@ -65,7 +95,7 @@ def validate_settings(cfg):
     for key in ('maximum_speed_m_s', 'maximum_specific_force_m_s2', 'minimum_specific_vertical_m_s2'):
         if limits[key] <= 0: raise ValueError('Positive vehicle limits required')
     if not 0 < limits['maximum_tilt_deg'] < 90: raise ValueError('Tilt bound must lie between 0 and 90 degrees')
-    if s.get('mode') != 'open_loop' or s.get('parameterization') != 'targeted_fold_strike_v1':
+    if s.get('mode') != 'open_loop' or s.get('parameterization') != (SPLINE_SCHEMA if spline else 'targeted_fold_strike_v1'):
         raise ValueError('The new objective requires its dedicated offline planner')
     for key in ('samples', 'proposal_count', 'support_points', 'iterations'):
         if isinstance(s[key], bool) or not isinstance(s[key], int) or s[key] < 1:
@@ -73,12 +103,35 @@ def validate_settings(cfg):
     if s['proposal_count'] < 2 or s['samples'] % s['proposal_count'] or not 2 <= s['support_points'] <= steps:
         raise ValueError('Two template families, divisible sample budgets, and valid support points required')
     if not 0 < s['target_ess_fraction'] < 1: raise ValueError('ESS fraction must lie in (0,1)')
+    if spline:
+        from deployment.braking_recovery import validate as validate_recovery
+        validate_recovery(cfg['recovery'])
+        if s.get('initialization','templates') not in ('templates','from_scratch'):
+            raise ValueError('Unknown spline initialization')
+        if not uses_templates(cfg):
+            if not 0 <= s.get('fresh_sample_fraction',-1) <= 1:
+                raise ValueError('Fresh sample fraction must lie in [0,1]')
+            if 'proposal_templates_path' in cfg:
+                raise ValueError('From-scratch planning must not specify previous motion templates')
+        elif s.get('position_correlation_length',0)<=0 or not s.get('initial_strengths') or not all(0<x<=1 for x in s['initial_strengths']):
+            raise ValueError('Positive spline correlation length and seed strengths in (0,1] required')
+        if s['support_points']!=9 or not s.get('position_noise_scales_m') or min(s['position_noise_scales_m'])<=0:
+            raise ValueError('Spline requires nine free control points and positive position noise scales')
+    else:
+        _validate_timing(s)
+    _validate_fold(fold)
+
+
+def _validate_timing(s):
     knots = s['timing_source_knots']
     if len(knots) != 4 or knots[0] != 0 or knots[-1] != 1 or any(a >= b for a,b in zip(knots,knots[1:])):
         raise ValueError('Three ordered template timing intervals required')
     noise = [s[k] for k in ('control_point_noise_scales','timing_noise_scales','strength_noise_scales')]
     if not noise[0] or len({len(x) for x in noise}) != 1 or any(min(x) <= 0 for x in noise):
         raise ValueError('Positive matching noise mixtures required')
+
+
+def _validate_fold(fold):
     n = fold['material_samples']; half = fold['half_window_fraction']*(n-1)
     if not isinstance(n, int) or n < 7 or not math.isclose(half, round(half)) or not 1 <= round(half) < (n-1)/2:
         raise ValueError('Fold window must cover whole material-grid intervals')
@@ -92,15 +145,56 @@ def validate_settings(cfg):
         raise ValueError('A fold requires at least three consecutive observations')
 
 
-def event_terms(distance, tip_velocity, direction, settings):
+def strike_angle_deg(velocity, direction):
+    """Angle of nonzero tip velocity to the requested world-frame direction."""
+    cosine=(velocity*direction).sum(-1)/(velocity.norm(dim=-1)*direction.norm()).clamp_min(1e-12)
+    return torch.rad2deg(torch.acos(cosine.clamp(-1,1)))
+
+
+def strike_direction_allowed(velocity, direction, settings):
+    """Apply the optional cone at the same instant as distance and speed."""
+    forward=(velocity*direction).sum(-1)
+    allowed=forward>0
+    if 'maximum_strike_angle_deg' in settings:
+        threshold=math.cos(math.radians(settings['maximum_strike_angle_deg']))
+        # Relative tolerance only covers floating-point roundoff at the boundary.
+        norm=velocity.norm(dim=-1)*direction.norm()
+        allowed &= forward >= (threshold-1e-12)*norm
+    return allowed
+
+
+def rewarded_speed(tip_velocity, direction, settings, root_velocity=None):
+    forward=(tip_velocity*direction).sum(-1).clamp_min(0)
+    if settings.get('speed_metric','absolute_tip_speed')=='tip_gain_over_root':
+        if root_velocity is None:raise ValueError('Root velocity is required for the speed-gain objective')
+        root_forward=(root_velocity*direction).sum(-1).clamp_min(0)
+        forward=(forward-root_forward).clamp_min(0)
+    return forward
+
+
+def strike_speed_allowed(tip_velocity, direction, settings, root_velocity=None):
+    gain=rewarded_speed(tip_velocity,direction,settings,root_velocity)
+    if 'minimum_tip_speed_gain_m_s' not in settings:return torch.ones_like(gain,dtype=torch.bool)
+    return gain >= settings['minimum_tip_speed_gain_m_s']
+
+
+def event_terms(distance, tip_velocity, direction, settings, *, root_velocity=None):
     error = (distance / settings['distance_scale_m']).square()
-    forward = (tip_velocity * direction).sum(-1).clamp_min(0)
+    forward = rewarded_speed(tip_velocity,direction,settings,root_velocity)
     speed_squared = (forward / settings['speed_scale_m_s']).square()
-    return dict(target=-error, strike=settings['intensity_weight'] * torch.exp(-error)
-                * speed_squared / (1 + speed_squared))
+    # Missing scale preserves every historical objective exactly.
+    proximity = (distance / settings.get('speed_proximity_scale_m', settings['distance_scale_m'])).square()
+    alignment=1.
+    if settings.get('prefer_aligned_strike',False):
+        cosine=(tip_velocity*direction).sum(-1)/(tip_velocity.norm(dim=-1)*direction.norm()).clamp_min(1e-12)
+        edge=math.cos(math.radians(settings['maximum_strike_angle_deg']))
+        # Full speed credit on-axis, zero at the cone edge; no extra angle weight.
+        alignment=((cosine-edge)/(1-edge)).clamp(0,1)
+    return dict(target=-error, strike=settings['intensity_weight'] * torch.exp(-proximity)
+                * speed_squared / (1 + speed_squared) * alignment)
 
 
-def strike_terms(distance, tip_velocity, direction, normalized_jerk, settings):
+def strike_terms(distance, tip_velocity, direction, normalized_jerk, settings, *, root_velocity=None):
     """One shared encounter supplies both target error and directed speed.
 
     The negative squared distance provides guidance even far from the target.
@@ -108,7 +202,7 @@ def strike_terms(distance, tip_velocity, direction, normalized_jerk, settings):
     arbitrarily large miss and has no hard speed cap. Jerk is a dimensionless
     mean over the complete fixed-duration command, not a second motion goal.
     """
-    return dict(**event_terms(distance, tip_velocity, direction, settings),
+    return dict(**event_terms(distance, tip_velocity, direction, settings,root_velocity=root_velocity),
                 smoothness=-settings['jerk_weight'] * normalized_jerk.square().mean((-1, -2)))
 
 
@@ -174,8 +268,11 @@ def initialize(env):
     env.strike_value = torch.full_like(env.total, -torch.inf)
     env.strike_distance = torch.full_like(env.total, torch.inf)
     env.strike_velocity = env.encounter_tip_velocity.clone().zero_()
+    env.strike_root_velocity = env.encounter_tip_velocity.clone().zero_()
+    env.maximum_directional_speed_gain = torch.full_like(env.total,-torch.inf)
     env.strike_time = torch.full_like(env.total, torch.inf)
     env.strike_valid = torch.zeros_like(env.active)
+    env.strike_fold_valid = torch.zeros_like(env.active)
 
 
 def observe(env, previous, current, eligible, clock_left):
@@ -183,7 +280,7 @@ def observe(env, previous, current, eligible, clock_left):
 
     Position and velocity use the same segment fraction. Equal-distance ties
     retain the earliest encounter. The fold must already be confirmed at the
-    start of this interval; later geometry cannot qualify an earlier encounter.
+    start of this interval when required; later geometry cannot qualify an earlier encounter.
     """
     before = previous.positions_m[:, -1]
     after = current.positions_m[:, -1]
@@ -202,19 +299,27 @@ def observe(env, previous, current, eligible, clock_left):
     env.encounter_fold_valid = torch.where(replace, env.fold_completed, env.encounter_fold_valid)
     # Task event and reporting event are distinct. Evaluate both endpoints and
     # the closest point of each physics segment, with co-timed velocities.
-    # Only an already completed travelling fold can qualify an event.
+    # Historical runs require fold completion; new runs record it diagnostically.
     for event_fraction in (torch.zeros_like(fraction), fraction, torch.ones_like(fraction)):
         event_position = before + event_fraction[:, None]*displacement
         event_velocity = previous.velocities_m_s[:, -1] + event_fraction[:, None]*(
             current.velocities_m_s[:, -1]-previous.velocities_m_s[:, -1])
         event_distance = (event_position-env.target).norm(dim=-1)
+        root_velocity=previous.velocities_m_s[:,0]+event_fraction[:,None]*(current.velocities_m_s[:,0]-previous.velocities_m_s[:,0])
         value = sum(event_terms(event_distance, event_velocity, env.direction,
-                               env.settings['trajectory_objective']).values())
-        forward = (event_velocity*env.direction).sum(-1) > 0
-        select = eligible & env.fold_completed & forward & torch.isfinite(value) & (value > env.strike_value)
+                               env.settings['trajectory_objective'],root_velocity=root_velocity).values())
+        forward = strike_direction_allowed(event_velocity, env.direction, env.settings['trajectory_objective'])
+        fold_allowed=env.fold_completed if requires_fold(env.settings) else torch.ones_like(eligible)
+        gain=rewarded_speed(event_velocity,env.direction,env.settings['trajectory_objective'],root_velocity)
+        env.maximum_directional_speed_gain=torch.maximum(env.maximum_directional_speed_gain,
+            torch.where(eligible & fold_allowed & forward,gain,-torch.inf))
+        speed_allowed=strike_speed_allowed(event_velocity,env.direction,env.settings['trajectory_objective'],root_velocity)
+        select = eligible & fold_allowed & forward & speed_allowed & torch.isfinite(value) & (value > env.strike_value)
+        env.strike_fold_valid=torch.where(select,env.fold_completed,env.strike_fold_valid)
         env.strike_value = torch.where(select, value, env.strike_value)
         env.strike_distance = torch.where(select, event_distance, env.strike_distance)
         env.strike_velocity = torch.where(select[:, None], event_velocity, env.strike_velocity)
+        env.strike_root_velocity = torch.where(select[:,None],root_velocity,env.strike_root_velocity)
         env.strike_time = torch.where(select, clock_left+event_fraction*env.dt, env.strike_time)
         env.strike_valid |= select
     q = previous.positions_m+fraction[:, None, None]*(current.positions_m-previous.positions_m)
@@ -230,11 +335,27 @@ def observe(env, previous, current, eligible, clock_left):
     env.success = env.strike_valid & ~env.failed
 
 
+def lateral_cost(packets, origin, direction, settings):
+    """Soft drift cost about the vertical plane through the launch/strike axis.
+
+    Uses all equally spaced 30 Hz reference positions, including the launch.
+    No axis is disabled and no lateral feasibility threshold is introduced.
+    """
+    normal = torch.stack((-direction[1], direction[0], torch.zeros_like(direction[0])))
+    normal = normal / normal.norm().clamp_min(1e-12)
+    displacement = ((packets[..., :3] - origin[:, None, :]) * normal).sum(-1)
+    return -settings.get('lateral_weight', 0.) * (displacement / settings.get('lateral_scale_m', 1.)).square().mean(-1)
+
+
 class StrikeCapture(RolloutCapture):
     def score(self, env, result, actions, settings):
         terms = strike_terms(env.strike_distance, env.strike_velocity,
-                             env.direction, actions, settings)
+                             env.direction, actions, settings,root_velocity=env.strike_root_velocity)
+        if settings.get('lateral_weight', 0.) > 0:
+            terms['lateral'] = lateral_cost(result['packets'], env.origin0, env.direction, settings)
         total = sum(terms.values())
         finite = torch.isfinite(total)
         admissible = finite & ~result['failed'] & env.strike_valid
+        admissible &= strike_direction_allowed(env.strike_velocity, env.direction, settings)
+        admissible &= strike_speed_allowed(env.strike_velocity,env.direction,settings,env.strike_root_velocity)
         return total.masked_fill(~admissible, -torch.inf), terms

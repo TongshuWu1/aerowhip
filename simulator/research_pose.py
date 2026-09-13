@@ -82,10 +82,10 @@ class ResearchPoseModel:
         spec=payload['residual'];self.residual=load_residual(path.parent/spec['checkpoint'],spec['sha256'],device)
 
     @torch.no_grad()
-    def predict(self,initial,packets,packet_times,output_times,offset,*,graph=True,hover_command=None):
+    def predict(self,initial,packets,packet_times,output_times,offset,*,graph=True,hover_command=None,maximum_tilt_deg=None):
         """Fixed packets, exact delayed events, and a causal supplied initial state."""
         return self._predict(initial,packets,packet_times,output_times,offset,
-            graph=graph,hover_command=hover_command,differentiable=False)
+            graph=graph,hover_command=hover_command,differentiable=False,maximum_tilt_deg=maximum_tilt_deg)
 
     @torch.enable_grad()
     def predict_differentiable(self,initial,packets,packet_times,output_times,offset,*,hover_command=None):
@@ -98,7 +98,7 @@ class ResearchPoseModel:
         return self._predict(initial,packets,packet_times,output_times,offset,
             graph=False,hover_command=hover_command,differentiable=True)
 
-    def _predict(self,initial,packets,packet_times,output_times,offset,*,graph,hover_command,differentiable):
+    def _predict(self,initial,packets,packet_times,output_times,offset,*,graph,hover_command,differentiable,maximum_tilt_deg=None):
         initial.validate();p=self.parameters
         for value in (packet_times,output_times,p.delay_s,p.gravity_m_s2):
             if isinstance(value,torch.Tensor) and value.requires_grad:
@@ -120,6 +120,11 @@ class ResearchPoseModel:
         state=initial;valid=torch.ones(len(packets),device=packets.device,dtype=torch.bool)
         r=torch.as_tensor(offset,device=initial.position.device,dtype=initial.position.dtype)
         if r.shape!=(3,) or not torch.isfinite(r).all():raise ValueError('A finite tracking-frame XYZ offset is required')
+        if maximum_tilt_deg is not None:
+            if not math.isfinite(maximum_tilt_deg) or not 0 < maximum_tilt_deg < 90:
+                raise ValueError('Predicted tilt limit must be finite and between 0 and 90 degrees')
+            from .predicted_envelope import attitude_valid
+            valid &= attitude_valid(initial.rotation, initial.rotation_command_from_tracking, maximum_tilt_deg)
         roots=[];positions=[];velocities=[];rotations=[];omegas=[];valids=[]
         def record():
             roots.append(state.position+torch.einsum('bij,j->bi',state.rotation,r));positions.append(state.position)
@@ -135,6 +140,8 @@ class ResearchPoseModel:
                 count=max(1,int(math.ceil((b-a)/maximum-1e-10)));h=(b-a)/count
                 for _ in range(count):
                     proposed,ok=tensor_midpoint(state,command,h,p,self.residual) if differentiable else steps(state,command,h)
+                    if maximum_tilt_deg is not None:
+                        ok = ok & attitude_valid(proposed.rotation, proposed.rotation_command_from_tracking, maximum_tilt_deg)
                     valid=valid&ok
                     state=PoseResponseState(*(torch.where(valid.reshape((-1,)+(1,)*(getattr(state,n).ndim-1)),getattr(proposed,n),getattr(state,n))
                         for n in ['position','velocity','rotation','omega_tracking']),state.compensation,state.rotation_command_from_tracking,state.alignment_provenance,0.)

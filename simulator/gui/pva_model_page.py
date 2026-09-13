@@ -18,13 +18,13 @@ class PVAModelPage(QWidget):
         super().__init__();self.root=Path(root);self.last_progress=None
         outer=QVBoxLayout(self);outer.setContentsMargins(18,12,18,14);self.tabs=QTabWidget();outer.addWidget(self.tabs)
         library=QWidget();body=QVBoxLayout(library);self.tabs.addTab(library,'Model library')
-        banner=note('Select a fitted model for the next plan. Each PPO run, MPPI plan and exported trajectory keeps its own frozen model.');banner.setObjectName('pipelineBanner');body.addWidget(banner)
+        banner=note('Select a fitted model for the next plan. Each MPPI plan and exported trajectory keeps its own frozen model.');banner.setObjectName('pipelineBanner');body.addWidget(banner)
         row=QHBoxLayout();self.models=QComboBox();row.addWidget(self.models,1);refresh=QPushButton('Refresh');refresh.clicked.connect(self.refresh);row.addWidget(refresh);body.addLayout(row)
         self.identity=note('');body.addWidget(self.identity)
         self.table=QTableWidget(0,3);self.table.setHorizontalHeaderLabels(['Component','Value / state','Interpretation']);self.table.verticalHeader().hide()
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch);self.table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers);body.addWidget(self.table,1)
         row=QHBoxLayout()
-        for method in ('ppo','mppi'):
+        for method in ('mppi',):
             button=QPushButton('Use for '+method.upper()+' setup');button.setObjectName('primaryButton');button.clicked.connect(lambda _,m=method:self.choose(m));row.addWidget(button)
         open_files=QPushButton('Open model files');open_files.clicked.connect(self.open_model);row.addWidget(open_files);body.addLayout(row)
         self.models.currentIndexChanged.connect(self.inspect)
@@ -70,7 +70,8 @@ class PVAModelPage(QWidget):
         prov=m.get('provenance',{});mass=m.get('mass_measurement',{});c=m['cable'];offset=m.get('recorded_data',{}).get('optitrack_to_attachment_offset_body_m')
         self.identity.setText(self.models.currentText()+'\n'+str(path))
         rows=[('Drone response','Enabled' if m.get('fullstate_execution',{}).get('enabled') else 'Disabled','Effective cmdFullState tracking at OptiTrack origin'),
-            ('Drone residual','Bounded acceleration','Fresh bootstrap uses a smooth zero-at-rest gate'),
+            ('Drone residual','Disabled' if prov.get('drone_residual_enabled') is False else 'Bounded acceleration',
+                'Nominal quadrotor response only' if prov.get('drone_residual_enabled') is False else 'Fresh bootstrap uses a smooth zero-at-rest gate'),
             ('Cable physics',f'EI {c["EI_n_m2"]:.4g} · Cb {c["Cb_n_m2_s"]:.4g}','DDER with a moving, freely pivoting attachment'),
             ('Cable residual',m.get('motion_residual',{}).get('specification',{}).get('mode','enabled') if m.get('motion_residual',{}).get('enabled') else 'Disabled','Enabled only when the selected model contains a learned correction'),
             ('Cable velocity damping',str(c.get('external_drag_s_inv',0))+' s⁻¹','Effective coefficient saved in this model'),

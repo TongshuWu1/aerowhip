@@ -112,6 +112,37 @@ def nodes_from_sites(sites, cable):
     return np.concatenate(parts,axis=-2)
 
 
+def observed_cable_history(data, ids, cable, minimum_fraction=None):
+    """Keep missing history observations masked; require a fully observed endpoint.
+
+    The default preserves the original strict history rule. An explicitly
+    reviewed partial-history policy permits regression on observed samples,
+    independently for each node, without filling missing positions.
+    """
+    sites=data['sites'][ids].copy()
+    if len(ids)<11 or not data['pose_valid'][ids].all():
+        raise ValueError('Missing causal cable history')
+    sites[:,1:][~data['marker_valid'][ids]]=np.nan
+    nodes=nodes_from_sites(sites,cable)
+    valid=np.isfinite(nodes).all(-1)
+    if minimum_fraction is None:
+        if not valid.all():raise ValueError('Missing causal cable history')
+    else:
+        if not .8<=minimum_fraction<=1.:raise ValueError('Invalid history observation fraction')
+        if not valid[-1].all():raise ValueError('Missing causal cable endpoint; no extrapolated position allowed')
+        if np.any(valid.mean(0)<minimum_fraction) or np.any(valid.sum(0)<11):
+            raise ValueError('Insufficient observed causal cable history')
+    return nodes,valid
+
+
+def observed_endpoint_velocity(times, nodes, valid, weight_tau_s=None):
+    if valid.all():return endpoint_velocity(times,nodes,weight_tau_s)
+    # Missing coordinates do not enter any least-squares term. The last
+    # position/time is still observed and identical for every node.
+    return np.stack([endpoint_velocity(times[valid[:,i]],nodes[valid[:,i],i],weight_tau_s)
+                     for i in range(nodes.shape[1])])
+
+
 def prepare(job=JOB,batch=BATCH,source=SOURCE):
     job=Path(job);batch=Path(batch);source=Path(source)
     if job.exists():raise FileExistsError('Adaptation job already exists; use its frozen inputs')
@@ -253,18 +284,18 @@ class Trial:
         site[:,0]=p+np.einsum('tij,j->ti',r,self.offset)
         return p,r,site
 
-    def cable_state(self,physics,*,cutoff=None,history_s=None,velocity_weight_tau_s=None):
+    def cable_state(self,physics,*,cutoff=None,history_s=None,velocity_weight_tau_s=None,
+                    minimum_history_observation_fraction=None):
         d=self.data
         if history_s is None:ids=d['pre_indices'] if cutoff is None else np.flatnonzero(d['time']<cutoff)[-11:]
         else:
             end=float(d['time'][d['pre_indices'][-1]])
             ids=causal_history_indices(d['time'],np.nextafter(end,np.inf) if cutoff is None else cutoff,history_s)
             if not d['pose_valid'][ids].all():raise ValueError('Missing causal cable history')
-        if len(ids)<11 or not np.isfinite(d['sites'][ids]).all() or not d['marker_valid'][ids].all():
-            raise ValueError('Missing causal cable history')
         t=d['time'][ids]
-        nodes=nodes_from_sites(d['sites'][ids],CableConfiguration.from_mapping(self.model['cable']))
+        nodes,valid=observed_cable_history(d,ids,CableConfiguration.from_mapping(self.model['cable']),
+                                          minimum_history_observation_fraction)
         q=torch.tensor(nodes[-1: ],dtype=torch.float64,device=self.device)
-        v=torch.tensor(endpoint_velocity(t,nodes,velocity_weight_tau_s)[None],dtype=q.dtype,device=q.device)
+        v=torch.tensor(observed_endpoint_velocity(t,nodes,valid,velocity_weight_tau_s)[None],dtype=q.dtype,device=q.device)
         with torch.no_grad():state=project_state(physics,q,v)
         return state,float(t[-1]),float((state.positions_m-q).abs().max())

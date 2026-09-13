@@ -28,11 +28,17 @@ def prepare(source,job,numerical_review):
     history=read_json(source/'cable_physics/history.json');saved=next(r for r in history if r['update']==chosen['update'])
     if saved['values']!=chosen['parameters'] or saved['best_loss']!=chosen['training_loss']:raise ValueError('Review is not bound to the saved physical iterate')
     paths=[source/'drone_residual/state.pt',source/'drone_residual/history.json',source/'drone_residual/result.json',source/'drone_nominal/parameters.json',review]
-    paths += [f for folder in ('stages/drone_nominal','drone_nominal','cable_physics') for f in (source/folder).rglob('*') if f.is_file()]
+    drone_result=read_json(source/'drone_residual/result.json')
+    reuse_drone=(drone_result.get('stop_reason')=='practical_plateau' and
+                 drone_result.get('numerically_verified') is True and
+                 (source/'stages/drone_residual/model.json').is_file())
+    retained=('stages/drone_nominal','drone_nominal','cable_physics')
+    if reuse_drone:retained+=('stages/drone_residual','drone_residual','attitude_refinement','adapted_drone')
+    paths += [f for folder in retained for f in (source/folder).rglob('*') if f.is_file()]
     hashes={str(f):sha256_file(f) for f in paths}
     c['residual_stopping']['ceiling']=None
-    c['continuation']=dict(source=str(source),hashes=hashes,selected_physical=chosen,
-        reason='User requested useful-progress stopping and residual contribution checks. Final physical iterate failed numerical validation; best verified earlier iterate retained.',
+    c['continuation']=dict(source=str(source),hashes=hashes,selected_physical=chosen,reuse_completed_drone=reuse_drone,
+        reason='Final physical iterate failed numerical validation; best verified earlier saved iterate retained. Completed, verified drone stages are reused when already stopped at their declared plateau.',
         validation_used_for_selection=False)
     c['implementation']='whip_full_continuation_v1'
     return data.prepare(job,source,p['preliminary_source'],c)
@@ -108,16 +114,31 @@ def run(job):
         nominal=ResearchExecutionModel.from_mapping(read_json(source/'stages/drone_nominal/model.json'),root=source/'stages/drone_nominal',device='cuda')
         engine.drone=nominal.drone
         full.save_model(model,engine,job/'stages/drone_nominal',job)
-        engine.drone.residual.requires_grad_(True)
-        progress(job,'drone_residual graph preparation',windows=len(trials),resume_update=400)
-        # Capture the change regularizer against the original inherited residual BEFORE loading current weights.
-        batch=FullTranslation(trials,engine.drone.parameters,engine.drone.residual,c,count=1);objective=batch.residual_block()
-        dr=train_to_plateau(engine.drone.residual,objective,c,job/'drone_residual',job,'drone_residual',resume=source/'drone_residual')
-        dr=verify_selected_residual(engine.drone.residual,objective,job/'drone_residual',dr)
-        engine.drone.residual.requires_grad_(False);del objective,batch;gc.collect();torch.cuda.empty_cache()
-        engine.drone.parameters=fit_attitude(trials,engine.drone.parameters,engine.drone.residual,c,job/'attitude_refinement',job)
-        full.save_model(model,engine,job/'stages/drone_residual',job)
-        full.compare_drone_runtime(trials,engine,c,job/'adapted_drone')
+        if continuation.get('reuse_completed_drone'):
+            # A cable-stage numerical failure must not restart a completed
+            # translation fit or silently change its selected checkpoint.
+            fitted=ResearchExecutionModel.from_mapping(read_json(source/'stages/drone_residual/model.json'),
+                root=source/'stages/drone_residual',device='cuda')
+            engine.drone=fitted.drone
+            dr=read_json(source/'drone_residual/result.json')
+            if dr.get('stop_reason')!='practical_plateau' or dr.get('numerically_verified') is not True:
+                raise ValueError('Completed verified drone fit required for reuse')
+            for folder in ('drone_residual','attitude_refinement','adapted_drone'):
+                shutil.copytree(source/folder,job/folder)
+            if (source/'training_windows.json').exists():shutil.copy2(source/'training_windows.json',job/'training_windows.json')
+            progress(job,'Reusing completed drone fit',selected_update=dr['selected_update'])
+            full.save_model(model,engine,job/'stages/drone_residual',job)
+        else:
+            engine.drone.residual.requires_grad_(True)
+            progress(job,'drone_residual graph preparation',windows=len(trials))
+            # Capture the change regularizer against the inherited residual before resuming.
+            batch=FullTranslation(trials,engine.drone.parameters,engine.drone.residual,c,count=1);objective=batch.residual_block()
+            dr=train_to_plateau(engine.drone.residual,objective,c,job/'drone_residual',job,'drone_residual',resume=source/'drone_residual')
+            dr=verify_selected_residual(engine.drone.residual,objective,job/'drone_residual',dr)
+            engine.drone.residual.requires_grad_(False);del objective,batch;gc.collect();torch.cuda.empty_cache()
+            engine.drone.parameters=fit_attitude(trials,engine.drone.parameters,engine.drone.residual,c,job/'attitude_refinement',job)
+            full.save_model(model,engine,job/'stages/drone_residual',job)
+            full.compare_drone_runtime(trials,engine,c,job/'adapted_drone')
         cable=np.array(continuation['selected_physical']['parameters'])
         shutil.copytree(source/'cable_physics',job/'cable_physics');cr=read_json(job/'cable_physics/result.json')
         cr.update(best=np.log(cable).tolist(),best_loss=continuation['selected_physical']['training_loss'],selected_update=continuation['selected_physical']['update'],

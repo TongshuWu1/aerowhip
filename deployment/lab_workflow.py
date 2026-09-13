@@ -200,17 +200,22 @@ class LabWorkspace:
                        slots=planned_slots(),models={'M0':dict(model=self.rel(model),signature=signature,
                            rehearsal=baseline['m0_rehearsal'],status='Retained frozen M0')},updates={},results=None)
             if planner_profile is not None:
-                from planning.strike_objective import validate_settings
+                from planning.pva_job import validate_settings
+                from planning.strike_objective import uses_templates
                 settings=self.path(planner_profile); cfg=read(settings);validate_settings(cfg)
-                templates=self.path(baseline['mppi_settings']).parent/'proposal_baselines.npz'
-                if not templates.is_file():raise FileNotFoundError('Frozen command templates are missing')
+                templates=(self.path(cfg['spline_seed_directory']) if cfg.get('spline_seed_directory') else self.path(baseline['mppi_settings']).parent)/'proposal_baselines.npz'
+                if uses_templates(cfg) and not templates.is_file():raise FileNotFoundError('Frozen command templates are missing')
                 frozen=self.directory/'planner';frozen.mkdir(parents=True)
                 shutil.copy2(settings,frozen/'settings.json')
-                shutil.copy2(templates,frozen/'proposal_baselines.npz')
+                if uses_templates(cfg):shutil.copy2(templates,frozen/'proposal_baselines.npz')
+                if cfg.get('spline_seed_directory'):
+                    seed_root=self.path(cfg['spline_seed_directory'])
+                    for filename in ('initial_proposal.npz',cfg['trajectory_objective']['reference_file']):shutil.copy2(seed_root/filename,frozen/filename)
+                    cfg['spline_seed_directory']=self.rel(frozen);write(frozen/'settings.json',cfg)
                 state['planner_profile']=self.rel(frozen/'settings.json')
                 state['planner_hashes']={self.rel(p):digest(p) for p in frozen.iterdir()}
                 state['models']['M0'].pop('rehearsal')
-                state['models']['M0']['status']='Retained M0 model; new travelling-fold plan required'
+                state['models']['M0']['status']='Retained M0 model; new targeted-strike plan required'
             self._save(state)
             from experimental_data.model_evaluation import load_catalog,save_catalog,model_identity as identity
             catalog=load_catalog(self.root)
@@ -243,7 +248,7 @@ class LabWorkspace:
             settings=self.path(state.get('planner_profile',baseline['mppi_settings'])); cfg=read(settings)
             cfg.update(model_path=item['model'],device=device)
             job,_=prepare(self.root,cfg,self.name+'-'+generation,development_review='Frozen lab study offline planning; physical execution remains external.')
-            for source in settings.parent.glob('*.npz'):
+            for source in (settings.parent.glob('*.npz') if cfg.get('mppi',{}).get('initialization')!='from_scratch' else []):
                 if not (job/source.name).exists(): shutil.copy2(source,job/source.name)
             item.update(plan=self.rel(job),status='Planning'); item.pop('rehearsal',None); self._save(state)
             try: run(job)
@@ -266,7 +271,9 @@ class LabWorkspace:
                 if state.get('planner_profile'):
                     frozen=read(self.path(state['planner_profile'])); planned=read(job/'settings.json')
                     for key in ('trajectory_objective','fold_constraint','mppi','task','launch','action','limits'):
-                        if frozen[key]!=planned[key]:raise ValueError('Plan differs from the frozen study settings: '+key)
+                        if frozen.get(key)!=planned.get(key):raise ValueError('Plan differs from the frozen study settings: '+key)
+                    for key in ('command_contract','fold_requirement','recovery'):
+                        if frozen.get(key)!=planned.get(key):raise ValueError('Plan differs from the frozen study settings: '+key)
                 rehearsal=self.directory/'rehearsals'/generation
                 generate(job,rehearsal,device=device)
                 portable_outputs(self.root,[rehearsal]);item['rehearsal']=self.rel(rehearsal)
@@ -274,8 +281,13 @@ class LabWorkspace:
             from deployment.lab_seed import model_identity
             if model_identity(rehearsal/'model.json')!=item['signature']: raise ValueError('Rehearsal belongs to another model.')
             metadata=read(rehearsal/'rehearsal.json')
-            if state.get('planner_profile') and metadata.get('predicted_fold_valid') is not True:
-                raise ValueError('Study requires a travelling-fold rehearsal')
+            if state.get('planner_profile'):
+                frozen=read(self.path(state['planner_profile']))
+                requirement=frozen.get('fold_requirement','required' if frozen.get('trajectory_objective',{}).get('schema')=='targeted_fold_strike_v1' else None)
+                if requirement is not None and metadata.get('fold_requirement','required')!=requirement:
+                    raise ValueError('Rehearsal fold requirement differs from the frozen study')
+                if requirement=='required' and metadata.get('predicted_fold_valid') is not True:
+                    raise ValueError('Study requires a travelling-fold rehearsal')
             if digest(rehearsal/'fullstate_30hz.csv')!=metadata['csv_sha256']: raise ValueError('Rehearsal CSV changed.')
             output=self.root/'exports'/self.name/generation
             output.mkdir(parents=True,exist_ok=False)

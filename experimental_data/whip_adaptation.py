@@ -12,7 +12,8 @@ from simulator.workflow import read_json
 from .adaptation_check import load_comparison,flight_names
 from .adaptation_rounds import read_optitrack,read_controller,COMMAND_COLUMNS
 from .preliminary_prepare import recorded_packets
-from .current_adaptation import Trial,causal_history_indices
+from .current_adaptation import Trial,causal_history_indices,observed_cable_history,observed_endpoint_velocity
+from simulator.cable import CableConfiguration
 from simulator.geometry import normalized_rotations_xyzw,attachment_positions
 from simulator.drone_pose_response import CommandSchedule
 from planning.pva_job import freeze_model_assets
@@ -108,6 +109,13 @@ def prepare(root,batch,comparison,review_path,job,*,full_model=False,diagnostics
         raise ValueError('Review must refer to this exact frozen M0 comparison')
     if set(review['takes'])!=set(flight_names(batch)):raise ValueError('Batch membership changed after review')
     chosen={n:r for n,r in review['takes'].items() if r['role']!='excluded'}
+    history_policy=review.get('cable_history_missingness')
+    if history_policy is not None:
+        if (history_policy.get('method')!='masked_regression_v1' or
+            history_policy.get('minimum_observation_fraction')!=.8 or
+            not str(history_policy.get('authorization','')).strip()):
+            raise ValueError('Explicit reviewed masked-history policy required')
+        p['cable_history_missingness']=history_policy
     response=review.get('response_update')
     if response is not None:
         from .response_update_contract import validate
@@ -148,7 +156,14 @@ def prepare(root,batch,comparison,review_path,job,*,full_model=False,diagnostics
         too_long=np.linalg.norm(np.diff(sites,axis=1),axis=-1)>np.asarray(model['cable']['marker_interval_lengths_m'])+.015
         marker_valid&=~too_long;marker_valid[:,:-1]&=~too_long[:,1:]
         pre=causal_history_indices(t,0.,p['drone_history_s']);cpre=causal_history_indices(t,0.,p['cable_history_s'])
-        if not pose_valid[cpre].all() or not marker_valid[cpre].all():raise ValueError(name+': missing clean one-second causal initialization')
+        try:
+            nodes,observed=observed_cable_history(dict(sites=sites,pose_valid=pose_valid,marker_valid=marker_valid),
+                cpre,CableConfiguration.from_mapping(model['cable']),
+                None if history_policy is None else history_policy['minimum_observation_fraction'])
+            history_velocity=observed_endpoint_velocity(t[cpre],nodes,observed,p['cable_velocity_weight_tau_s'])
+            if not np.isfinite(history_velocity).all():raise ValueError('Nonfinite history velocity')
+        except ValueError as exc:
+            raise ValueError(name+': '+str(exc)) from exc
         pt,packets,until,end=recorded_packets(c,invalid_rows_break_coverage=True);pt-=check['onset_s'];until-=check['onset_s'];end-=check['onset_s']
         schedule=CommandSchedule(pt,torch.tensor(packets[None],dtype=torch.float64),coverage_end_s=end,valid_until_s=until)
         hold=np.stack([schedule.sample(x)[0].numpy() for x in t[pre]])
@@ -166,7 +181,8 @@ def prepare(root,batch,comparison,review_path,job,*,full_model=False,diagnostics
         np.savez_compressed(folder/'data.npz',time=t,position=m['drone'],quaternion=m['quaternion'],rotation=rotation,
             sites=sites,pose_valid=pose_valid,marker_valid=marker_valid,pre_indices=pre,hover_commands=hold,
             packet_time=pt,packets=packets,packet_valid_until=until,command_coverage_end=end)
-        prepared[name]=dict(role=r['role'],end_s=stop,review=r,masked_markers=(~marker_valid).sum(0).tolist())
+        prepared[name]=dict(role=r['role'],end_s=stop,review=r,masked_markers=(~marker_valid).sum(0).tolist(),
+            history_node_coverage=observed.mean(0).tolist(),history_masked_node_samples=(~observed).sum(0).tolist())
     parent_generation=model.get('provenance',{}).get('generation_index',0)
     if p.get('parent_generation',parent_generation)!=parent_generation:raise ValueError('Protocol and frozen model generation disagree')
     p.update(parent_generation=parent_generation,takes=prepared,comparison=str(comparison),review_path=str(Path(review_path).resolve()),
@@ -205,4 +221,5 @@ class WhipTrial(Trial):
 
     def cable_state(self,physics,**kwargs):
         return super().cable_state(physics,history_s=self.protocol['cable_history_s'],
-            velocity_weight_tau_s=self.protocol['cable_velocity_weight_tau_s'],**kwargs)
+            velocity_weight_tau_s=self.protocol['cable_velocity_weight_tau_s'],
+            minimum_history_observation_fraction=self.protocol.get('cable_history_missingness',{}).get('minimum_observation_fraction'),**kwargs)

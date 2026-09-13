@@ -16,6 +16,9 @@ def draw(figure,arrays,metadata,settings):
     axes[0].axhline((target-origin)@direction,color='#059669',ls=':',label='Target')
     axes[0].set(ylabel='Forward displacement [m]',title='Forward pull and backward release')
     axes[1].plot(t,velocity,label='Modeled drone',color='#2563eb');axes[1].plot(t,cable[:,-1],label='Cable tip',color='#ea580c')
+    if settings.get('trajectory_objective',{}).get('speed_metric')=='tip_gain_over_root':
+        gain=np.maximum(np.maximum(cable[:,-1],0)-np.maximum(cable[:,0],0),0)
+        axes[1].plot(t,gain,label='Rewarded forward speed gain',color='#16a34a',ls='--')
     axes[1].axhline(0,color='#64748b',lw=.8);axes[1].set(ylabel='Forward velocity [m/s]')
     limit=max(1.,float(np.abs(cable).max()))
     mesh=axes[2].pcolormesh(t,np.arange(cable.shape[1]),cable.T,cmap='coolwarm',vmin=-limit,vmax=limit,shading='nearest')
@@ -42,12 +45,18 @@ def draw(figure,arrays,metadata,settings):
         from planning.strike_objective import fold_features
         material_grid=np.r_[0.,np.cumsum(lengths)]/lengths.sum()
         opposition,turn,location,_=fold_features(torch.as_tensor(q),torch.as_tensor(material_grid),settings['fold_constraint'])
-        axes[0].set_title('Quadrotor motion and tip strike')
+        angle=metadata.get('strike_angle_deg')
+        axes[0].set_title('Quadrotor motion and tip strike'+(f' ({angle:.1f} deg)' if angle is not None else ''))
         axes[3].clear();axes[3].plot(t,location.numpy(),color='#ea580c',label='Tracked dominant bend')
         axes[3].set(ylabel='Material coordinate',xlabel='Whip time [s]',ylim=(0,1))
         axes[3].axhline(settings['fold_constraint']['start_material_max'],color='#64748b',ls=':')
         axes[3].axhline(settings['fold_constraint']['end_material_min'],color='#64748b',ls=':')
-        axes[3].axvline(metadata['fold_completed_time_s'],color='#2563eb',ls='--',label='Fold completed')
+        completion=metadata.get('fold_completed_time_s')
+        if completion is not None and np.isfinite(completion):
+            axes[3].axvline(completion,color='#2563eb',ls='--',label='Fold completed')
+        else:
+            axes[3].text(.02,.95,'No fold completion recorded',transform=axes[3].transAxes,
+                         va='top',fontsize=8,color='#64748b')
         if hit is not None:axes[3].axvline(hit,color='#111827',ls='--',label='Scored strike')
         axes[3].legend(frameon=False,fontsize=8)
         return dict(fold_valid=metadata['predicted_fold_valid'],strike_time_s=hit,
