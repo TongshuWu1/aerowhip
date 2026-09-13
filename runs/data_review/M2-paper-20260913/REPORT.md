@@ -1,0 +1,59 @@
+# M2 physical performance check
+
+The operator confirmed that all five M2 takes had no cable contact, abort or manual intervention. Each controller recording matches all 124 dynamic packets of the selected M2 CSV. Tip and marker coverage is 100% over the 0-1.5 s strike window. Missing observations outside that window remain preserved.
+
+**M2 follows the original M0 tip trajectory more closely on average, but target accuracy and repeatability did not improve over M1.** These are measured flight results, not model forecasts.
+
+| Metric | M0 | M1 | M2 |
+|---|---:|---:|---:|
+| Target error at original strike (cm) | 24.12 +/- 6.94 | 11.18 +/- 4.04 | 13.10 +/- 7.52 |
+| Closest target distance, 0-1.5 s (cm) | 14.73 +/- 6.02 | 7.83 +/- 1.82 | 8.60 +/- 6.55 |
+| Original tip-reference RMSE (cm) | 18.09 +/- 1.80 | 16.06 +/- 2.34 | 13.28 +/- 2.60 |
+| Original quadrotor-reference RMSE (cm) | 15.66 +/- 3.58 | 11.17 +/- 2.87 | 12.63 +/- 5.65 |
+| Tip speed at original strike (m/s) | 5.98 +/- 0.53 | 5.85 +/- 0.32 | 5.82 +/- 0.79 |
+
+Entries are equal-take means +/- sample standard deviation, n=5 per generation. Reference tracking uses [0, 1.133333] s; the original strike time is 1.117248 s.
+
+| M2 take | Error at original strike (cm) | Closest distance (cm) | Tip-reference RMSE (cm) | Tip speed (m/s) |
+|---|---:|---:|---:|---:|
+| M2_001 | 20.13 | 19.80 | 15.28 | 5.03 |
+| M2_002 | 2.64 | 2.63 | 11.12 | 6.34 |
+| M2_003 | 12.46 | 6.53 | 13.98 | 6.92 |
+| M2_004 | 9.70 | 6.19 | 10.02 | 5.34 |
+| M2_005 | 20.55 | 7.87 | 15.99 | 5.47 |
+
+M2 tip-reference RMSE decreased by about 17% relative to M1. Mean fixed-time target error increased by 1.91 cm; closest distance increased by 0.77 cm. Fixed-time error standard deviation increased from 4.04 to 7.52 cm. Average measured tip speed is essentially unchanged (5.85 to 5.82 m/s).
+
+M2_001 remained about 19.8 cm from the target at its closest approach. M2_005 had a 20.6 cm fixed-time error, but approached to 7.9 cm approximately 34 ms later. This identifies a timing difference in the measured trajectory; it does not establish a controller or model failure mechanism. All five takes remain included.
+
+Clock alignment uses measured quadrotor streams, with no target-based time shift or spatial fit. M2_002 has about 9.46 ms disagreement between offsets from the two recording halves. Its minimum distance is about 2.63 cm, while fixed-time distance is sensitive to alignment (6.80-7.15 cm under +/-10 ms shifts, versus 2.64 cm nominal). The per-take timing sensitivity is in paper_metrics.json.
+
+No model fitting, model selection or command changes were performed. The M2 batch is evaluation-only; no M3 training split was assigned. Raw hashes and frozen forecast/source hashes were verified. This is a brief five-take comparison, not evidence of statistically established generalization.
+
+- Raw retained batch: `data/flight_batches/M2_paper_selected_correction_20260913`.
+- [Complete measured comparison](simple_performance.json).
+- [Per-take errors, coverage and timing sensitivity](paper_metrics.json).
+
+## Initial hover and cable-state mismatch
+
+The operator clarified that battery condition and damage are not considered the explanation, and reports small cable-tip motion during the initial hover, attributed to propeller airflow. The command-correction code initializes every rollout with the same frozen M0 cable shape and zero nodal velocity, rather than the measured pre-strike state of each take. Variation in the actual initial cable state is therefore a plausible source of tracking variability. Pre-strike motion and its association with strike error have not yet been quantified; neither airflow causation nor its contribution to the M1-to-M2 difference is established.
+
+All five takes remain included and all measured values are unchanged. Improved average tip-reference tracking does not imply improved target accuracy over M1.
+
+[Operator clarification and limitations](CONDITIONS_NOTE.md).
+
+## Exploratory subset selected after outcome review
+
+At the operator's request, a separate analysis retains M2_002 and M2_004 and omits M2_001, M2_003 and M2_005. Hardware defects in the omitted takes are suspected, not independently established. Selection followed inspection of performance; this is not a fault-qualified replacement for the primary five-take comparison.
+
+| Metric | M1: all five | M2: all five | M2: selected two |
+|---|---:|---:|---:|
+| Target error at original strike (cm) | 11.18 +/- 4.04 | 13.10 +/- 7.52 | 6.17 +/- 4.99 |
+| Closest target distance, 0-1.5 s (cm) | 7.83 +/- 1.82 | 8.60 +/- 6.55 | 4.41 +/- 2.51 |
+| Original tip-reference RMSE (cm) | 16.06 +/- 2.34 | 13.28 +/- 2.60 | 10.57 +/- 0.78 |
+| Original quadrotor-reference RMSE (cm) | 11.17 +/- 2.87 | 12.63 +/- 5.65 | 9.00 +/- 0.94 |
+| Tip speed at original strike (m/s) | 5.85 +/- 0.32 | 5.82 +/- 0.79 | 5.84 +/- 0.71 |
+
+Values are means +/- sample standard deviations. The selected pair has smaller mean errors, but selection after outcome review can bias the comparison and n=2 does not establish typical performance or repeatability. Take 002 retains the clock-alignment sensitivity noted above. All raw recordings and all five-take numerical outputs are unchanged.
+
+[Subset details and provenance](exploratory_subset_002_004/REPORT.md).

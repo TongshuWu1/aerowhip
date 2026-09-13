@@ -1,0 +1,33 @@
+{
+  "drag_rates_s_inv": [
+    0.0,
+    0.1,
+    0.2,
+    0.4,
+    0.8,
+    1.2,
+    1.6,
+    2.0
+  ],
+  "interpretation": "Effective nonnegative linear velocity damping, not calibrated aerodynamics",
+  "physical_pair": "Published M0 EI/Cb fixed; cable residual disabled",
+  "regularization": 2e-05,
+  "scope": "One finite diagnostic; no new M0 or neural training",
+  "selection": "Equal training-take weight, equal robust losses at 1 and 2 seconds",
+  "separate_take": "Only evaluated after freezing selected scalar; already inspected in earlier pilots",
+  "source_pilot": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\audits\\preliminary1-cable-only-pilot",
+  "training_windows": [
+    "figure8_001-00241",
+    "figure8_001-02441",
+    "figure8_001-04841",
+    "osci_001-00241",
+    "osci_001-02441",
+    "osci_001-04241",
+    "osci_002-00241",
+    "osci_002-01241",
+    "osci_002-02241",
+    "vertical_figure8_001-00441",
+    "vertical_figure8_001-01241",
+    "vertical_figure8_001-02241"
+  ]
+}

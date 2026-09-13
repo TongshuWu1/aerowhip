@@ -1,0 +1,37 @@
+{
+  "audit": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\preliminary1-intake\\intake.json",
+  "controller_format": "pva_controller_v1",
+  "controller_xyz_source": "OptiTrack-derived, explicitly confirmed by user; not an independent sensor",
+  "experiment_id": "20260909-unseen-145g-17g",
+  "files": {
+    "controller": "experiment_osci_002.csv",
+    "optitrack": "osci_002.csv"
+  },
+  "fit_job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\20260909-preliminary1-M0-v2",
+  "fit_role": "training",
+  "hardware": {
+    "cable_assembly_mass_kg": 0.017,
+    "drone_mass_kg": 0.145,
+    "drone_rigid_body": "auto_single_cf",
+    "schema": "current_experiment_hardware_v1",
+    "scope": "Fresh unseen-system experiment; historical models and flight artifacts are archived, not relabelled",
+    "source": "User measurement: repaired drone 145 g, cable assembly 17 g; all geometry unchanged",
+    "total_mass_kg": 0.162
+  },
+  "reviewed_for_fitting": true,
+  "source_directory": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\preliminary1",
+  "sources": {
+    "experiment_osci_002.csv": "b24d9f82fb0ab6a0c916a122092d859f3a69718a20c8fd79430a2250eb76f417",
+    "osci_002.csv": "25df168f5f46eee7a0ae59f0beadd6803f7775cddd083b3806ac4eb18e48bf09"
+  },
+  "stage": "preliminary",
+  "user_review": {
+    "contact": false,
+    "intervention": false,
+    "native_full_take_availability": "Not established",
+    "optitrack_hand_trimmed": true,
+    "settings_changed": false,
+    "trim_intent": "Approximately takeoff to about to land; user-selected good interval",
+    "vertical_pair_confirmed": true
+  }
+}

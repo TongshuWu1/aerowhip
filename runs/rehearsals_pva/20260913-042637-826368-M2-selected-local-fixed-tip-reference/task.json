@@ -1,0 +1,25 @@
+{
+  "desired_strike_direction_world": [
+    1.0,
+    0.0,
+    0.0
+  ],
+  "objective": {
+    "interval_s": [
+      0.0,
+      1.1333333333333333
+    ],
+    "reference_file": "reference.npz",
+    "schema": "fixed_tip_reference_v1",
+    "weights": {
+      "command": 0.01,
+      "quadrotor": 0.1,
+      "tip": 1.0
+    }
+  },
+  "target_position_m": [
+    1.25,
+    0.0,
+    1.25
+  ]
+}

@@ -22,8 +22,7 @@ influence commands through the fitted model, without a direct measured bias.
 Keep fitting independent of the target/reference objective. Existing M1_003/005
 recordings were used for M2 development selection, so do not say validation
 never influences model choice or present these as independent final evidence.
-The physical M0/M1 results and model-prediction results are distinct. No physical
-M2-selected result exists yet. See the [current handoff](../../HANDOFF.md).
+The physical M0/M1 results and model-prediction results are distinct. Five M2-selected flights are now evaluated. See the [current handoff](../../HANDOFF.md).
 
 The latest editorial changes preserve the framework heading structure and
 17 numbered equations. Retain necessary variable definitions, model equations
@@ -55,3 +54,13 @@ The command-correction figure now uses the actual M0-to-M1 correction run
 (M1-local-20260913-032256-816506), superseding the M2-selected example. Both panels
 use M1 predictions, with M0/corrected M1 commands and the original M0 reference.
 The red error connectors remain removed.
+
+## Experiments section added
+
+The live manuscript now includes Experiments, with setup, refinement/data roles,
+metrics, full five-take physical comparison, a disclosed post-hoc subset of M2
+takes 002/004, and development-only prediction results. All five M2 recordings
+remain the primary analysis. No hardware defect is treated as established.
+Abstract numbers use the full batches, not the selected pair. The source
+bibliography and existing figures are unchanged. The prior manuscript is backed
+up at `tmp/experiments_20260913/before/main.tex`.

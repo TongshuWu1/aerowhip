@@ -1,0 +1,192 @@
+{
+  "baseline_cost_m2": 0.003356675545445688,
+  "checkpoint": null,
+  "command_contract": "position_spline_pva_30hz_v1",
+  "command_semantics": "Desired tracked-origin P/V/A, 30 Hz zero-order hold, kinematic acceleration, zero yaw",
+  "corrected_cost_m2": 0.0019301498362972772,
+  "corrected_reference_quadrotor_rmse_m": 0.04572135319737659,
+  "corrected_reference_tip_rmse_m": 0.03960350448060721,
+  "csv_sha256": "c9a39713d627ceb5fe3cc555ccb2d3fdf853d3e20ae1a9c583faa661fbf8f379",
+  "elapsed_s": 184.52038810000522,
+  "evidence": "Simulation-only command correction toward the original M0 physical motion; M2 has not flown.",
+  "export": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M2_selected_fixed_tip_reference",
+  "independent_cost_difference_m2": 2.168404344971009e-19,
+  "initial_tracking_origin_m": [
+    0.0,
+    0.0,
+    1.4
+  ],
+  "iterations": 11,
+  "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M2-selected-local-20260913-042637-826368",
+  "maximum_predicted_tilt_limit_deg": 60.0,
+  "maximum_reference_quadrotor_deviation_m": 0.07106222033065802,
+  "minimum_predicted_cable_height_m": 0.39032820522437967,
+  "minimum_tip_distance_m": 0.057503779654247515,
+  "objective_schema": "fixed_tip_reference_v1",
+  "optimization": {
+    "active_controls": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "active_coordinates": 24,
+    "iterations": 11,
+    "maximum_jacobian_relative_difference": 0.04716542519640891,
+    "optimization_elapsed_s": 157.11576919999789,
+    "optimizer": "Bounded finite-difference Gauss-Newton",
+    "rollout_count": 1420,
+    "stop_reason": "Small verified objective improvement"
+  },
+  "original_reference_tip_rmse_m": 0.05502560897455246,
+  "planner": "Local M2-selected fixed-reference command correction",
+  "planner_mode": "open_loop",
+  "predicted_attitude_checked": true,
+  "predicted_hit_time_s": null,
+  "predicted_valid_hit": false,
+  "prediction_valid_through_s": 7.2,
+  "recovery": {
+    "brake_coefficients_normalized": [
+      [
+        0.6147657904038283,
+        -0.23165290617432516,
+        2.0325834047292415
+      ],
+      [
+        -2.6084761419929787,
+        -0.2066098175529514,
+        0.1587280653941248
+      ],
+      [
+        -0.9646843680184509,
+        0.031479924432331836,
+        -0.6492748410245172
+      ],
+      [
+        3.8947219660175803,
+        0.16463658497650896,
+        0.7069717226385648
+      ],
+      [
+        -1.7865802550057148,
+        -0.08756494656030979,
+        -0.2452733878151962
+      ]
+    ],
+    "brake_end_s": 1.0,
+    "brake_metrics": {
+      "minimum_az_m_s2": -1.2985496820490343,
+      "minimum_height_m": 2.0037349639222177,
+      "minimum_specific_vertical_m_s2": 8.508100317950966,
+      "minimum_vz_m_s": -0.08559925993521372,
+      "peak_absolute_jerk_m_s3": [
+        23.36833179610548,
+        1.1137392075883814,
+        4.241830335831389
+      ],
+      "peak_height_m": 2.0440945766767737,
+      "peak_horizontal_acceleration_m_s2": 4.447878059729148,
+      "peak_specific_force_m_s2": 10.914331021777334,
+      "peak_speed_m_s": 2.700553318773268
+    },
+    "braking_position_m": [
+      -0.8502530085957358,
+      -0.3297111608787456,
+      2.0037349639222177
+    ],
+    "hold_s": 3.0,
+    "hover_position_m": [
+      0.0,
+      0.0,
+      1.4
+    ],
+    "phase_description": "Smooth braking, rest-to-rest return, final hold",
+    "return_coefficients_normalized": [
+      [
+        -0.8502530085957358,
+        -0.3297111608787456,
+        2.0037349639222177
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        8.502530085957343,
+        3.29711160878745,
+        -6.037349639222168
+      ],
+      [
+        -12.753795128936014,
+        -4.945667413181175,
+        9.056024458833251
+      ],
+      [
+        5.101518051574406,
+        1.97826696527247,
+        -3.6224097835333007
+      ]
+    ],
+    "return_end_s": 3.066666666666667,
+    "return_metrics": {
+      "minimum_az_m_s2": -0.816102730347848,
+      "minimum_height_m": 1.4,
+      "minimum_specific_vertical_m_s2": 8.99054726965215,
+      "minimum_vz_m_s": -0.5477434148487859,
+      "peak_absolute_jerk_m_s3": [
+        5.7794714591868726,
+        2.241163776910672,
+        4.103800818846258
+      ],
+      "peak_height_m": 2.0037349639222177,
+      "peak_horizontal_acceleration_m_s2": 1.2327246798275209,
+      "peak_specific_force_m_s2": 10.694039728108766,
+      "peak_speed_m_s": 0.9922498309784056
+    },
+    "return_s": 2.066666666666667,
+    "schema": "brake_return_hold_v1",
+    "settings": {
+      "braking_downward_acceleration_m_s2": 3.5,
+      "braking_horizontal_acceleration_m_s2": 8.0,
+      "braking_tilt_deg": 60.0,
+      "hold_s": 3.0,
+      "maximum_brake_s": 6.0,
+      "maximum_return_s": 12.0,
+      "minimum_brake_s": 1.0,
+      "minimum_return_s": 2.0,
+      "return_speed_m_s": 1.0,
+      "schema": "brake_return_hold_v1"
+    },
+    "stationary_braking_waypoint": true,
+    "total_duration_s": 6.066666666666666,
+    "vehicle_limits_verified": false
+  },
+  "recovery_empirically_validated": false,
+  "recovery_prediction_complete": true,
+  "reference_feasible": true,
+  "reference_sha256": "0cdf777855e0594dfe81552a70f407467850ec3fc1de0e83907b59e907a26b2f",
+  "rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\20260913-042637-826368-M2-selected-local-fixed-tip-reference",
+  "schema": "pva_fullstate_30hz_v1",
+  "standard_fast_cable_max_difference_m": 7.98444231464579e-06,
+  "standard_fast_pose_max_difference_m": 0.0,
+  "strike_distance_m": 0.05906565189167921,
+  "strike_time_s": 1.1172482457473654,
+  "success_meaning": "No binary hit claim; fixed-time tracking objective",
+  "target_position_m": [
+    1.25,
+    0.0,
+    1.25
+  ],
+  "total_duration_s": 7.2,
+  "whip_end_s": 1.1333333333333333
+}

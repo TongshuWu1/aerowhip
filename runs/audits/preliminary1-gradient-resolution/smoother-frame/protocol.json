@@ -1,0 +1,14 @@
+{
+  "model_sha256": "4179e6297ed8dd838f42e2d9d8521f3309191bf49325d0e525c7182f0030e43e",
+  "scope": "Frozen residual and physical parameters; no optimization",
+  "settings": {
+    "dense": false,
+    "name": "smoother-frame",
+    "regularization": 2e-05,
+    "steps": 150
+  },
+  "windows": [
+    "figure8_001-00641",
+    "figure8_001-02441"
+  ]
+}

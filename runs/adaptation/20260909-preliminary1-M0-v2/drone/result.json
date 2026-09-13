@@ -1,0 +1,24 @@
+{
+  "parameters": {
+    "attitude_acceleration_scale_xy": 0.9909479099507259,
+    "attitude_acceleration_scale_z": 1.4981795914431826,
+    "attitude_drive_model": "independent_scale_v3",
+    "attitude_time_constant_s": 0.08144878396032805,
+    "delay_s": 0.02,
+    "feedforward_xy": 0.7466776443199834,
+    "feedforward_z": 1.299031502516172,
+    "gravity_m_s2": 9.80665,
+    "kd_xy": 0.9955425130126346,
+    "kd_z": 1.3581289278616668,
+    "kp_xy": 1.721387920192701,
+    "kp_z": 19.668324107815668
+  },
+  "stopping": {
+    "converged": false,
+    "evidence": "training-only selection",
+    "selected_update": 400,
+    "selection_loss": 0.9384377294729902,
+    "stop_reason": "safety_ceiling",
+    "updates": 400
+  }
+}

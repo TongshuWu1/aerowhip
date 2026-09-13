@@ -1,5 +1,16 @@
 # AeroWhip: current handoff
 
+## Post-hoc subset analysis
+
+The operator requested omitting M2_001/003/005 after seeing their performance,
+suspecting hardware defects without independent take-specific evidence.
+M2_002/004 are analyzed separately as an exploratory subset (n=2). Means:
+fixed-time target error 6.17 cm, closest distance 4.41 cm, tip-reference
+RMSE 10.57 cm, quadrotor-reference RMSE 9.00 cm, strike speed 5.84 m/s.
+All five M2 takes remain the primary comparison. Do not present the subset
+as a hardware-qualified exclusion or evidence of typical M2 improvement.
+See `runs/data_review/M2-paper-20260913/exploratory_subset_002_004/REPORT.md`.
+
 ## Initial hover clarification
 
 The operator clarified that battery condition and damage are not considered the explanation, and reports small cable-tip motion during the initial hover, attributed to propeller airflow. The command-correction code initializes every rollout with the same frozen M0 cable shape and zero nodal velocity, rather than the measured pre-strike state of each take. Variation in the actual initial cable state is therefore a plausible source of tracking variability. Pre-strike motion and its association with strike error have not yet been quantified; neither airflow causation nor its contribution to the M1-to-M2 difference is established.

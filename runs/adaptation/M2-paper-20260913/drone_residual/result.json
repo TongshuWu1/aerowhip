@@ -1,0 +1,16 @@
+{
+  "baseline_loss": 5.311709501755672,
+  "best_loss": 3.901461269235226,
+  "budget": {
+    "maximum_seconds": 600,
+    "maximum_updates": 600
+  },
+  "elapsed_s": 323.58298999999533,
+  "numerically_verified": true,
+  "optimizer_best_loss": 3.901461269235226,
+  "selected_update": 600,
+  "stop_reason": "update_budget",
+  "time_budget_scope": "Training loop; final checkpoint numerical checks are additional",
+  "updates": 600,
+  "validation_used_for_selection": false
+}

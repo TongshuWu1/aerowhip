@@ -1,0 +1,42 @@
+{
+  "baseline_scores": [
+    571.0666565993724,
+    695.1539105771674
+  ],
+  "best_candidate_wave_stages": 0,
+  "best_failed": false,
+  "best_minimum_tip_distance_m": 0.04471839102603759,
+  "best_reward": 695.1539105771674,
+  "best_success": true,
+  "command_steps": 34,
+  "cutoff": 34,
+  "elapsed_s": 64.4753733999969,
+  "evidence": "Development M0 simulation only",
+  "improvement_over_best_baseline": 0.0,
+  "independent_score_difference": 2.0042989490320906e-10,
+  "iterations": 20,
+  "legacy_reward": 565.4119685932206,
+  "maneuver_duration_s": 1.1333333333333333,
+  "objective_components": {
+    "approach": -4.478677195858787,
+    "cast": 75.70264373246889,
+    "contact": 440.909403234167,
+    "distance": -0.0,
+    "exit": -7.125014188070303,
+    "fold": 196.21247944866636,
+    "hit": 0.0,
+    "jerk": -0.0038596260016298977,
+    "joint": 0.0,
+    "lateral": -0.0026669843154583255,
+    "miss": -6.0603978438886985,
+    "pull": 0.0,
+    "release": 0.0,
+    "vertical": -0.0,
+    "wave": 0.0
+  },
+  "planner_mode": "offline_control_point_mppi_v1",
+  "proposal_parameterization": "timed_baselines_v1",
+  "scored_duration_s": 1.1248781338006826,
+  "status": "completed",
+  "stop_reason": "reward_plateau"
+}

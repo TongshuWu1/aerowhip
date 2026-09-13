@@ -1,0 +1,77 @@
+% Same centerline, continuous and discrete positions; qualitative bending roles.
+% EI resists bending; C_b opposes a change in bending, not rigid translation.
+% Local icons have equal segment lengths and illustrate responses, not rollouts.
+\begin{tikzpicture}[x=1cm,y=1cm,
+  awBendLeader/.style={draw=black!45,line width=.45pt},
+  awBendTitle/.style={font=\fontsize{8}{9.2}\selectfont\bfseries},
+  awBendResponse/.style={draw=awAccent,line width=.8pt,-{Stealth[length=1.7mm,width=1.2mm]}},
+  awBendReference/.style={draw=black!35,line width=.7pt,dashed}]
+\path[use as bounding box] (0,0) rectangle (8.0,4.7);
+
+% A smooth centerline and its node/segment approximation share one drawing.
+\coordinate (R0) at (.65,4.00);
+\coordinate (R1) at (1.44,3.78);
+\coordinate (R2) at (2.23,3.56);
+\coordinate (R3) at (3.02,3.41);
+\coordinate (R4) at (3.86,3.30);
+\coordinate (R5) at (4.70,3.45);
+\coordinate (R6) at (5.53,3.69);
+\coordinate (R7) at (6.38,3.91);
+\coordinate (R8) at (7.24,4.00);
+\draw[draw=awCable!25,line width=3.2pt,line cap=round]
+  plot[smooth,tension=.40] coordinates {
+  (.65,4.00) (1.44,3.78) (2.23,3.56) (3.02,3.41)
+  (3.86,3.30) (4.70,3.45) (5.53,3.69) (6.38,3.91) (7.24,4.00)};
+\draw[awCable] (R0)--(R1)--(R2)--(R3)--(R4)--(R5)--(R6)--(R7)--(R8);
+\foreach \j in {0,1,2,3,5,6,7} {\node[awNode] at (R\j) {};}
+\node[awNodeHi] at (R4) {};
+\node[awTip] at (R8) {};
+
+\node[awSmall,anchor=west] at (.25,4.45) {$\mathbf r_0=\mathbf p_a$};
+\draw[awBendLeader] (.65,4.28)--(R0);
+\node[awSmall] at (4.05,4.45) {centerline $\mathbf r(\cdot,t)$};
+\draw[awBendLeader] (3.32,4.27)--(2.66,3.48);
+\node[awSmall,anchor=east] at (7.70,4.45) {free tip};
+\draw[awBendLeader] (7.24,4.28)--(R8);
+\node[awSmall] at (1.49,2.89) {model nodes};
+\draw[awBendLeader] (1.70,3.06)--(2.20,3.51);
+\node[awSmall] at (3.86,2.89) {$\mathbf r_i(t)$};
+\draw[awBendLeader] (3.86,3.06)--(3.86,3.20);
+\node[awSmall] at (6.16,2.89) {fixed length $\ell_i$};
+\draw[awBendLeader] (5.52,3.06)--(4.27,3.355);
+
+\draw[black!20,line width=.4pt] (.30,2.55)--(7.70,2.55);
+\draw[black!15,line width=.4pt] (4.00,.12)--(4.00,2.40);
+
+% A bent pair tends toward a straight configuration under elastic response.
+\node[awBendTitle] at (2.00,2.27) {Bending stiffness $EI$};
+\draw[awBendReference] (.80,1.23)--(3.20,1.23);
+\draw[awCable] (.912431,1.737142)--(2.00,1.23)--(3.087569,1.737142);
+\node[awNode] at (.912431,1.737142) {};
+\node[awNodeHi] at (2.00,1.23) {};
+\node[awNode] at (3.087569,1.737142) {};
+\draw[awBendResponse] (2.00,1.23) ++(25:.86)
+  arc[start angle=25,end angle=0,radius=.86];
+\draw[awBendResponse] (2.00,1.23) ++(155:.86)
+  arc[start angle=155,end angle=180,radius=.86];
+\node[awSmall,text=black!55] at (2.00,.88) {straight reference};
+\node[awSmall] at (2.00,.34) {resists bending};
+
+% Gray shows a straightening bend; red opposes that change. In this example
+% damping and elasticity therefore favor opposite changes of the bend.
+% The two reference/current shapes use the same two 1.2-cm segments.
+\node[awBendTitle] at (6.00,2.27) {Bending damping $C_b$};
+\draw[awBendReference] (5.017018,1.918292)--(6.00,1.23)--(6.982982,1.918292);
+\draw[awCable] (4.912431,1.737142)--(6.00,1.23)--(7.087569,1.737142);
+\node[awNode] at (4.912431,1.737142) {};
+\node[awNodeHi] at (6.00,1.23) {};
+\node[awNode] at (7.087569,1.737142) {};
+\draw[black!55,line width=.65pt,-{Stealth[length=1.6mm,width=1.1mm]}]
+  (6.00,1.23) ++(36:1.32) arc[start angle=36,end angle=22,radius=1.32];
+\draw[awBendResponse] (6.00,1.23) ++(20:.86)
+  arc[start angle=20,end angle=35,radius=.86];
+\draw[awBendResponse] (6.00,1.23) ++(160:.86)
+  arc[start angle=160,end angle=145,radius=.86];
+\node[awSmall,text=black!55] at (6.00,.88) {straightening motion};
+\node[awSmall] at (6.00,.34) {opposes bending motion};
+\end{tikzpicture}

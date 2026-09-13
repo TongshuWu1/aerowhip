@@ -1,0 +1,63 @@
+{
+  "correction_status": "Reference frozen only; correction optimizer not yet implemented or run.",
+  "interval_s": [
+    0.0,
+    1.1333333333333333
+  ],
+  "jerk_limits_m_s3": [
+    60.0,
+    60.0,
+    60.0
+  ],
+  "launch_origin_m": [
+    0.0,
+    0.0,
+    1.4
+  ],
+  "limits": {
+    "maximum_origin_z_m": 2.8,
+    "maximum_specific_force_m_s2": 18.28571428571429,
+    "maximum_speed_m_s": 5.0,
+    "maximum_tilt_deg": 60.0,
+    "minimum_cable_z_m": 0.02,
+    "minimum_origin_z_m": 0.96,
+    "minimum_specific_vertical_m_s2": 2.0
+  },
+  "numerical_objective_settings": null,
+  "original_spline_domain_s": [
+    0.0,
+    1.5
+  ],
+  "physical_target_m": [
+    1.25,
+    0.0,
+    1.25
+  ],
+  "planned_strike_time_s": 1.1172482457473654,
+  "priority": "Tip trajectory primary; quadrotor trajectory soft secondary; original timestamps fixed.",
+  "recovery_settings": {
+    "braking_downward_acceleration_m_s2": 3.5,
+    "braking_horizontal_acceleration_m_s2": 8.0,
+    "braking_tilt_deg": 60.0,
+    "hold_s": 3.0,
+    "maximum_brake_s": 6.0,
+    "maximum_return_s": 12.0,
+    "minimum_brake_s": 1.0,
+    "minimum_return_s": 2.0,
+    "return_speed_m_s": 1.0,
+    "schema": "brake_return_hold_v1"
+  },
+  "reference_kind": "Original M0 predicted physical motion; not command positions or a new simulation.",
+  "reference_sha256": "0cdf777855e0594dfe81552a70f407467850ec3fc1de0e83907b59e907a26b2f",
+  "schema": "frozen_m0_physical_motion_reference_v1",
+  "source_hashes": {
+    "exports/M0_Bspline_slower_brake_1s/fullstate_30hz.csv": "49f9fd4b8e356543cb5523abca866646968f58b603f73bb94466f0734a1e8d90",
+    "runs/rehearsals_pva/20260913-012740-484590-M0-slower-brake-1s/model.json": "2925dd7387ee769c35a608e83d53d9699dc3e2b805104f462a9126f80c63d5af",
+    "runs/rehearsals_pva/20260913-012740-484590-M0-slower-brake-1s/plan.npz": "e5de326b57b7f0571e6cc67b9b62aa283202bb87ac66d308e68529c73ebc28a6",
+    "runs/rehearsals_pva/20260913-012740-484590-M0-slower-brake-1s/rehearsal.json": "862beb7700e5dc8739cbe70d42df0de33f1da85b9eed46d79ab92463e87956d5",
+    "runs/rehearsals_pva/20260913-012740-484590-M0-slower-brake-1s/rehearsal.npz": "5656a75e1db61d6e676d29f2faeefe891954758a7190086f7bd17a372cec83f8",
+    "runs/rehearsals_pva/20260913-012740-484590-M0-slower-brake-1s/settings.json": "d269d89a93805f994661c49c3d52b08144525728525b6db4adcdfac344feaafe",
+    "tools/freeze_paper_motion_reference.py": "6492355841cb1ece5a8561442da4643a17359e42d9cf07f4069b95d7d83367e8"
+  },
+  "source_rehearsal": "runs/rehearsals_pva/20260913-012740-484590-M0-slower-brake-1s"
+}

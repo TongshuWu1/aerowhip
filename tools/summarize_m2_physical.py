@@ -98,6 +98,19 @@ def main():
             condition['interpretation'], '',
             'All five takes remain included and all measured values are unchanged. Improved average tip-reference tracking does not imply improved target accuracy over M1.', '',
             '[Operator clarification and limitations](CONDITIONS_NOTE.md).']
+    subset_path=out/'exploratory_subset_002_004/metrics.json'
+    if subset_path.exists():
+        subset=read_json(subset_path)
+        assert subset['source_sha256']==sha256_file(out/'simple_performance.json')
+        lines += ['', '## Exploratory subset selected after outcome review', '',
+            "At the operator's request, a separate analysis retains M2_002 and M2_004 and omits M2_001, M2_003 and M2_005. Hardware defects in the omitted takes are suspected, not independently established. Selection followed inspection of performance; this is not a fault-qualified replacement for the primary five-take comparison.", '',
+            '| Metric | M1: all five | M2: all five | M2: selected two |',
+            '|---|---:|---:|---:|']
+        for key,label,unit,scale in metrics:
+            values=[results['M1']['aggregate'][key],results['M2']['aggregate'][key],subset['aggregate'][key]]
+            lines.append('| '+label+' ('+unit+') | '+' | '.join(f"{scale*v['mean']:.2f} +/- {scale*v['sample_sd']:.2f}" for v in values)+' |')
+        lines += ['', 'Values are means +/- sample standard deviations. The selected pair has smaller mean errors, but selection after outcome review can bias the comparison and n=2 does not establish typical performance or repeatability. Take 002 retains the clock-alignment sensitivity noted above. All raw recordings and all five-take numerical outputs are unchanged.', '',
+            '[Subset details and provenance](exploratory_subset_002_004/REPORT.md).']
     (out/'REPORT.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
     print({n:{k:r['aggregate'][k]['mean'] for k,_,_,_ in metrics} for n,r in results.items()})
 

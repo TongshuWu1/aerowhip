@@ -1,0 +1,220 @@
+{
+  "gain_bounds": [
+    [
+      0.1,
+      0.1,
+      0.1,
+      0.1,
+      0.05,
+      0.05
+    ],
+    [
+      80.0,
+      80.0,
+      20.0,
+      20.0,
+      3.0,
+      3.0
+    ]
+  ],
+  "method": "CUDA batched analytic sensitivity replay; bounded CPU trust-region optimizer",
+  "parameters": {
+    "attitude_acceleration_scale_xy": 1.0038308679167545,
+    "attitude_acceleration_scale_z": 1.497065230508507,
+    "attitude_drive_model": "independent_scale_v3",
+    "attitude_time_constant_s": 0.09087972089704967,
+    "delay_s": 0.02,
+    "feedforward_xy": 0.7466776443199834,
+    "feedforward_z": 1.299031502516172,
+    "gravity_m_s2": 9.80665,
+    "kd_xy": 0.9955425130126346,
+    "kd_z": 1.3581289278616668,
+    "kp_xy": 1.721387920192701,
+    "kp_z": 19.668324107815668
+  },
+  "training": [
+    "figure8_001-00041",
+    "figure8_001-00241",
+    "figure8_001-00441",
+    "figure8_001-00641",
+    "figure8_001-00841",
+    "figure8_001-01041",
+    "figure8_001-01241",
+    "figure8_001-01441",
+    "figure8_001-01641",
+    "figure8_001-01841",
+    "figure8_001-02041",
+    "figure8_001-02241",
+    "figure8_001-02441",
+    "figure8_001-02641",
+    "figure8_001-02841",
+    "figure8_001-03041",
+    "figure8_001-03241",
+    "figure8_001-03441",
+    "figure8_001-03641",
+    "figure8_001-03841",
+    "figure8_001-04041",
+    "figure8_001-04241",
+    "figure8_001-04441",
+    "figure8_001-04641",
+    "figure8_001-04841",
+    "osci_001-00241",
+    "osci_001-00441",
+    "osci_001-00641",
+    "osci_001-00841",
+    "osci_001-01041",
+    "osci_001-01241",
+    "osci_001-01441",
+    "osci_001-01641",
+    "osci_001-01841",
+    "osci_001-02041",
+    "osci_001-02241",
+    "osci_001-02441",
+    "osci_001-02641",
+    "osci_001-02841",
+    "osci_001-03041",
+    "osci_001-03241",
+    "osci_001-03441",
+    "osci_001-03641",
+    "osci_001-03841",
+    "osci_001-04041",
+    "osci_001-04241",
+    "osci_002-00241",
+    "osci_002-00441",
+    "osci_002-00641",
+    "osci_002-00841",
+    "osci_002-01041",
+    "osci_002-01241",
+    "osci_002-01441",
+    "osci_002-01641",
+    "osci_002-01841",
+    "osci_002-02041",
+    "osci_002-02241",
+    "vertical_figure8_001-00441",
+    "vertical_figure8_001-00641",
+    "vertical_figure8_001-00841",
+    "vertical_figure8_001-01041",
+    "vertical_figure8_001-01241",
+    "vertical_figure8_001-01441",
+    "vertical_figure8_001-01641",
+    "vertical_figure8_001-01841",
+    "vertical_figure8_001-02041",
+    "vertical_figure8_001-02241",
+    "vertical_figure8_001-02441",
+    "vertical_figure8_001-02641"
+  ],
+  "translation_profiles": [
+    {
+      "delay_s": 0.0,
+      "gains": [
+        1.64840888849579,
+        19.47896409630972,
+        1.1035161232928907,
+        1.2924850905731369,
+        0.7053615358397782,
+        1.263644763084186
+      ],
+      "nfev": 7,
+      "objective": 11.646192741667088,
+      "seconds": 2.005055400004494,
+      "stop_reason": "`ftol` termination condition is satisfied.",
+      "success": true
+    },
+    {
+      "delay_s": 0.02,
+      "gains": [
+        1.721387920192701,
+        19.668324107815668,
+        0.9955425130126346,
+        1.3581289278616668,
+        0.7466776443199834,
+        1.299031502516172
+      ],
+      "nfev": 7,
+      "objective": 11.465716709123777,
+      "seconds": 1.9601136999990558,
+      "stop_reason": "`ftol` termination condition is satisfied.",
+      "success": true
+    },
+    {
+      "delay_s": 0.04,
+      "gains": [
+        1.8099437527969477,
+        19.87940962049381,
+        0.8843839459568703,
+        1.427744384791157,
+        0.7855144543327529,
+        1.3382314983505972
+      ],
+      "nfev": 7,
+      "objective": 11.591407722715502,
+      "seconds": 2.1842217999947025,
+      "stop_reason": "`ftol` termination condition is satisfied.",
+      "success": true
+    },
+    {
+      "delay_s": 0.06,
+      "gains": [
+        1.9262745191013597,
+        20.11871080565406,
+        0.7716681396771355,
+        1.5011593716747351,
+        0.8221438350071503,
+        1.3815336245009409
+      ],
+      "nfev": 7,
+      "objective": 12.113156863205049,
+      "seconds": 2.2511095000081696,
+      "stop_reason": "`ftol` termination condition is satisfied.",
+      "success": true
+    },
+    {
+      "delay_s": 0.08,
+      "gains": [
+        2.0876124137568968,
+        20.394249794444857,
+        0.6639472766038972,
+        1.5750357635729912,
+        0.8569374250150162,
+        1.4289463280613783
+      ],
+      "nfev": 7,
+      "objective": 13.136077231839183,
+      "seconds": 2.308061399991857,
+      "stop_reason": "`ftol` termination condition is satisfied.",
+      "success": true
+    },
+    {
+      "delay_s": 0.1,
+      "gains": [
+        2.324933982497924,
+        20.69592153533869,
+        0.5678455586117617,
+        1.6471370067196585,
+        0.8919846342571895,
+        1.4799423113653953
+      ],
+      "nfev": 7,
+      "objective": 14.662260298034132,
+      "seconds": 2.218479999995907,
+      "stop_reason": "`ftol` termination condition is satisfied.",
+      "success": true
+    },
+    {
+      "delay_s": 0.12,
+      "gains": [
+        2.6797161597136787,
+        21.023194147319714,
+        0.49431573961638337,
+        1.7158579736257618,
+        0.9297753023392227,
+        1.5340774802749115
+      ],
+      "nfev": 7,
+      "objective": 16.550066790964443,
+      "seconds": 2.219589400003315,
+      "stop_reason": "`ftol` termination condition is satisfied.",
+      "success": true
+    }
+  ]
+}

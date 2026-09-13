@@ -1,0 +1,11 @@
+{
+  "basis": "Frozen protocol parent_generation=0; catalog parent=None; source model content identity matched.",
+  "previous_status": {
+    "error": "'generation_index'",
+    "model_selected": false,
+    "stage": "Stopped-fit finalization",
+    "status": "failed",
+    "training_restarted": false
+  },
+  "repair": "Add missing generation_index=0 to the verified root M0 catalog entry; original model untouched."
+}

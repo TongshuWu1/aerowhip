@@ -1,0 +1,95 @@
+{
+  "analysis": "post_hoc_exploratory_subset",
+  "source_sha256": "396f2c142891db5fb14159e9f1a71337516438d3beceb83cc9d429d704698369",
+  "retained_takes": [
+    "M2_002",
+    "M2_004"
+  ],
+  "omitted_only_in_this_analysis": [
+    "M2_001",
+    "M2_003",
+    "M2_005"
+  ],
+  "independent_hardware_fault_evidence_provided": false,
+  "primary_report_unchanged": true,
+  "aggregate": {
+    "fixed_time_error_m": {
+      "mean": 0.06166875910222524,
+      "sample_sd": 0.04990713501763631,
+      "n": 2,
+      "per_take": [
+        0.026379085501661997,
+        0.09695843270278848
+      ]
+    },
+    "closest_error_m": {
+      "mean": 0.04410093863044507,
+      "sample_sd": 0.025119278346885703,
+      "n": 2,
+      "per_take": [
+        0.02633892657284978,
+        0.06186295068804036
+      ]
+    },
+    "tip_reference_rmse_m": {
+      "mean": 0.10569944160876507,
+      "sample_sd": 0.00776868756008524,
+      "n": 2,
+      "per_take": [
+        0.11119273326342091,
+        0.10020614995410922
+      ]
+    },
+    "quadrotor_reference_rmse_m": {
+      "mean": 0.09003075323525755,
+      "sample_sd": 0.009424058357696401,
+      "n": 2,
+      "per_take": [
+        0.08336693766423267,
+        0.09669456880628244
+      ]
+    },
+    "fixed_time_tip_speed_m_s": {
+      "mean": 5.838485544929004,
+      "sample_sd": 0.7109184098193937,
+      "n": 2,
+      "per_take": [
+        6.341180773382654,
+        5.335790316475354
+      ]
+    }
+  },
+  "selected_take_metrics": {
+    "M2_002": {
+      "closest_error_m": 0.02633892657284978,
+      "closest_time_s": 1.1170227576836669,
+      "fixed_time_error_m": 0.026379085501661997,
+      "fixed_time_forward_velocity_m_s": 5.451990882542724,
+      "fixed_time_strike_angle_deg": 30.708632088779538,
+      "fixed_time_tip_speed_m_s": 6.341180773382654,
+      "quadrotor_reference_rmse_m": 0.08336693766423267,
+      "tip_reference_rmse_m": 0.11119273326342091
+    },
+    "M2_004": {
+      "closest_error_m": 0.06186295068804036,
+      "closest_time_s": 1.1301797578227772,
+      "fixed_time_error_m": 0.09695843270278848,
+      "fixed_time_forward_velocity_m_s": 4.759055267631968,
+      "fixed_time_strike_angle_deg": 26.885503438065093,
+      "fixed_time_tip_speed_m_s": 5.335790316475354,
+      "quadrotor_reference_rmse_m": 0.09669456880628244,
+      "tip_reference_rmse_m": 0.10020614995410922
+    }
+  },
+  "source_intervals": {
+    "reference_interval_s": [
+      0,
+      1.1333333333333333
+    ],
+    "closest_approach_interval_s": [
+      0,
+      1.5
+    ],
+    "planned_strike_time_s": 1.1172482457473654
+  }
+}

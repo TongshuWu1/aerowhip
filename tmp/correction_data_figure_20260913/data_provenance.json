@@ -1,0 +1,35 @@
+{
+  "sources": {
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M2-selected-local-20260913-042637-826368\\reference.npz": "0cdf777855e0594dfe81552a70f407467850ec3fc1de0e83907b59e907a26b2f",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M2-selected-local-20260913-042637-826368\\baseline_prediction.npz": "d000e24e797a455f0380c1a6936be392ba4d681610a27fb21eaae2163098ff4b",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M2-selected-local-20260913-042637-826368\\result.json": "ed1cc78a6a7c51c31a38363c5488b2d53125693381bb396525aff1f2935ef3fe",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M2-selected-local-20260913-042637-826368\\model.json": "6997ae46ae24e9088475d56663ac1b425e3eb5c77c36990ff8d900b7f16f38b4",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\20260913-042637-826368-M2-selected-local-fixed-tip-reference\\rehearsal.npz": "07643e0b3fa84dc177c350ebf2a5a6bfe70bc29b15934a2f11a28d29c8e89cce",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\20260913-042637-826368-M2-selected-local-fixed-tip-reference\\rehearsal.json": "c9428706b45cf69bba8602353b60f638e67dcbe2a5f37fe2ed472f9e0fd5a833",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\20260913-042637-826368-M2-selected-local-fixed-tip-reference\\model.json": "6997ae46ae24e9088475d56663ac1b425e3eb5c77c36990ff8d900b7f16f38b4"
+  },
+  "samples": 171,
+  "interval_s": [
+    0.0,
+    1.1333333333333333
+  ],
+  "marker_indices": [
+    42,
+    85,
+    128,
+    170
+  ],
+  "marker_times_s": [
+    0.28,
+    0.5666666666666667,
+    0.8533333333333334,
+    1.1333333333333333
+  ],
+  "projection": "world x-z; identical limits and equal axis scaling",
+  "smoothing": false,
+  "retiming": false,
+  "simulation_rerun": false,
+  "physical_measurements": false,
+  "before_tip_reference_rmse_3d_m": 0.05502560897455247,
+  "after_tip_reference_rmse_3d_m": 0.03960350448060721
+}

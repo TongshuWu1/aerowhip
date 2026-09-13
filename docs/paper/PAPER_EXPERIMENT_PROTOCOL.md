@@ -4,12 +4,12 @@ Preserve the current 145 g quadrotor and 17 g cable model, tracked-origin and
 attachment conventions, 30 Hz PVA commands, and original M0 reference. Origin:
 (0,0,1.4) m. Target: (1.25,0,1.25) m. M0 is not recollected or refitted.
 
-Five M0 and five M1 physical recordings have been collected. The user confirmed
+Five M0, five M1 and five M2 physical recordings have been collected. The user confirmed
 they are clean. Original controller/OptiTrack files, gaps, timing evidence and
 flown CSVs remain unchanged. Reports are under `runs/data_review/`.
 
-The next command is `exports/M2_selected_fixed_tip_reference/fullstate_30hz.csv`.
-Store its raw pairs in the same folder's `flight_take/`. The selected M2 uses
+The executed M2 command is `exports/M2_selected_fixed_tip_reference/fullstate_30hz.csv`.
+Its raw pairs remain in the same folder's `flight_take/`. The selected M2 uses
 updated nominal drone parameters, the retained M1 drone residual, and completed
 M2 cable physics/residual. Keep both residuals. No further fit is scheduled.
 
@@ -23,9 +23,9 @@ validation. M1_003/005 were later explicitly used for development model selectio
 this must be disclosed. They are not independent final tests. Missing marker
 observations are masked using the existing causal initialization rules.
 
-The previously planned final comparison remains five M0/M2 pairs: M2-M0,
+An earlier, unexecuted randomized comparison proposed five M0/M2 pairs: M2-M0,
 M0-M2, M0-M2, M2-M0, M0-M2. Final recordings remain outside fitting, stopping
-and tuning. No completed M2 flight or final comparison is claimed here.
+and tuning. Five sequential M2 flights are complete; that randomized paired comparison was not performed.
 
 Evaluate continuous three-dimensional target error, including error at the
 original planned strike time and closest distance over the declared interval.
@@ -38,3 +38,7 @@ flight authorization. Preserve every trial and document any interruption or
 tracking limitation. Windows checks do not establish Ubuntu/5080 or physical
 clearance validation. The complete prior protocol is preserved in
 `delete/cleanup-20260913/before_cleanup/docs/paper/PAPER_EXPERIMENT_PROTOCOL.md`.
+
+A post-hoc analysis of M2_002/004 is reported separately at the operator's
+request. The suspected hardware defects in omitted takes are unverified.
+This exploratory subset does not replace the five-take primary results.

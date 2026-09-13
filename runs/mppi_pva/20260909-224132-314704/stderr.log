@@ -1,0 +1,20 @@
+[W909 22:41:34.000000000 Context.cpp:448] Warning: torch.backends.cuda.preferred_linalg_library is an experimental feature. If you see any error or unexpected behavior when this flag is set please file an issue on GitHub. (function operator ())
+Traceback (most recent call last):
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\runs\mppi_pva\20260909-224132-314704\source_snapshot\tools\run_pva.py", line 8, in <module>
+    p=argparse.ArgumentParser();p.add_argument('--job',type=Path,required=True);a=p.parse_args();run(a.job)
+                                                                                                 ^^^^^^^^^^
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\runs\mppi_pva\20260909-224132-314704\source_snapshot\planning\pva_job.py", line 336, in run
+    result=ppo(job,model,cfg) if cfg['method']=='ppo' else mppi(job,model,cfg)
+                                                           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\runs\mppi_pva\20260909-224132-314704\source_snapshot\planning\pva_job.py", line 283, in mppi
+    return optimize(job,model,cfg)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\.venv\Lib\site-packages\torch\utils\_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\runs\mppi_pva\20260909-224132-314704\source_snapshot\planning\mppi_receding.py", line 157, in optimize
+    progress(job,stage='MPPI lookahead optimization',iteration=total_iterations,window_iteration=iteration,
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\runs\mppi_pva\20260909-224132-314704\source_snapshot\planning\pva_job.py", line 186, in progress
+    if (job/'STOP').exists():raise InterruptedError('Stopped by request at a rollout/update boundary')
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+InterruptedError: Stopped by request at a rollout/update boundary

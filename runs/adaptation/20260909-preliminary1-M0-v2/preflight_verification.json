@@ -1,0 +1,16 @@
+{
+  "attitude_max_difference": 1.45e-15,
+  "cable_differentiable_vs_inference_difference_m": 0.0,
+  "cable_fast_vs_direct_max_difference_m": 2.09e-14,
+  "cable_gradient_finite": true,
+  "cuda": "12.8",
+  "drone_residual_loss_gradient_difference": 0.0,
+  "gpu": "NVIDIA GeForce RTX 4080",
+  "os": "Windows-11-10.0.26200-SP0",
+  "precision": "float64",
+  "scope": "Two drone windows, one six-step cable gradient window; complete fitted runtime checks follow fitting",
+  "tests": "Three preparation tests passed; numerical GPU smoke checks passed",
+  "torch": "2.11.0+cu128",
+  "translation_jacobian_max_difference": 3.84e-08,
+  "translation_max_difference_m": 0.0
+}

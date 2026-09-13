@@ -1,0 +1,345 @@
+[
+  {
+    "accepted": true,
+    "cost_m2": 0.002056597005578053,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 5.792589265390838e-05,
+        "step": 0.01
+      }
+    ],
+    "elapsed_s": 19.34020559999044,
+    "iteration": 1,
+    "jacobian_relative_difference": 5.792589265390838e-05,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [],
+    "rollout_count": 100,
+    "step_scale": 1.0,
+    "trust_radius": 0.5
+  },
+  {
+    "accepted": true,
+    "cost_m2": 0.0020205414616010714,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.00014481273526567622,
+        "step": 0.01
+      }
+    ],
+    "elapsed_s": 29.5403476000065,
+    "iteration": 2,
+    "jacobian_relative_difference": 0.00014481273526567622,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [],
+    "rollout_count": 199,
+    "step_scale": 1.0,
+    "trust_radius": 0.65
+  },
+  {
+    "accepted": true,
+    "cost_m2": 0.0019907649858530337,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.04716542519640891,
+        "step": 0.01
+      }
+    ],
+    "elapsed_s": 39.43713330000173,
+    "iteration": 3,
+    "jacobian_relative_difference": 0.04716542519640891,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [],
+    "rollout_count": 298,
+    "step_scale": 1.0,
+    "trust_radius": 0.8450000000000001
+  },
+  {
+    "accepted": true,
+    "cost_m2": 0.0019665219941249574,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.0002408673093944902,
+        "step": 0.01
+      }
+    ],
+    "elapsed_s": 51.4014840000018,
+    "iteration": 4,
+    "jacobian_relative_difference": 0.0002408673093944902,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 399,
+    "step_scale": 0.25,
+    "trust_radius": 1.0
+  },
+  {
+    "accepted": true,
+    "cost_m2": 0.001963372320940694,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.004259314637763168,
+        "step": 0.01
+      }
+    ],
+    "elapsed_s": 63.338835300004575,
+    "iteration": 5,
+    "jacobian_relative_difference": 0.004259314637763168,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 500,
+    "step_scale": 0.25,
+    "trust_radius": 0.7
+  },
+  {
+    "accepted": true,
+    "cost_m2": 0.001960756888421283,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.16524152247218105,
+        "step": 0.01
+      },
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.004830315666870457,
+        "step": 0.0025
+      }
+    ],
+    "elapsed_s": 80.0148046000104,
+    "iteration": 6,
+    "jacobian_relative_difference": 0.004830315666870457,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 701,
+    "step_scale": 0.0625,
+    "trust_radius": 0.48999999999999994
+  },
+  {
+    "accepted": true,
+    "cost_m2": 0.0019535755534147163,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.002349432178901196,
+        "step": 0.0025
+      }
+    ],
+    "elapsed_s": 94.03824759999407,
+    "iteration": 7,
+    "jacobian_relative_difference": 0.002349432178901196,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 804,
+    "step_scale": 0.0625,
+    "trust_radius": 0.3429999999999999
+  },
+  {
+    "accepted": true,
+    "cost_m2": 0.0019420433132913578,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.06680678146296251,
+        "step": 0.0025
+      },
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.003282456429391305,
+        "step": 0.000625
+      }
+    ],
+    "elapsed_s": 112.69296640000539,
+    "iteration": 8,
+    "jacobian_relative_difference": 0.003282456429391305,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 1007,
+    "step_scale": 0.015625,
+    "trust_radius": 0.24009999999999992
+  },
+  {
+    "accepted": false,
+    "cost_m2": 0.0019420433132913578,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.030769813874240784,
+        "step": 0.000625
+      }
+    ],
+    "elapsed_s": 122.45849679998355,
+    "iteration": 9,
+    "jacobian_relative_difference": 0.030769813874240784,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 1112,
+    "step_scale": 0.0,
+    "trust_radius": 0.16806999999999994
+  },
+  {
+    "accepted": true,
+    "cost_m2": 0.0019318184968726186,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.030769813874240784,
+        "step": 0.000625
+      }
+    ],
+    "elapsed_s": 138.5272350999876,
+    "iteration": 10,
+    "jacobian_relative_difference": 0.030769813874240784,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 1217,
+    "step_scale": 0.015625,
+    "trust_radius": 0.042017499999999985
+  },
+  {
+    "accepted": true,
+    "cost_m2": 0.0019301498362972774,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.270883513029562,
+        "step": 0.000625
+      },
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.03383159686565673,
+        "step": 0.00015625
+      }
+    ],
+    "elapsed_s": 156.09935149998637,
+    "iteration": 11,
+    "jacobian_relative_difference": 0.03383159686565673,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 1419,
+    "step_scale": 0.03125,
+    "trust_radius": 0.029412249999999987
+  }
+]

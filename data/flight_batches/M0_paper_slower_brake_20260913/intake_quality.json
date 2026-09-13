@@ -1,0 +1,182 @@
+{
+  "M0_001": {
+    "alignment": {
+      "clock_verified": false,
+      "half_offsets_s": [
+        0.545272682063512,
+        0.54552435004992
+      ],
+      "includes_logging_latency": true,
+      "method": "measured XYZ constant-offset least squares; no spatial fit",
+      "offset_s": 0.5454666485366568,
+      "rms_m": 0.013191277307838539
+    },
+    "expected_dynamic_packets": 122,
+    "marker_missing_by_column": [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      3
+    ],
+    "matched_dynamic_packets": 122,
+    "missing_dynamic_packets": [],
+    "onset_s": 16.36090410153071,
+    "packet_timing_spread_s": 0.000307218233743356,
+    "relative_tracking_span_s": [
+      -4.825437452994054,
+      6.344562547005946
+    ],
+    "strike_marker_coverage": 0.9993333333333333,
+    "strike_tip_coverage": 1.0
+  },
+  "M0_002": {
+    "alignment": {
+      "clock_verified": false,
+      "half_offsets_s": [
+        -0.15465514146439469,
+        -0.15522114141375565
+      ],
+      "includes_logging_latency": true,
+      "method": "measured XYZ constant-offset least squares; no spatial fit",
+      "offset_s": -0.15491786931753546,
+      "rms_m": 0.01330120709692493
+    },
+    "expected_dynamic_packets": 122,
+    "marker_missing_by_column": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      16
+    ],
+    "matched_dynamic_packets": 122,
+    "missing_dynamic_packets": [],
+    "onset_s": 16.85062092145284,
+    "packet_timing_spread_s": 0.00041864713033135104,
+    "relative_tracking_span_s": [
+      -4.5655387907703755,
+      6.874461209229622
+    ],
+    "strike_marker_coverage": 1.0,
+    "strike_tip_coverage": 1.0
+  },
+  "M0_003": {
+    "alignment": {
+      "clock_verified": false,
+      "half_offsets_s": [
+        0.36536144144396526,
+        0.3745535739862244
+      ],
+      "includes_logging_latency": true,
+      "method": "measured XYZ constant-offset least squares; no spatial fit",
+      "offset_s": 0.36548985640310416,
+      "rms_m": 0.012391091555171159
+    },
+    "expected_dynamic_packets": 122,
+    "marker_missing_by_column": [
+      16,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15,
+      15
+    ],
+    "matched_dynamic_packets": 122,
+    "missing_dynamic_packets": [],
+    "onset_s": 17.01913475195567,
+    "packet_timing_spread_s": 0.00043183962504045326,
+    "relative_tracking_span_s": [
+      -5.4036448955525636,
+      7.166355104447437
+    ],
+    "strike_marker_coverage": 0.9993333333333333,
+    "strike_tip_coverage": 1.0
+  },
+  "M0_004": {
+    "alignment": {
+      "clock_verified": false,
+      "half_offsets_s": [
+        1.2953526021289468,
+        1.295205164835915
+      ],
+      "includes_logging_latency": true,
+      "method": "measured XYZ constant-offset least squares; no spatial fit",
+      "offset_s": 1.2953119382485676,
+      "rms_m": 0.01583463230260022
+    },
+    "expected_dynamic_packets": 122,
+    "marker_missing_by_column": [
+      28,
+      28,
+      28,
+      28,
+      28,
+      28,
+      28,
+      28,
+      28,
+      37
+    ],
+    "matched_dynamic_packets": 122,
+    "missing_dynamic_packets": [],
+    "onset_s": 16.505432069301605,
+    "packet_timing_spread_s": 0.0002650419870988685,
+    "relative_tracking_span_s": [
+      -3.1301201310530367,
+      6.299879868946963
+    ],
+    "strike_marker_coverage": 1.0,
+    "strike_tip_coverage": 1.0
+  },
+  "M0_005": {
+    "alignment": {
+      "clock_verified": false,
+      "half_offsets_s": [
+        1.4750035056119217,
+        1.4754062724196142
+      ],
+      "includes_logging_latency": true,
+      "method": "measured XYZ constant-offset least squares; no spatial fit",
+      "offset_s": 1.4750540658248315,
+      "rms_m": 0.01485189394076807
+    },
+    "expected_dynamic_packets": 122,
+    "marker_missing_by_column": [
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6,
+      6
+    ],
+    "matched_dynamic_packets": 122,
+    "missing_dynamic_packets": [],
+    "onset_s": 16.71272606054942,
+    "packet_timing_spread_s": 0.00029754638671875,
+    "relative_tracking_span_s": [
+      -3.2776719947245887,
+      7.21232800527541
+    ],
+    "strike_marker_coverage": 1.0,
+    "strike_tip_coverage": 1.0
+  }
+}

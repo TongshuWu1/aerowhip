@@ -1,0 +1,48 @@
+% Shared AeroWhip TikZ style definitions.
+% Load after \usepackage{tikz}.
+\usetikzlibrary{arrows.meta,calc,positioning,decorations.pathreplacing}
+
+\definecolor{awCable}{RGB}{0,153,164}
+\definecolor{awAccent}{RGB}{214,45,52}
+\definecolor{awMaterial}{RGB}{113,70,153}
+\definecolor{awDroneGray}{RGB}{232,232,232}
+\definecolor{awLightGray}{RGB}{150,150,150}
+
+\tikzset{
+  awCable/.style={draw=awCable,line width=1.15pt,line cap=round,line join=round},
+  awFold/.style={draw=awAccent,line width=1.8pt,line cap=round,line join=round},
+  awMotion/.style={draw=awAccent,line width=.9pt,-{Stealth[length=2.5mm,width=1.7mm]}},
+  awVector/.style={draw=black,line width=.75pt,-{Stealth[length=2.2mm,width=1.5mm]}},
+  awDim/.style={draw=black!70,line width=.55pt,{Stealth[length=1.7mm,width=1.2mm]}-{Stealth[length=1.7mm,width=1.2mm]}},
+  awGuide/.style={draw=black!45,line width=.5pt,dashed},
+  awSampleIdentity/.style={circle,draw=awMaterial,fill=white,line width=1.0pt,inner sep=1.15pt},
+  awSample/.style={circle,draw=black,fill=white,line width=.5pt,inner sep=1.0pt},
+  awNode/.style={circle,draw=black,fill=white,line width=.55pt,inner sep=1.05pt},
+  awNodeHi/.style={circle,draw=black,fill=white,line width=.7pt,inner sep=1.5pt},
+  awTip/.style={circle,fill=black,inner sep=1.4pt},
+  awLabel/.style={font=\fontsize{8}{9.2}\selectfont},
+  awSmall/.style={font=\fontsize{8}{9.2}\selectfont},
+  awStage/.style={font=\fontsize{8}{9.2}\selectfont\bfseries},
+  pics/awDrone/.style={code={
+      \draw[black,line width=.58pt,fill=awDroneGray,rounded corners=.4pt]
+        (-.15,-.10) rectangle (.15,.10);
+      \draw[black,line width=.52pt]
+        (-.12,.06)--(-.34,.18) (.12,.06)--(.34,.18)
+        (-.12,-.06)--(-.34,-.18) (.12,-.06)--(.34,-.18);
+      \draw[black,line width=.48pt,fill=white] (-.39,.20) ellipse (.14 and .045);
+      \draw[black,line width=.48pt,fill=white] (.39,.20) ellipse (.14 and .045);
+      \draw[black,line width=.48pt,fill=white] (-.39,-.20) ellipse (.14 and .045);
+      \draw[black,line width=.48pt,fill=white] (.39,-.20) ellipse (.14 and .045);
+      \fill[black!65] (-.39,.20) circle (.012);
+      \fill[black!65] (.39,.20) circle (.012);
+      \fill[black!65] (-.39,-.20) circle (.012);
+      \fill[black!65] (.39,-.20) circle (.012);
+      \draw[black,line width=.56pt] (0,-.10)--(0,-.36);
+      \fill[black] (0,-.36) circle (.021);
+  }},
+  pics/awTarget/.style={code={
+      \draw[awAccent,line width=.8pt] (0,0) circle (.10);
+      \draw[awAccent,line width=.8pt] (-.07,-.07)--(.07,.07);
+      \draw[awAccent,line width=.8pt] (-.07,.07)--(.07,-.07);
+  }}
+}

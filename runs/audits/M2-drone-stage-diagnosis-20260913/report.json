@@ -1,0 +1,87 @@
+{
+  "candidate_changed": false,
+  "interpretation": "Post-selection saved-stage diagnostic; native recorded timestamps and identical held-out take membership.",
+  "script_sha256": "fd691be65dd0985e9277c6f41950721a3f6bcffa106ee646b84876e6b4fe1079",
+  "stages": {
+    "M1_parent": {
+      "model": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M2-paper-20260913\\source_candidate\\model.json",
+      "per_take_m": {
+        "M1_003": 0.040457574234333486,
+        "M1_005": 0.1085828488961076
+      },
+      "position_rmse_mean_m": 0.07452021156522054
+    },
+    "M2_drone_residual": {
+      "model": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M2-paper-20260913\\stages\\drone_residual\\model.json",
+      "per_take_m": {
+        "M1_003": 0.06994367713544276,
+        "M1_005": 0.1428544579731756
+      },
+      "position_rmse_mean_m": 0.1063990675543092
+    },
+    "M2_nominal": {
+      "model": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M2-paper-20260913\\stages\\drone_nominal\\model.json",
+      "per_take_m": {
+        "M1_003": 0.035820264487911736,
+        "M1_005": 0.0982958267043061
+      },
+      "position_rmse_mean_m": 0.06705804559610892
+    },
+    "training_M1": {
+      "preliminary": {
+        "mean_m": 0.07927780208796306,
+        "per_take_m": {
+          "figure8_001": 0.05084864659296521,
+          "osci_001": 0.04187218236988148,
+          "osci_002": 0.17846510589545964,
+          "vertical_figure8_001": 0.045925273493545936
+        }
+      },
+      "prior_whip": {
+        "mean_m": 0.053546974844379175,
+        "per_take_m": {
+          "M0_001": 0.0606052244304359,
+          "M0_002": 0.07502419076190284,
+          "M0_004": 0.025011509340798797
+        }
+      },
+      "whip": {
+        "mean_m": 0.10229046768233226,
+        "per_take_m": {
+          "M1_001": 0.12710706205101024,
+          "M1_002": 0.05686302803472765,
+          "M1_004": 0.1229013129612589
+        }
+      }
+    },
+    "training_M2": {
+      "preliminary": {
+        "mean_m": 0.07802381206921259,
+        "per_take_m": {
+          "figure8_001": 0.05364849685322582,
+          "osci_001": 0.03491280088615737,
+          "osci_002": 0.17575703070960255,
+          "vertical_figure8_001": 0.047776919827864646
+        }
+      },
+      "prior_whip": {
+        "mean_m": 0.0534208345623771,
+        "per_take_m": {
+          "M0_001": 0.05992146725818568,
+          "M0_002": 0.07567272825604385,
+          "M0_004": 0.024668308172901773
+        }
+      },
+      "whip": {
+        "mean_m": 0.06115408101038607,
+        "per_take_m": {
+          "M1_001": 0.10494365983013147,
+          "M1_002": 0.037888481801806206,
+          "M1_004": 0.040630101399220506
+        }
+      }
+    }
+  },
+  "training_restarted": false,
+  "validation_used_for_selection": false
+}

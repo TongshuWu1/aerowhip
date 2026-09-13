@@ -1,0 +1,41 @@
+{
+  "autograd": -0.20851522068345363,
+  "bias_index": 27,
+  "differentiable_vs_inference_position_max_m": 0.0,
+  "elapsed_s": 26.78900019999128,
+  "finite_differences": [
+    {
+      "derivative": -0.20851433541135833,
+      "epsilon": 0.0001,
+      "relative_error": 4.2455993974688885e-06
+    },
+    {
+      "derivative": -0.20851806437072185,
+      "epsilon": 1e-06,
+      "relative_error": 1.3637606299477122e-05
+    },
+    {
+      "derivative": -0.2080710270746522,
+      "epsilon": 1e-08,
+      "relative_error": 0.002130269470715351
+    },
+    {
+      "derivative": -0.20166557312961686,
+      "epsilon": 1e-09,
+      "relative_error": 0.03284962858531656
+    },
+    {
+      "derivative": -0.19078738588973465,
+      "epsilon": 1e-10,
+      "relative_error": 0.08501938005106857
+    },
+    {
+      "derivative": -0.3828715122722315,
+      "epsilon": 1e-11,
+      "relative_error": 0.45539113253431623
+    }
+  ],
+  "gradient_norm": 1.401148559844849,
+  "loss": 2.4017335799526345,
+  "protected_unchanged": true
+}

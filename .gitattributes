@@ -30,3 +30,10 @@ paper/figures/** -text
 
 # Preserve exact external manuscript snapshot bytes and provenance hashes.
 paper/overleaf/** -text
+
+# User-authorized runtime snapshot: keep exported CSVs in LFS and exact temp/output bytes.
+exports/**/*.csv filter=lfs diff=lfs merge=lfs -text
+output/** -text
+tmp/** -text
+workspace/** -text
+experiments/** -text

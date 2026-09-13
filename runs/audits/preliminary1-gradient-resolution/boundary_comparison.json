@@ -1,0 +1,80 @@
+{
+  "scope": "Same candidate, exact same windows, initial state and 2 s duration; only boundary prediction source changes",
+  "takes": {
+    "figure8_001": {
+      "command_driven_tip": {
+        "rmse_m": 0.2612552460506528,
+        "samples": 300
+      },
+      "drone": {
+        "rmse_m": 0.06303132047286024,
+        "samples": 300
+      },
+      "measured_attachment_tip": {
+        "rmse_m": 0.10990141429446977,
+        "samples": 300
+      },
+      "window": "figure8_001-02441"
+    },
+    "figure8_002": {
+      "command_driven_tip": {
+        "rmse_m": 0.19943579715680812,
+        "samples": 300
+      },
+      "drone": {
+        "rmse_m": 0.06038085430176241,
+        "samples": 300
+      },
+      "measured_attachment_tip": {
+        "rmse_m": 0.16010435977898385,
+        "samples": 300
+      },
+      "window": "figure8_002-02041"
+    },
+    "osci_001": {
+      "command_driven_tip": {
+        "rmse_m": 0.03582423152139287,
+        "samples": 300
+      },
+      "drone": {
+        "rmse_m": 0.01737049424585684,
+        "samples": 300
+      },
+      "measured_attachment_tip": {
+        "rmse_m": 0.026104083194452562,
+        "samples": 300
+      },
+      "window": "osci_001-02441"
+    },
+    "osci_002": {
+      "command_driven_tip": {
+        "rmse_m": 0.13833684270648117,
+        "samples": 300
+      },
+      "drone": {
+        "rmse_m": 0.10103513514253414,
+        "samples": 300
+      },
+      "measured_attachment_tip": {
+        "rmse_m": 0.03536766402364627,
+        "samples": 300
+      },
+      "window": "osci_002-01241"
+    },
+    "vertical_figure8_001": {
+      "command_driven_tip": {
+        "rmse_m": 0.033379319535555015,
+        "samples": 300
+      },
+      "drone": {
+        "rmse_m": 0.03347719243872095,
+        "samples": 300
+      },
+      "measured_attachment_tip": {
+        "rmse_m": 0.03561446026392991,
+        "samples": 300
+      },
+      "window": "vertical_figure8_001-01441"
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "best_candidate_wave_stages": 0,
+  "best_failed": false,
+  "best_minimum_tip_distance_m": 0.04471839102603759,
+  "best_success": true,
+  "candidate_count": 512,
+  "cutoff": 34,
+  "legacy_reward": 565.4119685932206,
+  "objective_components": {
+    "approach": -4.478677195858787,
+    "cast": 75.70264373246889,
+    "contact": 440.909403234167,
+    "distance": -0.0,
+    "exit": -7.125014188070303,
+    "fold": 196.21247944866636,
+    "hit": 0.0,
+    "jerk": -0.0038596260016298977,
+    "joint": 0.0,
+    "lateral": -0.0026669843154583255,
+    "miss": -6.0603978438886985,
+    "pull": 0.0,
+    "release": 0.0,
+    "vertical": -0.0,
+    "wave": 0.0
+  },
+  "scored_duration_s": 1.1248781338006826,
+  "selected_indices": [
+    0,
+    128,
+    256,
+    384
+  ],
+  "type": "timed_baseline_screen"
+}

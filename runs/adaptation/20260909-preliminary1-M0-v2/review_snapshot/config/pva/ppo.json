@@ -1,0 +1,119 @@
+{
+  "action": {
+    "jerk_limit_m_s3": [
+      60.0,
+      60.0,
+      60.0
+    ]
+  },
+  "command_contract": "bounded_jerk_pva_30hz_v1",
+  "device": "cuda",
+  "launch": {
+    "origin_m": [
+      0.0,
+      0.0,
+      1.255
+    ],
+    "start_radius_m": 0.05,
+    "target_m": [
+      1.0,
+      0.0,
+      1.0
+    ],
+    "target_radius_m": 0.05
+  },
+  "limits": {
+    "maximum_origin_z_m": 2.8,
+    "maximum_specific_force_m_s2": 18.28571428571429,
+    "maximum_speed_m_s": 5.0,
+    "maximum_tilt_deg": 60.0,
+    "minimum_cable_z_m": 0.02,
+    "minimum_origin_z_m": 0.96,
+    "minimum_specific_vertical_m_s2": 2.0
+  },
+  "method": "ppo",
+  "model_path": "",
+  "mppi": {
+    "iterations": 100,
+    "minimum_iterations": 20,
+    "noise_correlation": 0.7,
+    "noise_std": 0.5,
+    "patience": 15,
+    "samples": 1024,
+    "seed": 656,
+    "temperature": 10.0
+  },
+  "observation_contract": "pva_whip_phase_v3",
+  "reward": {
+    "brake_progress": 30.0,
+    "command_acceleration": 120.0,
+    "command_speed": 30.0,
+    "displacement": 0.5,
+    "drone_approach": 10.0,
+    "failure": 600.0,
+    "horizontal_contact": 120.0,
+    "invalid_contact": 600.0,
+    "jerk": 0.02,
+    "joint_strike": 1500.0,
+    "lateral_excursion": 10.0,
+    "near_target_reach": 10.0,
+    "outward_contact": 400.0,
+    "progress": 60.0,
+    "proximity_scale_m": 0.35,
+    "pull_phase": 20.0,
+    "reach_progress": 40.0,
+    "reverse_phase": 60.0,
+    "strike_quality": 0.0,
+    "success": 1500.0,
+    "time_per_s": 1.0,
+    "vertical_excursion": 10.0,
+    "vertical_tip_alignment": 10.0,
+    "vertical_tip_velocity": 10.0,
+    "wave_progress": 60.0
+  },
+  "schema": "pva_planner_settings_v1",
+  "task": {
+    "duration_s": 5.0,
+    "first_contact_only": true,
+    "maximum_angle_deg": 45.0,
+    "minimum_backward_distance_m": 0.1,
+    "minimum_backward_speed_m_s": 0.5,
+    "minimum_directed_speed_m_s": 4.0,
+    "minimum_pull_distance_m": 0.25,
+    "minimum_pull_speed_m_s": 1.0,
+    "require_pullback": true,
+    "require_wave": true,
+    "strike_direction": [
+      1.0,
+      0.0,
+      0.0
+    ],
+    "target_radius_m": 0.05,
+    "wave_distal_angle_rad": 0.65,
+    "wave_distal_start": 0.75,
+    "wave_dwell_s": 0.04,
+    "wave_middle_angle_rad": 0.35,
+    "wave_proximal_angle_rad": 0.2,
+    "wave_proximal_end": 0.45
+  },
+  "training": {
+    "batch_size": 2048,
+    "entropy_coefficient": 0.005,
+    "epochs": 4,
+    "evaluate_every_updates": 4,
+    "gae_lambda": 0.99,
+    "hidden_dim": 256,
+    "initial_log_std": -0.8,
+    "learning_rate": 0.0003,
+    "maximum_attempts": 500000,
+    "minibatch_size": 8192,
+    "minimum_attempts": 98304,
+    "plateau_attempts": 49152,
+    "relative_improvement": 0.005,
+    "reset_value_on_resume": true,
+    "reward_scale": 0.01,
+    "seed": 655,
+    "success_priority": true,
+    "terminate_invalid_contact": true
+  }
+}

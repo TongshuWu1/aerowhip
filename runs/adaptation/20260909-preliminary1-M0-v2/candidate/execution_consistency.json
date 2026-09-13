@@ -1,0 +1,32 @@
+{
+  "figure8_001": {
+    "production_difference_m": 1.335660281140405e-06,
+    "production_tolerance_m": 0.0001,
+    "reason": "Production removes floating-point ceil over-subdivision at exact 5 ms boundaries; reference retains the exact fit partition",
+    "training_vs_reference_difference_m": 0.0
+  },
+  "figure8_002": {
+    "production_difference_m": 3.66878743605914e-06,
+    "production_tolerance_m": 0.0001,
+    "reason": "Production removes floating-point ceil over-subdivision at exact 5 ms boundaries; reference retains the exact fit partition",
+    "training_vs_reference_difference_m": 0.0
+  },
+  "osci_001": {
+    "production_difference_m": 1.457966224416296e-06,
+    "production_tolerance_m": 0.0001,
+    "reason": "Production removes floating-point ceil over-subdivision at exact 5 ms boundaries; reference retains the exact fit partition",
+    "training_vs_reference_difference_m": 0.0
+  },
+  "osci_002": {
+    "production_difference_m": 5.493582011517617e-06,
+    "production_tolerance_m": 0.0001,
+    "reason": "Production removes floating-point ceil over-subdivision at exact 5 ms boundaries; reference retains the exact fit partition",
+    "training_vs_reference_difference_m": 0.0
+  },
+  "vertical_figure8_001": {
+    "production_difference_m": 6.809110528083195e-06,
+    "production_tolerance_m": 0.0001,
+    "reason": "Production removes floating-point ceil over-subdivision at exact 5 ms boundaries; reference retains the exact fit partition",
+    "training_vs_reference_difference_m": 0.0
+  }
+}

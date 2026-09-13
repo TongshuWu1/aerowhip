@@ -1,0 +1,135 @@
+{
+  "evidence": "Two-second representative motion, not full-flight/strike validation",
+  "takes": {
+    "figure8_001": {
+      "cold": {
+        "drone": {
+          "rmse_m": 0.3200399761505686,
+          "samples": 303
+        },
+        "projection_m": 0.007436264354478861,
+        "tip": {
+          "rmse_m": 0.7628575882676174,
+          "samples": 303
+        },
+        "window": "figure8_001-02441"
+      },
+      "fitted": {
+        "drone": {
+          "rmse_m": 0.06291847424811124,
+          "samples": 303
+        },
+        "projection_m": 0.007436264354478861,
+        "tip": {
+          "rmse_m": 0.6625825633324498,
+          "samples": 303
+        },
+        "window": "figure8_001-02441"
+      }
+    },
+    "figure8_002": {
+      "cold": {
+        "drone": {
+          "rmse_m": 0.5612996981126563,
+          "samples": 303
+        },
+        "projection_m": 0.012629445685338414,
+        "tip": {
+          "rmse_m": 1.0153613270816009,
+          "samples": 303
+        },
+        "window": "figure8_002-02041"
+      },
+      "fitted": {
+        "drone": {
+          "rmse_m": 0.061169815462496606,
+          "samples": 303
+        },
+        "projection_m": 0.012629445685338414,
+        "tip": {
+          "rmse_m": 0.6462290664815302,
+          "samples": 303
+        },
+        "window": "figure8_002-02041"
+      }
+    },
+    "osci_001": {
+      "cold": {
+        "drone": {
+          "rmse_m": 0.36838426889261966,
+          "samples": 303
+        },
+        "projection_m": 0.009478728478602205,
+        "tip": {
+          "rmse_m": 0.5333891718479514,
+          "samples": 303
+        },
+        "window": "osci_001-02441"
+      },
+      "fitted": {
+        "drone": {
+          "rmse_m": 0.017426870960764257,
+          "samples": 303
+        },
+        "projection_m": 0.009478728478602205,
+        "tip": {
+          "rmse_m": 0.07564942870563071,
+          "samples": 303
+        },
+        "window": "osci_001-02441"
+      }
+    },
+    "osci_002": {
+      "cold": {
+        "drone": {
+          "rmse_m": 1.1528564803158474,
+          "samples": 303
+        },
+        "projection_m": 0.008591343155645581,
+        "tip": {
+          "rmse_m": 1.5473430296761876,
+          "samples": 303
+        },
+        "window": "osci_002-01241"
+      },
+      "fitted": {
+        "drone": {
+          "rmse_m": 0.10154717008676643,
+          "samples": 303
+        },
+        "projection_m": 0.008591343155645581,
+        "tip": {
+          "rmse_m": 0.31069483596279546,
+          "samples": 303
+        },
+        "window": "osci_002-01241"
+      }
+    },
+    "vertical_figure8_001": {
+      "cold": {
+        "drone": {
+          "rmse_m": 0.2525677186092862,
+          "samples": 303
+        },
+        "projection_m": 0.00842520146347664,
+        "tip": {
+          "rmse_m": 0.43120564338407436,
+          "samples": 303
+        },
+        "window": "vertical_figure8_001-01441"
+      },
+      "fitted": {
+        "drone": {
+          "rmse_m": 0.03345101477468669,
+          "samples": 303
+        },
+        "projection_m": 0.00842520146347664,
+        "tip": {
+          "rmse_m": 0.040434420368142245,
+          "samples": 303
+        },
+        "window": "vertical_figure8_001-01441"
+      }
+    }
+  }
+}

@@ -1,0 +1,1002 @@
+[
+  {
+    "baseline_scores": [
+      571.0666565993724,
+      696.0130462630715
+    ],
+    "best_candidate_wave_stages": 0,
+    "best_failed": false,
+    "best_minimum_tip_distance_m": 0.03589550982251491,
+    "best_reward": 696.0130462630715,
+    "best_success": false,
+    "cutoff": 45,
+    "effective_samples": 21.000000280248788,
+    "effective_samples_per_proposal": [
+      5.400000116330506,
+      5.800000192693581,
+      3.799999959757075,
+      6.000000011467626
+    ],
+    "elapsed_s": 7.198983000009321,
+    "failures": 0.794921875,
+    "improvement_over_best_baseline": 0.0,
+    "iteration": 1,
+    "legacy_reward": -73.70934269222526,
+    "live_snapshot_seconds": 0.029219799995189533,
+    "objective_components": {
+      "approach": -5.524059385281996,
+      "cast": 75.70264373246889,
+      "contact": 440.909403234167,
+      "distance": -0.0,
+      "exit": -5.2175467307192775,
+      "fold": 196.21247944866636,
+      "hit": 0.0,
+      "jerk": -0.0039798246368786,
+      "joint": 0.0,
+      "lateral": -0.005496367703840781,
+      "miss": -6.0603978438886985,
+      "pull": 0.0,
+      "release": 0.0,
+      "vertical": -0.0,
+      "wave": 0.0
+    },
+    "scored_duration_s": 1.5,
+    "success": 0.0,
+    "temperatures": [
+      141.29003532218476,
+      142.1213788978264,
+      77.8601628011761,
+      149.41027286442682
+    ]
+  },
+  {
+    "baseline_scores": [
+      571.0666565993724,
+      696.0130462630715
+    ],
+    "best_candidate_wave_stages": 0,
+    "best_failed": false,
+    "best_minimum_tip_distance_m": 0.03589550982251491,
+    "best_reward": 696.0130462630715,
+    "best_success": false,
+    "cutoff": 45,
+    "effective_samples": 23.600000900725544,
+    "effective_samples_per_proposal": [
+      7.200000287554055,
+      5.800000216661234,
+      5.400000106930175,
+      5.200000289580079
+    ],
+    "elapsed_s": 10.111126900010277,
+    "failures": 0.76953125,
+    "improvement_over_best_baseline": 0.0,
+    "iteration": 2,
+    "legacy_reward": -73.70934269222526,
+    "live_snapshot_seconds": 0.009747499992954545,
+    "objective_components": {
+      "approach": -5.524059385281996,
+      "cast": 75.70264373246889,
+      "contact": 440.909403234167,
+      "distance": -0.0,
+      "exit": -5.2175467307192775,
+      "fold": 196.21247944866636,
+      "hit": 0.0,
+      "jerk": -0.0039798246368786,
+      "joint": 0.0,
+      "lateral": -0.005496367703840781,
+      "miss": -6.0603978438886985,
+      "pull": 0.0,
+      "release": 0.0,
+      "vertical": -0.0,
+      "wave": 0.0
+    },
+    "scored_duration_s": 1.5,
+    "success": 0.0,
+    "temperatures": [
+      159.81533796418387,
+      129.75085697928213,
+      163.61865136977048,
+      149.43405376960433
+    ]
+  },
+  {
+    "baseline_scores": [
+      571.0666565993724,
+      696.0130462630715
+    ],
+    "best_candidate_wave_stages": 0,
+    "best_failed": false,
+    "best_minimum_tip_distance_m": 0.03589550982251491,
+    "best_reward": 696.0130462630715,
+    "best_success": false,
+    "cutoff": 45,
+    "effective_samples": 26.80000073169363,
+    "effective_samples_per_proposal": [
+      8.800000212313881,
+      7.400000117197166,
+      6.200000304244491,
+      4.400000097938088
+    ],
+    "elapsed_s": 13.052053400009754,
+    "failures": 0.73828125,
+    "improvement_over_best_baseline": 0.0,
+    "iteration": 3,
+    "legacy_reward": -73.70934269222526,
+    "live_snapshot_seconds": 0.010402699990663677,
+    "objective_components": {
+      "approach": -5.524059385281996,
+      "cast": 75.70264373246889,
+      "contact": 440.909403234167,
+      "distance": -0.0,
+      "exit": -5.2175467307192775,
+      "fold": 196.21247944866636,
+      "hit": 0.0,
+      "jerk": -0.0039798246368786,
+      "joint": 0.0,
+      "lateral": -0.005496367703840781,
+      "miss": -6.0603978438886985,
+      "pull": 0.0,
+      "release": 0.0,
+      "vertical": -0.0,
+      "wave": 0.0
+    },
+    "scored_duration_s": 1.5,
+    "success": 0.0,
+    "temperatures": [
+      103.14876702383492,
+      152.1678950360734,
+      129.2123935171746,
+      92.26667633227272
+    ]
+  },
+  {
+    "baseline_scores": [
+      571.0666565993724,
+      696.0130462630715
+    ],
+    "best_candidate_wave_stages": 0,
+    "best_failed": false,
+    "best_minimum_tip_distance_m": 0.03589550982251491,
+    "best_reward": 696.0130462630715,
+    "best_success": false,
+    "cutoff": 45,
+    "effective_samples": 30.20000090564518,
+    "effective_samples_per_proposal": [
+      7.800000215530599,
+      7.400000156937019,
+      7.2000003413119265,
+      7.800000191865633
+    ],
+    "elapsed_s": 15.924645899998723,
+    "failures": 0.705078125,
+    "improvement_over_best_baseline": 0.0,
+    "iteration": 4,
+    "legacy_reward": -73.70934269222526,
+    "live_snapshot_seconds": 0.007830900009139441,
+    "objective_components": {
+      "approach": -5.524059385281996,
+      "cast": 75.70264373246889,
+      "contact": 440.909403234167,
+      "distance": -0.0,
+      "exit": -5.2175467307192775,
+      "fold": 196.21247944866636,
+      "hit": 0.0,
+      "jerk": -0.0039798246368786,
+      "joint": 0.0,
+      "lateral": -0.005496367703840781,
+      "miss": -6.0603978438886985,
+      "pull": 0.0,
+      "release": 0.0,
+      "vertical": -0.0,
+      "wave": 0.0
+    },
+    "scored_duration_s": 1.5,
+    "success": 0.0,
+    "temperatures": [
+      123.44939311886347,
+      165.73754889599985,
+      157.54267372909163,
+      151.11210257018146
+    ]
+  },
+  {
+    "baseline_scores": [
+      571.0666565993724,
+      696.0130462630715
+    ],
+    "best_candidate_wave_stages": 0,
+    "best_failed": false,
+    "best_minimum_tip_distance_m": 0.03589550982251491,
+    "best_reward": 696.0130462630715,
+    "best_success": false,
+    "cutoff": 45,
+    "effective_samples": 27.800000767403148,
+    "effective_samples_per_proposal": [
+      8.600000417299198,
+      7.00000003392718,
+      5.800000209364018,
+      6.400000106812754
+    ],
+    "elapsed_s": 18.830302800008212,
+    "failures": 0.728515625,
+    "improvement_over_best_baseline": 0.0,
+    "iteration": 5,
+    "legacy_reward": -73.70934269222526,
+    "live_snapshot_seconds": 0.005229200003668666,
+    "objective_components": {
+      "approach": -5.524059385281996,
+      "cast": 75.70264373246889,
+      "contact": 440.909403234167,
+      "distance": -0.0,
+      "exit": -5.2175467307192775,
+      "fold": 196.21247944866636,
+      "hit": 0.0,
+      "jerk": -0.0039798246368786,
+      "joint": 0.0,
+      "lateral": -0.005496367703840781,
+      "miss": -6.0603978438886985,
+      "pull": 0.0,
+      "release": 0.0,
+      "vertical": -0.0,
+      "wave": 0.0
+    },
+    "scored_duration_s": 1.5,
+    "success": 0.0,
+    "temperatures": [
+      127.65850707097039,
+      141.53837795841503,
+      111.5700135131037,
+      120.51101701192995
+    ]
+  },
+  {
+    "baseline_scores": [
+      571.0666565993724,
+      696.0130462630715
+    ],
+    "best_candidate_wave_stages": 0,
+    "best_failed": false,
+    "best_minimum_tip_distance_m": 0.03589550982251491,
+    "best_reward": 696.0130462630715,
+    "best_success": false,
+    "cutoff": 45,
+    "effective_samples": 30.200000370448507,
+    "effective_samples_per_proposal": [
+      9.00000000849646,
+      5.800000201962762,
+      7.80000021531399,
+      7.599999944675296
+    ],
+    "elapsed_s": 21.702238900004886,
+    "failures": 0.705078125,
+    "improvement_over_best_baseline": 0.0,
+    "iteration": 6,
+    "legacy_reward": -73.70934269222526,
+    "live_snapshot_seconds": 0.008511099993484095,
+    "objective_components": {
+      "approach": -5.524059385281996,
+      "cast": 75.70264373246889,
+      "contact": 440.909403234167,
+      "distance": -0.0,
+      "exit": -5.2175467307192775,
+      "fold": 196.21247944866636,
+      "hit": 0.0,
+      "jerk": -0.0039798246368786,
+      "joint": 0.0,
+      "lateral": -0.005496367703840781,
+      "miss": -6.0603978438886985,
+      "pull": 0.0,
+      "release": 0.0,
+      "vertical": -0.0,
+      "wave": 0.0
+    },
+    "scored_duration_s": 1.5,
+    "success": 0.0,
+    "temperatures": [
+      104.71615340971822,
+      91.38797465984543,
+      188.89124857365277,
+      138.87564471318677
+    ]
+  },
+  {
+    "baseline_scores": [
+      571.0666565993724,
+      696.0130462630715
+    ],
+    "best_candidate_wave_stages": 0,
+    "best_failed": false,
+    "best_minimum_tip_distance_m": 0.03589550982251491,
+    "best_reward": 696.0130462630715,
+    "best_success": false,
+    "cutoff": 45,
+    "effective_samples": 31.200000400507285,
+    "effective_samples_per_proposal": [
+      8.800000232146683,
+      8.199999866826783,
+      8.000000003823178,
+      6.200000297710641
+    ],
+    "elapsed_s": 24.61614670000563,
+    "failures": 0.6953125,
+    "improvement_over_best_baseline": 0.0,
+    "iteration": 7,
+    "legacy_reward": -73.70934269222526,
+    "live_snapshot_seconds": 0.008189200001652353,
+    "objective_components": {
+      "approach": -5.524059385281996,
+      "cast": 75.70264373246889,
+      "contact": 440.909403234167,
+      "distance": -0.0,
+      "exit": -5.2175467307192775,
+      "fold": 196.21247944866636,
+      "hit": 0.0,
+      "jerk": -0.0039798246368786,
+      "joint": 0.0,
+      "lateral": -0.005496367703840781,
+      "miss": -6.0603978438886985,
+      "pull": 0.0,
+      "release": 0.0,
+      "vertical": -0.0,
+      "wave": 0.0
+    },
+    "scored_duration_s": 1.5,
+    "success": 0.0,
+    "temperatures": [
+      160.04146341571914,
+      153.44237683971048,
+      156.5053697107011,
+      122.16890013520957
+    ]
+  },
+  {
+    "baseline_scores": [
+      571.0666565993724,
+      696.0130462630715
+    ],
+    "best_candidate_wave_stages": 0,
+    "best_failed": false,
+    "best_minimum_tip_distance_m": 0.03589550982251491,
+    "best_reward": 696.0130462630715,
+    "best_success": false,
+    "cutoff": 45,
+    "effective_samples": 29.800000227297275,
+    "effective_samples_per_proposal": [
+      8.199999810939863,
+      8.800000198764398,
+      6.4000001194393095,
+      6.400000098153704
+    ],
+    "elapsed_s": 27.517577600010554,
+    "failures": 0.708984375,
+    "improvement_over_best_baseline": 0.0,
+    "iteration": 8,
+    "legacy_reward": -73.70934269222526,
+    "live_snapshot_seconds": 0.005236400000285357,
+    "objective_components": {
+      "approach": -5.524059385281996,
+      "cast": 75.70264373246889,
+      "contact": 440.909403234167,
+      "distance": -0.0,
+      "exit": -5.2175467307192775,
+      "fold": 196.21247944866636,
+      "hit": 0.0,
+      "jerk": -0.0039798246368786,
+      "joint": 0.0,
+      "lateral": -0.005496367703840781,
+      "miss": -6.0603978438886985,
+      "pull": 0.0,
+      "release": 0.0,
+      "vertical": -0.0,
+      "wave": 0.0
+    },
+    "scored_duration_s": 1.5,
+    "success": 0.0,
+    "temperatures": [
+      125.1842306857528,
+      134.76775633650655,
+      199.12655771658277,
+      132.82437230476768
+    ]
+  },
+  {
+    "baseline_scores": [
+      571.0666565993724,
+      696.0130462630715
+    ],
+    "best_candidate_wave_stages": 0,
+    "best_failed": false,
+    "best_minimum_tip_distance_m": 0.03589550982251491,
+    "best_reward": 696.0130462630715,
+    "best_success": false,
+    "cutoff": 45,
+    "effective_samples": 31.000000555315655,
+    "effective_samples_per_proposal": [
+      7.599999906499854,
+      7.400000118965094,
+      8.600000416517956,
+      7.40000011333275
+    ],
+    "elapsed_s": 30.37809740001103,
+    "failures": 0.697265625,
+    "improvement_over_best_baseline": 0.0,
+    "iteration": 9,
+    "legacy_reward": -73.70934269222526,
+    "live_snapshot_seconds": 0.01329289999557659,
+    "objective_components": {
+      "approach": -5.524059385281996,
+      "cast": 75.70264373246889,
+      "contact": 440.909403234167,
+      "distance": -0.0,
+      "exit": -5.2175467307192775,
+      "fold": 196.21247944866636,
+      "hit": 0.0,
+      "jerk": -0.0039798246368786,
+      "joint": 0.0,
+      "lateral": -0.005496367703840781,
+      "miss": -6.0603978438886985,
+      "pull": 0.0,
+      "release": 0.0,
+      "vertical": -0.0,
+      "wave": 0.0
+    },
+    "scored_duration_s": 1.5,
+    "success": 0.0,
+    "temperatures": [
+      76.51667045399194,
+      138.56754330235395,
+      155.14848347495598,
+      149.70751873185495
+    ]
+  },
+  {
+    "baseline_scores": [
+      571.0666565993724,
+      696.0130462630715
+    ],
+    "best_candidate_wave_stages": 0,
+    "best_failed": false,
+    "best_minimum_tip_distance_m": 0.03589550982251491,
+    "best_reward": 696.0130462630715,
+    "best_success": false,
+    "cutoff": 45,
+    "effective_samples": 29.40000016401251,
+    "effective_samples_per_proposal": [
+      8.199999834864757,
+      7.5999999320415625,
+      7.200000296100233,
+      6.400000101005959
+    ],
+    "elapsed_s": 33.27759260000312,
+    "failures": 0.712890625,
+    "improvement_over_best_baseline": 0.0,
+    "iteration": 10,
+    "legacy_reward": -73.70934269222526,
+    "live_snapshot_seconds": 0.0058889999927487224,
+    "objective_components": {
+      "approach": -5.524059385281996,
+      "cast": 75.70264373246889,
+      "contact": 440.909403234167,
+      "distance": -0.0,
+      "exit": -5.2175467307192775,
+      "fold": 196.21247944866636,
+      "hit": 0.0,
+      "jerk": -0.0039798246368786,
+      "joint": 0.0,
+      "lateral": -0.005496367703840781,
+      "miss": -6.0603978438886985,
+      "pull": 0.0,
+      "release": 0.0,
+      "vertical": -0.0,
+      "wave": 0.0
+    },
+    "scored_duration_s": 1.5,
+    "success": 0.0,
+    "temperatures": [
+      165.5669618133632,
+      172.2992429965078,
+      147.22264987348774,
+      142.83324311179933
+    ]
+  },
+  {
+    "baseline_scores": [
+      571.0666565993724,
+      696.0130462630715
+    ],
+    "best_candidate_wave_stages": 0,
+    "best_failed": false,
+    "best_minimum_tip_distance_m": 0.03589550982251491,
+    "best_reward": 696.0130462630715,
+    "best_success": false,
+    "cutoff": 45,
+    "effective_samples": 31.000001079160626,
+    "effective_samples_per_proposal": [
+      9.000000051509284,
+      8.400000612838253,
+      6.400000121443148,
+      7.200000293369941
+    ],
+    "elapsed_s": 36.1314762999973,
+    "failures": 0.697265625,
+    "improvement_over_best_baseline": 0.0,
+    "iteration": 11,
+    "legacy_reward": -73.70934269222526,
+    "live_snapshot_seconds": 0.006364600005326793,
+    "objective_components": {
+      "approach": -5.524059385281996,
+      "cast": 75.70264373246889,
+      "contact": 440.909403234167,
+      "distance": -0.0,
+      "exit": -5.2175467307192775,
+      "fold": 196.21247944866636,
+      "hit": 0.0,
+      "jerk": -0.0039798246368786,
+      "joint": 0.0,
+      "lateral": -0.005496367703840781,
+      "miss": -6.0603978438886985,
+      "pull": 0.0,
+      "release": 0.0,
+      "vertical": -0.0,
+      "wave": 0.0
+    },
+    "scored_duration_s": 1.5,
+    "success": 0.0,
+    "temperatures": [
+      117.72528369649939,
+      157.91318050813092,
+      115.96068505357522,
+      119.01425009230685
+    ]
+  },
+  {
+    "baseline_scores": [
+      571.0666565993724,
+      696.0130462630715
+    ],
+    "best_candidate_wave_stages": 0,
+    "best_failed": false,
+    "best_minimum_tip_distance_m": 0.03589550982251491,
+    "best_reward": 696.0130462630715,
+    "best_success": false,
+    "cutoff": 45,
+    "effective_samples": 30.60000050698125,
+    "effective_samples_per_proposal": [
+      8.00000005179885,
+      6.599999919238554,
+      8.400000601686362,
+      7.599999934257483
+    ],
+    "elapsed_s": 38.99091680000129,
+    "failures": 0.701171875,
+    "improvement_over_best_baseline": 0.0,
+    "iteration": 12,
+    "legacy_reward": -73.70934269222526,
+    "live_snapshot_seconds": 0.009192199999233708,
+    "objective_components": {
+      "approach": -5.524059385281996,
+      "cast": 75.70264373246889,
+      "contact": 440.909403234167,
+      "distance": -0.0,
+      "exit": -5.2175467307192775,
+      "fold": 196.21247944866636,
+      "hit": 0.0,
+      "jerk": -0.0039798246368786,
+      "joint": 0.0,
+      "lateral": -0.005496367703840781,
+      "miss": -6.0603978438886985,
+      "pull": 0.0,
+      "release": 0.0,
+      "vertical": -0.0,
+      "wave": 0.0
+    },
+    "scored_duration_s": 1.5,
+    "success": 0.0,
+    "temperatures": [
+      184.7613754967612,
+      113.5830731952924,
+      158.08860845578985,
+      146.51776076436866
+    ]
+  },
+  {
+    "baseline_scores": [
+      571.0666565993724,
+      696.0130462630715
+    ],
+    "best_candidate_wave_stages": 0,
+    "best_failed": false,
+    "best_minimum_tip_distance_m": 0.03589550982251491,
+    "best_reward": 696.0130462630715,
+    "best_success": false,
+    "cutoff": 45,
+    "effective_samples": 29.800000755379966,
+    "effective_samples_per_proposal": [
+      8.600000400264467,
+      7.599999941496375,
+      7.200000293774778,
+      6.400000119844346
+    ],
+    "elapsed_s": 41.840118300009635,
+    "failures": 0.708984375,
+    "improvement_over_best_baseline": 0.0,
+    "iteration": 13,
+    "legacy_reward": -73.70934269222526,
+    "live_snapshot_seconds": 0.0059083999949507415,
+    "objective_components": {
+      "approach": -5.524059385281996,
+      "cast": 75.70264373246889,
+      "contact": 440.909403234167,
+      "distance": -0.0,
+      "exit": -5.2175467307192775,
+      "fold": 196.21247944866636,
+      "hit": 0.0,
+      "jerk": -0.0039798246368786,
+      "joint": 0.0,
+      "lateral": -0.005496367703840781,
+      "miss": -6.0603978438886985,
+      "pull": 0.0,
+      "release": 0.0,
+      "vertical": -0.0,
+      "wave": 0.0
+    },
+    "scored_duration_s": 1.5,
+    "success": 0.0,
+    "temperatures": [
+      104.86091666114284,
+      180.6653244454511,
+      124.02375440803695,
+      159.157633829911
+    ]
+  },
+  {
+    "baseline_scores": [
+      571.0666565993724,
+      696.0130462630715
+    ],
+    "best_candidate_wave_stages": 0,
+    "best_failed": false,
+    "best_minimum_tip_distance_m": 0.03589550982251491,
+    "best_reward": 696.0130462630715,
+    "best_success": false,
+    "cutoff": 45,
+    "effective_samples": 31.60000091081149,
+    "effective_samples_per_proposal": [
+      8.400000576406198,
+      6.200000291644687,
+      9.19999983462933,
+      7.800000208131277
+    ],
+    "elapsed_s": 44.70526119999704,
+    "failures": 0.69140625,
+    "improvement_over_best_baseline": 0.0,
+    "iteration": 14,
+    "legacy_reward": -73.70934269222526,
+    "live_snapshot_seconds": 0.005508599992026575,
+    "objective_components": {
+      "approach": -5.524059385281996,
+      "cast": 75.70264373246889,
+      "contact": 440.909403234167,
+      "distance": -0.0,
+      "exit": -5.2175467307192775,
+      "fold": 196.21247944866636,
+      "hit": 0.0,
+      "jerk": -0.0039798246368786,
+      "joint": 0.0,
+      "lateral": -0.005496367703840781,
+      "miss": -6.0603978438886985,
+      "pull": 0.0,
+      "release": 0.0,
+      "vertical": -0.0,
+      "wave": 0.0
+    },
+    "scored_duration_s": 1.5,
+    "success": 0.0,
+    "temperatures": [
+      125.32006442349685,
+      76.46982212991385,
+      195.42993703467758,
+      145.72809748306986
+    ]
+  },
+  {
+    "baseline_scores": [
+      571.0666565993724,
+      696.0130462630715
+    ],
+    "best_candidate_wave_stages": 0,
+    "best_failed": false,
+    "best_minimum_tip_distance_m": 0.03589550982251491,
+    "best_reward": 696.0130462630715,
+    "best_success": false,
+    "cutoff": 45,
+    "effective_samples": 32.40000020103355,
+    "effective_samples_per_proposal": [
+      8.000000025902807,
+      8.600000443399473,
+      8.19999982514436,
+      7.599999906586911
+    ],
+    "elapsed_s": 47.595026700000744,
+    "failures": 0.68359375,
+    "improvement_over_best_baseline": 0.0,
+    "iteration": 15,
+    "legacy_reward": -73.70934269222526,
+    "live_snapshot_seconds": 0.005110199999762699,
+    "objective_components": {
+      "approach": -5.524059385281996,
+      "cast": 75.70264373246889,
+      "contact": 440.909403234167,
+      "distance": -0.0,
+      "exit": -5.2175467307192775,
+      "fold": 196.21247944866636,
+      "hit": 0.0,
+      "jerk": -0.0039798246368786,
+      "joint": 0.0,
+      "lateral": -0.005496367703840781,
+      "miss": -6.0603978438886985,
+      "pull": 0.0,
+      "release": 0.0,
+      "vertical": -0.0,
+      "wave": 0.0
+    },
+    "scored_duration_s": 1.5,
+    "success": 0.0,
+    "temperatures": [
+      86.82123546318192,
+      164.27130403315067,
+      120.69420553967069,
+      186.16633578315242
+    ]
+  },
+  {
+    "baseline_scores": [
+      571.0666565993724,
+      696.0130462630715
+    ],
+    "best_candidate_wave_stages": 0,
+    "best_failed": false,
+    "best_minimum_tip_distance_m": 0.03589550982251491,
+    "best_reward": 696.0130462630715,
+    "best_success": false,
+    "cutoff": 45,
+    "effective_samples": 31.199999907413346,
+    "effective_samples_per_proposal": [
+      6.599999928540499,
+      7.599999935787485,
+      7.80000021253269,
+      9.199999830552674
+    ],
+    "elapsed_s": 50.46051960000477,
+    "failures": 0.6953125,
+    "improvement_over_best_baseline": 0.0,
+    "iteration": 16,
+    "legacy_reward": -73.70934269222526,
+    "live_snapshot_seconds": 0.011504499998409301,
+    "objective_components": {
+      "approach": -5.524059385281996,
+      "cast": 75.70264373246889,
+      "contact": 440.909403234167,
+      "distance": -0.0,
+      "exit": -5.2175467307192775,
+      "fold": 196.21247944866636,
+      "hit": 0.0,
+      "jerk": -0.0039798246368786,
+      "joint": 0.0,
+      "lateral": -0.005496367703840781,
+      "miss": -6.0603978438886985,
+      "pull": 0.0,
+      "release": 0.0,
+      "vertical": -0.0,
+      "wave": 0.0
+    },
+    "scored_duration_s": 1.5,
+    "success": 0.0,
+    "temperatures": [
+      121.37250424379845,
+      149.58862057360355,
+      135.03167673659985,
+      197.47236709255972
+    ]
+  },
+  {
+    "baseline_scores": [
+      571.0666565993724,
+      696.0130462630715
+    ],
+    "best_candidate_wave_stages": 0,
+    "best_failed": false,
+    "best_minimum_tip_distance_m": 0.03589550982251491,
+    "best_reward": 696.0130462630715,
+    "best_success": false,
+    "cutoff": 45,
+    "effective_samples": 32.39999971405662,
+    "effective_samples_per_proposal": [
+      7.800000192492624,
+      8.19999985698724,
+      8.199999846180337,
+      8.199999818396412
+    ],
+    "elapsed_s": 53.36036200000672,
+    "failures": 0.68359375,
+    "improvement_over_best_baseline": 0.0,
+    "iteration": 17,
+    "legacy_reward": -73.70934269222526,
+    "live_snapshot_seconds": 0.008139800003846176,
+    "objective_components": {
+      "approach": -5.524059385281996,
+      "cast": 75.70264373246889,
+      "contact": 440.909403234167,
+      "distance": -0.0,
+      "exit": -5.2175467307192775,
+      "fold": 196.21247944866636,
+      "hit": 0.0,
+      "jerk": -0.0039798246368786,
+      "joint": 0.0,
+      "lateral": -0.005496367703840781,
+      "miss": -6.0603978438886985,
+      "pull": 0.0,
+      "release": 0.0,
+      "vertical": -0.0,
+      "wave": 0.0
+    },
+    "scored_duration_s": 1.5,
+    "success": 0.0,
+    "temperatures": [
+      106.15771967466202,
+      140.13419259728883,
+      115.00141165981032,
+      116.05922780181629
+    ]
+  },
+  {
+    "baseline_scores": [
+      571.0666565993724,
+      696.0130462630715
+    ],
+    "best_candidate_wave_stages": 0,
+    "best_failed": false,
+    "best_minimum_tip_distance_m": 0.03589550982251491,
+    "best_reward": 696.0130462630715,
+    "best_success": false,
+    "cutoff": 45,
+    "effective_samples": 31.00000007516104,
+    "effective_samples_per_proposal": [
+      6.599999946200482,
+      8.60000040861836,
+      8.199999812051633,
+      7.599999908290567
+    ],
+    "elapsed_s": 56.30527440000151,
+    "failures": 0.697265625,
+    "improvement_over_best_baseline": 0.0,
+    "iteration": 18,
+    "legacy_reward": -73.70934269222526,
+    "live_snapshot_seconds": 0.005749499992816709,
+    "objective_components": {
+      "approach": -5.524059385281996,
+      "cast": 75.70264373246889,
+      "contact": 440.909403234167,
+      "distance": -0.0,
+      "exit": -5.2175467307192775,
+      "fold": 196.21247944866636,
+      "hit": 0.0,
+      "jerk": -0.0039798246368786,
+      "joint": 0.0,
+      "lateral": -0.005496367703840781,
+      "miss": -6.0603978438886985,
+      "pull": 0.0,
+      "release": 0.0,
+      "vertical": -0.0,
+      "wave": 0.0
+    },
+    "scored_duration_s": 1.5,
+    "success": 0.0,
+    "temperatures": [
+      149.34986096130353,
+      143.52966983202728,
+      86.98271851507478,
+      119.90875692859086
+    ]
+  },
+  {
+    "baseline_scores": [
+      571.0666565993724,
+      696.0130462630715
+    ],
+    "best_candidate_wave_stages": 0,
+    "best_failed": false,
+    "best_minimum_tip_distance_m": 0.03589550982251491,
+    "best_reward": 696.0130462630715,
+    "best_success": false,
+    "cutoff": 45,
+    "effective_samples": 29.800000813676565,
+    "effective_samples_per_proposal": [
+      6.800000239474266,
+      7.80000022607468,
+      8.600000415733849,
+      6.5999999323937715
+    ],
+    "elapsed_s": 59.168858500008355,
+    "failures": 0.708984375,
+    "improvement_over_best_baseline": 0.0,
+    "iteration": 19,
+    "legacy_reward": -73.70934269222526,
+    "live_snapshot_seconds": 0.005310300010023639,
+    "objective_components": {
+      "approach": -5.524059385281996,
+      "cast": 75.70264373246889,
+      "contact": 440.909403234167,
+      "distance": -0.0,
+      "exit": -5.2175467307192775,
+      "fold": 196.21247944866636,
+      "hit": 0.0,
+      "jerk": -0.0039798246368786,
+      "joint": 0.0,
+      "lateral": -0.005496367703840781,
+      "miss": -6.0603978438886985,
+      "pull": 0.0,
+      "release": 0.0,
+      "vertical": -0.0,
+      "wave": 0.0
+    },
+    "scored_duration_s": 1.5,
+    "success": 0.0,
+    "temperatures": [
+      227.40514782272976,
+      154.04089149393636,
+      122.84010743710192,
+      130.33152801375928
+    ]
+  },
+  {
+    "baseline_scores": [
+      571.0666565993724,
+      696.0130462630715
+    ],
+    "best_candidate_wave_stages": 0,
+    "best_failed": false,
+    "best_minimum_tip_distance_m": 0.03589550982251491,
+    "best_reward": 696.0130462630715,
+    "best_success": false,
+    "cutoff": 45,
+    "effective_samples": 28.000000088363482,
+    "effective_samples_per_proposal": [
+      7.000000019978606,
+      7.599999917130588,
+      6.000000031950252,
+      7.4000001193040355
+    ],
+    "elapsed_s": 62.0458040000085,
+    "failures": 0.7265625,
+    "improvement_over_best_baseline": 0.0,
+    "iteration": 20,
+    "legacy_reward": -73.70934269222526,
+    "live_snapshot_seconds": 0.005602799996268004,
+    "objective_components": {
+      "approach": -5.524059385281996,
+      "cast": 75.70264373246889,
+      "contact": 440.909403234167,
+      "distance": -0.0,
+      "exit": -5.2175467307192775,
+      "fold": 196.21247944866636,
+      "hit": 0.0,
+      "jerk": -0.0039798246368786,
+      "joint": 0.0,
+      "lateral": -0.005496367703840781,
+      "miss": -6.0603978438886985,
+      "pull": 0.0,
+      "release": 0.0,
+      "vertical": -0.0,
+      "wave": 0.0
+    },
+    "scored_duration_s": 1.5,
+    "success": 0.0,
+    "temperatures": [
+      161.0391984874482,
+      83.01398058092417,
+      81.1681016237144,
+      120.70493317894915
+    ]
+  }
+]

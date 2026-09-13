@@ -1,0 +1,21 @@
+{
+  "analytic": -1.0869381898077424,
+  "central_difference": -1.086938189462927,
+  "checks": [
+    {
+      "central_difference": -1.086938188192832,
+      "epsilon": 0.0001,
+      "relative_error": 1.485742651006636e-09
+    },
+    {
+      "central_difference": -1.086938189462927,
+      "epsilon": 5e-05,
+      "relative_error": 3.172354147342282e-10
+    }
+  ],
+  "epsilon": 5e-05,
+  "index": 1,
+  "loss": 6.402691639427194,
+  "passed": true,
+  "relative_error": 3.172354147342282e-10
+}

@@ -1,0 +1,40 @@
+{
+  "sources": {
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M1-local-20260913-032256-816506\\reference.npz": "0cdf777855e0594dfe81552a70f407467850ec3fc1de0e83907b59e907a26b2f",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M1-local-20260913-032256-816506\\baseline_prediction.npz": "edec8b1a290ed207bdff56dc2e5a449b2066307461917f08b2cfe650afdcc45d",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M1-local-20260913-032256-816506\\result.json": "b506367db4badf4c0ebf6449b3612f2fb65e8f8d9335c97e108b770825866248",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M1-local-20260913-032256-816506\\model.json": "8ce3609864461dc334a4112d4b5b5f357f0872492d964f089b41fec0ed81f07b",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\20260913-032256-816506-M1-local-fixed-tip-reference\\rehearsal.npz": "c205a7f4b86076611f02c1a89bad6ec332ce8e1e6280b039f49cb214b96bbf05",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\20260913-032256-816506-M1-local-fixed-tip-reference\\rehearsal.json": "0ed3fcdc1a8acfbd8df7bbe63d5e6469758ea5e9fb5fe62f7825784e24d5c56b",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\20260913-032256-816506-M1-local-fixed-tip-reference\\model.json": "8ce3609864461dc334a4112d4b5b5f357f0872492d964f089b41fec0ed81f07b"
+  },
+  "before_command": "M0",
+  "after_command": "M1",
+  "predictor": "M1 in both panels",
+  "reference": "Original M0 forecast",
+  "samples": 171,
+  "interval_s": [
+    0.0,
+    1.1333333333333333
+  ],
+  "marker_indices": [
+    42,
+    85,
+    128,
+    170
+  ],
+  "marker_times_s": [
+    0.28,
+    0.5666666666666667,
+    0.8533333333333334,
+    1.1333333333333333
+  ],
+  "projection": "world x-z; identical limits and equal scaling",
+  "red_error_connectors": false,
+  "smoothing": false,
+  "retiming": false,
+  "simulation_rerun": false,
+  "physical_measurements": false,
+  "before_tip_reference_rmse_3d_m": 0.1441143925289969,
+  "after_tip_reference_rmse_3d_m": 0.03734728569844124
+}

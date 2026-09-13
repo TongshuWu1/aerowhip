@@ -1,0 +1,190 @@
+{
+  "baseline_cost_m2": 0.022417939767171748,
+  "checkpoint": null,
+  "command_contract": "position_spline_pva_30hz_v1",
+  "command_semantics": "Desired tracked-origin P/V/A, 30 Hz zero-order hold, kinematic acceleration, zero yaw",
+  "corrected_cost_m2": 0.0017364820124005603,
+  "corrected_reference_quadrotor_rmse_m": 0.044260127967881646,
+  "corrected_reference_tip_rmse_m": 0.037347285698441236,
+  "csv_sha256": "1b35a8803362f7f97b3439850116bcb57aed8cbc000a7ef99460b4e31923ae26",
+  "elapsed_s": 174.4084378000116,
+  "evidence": "Simulation-only command correction toward the original M0 physical motion; M1 has not flown.",
+  "independent_cost_difference_m2": 4.336808689942018e-19,
+  "initial_tracking_origin_m": [
+    0.0,
+    0.0,
+    1.4
+  ],
+  "iterations": 12,
+  "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M1-local-20260913-032256-816506",
+  "maximum_predicted_tilt_limit_deg": 60.0,
+  "maximum_reference_quadrotor_deviation_m": 0.07535322710435177,
+  "minimum_predicted_cable_height_m": 0.38922459067895415,
+  "minimum_tip_distance_m": 0.05295683841053546,
+  "objective_schema": "fixed_tip_reference_v1",
+  "optimization": {
+    "active_controls": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "active_coordinates": 24,
+    "iterations": 12,
+    "maximum_jacobian_relative_difference": 0.018962102295880152,
+    "optimization_elapsed_s": 147.1184048000141,
+    "optimizer": "Bounded finite-difference Gauss-Newton",
+    "rollout_count": 1399,
+    "stop_reason": "Iteration budget reached"
+  },
+  "original_reference_tip_rmse_m": 0.1441143925289969,
+  "planner": "Local M1 fixed-reference command correction",
+  "planner_mode": "open_loop",
+  "predicted_attitude_checked": true,
+  "predicted_hit_time_s": null,
+  "predicted_valid_hit": false,
+  "prediction_valid_through_s": 7.2,
+  "recovery": {
+    "brake_coefficients_normalized": [
+      [
+        0.6100041835030664,
+        -0.2251239430396083,
+        2.0476548356460564
+      ],
+      [
+        -2.655958180575016,
+        -0.3124713038338277,
+        0.14432533560174707
+      ],
+      [
+        -0.791123647748585,
+        0.05071300569469724,
+        -0.7557070661909023
+      ],
+      [
+        3.7107897109064627,
+        0.24485396290756473,
+        0.8632840859861226
+      ],
+      [
+        -1.7235409141618003,
+        -0.13087914906956524,
+        -0.3056908652945776
+      ]
+    ],
+    "brake_end_s": 1.0,
+    "brake_metrics": {
+      "minimum_az_m_s2": -1.5114141323818047,
+      "minimum_height_m": 1.9938663257484461,
+      "minimum_specific_vertical_m_s2": 8.295235867618194,
+      "minimum_vz_m_s": -0.12427879127162753,
+      "peak_absolute_jerk_m_s3": [
+        22.264738265438776,
+        1.6719758002241778,
+        5.179704515916736
+      ],
+      "peak_height_m": 2.0555218972606513,
+      "peak_horizontal_acceleration_m_s2": 4.4313831827378065,
+      "peak_specific_force_m_s2": 10.983334858751164,
+      "peak_speed_m_s": 2.7319205855318742
+    },
+    "braking_position_m": [
+      -0.8498288480758722,
+      -0.37290742734073923,
+      1.9938663257484466
+    ],
+    "hold_s": 3.0,
+    "hover_position_m": [
+      0.0,
+      0.0,
+      1.4
+    ],
+    "phase_description": "Smooth braking, rest-to-rest return, final hold",
+    "return_coefficients_normalized": [
+      [
+        -0.8498288480758722,
+        -0.37290742734073923,
+        1.9938663257484466
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        8.498288480758706,
+        3.7290742734073845,
+        -5.938663257484457
+      ],
+      [
+        -12.747432721138061,
+        -5.5936114101110785,
+        8.907994886226685
+      ],
+      [
+        5.0989730884552245,
+        2.2374445640444316,
+        -3.563197954490674
+      ]
+    ],
+    "return_end_s": 3.066666666666667,
+    "return_metrics": {
+      "minimum_az_m_s2": -0.8027627334291547,
+      "minimum_height_m": 1.4000000000000008,
+      "minimum_specific_vertical_m_s2": 9.003887266570844,
+      "minimum_vz_m_s": -0.5387900132798398,
+      "peak_absolute_jerk_m_s3": [
+        5.7765882895963125,
+        2.53478413066025,
+        4.0367201827417745
+      ],
+      "peak_height_m": 1.9938663257484466,
+      "peak_horizontal_acceleration_m_s2": 1.254492057705222,
+      "peak_specific_force_m_s2": 10.683322932079426,
+      "peak_speed_m_s": 0.9996099335012384
+    },
+    "return_s": 2.066666666666667,
+    "schema": "brake_return_hold_v1",
+    "settings": {
+      "braking_downward_acceleration_m_s2": 3.5,
+      "braking_horizontal_acceleration_m_s2": 8.0,
+      "braking_tilt_deg": 60.0,
+      "hold_s": 3.0,
+      "maximum_brake_s": 6.0,
+      "maximum_return_s": 12.0,
+      "minimum_brake_s": 1.0,
+      "minimum_return_s": 2.0,
+      "return_speed_m_s": 1.0,
+      "schema": "brake_return_hold_v1"
+    },
+    "stationary_braking_waypoint": true,
+    "total_duration_s": 6.066666666666666,
+    "vehicle_limits_verified": false
+  },
+  "recovery_empirically_validated": false,
+  "recovery_prediction_complete": true,
+  "reference_feasible": true,
+  "reference_sha256": "0cdf777855e0594dfe81552a70f407467850ec3fc1de0e83907b59e907a26b2f",
+  "schema": "pva_fullstate_30hz_v1",
+  "standard_fast_cable_max_difference_m": 1.502136567910206e-08,
+  "standard_fast_pose_max_difference_m": 0.0,
+  "strike_distance_m": 0.05410596629677908,
+  "strike_time_s": 1.1172482457473654,
+  "success_meaning": "No binary hit claim; fixed-time tracking objective",
+  "target_position_m": [
+    1.25,
+    0.0,
+    1.25
+  ],
+  "total_duration_s": 7.2,
+  "whip_end_s": 1.1333333333333333
+}

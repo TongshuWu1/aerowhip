@@ -1,0 +1,46 @@
+{
+  "analytic": -0.5060212209970387,
+  "central_difference": -0.5056785257195884,
+  "checks": [
+    {
+      "central_difference": 0.7694258981216784,
+      "epsilon": 0.0001,
+      "relative_error": 1.6576607600970246
+    },
+    {
+      "central_difference": 0.9738919511725896,
+      "epsilon": 5e-05,
+      "relative_error": 1.5195866136769862
+    },
+    {
+      "central_difference": 0.8699597718209161,
+      "epsilon": 1e-05,
+      "relative_error": 1.581660482918519
+    },
+    {
+      "central_difference": -0.9218207234429342,
+      "epsilon": 5e-06,
+      "relative_error": 0.4510633053387151
+    },
+    {
+      "central_difference": -0.4788291227963981,
+      "epsilon": 1e-06,
+      "relative_error": 0.05373707084272607
+    },
+    {
+      "central_difference": -0.49615224462229435,
+      "epsilon": 5e-07,
+      "relative_error": 0.01950308794421515
+    },
+    {
+      "central_difference": -0.5056785257195884,
+      "epsilon": 1e-07,
+      "relative_error": 0.0006772349917956305
+    }
+  ],
+  "epsilon": 1e-07,
+  "index": 31,
+  "loss": 2.093105777803757,
+  "passed": true,
+  "relative_error": 0.0006772349917956305
+}

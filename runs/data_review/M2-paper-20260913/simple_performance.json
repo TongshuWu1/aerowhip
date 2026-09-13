@@ -1,0 +1,513 @@
+{
+  "closest_approach_interval_s": [
+    0,
+    1.5
+  ],
+  "definition": "Actual measured trajectories; equal-take averages; raw world coordinates and measured-stream clock alignment. No new simulation, fitting or tuning.",
+  "limitations": [
+    "Five repetitions per generation; not a randomized paired final comparison.",
+    "Clock offsets include logging latency. M2_002 half-record offsets differ by 9.46 ms; fixed-time errors are timing-sensitive.",
+    "Minimum distance is interpolated only along adjacent valid tracking samples; no physical impact is inferred.",
+    "Tip velocity is estimated from measured positions using the same local derivative as M0/M1."
+  ],
+  "operator_review": {
+    "fit_authorized": false,
+    "no_abort": true,
+    "no_cable_contact": true,
+    "no_manual_intervention": true,
+    "protocol_sha256": "e2e74d887195477723bc0d1cc911015325d640b129f4b2124885b1894c98fcac",
+    "source": "User confirmation in this conversation: All five were clean",
+    "takes": [
+      "M2_001",
+      "M2_002",
+      "M2_003",
+      "M2_004",
+      "M2_005"
+    ]
+  },
+  "planned_strike_time_s": 1.1172482457473654,
+  "reference_interval_s": [
+    0,
+    1.1333333333333333
+  ],
+  "results": {
+    "M0": {
+      "aggregate": {
+        "closest_error_m": {
+          "mean": 0.14733451092921307,
+          "n": 5,
+          "per_take": [
+            0.12773374572542928,
+            0.23541884093083906,
+            0.17273866522542475,
+            0.0748438408821995,
+            0.12593746188217264
+          ],
+          "sample_sd": 0.060210342125961595
+        },
+        "closest_time_s": {
+          "mean": 1.142954791143781,
+          "n": 5,
+          "per_take": [
+            1.1294858469278353,
+            1.1362931871072466,
+            1.131983033907338,
+            1.1698798689469605,
+            1.1471320188295246
+          ],
+          "sample_sd": 0.01649680218506818
+        },
+        "fixed_time_error_m": {
+          "mean": 0.24122721242970932,
+          "n": 5,
+          "per_take": [
+            0.1524228982828944,
+            0.26908670343183755,
+            0.20444331056731735,
+            0.33749077644841746,
+            0.24269237341807984
+          ],
+          "sample_sd": 0.06943384142569044
+        },
+        "fixed_time_forward_velocity_m_s": {
+          "mean": 5.256117114688508,
+          "n": 5,
+          "per_take": [
+            5.061080632614409,
+            4.907472862846487,
+            5.296083809397569,
+            5.135458699294105,
+            5.880489569289971
+          ],
+          "sample_sd": 0.376028188982832
+        },
+        "fixed_time_strike_angle_deg": {
+          "mean": 24.333644715687495,
+          "n": 5,
+          "per_take": [
+            35.267776154953225,
+            34.704944275126714,
+            36.57991406416988,
+            4.8668120905212895,
+            10.24877699366637
+          ],
+          "sample_sd": 15.446935529753228
+        },
+        "fixed_time_tip_speed_m_s": {
+          "mean": 5.978659410505999,
+          "n": 5,
+          "per_take": [
+            6.1987916292001,
+            5.96947236559609,
+            6.595154945546568,
+            5.154041049022313,
+            5.975837063164929
+          ],
+          "sample_sd": 0.5264534043880035
+        },
+        "quadrotor_reference_rmse_m": {
+          "mean": 0.15655487638689064,
+          "n": 5,
+          "per_take": [
+            0.15363840684347171,
+            0.20183670845511079,
+            0.1829545796838795,
+            0.12434755341047395,
+            0.11999713354151732
+          ],
+          "sample_sd": 0.035810873556354664
+        },
+        "tip_reference_rmse_m": {
+          "mean": 0.1809447803382713,
+          "n": 5,
+          "per_take": [
+            0.1547265690097801,
+            0.19003592609535425,
+            0.185040338699227,
+            0.20201833120549462,
+            0.17290273668150058
+          ],
+          "sample_sd": 0.017997125791781313
+        }
+      },
+      "takes": {
+        "M0_001": {
+          "closest_error_m": 0.12773374572542928,
+          "closest_time_s": 1.1294858469278353,
+          "fixed_time_error_m": 0.1524228982828944,
+          "fixed_time_forward_velocity_m_s": 5.061080632614409,
+          "fixed_time_strike_angle_deg": 35.267776154953225,
+          "fixed_time_tip_speed_m_s": 6.1987916292001,
+          "quadrotor_reference_rmse_m": 0.15363840684347171,
+          "tip_reference_rmse_m": 0.1547265690097801
+        },
+        "M0_002": {
+          "closest_error_m": 0.23541884093083906,
+          "closest_time_s": 1.1362931871072466,
+          "fixed_time_error_m": 0.26908670343183755,
+          "fixed_time_forward_velocity_m_s": 4.907472862846487,
+          "fixed_time_strike_angle_deg": 34.704944275126714,
+          "fixed_time_tip_speed_m_s": 5.96947236559609,
+          "quadrotor_reference_rmse_m": 0.20183670845511079,
+          "tip_reference_rmse_m": 0.19003592609535425
+        },
+        "M0_003": {
+          "closest_error_m": 0.17273866522542475,
+          "closest_time_s": 1.131983033907338,
+          "fixed_time_error_m": 0.20444331056731735,
+          "fixed_time_forward_velocity_m_s": 5.296083809397569,
+          "fixed_time_strike_angle_deg": 36.57991406416988,
+          "fixed_time_tip_speed_m_s": 6.595154945546568,
+          "quadrotor_reference_rmse_m": 0.1829545796838795,
+          "tip_reference_rmse_m": 0.185040338699227
+        },
+        "M0_004": {
+          "closest_error_m": 0.0748438408821995,
+          "closest_time_s": 1.1698798689469605,
+          "fixed_time_error_m": 0.33749077644841746,
+          "fixed_time_forward_velocity_m_s": 5.135458699294105,
+          "fixed_time_strike_angle_deg": 4.8668120905212895,
+          "fixed_time_tip_speed_m_s": 5.154041049022313,
+          "quadrotor_reference_rmse_m": 0.12434755341047395,
+          "tip_reference_rmse_m": 0.20201833120549462
+        },
+        "M0_005": {
+          "closest_error_m": 0.12593746188217264,
+          "closest_time_s": 1.1471320188295246,
+          "fixed_time_error_m": 0.24269237341807984,
+          "fixed_time_forward_velocity_m_s": 5.880489569289971,
+          "fixed_time_strike_angle_deg": 10.24877699366637,
+          "fixed_time_tip_speed_m_s": 5.975837063164929,
+          "quadrotor_reference_rmse_m": 0.11999713354151732,
+          "tip_reference_rmse_m": 0.17290273668150058
+        }
+      }
+    },
+    "M1": {
+      "aggregate": {
+        "closest_error_m": {
+          "mean": 0.07830399191124375,
+          "n": 5,
+          "per_take": [
+            0.10103184639508483,
+            0.08758335618320082,
+            0.08245497348672887,
+            0.05530066808412047,
+            0.06514911540708378
+          ],
+          "sample_sd": 0.018180321103500503
+        },
+        "closest_time_s": {
+          "mean": 1.1261493730129157,
+          "n": 5,
+          "per_take": [
+            1.1089898661343511,
+            1.1399603403762812,
+            1.1337508985087794,
+            1.1209298965559074,
+            1.127115863489259
+          ],
+          "sample_sd": 0.011949390403048243
+        },
+        "fixed_time_error_m": {
+          "mean": 0.11184578650878826,
+          "n": 5,
+          "per_take": [
+            0.11140739186073838,
+            0.16439229354085808,
+            0.13468122512155511,
+            0.059689362590959194,
+            0.08905865942983056
+          ],
+          "sample_sd": 0.04038047351191261
+        },
+        "fixed_time_forward_velocity_m_s": {
+          "mean": 5.288241838053472,
+          "n": 5,
+          "per_take": [
+            2.865251507511933,
+            5.719772889508349,
+            6.183212966972978,
+            5.8150526939738825,
+            5.857919132300217
+          ],
+          "sample_sd": 1.3656625140717316
+        },
+        "fixed_time_strike_angle_deg": {
+          "mean": 18.822178621208884,
+          "n": 5,
+          "per_take": [
+            57.86419196379607,
+            7.00833037148104,
+            8.33934135553578,
+            12.27029992808831,
+            8.628729487143232
+          ],
+          "sample_sd": 21.912149672653577
+        },
+        "fixed_time_tip_speed_m_s": {
+          "mean": 5.854928424728232,
+          "n": 5,
+          "per_take": [
+            5.386541123341676,
+            5.762830324202466,
+            6.2492902396515415,
+            5.950998064679998,
+            5.92498237176548
+          ],
+          "sample_sd": 0.31524867030100256
+        },
+        "quadrotor_reference_rmse_m": {
+          "mean": 0.11167366509540215,
+          "n": 5,
+          "per_take": [
+            0.15838927648666498,
+            0.081214397001095,
+            0.09789347553879814,
+            0.11034368885602416,
+            0.1105274875944284
+          ],
+          "sample_sd": 0.028736264303042894
+        },
+        "tip_reference_rmse_m": {
+          "mean": 0.16064905100318788,
+          "n": 5,
+          "per_take": [
+            0.11981779293147873,
+            0.16463638842622344,
+            0.16778570301653067,
+            0.17247758376902306,
+            0.17852778687268356
+          ],
+          "sample_sd": 0.02341786540809618
+        }
+      },
+      "takes": {
+        "M1_001": {
+          "closest_error_m": 0.10103184639508483,
+          "closest_time_s": 1.1089898661343511,
+          "fixed_time_error_m": 0.11140739186073838,
+          "fixed_time_forward_velocity_m_s": 2.865251507511933,
+          "fixed_time_strike_angle_deg": 57.86419196379607,
+          "fixed_time_tip_speed_m_s": 5.386541123341676,
+          "quadrotor_reference_rmse_m": 0.15838927648666498,
+          "tip_reference_rmse_m": 0.11981779293147873
+        },
+        "M1_002": {
+          "closest_error_m": 0.08758335618320082,
+          "closest_time_s": 1.1399603403762812,
+          "fixed_time_error_m": 0.16439229354085808,
+          "fixed_time_forward_velocity_m_s": 5.719772889508349,
+          "fixed_time_strike_angle_deg": 7.00833037148104,
+          "fixed_time_tip_speed_m_s": 5.762830324202466,
+          "quadrotor_reference_rmse_m": 0.081214397001095,
+          "tip_reference_rmse_m": 0.16463638842622344
+        },
+        "M1_003": {
+          "closest_error_m": 0.08245497348672887,
+          "closest_time_s": 1.1337508985087794,
+          "fixed_time_error_m": 0.13468122512155511,
+          "fixed_time_forward_velocity_m_s": 6.183212966972978,
+          "fixed_time_strike_angle_deg": 8.33934135553578,
+          "fixed_time_tip_speed_m_s": 6.2492902396515415,
+          "quadrotor_reference_rmse_m": 0.09789347553879814,
+          "tip_reference_rmse_m": 0.16778570301653067
+        },
+        "M1_004": {
+          "closest_error_m": 0.05530066808412047,
+          "closest_time_s": 1.1209298965559074,
+          "fixed_time_error_m": 0.059689362590959194,
+          "fixed_time_forward_velocity_m_s": 5.8150526939738825,
+          "fixed_time_strike_angle_deg": 12.27029992808831,
+          "fixed_time_tip_speed_m_s": 5.950998064679998,
+          "quadrotor_reference_rmse_m": 0.11034368885602416,
+          "tip_reference_rmse_m": 0.17247758376902306
+        },
+        "M1_005": {
+          "closest_error_m": 0.06514911540708378,
+          "closest_time_s": 1.127115863489259,
+          "fixed_time_error_m": 0.08905865942983056,
+          "fixed_time_forward_velocity_m_s": 5.857919132300217,
+          "fixed_time_strike_angle_deg": 8.628729487143232,
+          "fixed_time_tip_speed_m_s": 5.92498237176548,
+          "quadrotor_reference_rmse_m": 0.1105274875944284,
+          "tip_reference_rmse_m": 0.17852778687268356
+        }
+      }
+    },
+    "M2": {
+      "aggregate": {
+        "closest_error_m": {
+          "mean": 0.08603759010078157,
+          "n": 5,
+          "per_take": [
+            0.19799795750461674,
+            0.02633892657284978,
+            0.06532216575269323,
+            0.06186295068804036,
+            0.07866594998570768
+          ],
+          "sample_sd": 0.06551132988053779
+        },
+        "closest_time_s": {
+          "mean": 1.1223602794415815,
+          "n": 5,
+          "per_take": [
+            1.1112978052365143,
+            1.1170227576836669,
+            1.1019212095164093,
+            1.1301797578227772,
+            1.1513798669485398
+          ],
+          "sample_sd": 0.019182698941286033
+        },
+        "fixed_time_error_m": {
+          "mean": 0.1309621611990699,
+          "n": 5,
+          "per_take": [
+            0.2013231446490472,
+            0.026379085501661997,
+            0.12463488860555413,
+            0.09695843270278848,
+            0.20551525453629774
+          ],
+          "sample_sd": 0.07523752283709341
+        },
+        "fixed_time_forward_velocity_m_s": {
+          "mean": 4.675487791233225,
+          "n": 5,
+          "per_take": [
+            2.784146814552394,
+            5.451990882542724,
+            6.343260121882569,
+            4.759055267631968,
+            4.0389858695564715
+          ],
+          "sample_sd": 1.3577288487741768
+        },
+        "fixed_time_strike_angle_deg": {
+          "mean": 35.991419631943714,
+          "n": 5,
+          "per_take": [
+            56.40252504741858,
+            30.708632088779538,
+            23.59028970136476,
+            26.885503438065093,
+            42.37014788409061
+          ],
+          "sample_sd": 13.434237751986686
+        },
+        "fixed_time_tip_speed_m_s": {
+          "mean": 5.819394967156823,
+          "n": 5,
+          "per_take": [
+            5.031395057100985,
+            6.341180773382654,
+            6.921702915249601,
+            5.335790316475354,
+            5.466905773575521
+          ],
+          "sample_sd": 0.785240279788232
+        },
+        "quadrotor_reference_rmse_m": {
+          "mean": 0.12628192246105785,
+          "n": 5,
+          "per_take": [
+            0.20210332888098043,
+            0.08336693766423267,
+            0.07830111530049727,
+            0.09669456880628244,
+            0.17094366165329647
+          ],
+          "sample_sd": 0.05648632996432413
+        },
+        "tip_reference_rmse_m": {
+          "mean": 0.13276261742650047,
+          "n": 5,
+          "per_take": [
+            0.15276570771882517,
+            0.11119273326342091,
+            0.13976765295858057,
+            0.10020614995410922,
+            0.1598808432375666
+          ],
+          "sample_sd": 0.02602775341956213
+        }
+      },
+      "takes": {
+        "M2_001": {
+          "closest_error_m": 0.19799795750461674,
+          "closest_time_s": 1.1112978052365143,
+          "fixed_time_error_m": 0.2013231446490472,
+          "fixed_time_forward_velocity_m_s": 2.784146814552394,
+          "fixed_time_strike_angle_deg": 56.40252504741858,
+          "fixed_time_tip_speed_m_s": 5.031395057100985,
+          "quadrotor_reference_rmse_m": 0.20210332888098043,
+          "tip_reference_rmse_m": 0.15276570771882517
+        },
+        "M2_002": {
+          "closest_error_m": 0.02633892657284978,
+          "closest_time_s": 1.1170227576836669,
+          "fixed_time_error_m": 0.026379085501661997,
+          "fixed_time_forward_velocity_m_s": 5.451990882542724,
+          "fixed_time_strike_angle_deg": 30.708632088779538,
+          "fixed_time_tip_speed_m_s": 6.341180773382654,
+          "quadrotor_reference_rmse_m": 0.08336693766423267,
+          "tip_reference_rmse_m": 0.11119273326342091
+        },
+        "M2_003": {
+          "closest_error_m": 0.06532216575269323,
+          "closest_time_s": 1.1019212095164093,
+          "fixed_time_error_m": 0.12463488860555413,
+          "fixed_time_forward_velocity_m_s": 6.343260121882569,
+          "fixed_time_strike_angle_deg": 23.59028970136476,
+          "fixed_time_tip_speed_m_s": 6.921702915249601,
+          "quadrotor_reference_rmse_m": 0.07830111530049727,
+          "tip_reference_rmse_m": 0.13976765295858057
+        },
+        "M2_004": {
+          "closest_error_m": 0.06186295068804036,
+          "closest_time_s": 1.1301797578227772,
+          "fixed_time_error_m": 0.09695843270278848,
+          "fixed_time_forward_velocity_m_s": 4.759055267631968,
+          "fixed_time_strike_angle_deg": 26.885503438065093,
+          "fixed_time_tip_speed_m_s": 5.335790316475354,
+          "quadrotor_reference_rmse_m": 0.09669456880628244,
+          "tip_reference_rmse_m": 0.10020614995410922
+        },
+        "M2_005": {
+          "closest_error_m": 0.07866594998570768,
+          "closest_time_s": 1.1513798669485398,
+          "fixed_time_error_m": 0.20551525453629774,
+          "fixed_time_forward_velocity_m_s": 4.0389858695564715,
+          "fixed_time_strike_angle_deg": 42.37014788409061,
+          "fixed_time_tip_speed_m_s": 5.466905773575521,
+          "quadrotor_reference_rmse_m": 0.17094366165329647,
+          "tip_reference_rmse_m": 0.1598808432375666
+        }
+      }
+    }
+  },
+  "source_hashes": {
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M2_paper_selected_correction_20260913\\operator_review.json": "cd268c5d4a79bae0ca9fe4cc55d107be05ff27ade39cd5dac542ff1b6d5e6e26",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M0-paper-20260913\\M0_001.npz": "43d62483e47712d6126e9d857709a5074415c12ba19600ae2c79f632bd30c8fc",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M0-paper-20260913\\M0_002.npz": "377b5b1be1f614b372da00638d7a91fbca7e8a583ba83064b0637eeccdb79755",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M0-paper-20260913\\M0_003.npz": "ff29a0130f47ada92fd1edca12658465e1d1be18a87cadb90d4dc6582bdfec85",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M0-paper-20260913\\M0_004.npz": "612e8ca45703e7618f8ac0182608b72bc54c0808254e97f9468093a6af05bf10",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M0-paper-20260913\\M0_005.npz": "fc5ba4d3a3c863b251a78cf631399230ccc0d4791657828c96a09b8d4f76da71",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M0-paper-20260913\\paper_metrics.json": "88260f89fc7a1e038b49d677280cc2ba0f7651e3204ca6b0aad274b9aab5cfcd",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M1-paper-20260913\\M1_001.npz": "f838278085038d9433e6cb7b4750c53688c5fc5edf50f537c2da1b7820b73bc7",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M1-paper-20260913\\M1_002.npz": "ae9933e1359ad3aeb4a6ffcf616c9306342f778d3ec84b2a545c5879c0ea221a",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M1-paper-20260913\\M1_003.npz": "c163dba3ac4d4c094e312704c7b1d1fd4b13ddc4646929a6f21c39e1a4d3df90",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M1-paper-20260913\\M1_004.npz": "7c86b5caa871ca453c8ada16a6b944722b0a1e42ab54cfa5bdc6bb40de334df1",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M1-paper-20260913\\M1_005.npz": "fed3a3a48a8493fd30f45b42c202bde601e3b3ce3f907ab6dd53aa818a59ca34",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M1-paper-20260913\\paper_metrics.json": "057b0503641877a9ae364e02aa83bea8217a9f0d4ba43be0d8b8c68eb28a104d",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M2-paper-20260913\\M2_001.npz": "05b8d6caf2207321cf3093c16b3ea78bc9b4485ae0858ebb0e7b0bdc18086b20",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M2-paper-20260913\\M2_002.npz": "3fef2fb2aa02011e70a51d08326613956f4ac3ecfebaeb1aae514ac9fe2f38a3",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M2-paper-20260913\\M2_003.npz": "86e936f4beaaf2260763ae29a61d2dc6176eed3f2672ae8870486e16630456f1",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M2-paper-20260913\\M2_004.npz": "9a6eb50f44a8cdf36a2e056880cf85637f3589341b3fd95c9dc1aa2b8b43e920",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M2-paper-20260913\\M2_005.npz": "7010f7a6a153891f0bbbe325e07b69857740f057cc158570a0c171e9f0c673f1",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M2-paper-20260913\\paper_metrics.json": "bc3543e95ad90c4477c7580ee096b7783fa4f072e58a359e5a24cba7b7035dbc",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M0-paper-fixed-reference\\reference.npz": "0cdf777855e0594dfe81552a70f407467850ec3fc1de0e83907b59e907a26b2f"
+  }
+}

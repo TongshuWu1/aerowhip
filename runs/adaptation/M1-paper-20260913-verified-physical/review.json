@@ -1,0 +1,73 @@
+{
+  "cable_history_missingness": {
+    "authorization": "User requested retaining M0_002 and using observed data while omitting occluded tip samples.",
+    "details": "Per-node weighted quadratic endpoint velocity on valid observations only; same one-second history, same 0.02 s weight constant; at least 80 percent and 11 observations per node; fully observed last frame required. Raw gaps are not filled.",
+    "method": "masked_regression_v1",
+    "minimum_observation_fraction": 0.8
+  },
+  "comparison": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M0-paper-20260913",
+  "report_sha256": "21f2ba6b497503fd32406f7f2e1657a0c61af976693c5d1e4aad643dacf9a951",
+  "schema": "prospective_whip_adaptation_v1",
+  "takes": {
+    "M0_001": {
+      "accepted": true,
+      "cable_only_update_justification": "",
+      "clock_reviewed": true,
+      "free_motion_end_s": 1.5,
+      "no_intervention": true,
+      "notes": "Clock estimated from measured streams, not verified hardware sync. Fit capped at planned whip end; roles predeclared.",
+      "physical_contact": "none",
+      "reviewed_by": "Operator clean-take confirmation; Codex command/identity/timing audit",
+      "role": "adaptation",
+      "same_controller_and_hardware": true
+    },
+    "M0_002": {
+      "accepted": true,
+      "cable_only_update_justification": "",
+      "clock_reviewed": true,
+      "free_motion_end_s": 1.5,
+      "no_intervention": true,
+      "notes": "Clock estimated from measured streams, not verified hardware sync. Fit capped at planned whip end; roles predeclared.",
+      "physical_contact": "none",
+      "reviewed_by": "Operator clean-take confirmation; Codex command/identity/timing audit",
+      "role": "adaptation",
+      "same_controller_and_hardware": true
+    },
+    "M0_003": {
+      "accepted": true,
+      "cable_only_update_justification": "",
+      "clock_reviewed": true,
+      "free_motion_end_s": 1.5,
+      "no_intervention": true,
+      "notes": "Clock estimated from measured streams, not verified hardware sync. Fit capped at planned whip end; roles predeclared.",
+      "physical_contact": "none",
+      "reviewed_by": "Operator clean-take confirmation; Codex command/identity/timing audit",
+      "role": "validation",
+      "same_controller_and_hardware": true
+    },
+    "M0_004": {
+      "accepted": true,
+      "cable_only_update_justification": "",
+      "clock_reviewed": true,
+      "free_motion_end_s": 1.5,
+      "no_intervention": true,
+      "notes": "Clock estimated from measured streams, not verified hardware sync. Fit capped at planned whip end; roles predeclared.",
+      "physical_contact": "none",
+      "reviewed_by": "Operator clean-take confirmation; Codex command/identity/timing audit",
+      "role": "adaptation",
+      "same_controller_and_hardware": true
+    },
+    "M0_005": {
+      "accepted": true,
+      "cable_only_update_justification": "",
+      "clock_reviewed": true,
+      "free_motion_end_s": 1.5,
+      "no_intervention": true,
+      "notes": "Clock estimated from measured streams, not verified hardware sync. Fit capped at planned whip end; roles predeclared.",
+      "physical_contact": "none",
+      "reviewed_by": "Operator clean-take confirmation; Codex command/identity/timing audit",
+      "role": "validation",
+      "same_controller_and_hardware": true
+    }
+  }
+}

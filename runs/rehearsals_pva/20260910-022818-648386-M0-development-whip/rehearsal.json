@@ -1,0 +1,188 @@
+{
+  "checkpoint": null,
+  "checkpoint_sha256": null,
+  "command_contract": "bounded_jerk_pva_30hz_v1",
+  "command_height_range_m": [
+    1.254753029782935,
+    1.7965000484744782
+  ],
+  "command_semantics": "Desired OptiTrack tracked-origin P/V/A, kinematic acceleration, 30 Hz zero-order hold, no force or mass compensation",
+  "csv_sha256": "ea2e20bba92eb55cad12559ea97fb817eed76cd9ef6b21c191bf7b504368dde3",
+  "evidence": "Fitted model simulation only; real flight performance remains to be measured",
+  "execution": "Take off; hold 10 s at saved start; execute complete CSV at saved timestamps; land. Offline artifact, no flight sender.",
+  "initial_tracking_origin_m": [
+    0.0,
+    0.0,
+    1.255
+  ],
+  "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260910-022818-648386",
+  "lookahead_s": 1.5,
+  "minimum_predicted_cable_height_m": 0.24640347135636934,
+  "minimum_tip_distance_m": 0.044718391025665244,
+  "plan_sha256": "1f43a741a757e598d7256edd99595272afdea2e83b906f6affad7a2a0dc2a72f",
+  "planner": "MPPI PVA",
+  "planner_mode": "open_loop",
+  "predicted_drone_height_range_m": [
+    1.2528640159620834,
+    1.760645069165109
+  ],
+  "predicted_hit_time_s": 1.1248781338005418,
+  "predicted_valid_hit": true,
+  "prediction_valid_through_s": 10.266666666666667,
+  "pullback": {
+    "backward_travel_at_contact_m": 0.17516013888881632,
+    "backward_travel_m": 0.18622166708098464,
+    "contact_evaluation": "Linear interpolation within the intersected physics interval, consistent with sphere-entry timing",
+    "drone_forward_speed_at_contact_m_s": -1.2983453148225457,
+    "drone_forward_speed_at_handover_m_s": -1.3208468450430033,
+    "note": "Physical simulated tracked-origin motion, not command reversal; criteria evaluated at the hit, values here at the next 30 Hz handover boundary",
+    "peak_forward_displacement_m": 0.830551309542544,
+    "pull_completed": true,
+    "required": false,
+    "reverse_completed": true,
+    "tip_forward_speed_at_contact_m_s": 4.178863528157634
+  },
+  "recovery": {
+    "approach_coefficients_normalized": [
+      [
+        -0.799699873075321,
+        0.021911481084479673,
+        1.6549999999999998
+      ],
+      [
+        1.6063846445519436,
+        -0.044014345804683296,
+        -0.8034937599149243
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        -1.6413091365584518,
+        0.044971263983303034,
+        0.8209625594895467
+      ],
+      [
+        0.8555790602857343,
+        -0.023442550170271262,
+        -0.42795007931939594
+      ],
+      [
+        -0.02095469520390499,
+        0.000574150907171846,
+        0.010481279744773512
+      ]
+    ],
+    "approach_position_m": [
+      -0.799699873075321,
+      0.021911481084479673,
+      1.6549999999999998
+    ],
+    "approach_velocity_m_s": [
+      0.312932073614015,
+      -0.008574223208704537,
+      -0.15652475842498526
+    ],
+    "brake_end_s": 1.0,
+    "height_bounds_m": [
+      0.96,
+      2.8
+    ],
+    "hold_s": 3.0,
+    "hover_position_m": [
+      0.0,
+      0.0,
+      1.255
+    ],
+    "maximum_tilt_limit_deg": 60.0,
+    "phase_description": "Moving curved turn/descent, slow approach, stationary final hold",
+    "return_end_s": 6.133333333333334,
+    "return_s": 5.133333333333334,
+    "schema": "curved_moving_recovery_v1",
+    "settings": {
+      "approach_distance_m": 0.8,
+      "approach_height_m": 0.4,
+      "approach_speed_m_s": 0.35,
+      "hold_s": 3.0,
+      "maximum_descent_speed_m_s": 5.0,
+      "maximum_downward_acceleration_m_s2": 7.806649999999999,
+      "maximum_horizontal_acceleration_m_s2": 18.28571428571429,
+      "maximum_specific_force_m_s2": 18.28571428571429,
+      "maximum_speed_m_s": 5.0,
+      "maximum_tilt_deg": 60.0,
+      "maximum_turn_s": 8.0,
+      "minimum_specific_vertical_m_s2": 2.0,
+      "minimum_turn_s": 1.0
+    },
+    "stationary_braking_waypoint": false,
+    "total_duration_s": 9.133333333333333,
+    "turn_coefficients_normalized": [
+      [
+        0.6044470334064916,
+        0.009632939820231272,
+        1.7965000484744782
+      ],
+      [
+        -2.3001041086930085,
+        0.0630220028373244,
+        -0.00667692024257078
+      ],
+      [
+        -1.0496039317770842,
+        0.165833344557247,
+        -1.4780243024733846
+      ],
+      [
+        1.656239088215121,
+        -0.7185497452183844,
+        3.685232977830733
+      ],
+      [
+        1.7030834476499694,
+        0.7574783749456773,
+        -3.460660851218437
+      ],
+      [
+        -1.4137614018768094,
+        -0.25550543585761576,
+        1.1186290476291807
+      ]
+    ],
+    "turn_end_s": 1.0,
+    "turn_metrics": {
+      "minimum_az_m_s2": -2.956048604946769,
+      "minimum_height_m": 1.6549999999999998,
+      "minimum_specific_vertical_m_s2": 6.85060139505323,
+      "minimum_vz_m_s": -0.25746632259490404,
+      "peak_height_m": 1.7965000484744782,
+      "peak_horizontal_acceleration_m_s2": 5.23290570649342,
+      "peak_specific_force_m_s2": 11.267467306855481,
+      "peak_speed_m_s": 2.4996695730490464
+    },
+    "vehicle_limits_verified": false
+  },
+  "recovery_empirically_validated": false,
+  "recovery_prediction_complete": true,
+  "reference_feasible": true,
+  "schema": "pva_fullstate_30hz_v1",
+  "scored_duration_s": 1.1248781338005418,
+  "success_criterion": "tip_contact_v1",
+  "success_meaning": "Tip enters the target sphere; speed, reversal and wave are diagnostics, not pass/fail gates.",
+  "target_position_m": [
+    1.25,
+    0.0,
+    1.0
+  ],
+  "total_duration_s": 10.266666666666667,
+  "training_export_cable_max_difference_m": 7.456257833382551e-13,
+  "training_export_prefix_max_difference_m": 2.1094237467877974e-15,
+  "wave": {
+    "completed_stages": 0,
+    "completion_time_s": null,
+    "definition": "Dominant local bend persists through proximal, middle, distal material bands before contact; kinematic proxy only",
+    "required": false
+  },
+  "whip_end_s": 1.1333333333333333
+}

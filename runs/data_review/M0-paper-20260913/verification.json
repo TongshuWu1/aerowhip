@@ -1,0 +1,32 @@
+{
+  "independent_formula_checks": {
+    "M0_001": {
+      "fixed_time_error_m": 0.1524228982828944,
+      "tip_rmse_m": 0.22732418370257818
+    },
+    "M0_002": {
+      "fixed_time_error_m": 0.26908670343183755,
+      "tip_rmse_m": 0.2726409774959944
+    },
+    "M0_003": {
+      "fixed_time_error_m": 0.20444331056731735,
+      "tip_rmse_m": 0.24334640689795956
+    },
+    "M0_004": {
+      "fixed_time_error_m": 0.33749077644841746,
+      "tip_rmse_m": 0.2128145669046681
+    },
+    "M0_005": {
+      "fixed_time_error_m": 0.24269237341807984,
+      "tip_rmse_m": 0.21435520459032884
+    }
+  },
+  "m0_model_sha256": "81163c173c688717ae4df24c51ae76e1f9f3b49a8e5a6549421ce8244d03715e",
+  "raw_hashes_unchanged": true,
+  "tests": {
+    "additional": "Completed-drone continuation regression passed; full-model suite also rerun (10 passed).",
+    "passed": 47,
+    "skip_reason": "Legacy adp0 integration fixture unavailable (includes CPU and CUDA tests)",
+    "skipped": 6
+  }
+}

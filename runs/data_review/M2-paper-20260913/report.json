@@ -1,0 +1,178 @@
+{
+  "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M2_paper_selected_correction_20260913",
+  "evidence": "Frozen M2-selected forecast comparison before adaptation; timing alignment is estimated unless independently verified.",
+  "new_rollouts": 0,
+  "schema": "prospective_whip_adaptation_v1",
+  "takes": {
+    "M2_001": {
+      "alignment": {
+        "clock_verified": false,
+        "includes_logging_latency": true,
+        "method": "measured XYZ constant-offset least squares; no spatial fit",
+        "offset_s": -9.124624024305012,
+        "rms_m": null
+      },
+      "drone": {
+        "coverage": 1.0,
+        "rmse_m": 0.16694444304054548,
+        "total_count": 114,
+        "valid_count": 114
+      },
+      "forecast_sha256": "07643e0b3fa84dc177c350ebf2a5a6bfe70bc29b15934a2f11a28d29c8e89cce",
+      "frame": "raw_global_xyz",
+      "interpretation": "Observed target distance is sampled geometry, not independently verified physical contact; gaps are not inferred misses.",
+      "minimum_observed_tip_target_m": 0.19799795750461674,
+      "onset_s": 15.824078170458474,
+      "packet_count": 124,
+      "packet_jitter_s": 0.0003205776214603162,
+      "target_distance": {
+        "coverage": 1.0,
+        "rmse_m": 1.311481143293749,
+        "total_count": 114,
+        "valid_count": 114
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.13958536521477594,
+        "total_count": 114,
+        "valid_count": 114
+      }
+    },
+    "M2_002": {
+      "alignment": {
+        "clock_verified": false,
+        "includes_logging_latency": true,
+        "method": "measured XYZ constant-offset least squares; no spatial fit",
+        "offset_s": 0.09501015863318168,
+        "rms_m": null
+      },
+      "drone": {
+        "coverage": 1.0,
+        "rmse_m": 0.06188634940252785,
+        "total_count": 114,
+        "valid_count": 114
+      },
+      "forecast_sha256": "07643e0b3fa84dc177c350ebf2a5a6bfe70bc29b15934a2f11a28d29c8e89cce",
+      "frame": "raw_global_xyz",
+      "interpretation": "Observed target distance is sampled geometry, not independently verified physical contact; gaps are not inferred misses.",
+      "minimum_observed_tip_target_m": 0.034433764955345815,
+      "onset_s": 16.964550149440768,
+      "packet_count": 124,
+      "packet_jitter_s": 0.00033464431762908475,
+      "target_distance": {
+        "coverage": 1.0,
+        "rmse_m": 1.2879182640381373,
+        "total_count": 114,
+        "valid_count": 114
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.08860441744678933,
+        "total_count": 114,
+        "valid_count": 114
+      }
+    },
+    "M2_003": {
+      "alignment": {
+        "clock_verified": false,
+        "includes_logging_latency": true,
+        "method": "measured XYZ constant-offset least squares; no spatial fit",
+        "offset_s": -0.7145319705593046,
+        "rms_m": null
+      },
+      "drone": {
+        "coverage": 1.0,
+        "rmse_m": 0.10120986495766598,
+        "total_count": 114,
+        "valid_count": 114
+      },
+      "forecast_sha256": "07643e0b3fa84dc177c350ebf2a5a6bfe70bc29b15934a2f11a28d29c8e89cce",
+      "frame": "raw_global_xyz",
+      "interpretation": "Observed target distance is sampled geometry, not independently verified physical contact; gaps are not inferred misses.",
+      "minimum_observed_tip_target_m": 0.06532667051059621,
+      "onset_s": 15.563660399119058,
+      "packet_count": 124,
+      "packet_jitter_s": 0.00035403569539305124,
+      "target_distance": {
+        "coverage": 1.0,
+        "rmse_m": 1.2369750184240098,
+        "total_count": 114,
+        "valid_count": 114
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.12684309253649995,
+        "total_count": 114,
+        "valid_count": 114
+      }
+    },
+    "M2_004": {
+      "alignment": {
+        "clock_verified": false,
+        "includes_logging_latency": true,
+        "method": "measured XYZ constant-offset least squares; no spatial fit",
+        "offset_s": 0.03512566184994825,
+        "rms_m": null
+      },
+      "drone": {
+        "coverage": 1.0,
+        "rmse_m": 0.06722215398349611,
+        "total_count": 113,
+        "valid_count": 113
+      },
+      "forecast_sha256": "07643e0b3fa84dc177c350ebf2a5a6bfe70bc29b15934a2f11a28d29c8e89cce",
+      "frame": "raw_global_xyz",
+      "interpretation": "Observed target distance is sampled geometry, not independently verified physical contact; gaps are not inferred misses.",
+      "minimum_observed_tip_target_m": 0.06402614476133954,
+      "onset_s": 16.427988584836324,
+      "packet_count": 124,
+      "packet_jitter_s": 0.00032938321431430495,
+      "target_distance": {
+        "coverage": 1.0,
+        "rmse_m": 1.2697379875492465,
+        "total_count": 113,
+        "valid_count": 113
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.07907723213753991,
+        "total_count": 113,
+        "valid_count": 113
+      }
+    },
+    "M2_005": {
+      "alignment": {
+        "clock_verified": false,
+        "includes_logging_latency": true,
+        "method": "measured XYZ constant-offset least squares; no spatial fit",
+        "offset_s": 0.274997466925177,
+        "rms_m": null
+      },
+      "drone": {
+        "coverage": 1.0,
+        "rmse_m": 0.13771877926903,
+        "total_count": 113,
+        "valid_count": 113
+      },
+      "forecast_sha256": "07643e0b3fa84dc177c350ebf2a5a6bfe70bc29b15934a2f11a28d29c8e89cce",
+      "frame": "raw_global_xyz",
+      "interpretation": "Observed target distance is sampled geometry, not independently verified physical contact; gaps are not inferred misses.",
+      "minimum_observed_tip_target_m": 0.1491523518922849,
+      "onset_s": 16.59660255908966,
+      "packet_count": 124,
+      "packet_jitter_s": 0.0002519607543938207,
+      "target_distance": {
+        "coverage": 1.0,
+        "rmse_m": 1.3093734725934345,
+        "total_count": 113,
+        "valid_count": 113
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.14553029918385818,
+        "total_count": 113,
+        "valid_count": 113
+      }
+    }
+  }
+}

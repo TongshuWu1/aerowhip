@@ -1,0 +1,816 @@
+{
+  "0.0": [
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.006703682495506768,
+          "tip_rmse_m": 0.008567160999127193
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.008808464755636401,
+          "tip_rmse_m": 0.017212860908342984
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.01010802565349555,
+          "tip_rmse_m": 0.018549883270951178
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.013034855823967519,
+          "tip_rmse_m": 0.024184650277862985
+        }
+      },
+      "name": "figure8_001-00241",
+      "role": "training",
+      "take": "figure8_001"
+    },
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.01757525381727759,
+          "tip_rmse_m": 0.02243289152829676
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.02773765559249206,
+          "tip_rmse_m": 0.047028019850177544
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.07940751133723653,
+          "tip_rmse_m": 0.10902461242653945
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.16261971856704333,
+          "tip_rmse_m": 0.2966365968548763
+        }
+      },
+      "name": "figure8_001-02441",
+      "role": "training",
+      "take": "figure8_001"
+    },
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.006246452804904915,
+          "tip_rmse_m": 0.010567548550103794
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.008906099267678776,
+          "tip_rmse_m": 0.018583075899529976
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.016590586077446175,
+          "tip_rmse_m": 0.03104884452892446
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.016535390850532485,
+          "tip_rmse_m": 0.030962636362405555
+        }
+      },
+      "name": "figure8_001-04841",
+      "role": "training",
+      "take": "figure8_001"
+    },
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.009665156777395056,
+          "tip_rmse_m": 0.013951395614380113
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.01114638527393594,
+          "tip_rmse_m": 0.0159708063591572
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.017502195139545363,
+          "tip_rmse_m": 0.029905206485126175
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.015977572316827417,
+          "tip_rmse_m": 0.027230223883503414
+        }
+      },
+      "name": "figure8_002-00241",
+      "role": "validation",
+      "take": "figure8_002"
+    },
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.014114359376698252,
+          "tip_rmse_m": 0.016279873782753074
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.02327207045783158,
+          "tip_rmse_m": 0.03168833078024711
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.0528597403563333,
+          "tip_rmse_m": 0.08543928496493713
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.10215651055113278,
+          "tip_rmse_m": 0.16760590499260866
+        }
+      },
+      "name": "figure8_002-01841",
+      "role": "validation",
+      "take": "figure8_002"
+    },
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.0065102757958374205,
+          "tip_rmse_m": 0.01143806495134841
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.011048994134979128,
+          "tip_rmse_m": 0.022050684835908992
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.015845218082722934,
+          "tip_rmse_m": 0.02883714533561305
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.013584878977338644,
+          "tip_rmse_m": 0.024673765287131395
+        }
+      },
+      "name": "figure8_002-05041",
+      "role": "validation",
+      "take": "figure8_002"
+    },
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.00890258689781999,
+          "tip_rmse_m": 0.01365459122673281
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.010281646429410034,
+          "tip_rmse_m": 0.018684225406329462
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.01813880904771975,
+          "tip_rmse_m": 0.032788450419719256
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.02310169611865588,
+          "tip_rmse_m": 0.03922587932411918
+        }
+      },
+      "name": "osci_001-00241",
+      "role": "training",
+      "take": "osci_001"
+    },
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.011265894567336673,
+          "tip_rmse_m": 0.015587879203114963
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.012736303759478963,
+          "tip_rmse_m": 0.017427405885595073
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.012481666655923283,
+          "tip_rmse_m": 0.02326439337711225
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.041495458558585704,
+          "tip_rmse_m": 0.06649670235013022
+        }
+      },
+      "name": "osci_001-02441",
+      "role": "training",
+      "take": "osci_001"
+    },
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.00812419778528795,
+          "tip_rmse_m": 0.012210024605144396
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.009276452331611553,
+          "tip_rmse_m": 0.013812863789999203
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.00995992940521576,
+          "tip_rmse_m": 0.01399271017374551
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.011613238821694622,
+          "tip_rmse_m": 0.01846066811279201
+        }
+      },
+      "name": "osci_001-04241",
+      "role": "training",
+      "take": "osci_001"
+    },
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.010625827460291138,
+          "tip_rmse_m": 0.01682738138795842
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.012924960415313548,
+          "tip_rmse_m": 0.02117845513220024
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.01826847060215823,
+          "tip_rmse_m": 0.02948011495628411
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.05981060295100992,
+          "tip_rmse_m": 0.10925265823860644
+        }
+      },
+      "name": "osci_002-00241",
+      "role": "training",
+      "take": "osci_002"
+    },
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.018837919625995878,
+          "tip_rmse_m": 0.02831626927210092
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.04036236539574457,
+          "tip_rmse_m": 0.0638653807121636
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.04800628719050216,
+          "tip_rmse_m": 0.08737980173334839
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.10503135181026622,
+          "tip_rmse_m": 0.17930283836838962
+        }
+      },
+      "name": "osci_002-01241",
+      "role": "training",
+      "take": "osci_002"
+    },
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.013238421554377891,
+          "tip_rmse_m": 0.01735432224054759
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.025563244700024305,
+          "tip_rmse_m": 0.02491515157829795
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.03144352723594185,
+          "tip_rmse_m": 0.04791016815433645
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.07158919167355741,
+          "tip_rmse_m": 0.11652723992635394
+        }
+      },
+      "name": "osci_002-02241",
+      "role": "training",
+      "take": "osci_002"
+    },
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.0050929565346770934,
+          "tip_rmse_m": 0.009904640295445374
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.005308804432138092,
+          "tip_rmse_m": 0.00983175621814215
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.006332801264405237,
+          "tip_rmse_m": 0.010621585614127696
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.008311370516209223,
+          "tip_rmse_m": 0.014131635873425622
+        }
+      },
+      "name": "vertical_figure8_001-00441",
+      "role": "training",
+      "take": "vertical_figure8_001"
+    },
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.006197124945674181,
+          "tip_rmse_m": 0.008603897769974068
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.007532365654276561,
+          "tip_rmse_m": 0.01055699754929187
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.013269889196101552,
+          "tip_rmse_m": 0.021376052119189845
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.04339793916320077,
+          "tip_rmse_m": 0.07464755774214929
+        }
+      },
+      "name": "vertical_figure8_001-01241",
+      "role": "training",
+      "take": "vertical_figure8_001"
+    },
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.004697810026331335,
+          "tip_rmse_m": 0.00829238740251311
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.005391571124780103,
+          "tip_rmse_m": 0.008467488222973914
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.009087979791798638,
+          "tip_rmse_m": 0.014983665278563025
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.01157345123759774,
+          "tip_rmse_m": 0.02052261823473838
+        }
+      },
+      "name": "vertical_figure8_001-02241",
+      "role": "training",
+      "take": "vertical_figure8_001"
+    }
+  ],
+  "0.4": [
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.006649337272025946,
+          "tip_rmse_m": 0.008541480311801975
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.008934601102021295,
+          "tip_rmse_m": 0.017528194877942254
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.010236063444853548,
+          "tip_rmse_m": 0.019423189968594573
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.011851393524690376,
+          "tip_rmse_m": 0.021866812365880412
+        }
+      },
+      "name": "figure8_001-00241",
+      "role": "training",
+      "take": "figure8_001"
+    },
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.018001056163914272,
+          "tip_rmse_m": 0.01983371027169202
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.032659382549062,
+          "tip_rmse_m": 0.05380427431195461
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.03640018414452383,
+          "tip_rmse_m": 0.0606913346806627
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.06455235093481976,
+          "tip_rmse_m": 0.10990141429446977
+        }
+      },
+      "name": "figure8_001-02441",
+      "role": "training",
+      "take": "figure8_001"
+    },
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.0061165962686622255,
+          "tip_rmse_m": 0.010180951974589606
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.008169108674686586,
+          "tip_rmse_m": 0.016573916913409318
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.015550006369267509,
+          "tip_rmse_m": 0.029699000945164353
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.015333283953038086,
+          "tip_rmse_m": 0.029203822177252373
+        }
+      },
+      "name": "figure8_001-04841",
+      "role": "training",
+      "take": "figure8_001"
+    },
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.009611773110228473,
+          "tip_rmse_m": 0.013956346630947355
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.010996434373786342,
+          "tip_rmse_m": 0.015600981371877714
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.017435535534146226,
+          "tip_rmse_m": 0.030275735558294655
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.015538482015883641,
+          "tip_rmse_m": 0.02667017327017325
+        }
+      },
+      "name": "figure8_002-00241",
+      "role": "validation",
+      "take": "figure8_002"
+    },
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.013843244102507207,
+          "tip_rmse_m": 0.01924779185950049
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.01894698447735903,
+          "tip_rmse_m": 0.0262565093938668
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.022689339180703733,
+          "tip_rmse_m": 0.038932291760649926
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.029158984593525467,
+          "tip_rmse_m": 0.04642556704846208
+        }
+      },
+      "name": "figure8_002-01841",
+      "role": "validation",
+      "take": "figure8_002"
+    },
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.006276141235543257,
+          "tip_rmse_m": 0.010709478784763547
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.010124825288420477,
+          "tip_rmse_m": 0.020416017326120625
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.014939243509449689,
+          "tip_rmse_m": 0.02784510740898981
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.012238394782155312,
+          "tip_rmse_m": 0.022819000998309726
+        }
+      },
+      "name": "figure8_002-05041",
+      "role": "validation",
+      "take": "figure8_002"
+    },
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.009287883699872821,
+          "tip_rmse_m": 0.012783741684379667
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.01165586636174736,
+          "tip_rmse_m": 0.014536494803750083
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.016747437254772925,
+          "tip_rmse_m": 0.026116314982401932
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.019110044627270024,
+          "tip_rmse_m": 0.031092821300466693
+        }
+      },
+      "name": "osci_001-00241",
+      "role": "training",
+      "take": "osci_001"
+    },
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.01119990719601138,
+          "tip_rmse_m": 0.0169608336558164
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.015937094915336125,
+          "tip_rmse_m": 0.030380118121209075
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.017880959650721347,
+          "tip_rmse_m": 0.030680796015013993
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.015139860413379174,
+          "tip_rmse_m": 0.026104083194452562
+        }
+      },
+      "name": "osci_001-02441",
+      "role": "training",
+      "take": "osci_001"
+    },
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.008034455822005347,
+          "tip_rmse_m": 0.012190021761388255
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.011285905957652425,
+          "tip_rmse_m": 0.014568144392667626
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.01829085667590514,
+          "tip_rmse_m": 0.026569284625795806
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.015538848230944827,
+          "tip_rmse_m": 0.024876327862403777
+        }
+      },
+      "name": "osci_001-04241",
+      "role": "training",
+      "take": "osci_001"
+    },
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.01041707342195767,
+          "tip_rmse_m": 0.01641507867991778
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.012231181237245663,
+          "tip_rmse_m": 0.020356900534459398
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.022249731570446508,
+          "tip_rmse_m": 0.03462844580480379
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.08000142889572599,
+          "tip_rmse_m": 0.1444580416052945
+        }
+      },
+      "name": "osci_002-00241",
+      "role": "training",
+      "take": "osci_002"
+    },
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.010423999082588415,
+          "tip_rmse_m": 0.014745102985002746
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.010578073878230343,
+          "tip_rmse_m": 0.015926681810498465
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.012037540445053379,
+          "tip_rmse_m": 0.018890032611746706
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.019891117286265674,
+          "tip_rmse_m": 0.03536766402364627
+        }
+      },
+      "name": "osci_002-01241",
+      "role": "training",
+      "take": "osci_002"
+    },
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.009469535475329091,
+          "tip_rmse_m": 0.013332481040595003
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.01763215677592593,
+          "tip_rmse_m": 0.01851748057303822
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.029583608082263967,
+          "tip_rmse_m": 0.05348731960820818
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.038606761628515694,
+          "tip_rmse_m": 0.06536594639711854
+        }
+      },
+      "name": "osci_002-02241",
+      "role": "training",
+      "take": "osci_002"
+    },
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.005098945224121712,
+          "tip_rmse_m": 0.009372077381884605
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.005714258352693237,
+          "tip_rmse_m": 0.009653091118893552
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.007718266561170676,
+          "tip_rmse_m": 0.012573519687302113
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.009423877575138476,
+          "tip_rmse_m": 0.0153360441240667
+        }
+      },
+      "name": "vertical_figure8_001-00441",
+      "role": "training",
+      "take": "vertical_figure8_001"
+    },
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.006170418676683917,
+          "tip_rmse_m": 0.010299522502641082
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.011343173799551045,
+          "tip_rmse_m": 0.01849617177021809
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.016435097764463894,
+          "tip_rmse_m": 0.03009663482913723
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.023937269658373898,
+          "tip_rmse_m": 0.04693815260280576
+        }
+      },
+      "name": "vertical_figure8_001-01241",
+      "role": "training",
+      "take": "vertical_figure8_001"
+    },
+    {
+      "horizons": {
+        "0.25": {
+          "actual_last_time_s": 0.25333333333333335,
+          "all_marker_rmse_m": 0.004635922308343383,
+          "tip_rmse_m": 0.0083746239918348
+        },
+        "0.5": {
+          "actual_last_time_s": 0.5,
+          "all_marker_rmse_m": 0.004995742667698097,
+          "tip_rmse_m": 0.008430934025914856
+        },
+        "1.0": {
+          "actual_last_time_s": 1.0,
+          "all_marker_rmse_m": 0.007647528693020438,
+          "tip_rmse_m": 0.01257192835810904
+        },
+        "2.0": {
+          "actual_last_time_s": 2.0,
+          "all_marker_rmse_m": 0.008508981325858762,
+          "tip_rmse_m": 0.014139295335724285
+        }
+      },
+      "name": "vertical_figure8_001-02241",
+      "role": "training",
+      "take": "vertical_figure8_001"
+    }
+  ]
+}

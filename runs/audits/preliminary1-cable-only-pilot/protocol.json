@@ -1,0 +1,53 @@
+{
+  "evidence": "Conditional on measured attachment. Offline reference is retrospective, not deployable.",
+  "fitting_initializer": "causal_weighted_1s; tau frozen from prior training-only diagnostic",
+  "grid_shape": [
+    7,
+    7
+  ],
+  "hardware": {
+    "dtype": "float64",
+    "gpu": "NVIDIA GeForce RTX 4080",
+    "os": "Windows-11-10.0.26200-SP0"
+  },
+  "history_s": 1.0,
+  "horizons_s": [
+    0.25,
+    0.5,
+    1.0,
+    2.0
+  ],
+  "initial_positions": "Same raw positions and length projection for all methods; only velocity estimate differs",
+  "methods": [
+    "causal_uniform_1s",
+    "causal_weighted_1s",
+    "offline_centered_110ms"
+  ],
+  "model_sha256": "4179e6297ed8dd838f42e2d9d8521f3309191bf49325d0e525c7182f0030e43e",
+  "offline_future_s": 0.05,
+  "parameter_bounds": [
+    [
+      1e-09,
+      0.0001
+    ],
+    [
+      1e-09,
+      0.001
+    ]
+  ],
+  "scope": "Small physical-only cable diagnostic; no M0 publication or selection",
+  "search": {
+    "ceiling": 24,
+    "minimum": 6,
+    "patience": 5,
+    "population": 16,
+    "relative": 0.005,
+    "seed": 9409
+  },
+  "source_job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\20260909-preliminary1-M0-v2",
+  "stopping": "Small finite grid plus practical plateau; ceiling is not convergence",
+  "training_horizon_s": 1.0,
+  "training_window_selection": "Three evenly spaced eligible windows per training take, before prediction errors",
+  "validation_window_selection": "Three evenly spaced eligible windows from figure8_002; excluded from search",
+  "weighted_tau_s": 0.02
+}

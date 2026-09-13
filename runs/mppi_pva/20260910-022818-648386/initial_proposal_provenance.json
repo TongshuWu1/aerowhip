@@ -1,0 +1,48 @@
+{
+  "interpretation": "Editable commands/style reference only; all dynamics and target predictions are newly evaluated under the same development M0.",
+  "parent_provenance": {
+    "deterministic_rows": "Four means, incumbent, both exact baselines; excluded from weight updates",
+    "families": [
+      0,
+      1,
+      0,
+      1
+    ],
+    "interpretation": "Exact command baselines only; both reevaluated under the same development M0 in every batch. No saved state/forecast substituted.",
+    "old_command_provenance": {
+      "physics": "Every candidate uses frozen development M0. No archived model or accepted forecast substitutes for prediction.",
+      "saved_sha256": "bde6418097015aada0b27712d8f54c354a2aa3cc33f5a41ff986a556e17345cf",
+      "source": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project_archive_20260909_unseen_145g_17g\\payload\\runs\\rehearsals_pva\\20260909-173305-488091-mppi-wave\\plan.npz",
+      "source_sha256": "950c726063aae5cb3bf3ce37b4beb1228ff8b0883c601af38d002699fb8cc63e",
+      "transformation": "39 exact accepted jerk commands plus six zero-jerk commands; no time compression. Control points perturb the exact latent baseline."
+    },
+    "saved_sha256": "754fafdb384f395027888d24bd50d9fc315e49c782747d912ef217655d82e9f0",
+    "sources": [
+      {
+        "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260910-015017-245988\\initial_proposal.npz",
+        "sha256": "bde6418097015aada0b27712d8f54c354a2aa3cc33f5a41ff986a556e17345cf"
+      },
+      {
+        "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260910-011618-458510\\plan.npz",
+        "sha256": "0f0fd52981a7e58883cf184c7356b59b72167c9b76e1445c91f06e36979749a6"
+      }
+    ],
+    "strength": "Per-axis latent gain plus ten smooth XYZ residual controls",
+    "timing": "Independent XYZ monotone three-phase retiming, exact interval averages of source zero-order-hold jerk. Duration remains 1.5 s."
+  },
+  "parent_run": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260910-020448-013542",
+  "sources": {
+    "initial_proposal.npz": {
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260910-020448-013542\\initial_proposal.npz",
+      "sha256": "bde6418097015aada0b27712d8f54c354a2aa3cc33f5a41ff986a556e17345cf"
+    },
+    "proposal_baselines.npz": {
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260910-020448-013542\\proposal_baselines.npz",
+      "sha256": "754fafdb384f395027888d24bd50d9fc315e49c782747d912ef217655d82e9f0"
+    },
+    "wave_reference.npz": {
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260910-020448-013542\\wave_reference.npz",
+      "sha256": "fca15a2541af592e0b581baca57bd6ac20263520f9a0a00a0645ce230506c99c"
+    }
+  }
+}

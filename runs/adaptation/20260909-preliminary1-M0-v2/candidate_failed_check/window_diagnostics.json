@@ -1,0 +1,120 @@
+{
+  "evidence": "Retrospective causal 2 s drone / 1 s cable windows; validation take excluded from fitting and selection",
+  "takes": {
+    "figure8_001": {
+      "cable_tip": {
+        "cold": {
+          "rmse_m": 0.10957430951964603,
+          "samples": 7350
+        },
+        "fitted": {
+          "rmse_m": 0.11015315593181847,
+          "samples": 7350
+        }
+      },
+      "drone": {
+        "cold": {
+          "rmse_m": 0.18798176483645246,
+          "samples": 5025
+        },
+        "fitted": {
+          "rmse_m": 0.05923193026289028,
+          "samples": 5025
+        }
+      },
+      "role": "training"
+    },
+    "figure8_002": {
+      "cable_tip": {
+        "cold": {
+          "rmse_m": 0.12831026356918807,
+          "samples": 6300
+        },
+        "fitted": {
+          "rmse_m": 0.1111103536272376,
+          "samples": 6300
+        }
+      },
+      "drone": {
+        "cold": {
+          "rmse_m": 0.32828120702239527,
+          "samples": 5226
+        },
+        "fitted": {
+          "rmse_m": 0.11985478309597801,
+          "samples": 5226
+        }
+      },
+      "role": "validation"
+    },
+    "osci_001": {
+      "cable_tip": {
+        "cold": {
+          "rmse_m": 0.05812211438408717,
+          "samples": 6150
+        },
+        "fitted": {
+          "rmse_m": 0.057359581572630505,
+          "samples": 6150
+        }
+      },
+      "drone": {
+        "cold": {
+          "rmse_m": 0.37706997054510044,
+          "samples": 4221
+        },
+        "fitted": {
+          "rmse_m": 0.03165704562565239,
+          "samples": 4221
+        }
+      },
+      "role": "training"
+    },
+    "osci_002": {
+      "cable_tip": {
+        "cold": {
+          "rmse_m": 0.24053681945281022,
+          "samples": 3300
+        },
+        "fitted": {
+          "rmse_m": 0.16545274562512344,
+          "samples": 3300
+        }
+      },
+      "drone": {
+        "cold": {
+          "rmse_m": 0.6390793385838277,
+          "samples": 2211
+        },
+        "fitted": {
+          "rmse_m": 0.13926191223417111,
+          "samples": 2211
+        }
+      },
+      "role": "training"
+    },
+    "vertical_figure8_001": {
+      "cable_tip": {
+        "cold": {
+          "rmse_m": 0.03808320926613351,
+          "samples": 3150
+        },
+        "fitted": {
+          "rmse_m": 0.03766326407025781,
+          "samples": 3150
+        }
+      },
+      "drone": {
+        "cold": {
+          "rmse_m": 0.18301604235435232,
+          "samples": 2412
+        },
+        "fitted": {
+          "rmse_m": 0.03917670800097435,
+          "samples": 2412
+        }
+      },
+      "role": "training"
+    }
+  }
+}

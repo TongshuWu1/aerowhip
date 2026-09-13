@@ -1,0 +1,38 @@
+{
+  "nominal": {
+    "initialization": "causal moving-history state, not assumed rest",
+    "parameters": {
+      "attitude_acceleration_scale_xy": 0.9490923873516671,
+      "attitude_acceleration_scale_z": 0.7037629811689953,
+      "attitude_drive_model": "independent_scale_v3",
+      "attitude_time_constant_s": 0.04312667907186067,
+      "delay_s": 0.1,
+      "feedforward_xy": 0.7402095617895196,
+      "feedforward_z": 1.5186950817678706,
+      "gravity_m_s2": 9.80665,
+      "kd_xy": 0.7376272967347756,
+      "kd_z": 1.5453595102737188,
+      "kp_xy": 1.706184021879835,
+      "kp_z": 19.627924232455317
+    },
+    "schema": "nominal_loaded_drone_pose_candidate_v3",
+    "training_takes": [
+      "figure8_001",
+      "osci_001",
+      "osci_002",
+      "vertical_figure8_001",
+      "M0_001",
+      "M0_002",
+      "M0_004"
+    ]
+  },
+  "residual": {
+    "checkpoint": "drone_residual.pt",
+    "sha256": "3aefadc037270fbc82d2f835732e9c674e49852d6cc0e8ed78f04f36ca137d72",
+    "specification": {
+      "acceleration_limit": 0.5,
+      "hidden": 16,
+      "hover_gate": true
+    }
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "cable_parameters": [
+    1.0004186883881064e-08,
+    0.0001006050808253074,
+    0.3493399806242019
+  ],
+  "cable_physics": {
+    "active_bounds": [
+      0,
+      0,
+      0
+    ],
+    "baseline_loss": 2.133836560915099,
+    "best": [
+      -18.420262143189785,
+      -9.204307796352238,
+      -1.0517096744459042
+    ],
+    "best_loss": 2.0936265356147845,
+    "elapsed_s": 16.159003000007942,
+    "nfev": 8,
+    "original_result": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M1-paper-20260913\\cable_physics\\result.json",
+    "rejected_final": true,
+    "selected_update": 6,
+    "selection": "Best training loss among numerically verified physical iterates",
+    "solver_message": "Stopped because `callback` function raised `StopIteration` or returned `True`",
+    "stop_reason": "practical_plateau",
+    "updates": 7
+  },
+  "cable_residual": {
+    "additional_updates": 0,
+    "baseline_loss": 2.0930752591341006,
+    "best_loss": 1.5507079242220125,
+    "ceiling": null,
+    "elapsed_s": 2208.5036376000207,
+    "numerically_verified": true,
+    "optimizer_best_loss": 1.5507079242220125,
+    "practical_plateau_reached": false,
+    "selected_update": 370,
+    "stop_reason": "user_requested_stop",
+    "stop_receipt": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M1-paper-20260913-verified-physical\\user_stop_finalization.json",
+    "updates": 375
+  },
+  "candidate_sha256": "89f5712bd49acf56d4bcbf1adef05a12087a136f1aae16da627e259e268dd599",
+  "drone_parameters": {
+    "attitude_acceleration_scale_xy": 0.9490923873516671,
+    "attitude_acceleration_scale_z": 0.7037629811689953,
+    "attitude_drive_model": "independent_scale_v3",
+    "attitude_time_constant_s": 0.04312667907186067,
+    "delay_s": 0.1,
+    "feedforward_xy": 0.7402095617895196,
+    "feedforward_z": 1.5186950817678706,
+    "gravity_m_s2": 9.80665,
+    "kd_xy": 0.7376272967347756,
+    "kd_z": 1.5453595102737188,
+    "kp_xy": 1.706184021879835,
+    "kp_z": 19.627924232455317
+  },
+  "drone_residual": {
+    "additional_updates": 1010,
+    "baseline_loss": 6.402691639427194,
+    "best_loss": 3.7982341111927043,
+    "ceiling": null,
+    "elapsed_s": 518.0433381000184,
+    "numerically_verified": true,
+    "optimizer_best_loss": 3.7982341111927043,
+    "selected_update": 1010,
+    "stop_reason": "practical_plateau",
+    "updates": 1010
+  },
+  "schema": "whip_full_model_v1",
+  "stages_complete": true,
+  "training_takes": [
+    "M0_001",
+    "M0_002",
+    "M0_004"
+  ],
+  "user_stop_receipt_sha256": "9dd5ea739c196bd356415626f7a5be440174f5bb0a4da904cbd4590e82b34211",
+  "validation_used_for_selection": false
+}

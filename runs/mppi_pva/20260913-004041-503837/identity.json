@@ -1,0 +1,12 @@
+{
+  "command_contract": "position_spline_pva_30hz_v1",
+  "development_review": "Explicit offline simulation planning; physical performance remains unvalidated.",
+  "evidence": "simulation only",
+  "method": "mppi",
+  "model_source": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\20260910-022818-648386-M0-development-whip\\model.json",
+  "model_source_sha256": "81163c173c688717ae4df24c51ae76e1f9f3b49a8e5a6549421ce8244d03715e",
+  "name": "M0-Bspline-origin1p4-target1p25",
+  "source_checkpoint": null,
+  "source_checkpoint_sha256": null,
+  "success_criterion": "tip_contact_v1"
+}

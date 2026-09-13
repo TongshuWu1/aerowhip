@@ -1,0 +1,92 @@
+{
+  "M1_001": {
+    "clock_verified": false,
+    "controller_sha256": "1c7849a661a7bcd26e6b787a829575c16c2f1d9db9a69abebebdabcd79b12730",
+    "diagnostic": {
+      "clock_verified": false,
+      "half_offsets_s": [
+        0.21543573211736297,
+        0.22451140768165495
+      ],
+      "includes_logging_latency": true,
+      "method": "measured XYZ constant-offset least squares; no spatial fit",
+      "offset_s": 0.2154602761634442,
+      "rms_m": 0.013264980388407031
+    },
+    "offset_s": 0.2154602761634442,
+    "optitrack_sha256": "355cbcff23577230e087f033d5e47671b260d5782477c542e27bceca24d8dc92",
+    "source": "measured XYZ constant-offset least squares; no spatial fit"
+  },
+  "M1_002": {
+    "clock_verified": false,
+    "controller_sha256": "80d82cf1cb441b42c5001cdc361eddf63aeadd917d2109eca90862aceb2d5302",
+    "diagnostic": {
+      "clock_verified": false,
+      "half_offsets_s": [
+        -2.4946800892849934,
+        -2.494662557499724
+      ],
+      "includes_logging_latency": true,
+      "method": "measured XYZ constant-offset least squares; no spatial fit",
+      "offset_s": -2.4946673975132394,
+      "rms_m": 0.015092895281865878
+    },
+    "offset_s": -2.4946673975132394,
+    "optitrack_sha256": "9b86ba47e17f4dbdba0f81d6454a09003fd616506fcc4495fc2082cd7270f684",
+    "source": "measured XYZ constant-offset least squares; no spatial fit"
+  },
+  "M1_003": {
+    "clock_verified": false,
+    "controller_sha256": "ae1697d4097f7d4a47ebbe91c82b374ddc852caefb78a581bd9de976414c7c1e",
+    "diagnostic": {
+      "clock_verified": false,
+      "half_offsets_s": [
+        0.4253648505963448,
+        0.43503420215718147
+      ],
+      "includes_logging_latency": true,
+      "method": "measured XYZ constant-offset least squares; no spatial fit",
+      "offset_s": 0.4254888096003268,
+      "rms_m": 0.015959383519108278
+    },
+    "offset_s": 0.4254888096003268,
+    "optitrack_sha256": "69ac60c51509b2aabd9b6b720beda717549d962df7acfb757560f13789886c4d",
+    "source": "measured XYZ constant-offset least squares; no spatial fit"
+  },
+  "M1_004": {
+    "clock_verified": false,
+    "controller_sha256": "0ec67ea026e32ad9fe78a37dbe0ef746c435442f9f94c50a2659d6006bdb33ae",
+    "diagnostic": {
+      "clock_verified": false,
+      "half_offsets_s": [
+        0.3248643901797635,
+        0.32525501210514957
+      ],
+      "includes_logging_latency": true,
+      "method": "measured XYZ constant-offset least squares; no spatial fit",
+      "offset_s": 0.3249640217919123,
+      "rms_m": 0.018310911182271513
+    },
+    "offset_s": 0.3249640217919123,
+    "optitrack_sha256": "1be0199aecf09cf0bd6b343a33fed1fb0a7bcce6217df4ef7d83068c2d7fb26e",
+    "source": "measured XYZ constant-offset least squares; no spatial fit"
+  },
+  "M1_005": {
+    "clock_verified": false,
+    "controller_sha256": "d01c0f7158a3309554e7aeedc54845a908fb49c94f81b3d2aa43a6960e50e2c5",
+    "diagnostic": {
+      "clock_verified": false,
+      "half_offsets_s": [
+        -0.7349587695127413,
+        -0.7352369928324118
+      ],
+      "includes_logging_latency": true,
+      "method": "measured XYZ constant-offset least squares; no spatial fit",
+      "offset_s": -0.7350456138114364,
+      "rms_m": 0.016897676830359424
+    },
+    "offset_s": -0.7350456138114364,
+    "optitrack_sha256": "d0bacb9c25b3dbf11f7eddce2e6b4ad12fa35dd7820441e5ea190a6571d1d2b2",
+    "source": "measured XYZ constant-offset least squares; no spatial fit"
+  }
+}

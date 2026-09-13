@@ -1,0 +1,23 @@
+{
+  "objective": "Equal-take weighted recursive one-second windows across full preliminary motion; measured attachment",
+  "selected_physics": [
+    1.0000075291928627e-08,
+    9.999153329934056e-05
+  ],
+  "specification": {
+    "acceleration_limit": 0.5,
+    "damping_limit_s_inv": 2.0,
+    "hidden": 32,
+    "mode": "dissipative_plus_acceleration",
+    "node_count": 12
+  },
+  "stopping": {
+    "converged": true,
+    "evidence": "training-only selection",
+    "selected_update": 12,
+    "selection_loss": 0.986315490175983,
+    "stop_reason": "plateau",
+    "updates": 12
+  },
+  "windows": 133
+}

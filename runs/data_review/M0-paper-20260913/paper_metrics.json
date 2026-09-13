@@ -1,0 +1,697 @@
+{
+  "aggregate": {
+    "closest_error_m": {
+      "mean": 0.14733451092921307,
+      "n": 5,
+      "per_take": [
+        0.12773374572542928,
+        0.23541884093083906,
+        0.17273866522542475,
+        0.0748438408821995,
+        0.12593746188217264
+      ],
+      "sample_sd": 0.060210342125961595
+    },
+    "common_drone_rmse_m": {
+      "mean": 0.17450515956907448,
+      "n": 5,
+      "per_take": [
+        0.16823053329890883,
+        0.22221516453779627,
+        0.18682511441388633,
+        0.14692880817354972,
+        0.1483261774212314
+      ],
+      "sample_sd": 0.031277751912943096
+    },
+    "common_markers_rmse_m": {
+      "mean": 0.2117556680512342,
+      "n": 5,
+      "per_take": [
+        0.21024726546742847,
+        0.2571700035554564,
+        0.2272284868485193,
+        0.17654561584764894,
+        0.18758696853711798
+      ],
+      "sample_sd": 0.0321248310562147
+    },
+    "common_tip_rmse_m": {
+      "mean": 0.2340962679183058,
+      "n": 5,
+      "per_take": [
+        0.22732418370257818,
+        0.2726409774959944,
+        0.24334640689795956,
+        0.2128145669046681,
+        0.21435520459032884
+      ],
+      "sample_sd": 0.02479788908127687
+    },
+    "fixed_time_error_m": {
+      "mean": 0.24122721242970932,
+      "n": 5,
+      "per_take": [
+        0.1524228982828944,
+        0.26908670343183755,
+        0.20444331056731735,
+        0.33749077644841746,
+        0.24269237341807984
+      ],
+      "sample_sd": 0.06943384142569044
+    }
+  },
+  "definition": "3D Euclidean errors; RMSE=sqrt(mean squared Euclidean error); equal-take mean and sample SD.",
+  "limitations": [
+    "Estimated timing includes logging latency; +/-10 ms sensitivity reported.",
+    "Closest approach is piecewise linear between adjacent valid 100 Hz observations.",
+    "Original forecast uses planned initial state, not measured preflight state.",
+    "No physical impact or binary success is inferred from distance."
+  ],
+  "protocol": {
+    "common_evaluation_interval_s": [
+      0.0,
+      1.5
+    ],
+    "fit_end_s": 1.1333333333333333,
+    "no_binary_paper_hit_threshold": true,
+    "planned_strike_time_s": 1.1172482457473654,
+    "target_m": [
+      1.25,
+      0.0,
+      1.25
+    ],
+    "timing_sensitivity_offsets_s": [
+      -0.01,
+      0.0,
+      0.01
+    ]
+  },
+  "takes": {
+    "M0_001": {
+      "closest": {
+        "contiguous_segment_coverage": 0.9933774834437086,
+        "nearest": {
+          "distance_m": 0.12773374572542928,
+          "position_m": [
+            1.1725981793999958,
+            0.07145324894896578,
+            1.3222447311538392
+          ],
+          "time_s": 1.1294858469278353
+        },
+        "sample_coverage": 0.993421052631579
+      },
+      "fixed_time_error_m": 0.1524228982828944,
+      "fixed_time_error_xyz_m": [
+        -0.1378672160814507,
+        0.05987600776829566,
+        0.02530285250004738
+      ],
+      "fixed_time_tip_position_m": [
+        1.1121327839185493,
+        0.05987600776829566,
+        1.2753028525000474
+      ],
+      "fixed_time_tip_speed_m_s": 6.1987916292001,
+      "original_forecast_errors": {
+        "common": {
+          "drone": {
+            "coverage": 1.0,
+            "rmse_m": 0.16823053329890883,
+            "total_count": 150,
+            "valid_count": 150
+          },
+          "markers": {
+            "coverage": 0.9993333333333333,
+            "rmse_m": 0.21024726546742847,
+            "total_count": 1500,
+            "valid_count": 1499
+          },
+          "tip": {
+            "coverage": 1.0,
+            "rmse_m": 0.22732418370257818,
+            "total_count": 150,
+            "valid_count": 150
+          }
+        },
+        "strike": {
+          "drone": {
+            "coverage": 1.0,
+            "rmse_m": 0.15363840684347171,
+            "total_count": 113,
+            "valid_count": 113
+          },
+          "markers": {
+            "coverage": 1.0,
+            "rmse_m": 0.158598418838647,
+            "total_count": 1130,
+            "valid_count": 1130
+          },
+          "tip": {
+            "coverage": 1.0,
+            "rmse_m": 0.1547265690097801,
+            "total_count": 113,
+            "valid_count": 113
+          }
+        }
+      },
+      "planned_time_s": 1.1172482457473654,
+      "quality": {
+        "alignment": {
+          "clock_verified": false,
+          "half_offsets_s": [
+            0.545272682063512,
+            0.54552435004992
+          ],
+          "includes_logging_latency": true,
+          "method": "measured XYZ constant-offset least squares; no spatial fit",
+          "offset_s": 0.5454666485366568,
+          "rms_m": 0.013191277307838539
+        },
+        "expected_dynamic_packets": 122,
+        "marker_missing_by_column": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3
+        ],
+        "matched_dynamic_packets": 122,
+        "missing_dynamic_packets": [],
+        "onset_s": 16.36090410153071,
+        "packet_timing_spread_s": 0.000307218233743356,
+        "relative_tracking_span_s": [
+          -4.825437452994054,
+          6.344562547005946
+        ],
+        "strike_marker_coverage": 0.9993333333333333,
+        "strike_tip_coverage": 1.0
+      },
+      "role": "adaptation",
+      "timing_sensitivity": [
+        {
+          "fixed_time_error_m": 0.12852895896519836,
+          "offset_change_s": -0.01
+        },
+        {
+          "fixed_time_error_m": 0.1524228982828944,
+          "offset_change_s": 0.0
+        },
+        {
+          "fixed_time_error_m": 0.19689659537859844,
+          "offset_change_s": 0.01
+        }
+      ]
+    },
+    "M0_002": {
+      "closest": {
+        "contiguous_segment_coverage": 0.9933774834437086,
+        "nearest": {
+          "distance_m": 0.23541884093083906,
+          "position_m": [
+            1.128885628458709,
+            0.18488634594869266,
+            1.3310578728632707
+          ],
+          "time_s": 1.1362931871072466
+        },
+        "sample_coverage": 0.993421052631579
+      },
+      "fixed_time_error_m": 0.26908670343183755,
+      "fixed_time_error_xyz_m": [
+        -0.21202879613176862,
+        0.16543876796443038,
+        0.00902538803254127
+      ],
+      "fixed_time_tip_position_m": [
+        1.0379712038682314,
+        0.16543876796443038,
+        1.2590253880325413
+      ],
+      "fixed_time_tip_speed_m_s": 5.96947236559609,
+      "original_forecast_errors": {
+        "common": {
+          "drone": {
+            "coverage": 1.0,
+            "rmse_m": 0.22221516453779627,
+            "total_count": 150,
+            "valid_count": 150
+          },
+          "markers": {
+            "coverage": 1.0,
+            "rmse_m": 0.2571700035554564,
+            "total_count": 1500,
+            "valid_count": 1500
+          },
+          "tip": {
+            "coverage": 1.0,
+            "rmse_m": 0.2726409774959944,
+            "total_count": 150,
+            "valid_count": 150
+          }
+        },
+        "strike": {
+          "drone": {
+            "coverage": 1.0,
+            "rmse_m": 0.20183670845511079,
+            "total_count": 113,
+            "valid_count": 113
+          },
+          "markers": {
+            "coverage": 1.0,
+            "rmse_m": 0.20083107118830218,
+            "total_count": 1130,
+            "valid_count": 1130
+          },
+          "tip": {
+            "coverage": 1.0,
+            "rmse_m": 0.19003592609535425,
+            "total_count": 113,
+            "valid_count": 113
+          }
+        }
+      },
+      "planned_time_s": 1.1172482457473654,
+      "quality": {
+        "alignment": {
+          "clock_verified": false,
+          "half_offsets_s": [
+            -0.15465514146439469,
+            -0.15522114141375565
+          ],
+          "includes_logging_latency": true,
+          "method": "measured XYZ constant-offset least squares; no spatial fit",
+          "offset_s": -0.15491786931753546,
+          "rms_m": 0.01330120709692493
+        },
+        "expected_dynamic_packets": 122,
+        "marker_missing_by_column": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          16
+        ],
+        "matched_dynamic_packets": 122,
+        "missing_dynamic_packets": [],
+        "onset_s": 16.85062092145284,
+        "packet_timing_spread_s": 0.00041864713033135104,
+        "relative_tracking_span_s": [
+          -4.5655387907703755,
+          6.874461209229622
+        ],
+        "strike_marker_coverage": 1.0,
+        "strike_tip_coverage": 1.0
+      },
+      "role": "adaptation",
+      "timing_sensitivity": [
+        {
+          "fixed_time_error_m": 0.2437845749691769,
+          "offset_change_s": -0.01
+        },
+        {
+          "fixed_time_error_m": 0.26908670343183755,
+          "offset_change_s": 0.0
+        },
+        {
+          "fixed_time_error_m": 0.3040946996325478,
+          "offset_change_s": 0.01
+        }
+      ]
+    },
+    "M0_003": {
+      "closest": {
+        "contiguous_segment_coverage": 0.9933774834437086,
+        "nearest": {
+          "distance_m": 0.17273866522542475,
+          "position_m": [
+            1.1420345978644668,
+            0.1016947334202289,
+            1.338545466288018
+          ],
+          "time_s": 1.131983033907338
+        },
+        "sample_coverage": 0.993421052631579
+      },
+      "fixed_time_error_m": 0.20444331056731735,
+      "fixed_time_error_xyz_m": [
+        -0.18225496512983352,
+        0.0894546230407082,
+        0.02404298937096927
+      ],
+      "fixed_time_tip_position_m": [
+        1.0677450348701665,
+        0.0894546230407082,
+        1.2740429893709693
+      ],
+      "fixed_time_tip_speed_m_s": 6.595154945546568,
+      "original_forecast_errors": {
+        "common": {
+          "drone": {
+            "coverage": 1.0,
+            "rmse_m": 0.18682511441388633,
+            "total_count": 150,
+            "valid_count": 150
+          },
+          "markers": {
+            "coverage": 0.9993333333333333,
+            "rmse_m": 0.2272284868485193,
+            "total_count": 1500,
+            "valid_count": 1499
+          },
+          "tip": {
+            "coverage": 1.0,
+            "rmse_m": 0.24334640689795956,
+            "total_count": 150,
+            "valid_count": 150
+          }
+        },
+        "strike": {
+          "drone": {
+            "coverage": 1.0,
+            "rmse_m": 0.1829545796838795,
+            "total_count": 113,
+            "valid_count": 113
+          },
+          "markers": {
+            "coverage": 1.0,
+            "rmse_m": 0.1907022551440139,
+            "total_count": 1130,
+            "valid_count": 1130
+          },
+          "tip": {
+            "coverage": 1.0,
+            "rmse_m": 0.18504033869922698,
+            "total_count": 113,
+            "valid_count": 113
+          }
+        }
+      },
+      "planned_time_s": 1.1172482457473654,
+      "quality": {
+        "alignment": {
+          "clock_verified": false,
+          "half_offsets_s": [
+            0.36536144144396526,
+            0.3745535739862244
+          ],
+          "includes_logging_latency": true,
+          "method": "measured XYZ constant-offset least squares; no spatial fit",
+          "offset_s": 0.36548985640310416,
+          "rms_m": 0.012391091555171159
+        },
+        "expected_dynamic_packets": 122,
+        "marker_missing_by_column": [
+          16,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15,
+          15
+        ],
+        "matched_dynamic_packets": 122,
+        "missing_dynamic_packets": [],
+        "onset_s": 17.01913475195567,
+        "packet_timing_spread_s": 0.00043183962504045326,
+        "relative_tracking_span_s": [
+          -5.4036448955525636,
+          7.166355104447437
+        ],
+        "strike_marker_coverage": 0.9993333333333333,
+        "strike_tip_coverage": 1.0
+      },
+      "role": "validation",
+      "timing_sensitivity": [
+        {
+          "fixed_time_error_m": 0.175664064121258,
+          "offset_change_s": -0.01
+        },
+        {
+          "fixed_time_error_m": 0.20444331056731735,
+          "offset_change_s": 0.0
+        },
+        {
+          "fixed_time_error_m": 0.2505586341758437,
+          "offset_change_s": 0.01
+        }
+      ]
+    },
+    "M0_004": {
+      "closest": {
+        "contiguous_segment_coverage": 0.9933774834437086,
+        "nearest": {
+          "distance_m": 0.0748438408821995,
+          "position_m": [
+            1.232978,
+            0.058775,
+            1.293097
+          ],
+          "time_s": 1.1698798689469605
+        },
+        "sample_coverage": 0.993421052631579
+      },
+      "fixed_time_error_m": 0.33749077644841746,
+      "fixed_time_error_xyz_m": [
+        -0.3341051156616578,
+        0.04740456610979751,
+        0.005157808488865934
+      ],
+      "fixed_time_tip_position_m": [
+        0.9158948843383422,
+        0.04740456610979751,
+        1.255157808488866
+      ],
+      "fixed_time_tip_speed_m_s": 5.154041049022313,
+      "original_forecast_errors": {
+        "common": {
+          "drone": {
+            "coverage": 1.0,
+            "rmse_m": 0.14692880817354972,
+            "total_count": 150,
+            "valid_count": 150
+          },
+          "markers": {
+            "coverage": 1.0,
+            "rmse_m": 0.17654561584764894,
+            "total_count": 1500,
+            "valid_count": 1500
+          },
+          "tip": {
+            "coverage": 1.0,
+            "rmse_m": 0.2128145669046681,
+            "total_count": 150,
+            "valid_count": 150
+          }
+        },
+        "strike": {
+          "drone": {
+            "coverage": 1.0,
+            "rmse_m": 0.12434755341047395,
+            "total_count": 113,
+            "valid_count": 113
+          },
+          "markers": {
+            "coverage": 1.0,
+            "rmse_m": 0.16014732813852922,
+            "total_count": 1130,
+            "valid_count": 1130
+          },
+          "tip": {
+            "coverage": 1.0,
+            "rmse_m": 0.20201833120549462,
+            "total_count": 113,
+            "valid_count": 113
+          }
+        }
+      },
+      "planned_time_s": 1.1172482457473654,
+      "quality": {
+        "alignment": {
+          "clock_verified": false,
+          "half_offsets_s": [
+            1.2953526021289468,
+            1.295205164835915
+          ],
+          "includes_logging_latency": true,
+          "method": "measured XYZ constant-offset least squares; no spatial fit",
+          "offset_s": 1.2953119382485676,
+          "rms_m": 0.01583463230260022
+        },
+        "expected_dynamic_packets": 122,
+        "marker_missing_by_column": [
+          28,
+          28,
+          28,
+          28,
+          28,
+          28,
+          28,
+          28,
+          28,
+          37
+        ],
+        "matched_dynamic_packets": 122,
+        "missing_dynamic_packets": [],
+        "onset_s": 16.505432069301605,
+        "packet_timing_spread_s": 0.0002650419870988685,
+        "relative_tracking_span_s": [
+          -3.1301201310530367,
+          6.299879868946963
+        ],
+        "strike_marker_coverage": 1.0,
+        "strike_tip_coverage": 1.0
+      },
+      "role": "adaptation",
+      "timing_sensitivity": [
+        {
+          "fixed_time_error_m": 0.28479276853253793,
+          "offset_change_s": -0.01
+        },
+        {
+          "fixed_time_error_m": 0.33749077644841746,
+          "offset_change_s": 0.0
+        },
+        {
+          "fixed_time_error_m": 0.3859921188373343,
+          "offset_change_s": 0.01
+        }
+      ]
+    },
+    "M0_005": {
+      "closest": {
+        "contiguous_segment_coverage": 0.9933774834437086,
+        "nearest": {
+          "distance_m": 0.12593746188217264,
+          "position_m": [
+            1.2090563637854996,
+            0.09653795603385809,
+            1.3197444334958943
+          ],
+          "time_s": 1.1471320188295246
+        },
+        "sample_coverage": 0.993421052631579
+      },
+      "fixed_time_error_m": 0.24269237341807984,
+      "fixed_time_error_xyz_m": [
+        -0.22730405728761038,
+        0.08417786003543412,
+        0.012105434141174154
+      ],
+      "fixed_time_tip_position_m": [
+        1.0226959427123896,
+        0.08417786003543412,
+        1.2621054341411742
+      ],
+      "fixed_time_tip_speed_m_s": 5.975837063164929,
+      "original_forecast_errors": {
+        "common": {
+          "drone": {
+            "coverage": 1.0,
+            "rmse_m": 0.1483261774212314,
+            "total_count": 150,
+            "valid_count": 150
+          },
+          "markers": {
+            "coverage": 1.0,
+            "rmse_m": 0.18758696853711798,
+            "total_count": 1500,
+            "valid_count": 1500
+          },
+          "tip": {
+            "coverage": 1.0,
+            "rmse_m": 0.21435520459032884,
+            "total_count": 150,
+            "valid_count": 150
+          }
+        },
+        "strike": {
+          "drone": {
+            "coverage": 1.0,
+            "rmse_m": 0.11999713354151732,
+            "total_count": 114,
+            "valid_count": 114
+          },
+          "markers": {
+            "coverage": 1.0,
+            "rmse_m": 0.14710272607279234,
+            "total_count": 1140,
+            "valid_count": 1140
+          },
+          "tip": {
+            "coverage": 1.0,
+            "rmse_m": 0.17290273668150058,
+            "total_count": 114,
+            "valid_count": 114
+          }
+        }
+      },
+      "planned_time_s": 1.1172482457473654,
+      "quality": {
+        "alignment": {
+          "clock_verified": false,
+          "half_offsets_s": [
+            1.4750035056119217,
+            1.4754062724196142
+          ],
+          "includes_logging_latency": true,
+          "method": "measured XYZ constant-offset least squares; no spatial fit",
+          "offset_s": 1.4750540658248315,
+          "rms_m": 0.01485189394076807
+        },
+        "expected_dynamic_packets": 122,
+        "marker_missing_by_column": [
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6,
+          6
+        ],
+        "matched_dynamic_packets": 122,
+        "missing_dynamic_packets": [],
+        "onset_s": 16.71272606054942,
+        "packet_timing_spread_s": 0.00029754638671875,
+        "relative_tracking_span_s": [
+          -3.2776719947245887,
+          7.21232800527541
+        ],
+        "strike_marker_coverage": 1.0,
+        "strike_tip_coverage": 1.0
+      },
+      "role": "validation",
+      "timing_sensitivity": [
+        {
+          "fixed_time_error_m": 0.18988071415261862,
+          "offset_change_s": -0.01
+        },
+        {
+          "fixed_time_error_m": 0.24269237341807984,
+          "offset_change_s": 0.0
+        },
+        {
+          "fixed_time_error_m": 0.2948985610394576,
+          "offset_change_s": 0.01
+        }
+      ]
+    }
+  }
+}

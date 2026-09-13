@@ -1,0 +1,19 @@
+Reconstructing the unchanged training objective; no optimization
+[W913 03:00:00.000000000 Context.cpp:448] Warning: torch.backends.cuda.preferred_linalg_library is an experimental feature. If you see any error or unexpected behavior when this flag is set please file an issue on GitHub. (function operator ())
+Numerically checking saved cable checkpoints; no optimization
+Evaluating frozen M0/M1 predictions
+combined validation M0
+combined validation M1
+Checking retained preliminary validation
+preliminary validation {'model': 'M0', 'windows': 26}
+preliminary validation {'model': 'M1', 'windows': 26}
+Traceback (most recent call last):
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\tools\finalize_stopped_whip_fit.py", line 162, in <module>
+    run(args.job, args.reason)
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\tools\finalize_stopped_whip_fit.py", line 144, in run
+    registration = full.register(job, output)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\experimental_data\whip_full_fit.py", line 198, in register
+    generation=int(baseline['generation_index'])+1
+                   ~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+KeyError: 'generation_index'

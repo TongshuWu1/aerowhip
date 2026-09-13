@@ -1,0 +1,98 @@
+{
+  "cable": {
+    "Cb_n_m2_s": 1e-06,
+    "EI_n_m2": 1e-06,
+    "attachment": "dynamic_shared_node_0_free_pivot",
+    "bare_cable_mass_kg": 0.007395479808164983,
+    "constraint_iterations": 4,
+    "diameter_m": 0.0035,
+    "external_drag_s_inv": 0.0,
+    "gravity_m_s2": [
+      0.0,
+      0.0,
+      -9.80665
+    ],
+    "marker_interval_lengths_m": [
+      0.063,
+      0.087,
+      0.1,
+      0.1,
+      0.1,
+      0.1,
+      0.1,
+      0.1025,
+      0.1,
+      0.1
+    ],
+    "moving_marker_masses_kg": [
+      0.0009604520191835018,
+      0.0009604520191835018,
+      0.0009604520191835018,
+      0.0009604520191835018,
+      0.0009604520191835018,
+      0.0009604520191835018,
+      0.0009604520191835018,
+      0.0009604520191835018,
+      0.0009604520191835018,
+      0.0009604520191835018
+    ],
+    "parameter_source": "Unfitted engineering initialization; new preliminary data required",
+    "segments_per_marker_interval": [
+      2,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "substeps": 12
+  },
+  "force_accounting": {
+    "aerodynamic_drag": "effective_world_velocity_decay_on_free_cable_vertices",
+    "cable_reaction": "internal_bending_damping_and_inextensibility_forces_transmitted_at_shared_node_0",
+    "commanded_force": "acts_only_on_shared_node_0",
+    "gravity": "acts_on_point_mass_and_every_cable_vertex"
+  },
+  "mass_measurement": {
+    "cable_assembly_mass_kg": 0.017,
+    "distribution": "Provisional proportional scaling of existing cable/marker distribution to 17 g; geometry unchanged",
+    "drone_mass_kg": 0.145,
+    "source": "User measurement: repaired drone 145 g, cable assembly 17 g; all geometry unchanged",
+    "total_mass_kg": 0.162
+  },
+  "point_force_controller": {
+    "application_node": 0,
+    "dimensions": 3,
+    "force_limit_status": "measurement_required",
+    "input": "commanded_force_world_n",
+    "maximum_force_norm_n": null,
+    "response": "instantaneous_direct_force"
+  },
+  "point_mass": {
+    "degrees_of_freedom": 3,
+    "mass_kg": 0.145,
+    "state_location": "shared_cable_node_0"
+  },
+  "provenance": {
+    "fit_complete": false,
+    "label": "Unseen system 145 g + 17 g - unfitted structure",
+    "learned_prior": false,
+    "stage": "awaiting_preliminary_recordings"
+  },
+  "recorded_data": {
+    "optitrack_to_attachment_offset_body_m": [
+      0.0066549972854827175,
+      -0.01287427254333901,
+      -0.055
+    ]
+  },
+  "schema": "point_force_dder_model_v1",
+  "simulation": {
+    "device": "auto",
+    "dt_s": 0.01
+  }
+}
