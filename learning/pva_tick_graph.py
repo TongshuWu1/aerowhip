@@ -13,12 +13,13 @@ from simulator.cable import DderState
 from simulator.research_physics import ResearchPhysics
 from simulator.research_pose import tensor_midpoint
 from planning.whip_objective import ENCOUNTER_FIELDS
+from planning.strike_objective import FIELDS as STRIKE_FIELDS
 
 POSE=('position','velocity','rotation','omega_tracking','compensation','rotation_command_from_tracking')
 FIELDS=('active','evolving','success','failed','contact','tip_contact','minimum_distance','initial_distance',
         'best_quality','termination_time','cutoff','origin0','target','total',
         'pull_ready','reverse_ready','pull_peak','pull_credit','reverse_credit',
-        'wave_stage','wave_dwell','wave_credit','wave_completion_time','reach_credit','brake_credit')+ENCOUNTER_FIELDS
+        'wave_stage','wave_dwell','wave_credit','wave_completion_time','reach_credit','brake_credit')+ENCOUNTER_FIELDS+STRIKE_FIELDS
 
 
 def state_values(env):

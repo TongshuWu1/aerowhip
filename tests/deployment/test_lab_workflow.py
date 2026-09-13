@@ -26,7 +26,7 @@ def lab(tmp_path,monkeypatch):
                   preliminary='workspace/baseline/preliminary',preliminary_training_takes=[],mppi_settings='workspace/baseline/planner/settings.json')
     write(root/'workspace/baseline/manifest.json',manifest)
     monkeypatch.setattr(lab_seed,'load_baseline',lambda _:deepcopy(manifest))
-    workspace=LabWorkspace(root,'day1');workspace.create()
+    workspace=LabWorkspace(root,'day1');workspace.create(planner_profile=None)
     return workspace
 
 
@@ -286,3 +286,43 @@ def test_partial_final_window_remains_flagged_in_observed_summary(lab,monkeypatc
     assert result['summary']['fully_observed_pair_count']==0
     assert not result['paired'][0]['coverage']['M0']['window_complete']
     assert not lab._load()['results']['predictions_complete']
+
+
+def test_new_study_freezes_objective_but_keeps_m0_model(lab):
+    profile=Path(__file__).resolve().parents[2]/'config/pva/systematic_strike.json'
+    dst=lab.root/'config/pva/systematic_strike.json';dst.parent.mkdir(parents=True)
+    shutil.copy2(profile,dst)
+    templates=lab.root/'workspace/baseline/planner/proposal_baselines.npz'
+    templates.parent.mkdir(parents=True);templates.write_bytes(b'command templates only')
+    before=digest(lab.root/'workspace/baseline/model/model.json')
+    new=LabWorkspace(lab.root,'new-objective');state=new.create()
+    assert 'rehearsal' not in state['models']['M0']
+    assert digest(lab.root/'workspace/baseline/model/model.json')==before
+    assert read(new.path(state['planner_profile']))['trajectory_objective']['schema']=='targeted_fold_strike_v1'
+    assert 'reward' not in read(new.path(state['planner_profile']))
+    with pytest.raises(ValueError,match='Plan this generation first'):new.export('M0')
+    new.path(state['planner_profile']).write_text('{}')
+    with pytest.raises(ValueError,match='Frozen input changed'):new.plan('M0')
+
+
+@pytest.mark.parametrize('free_end,expected',[(1.5,2.),(.74,None)])
+def test_strike_speed_report_excludes_postcontact_derivative_windows(lab,monkeypatch,free_end,expected):
+    import numpy as np
+    from experimental_data import adaptation_check
+    lab.export('M0');state=lab._load()
+    profile=lab.directory/'planner/settings.json'
+    write(profile,{'task':{'strike_direction':[1.,0.,0.]}})
+    state.update(planner_profile=lab.rel(profile),planner_hashes={lab.rel(profile):digest(profile)})
+    a,b=raw_pair(lab,101)
+    state['slots'][0].update(status='reviewed',batch='unused',
+        raw_hashes={lab.rel(a):digest(a),lab.rel(b):digest(b)},review={'free_motion_end_s':free_end})
+    lab._save(state)
+    def comparison(*args):
+        time=np.arange(151)*.01;cable=np.zeros((len(time),11,3))
+        cable[:,-1,0]=2*(time-.75);cable[:,-1,1]=.01
+        return dict(time=time,measured_cable=cable,target=np.zeros(3))
+    monkeypatch.setattr(adaptation_check,'load_comparison',comparison)
+    row=lab.evaluate('cpu',predictions=False)['physical'][0]
+    assert row['minimum_tip_target_m']==pytest.approx(.01)
+    if expected is None:assert row['directed_tip_speed_at_closest_m_s'] is None
+    else:assert row['directed_tip_speed_at_closest_m_s']==pytest.approx(expected)

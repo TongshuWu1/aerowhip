@@ -23,7 +23,7 @@ class AdaptationScene(PointCableViewer3D):
         self.comparison_bounds[4] = min(self.comparison_bounds[4], 0.)
         super().__init__(data['predicted_cable'][0], data['target'],
                          data['task']['desired_strike_direction_world'],
-                         data['task']['success']['tip_target_distance_m'], parent)
+                         data['task'].get('success',{}).get('tip_target_distance_m',data['task'].get('target_marker_radius_m',.02)), parent)
         pv = self._pv
         # Keep the shared environment/camera, replace animated actors with paired geometry.
         for name in ('cable', 'cableNodes', 'controlledPoint', 'drone', 'cableTip',

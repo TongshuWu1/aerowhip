@@ -5,6 +5,7 @@ import math
 LEGACY='legacy_strike_v1'
 TIP_CONTACT='tip_contact_v1'
 TWO_TARGET='ordered_two_target_v1'
+FOLD_STRIKE='targeted_fold_strike_v1'
 
 
 def hit_time_bonus(weights,success,failed,time_s):
@@ -41,11 +42,12 @@ def impact_bonus(weights,success,failed,tip_velocity,direction):
 
 def criterion(task):
     value=task.get('success_criterion',LEGACY)
-    if value not in (LEGACY,TIP_CONTACT,TWO_TARGET):raise ValueError('Unknown PVA success criterion: '+str(value))
+    if value not in (LEGACY,TIP_CONTACT,TWO_TARGET,FOLD_STRIKE):raise ValueError('Unknown PVA success criterion: '+str(value))
     return value
 
 
 def label(task):
+    if criterion(task)==FOLD_STRIKE:return 'Travelling fold confirmed; continuous strike metrics'
     if criterion(task)==TWO_TARGET:return 'Tip reaches T1 then T2'
     return 'Tip reaches target' if criterion(task)==TIP_CONTACT else 'Legacy speed / strategy / wave gates'
 

@@ -30,12 +30,29 @@ def draw(figure,arrays,metadata,settings):
     peak=material[bend.argmax(1)]
     axes[3].plot(t,np.where(bend.max(1)>=.05,peak,np.nan),color='cyan',lw=1)
     axes[3].set(ylabel='Bend location (0 = attachment)',xlabel='Whip time [s]')
-    figure.colorbar(mesh,ax=axes[3],label='Local turning angle [rad]')
-    hit=metadata.get('predicted_hit_time_s')
+    if metadata.get('objective_schema')!='targeted_fold_strike_v1':
+        figure.colorbar(mesh,ax=axes[3],label='Local turning angle [rad]')
+    hit=metadata.get('strike_time_s',metadata.get('predicted_hit_time_s'))
     for ax in axes:
         if hit is not None:ax.axvline(hit,color='#111827',ls='--',lw=1)
         ax.spines[['top','right']].set_visible(False)
     for ax in axes[:2]:ax.legend(frameon=False,fontsize=8);ax.grid(alpha=.2)
+    if metadata.get('objective_schema')=='targeted_fold_strike_v1':
+        import torch
+        from planning.strike_objective import fold_features
+        material_grid=np.r_[0.,np.cumsum(lengths)]/lengths.sum()
+        opposition,turn,location,_=fold_features(torch.as_tensor(q),torch.as_tensor(material_grid),settings['fold_constraint'])
+        axes[0].set_title('Quadrotor motion and tip strike')
+        axes[3].clear();axes[3].plot(t,location.numpy(),color='#ea580c',label='Tracked dominant bend')
+        axes[3].set(ylabel='Material coordinate',xlabel='Whip time [s]',ylim=(0,1))
+        axes[3].axhline(settings['fold_constraint']['start_material_max'],color='#64748b',ls=':')
+        axes[3].axhline(settings['fold_constraint']['end_material_min'],color='#64748b',ls=':')
+        axes[3].axvline(metadata['fold_completed_time_s'],color='#2563eb',ls='--',label='Fold completed')
+        if hit is not None:axes[3].axvline(hit,color='#111827',ls='--',label='Scored strike')
+        axes[3].legend(frameon=False,fontsize=8)
+        return dict(fold_valid=metadata['predicted_fold_valid'],strike_time_s=hit,
+            directed_tip_speed_m_s=metadata['directed_tip_speed_m_s'],strike_distance_m=metadata['strike_distance_m'],
+            source='Saved simulated geometry and velocity; no physical impact measurement')
     cfg=settings['task'];pull=(p>=cfg.get('minimum_pull_distance_m',.25))&(velocity>=cfg.get('minimum_pull_speed_m_s',1.))
     loaded=np.maximum.accumulate(pull)
     back=np.maximum.accumulate(p)-p

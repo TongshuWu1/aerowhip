@@ -583,12 +583,14 @@ class LabWindow(QMainWindow):
         self.plan_status.setText(f'{generation} · '+(model.get('status', 'Frozen model available') if model_available else 'Model not available yet')+
                                 (' · complete command exported' if exported and exported.exists() else ''))
         baseline = self.snapshot.get('baseline') or {}
-        settings_file = plan / 'settings.json' if plan else self.resolve(baseline.get('mppi_settings'))
+        study = self.snapshot.get('study') or {}
+        settings_file = plan / 'settings.json' if plan else self.resolve(study.get('planner_profile', baseline.get('mppi_settings')))
         setup = read_json(settings_file, {}) if settings_file else {}
         launch = setup.get('launch', {})
         fill(self.plan_details, [
             ['Model', model.get('model', 'Awaiting retained baseline / completed update')],
             ['Plan', model.get('plan', 'Not generated')],
+            ['Objective', setup.get('trajectory_objective', {}).get('schema', 'Historical saved objective')],
             ['Command rate', '30 Hz · full sequence generated before flight'],
             ['Launch tracked origin [m]', str(launch.get('origin_m', 'See the retained setup'))],
             ['Target [m]', str(launch.get('target_m', 'See the retained setup'))],

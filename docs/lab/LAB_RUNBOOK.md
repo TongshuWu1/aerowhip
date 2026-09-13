@@ -14,7 +14,16 @@ This app exports CSVs; execute them in the laboratory's separate flight program.
    is [0, 0, 1.255] m.
 4. Check launch preparation, tip visibility and command/onset logging using the
    existing lab procedure. Finish setup debugging before collecting study takes.
-5. Export M0 and preserve the exact CSV, manifest and original forecast together.
+5. Generate a new M0 plan with the travelling-fold strike objective, then use
+   **Rehearse + export CSV**. Inspect the predicted fold and complete recovery.
+   Preserve the exact CSV, manifest and original forecast together. M0's physical
+   calibration stays unchanged; its historical command is not the new study command.
+
+New studies freeze the objective, fold criterion, command templates and fixed
+planning budget for all three models. See
+[the task definition](../methods/TARGETED_FOLD_STRIKE.md). Historical studies
+continue using their saved settings. Fold acceptance is simulated geometry;
+record the real cable motion and do not describe it as measured impact energy.
 
 ## The 20 executions
 
@@ -77,7 +86,7 @@ unfinished chain as a completed M0 to M2 experiment.
 **Primary task metric:** minimum observed 3D tip-to-target distance during the
 fixed 0â€“1.5 s interval after command onset, in centimeters. Smaller is better.
 There is no binary 5 cm success requirement. Show coverage and the closest-point
-time; the fixed interval can include early recovery.
+time. New fold-strike plans use the full 1.5 s maneuver before recovery.
 
 **Supporting metric:** command-to-tip prediction RMS. Evaluate all three frozen
 models on the same final recordings with common commands, causal initialization,

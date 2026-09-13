@@ -73,6 +73,8 @@ def generate(job,output,*,checkpoint=None,origin=None,target=None,device='cuda',
         result=env.rollout(actions=actions,trace=True,max_steps=len(saved_actions))
         if bool(env.active.any()):raise ValueError('Saved plan ends before a modeled hit or maneuver time limit; no CSV exported')
     if bool(result['failed'][0]):raise ValueError('Whip fails the command, workspace or model envelope; no CSV exported')
+    if env.targeted_strike and not bool(result['fold_valid'][0]):
+        raise ValueError('No verified travelling fold before the strike event; no CSV exported')
     cutoff=int(result['cutoffs'][0]);whip=result['packets'][0,:cutoff+1].cpu().numpy()
     if len(whip)<2:raise ValueError('Empty maneuver')
     if progress:progress('Appending smooth recovery',0,1)
@@ -113,7 +115,9 @@ def generate(job,output,*,checkpoint=None,origin=None,target=None,device='cuda',
     atomic_json(output/'task.json',dict(desired_strike_direction_world=cfg['task']['strike_direction'],
         target_position_m=cfg['launch']['target_m'],
         **(dict(target_positions_m=cfg['task']['target_sequence_m']) if env.extra_tick_fields else {}),
-        success=dict(tip_target_distance_m=cfg['task']['target_radius_m'])))
+        **(dict(target_marker_radius_m=.02,acceptance='Travelling fold before the scored strike event; continuous distance and speed',
+                objective=cfg['trajectory_objective'],fold_constraint=cfg['fold_constraint'])
+           if env.targeted_strike else dict(success=dict(tip_target_distance_m=cfg['task']['target_radius_m'])))))
     with (output/'fullstate_30hz.csv').open('w',newline='',encoding='utf-8') as stream:
         writer=csv.writer(stream);writer.writerow(FIELDS);writer.writerows(np.c_[times,packets])
     jerk=result['actions'][0,:cutoff].cpu().numpy()*np.asarray(cfg['action']['jerk_limit_m_s3'])
@@ -146,6 +150,15 @@ def generate(job,output,*,checkpoint=None,origin=None,target=None,device='cuda',
         command_semantics='Desired OptiTrack tracked-origin P/V/A, kinematic acceleration, 30 Hz zero-order hold, no force or mass compensation',
         execution='Take off; hold 10 s at saved start; execute complete CSV at saved timestamps; land. Offline artifact, no flight sender.',
         evidence='Fitted model simulation only; real flight performance remains to be measured')
+    if env.targeted_strike:
+        metadata.pop('predicted_valid_hit');metadata.pop('predicted_hit_time_s')
+        shutil.copy2(job/'proposal_baselines.npz',output/'proposal_baselines.npz')
+        metadata.update(predicted_fold_valid=True,fold_completed_time_s=float(env.fold_completed_time_s[0]),
+            objective_schema=cfg['trajectory_objective']['schema'],
+            proposal_baselines_sha256=sha256_file(output/'proposal_baselines.npz'),
+            strike_time_s=float(env.strike_time[0]),strike_distance_m=float(env.strike_distance[0]),
+            directed_tip_speed_m_s=float((env.strike_velocity[0]*env.direction).sum()),
+            closest_approach_time_s=float(env.encounter_time[0]))
     if cfg['task'].get('require_pullback',False):
         forward_speed=(env.pose.velocity[0]*env.direction).sum()
         position=((env.pose.position-env.origin0)*env.direction).sum(-1)[0]
@@ -170,6 +183,8 @@ def generate(job,output,*,checkpoint=None,origin=None,target=None,device='cuda',
     metadata['success_criterion']=cfg['task'].get('success_criterion','legacy_strike_v1')
     metadata['success_meaning']=('Tip enters the target sphere; speed, reversal and wave are diagnostics, not pass/fail gates.'
         if metadata['success_criterion']=='tip_contact_v1' else 'Historical composite strike requirements in saved settings.')
+    if env.targeted_strike:
+        metadata['success_meaning']='Predicted travelling fold before the scored encounter; neither a hit label nor measured impact energy.'
     if env.extra_tick_fields:
         from learning.two_target_whip import details
         metadata.update(details(env,0),target_positions_m=cfg['task']['target_sequence_m'],

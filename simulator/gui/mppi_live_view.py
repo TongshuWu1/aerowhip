@@ -56,8 +56,10 @@ class MPPILiveView(QWidget):
         try:data=load_snapshot(path)
         except (OSError,ValueError,KeyError) as exc:self.status.setText('Waiting for a readable snapshot: '+str(exc));return
         self.fingerprint=key;self.data=data;self.candidate.blockSignals(True);selected=max(0,self.candidate.currentIndex());self.candidate.clear()
+        fold_task=read_json(self.job/'settings.json',{}).get('task',{}).get('success_criterion')=='targeted_fold_strike_v1'
         for i,label in enumerate(data['labels']):
             state='infeasible' if data['failed'][i] else 'modeled hit' if data['success'][i] else 'no modeled hit'
+            if fold_task and not data['failed'][i]:state='fold-qualified strike' if data['success'][i] else 'fold/strike not qualified'
             self.candidate.addItem(f'{label} · {state} · score {data["scores"][i]:.2f}')
         self.candidate.setCurrentIndex(min(selected,self.candidate.count()-1));self.candidate.blockSignals(False)
         self.ensure_viewer();self.reset_play();self.draw_paths()
@@ -66,10 +68,10 @@ class MPPILiveView(QWidget):
         if self.viewer is not None or self.data is None:return
         from .viewer_3d import create_viewer
         cfg=read_json(self.job/'settings.json',{});task=cfg.get('task',{})
-        self.viewer=create_viewer(self.data['cable_positions_m'][0,0],self.data['target_position_m'],task.get('strike_direction',[1,0,0]),task.get('target_radius_m',.05),self)
+        self.viewer=create_viewer(self.data['cable_positions_m'][0,0],self.data['target_position_m'],task.get('strike_direction',[1,0,0]),task.get('target_radius_m',.02),self)
         if 'target_positions_m' in self.data:
             from .whip_targets import add_targets
-            add_targets(self.viewer,self.data['target_positions_m'],task.get('target_radius_m',.05))
+            add_targets(self.viewer,self.data['target_positions_m'],task.get('target_radius_m',.02))
         self.viewer.set_live_flight(True);self.host.addWidget(self.viewer);self.empty.hide();self.fit_camera()
 
     def fit_camera(self):

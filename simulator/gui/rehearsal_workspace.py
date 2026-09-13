@@ -145,8 +145,9 @@ class RehearsalWorkspace(QWidget):
         for spins,values in [(self.start_spins,m['initial_tracking_origin_m']),(self.target_spins,m['target_position_m'])]:
             for spin,value in zip(spins,values):spin.blockSignals(True);spin.setValue(value);spin.blockSignals(False)
         self.result_label=(m['planner'] if m.get('planner') else 'Policy '+m['checkpoint_sha256'][:8])
+        outcome=('travelling fold confirmed' if m.get('predicted_fold_valid') else 'no verified fold') if 'predicted_fold_valid' in m else ('valid hit' if m.get('predicted_valid_hit') else 'miss')
         self.status.setText(f'{self.result_label} · whip {m["whip_end_s"]:.2f} s · total CSV {m["total_duration_s"]:.2f} s · '
-            f'predicted {"valid hit" if m["predicted_valid_hit"] else "miss"} · closest tip {m["minimum_tip_distance_m"]*100:.1f} cm. Recovery prediction is unvalidated.')
+            f'predicted {outcome} · closest tip {m["minimum_tip_distance_m"]*100:.1f} cm. Recovery prediction is unvalidated.')
         if m.get('target_positions_m'):
             closest=' / '.join(f'{100*d:.1f} cm' for d in m['target_minimum_distances_m'])
             self.status.setText(f'MPPI two-target whip · {sum(m["target_hits"])}/2 ordered tip hits · closest T1 / T2: {closest} · complete CSV {m["total_duration_s"]:.2f} s. Simulation only.')
@@ -155,7 +156,7 @@ class RehearsalWorkspace(QWidget):
             snapshot=m['policy_snapshot']
             self.status.setText(f'{snapshot["source_run_name"]} · {snapshot["checkpoint_choice"]} at {snapshot["checkpoint_attempts"]:,} attempts · {m["outcome"]} · closest tip {m["minimum_tip_distance_m"]*100:.1f} cm. Policy preview only; no recovery or flight CSV.')
         elif not m['recovery_prediction_complete']:self.status.setText(self.status.text()+f' Prediction stopped at {m["prediction_valid_through_s"]:.2f} s after a model-domain failure.')
-        self.status.setText(self.status.text()+(' Task requires forward pull then backward release.' if m.get('pullback',{}).get('required') else ' Saved tip-hit criteria did not require backward release.'))
+        if 'predicted_fold_valid' not in m:self.status.setText(self.status.text()+(' Task requires forward pull then backward release.' if m.get('pullback',{}).get('required') else ' Saved tip-hit criteria did not require backward release.'))
         if m.get('wave',{}).get('required'):
             self.status.setText(self.status.text()+f' Travelling-bend stages: {m["wave"]["completed_stages"]}/3.')
         for w in [self.save,self.package,self.open,self.play]:w.setEnabled(True)
@@ -172,10 +173,10 @@ class RehearsalWorkspace(QWidget):
     def ensure_viewer(self):
         if self.viewer is not None or self.arrays is None:return
         from .viewer_3d import create_viewer
-        task=read_json(self.directory/'task.json');self.viewer=create_viewer(self.arrays['cable_positions_m'][0],self.arrays['target_position_m'],task['desired_strike_direction_world'],task['success']['tip_target_distance_m'],self)
+        task=read_json(self.directory/'task.json');self.viewer=create_viewer(self.arrays['cable_positions_m'][0],self.arrays['target_position_m'],task['desired_strike_direction_world'],task.get('success',{}).get('tip_target_distance_m',task.get('target_marker_radius_m',.02)),self)
         if 'target_positions_m' in self.arrays:
             from .whip_targets import add_targets
-            add_targets(self.viewer,self.arrays['target_positions_m'],task['success']['tip_target_distance_m'])
+            add_targets(self.viewer,self.arrays['target_positions_m'],task.get('success',{}).get('tip_target_distance_m',task.get('target_marker_radius_m',.02)))
         q=self.arrays['cable_positions_m'][0]
         self.viewer.update_state(q,np.zeros(3),q[:1],q[-1:],
             tracked_origin_m=self.arrays['origin_positions_m'][0],tracked_rotation=self.arrays['origin_rotations'][0],render=False)
@@ -202,7 +203,7 @@ class RehearsalWorkspace(QWidget):
             import pyvista as pv
             if not getattr(self,'_reference_source',None)==str(self.directory):
                 task=read_json(self.directory/'task.json')
-                self.viewer.set_target(a['target_position_m'],task['desired_strike_direction_world'],task['success']['tip_target_distance_m'],render=False)
+                self.viewer.set_target(a['target_position_m'],task['desired_strike_direction_world'],task.get('success',{}).get('tip_target_distance_m',task.get('target_marker_radius_m',.02)),render=False)
                 if len(a['commands'])>1:self.viewer.plotter.add_mesh(pv.lines_from_points(a['commands'][:,:3]),color='#2563eb',line_width=2,name='FullStateReference',render=False,reset_camera=False)
                 self._origin_mesh=pv.PolyData(a['origin_positions_m'][index:index+1].copy())
                 self.viewer.plotter.add_mesh(self._origin_mesh,color='#0f172a',point_size=12,render_points_as_spheres=True,name='TrackedOrigin',render=False,reset_camera=False)

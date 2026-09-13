@@ -1,5 +1,18 @@
 # Deployment handoff
 
+## 12 September: new travelling-fold MPPI task
+
+The user explicitly replaced the MPPI objective for the upcoming study. New
+studies use `config/pva/systematic_strike.json`: accurate, fast forward tip motion
+with a required travelling fold, plus the existing flight/recovery constraints.
+Keep the calibrated M0 model and preliminary data, but generate a new M0 command.
+Freeze the new objective, fold criterion, templates and budget across M0/M1/M2.
+Existing studies and historical commands keep their original definitions.
+See [the task definition](docs/methods/TARGETED_FOLD_STRIKE.md) and its validation
+record before using the new workflow. This update supersedes instructions to
+reuse the historical M0 command for a newly created study.
+
+
 Updated 11 September 2026. Branch: deployment.
 
 Start with README.md, then docs/lab/LAB_RUNBOOK.md. The primary launcher is

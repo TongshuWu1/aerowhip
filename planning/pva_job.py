@@ -56,6 +56,8 @@ def load_settings(root,method):
 
 
 def validate_settings(cfg):
+    from planning.strike_objective import enabled,validate_settings as validate_strike
+    if enabled(cfg):return validate_strike(cfg)
     from learning.pva_ppo_rollout import decision_steps
     decision_steps(cfg)
     from learning.ppo_trajectory_reward import validate
@@ -332,6 +334,10 @@ def whiten(values,rho):
 
 
 def mppi(job,model,cfg):
+    from planning.strike_objective import enabled
+    if enabled(cfg):
+        from planning.strike_mppi import optimize
+        return optimize(job,model,cfg)
     if cfg['mppi'].get('parameterization')=='control_points':
         from planning.mppi_trajectory import optimize
         return optimize(job,model,cfg)

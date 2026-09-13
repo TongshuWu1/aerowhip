@@ -88,6 +88,12 @@ class PVAEnvironment:
         fast_solve=fast_solve and torch.device(device).type=='cuda'
         self.fused_ticks=fused_ticks and graph and torch.device(device).type=='cuda';self.tick_graphs={}
         self.model_config=deepcopy(model);self.settings=deepcopy(settings);self.device=torch.device(device);self.root=root
+        from planning.strike_objective import enabled
+        self.targeted_strike=enabled(self.settings)
+        if self.targeted_strike:
+            # The new objective bypasses legacy shaping and contact termination.
+            # These three zero values are internal bookkeeping, not saved rewards.
+            self.settings['reward']=dict(success=0.,failure=0.,jerk=0.)
         criterion(self.settings['task'])
         if settings.get('command_contract')!=SCHEMA:raise ValueError('PVA action contract required; a force checkpoint cannot be reinterpreted')
         self.batch_size=int(batch_size);self.engine=ResearchExecutionModel.from_mapping(model,root=root,device=device)
@@ -159,6 +165,8 @@ class PVAEnvironment:
         self.encounter_backward=self.total.clone();self.encounter_tip_first=self.active.clone().zero_()
         self.termination_time=self.total.new_full((b,),self.steps*self.control_dt)
         self.cutoff=torch.full((b,),self.steps,device=self.device,dtype=torch.long)
+        from planning.strike_objective import initialize as initialize_strike
+        initialize_strike(self)
         self.frames=[]
         from learning.two_target_whip import initialize
         initialize(self)
@@ -205,6 +213,8 @@ class PVAEnvironment:
         self.evolving=expand(getattr(source,'evolving',source.active))
         from planning.whip_objective import ENCOUNTER_FIELDS
         for name in ENCOUNTER_FIELDS:setattr(self,name,expand(getattr(source,name)))
+        from planning.strike_objective import FIELDS as STRIKE_FIELDS
+        for name in STRIKE_FIELDS:setattr(self,name,expand(getattr(source,name)))
         for name in self.extra_tick_fields:setattr(self,name,expand(getattr(source,name)))
         self.packets=[expand(p) for p in source.packets]
         self.actions=[expand(a) for a in source.actions]
@@ -248,6 +258,14 @@ class PVAEnvironment:
         self.state=DderState(torch.where(self.evolving[:,None,None],q,previous.positions_m),
             torch.where(self.evolving[:,None,None],v,previous.velocities_m_s))
         q,v=self.state.positions_m,self.state.velocities_m_s
+        if self.targeted_strike:
+            from planning.strike_objective import observe
+            observe(self,previous,self.state,running,clock_left)
+            self.termination_time=torch.where(invalid,clock_left,self.termination_time)
+            self.cutoff=torch.where(invalid,clock_cutoff,self.cutoff)
+            if trace:self.frames.append(dict(time_s=right,origin=self.pose.position.clone(),rotation=self.pose.rotation.clone(),cable=q.clone(),
+                origin_velocity=self.pose.velocity.clone(),cable_velocity=v.clone()))
+            return reward
         delta=q[:,-1]-previous.positions_m[:,-1]
         fraction=((self.target-previous.positions_m[:,-1])*delta).sum(-1)/delta.square().sum(-1).clamp_min(1e-20)
         nearest=previous.positions_m[:,-1]+fraction.clamp(0,1)[:,None]*delta
@@ -420,6 +438,13 @@ class PVAEnvironment:
 
     def result(self):
         extra={}
+        if self.targeted_strike:
+            extra.update(closest_approach_time_s=self.encounter_time.clone(),
+                closest_tip_velocity_m_s=self.encounter_tip_velocity.clone(),
+                fold_valid=self.strike_valid.clone(),
+                strike_time_s=self.strike_time.clone(), strike_distance_m=self.strike_distance.clone(),
+                strike_tip_velocity_m_s=self.strike_velocity.clone(),
+                fold_completed_time_s=self.fold_completed_time_s.clone())
         if self.extra_tick_fields:
             extra=dict(target_hits=self.target_hits.clone()&~self.failed[:,None],target_hit_times_s=self.target_hit_times.clone(),
                 target_minimum_distances_m=self.target_minimum_distances.clone(),target_hit_velocities_m_s=self.target_hit_velocities.clone())
