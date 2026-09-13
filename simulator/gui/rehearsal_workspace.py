@@ -140,13 +140,19 @@ class RehearsalWorkspace(QWidget):
         m=self.metadata;self.progress.setValue(1000)
         self.launch_note.setText('Settled level hover · zero initial velocity\nHanging cable · saved launch and target\n'+
             ('Deterministic policy through termination\nPreview has no recovery or flight CSV' if m.get('preview_only') else
-             'Hold 10 s before execution\nFrozen whip → curved recovery → slow approach → hold'))
+             'Hold 10 s before execution\nFrozen whip → '+('brake → return → hold' if m.get('recovery',{}).get('schema')=='brake_return_hold_v1' else 'historical saved recovery → hold')))
         self.time_note.setText('Blue: commanded tracked origin · orange: predicted whip'+('' if m.get('preview_only') else ' · green: predicted recovery'))
         for spins,values in [(self.start_spins,m['initial_tracking_origin_m']),(self.target_spins,m['target_position_m'])]:
             for spin,value in zip(spins,values):spin.blockSignals(True);spin.setValue(value);spin.blockSignals(False)
         self.result_label=(m['planner'] if m.get('planner') else 'Policy '+m['checkpoint_sha256'][:8])
+        outcome=('travelling fold confirmed' if m.get('predicted_fold_valid') else 'no verified fold') if 'predicted_fold_valid' in m else ('valid hit' if m.get('predicted_valid_hit') else 'miss')
         self.status.setText(f'{self.result_label} · whip {m["whip_end_s"]:.2f} s · total CSV {m["total_duration_s"]:.2f} s · '
-            f'predicted {"valid hit" if m["predicted_valid_hit"] else "miss"} · closest tip {m["minimum_tip_distance_m"]*100:.1f} cm. Recovery prediction is unvalidated.')
+            f'predicted {outcome} · closest tip {m["minimum_tip_distance_m"]*100:.1f} cm. '+
+            ('Complete recovery replay; physical validation pending.' if m.get('recovery_prediction_complete') else 'Recovery replay incomplete; physical validation pending.'))
+        if m.get('fold_requirement')=='diagnostic_only':
+            self.status.setText(self.status.text()+' Fold is a diagnostic, not an acceptance condition.')
+        if m.get('speed_metric')=='tip_gain_over_root':
+            self.status.setText(self.status.text()+f' Scored event: tip {m["directed_tip_speed_m_s"]:.2f} m/s, root {m["root_forward_speed_m_s"]:.2f} m/s, rewarded gain {m["rewarded_tip_speed_m_s"]:.2f} m/s; angle {m["strike_angle_deg"]:.1f} deg.')
         if m.get('target_positions_m'):
             closest=' / '.join(f'{100*d:.1f} cm' for d in m['target_minimum_distances_m'])
             self.status.setText(f'MPPI two-target whip · {sum(m["target_hits"])}/2 ordered tip hits · closest T1 / T2: {closest} · complete CSV {m["total_duration_s"]:.2f} s. Simulation only.')
@@ -155,9 +161,15 @@ class RehearsalWorkspace(QWidget):
             snapshot=m['policy_snapshot']
             self.status.setText(f'{snapshot["source_run_name"]} · {snapshot["checkpoint_choice"]} at {snapshot["checkpoint_attempts"]:,} attempts · {m["outcome"]} · closest tip {m["minimum_tip_distance_m"]*100:.1f} cm. Policy preview only; no recovery or flight CSV.')
         elif not m['recovery_prediction_complete']:self.status.setText(self.status.text()+f' Prediction stopped at {m["prediction_valid_through_s"]:.2f} s after a model-domain failure.')
-        self.status.setText(self.status.text()+(' Task requires forward pull then backward release.' if m.get('pullback',{}).get('required') else ' Saved tip-hit criteria did not require backward release.'))
+        if 'predicted_fold_valid' not in m:self.status.setText(self.status.text()+(' Task requires forward pull then backward release.' if m.get('pullback',{}).get('required') else ' Saved tip-hit criteria did not require backward release.'))
         if m.get('wave',{}).get('required'):
             self.status.setText(self.status.text()+f' Travelling-bend stages: {m["wave"]["completed_stages"]}/3.')
+        if m.get('objective_schema')=='fixed_tip_reference_v1':
+            correction_label=m.get('planner','Fixed-reference correction').replace(' command correction',' correction')
+            self.status.setText(f'{correction_label} · tip reference RMSE '
+                f'{100*m["corrected_reference_tip_rmse_m"]:.1f} cm · quadrotor reference RMSE '
+                f'{100*m["corrected_reference_quadrotor_rmse_m"]:.1f} cm · total CSV '
+                f'{m["total_duration_s"]:.2f} s. Complete coupled recovery checked; simulation only.')
         for w in [self.save,self.package,self.open,self.play]:w.setEnabled(True)
         if m.get('preview_only'):self.save.setEnabled(False);self.package.setEnabled(False)
         self.timeline.setRange(0,len(self.arrays['prediction_time_s'])-1);self.timeline.setValue(0)
@@ -172,10 +184,10 @@ class RehearsalWorkspace(QWidget):
     def ensure_viewer(self):
         if self.viewer is not None or self.arrays is None:return
         from .viewer_3d import create_viewer
-        task=read_json(self.directory/'task.json');self.viewer=create_viewer(self.arrays['cable_positions_m'][0],self.arrays['target_position_m'],task['desired_strike_direction_world'],task['success']['tip_target_distance_m'],self)
+        task=read_json(self.directory/'task.json');self.viewer=create_viewer(self.arrays['cable_positions_m'][0],self.arrays['target_position_m'],task['desired_strike_direction_world'],task.get('success',{}).get('tip_target_distance_m',task.get('target_marker_radius_m',.02)),self)
         if 'target_positions_m' in self.arrays:
             from .whip_targets import add_targets
-            add_targets(self.viewer,self.arrays['target_positions_m'],task['success']['tip_target_distance_m'])
+            add_targets(self.viewer,self.arrays['target_positions_m'],task.get('success',{}).get('tip_target_distance_m',task.get('target_marker_radius_m',.02)))
         q=self.arrays['cable_positions_m'][0]
         self.viewer.update_state(q,np.zeros(3),q[:1],q[-1:],
             tracked_origin_m=self.arrays['origin_positions_m'][0],tracked_rotation=self.arrays['origin_rotations'][0],render=False)
@@ -202,14 +214,15 @@ class RehearsalWorkspace(QWidget):
             import pyvista as pv
             if not getattr(self,'_reference_source',None)==str(self.directory):
                 task=read_json(self.directory/'task.json')
-                self.viewer.set_target(a['target_position_m'],task['desired_strike_direction_world'],task['success']['tip_target_distance_m'],render=False)
+                self.viewer.set_target(a['target_position_m'],task['desired_strike_direction_world'],task.get('success',{}).get('tip_target_distance_m',task.get('target_marker_radius_m',.02)),render=False)
                 if len(a['commands'])>1:self.viewer.plotter.add_mesh(pv.lines_from_points(a['commands'][:,:3]),color='#2563eb',line_width=2,name='FullStateReference',render=False,reset_camera=False)
                 self._origin_mesh=pv.PolyData(a['origin_positions_m'][index:index+1].copy())
                 self.viewer.plotter.add_mesh(self._origin_mesh,color='#0f172a',point_size=12,render_points_as_spheres=True,name='TrackedOrigin',render=False,reset_camera=False)
                 self._reference_source=str(self.directory)
             self._origin_mesh.points=a['origin_positions_m'][index:index+1].copy();self._origin_mesh.Modified()
         self.viewer.render()
-        self.scene_note.setText(f'{t:.2f} s · {"Frozen whip" if phase==1 else "Recovery / final hold — unvalidated"} · tracking-frame glyph and cable attachment · {self.result_label}')
+        phase_name={1:'Frozen whip',2:'Braking',3:'Return to hover',4:'Final hold'}.get(int(phase),'Recovery') if self.metadata.get('recovery',{}).get('schema')=='brake_return_hold_v1' else ('Frozen whip' if phase==1 else 'Historical recovery / hold')
+        self.scene_note.setText(f'{t:.2f} s · {phase_name} · model prediction · {self.result_label}')
         if 'target_hit_times_s' in a:
             from .whip_targets import progress_text
             self.scene_note.setText(self.scene_note.text()+' · '+progress_text(t,a['target_hit_times_s']))
@@ -239,12 +252,21 @@ class RehearsalWorkspace(QWidget):
         prediction=a['origin_positions_m'];planned=p[np.searchsorted(t,a['prediction_time_s'],side='right').clip(1,len(t))-1,:3]
         error_axis=axes[3].twinx();error_axis.plot(a['prediction_time_s'],np.linalg.norm(prediction-planned,axis=-1)*100,color='#ea580c',label='Tracking error')
         error_axis.set_ylabel('Tracking error [cm]',color='#ea580c');error_axis.tick_params(axis='y',colors='#ea580c',labelsize=8);error_axis.spines['top'].set_visible(False)
+        if self.metadata.get('objective_schema')=='fixed_tip_reference_v1':
+            error_axis.clear()
+            rt=a['reference_time_s'];tip=a['cable_positions_m'][:len(rt),-1]
+            error_axis.plot(rt,100*np.linalg.norm(tip-a['reference_tip_positions_m'],axis=-1),color='#ea580c')
+            error_axis.set_ylabel('Tip reference error [cm]',color='#ea580c')
+            error_axis.tick_params(axis='y',colors='#ea580c',labelsize=8)
+            error_axis.spines['top'].set_visible(False)
         force='virtual_force_n' in a
         direct=self.metadata.get('schema')=='pva_fullstate_30hz_v1'
         self.plot_note.setText('Virtual force includes gravity; it is simulator input only.' if force else
-            ('Bounded XYZ jerk integrates to desired P/V/A. Commands are held at 30 Hz. Dashed lines show predicted drone motion; tracking error uses the held command. Recovery has no new flight evidence.' if direct else
+            ('The saved trajectory supplies desired P/V/A. Commands are held at 30 Hz. Dashed lines show predicted drone motion; tracking error uses the held command. Recovery has no new flight evidence.' if direct else
              'Saved P/V/A commands and fitted drone prediction. Tracking error uses the held command. Recovery is not empirically validated.'))
         if self.metadata.get('preview_only'):self.plot_note.setText('Frozen deterministic PPO policy. Desired P/V/A and modeled motion through termination; no recovery or flight CSV.')
+        if self.metadata.get('objective_schema')=='fixed_tip_reference_v1':
+            self.plot_note.setText('Corrected B-spline P/V/A commands, evaluated with M1. The error curve compares the predicted tip with the original M0 tip trajectory at the same timestamps. Slower braking, return and hold are included. Simulation only.')
         for ax,title,unit in zip(axes,['Virtual total force' if force else 'Commanded velocity','Origin position (dashed = predicted)','Commanded acceleration','Speed and prediction error'],['N' if force else 'm/s','m','m/s²','Commanded speed [m/s]']):
             ax.set(title=title,xlabel='Time [s]' if self.metadata.get('preview_only') else 'CSV time [s]',ylabel=unit);ax.axvline(self.metadata['whip_end_s'],color='#94a3b8',ls=':',lw=1);ax.legend(fontsize=7,frameon=False)
         style_axes(axes);self.canvas.draw_idle()

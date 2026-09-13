@@ -77,3 +77,21 @@ def test_recovery_search_filters_low_altitude_loops_before_selecting_a_turn():
     assert m['minimum_height_m']>=limits['minimum_origin_z_m']-1e-8
     assert m['peak_height_m']<=limits['maximum_origin_z_m']+1e-8
     np.testing.assert_array_equal(packets[:2],whip)
+
+
+def test_new_strike_cannot_export_without_fold_even_when_physics_passes(tmp_path,monkeypatch):
+    import pytest
+    import torch
+    from types import SimpleNamespace
+    from experimental_data.io import atomic_json
+    from deployment import pva_rehearsal
+    atomic_json(tmp_path/'settings.json',dict(method='mppi'))
+    atomic_json(tmp_path/'model.json',{})
+    atomic_json(tmp_path/'status.json',dict(status='completed'))
+    np.savez(tmp_path/'plan.npz',normalized_jerk=np.zeros((45,3)),plan_complete=True,committed_steps=45)
+    env=SimpleNamespace(steps=45,targeted_strike=True,active=torch.tensor([False]),
+        tensor=torch.as_tensor,rollout=lambda **_:dict(failed=torch.tensor([False]),fold_valid=torch.tensor([False])))
+    monkeypatch.setattr(pva_rehearsal,'PVAEnvironment',lambda *a,**k:env)
+    with pytest.raises(ValueError,match='No verified travelling fold'):
+        pva_rehearsal.generate(tmp_path,tmp_path/'export')
+    assert not (tmp_path/'export').exists()

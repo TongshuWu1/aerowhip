@@ -88,8 +88,15 @@ class PVAEnvironment:
         fast_solve=fast_solve and torch.device(device).type=='cuda'
         self.fused_ticks=fused_ticks and graph and torch.device(device).type=='cuda';self.tick_graphs={}
         self.model_config=deepcopy(model);self.settings=deepcopy(settings);self.device=torch.device(device);self.root=root
+        from planning.strike_objective import enabled
+        self.targeted_strike=enabled(self.settings)
+        if self.targeted_strike:
+            # The new objective bypasses legacy shaping and contact termination.
+            # These three zero values are internal bookkeeping, not saved rewards.
+            self.settings['reward']=dict(success=0.,failure=0.,jerk=0.)
         criterion(self.settings['task'])
-        if settings.get('command_contract')!=SCHEMA:raise ValueError('PVA action contract required; a force checkpoint cannot be reinterpreted')
+        from planning.position_spline import SCHEMA as SPLINE_SCHEMA
+        if settings.get('command_contract') not in (SCHEMA, SPLINE_SCHEMA):raise ValueError('PVA action contract required; a force checkpoint cannot be reinterpreted')
         self.batch_size=int(batch_size);self.engine=ResearchExecutionModel.from_mapping(model,root=root,device=device)
         self.dt=self.engine.dt_s;self.control_dt=1/30;self.stride=round(self.control_dt/self.dt)
         if self.stride<1 or not math.isclose(self.dt*self.stride,self.control_dt,abs_tol=1e-10):raise ValueError('PVA/physics clocks do not align')
@@ -159,6 +166,8 @@ class PVAEnvironment:
         self.encounter_backward=self.total.clone();self.encounter_tip_first=self.active.clone().zero_()
         self.termination_time=self.total.new_full((b,),self.steps*self.control_dt)
         self.cutoff=torch.full((b,),self.steps,device=self.device,dtype=torch.long)
+        from planning.strike_objective import initialize as initialize_strike
+        initialize_strike(self)
         self.frames=[]
         from learning.two_target_whip import initialize
         initialize(self)
@@ -205,6 +214,8 @@ class PVAEnvironment:
         self.evolving=expand(getattr(source,'evolving',source.active))
         from planning.whip_objective import ENCOUNTER_FIELDS
         for name in ENCOUNTER_FIELDS:setattr(self,name,expand(getattr(source,name)))
+        from planning.strike_objective import FIELDS as STRIKE_FIELDS
+        for name in STRIKE_FIELDS:setattr(self,name,expand(getattr(source,name)))
         for name in self.extra_tick_fields:setattr(self,name,expand(getattr(source,name)))
         self.packets=[expand(p) for p in source.packets]
         self.actions=[expand(a) for a in source.actions]
@@ -219,7 +230,12 @@ class PVAEnvironment:
             command=self.hover if i<0 else self.packets[i]
             n=max(1,math.ceil((b-a)/self.pose_maximum-1e-10))
             for _ in range(n):
-                proposal,ok=self.pose_stepper(self.pose,command,(b-a)/n);valid&=ok
+                proposal,ok=self.pose_stepper(self.pose,command,(b-a)/n)
+                if self.targeted_strike:
+                    from simulator.predicted_envelope import attitude_valid
+                    ok = ok & attitude_valid(proposal.rotation, proposal.rotation_command_from_tracking,
+                                             self.settings['limits']['maximum_tilt_deg'])
+                valid&=ok
                 accepted=valid&self.evolving
                 self.pose=replace(self.pose,**{name:torch.where(accepted.reshape((-1,)+(1,)*(getattr(self.pose,name).ndim-1)),
                     getattr(proposal,name),getattr(self.pose,name)) for name in ('position','velocity','rotation','omega_tracking')})
@@ -248,6 +264,14 @@ class PVAEnvironment:
         self.state=DderState(torch.where(self.evolving[:,None,None],q,previous.positions_m),
             torch.where(self.evolving[:,None,None],v,previous.velocities_m_s))
         q,v=self.state.positions_m,self.state.velocities_m_s
+        if self.targeted_strike:
+            from planning.strike_objective import observe
+            observe(self,previous,self.state,running,clock_left)
+            self.termination_time=torch.where(invalid,clock_left,self.termination_time)
+            self.cutoff=torch.where(invalid,clock_cutoff,self.cutoff)
+            if trace:self.frames.append(dict(time_s=right,origin=self.pose.position.clone(),rotation=self.pose.rotation.clone(),cable=q.clone(),
+                origin_velocity=self.pose.velocity.clone(),cable_velocity=v.clone()))
+            return reward
         delta=q[:,-1]-previous.positions_m[:,-1]
         fraction=((self.target-previous.positions_m[:,-1])*delta).sum(-1)/delta.square().sum(-1).clamp_min(1e-20)
         nearest=previous.positions_m[:,-1]+fraction.clamp(0,1)[:,None]*delta
@@ -291,7 +315,7 @@ class PVAEnvironment:
             directed=(contact_tip_velocity*self.direction).sum(-1)
             contact_speed=contact_tip_velocity.norm(dim=-1)
         else:contact_speed=v[:,-1].norm(dim=-1)
-        angle_ok=directed/contact_speed.clamp_min(1e-12)>=math.cos(math.radians(task['maximum_angle_deg']))
+        angle_ok=torch.ones_like(entered) if task.get('angle_mode')=='soft_reward' else directed/contact_speed.clamp_min(1e-12)>=math.cos(math.radians(task['maximum_angle_deg']))
         hit=entered&(tip<other)&first_allowed&(directed>=task['minimum_directed_speed_m_s'])&angle_ok&pullback_allowed
         if task.get('require_wave',False):
             # Conservative causal check: all stages must finish BEFORE the
@@ -350,10 +374,10 @@ class PVAEnvironment:
         return reward
 
     @torch.no_grad()
-    def step(self,action,*,trace=False):
+    def step(self,action,*,trace=False,next_packet=None):
         if self.index>=self.steps:raise ValueError('Reset a completed PVA rollout before stepping')
         action=action.to(device=self.device,dtype=torch.float64)
-        if action.shape!=(self.batch_size,3) or not bool(torch.isfinite(action).all()) or bool((action.abs()>1+1e-6).any()):raise ValueError('Finite normalized bounded XYZ jerk action required')
+        if action.shape!=(self.batch_size,3) or not bool(torch.isfinite(action).all()) or (next_packet is None and bool((action.abs()>1+1e-6).any())):raise ValueError('Finite normalized bounded XYZ jerk action required')
         mask=self.active.clone();self.evolving=mask.clone();weights=self.settings['reward'];limits=self.settings['limits'];task=self.settings['task']
         if weights.get('early_hit',0.):
             from learning.pva_success import hit_time_bonus
@@ -362,7 +386,10 @@ class PVAEnvironment:
             from learning.pva_success import impact_bonus
             previous_impact_bonus=impact_bonus(weights,self.success,self.failed,self.hit_tip_velocity,self.direction)
         reward=self.total.new_zeros(self.batch_size)
-        next_command=integrate_jerk(self.command,action*self.limit,self.control_dt)
+        from planning.position_spline import SCHEMA as SPLINE_SCHEMA
+        spline=self.settings['command_contract']==SPLINE_SCHEMA
+        if spline != (next_packet is not None):raise ValueError('Reference packets must match the saved spline/jerk contract')
+        next_command=next_packet if spline else integrate_jerk(self.command,action*self.limit,self.control_dt)
         if weights.get('command_speed',0.):
             # Soft cost with no added speed cutoff or action clipping.
             speed_ratio=next_command[:,3:6].norm(dim=-1)/limits['maximum_speed_m_s']
@@ -398,10 +425,15 @@ class PVAEnvironment:
         return self.observation(),reward.float()[:,None],(~self.active).float()[:,None],mask.float()[:,None]
 
     @torch.no_grad()
-    def rollout(self,policy=None,actions=None,*,trace=False,max_steps=None,observer=None):
+    def rollout(self,policy=None,actions=None,*,trace=False,max_steps=None,observer=None,packets=None):
         if (policy is None)==(actions is None):raise ValueError('Supply one policy or action sequence')
         count=self.steps-self.index if max_steps is None else min(int(max_steps),self.steps-self.index)
         if count<1:raise ValueError('Rollout needs at least one remaining interval')
+        if packets is not None:
+            if policy is not None or packets.shape!=(self.batch_size,count+1,11) or not bool(torch.isfinite(packets).all()):
+                raise ValueError('Finite complete spline PVA packets required')
+            if not torch.allclose(packets[:,0],self.command,atol=1e-9,rtol=0):
+                raise ValueError('Spline initial PVA must equal the rollout initial command')
         from learning.ppo_trajectory_reward import enabled,TrajectoryReward
         objective=TrajectoryReward(self) if enabled(self.settings) else None
         from learning.pva_ppo_rollout import decision_steps
@@ -411,7 +443,8 @@ class PVAEnvironment:
         if observer is not None:observer(self)
         for i in range(count):
             if policy is not None and i%repeat==0:held_action=policy(self.observation())
-            self.step(held_action if policy is not None else actions[:,i],trace=trace)
+            self.step(held_action if policy is not None else actions[:,i],trace=trace,
+                      next_packet=None if packets is None else packets[:,i+1])
             if objective is not None:objective.observe(self)
             if observer is not None:observer(self)
             if not bool(self.active.any()):break
@@ -420,6 +453,14 @@ class PVAEnvironment:
 
     def result(self):
         extra={}
+        if self.targeted_strike:
+            extra.update(closest_approach_time_s=self.encounter_time.clone(),
+                closest_tip_velocity_m_s=self.encounter_tip_velocity.clone(),
+                fold_valid=(self.strike_valid & self.strike_fold_valid & ~self.failed).clone(),
+                strike_time_s=self.strike_time.clone(), strike_distance_m=self.strike_distance.clone(),
+                strike_tip_velocity_m_s=self.strike_velocity.clone(),
+                strike_root_velocity_m_s=self.strike_root_velocity.clone(),
+                fold_completed_time_s=self.fold_completed_time_s.clone())
         if self.extra_tick_fields:
             extra=dict(target_hits=self.target_hits.clone()&~self.failed[:,None],target_hit_times_s=self.target_hit_times.clone(),
                 target_minimum_distances_m=self.target_minimum_distances.clone(),target_hit_velocities_m_s=self.target_hit_velocities.clone())

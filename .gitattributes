@@ -27,3 +27,6 @@ rehearsal_csv_and_result_in_real_flight/**/*.csv filter=lfs diff=lfs merge=lfs -
 # Preserve exact exported evidence bytes at the canonical locations.
 exports/** -text
 paper/figures/** -text
+
+# Preserve exact external manuscript snapshot bytes and provenance hashes.
+paper/overleaf/** -text

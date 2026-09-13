@@ -136,7 +136,7 @@ retiring the task does not resolve or erase that limitation.
 
 ## Latest paper-pipeline audit â€” 11 September 2026
 
-Read [PAPER_PIPELINE_AUDIT.md](../paper/PAPER_PIPELINE_AUDIT.md) and [PAPER_EXPERIMENT_PROTOCOL.md](../paper/PAPER_EXPERIMENT_PROTOCOL.md) first
+Read [PAPER_PIPELINE_AUDIT.md](../../delete/cleanup-20260913/docs/paper/PAPER_PIPELINE_AUDIT.md) and [PAPER_EXPERIMENT_PROTOCOL.md](../paper/PAPER_EXPERIMENT_PROTOCOL.md) first
 for paper decisions. Canonical flown lineage remains M0 â†’ M1-full â†’
 M2-frozen-refit-v1, 5/5/3 development takes. Selected paper baseline: staged full
 drone/cable/residual simulation-error fitting, offline 512-sample/1.5 s MPPI,
@@ -157,13 +157,13 @@ to future adaptation; 003 remains validation. The user completed this batch with
 three takes. All 310 selected command rows match per take. Original forecast
 drone/tip RMS averages 7.04/9.38 cm; no measured entry into the 5 cm target sphere.
 Closest distances are 8.63/6.56/8.84 cm and forward near-approach speeds are
-5.76/4.54/5.92 m/s. Read the [M2 flight review](../../runs/data_review/M2-whip-intake-20260910/README.md).
+5.76/4.54/5.92 m/s. Read the [M2 flight review](../../delete/cleanup-20260913/runs/data_review/M2-whip-intake-20260910/README.md).
 Flights by model â†’ M2-frozen-refit-v1 has all three measured/original-ghost replays.
 No new adaptation, planning or selection change followed the review.
 
 **Selected for the next flight:** the user chose rehearsal
 `20260910-211435-608306-M2-frozen-refit-v1-whip`. The
-[frozen package](../../runs/flight_packages/20260910-211435-608306/README.md) contains
+[frozen package](../../delete/cleanup-20260913/runs/flight_packages/20260910-211435-608306/README.md) contains
 the exact 10.3 s CSV and original M2 forecast. The global flight-selection pointer
 now identifies this run; prior pointers/artifacts are preserved. Existing exported
 CSV matches exactly. Record paired logs in
@@ -176,23 +176,23 @@ Latest reward follow-up: job `20260910-211435-608306` doubled the contact-speed
 weight 800â†’1600. It completed in 67.93 s and retained the exact prior commands,
 CSV, forecast and 4.90513 m/s directed contact speed. No further speed improvement.
 Separate rehearsal/recovery/native render checks passed; prior artifacts preserved.
-See [M2 MPPI results](../development/M2_AGGRESSIVE_MPPI.md). No flight or promotion occurred.
+See [M2 MPPI results](../../delete/cleanup-20260913/docs/development/M2_AGGRESSIVE_MPPI.md). No flight or promotion occurred.
 
-Latest: the user-authorized [M2 aggressive MPPI](../development/M2_AGGRESSIVE_MPPI.md) completed.
+Latest: the user-authorized [M2 aggressive MPPI](../../delete/cleanup-20260913/docs/development/M2_AGGRESSIVE_MPPI.md) completed.
 Job `20260910-210545-160853` uses the frozen M2 refit with a stronger smooth
 contact-speed bonus. Modeled forward hit speed improves 4.51â†’4.91 m/s against
 the same-model M1 command baseline. Its separate rehearsal and full recovery
 passed and are open for review. No model promotion or real flight occurred.
 Earlier no-new-planner notes below are historical.
 
-Latest: [M2 regression analysis](../development/M2_REGRESSION_ANALYSIS.md) is complete. Frozen
+Latest: [M2 regression analysis](../../delete/cleanup-20260913/docs/development/M2_REGRESSION_ANALYSIS.md) is complete. Frozen
 component/axis interventions identify a mismatch between separate fitting losses
 and command-to-tip prediction, with changed forward motion causing late tip-height
 regressions on three takes. No new fitting, planner, promotion or flight followed.
 
 Current: full M1-full â†’ M2 adaptation completed as
 `runs/adaptation/M2-full-whip-v1` in 27.8 min; do not duplicate or restart. Read
-[the M2 data, fitting and planning contract](../development/M1_TO_M2_ADAPTATION.md).
+[the M2 data, fitting and planning contract](../../delete/cleanup-20260913/docs/development/M1_TO_M2_ADAPTATION.md).
 The user confirmed unchanged hardware/controller/CSV and no contact/intervention.
 New 001/002/004 train and 003/005 remain outside fitting/selection. Both inherited
 residuals are updated, with prior training replay and post-selection retention
@@ -206,7 +206,7 @@ improvements. Earlier M0 005 improves; preliminary holdout slightly worsens.
 See the linked result for all takes and the saved error-cancellation diagnosis.
 
 Five real M1-full takes have arrived and been compared with the frozen M1 forecast.
-Read the [M1 real-flight review](../../runs/data_review/M1-whip-intake-20260910/README.md).
+Read the [M1 real-flight review](../../delete/cleanup-20260913/runs/data_review/M1-whip-intake-20260910/README.md).
 Mean same-command nominal-state drone/tip RMS improves from M0 10.64/18.85 cm
 to M1 8.46/8.77 cm; causal-history checks also favor M1. All command rows match.
 Near-target outward speed is 5.11 m/s mean, about 16% below the earlier M0 flights;
@@ -218,13 +218,13 @@ hardware/controller/contact confirmations remain pending. M1 real+ghost replay
 is open at 001. These facts supersede older no-real-M1 statements below.
 
 Next prospective candidate is prepared in **M1-full**:
-[`runs/flight_packages/20260910-181929-716218`](../../runs/flight_packages/20260910-181929-716218/README.md).
+[`runs/flight_packages/20260910-181929-716218`](../../delete/cleanup-20260913/runs/flight_packages/20260910-181929-716218/README.md).
 Review its saved rehearsal before flight. The 512-sample / 1.5 s search predicts
 contact at 1.177714689 s; the complete CSV is 10.333333 s including checked recovery.
 The first unchanged-settings M1 run missed; a versioned final-candidate ordering
 now prefers feasible tip hits, then the original soft objective. Reward weights,
 model, controller and bounds did not change. Read the
-[planning comparison and checks](../../runs/audits/M1-full-mppi-contact-20260910/README.md).
+[planning comparison and checks](../../delete/cleanup-20260913/runs/audits/M1-full-mppi-contact-20260910/README.md).
 19 tests and native CUDA/Qt/VTK checks passed. M0 selection and old artifacts stay
 unchanged. This is a separate review candidate, with no physical flight executed.
 The next real flight tests the already-fitted M1, then can supply M2 adaptation
@@ -243,7 +243,7 @@ The project goal is full drone/cable/residual adaptation; read the current
 gain-only candidate, and the raw whip pipeline does not yet train both residuals.
 Older scalar-only procedures below are historical trial scopes.
 
-The [first partial real adaptation](../development/M0_M1_FIRST_ADAPTATION.md) is complete. A single drone
+The [first partial real adaptation](../../delete/cleanup-20260913/docs/development/M0_M1_FIRST_ADAPTATION.md) is complete. A single drone
 response gain was fitted, but held-out errors increased, so the M1 candidate is
 not promoted and M0 remains selected. Compare generations contains the saved
 M0/M1 same-input results. No fitting/planning is running and no M1 flight occurred.
@@ -251,7 +251,7 @@ Older no-M1/synthetic-only statements below are historical.
 
 Five real M0 whip pairs are now received and checked. User-requested split is
 001/002/004 adaptation and 003/005 validation. Read the
-[intake review](../../runs/data_review/M0-whip-intake-20260910/README.md), including
+[intake review](../../delete/cleanup-20260913/runs/data_review/M0-whip-intake-20260910/README.md), including
 003's missing initialization marker and estimated clock alignment. Current original-
 forecast comparison is `runs/data_review/M0-whip-first-comparison-v2`. No M1 fit or
 reinitialized diagnostic rollout has run. Earlier empty-inbox notes are historical.
@@ -271,7 +271,7 @@ The live catalog contains only selected M0. Real inbox remains empty; no new
 real fitting/planning/flight ran. Reviewed scalar-only scope and prospective
 validation remain required. Synthetic audit: `runs/audits/model-evolution-20260910`.
 
-Latest: [M0â†’M1 preparation and audit](../development/M0_TO_M1_ADAPTATION.md) is ready for
+Latest: [M0â†’M1 preparation and audit](../../delete/cleanup-20260913/docs/development/M0_TO_M1_ADAPTATION.md) is ready for
 reviewed new flight data. Inbox `M0_whip_20260910-022818-648386/flight_take` under
 `data/flight_batches` is empty. Original flight package/forecast
 unchanged. New raw-coordinate workflow compares the frozen forecast before a
@@ -281,7 +281,7 @@ No real M1 or physical validation exists yet; synthetic software checks are unde
 `runs/audits/M0-to-M1-readiness-20260910`. Read that guide before using old fit notes.
 
 Latest: user selected `20260910-022818-648386` for the next measured flight.
-Use [selected take instructions](../../runs/flight_packages/20260910-022818-648386/README.md)
+Use [selected take instructions](../../delete/cleanup-20260913/runs/flight_packages/20260910-022818-648386/README.md)
 and `config/pva/flight_selection.json`; exact CSV and original forecast preserved.
 Eleven other MPPI runs and three rehearsals are archived in place and hidden from
 active lists; all original files and paths retained. Live-view run binding fixed,
@@ -313,14 +313,14 @@ target contact and our custom wave/speed/reversal requirements must be reported
 separately. Both recent motions contact the virtual target; neither establishes
 the preferred fold. Review only; no implementation/settings changes, runs or fits.
 
-Latest: the [timing/strength search trial](../development/MPPI_TIMING_SEARCH.md) completed with
+Latest: the [timing/strength search trial](../../delete/cleanup-20260913/docs/development/MPPI_TIMING_SEARCH.md) completed with
 no improvement, job `20260910-020448-013542`. Twenty updates / 64.40 s retained
 the exact previous-sweep commands; no strong fold or strict success. Checked
 rehearsal saved/selected; optimization stopped. Both baselines retained under the same
 development M0 and unchanged reward/bounds; 512 samples, full 1.5 s. Read its
 status and audit `mppi-timed-baselines-20260910`; no automatic duplicate or fit.
 
-Latest: the [preferred-fold objective and one trial](../development/MPPI_PREFERRED_FOLD.md) completed.
+Latest: the [preferred-fold objective and one trial](../../delete/cleanup-20260913/docs/development/MPPI_PREFERRED_FOLD.md) completed.
 Job `20260910-015017-245988` stopped at plateau after 31 updates / 94.51 s:
 1.63 cm closest tip, flatter velocity elevation (17.04 degrees), but no strong
 fold or strict strike. Rehearsal/recovery frozen and selected; all optimization
@@ -340,10 +340,10 @@ Latest outcome: whole-whip job `20260910-011618-458510` completed after 20 updat
 at plateau (63.28 s). Closest tip 3.59 cm and first tip contact at 1.12488 s,
 but strict success false: dominant-bend stages 0/3. Complete simulated recovery
 passed; rehearsal and original forecast saved and selected for playback. Read
-latest HANDOFF and [trial details](../development/MPPI_WHOLE_WHIP.md). No optimizer, fit or flight
+latest HANDOFF and [trial details](../../delete/cleanup-20260913/docs/development/MPPI_WHOLE_WHIP.md). No optimizer, fit or flight
 is currently authorized to start automatically. Launch notes below are historical.
 
-Latest 10 September 01:17: user-authorized [whole-whip MPPI](../development/MPPI_WHOLE_WHIP.md)
+Latest 10 September 01:17: user-authorized [whole-whip MPPI](../../delete/cleanup-20260913/docs/development/MPPI_WHOLE_WHIP.md)
 trial `20260910-011618-458510` is running; preceding run is stopped at 42 commands.
 Same development model; 512 samples, 10 control points, four proposals, adaptive
 temperature and separate continuous objective over a complete 1.5 s maneuver.
@@ -359,16 +359,16 @@ No fit-complete/flight-ready claim or global selection change. The one-run worke
 will check and freeze a rehearsal after completion if recovery passes; no retry,
 flight or M1 fit is automatic. See latest HANDOFF for exact paths and checks.
 
-10 September update: [gradient and damping investigation](../development/PRELIMINARY1_DAMPING_RESOLUTION.md)
+10 September update: [gradient and damping investigation](../../delete/cleanup-20260913/docs/development/PRELIMINARY1_DAMPING_RESOLUTION.md)
 completed; a separate unselected M0 development candidate is staged. New real
 whip takes will be collected later for the sim-to-real-to-sim loop. Original M0
 and saved forecasts remain unchanged; MPPI and neural fitting remain stopped.
 
 Latest status: the user authorized and completed the small
-[cable-only pilot](../development/PRELIMINARY1_CABLE_PILOT.md) following the literature review.
+[cable-only pilot](../../delete/cleanup-20260913/docs/development/PRELIMINARY1_CABLE_PILOT.md) following the literature review.
 Its physical pair is diagnostic only; no new M0 was published or selected.
 MPPI `20260909-224132-314704` remains stopped. No drone or residual training ran.
-See [method comparison and proposed next steps](../development/PRELIMINARY1_METHOD_COMPARISON.md)
+See [method comparison and proposed next steps](../../delete/cleanup-20260913/docs/development/PRELIMINARY1_METHOD_COMPARISON.md)
 and the latest HANDOFF; older running-status descriptions below are historical.
 
 The new experiment is `20260909-unseen-145g-17g`. The user reports a repaired
@@ -378,7 +378,7 @@ scaled to 17 g; this distribution remains provisional. No old learned model,
 recording or policy is active. Historical evidence is recoverable through HANDOFF.
 
 The first five preliminary pairs have now been collected, reviewed and fitted
-under the user's subsequent authorization. See [preliminary1 fit details](../development/PRELIMINARY1_FIT.md)
+under the user's subsequent authorization. See [preliminary1 fit details](../../delete/cleanup-20260913/docs/development/PRELIMINARY1_FIT.md)
 and the job status in HANDOFF. Collection instructions below remain applicable to
 additional takes; imports do not automatically enter an existing frozen fit.
 

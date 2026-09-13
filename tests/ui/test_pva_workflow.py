@@ -29,11 +29,11 @@ def test_planner_setup_edits_are_independent_and_do_not_translate_saved_runs(tmp
     page.shutdown();page.close();app.processEvents()
 
 
-def test_new_window_is_six_page_direct_pva_workflow():
+def test_new_window_is_five_page_mppi_workflow():
     from simulator.gui.main_window import SimulatorMainWindow
     from simulator.gui.pva_main_window import PVAResearchWindow,PAGES
     assert SimulatorMainWindow is PVAResearchWindow
-    assert [name for name,_ in PAGES]==['Models & fitting','Recordings','PPO','MPPI','Rehearsals','Flight comparison']
+    assert [name for name,_ in PAGES]==['Models & fitting','Recordings','MPPI','Rehearsals','Flight comparison']
 
 
 def test_wave_setup_keeps_mixture_scales_and_task_controls(tmp_path):

@@ -1,100 +1,103 @@
 # AeroWhip: current handoff
 
-Updated 11 September 2026. Project/repository name: **AeroWhip / `aerowhip`**.
-Paper title: **AeroWhip: Aerial Cable Whipping through Iterative Model Refinement**.
+## Initial hover clarification
 
-Read [the paper handoff](docs/paper/PAPER_WRITING_HANDOFF.md) and
-[experiment protocol](docs/paper/PAPER_EXPERIMENT_PROTOCOL.md) for current decisions.
-They supersede older proposals for new preliminary collection, a refitted M0,
-multiple targets, 90 final flights or binary 5 cm paper outcomes.
+The operator clarified that battery condition and damage are not considered the explanation, and reports small cable-tip motion during the initial hover, attributed to propeller airflow. The command-correction code initializes every rollout with the same frozen M0 cable shape and zero nodal velocity, rather than the measured pre-strike state of each take. Variation in the actual initial cable state is therefore a plausible source of tracking variability. Pre-strike motion and its association with strike error have not yet been quantified; neither airflow causation nor its contribution to the M1-to-M2 difference is established.
+All five takes and measured metrics are unchanged. See
+`runs/data_review/M2-paper-20260913/CONDITIONS_NOTE.md`.
 
-## Current scope
+## Latest physical check: five M2-selected flights
 
-- Retain the existing M0, preliminary measurements and their original roles.
-  Collect a new whip chain: 5 M0 flights, 5 M1 flights, then 5 paired M0/M2 blocks
-  (10 final flights), at one target. Do not refit M0.
-- Use continuous minimum 3D tip-to-target distance over 0–1.5 s as the main task
-  metric. Evaluate all three frozen models on the same final recordings for
-  command-to-tip prediction RMS. Final recordings never enter fitting or tuning.
-- Use the existing staged full update and frozen M0 planner settings. Retained
-  M0 disables the cable residual; full M1/M2 enable it. Report this model-capacity
-  difference; this is not a controlled extra-data-only comparison.
-- The current PVA workflow exports 30 Hz CSVs. Aircraft execution uses the
-  colleague's separate flight program. Preserve historical command semantics
-  for historical artifacts; do not reinterpret older force/20 Hz policies.
-- The main research UI has six pages. The `deployment` branch has the five-page
-  operator workflow and its own setup/runbook. Ubuntu/RTX 5080 is the planned lab
-  machine, not a validated environment. See `docs/lab/VALIDATION.md`.
+All five M2 takes were confirmed clean and matched the selected CSV. Tip and
+marker coverage is complete over the strike window. The batch is evaluation-only;
+no new fit, command correction or M3 training split was requested.
 
-## Existing evidence
+Equal-take means (M0 / M1 / M2): fixed-time target error 24.12 / 11.18 / 13.10 cm;
+closest distance 14.73 / 7.83 / 8.60 cm; original tip-reference RMSE
+18.09 / 16.06 / 13.28 cm; original quadrotor-reference RMSE
+15.66 / 11.17 / 12.63 cm. Tip speed at original strike 5.98 / 5.85 / 5.82 m/s.
+M2 improved average tip-trajectory tracking but not target accuracy over M1.
+Fixed-time target-error SD increased from 4.04 to 7.52 cm. No take was excluded.
+Clock offsets are estimated; M2_002 has 9.46 ms half-record disagreement.
 
-The historical flown lineage is **M0 → M1-full → M2-frozen-refit-v1**, with
-5/5/3 development takes. The gain-only M1 is a sibling, not the full update;
-the original full M2 and its frozen refit have the same model signature.
-These observations informed system design and are not an untouched final test.
-Read [the development comparison](docs/development/M0_M1_M2_SYSTEM_COMPARISON.md) and
-[the frozen staged method](docs/methods/FROZEN_SYSTEM_IDENTIFICATION.md), retaining their
-study-specific qualifications and original reporting windows.
+Report: `runs/data_review/M2-paper-20260913/REPORT.md`.
+Immutable intake: `data/flight_batches/M2_paper_selected_correction_20260913`.
+Original files remain in `exports/M2_selected_fixed_tip_reference/flight_take`.
+All raw and frozen-forecast hashes verified; no numerical source changed.
 
-M0's retained command is
-`runs/rehearsals_pva/20260910-022818-648386-M0-development-whip`.
-CSV SHA-256:
-`ea2e20bba92eb55cad12559ea97fb817eed76cd9ef6b21c191bf7b504368dde3`.
-Original forecast SHA-256:
-`8ed2d231f333d567d71fd8871322e6a2d77b625a29ea2135c434553290b25e13`.
-The research flight selection is recorded separately in
-`config/pva/flight_selection.json`; do not change it as a documentation cleanup.
+## Current flight and model
 
-## Jobs and preserved work
+Main branch; current model is **M2-selected**: updated nominal quadrotor response,
+retained M1 quadrotor residual, M2 cable physical parameters and verified cable
+residual checkpoint 100. The user chose to keep the drone residual. No further
+fitting or optimization is running. The cable-only variant is historical.
 
-PPO development is separate from the core MPPI paper study. Verified job
-`runs/ppo_pva/20260911-142454-400090` completed at 2,097,152 attempts with stopping
-reason `safety_ceiling`; that is not a convergence claim. Its best checkpoint is
-from 2,080,768 attempts, SHA-256
-`afe1826067889787c598aee00f4d0f6bb44f2fe77f67fb0e6daa257dc948e6ea`.
-The completed recovery rehearsal is
-`runs/rehearsals_pva/20260911-142454-400090-M2-ppo-persistent-whip`.
-Preserve this run, checkpoints and recovery previews; do not duplicate or
-restart it. Read actual status again before any later job action.
-Two-target exploration is paused and the swing-and-settle task is retired.
+- CSV: `exports/M2_selected_fixed_tip_reference/fullstate_30hz.csv`.
+- Raw next takes: `exports/M2_selected_fixed_tip_reference/flight_take/`.
+- 217 rows, 30 Hz, 7.2 s. Origin (0,0,1.4) m; target (1.25,0,1.25) m.
+- CSV SHA256: `c9a39713d627ceb5fe3cc555ccb2d3fdf853d3e20ae1a9c583faa661fbf8f379`.
+- Model: `runs/adaptation/M2-selected-20260913/candidate/model.json`.
+- Correction: `runs/reference_tracking/M2-selected-local-20260913-042637-826368`.
+- Rehearsal: `runs/rehearsals_pva/20260913-042637-826368-M2-selected-local-fixed-tip-reference`.
+- `exports/CURRENT_FLIGHT.json` and `config/pva/replay.json` select this run.
 
-The user authorized removing obsolete measurements, failed legacy trials, old
-records and superseded documents, while keeping the recent work (especially
-the 10 September M0/M1/M2 chain). Retain the complete current lineage, its
-preliminary/calibration dependencies, current selected PPO/MPPI, new deployment
-work, and the raw records, forecasts, weights, optimizer state and source
-snapshots needed to explain and reproduce them. Age alone must not remove a
-dependency of a retained model or result. Do not inspect, fit,
-evaluate or plot the protected `fig8vertical_002` recording. Its opaque copying
-for the previously authorized private lab transfer is allowed.
+The corrected quintic B-spline starts from the executed M1 commands and matches
+the same original M0 predicted physical tip trajectory and timing. The objective
+is mean squared tip-reference error + 0.1 quadrotor-reference error + 0.01 command
+position change from original M0. No direct measured-trajectory bias is added.
+The fixed reference is `runs/reference_tracking/M0-paper-fixed-reference`.
+Original strike time is 1.1172482457473654 s; correction prefix ends at 34/30 s.
+Same slower braking, return to launch and final hold. Commands remain desired
+tracked-origin P/V/A, kinematic acceleration, zero yaw, 30 Hz zero-order hold.
 
-Cleanup does not change fitting roles, rewards, physics or the selected flight.
-Do not reset the working tree, rewrite Git history, or restart old jobs while
-organizing the project. Do not treat removed historical status prose as a live
-instruction if it is encountered in a retained frozen snapshot.
+## Physical evidence and fitting
 
-The 11 September 2026 cleanup removed 5,669 obsolete or generated files
-(78,039,454 bytes) across 153 reviewed paths. All 10,874 retained evidence files
-matched their pre-cleanup hashes; the recent M0–M2 lineage, required preliminary/
-calibration inputs and selected PPO/MPPI remain intact.
+M0 and M1 each have five clean physical takes. Mean target error at the original
+strike time decreased from 24.12 to 11.18 cm. Mean closest distance decreased
+from 14.73 to 7.83 cm. Original-reference tip RMSE decreased from 18.09 to 16.06 cm.
+The five M2-selected flights are now evaluated above; the earlier values describe M0/M1.
 
-## Folder organization
+- Current M0 data: `data/flight_batches/M0_paper_slower_brake_20260913`.
+- Current M1 data: `data/flight_batches/M1_paper_local_correction_20260913`.
+- Data checks: `runs/data_review/M0-paper-20260913` and `M1-paper-20260913`.
+- M1: `runs/adaptation/M1-paper-20260913-verified-physical`.
+- M2 original completed fit: `runs/adaptation/M2-paper-20260913` (dependency only).
 
-Current recordings are in `data/flight_batches/`, handoff exports in `exports/`,
-paper illustrations in `paper/figures/`, and the optional SDK in
-`third_party/natnet/`. Documentation is grouped under `docs/setup`,
-`docs/methods`, `docs/paper` and `docs/development`. See
-[the folder map](docs/FOLDER_MAP.md).
+M1_001/002/004 were fitted; M1_003/005 were later explicitly used for development
+model selection. Do not call them independent final test evidence. Selected
+model prediction RMSE on these recordings: quadrotor 6.72 cm, combined tip 8.46 cm.
+The full retrained M2 drone residual regressed. Cable-only ablation gave 5.79 cm
+quadrotor and 9.53 cm tip prediction RMSE. These are retrospective predictions,
+not future flight performance. If a later fit is explicitly requested, its parent must be M2-selected; no fit is currently authorized.
 
-Only paths and guides changed during organization; frozen experiment/config
-bytes and model identities are preserved. Local compatibility links retain old
-data/figure paths used inside historical evidence. New code uses the canonical
-locations and does not depend on Windows links for new studies.
+Cable residual fitting stopped under the user's time budget; checkpoint 101
+failed the unchanged numerical check, checkpoint 100 passed. No indefinite
+retraining. Preserve causal masked initialization and observed measurements;
+do not invent missing marker samples or normalize retrospective heights.
 
-## Branches after consolidation
+## Cleanup and reproducibility
 
-`main` is the canonical research checkout, with both research and lab launchers.
-`deployment` keeps portable empty defaults and the guided lab entry point.
-The shared first-party numerical and workflow source is synchronized.
-The old `twin-rewrite` and `Simulator` branch histories are retained by merges;
-the paused Isaac prototype is historical only. See `docs/GIT_WORKFLOW.md`.
+Obsolete artifacts were moved to `delete/cleanup-20260913/`, preserving relative
+paths. `plan.json`, `file_manifest.json` and `move_verification.json` record the
+moves and byte verification. No permanent deletion. The previous complete
+handoff is `delete/cleanup-20260913/before_cleanup/HANDOFF.md`.
+
+Required older planning seeds, preliminary data, fitting jobs and source
+snapshots remain at their original paths because current evidence depends on
+them. Their retention is explained by `plan.json` under retained_dependencies.
+All source packages, tests, calibration, current measurements, model weights and
+flown CSVs remain. Legacy catalog entries are preserved in the archived catalog.
+Do not reactivate old planner/reward experiments or bulk-delete dependency jobs.
+
+## Paper and validation
+
+The active manuscript is in the user's Dropbox Overleaf folder:
+`C:/Users/wts28/Lehigh University Dropbox/TonyLehigh Wu/Apps/Overleaf/AeroWhip-ICRA/main.tex`.
+The repository manuscript is an older reference. See
+`docs/paper/PAPER_WRITING_HANDOFF.md` and `docs/paper/PAPER_EXPERIMENT_PROTOCOL.md`.
+
+Current CSV, B-spline derivatives, PVA joins, complete replay and offscreen UI
+were checked on Windows / RTX 4080. These are not Ubuntu/5080 validation or
+physical collision-clearance certification. There is no validated flight sender.
+Do not inspect or evaluate the protected fig8vertical_002 recording. Preserve
+raw data and frozen source hashes; cleanup is not authorization to refit or fly.

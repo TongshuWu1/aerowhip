@@ -1,0 +1,118 @@
+{
+  "schema": "reported_recovery_incident_audit_v1",
+  "user_report": "Cable goes directly into drone during recovery on real flight.",
+  "reported_csv_binding": "Pending user confirmation; latest exported trajectory inspected as likely subject.",
+  "inspected_rehearsal": "runs/rehearsals_pva/20260913-004041-503837-M0-Bspline-origin1p4-target1p25",
+  "csv_sha256": "3c0f301a969b17c5c61c0fdbd214d4001384f935c460f753b03a9bdc7a92c4cd",
+  "confirmed_code_findings": [
+    "Recovery planner uses quadrotor PVA and shortest permitted brake duration; no cable state enters recovery selection.",
+    "Return follows braking immediately, with no cable-settling condition.",
+    "Full export checks PVA limits, model validity, height and numerical consistency; no body/rotor clearance check."
+  ],
+  "predicted_boundary_states": [
+    {
+      "phase_boundary": "whip_end",
+      "time_s": 1.1333333333333333,
+      "predicted_drone_speed_m_s": 1.3776679778985335,
+      "tip_speed_relative_to_drone_m_s": 6.049840327847583,
+      "maximum_cable_speed_relative_to_drone_m_s": 6.049840327847583
+    },
+    {
+      "phase_boundary": "braking_end",
+      "time_s": 1.7000000000000002,
+      "predicted_drone_speed_m_s": 0.4262028213648289,
+      "tip_speed_relative_to_drone_m_s": 3.5055984284955404,
+      "maximum_cable_speed_relative_to_drone_m_s": 3.584360443410875
+    },
+    {
+      "phase_boundary": "return_end",
+      "time_s": 3.7,
+      "predicted_drone_speed_m_s": 0.14715736516741637,
+      "tip_speed_relative_to_drone_m_s": 4.000994670059312,
+      "maximum_cable_speed_relative_to_drone_m_s": 4.000994670059312
+    }
+  ],
+  "geometric_diagnostics": [
+    {
+      "phase": "whip",
+      "excluded_root_material_length_m": 0.1,
+      "minimum_segment_distance_to_tracking_origin_m": 0.1499218614726206,
+      "time_s": 0.8533333333333334
+    },
+    {
+      "phase": "whip",
+      "excluded_root_material_length_m": 0.2,
+      "minimum_segment_distance_to_tracking_origin_m": 0.24663538191879658,
+      "time_s": 0.8666666666666667
+    },
+    {
+      "phase": "whip",
+      "excluded_root_material_length_m": 0.3,
+      "minimum_segment_distance_to_tracking_origin_m": 0.34240107749195553,
+      "time_s": 0.88
+    },
+    {
+      "phase": "braking",
+      "excluded_root_material_length_m": 0.1,
+      "minimum_segment_distance_to_tracking_origin_m": 0.14573426095950612,
+      "time_s": 1.4266666666666667
+    },
+    {
+      "phase": "braking",
+      "excluded_root_material_length_m": 0.2,
+      "minimum_segment_distance_to_tracking_origin_m": 0.23829681164154373,
+      "time_s": 1.4533333333333334
+    },
+    {
+      "phase": "braking",
+      "excluded_root_material_length_m": 0.3,
+      "minimum_segment_distance_to_tracking_origin_m": 0.3248546073207719,
+      "time_s": 1.5
+    },
+    {
+      "phase": "return",
+      "excluded_root_material_length_m": 0.1,
+      "minimum_segment_distance_to_tracking_origin_m": 0.13097314785713232,
+      "time_s": 2.3400000000000003
+    },
+    {
+      "phase": "return",
+      "excluded_root_material_length_m": 0.2,
+      "minimum_segment_distance_to_tracking_origin_m": 0.22276743979850994,
+      "time_s": 2.3933333333333335
+    },
+    {
+      "phase": "return",
+      "excluded_root_material_length_m": 0.3,
+      "minimum_segment_distance_to_tracking_origin_m": 0.31570039065109456,
+      "time_s": 2.4000000000000004
+    },
+    {
+      "phase": "hold",
+      "excluded_root_material_length_m": 0.1,
+      "minimum_segment_distance_to_tracking_origin_m": 0.13884449539458843,
+      "time_s": 4.053333333333334
+    },
+    {
+      "phase": "hold",
+      "excluded_root_material_length_m": 0.2,
+      "minimum_segment_distance_to_tracking_origin_m": 0.23411141176178485,
+      "time_s": 4.053333333333334
+    },
+    {
+      "phase": "hold",
+      "excluded_root_material_length_m": 0.3,
+      "minimum_segment_distance_to_tracking_origin_m": 0.33131830488941355,
+      "time_s": 4.066666666666667
+    }
+  ],
+  "limitations": [
+    "These are sampled centerline distances to the tracking origin, not distances to measured body or propeller geometry.",
+    "Root exclusions are diagnostic comparisons, not acceptance thresholds.",
+    "No actual flight logs or physical geometry were available for this incident; physical collision mechanism is unverified."
+  ],
+  "action": "Do not use the reported trajectory for further physical execution pending incident review. No replacement motion, reward or model change made.",
+  "confirmed_incident_phase": "braking",
+  "confirmed_hardware": "unchanged from M0, same vehicle and cable/attachment",
+  "physical_logs_available": false
+}

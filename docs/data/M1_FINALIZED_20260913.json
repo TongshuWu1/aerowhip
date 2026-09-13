@@ -1,0 +1,54 @@
+{
+  "M0_sha256": "81163c173c688717ae4df24c51ae76e1f9f3b49a8e5a6549421ce8244d03715e",
+  "active_M0_preserved": true,
+  "additional_optimizer_updates": 0,
+  "candidate": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M1-paper-20260913-verified-physical\\candidate\\model.json",
+  "hardware": "Windows / RTX 4080",
+  "model_sha256": "89f5712bd49acf56d4bcbf1adef05a12087a136f1aae16da627e259e268dd599",
+  "numerically_verified": true,
+  "physical_M1_flown": false,
+  "raw_hashes_unchanged": true,
+  "registration": {
+    "id": "M1",
+    "promoted": false,
+    "status": "Candidate - validation improved; prospective flight pending",
+    "validation": {
+      "equal_take_mean": {
+        "command_driven_tip": [
+          0.1623236907256707,
+          0.06942502891294486
+        ],
+        "drone": [
+          0.1413093729431848,
+          0.0630564832229681
+        ]
+      },
+      "takes": {
+        "M0_003": {
+          "command_driven_tip": [
+            0.153540736515526,
+            0.07938600611684417
+          ],
+          "drone": [
+            0.15937324040792153,
+            0.0828009990313863
+          ]
+        },
+        "M0_005": {
+          "command_driven_tip": [
+            0.1711066449358154,
+            0.05946405170904555
+          ],
+          "drone": [
+            0.12324550547844809,
+            0.0433119674145499
+          ]
+        }
+      }
+    }
+  },
+  "saved_update": 375,
+  "selected_update": 370,
+  "status": "completed",
+  "stop_reason": "user_requested_stop"
+}

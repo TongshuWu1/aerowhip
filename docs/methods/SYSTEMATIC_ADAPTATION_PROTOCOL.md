@@ -1,7 +1,7 @@
 # Historical combined-fitting design, version 0.2
 
 **Superseded as the active paper pipeline on 11 September 2026.** Read
-[PAPER_PIPELINE_AUDIT.md](../paper/PAPER_PIPELINE_AUDIT.md) and
+[PAPER_PIPELINE_AUDIT.md](../../delete/cleanup-20260913/docs/paper/PAPER_PIPELINE_AUDIT.md) and
 [PAPER_EXPERIMENT_PROTOCOL.md](../paper/PAPER_EXPERIMENT_PROTOCOL.md).
 The selected clean-study baseline uses the implemented staged full-model fit;
 the combined refinement below is an optional, unimplemented extension, not a
@@ -353,8 +353,8 @@ manifest values and the flight budget only after that comparison. Then freeze
 the method and begin the user's clean collection. A model-specific repair of the
 current M2 is not the experimental definition.
 
-Current evidence and implementation detail: [M2 diagnosis](../development/M2_REGRESSION_ANALYSIS.md),
-[completed staged M2](../development/M1_TO_M2_ADAPTATION.md),
+Current evidence and implementation detail: [M2 diagnosis](../../delete/cleanup-20260913/docs/development/M2_REGRESSION_ANALYSIS.md),
+[completed staged M2](../../delete/cleanup-20260913/docs/development/M1_TO_M2_ADAPTATION.md),
 [model contract](ADAPTATION_MODEL_CONTRACT.md),
 [evaluation infrastructure](SIM_REAL_EVALUATION.md). Those earlier documents retain
 their historical experiments; this document defines the proposed study structure.

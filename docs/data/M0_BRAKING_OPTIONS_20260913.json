@@ -1,0 +1,94 @@
+{
+  "source_rehearsal": "runs/rehearsals_pva/20260913-004041-503837-M0-Bspline-origin1p4-target1p25",
+  "confirmed_user_report": {
+    "incident_phase": "braking",
+    "hardware": "same M0 vehicle and cable/attachment"
+  },
+  "fixed_whip_exit_pva": [
+    0.6333432816107071,
+    -0.10739713036982339,
+    2.0778461653123377,
+    -2.3672436560183434,
+    -0.23414816219808388,
+    0.23835408278381454,
+    -1.8662714916326046,
+    -0.11183866403618387,
+    -2.767092009528575
+  ],
+  "comparison": [
+    {
+      "configured_horizontal_braking_limit_m_s2": 8.0,
+      "brake_duration_s": 0.5666666666666667,
+      "peak_horizontal_acceleration_m_s2": 6.792232808478206,
+      "peak_axis_jerk_m_s3": [
+        57.405915520517546,
+        5.164536160911655,
+        15.078739281680605
+      ],
+      "stopping_position_m": [
+        -0.08731579695391822,
+        -0.17673182946543392,
+        2.0713344896238852
+      ],
+      "distance_from_whip_exit_to_stop_m": 0.7240160287842841,
+      "minimum_command_x_m": -0.08731579695391822,
+      "note": "Kinematic candidate only; cable clearance and physical behavior not validated."
+    },
+    {
+      "configured_horizontal_braking_limit_m_s2": 5.0,
+      "brake_duration_s": 0.8,
+      "peak_horizontal_acceleration_m_s2": 4.964554951640014,
+      "peak_axis_jerk_m_s3": [
+        31.52426673333499,
+        2.7543323407879554,
+        11.600890521544615
+      ],
+      "stopping_position_m": [
+        -0.4130886603503692,
+        -0.20702112399765338,
+        2.0256095579176727
+      ],
+      "distance_from_whip_exit_to_stop_m": 1.0524606464922532,
+      "minimum_command_x_m": -0.4130886603503692,
+      "note": "Kinematic candidate only; cable clearance and physical behavior not validated."
+    },
+    {
+      "configured_horizontal_braking_limit_m_s2": 4.0,
+      "brake_duration_s": 1.0333333333333334,
+      "peak_horizontal_acceleration_m_s2": 3.965138342122089,
+      "peak_axis_jerk_m_s3": [
+        20.5261661720836,
+        1.7486367389014115,
+        9.371977344863371
+      ],
+      "stopping_position_m": [
+        -0.7557962095042274,
+        -0.23832525085168274,
+        1.9547758283472199
+      ],
+      "distance_from_whip_exit_to_stop_m": 1.40071303497493,
+      "minimum_command_x_m": -0.7557962095042274,
+      "note": "Kinematic candidate only; cable clearance and physical behavior not validated."
+    },
+    {
+      "configured_horizontal_braking_limit_m_s2": 3.0,
+      "brake_duration_s": 1.4666666666666666,
+      "peak_horizontal_acceleration_m_s2": 2.956888708586727,
+      "peak_axis_jerk_m_s3": [
+        11.692680381363228,
+        0.958113751023091,
+        6.8817839686354745
+      ],
+      "stopping_position_m": [
+        -1.4371818446361448,
+        -0.2991538987200897,
+        1.7566122954234942
+      ],
+      "distance_from_whip_exit_to_stop_m": 2.10405231774104,
+      "minimum_command_x_m": -1.4371818446361448,
+      "note": "Kinematic candidate only; cable clearance and physical behavior not validated."
+    }
+  ],
+  "selection": null,
+  "conclusion": "Gentler braking needs more travel for this fixed whip exit. These candidates do not establish avoidance of the reported physical collision. Flight log/video and body/rotor geometry remain needed."
+}

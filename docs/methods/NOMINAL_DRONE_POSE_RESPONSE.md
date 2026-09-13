@@ -5,9 +5,9 @@ the original 8 September integration stage; see [current architecture](../ARCHIT
 and [HANDOFF.md](../../HANDOFF.md) for the active PVA integration and stop state.
 
 Implemented 8 September 2026 as a standalone engine with no default fitted
-gains. The [first fit](../history/20260909-doc-cleanup/NOMINAL_DRONE_FIT_RESULTS_20260908.md) found useful position
+gains. The [first fit](../../delete/cleanup-20260913/docs/history/20260909-doc-cleanup/NOMINAL_DRONE_FIT_RESULTS_20260908.md) found useful position
 accuracy but attitude-domain/post-hold limitations. The subsequent
-[independent attitude mapping](../history/20260909-doc-cleanup/ATTITUDE_MAPPING_CORRECTION_20260908.md) resolves
+[independent attitude mapping](../../delete/cleanup-20260913/docs/history/20260909-doc-cleanup/ATTITUDE_MAPPING_CORRECTION_20260908.md) resolves
 the observed attitude-domain failures and improves maneuver orientation;
 post-hold tracking remains a separate limitation.
 The existing selected model, PPO, GUI execution path and physical calibration
@@ -199,7 +199,7 @@ loaded cable and a tracked origin distinct from COM, it is not an identity for
 actual motor-thrust direction. Assess orientation and attachment errors as well
 as position error before accepting this low-parameter approximation.
 
-See [the implementation review](../history/20260909-doc-cleanup/NOMINAL_DRONE_IMPLEMENTATION_REVIEW_20260908.md)
+See [the implementation review](../../delete/cleanup-20260913/docs/history/20260909-doc-cleanup/NOMINAL_DRONE_IMPLEMENTATION_REVIEW_20260908.md)
 for verified fixes, independent tests and remaining integration work.
 
 ## Historical verification before fitting

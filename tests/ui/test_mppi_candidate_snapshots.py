@@ -13,7 +13,7 @@ def test_capture_clones_states_and_publishes_prior_best_without_relabeling(tmp_p
     capture=RolloutCapture();capture(env);p.add_(1);q.add_(2);capture(env)
     result=dict(failed=torch.tensor([False,False,True,False]),success=torch.zeros(4,dtype=torch.bool),duration_s=torch.ones(4))
     score=torch.tensor([3.,2.,-torch.inf,1.]);best=series(capture,0,7,score,result,'Best so far')
-    actual=SimpleNamespace(index=14,target=torch.ones(1,3),initial_pose=env.pose,initial_state=env.state,frames=[])
+    actual=SimpleNamespace(index=14,target=torch.ones(1,3),initial_pose=env.pose,initial_state=env.state,frames=[],settings={'task':{}})
     publish(tmp_path,actual,capture,score,result,best,8)
     data=load_snapshot(tmp_path/'live.npz')
     assert data['series_iterations'][0]==7 and data['iteration']==8 and data['command_step']==14

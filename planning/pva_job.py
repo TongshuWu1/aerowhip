@@ -56,6 +56,19 @@ def load_settings(root,method):
 
 
 def validate_settings(cfg):
+    from planning.position_spline import SCHEMA as SPLINE_SCHEMA
+    if cfg.get('command_contract')==SPLINE_SCHEMA and cfg.get('trajectory_objective',{}).get('schema')=='preferred_fold_v1':
+        old=deepcopy(cfg);old['command_contract']=SCHEMA
+        validate_settings(old)
+        if cfg.get('recovery'):
+            from deployment.braking_recovery import validate as validate_recovery
+            validate_recovery(cfg['recovery'])
+        if cfg['mppi'].get('support_points')!=9:raise ValueError('Nine free B-spline position controls required')
+        scales=cfg['mppi'].get('position_noise_scales_m',[])
+        if not scales or any(not math.isfinite(v) or v<=0 for v in scales):raise ValueError('Positive finite position noise required')
+        return
+    from planning.strike_objective import enabled,validate_settings as validate_strike
+    if enabled(cfg):return validate_strike(cfg)
     from learning.pva_ppo_rollout import decision_steps
     decision_steps(cfg)
     from learning.ppo_trajectory_reward import validate
@@ -191,11 +204,15 @@ def prepare(root,settings,name,*,checkpoint=None,development_review=None):
     atomic_json(directory/'model.json',model);atomic_json(directory/'settings.json',cfg)
     atomic_json(directory/'identity.json',dict(name=name.strip() or f'{cfg["method"].upper()} PVA',method=cfg['method'],
         success_criterion=cfg['task'].get('success_criterion','legacy_strike_v1'),
-        model_source=str(source),model_source_sha256=sha256_file(source),command_contract=SCHEMA,
+        model_source=str(source),model_source_sha256=sha256_file(source),command_contract=cfg['command_contract'],
         source_checkpoint=str(checkpoint) if checkpoint else None,
         source_checkpoint_sha256=sha256_file(checkpoint) if checkpoint else None,evidence='simulation only',
         development_review=development_review))
     if resume is not None:shutil.copy2(checkpoint,directory/'resume.pt')
+    if cfg.get('spline_seed_directory'):
+        seed_root=Path(cfg['spline_seed_directory']);seed_root=seed_root if seed_root.is_absolute() else root/seed_root
+        for filename in ('initial_proposal.npz','proposal_baselines.npz',cfg['trajectory_objective']['reference_file']):
+            shutil.copy2(seed_root/filename,directory/filename)
     snapshot=directory/'source_snapshot'
     for folder in ('learning','planning','simulator','deployment','experimental_data','tools'):
         for path in (root/folder).rglob('*.py'):
@@ -332,6 +349,10 @@ def whiten(values,rho):
 
 
 def mppi(job,model,cfg):
+    from planning.strike_objective import enabled
+    if enabled(cfg):
+        from planning.strike_mppi import optimize
+        return optimize(job,model,cfg)
     if cfg['mppi'].get('parameterization')=='control_points':
         from planning.mppi_trajectory import optimize
         return optimize(job,model,cfg)

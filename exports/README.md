@@ -1,10 +1,13 @@
-# Flight-program exports
+# Flight exports
 
-Save complete command CSVs and trajectory/model bundles here when handing them
-to the separate flight program. The main research UI now defaults to this folder.
-These are offline exports; saving a file does not send commands to an aircraft.
+The current next-flight command is
+[M2_selected_fixed_tip_reference/fullstate_30hz.csv](M2_selected_fixed_tip_reference/fullstate_30hz.csv).
+It has 217 rows at 30 Hz and lasts 7.2 seconds. Save its new raw recordings in
+`M2_selected_fixed_tip_reference/flight_take/`.
 
-Original planned commands and predictions remain with their immutable run in
-`runs/rehearsals_pva/`. Pair the command actually flown with recordings in
-`data/flight_batches/`. On the `deployment` branch, exports are grouped further
-as `exports/<study>/<generation>/`.
+The original flown M0 and M1 folders remain for comparison. `CURRENT_FLIGHT.json`
+and the Rehearsal startup selection point to the selected M2. These are offline
+CSV exports for the separate laboratory flight program.
+
+Unused commands were moved to `delete/cleanup-20260913/exports/` at the repo root.
+Their original bytes and provenance remain available there.

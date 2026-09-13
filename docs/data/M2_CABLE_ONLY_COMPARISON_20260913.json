@@ -1,0 +1,295 @@
+{
+  "comparison": {
+    "cable_only": {
+      "per_take": {
+        "M1_003": {
+          "command_driven": {
+            "markers": {
+              "coverage": 1.0,
+              "rmse_m": 0.06686212169186688,
+              "total_count": 1700,
+              "valid_count": 1700
+            },
+            "tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.07325069175730996,
+              "total_count": 170,
+              "valid_count": 170
+            }
+          },
+          "conditional_cable": {
+            "markers": {
+              "coverage": 1.0,
+              "rmse_m": 0.03503864551330484,
+              "total_count": 1700,
+              "valid_count": 1700
+            },
+            "tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.052014146002592083,
+              "total_count": 170,
+              "valid_count": 170
+            }
+          },
+          "drone": {
+            "coverage": 1.0,
+            "rmse_m": 0.04838643816264223,
+            "total_count": 170,
+            "valid_count": 170
+          },
+          "end_s": 1.1294124665407854,
+          "projection_m": 0.00522811765948461,
+          "role": "validation",
+          "start_s": -0.0039208667925478835
+        },
+        "M1_005": {
+          "command_driven": {
+            "markers": {
+              "coverage": 0.9923529411764705,
+              "rmse_m": 0.08961681445300625,
+              "total_count": 1700,
+              "valid_count": 1687
+            },
+            "tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.11735950189394724,
+              "total_count": 170,
+              "valid_count": 170
+            }
+          },
+          "conditional_cable": {
+            "markers": {
+              "coverage": 0.9923529411764705,
+              "rmse_m": 0.03267587534010412,
+              "total_count": 1700,
+              "valid_count": 1687
+            },
+            "tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.04328445721684673,
+              "total_count": 170,
+              "valid_count": 170
+            }
+          },
+          "drone": {
+            "coverage": 1.0,
+            "rmse_m": 0.06740581982396714,
+            "total_count": 170,
+            "valid_count": 170
+          },
+          "end_s": 1.131217133635261,
+          "projection_m": 0.006863225707308684,
+          "role": "validation",
+          "start_s": -0.0021161996980723075
+        }
+      },
+      "quadrotor_rmse_mean_m": 0.05789612899330468,
+      "tip_rmse_mean_m": 0.0953050968256286
+    },
+    "cable_parameters_and_weights_unchanged": true,
+    "choice": "User-requested fixed-parameter ablation, regardless of retrospective score; prospective physical test pending",
+    "data_use": "Previously inspected M1 validation recordings now explicitly used for development model selection; not independent final evidence.",
+    "nominal_only_exact_differences": {
+      "M1_003": {
+        "position_attachment_m": 0.0,
+        "position_origin_m": 0.0,
+        "rotation_tracking_to_world": 0.0,
+        "velocity_origin_m_s": 0.0
+      },
+      "M1_005": {
+        "position_attachment_m": 0.0,
+        "position_origin_m": 0.0,
+        "rotation_tracking_to_world": 0.0,
+        "velocity_origin_m_s": 0.0
+      }
+    },
+    "nominal_refitted": false,
+    "original_M1": {
+      "model": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M2-selected-20260913\\variants\\M1_baseline\\model.json",
+      "per_take": {
+        "M1_003": {
+          "command_driven": {
+            "markers": {
+              "coverage": 1.0,
+              "rmse_m": 0.04658801579314824,
+              "total_count": 1700,
+              "valid_count": 1700
+            },
+            "tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.059768919238866194,
+              "total_count": 170,
+              "valid_count": 170
+            }
+          },
+          "conditional_cable": {
+            "markers": {
+              "coverage": 1.0,
+              "rmse_m": 0.042337491935496,
+              "total_count": 1700,
+              "valid_count": 1700
+            },
+            "tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.06349557693769484,
+              "total_count": 170,
+              "valid_count": 170
+            }
+          },
+          "drone": {
+            "coverage": 1.0,
+            "rmse_m": 0.04049675039187267,
+            "total_count": 170,
+            "valid_count": 170
+          },
+          "end_s": 1.1294124665407854,
+          "projection_m": 0.00522811765948461,
+          "role": "validation",
+          "start_s": -0.0039208667925478835
+        },
+        "M1_005": {
+          "command_driven": {
+            "markers": {
+              "coverage": 0.9923529411764705,
+              "rmse_m": 0.10685210428086864,
+              "total_count": 1700,
+              "valid_count": 1687
+            },
+            "tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.13931337021310386,
+              "total_count": 170,
+              "valid_count": 170
+            }
+          },
+          "conditional_cable": {
+            "markers": {
+              "coverage": 0.9923529411764705,
+              "rmse_m": 0.040489190704406756,
+              "total_count": 1700,
+              "valid_count": 1687
+            },
+            "tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.05586139677510352,
+              "total_count": 170,
+              "valid_count": 170
+            }
+          },
+          "drone": {
+            "coverage": 1.0,
+            "rmse_m": 0.10871869214612999,
+            "total_count": 170,
+            "valid_count": 170
+          },
+          "end_s": 1.131217133635261,
+          "projection_m": 0.006863225707308684,
+          "role": "validation",
+          "start_s": -0.0021161996980723075
+        }
+      },
+      "quadrotor_rmse_mean_m": 0.07460772126900134,
+      "tip_rmse_mean_m": 0.09954114472598502
+    },
+    "quadrotor_parameters_unchanged": true,
+    "retained_drone_residual": {
+      "model": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M2-selected-20260913\\variants\\retained_drone_M2_cable\\model.json",
+      "per_take": {
+        "M1_003": {
+          "command_driven": {
+            "markers": {
+              "coverage": 1.0,
+              "rmse_m": 0.04323601763587592,
+              "total_count": 1700,
+              "valid_count": 1700
+            },
+            "tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.05142024176099154,
+              "total_count": 170,
+              "valid_count": 170
+            }
+          },
+          "conditional_cable": {
+            "markers": {
+              "coverage": 1.0,
+              "rmse_m": 0.03503864551330484,
+              "total_count": 1700,
+              "valid_count": 1700
+            },
+            "tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.052014146002592083,
+              "total_count": 170,
+              "valid_count": 170
+            }
+          },
+          "drone": {
+            "coverage": 1.0,
+            "rmse_m": 0.03588471472525344,
+            "total_count": 170,
+            "valid_count": 170
+          },
+          "end_s": 1.1294124665407854,
+          "projection_m": 0.00522811765948461,
+          "role": "validation",
+          "start_s": -0.0039208667925478835
+        },
+        "M1_005": {
+          "command_driven": {
+            "markers": {
+              "coverage": 0.9923529411764705,
+              "rmse_m": 0.09418895771684907,
+              "total_count": 1700,
+              "valid_count": 1687
+            },
+            "tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.11769922551027795,
+              "total_count": 170,
+              "valid_count": 170
+            }
+          },
+          "conditional_cable": {
+            "markers": {
+              "coverage": 0.9923529411764705,
+              "rmse_m": 0.03267587534010412,
+              "total_count": 1700,
+              "valid_count": 1687
+            },
+            "tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.04328445721684673,
+              "total_count": 170,
+              "valid_count": 170
+            }
+          },
+          "drone": {
+            "coverage": 1.0,
+            "rmse_m": 0.09843409837830652,
+            "total_count": 170,
+            "valid_count": 170
+          },
+          "end_s": 1.131217133635261,
+          "projection_m": 0.006863225707308684,
+          "role": "validation",
+          "start_s": -0.0021161996980723075
+        }
+      },
+      "quadrotor_rmse_mean_m": 0.06715940655177999,
+      "tip_rmse_mean_m": 0.08455973363563474
+    },
+    "schema": "fixed_parameter_residual_ablation_v1",
+    "selected": "cable_residual_only",
+    "selection_takes": [
+      "M1_003",
+      "M1_005"
+    ],
+    "source_model": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M2-selected-20260913\\candidate\\model.json",
+    "training_restarted": false
+  },
+  "csv_independent_verifier_run": false,
+  "full_replay_completed": true,
+  "selected_for_flight": false,
+  "user_decision": "Keep drone residual; active model M2-selected"
+}

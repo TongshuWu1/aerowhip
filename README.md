@@ -1,5 +1,13 @@
 # AeroWhip
 
+Current flight: [M2 selected CSV](exports/M2_selected_fixed_tip_reference/fullstate_30hz.csv).
+See [HANDOFF.md](HANDOFF.md) for the active model, measurements and next steps,
+and [the folder map](docs/FOLDER_MAP.md) for repository organization.
+
+Obsolete artifacts were moved to `delete/cleanup-20260913/`; nothing was
+permanently deleted. The original README is preserved in its `before_cleanup/` folder.
+
+
 **AeroWhip: Aerial Cable Whipping through Iterative Model Refinement**
 
 Repository: [TongshuWu1/aerowhip](https://github.com/TongshuWu1/aerowhip).
@@ -15,6 +23,22 @@ common recordings. The existing M0 and preliminary recordings are retained.
 Historical M0/M1/M2 trials are development evidence; the planned new study uses
 20 executions at one target.
 
+
+## M0 B-spline planner on main
+
+The selected M0 motion initializes a smooth position B-spline with 9 adjustable
+XYZ points. Its original objective and target are restored. Strike alignment is
+a smooth reward; recovery brakes firmly, returns to launch, and holds.
+See the [planner guide](docs/methods/POSITION_SPLINE_PLANNER.md).
+
+A short development refinement passed complete coupled replay and CSV checks.
+The result is simulation evidence; physical validation is pending.
+
+```sh
+python tools/plan_fold_strike.py --check
+python run_simulation.py
+```
+
 ## Start here
 
 - [Current decisions and evidence boundaries](HANDOFF.md)
@@ -25,8 +49,8 @@ Historical M0/M1/M2 trials are development evidence; the planned new study uses
 
 ## Research and lab versions
 
-The main research checkout keeps six pages: **Models & fitting**, **Recordings**,
-**PPO**, **MPPI**, **Rehearsals**, and **Flight comparison**. Run it from the
+The main research checkout keeps five pages: **Models & fitting**, **Recordings**,
+**MPPI**, **Rehearsals**, and **Flight comparison**. Run it from the
 repository root using the existing environment:
 
 ```sh

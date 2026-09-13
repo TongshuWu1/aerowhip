@@ -186,7 +186,7 @@ class LabWorkspace:
                 if status.is_file(): update.update(read(status))
         return result
 
-    def create(self,name=None):
+    def create(self,name=None,*,planner_profile='config/pva/systematic_strike.json'):
         from deployment.lab_seed import load_baseline,model_identity
         if name: self.name=safe_name(name)
         if self.directory.exists(): raise ValueError('Study already exists; choose it to continue.')
@@ -199,6 +199,23 @@ class LabWorkspace:
                            aggregation='Equal take weight; five paired final comparisons; retain exclusions and missing coverage'),
                        slots=planned_slots(),models={'M0':dict(model=self.rel(model),signature=signature,
                            rehearsal=baseline['m0_rehearsal'],status='Retained frozen M0')},updates={},results=None)
+            if planner_profile is not None:
+                from planning.pva_job import validate_settings
+                from planning.strike_objective import uses_templates
+                settings=self.path(planner_profile); cfg=read(settings);validate_settings(cfg)
+                templates=(self.path(cfg['spline_seed_directory']) if cfg.get('spline_seed_directory') else self.path(baseline['mppi_settings']).parent)/'proposal_baselines.npz'
+                if uses_templates(cfg) and not templates.is_file():raise FileNotFoundError('Frozen command templates are missing')
+                frozen=self.directory/'planner';frozen.mkdir(parents=True)
+                shutil.copy2(settings,frozen/'settings.json')
+                if uses_templates(cfg):shutil.copy2(templates,frozen/'proposal_baselines.npz')
+                if cfg.get('spline_seed_directory'):
+                    seed_root=self.path(cfg['spline_seed_directory'])
+                    for filename in ('initial_proposal.npz',cfg['trajectory_objective']['reference_file']):shutil.copy2(seed_root/filename,frozen/filename)
+                    cfg['spline_seed_directory']=self.rel(frozen);write(frozen/'settings.json',cfg)
+                state['planner_profile']=self.rel(frozen/'settings.json')
+                state['planner_hashes']={self.rel(p):digest(p) for p in frozen.iterdir()}
+                state['models']['M0'].pop('rehearsal')
+                state['models']['M0']['status']='Retained M0 model; new targeted-strike plan required'
             self._save(state)
             from experimental_data.model_evaluation import load_catalog,save_catalog,model_identity as identity
             catalog=load_catalog(self.root)
@@ -226,10 +243,12 @@ class LabWorkspace:
             if item.get('export'): raise ValueError('This generation is frozen for collection; its command cannot be replanned.')
             from deployment.lab_seed import load_baseline
             from planning.pva_job import prepare,run
-            baseline=load_baseline(self.root); settings=self.path(baseline['mppi_settings']); cfg=read(settings)
+            baseline=load_baseline(self.root)
+            self._verify(state.get('planner_hashes',{}))
+            settings=self.path(state.get('planner_profile',baseline['mppi_settings'])); cfg=read(settings)
             cfg.update(model_path=item['model'],device=device)
             job,_=prepare(self.root,cfg,self.name+'-'+generation,development_review='Frozen lab study offline planning; physical execution remains external.')
-            for source in settings.parent.glob('*.npz'):
+            for source in (settings.parent.glob('*.npz') if cfg.get('mppi',{}).get('initialization')!='from_scratch' else []):
                 if not (job/source.name).exists(): shutil.copy2(source,job/source.name)
             item.update(plan=self.rel(job),status='Planning'); item.pop('rehearsal',None); self._save(state)
             try: run(job)
@@ -241,6 +260,7 @@ class LabWorkspace:
     def export(self,generation,device='cuda'):
         with self.runtime():
             state=self._load();item=self._assert_model(state,generation)
+            self._verify(state.get('planner_hashes',{}))
             if item.get('export'):
                 self._verify(item['export_hashes']);return item
             if not item.get('rehearsal'):
@@ -248,6 +268,12 @@ class LabWorkspace:
                 from deployment.pva_rehearsal import generate
                 job=self.path(item['plan'])
                 if read(job/'status.json').get('status')!='completed': raise ValueError('Only a completed plan can be exported.')
+                if state.get('planner_profile'):
+                    frozen=read(self.path(state['planner_profile'])); planned=read(job/'settings.json')
+                    for key in ('trajectory_objective','fold_constraint','mppi','task','launch','action','limits'):
+                        if frozen.get(key)!=planned.get(key):raise ValueError('Plan differs from the frozen study settings: '+key)
+                    for key in ('command_contract','fold_requirement','recovery'):
+                        if frozen.get(key)!=planned.get(key):raise ValueError('Plan differs from the frozen study settings: '+key)
                 rehearsal=self.directory/'rehearsals'/generation
                 generate(job,rehearsal,device=device)
                 portable_outputs(self.root,[rehearsal]);item['rehearsal']=self.rel(rehearsal)
@@ -255,6 +281,13 @@ class LabWorkspace:
             from deployment.lab_seed import model_identity
             if model_identity(rehearsal/'model.json')!=item['signature']: raise ValueError('Rehearsal belongs to another model.')
             metadata=read(rehearsal/'rehearsal.json')
+            if state.get('planner_profile'):
+                frozen=read(self.path(state['planner_profile']))
+                requirement=frozen.get('fold_requirement','required' if frozen.get('trajectory_objective',{}).get('schema')=='targeted_fold_strike_v1' else None)
+                if requirement is not None and metadata.get('fold_requirement','required')!=requirement:
+                    raise ValueError('Rehearsal fold requirement differs from the frozen study')
+                if requirement=='required' and metadata.get('predicted_fold_valid') is not True:
+                    raise ValueError('Study requires a travelling-fold rehearsal')
             if digest(rehearsal/'fullstate_30hz.csv')!=metadata['csv_sha256']: raise ValueError('Rehearsal CSV changed.')
             output=self.root/'exports'/self.name/generation
             output.mkdir(parents=True,exist_ok=False)
@@ -495,10 +528,11 @@ class LabWorkspace:
     def evaluate(self,device='cuda',predictions=True):
         if predictions and device!='cuda': raise ValueError('Matched full-model diagnostics use the reviewed CUDA path. Use physical-only results on CPU.')
         with self.runtime():
-            state=self._load();output=self.directory/'results'/stamp();output.mkdir(parents=True)
+            state=self._load();self._verify(state.get('planner_hashes',{}))
+            output=self.directory/'results'/stamp();output.mkdir(parents=True)
             write(output/'study_snapshot.json',state)
             from experimental_data.adaptation_check import load_comparison
-            from experimental_data.flight_performance import encounter
+            from experimental_data.flight_performance import encounter,local_velocity
             import numpy as np
             rows=[]
             for slot in state['slots']:
@@ -510,6 +544,19 @@ class LabWorkspace:
                     data=load_comparison(self.root,self.path(slot['batch']),slot['take'],self.path(item['rehearsal']))
                     mask=(data['time']>=0)&(data['time']<=state['measurement']['window_s'][1])
                     result=encounter(data['time'][mask],data['measured_cable'][mask,-1],data['target'],.05)
+                    if state.get('planner_profile'):
+                        velocity=None
+                        end=slot.get('review',{}).get('free_motion_end_s')
+                        if end is not None and slot['status']=='reviewed':
+                            tip=data['measured_cable'][mask,-1].copy()
+                            tip[data['time'][mask]>end]=np.nan
+                            velocity=local_velocity(data['time'][mask],tip)
+                        profile=read(self.path(state['planner_profile']))
+                        measured=encounter(data['time'][mask],data['measured_cable'][mask,-1],data['target'],.05,
+                            velocity=velocity,direction=profile['task']['strike_direction'])
+                        row['directed_tip_speed_at_closest_m_s']=(measured['nearest'] or {}).get('outward_speed_m_s')
+                        row['speed_estimator']='Five-sample centered quadratic derivative; contiguous reviewed free-motion observations only'
+                        row['physical_fold_status']='Requires review of measured cable/video; simulated acceptance is not physical confirmation'
                     t=data['time'][mask];native_step=float(np.median(np.diff(t)))
                     complete=t[0]<=1.5*native_step and t[-1]>=state['measurement']['window_s'][1]-1.5*native_step
                     row.update(minimum_tip_target_m=result['nearest']['distance_m'] if result['nearest'] else None,
@@ -534,7 +581,7 @@ class LabWorkspace:
                     fully_observed_paired_mean_improvement_m=float(np.mean([p['improvement_m'] for p in paired if p['fully_observed']])) if any(p['fully_observed'] for p in paired) else None),
                 qualification='All distances and paired means use observed adjacent segments only. Truncated windows and gaps may hide a closer encounter; they remain explicitly flagged in each pair. The fully observed subset requires the complete 1.5 s window and every native sample/segment observed. Positive paired improvement means smaller observed M2 error. Development takes are not final evidence.',predictions=[],prediction_summary=[])
             write(output/'report.json',report)
-            columns=['stage','take','generation','role','pair','excluded','reviewed','minimum_tip_target_m','sample_coverage','segment_coverage','window_complete','fully_observed','observation_end_s','notes','error']
+            columns=['stage','take','generation','role','pair','excluded','reviewed','minimum_tip_target_m','sample_coverage','segment_coverage','window_complete','fully_observed','observation_end_s','directed_tip_speed_at_closest_m_s','speed_estimator','physical_fold_status','notes','error']
             with (output/'physical_results.csv').open('w',newline='',encoding='utf-8') as stream:
                 writer=csv.DictWriter(stream,fieldnames=columns,extrasaction='ignore');writer.writeheader();writer.writerows(rows)
             evidence={p:h for slot in state['slots'] for p,h in slot.get('raw_hashes',{}).items()}

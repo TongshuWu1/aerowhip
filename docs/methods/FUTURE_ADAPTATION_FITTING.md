@@ -1,6 +1,6 @@
 # Future fitting: convergence and essential checks
 
-Current completed run: [M1-full to M2](../development/M1_TO_M2_ADAPTATION.md),
+Current completed run: [M1-full to M2](../../delete/cleanup-20260913/docs/development/M1_TO_M2_ADAPTATION.md),
 `runs/adaptation/M2-full-whip-v1`, 27.8 min, mixed combined results, not promoted.
 Do not duplicate or restart. Both parent residuals were retained and updated; prior training
 replay excludes historical held-out takes. The full pipeline uses practical
@@ -13,13 +13,13 @@ duplicate it. M1-full is registered for comparison, not promoted. This supersede
 earlier no-fit and scalar-only notes below. The
 stopping, provenance and validation requirements remain applicable.
 
-Current real trial: [M0/M1 first adaptation](../development/M0_M1_FIRST_ADAPTATION.md). One nominal
+Current real trial: [M0/M1 first adaptation](../../delete/cleanup-20260913/docs/development/M0_M1_FIRST_ADAPTATION.md). One nominal
 horizontal response gain fit completed at plateau and is not promoted after
 held-out regression. No fitting is running; do not resume/retry automatically.
 The scope was chosen from adaptation-only drone/cable diagnostics. Older statements
 below about synthetic-only adaptation are superseded by that measured trial.
 
-**Current whip workflow:** read [M0→M1 preparation](../development/M0_TO_M1_ADAPTATION.md).
+**Current whip workflow:** read [M0→M1 preparation](../../delete/cleanup-20260913/docs/development/M0_TO_M1_ADAPTATION.md).
 It supersedes the historical normalized/adp0 launch details below. No real M1
 fit is active; only synthetic software checks were run during preparation.
 

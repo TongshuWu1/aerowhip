@@ -1,0 +1,88 @@
+{
+  "scope": "Old AeroWhip sibling directories only; active main and unrelated projects excluded",
+  "targets": [
+    {
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project_archive_2026-08-31",
+      "files": 15134,
+      "bytes": 3166159102,
+      "links": [],
+      "status": "still_present"
+    },
+    {
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project_archive_20260908_adaptation_policy_195207",
+      "files": 934,
+      "bytes": 696152285,
+      "links": [],
+      "status": "still_present"
+    },
+    {
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project_archive_20260908_policy_cleanup",
+      "files": 10522,
+      "bytes": 7208823085,
+      "links": [],
+      "status": "still_present"
+    },
+    {
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project_archive_20260909_unseen_145g_17g",
+      "files": 25684,
+      "bytes": 2497212992,
+      "links": [],
+      "status": "still_present"
+    },
+    {
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project_archive_M1_retired_20260908_212421",
+      "files": 696,
+      "bytes": 99384394,
+      "links": [],
+      "status": "still_present"
+    },
+    {
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project_legacy_code_20260910",
+      "files": 2,
+      "bytes": 1839410,
+      "links": [],
+      "status": "still_present"
+    },
+    {
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project_source_review_20260910",
+      "files": 445,
+      "bytes": 3091387,
+      "links": [],
+      "status": "still_present"
+    },
+    {
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project_source_review_20260910.zip",
+      "files": 1,
+      "bytes": 1077117,
+      "links": [],
+      "status": "still_present"
+    },
+    {
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project_source_review_20260910.zip.sha256",
+      "files": 1,
+      "bytes": 124,
+      "links": [],
+      "status": "still_present"
+    },
+    {
+      "path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_simulator",
+      "files": 1248,
+      "bytes": 70478493,
+      "links": [],
+      "status": "removed"
+    }
+  ],
+  "active_sha256": {
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\20260910-022818-648386-M0-development-whip\\model.json": "81163c173c688717ae4df24c51ae76e1f9f3b49a8e5a6549421ce8244d03715e",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\20260910-022818-648386-M0-development-whip\\assets\\drone_model.json": "c644bddaa7ccd3a3dab58b4befa8b4642ad6792487510197ee2eb52da5dc0945",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\20260910-022818-648386-M0-development-whip\\assets\\drone_residual.pt": "564b272e1c6d4a553665828ecdd4b8f04ab2d17257ef716e4f73aa42dd9cd6d8",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\config\\pva\\m0_spline\\initial_proposal.npz": "ccbadf77f5e85e5151e7754d465e4890aaef25142aee6317a80d50232bae975e",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\config\\pva\\m0_spline\\proposal_baselines.npz": "754fafdb384f395027888d24bd50d9fc315e49c782747d912ef217655d82e9f0",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\config\\pva\\m0_spline\\wave_reference.npz": "fca15a2541af592e0b581baca57bd6ac20263520f9a0a00a0645ce230506c99c",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M0_Bspline_firm_brake\\fullstate_30hz.csv": "e0fdcbd034a23dd300a3cf4e9de0447981597248b9a6a0aa1010e15cada531f5"
+  },
+  "status": "partial: retired simulator worktree removed; archive deletion command rejected before execution",
+  "block_message": "blocked by policy; no specific rule identified",
+  "removed_bytes": 70478493,
+  "remaining_bytes": 13673739896
+}

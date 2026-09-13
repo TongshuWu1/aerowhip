@@ -16,7 +16,7 @@ The three-stage detector is still brittle. Both statements matter. Better
 contact scoring and a better description of the desired motion are separate
 requirements, and a changed success definition must never rewrite old results.
 
-![Saved forecast comparison](../../runs/audits/preferred-whip-review-20260910/comparison.png)
+![Saved forecast comparison](../../delete/cleanup-20260913/runs/audits/preferred-whip-review-20260910/comparison.png)
 
 In the middle row, the bright diagonal in the preferred motion is a strong bend
 travelling toward the tip in material coordinates. The other two cases have

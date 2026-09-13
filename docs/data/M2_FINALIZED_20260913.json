@@ -1,0 +1,253 @@
+{
+  "cable_residual_stopping": {
+    "baseline_loss": 2.214064461344144,
+    "best_loss": 1.8448909136331386,
+    "budget": {
+      "maximum_seconds": 600,
+      "maximum_updates": 200
+    },
+    "elapsed_s": 605.0534881000058,
+    "numerically_verified": true,
+    "optimizer_best_loss": 1.8410574683131617,
+    "selected_update": 100,
+    "stop_reason": "wall_time_budget",
+    "time_budget_scope": "Training loop; final checkpoint numerical checks are additional",
+    "updates": 101,
+    "validation_used_for_selection": false
+  },
+  "correction": {
+    "baseline_cost_m2": 0.0030153181399276523,
+    "checkpoint": null,
+    "command_contract": "position_spline_pva_30hz_v1",
+    "command_semantics": "Desired tracked-origin P/V/A, 30 Hz zero-order hold, kinematic acceleration, zero yaw",
+    "corrected_cost_m2": 0.0020023370012267243,
+    "corrected_reference_quadrotor_rmse_m": 0.048043028446804796,
+    "corrected_reference_tip_rmse_m": 0.040206126443088554,
+    "correction_job": "runs/reference_tracking/M2-local-20260913-041638-043249",
+    "csv_sha256": "1e0e9225bdb1ff6ee1fadfd3ce203ddcac0021179b4aad188c5958a93a7eb2b9",
+    "elapsed_s": 124.6298748999834,
+    "evidence": "Simulation-only command correction toward the original M0 physical motion; M2 has not flown.",
+    "independent_cost_difference_m2": 4.336808689942018e-19,
+    "initial_tracking_origin_m": [
+      0.0,
+      0.0,
+      1.4
+    ],
+    "iterations": 6,
+    "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M2-local-20260913-041638-043249",
+    "maximum_predicted_tilt_limit_deg": 60.0,
+    "maximum_reference_quadrotor_deviation_m": 0.07723818380671146,
+    "minimum_predicted_cable_height_m": 0.3883060969590472,
+    "minimum_tip_distance_m": 0.06254801871837651,
+    "objective_schema": "fixed_tip_reference_v1",
+    "optimization": {
+      "active_controls": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "active_coordinates": 24,
+      "iterations": 6,
+      "maximum_jacobian_relative_difference": 0.020826228709168292,
+      "optimization_elapsed_s": 97.19852039997932,
+      "optimizer": "Bounded finite-difference Gauss-Newton",
+      "rollout_count": 1018,
+      "stop_reason": "No improving feasible local step"
+    },
+    "original_reference_tip_rmse_m": 0.05143687867999069,
+    "planner": "Local M2 fixed-reference command correction",
+    "planner_mode": "open_loop",
+    "predicted_attitude_checked": true,
+    "predicted_hit_time_s": null,
+    "predicted_valid_hit": false,
+    "prediction_valid_through_s": 7.2,
+    "recovery": {
+      "brake_coefficients_normalized": [
+        [
+          0.6318774583105438,
+          -0.23763690383247688,
+          2.036153985314938
+        ],
+        [
+          -2.6419920192099866,
+          -0.2832592586682037,
+          0.12521127163988777
+        ],
+        [
+          -0.9806591468362266,
+          0.13041273630233388,
+          -0.6941575519226658
+        ],
+        [
+          3.9495375483249555,
+          0.10937561026509182,
+          0.8003321309236666
+        ],
+        [
+          -1.8113255830231065,
+          -0.0764232611829349,
+          -0.284473140141389
+        ]
+      ],
+      "brake_end_s": 1.0,
+      "brake_metrics": {
+        "minimum_az_m_s2": -1.3883151038453316,
+        "minimum_height_m": 1.9830666958144376,
+        "minimum_specific_vertical_m_s2": 8.418334896154668,
+        "minimum_vz_m_s": -0.11882616150697392,
+        "peak_absolute_jerk_m_s3": [
+          23.697225289949735,
+          1.1779046067998864,
+          4.801992785542
+        ],
+        "peak_height_m": 2.0425515118171056,
+        "peak_horizontal_acceleration_m_s2": 4.510863048455063,
+        "peak_specific_force_m_s2": 11.009840958415797,
+        "peak_speed_m_s": 2.7400221235971856
+      },
+      "braking_position_m": [
+        -0.8525617424338205,
+        -0.35753107711618975,
+        1.9830666958144376
+      ],
+      "hold_s": 3.0,
+      "hover_position_m": [
+        0.0,
+        0.0,
+        1.4
+      ],
+      "phase_description": "Smooth braking, rest-to-rest return, final hold",
+      "return_coefficients_normalized": [
+        [
+          -0.8525617424338205,
+          -0.35753107711618975,
+          1.9830666958144376
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          8.52561742433819,
+          3.5753107711618917,
+          -5.830666958144365
+        ],
+        [
+          -12.788426136507285,
+          -5.362966156742837,
+          8.74600043721655
+        ],
+        [
+          5.115370454602914,
+          2.1451864626971346,
+          -3.49840017488662
+        ]
+      ],
+      "return_end_s": 3.066666666666667,
+      "return_metrics": {
+        "minimum_az_m_s2": -0.788164262241346,
+        "minimum_height_m": 1.4000000000000021,
+        "minimum_specific_vertical_m_s2": 9.018485737758654,
+        "minimum_vz_m_s": -0.5289919619284198,
+        "peak_absolute_jerk_m_s3": [
+          5.795164742467466,
+          2.430265621027434,
+          3.9633112652285374
+        ],
+        "peak_height_m": 1.9830666958144376,
+        "peak_horizontal_acceleration_m_s2": 1.2496914926490699,
+        "peak_specific_force_m_s2": 10.66826218641969,
+        "peak_speed_m_s": 0.9916362882791908
+      },
+      "return_s": 2.066666666666667,
+      "schema": "brake_return_hold_v1",
+      "settings": {
+        "braking_downward_acceleration_m_s2": 3.5,
+        "braking_horizontal_acceleration_m_s2": 8.0,
+        "braking_tilt_deg": 60.0,
+        "hold_s": 3.0,
+        "maximum_brake_s": 6.0,
+        "maximum_return_s": 12.0,
+        "minimum_brake_s": 1.0,
+        "minimum_return_s": 2.0,
+        "return_speed_m_s": 1.0,
+        "schema": "brake_return_hold_v1"
+      },
+      "stationary_braking_waypoint": true,
+      "total_duration_s": 6.066666666666666,
+      "vehicle_limits_verified": false
+    },
+    "recovery_empirically_validated": false,
+    "recovery_prediction_complete": true,
+    "reference_feasible": true,
+    "reference_sha256": "0cdf777855e0594dfe81552a70f407467850ec3fc1de0e83907b59e907a26b2f",
+    "rehearsal": "runs/rehearsals_pva/20260913-041638-043249-M2-local-fixed-tip-reference",
+    "schema": "pva_fullstate_30hz_v1",
+    "standard_fast_cable_max_difference_m": 4.093459112286535e-06,
+    "standard_fast_pose_max_difference_m": 0.0,
+    "strike_distance_m": 0.061985889358892085,
+    "strike_time_s": 1.1172482457473654,
+    "success_meaning": "No binary hit claim; fixed-time tracking objective",
+    "target_position_m": [
+      1.25,
+      0.0,
+      1.25
+    ],
+    "total_duration_s": 7.2,
+    "whip_end_s": 1.1333333333333333
+  },
+  "fit_registration": {
+    "id": "M2",
+    "promoted": false,
+    "status": "Not promoted - validation did not improve both drone and tip",
+    "validation": {
+      "equal_take_mean": {
+        "command_driven_tip": [
+          0.09954114472598502,
+          0.09859301777943336
+        ],
+        "drone": [
+          0.07460772126900134,
+          0.10665189163374586
+        ]
+      },
+      "takes": {
+        "M1_003": {
+          "command_driven_tip": [
+            0.059768919238866194,
+            0.052895690058671625
+          ],
+          "drone": [
+            0.04049675039187267,
+            0.07013688972641902
+          ]
+        },
+        "M1_005": {
+          "command_driven_tip": [
+            0.13931337021310386,
+            0.1442903455001951
+          ],
+          "drone": [
+            0.10871869214612999,
+            0.1431668935410727
+          ]
+        }
+      }
+    }
+  },
+  "physical_M2_flight_performed": false,
+  "recommendation": "Experimental candidate; not promoted. Held-out quadrotor prediction worsened after residual retraining. M1 preserved.",
+  "stage_diagnosis": "runs/audits/M2-drone-stage-diagnosis-20260913/report.json",
+  "tests": "16 targeted tests passed; actual CSV/replay/PVA/UI checks passed"
+}

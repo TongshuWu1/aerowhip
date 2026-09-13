@@ -12,8 +12,7 @@ from simulator.workflow import read_json
 
 PAGES=[('Models & fitting','Choose the model, monitor fitting, and inspect the evidence'),
        ('Recordings','Organize measured OptiTrack data and the commands sent to the drone'),
-       ('PPO','Learn a direct P/V/A trajectory generator in the fitted model'),
-       ('MPPI','Optimize a direct P/V/A command sequence independently of PPO'),
+       ('MPPI','Refine the selected M0 motion using position B-splines'),
        ('Rehearsals','Inspect saved commands, predicted motion, and complete CSV exports'),
        ('Flight comparison','Track model generations, compare predictions, and inspect real flights')]
 
@@ -43,13 +42,12 @@ class PVAResearchWindow(QMainWindow):
         self.model_page=PVAModelPage(self.root);self.model_page.model_requested.connect(self.select_model)
         from .recordings_workspace import RecordingsWorkspace
         self.recordings_page=RecordingsWorkspace(self.root)
-        self.ppo_page=PVAPlannerPage(self.root,'ppo');self.training_page=self.ppo_page
         self.mppi_page=PVAPlannerPage(self.root,'mppi')
         self.rehearsal_page=QWidget();re=QVBoxLayout(self.rehearsal_page);self.rehearsal_tabs=QTabWidget();re.addWidget(self.rehearsal_tabs)
         current=QWidget();c=QVBoxLayout(current);self.rehearsal_tabs.addTab(current,'Direct PVA rehearsals')
         row=QHBoxLayout();self.rehearsals=QComboBox();row.addWidget(self.rehearsals,1);refresh=QPushButton('Refresh');refresh.clicked.connect(self.refresh_rehearsals);row.addWidget(refresh)
         open_button=QPushButton('Open selected');open_button.clicked.connect(self.open_rehearsal);row.addWidget(open_button);c.addLayout(row)
-        self.rehearsal_status=note('Generate a rehearsal in PPO or MPPI, then inspect its saved command and predicted drone/cable here.');c.addWidget(self.rehearsal_status)
+        self.rehearsal_status=note('Generate a rehearsal in MPPI, then inspect its saved command and predicted drone/cable here.');c.addWidget(self.rehearsal_status)
         self.inspector=RehearsalWorkspace(self.root,inspection_only=True);c.addWidget(self.inspector,1)
         from .recorded_takes_replay import RecordedTakesReplay
         self.recorded_replay=RecordedTakesReplay(self.root);self.rehearsal_tabs.addTab(self.recorded_replay,'Recorded takes')
@@ -69,9 +67,9 @@ class PVAResearchWindow(QMainWindow):
         self.evolution_page.flight_requested.connect(self.open_flight_comparison)
         self.flight_workspace.currentChanged.connect(lambda _:self.page_changed(self.main_tabs.currentIndex()))
         self.recordings_page.current.comparison_requested.connect(self.open_flight_comparison)
-        for page,(title,_) in zip([self.model_page,self.recordings_page,self.ppo_page,self.mppi_page,self.rehearsal_page,self.flight_workspace],PAGES):self.main_tabs.addTab(page,title)
+        for page,(title,_) in zip([self.model_page,self.recordings_page,self.mppi_page,self.rehearsal_page,self.flight_workspace],PAGES):self.main_tabs.addTab(page,title)
         self.main_tabs.currentChanged.connect(self.page_changed);self.rehearsal_tabs.currentChanged.connect(lambda _:self.page_changed(self.main_tabs.currentIndex()))
-        self.ppo_page.changed.connect(self.refresh_rehearsals);self.mppi_page.changed.connect(self.refresh_rehearsals)
+        self.mppi_page.changed.connect(self.refresh_rehearsals)
         self.refresh_rehearsals();self.page_changed(0)
         if (self.root/'config/pva/flight_replay.json').is_file():QTimer.singleShot(200,self.restore_flight_replay)
         elif (self.root/'config/pva/replay.json').is_file():QTimer.singleShot(200,self.restore_replay)
@@ -96,7 +94,7 @@ class PVAResearchWindow(QMainWindow):
         path=(path if path.is_absolute() else self.root/path).resolve()
         index=self.rehearsals.findData(str(path))
         if index<0:return  # The selected artifact may be absent in a source-only checkout.
-        self.rehearsals.setCurrentIndex(index);self.open_rehearsal();self.main_tabs.setCurrentIndex(4)
+        self.rehearsals.setCurrentIndex(index);self.open_rehearsal();self.main_tabs.setCurrentWidget(self.rehearsal_page)
         if self.inspector.arrays is None:return
         self.inspector.camera.setCurrentText(selection.get('camera','Side XZ'))
         self.inspector.speed.setCurrentText(selection.get('speed','0.25×'))
@@ -107,8 +105,8 @@ class PVAResearchWindow(QMainWindow):
         QTimer.singleShot(100,lambda:self.inspector.draw_frame(frame) if self.inspector.arrays is not None else None)
         self.rehearsal_status.setText('Saved replay loaded. Press Play to inspect the original predicted whip and recovery.')
 
-    def select_model(self,path,method='ppo'):
-        page=self.ppo_page if method=='ppo' else self.mppi_page;page.select_model(path);self.main_tabs.setCurrentWidget(page)
+    def select_model(self,path,method='mppi'):
+        page=self.mppi_page;page.select_model(path);self.main_tabs.setCurrentWidget(page)
 
     def refresh_rehearsals(self):
         selected=self.rehearsals.currentData();self.rehearsals.clear()
@@ -127,21 +125,21 @@ class PVAResearchWindow(QMainWindow):
         if page.worker is not None and page.worker.isRunning():return
         if not page.select_flight(batch,take):return
         page.views.setCurrentIndex(0)
-        self.flight_workspace.setCurrentWidget(page);self.main_tabs.setCurrentIndex(5)
+        self.flight_workspace.setCurrentWidget(page);self.main_tabs.setCurrentWidget(self.flight_workspace)
         page.load_flight()
 
     def open_recorded_take(self,name):
         self.recorded_replay.open_take(name)
-        self.rehearsal_tabs.setCurrentWidget(self.recorded_replay);self.main_tabs.setCurrentIndex(4)
+        self.rehearsal_tabs.setCurrentWidget(self.recorded_replay);self.main_tabs.setCurrentWidget(self.rehearsal_page)
 
     def page_changed(self,index):
         self.title.setText(PAGES[index][0]);self.subtitle.setText(PAGES[index][1]);self.buttons[index].setChecked(True)
-        self.ppo_page.set_page_active(index==2);self.mppi_page.set_page_active(index==3)
-        self.inspector.set_page_active(index==4 and self.rehearsal_tabs.currentIndex()==0)
-        self.adaptation_check_page.set_page_active(index==5 and self.flight_workspace.currentWidget() is self.adaptation_check_page)
-        self.recorded_replay.set_page_active(index==4 and self.rehearsal_tabs.currentWidget() is self.recorded_replay)
+        self.mppi_page.set_page_active(index==2)
+        self.inspector.set_page_active(index==3 and self.rehearsal_tabs.currentIndex()==0)
+        self.adaptation_check_page.set_page_active(index==4 and self.flight_workspace.currentWidget() is self.adaptation_check_page)
+        self.recorded_replay.set_page_active(index==3 and self.rehearsal_tabs.currentWidget() is self.recorded_replay)
 
     def closeEvent(self,event):
-        ready=[p.shutdown() for p in (self.model_page,self.ppo_page,self.mppi_page,self.inspector,self.adaptation_check_page,self.recorded_replay,self.evolution_page)]
+        ready=[p.shutdown() for p in (self.model_page,self.mppi_page,self.inspector,self.adaptation_check_page,self.recorded_replay,self.evolution_page)]
         if not all(ready):event.ignore();QTimer.singleShot(250,self.close);return
         super().closeEvent(event)

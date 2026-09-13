@@ -16,7 +16,7 @@ Subsequent explicit authorization implemented the complete workflow. Its
 `runs/adaptation/M1-full-whip-v2` continuation is completed and registered without
 promotion; the failed v1 and earlier gain-only M1 remain preserved. Read
 [the implementation and measured-run report](FULL_MODEL_ADAPTATION.md) and the
-[window, residual and limits review](../development/TRAINING_HORIZON_RESIDUAL_REVIEW.md).
+[window, residual and limits review](../../delete/cleanup-20260913/docs/development/TRAINING_HORIZON_RESIDUAL_REVIEW.md).
 Missing-implementation statements below record the audit finding
 that motivated that work; they no longer describe the available full fitter.
 
@@ -40,7 +40,7 @@ is a complete package of nominal parameters, residual weights, geometry,
 initialization conventions and data/source provenance. The generation number
 does not imply improved accuracy or physical success.
 
-The original [research proposal](../paper/RESEARCH_PROPOSAL_ADAPTIVE_AERIAL_WHIP.md),
+The original [research proposal](../../delete/cleanup-20260913/docs/paper/RESEARCH_PROPOSAL_ADAPTIVE_AERIAL_WHIP.md),
 especially hypotheses H1/H2 and Section 5, already calls for aircraft/cable
 identification and a restrained residual with preliminary-data retention. Its
 old force interface, vehicle identity and timing are historical; the current

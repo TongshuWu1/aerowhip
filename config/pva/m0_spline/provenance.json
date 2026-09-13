@@ -1,0 +1,13 @@
+{
+  "schema": "m0_bspline_seed_provenance_v1",
+  "original_job": "runs/mppi_pva/20260910-022818-648386",
+  "original_checkpoint_files": {
+    "checkpoints/search.pt": "84bacdcd3d3e177613972c830fe94093842d73276fa742b3f9d6cc6863e0b95a"
+  },
+  "files": {
+    "initial_proposal.npz": "ccbadf77f5e85e5151e7754d465e4890aaef25142aee6317a80d50232bae975e",
+    "proposal_baselines.npz": "754fafdb384f395027888d24bd50d9fc315e49c782747d912ef217655d82e9f0",
+    "wave_reference.npz": "fca15a2541af592e0b581baca57bd6ac20263520f9a0a00a0645ce230506c99c"
+  },
+  "purpose": "Original selected M0 full best-actions converted to initialize the current B-spline planner. Historical source run removed by user-requested cleanup; numeric runtime seed retained unchanged."
+}

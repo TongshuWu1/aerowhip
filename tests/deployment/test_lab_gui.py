@@ -261,3 +261,18 @@ def test_continuous_error_results_preserve_exclusions_and_negative_improvement(t
     assert window.prediction_results.item(0, 1).text() == '11.00'
     assert 'success threshold' in window.result_note.text()
     window.close()
+
+
+def test_new_m0_uses_frozen_profile_and_requires_planning(tmp_path, app):
+    state=sample_overview(tmp_path)
+    state['models']['M0'].pop('rehearsal')
+    profile=tmp_path/'experiments/lab-test/planner/settings.json'
+    profile.parent.mkdir(parents=True)
+    profile.write_text(json.dumps({'trajectory_objective':{'schema':'targeted_fold_strike_v1'}}))
+    state['study']['planner_profile']=str(profile)
+    window=LabWindow(tmp_path,factory(state))
+    assert window.plan_button.isEnabled()
+    assert not window.export_button.isEnabled()
+    assert any(window.plan_details.item(i,1).text()=='targeted_fold_strike_v1'
+               for i in range(window.plan_details.rowCount()))
+    window.close()

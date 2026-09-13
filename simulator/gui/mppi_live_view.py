@@ -17,10 +17,27 @@ def load_snapshot(path):
     return data
 
 
+def candidate_status(settings, failed, scored, score):
+    if failed:return 'infeasible'
+    targeted=settings.get('task',{}).get('success_criterion')=='targeted_fold_strike_v1'
+    if targeted:
+        if not np.isfinite(score):return 'not accepted'
+        if settings.get('fold_requirement','required')=='diagnostic_only':
+            return 'scored strike; fold diagnostic only' if scored else 'no scored strike'
+        return 'fold-qualified strike' if scored else 'fold/strike not qualified'
+    return 'modeled hit' if scored else 'no modeled hit'
+
+
 class MPPILiveView(QWidget):
     def __init__(self):
         super().__init__();self.job=None;self.data=None;self.viewer=None;self.active=False;self.playing=True;self.fingerprint=None;self.clock=0.
-        body=QVBoxLayout(self);self.status=note('Live 3D starts with the first completed candidate batch of a new run.');body.addWidget(self.status)
+        body=QVBoxLayout(self)
+        self.run_selector=QComboBox();self.run_selector.setMinimumContentsLength(20)
+        self.run_selector.setSizeAdjustPolicy(QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon)
+        self.run_selector.setToolTip('The same selected run is used in Optimization progress and Live 3D.')
+        body.addWidget(self.run_selector)
+        self.run_note=note('No run selected.');body.addWidget(self.run_note)
+        self.status=note('Live 3D starts with the first completed candidate batch of a new run.');body.addWidget(self.status)
         row=QHBoxLayout();body.addLayout(row);self.candidate=QComboBox();row.addWidget(self.candidate,1);self.candidate.currentIndexChanged.connect(self.reset_play)
         self.follow=QCheckBox('Follow newest iteration');self.follow.setChecked(True);row.addWidget(self.follow)
         self.play=QPushButton('Pause');self.play.clicked.connect(self.toggle_play);row.addWidget(self.play)
@@ -39,7 +56,10 @@ class MPPILiveView(QWidget):
     def set_job(self,job):
         job=Path(job) if job else None
         if self.job==job:return
-        self.job=job;self.data=None;self.fingerprint=None;self.candidate.clear();self.slider.setRange(0,0);self.clear_viewer();self.empty.show();self.frame_note.setText('')
+        self.job=job;self.follow.setChecked(True);self.data=None;self.fingerprint=None;self.candidate.clear();self.slider.setRange(0,0);self.clear_viewer();self.empty.show();self.frame_note.setText('')
+        identity=read_json(job/'identity.json',{}) if job else {}
+        self.run_note.setText(f"Run: {identity.get('name',job.name)} | {job.name}" if job else 'No run selected.')
+        self.run_note.setToolTip(str(job) if job else '')
         self.status.setText('Waiting for a live candidate snapshot.');self.poll()
 
     def clear_viewer(self):
@@ -56,8 +76,9 @@ class MPPILiveView(QWidget):
         try:data=load_snapshot(path)
         except (OSError,ValueError,KeyError) as exc:self.status.setText('Waiting for a readable snapshot: '+str(exc));return
         self.fingerprint=key;self.data=data;self.candidate.blockSignals(True);selected=max(0,self.candidate.currentIndex());self.candidate.clear()
+        settings=read_json(self.job/'settings.json',{})
         for i,label in enumerate(data['labels']):
-            state='infeasible' if data['failed'][i] else 'modeled hit' if data['success'][i] else 'no modeled hit'
+            state=candidate_status(settings,data['failed'][i],data['success'][i],data['scores'][i])
             self.candidate.addItem(f'{label} · {state} · score {data["scores"][i]:.2f}')
         self.candidate.setCurrentIndex(min(selected,self.candidate.count()-1));self.candidate.blockSignals(False)
         self.ensure_viewer();self.reset_play();self.draw_paths()
@@ -66,10 +87,10 @@ class MPPILiveView(QWidget):
         if self.viewer is not None or self.data is None:return
         from .viewer_3d import create_viewer
         cfg=read_json(self.job/'settings.json',{});task=cfg.get('task',{})
-        self.viewer=create_viewer(self.data['cable_positions_m'][0,0],self.data['target_position_m'],task.get('strike_direction',[1,0,0]),task.get('target_radius_m',.05),self)
+        self.viewer=create_viewer(self.data['cable_positions_m'][0,0],self.data['target_position_m'],task.get('strike_direction',[1,0,0]),task.get('target_radius_m',.02),self)
         if 'target_positions_m' in self.data:
             from .whip_targets import add_targets
-            add_targets(self.viewer,self.data['target_positions_m'],task.get('target_radius_m',.05))
+            add_targets(self.viewer,self.data['target_positions_m'],task.get('target_radius_m',.02))
         self.viewer.set_live_flight(True);self.host.addWidget(self.viewer);self.empty.hide();self.fit_camera()
 
     def fit_camera(self):

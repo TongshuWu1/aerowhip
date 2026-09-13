@@ -4,7 +4,7 @@ Read the current [full-model adaptation contract](ADAPTATION_MODEL_CONTRACT.md).
 Drone learning is one part of a workflow that also evaluates and adapts cable
 physics and residuals. The single-gain branch below is a partial implementation.
 
-The first real [gain-only adaptation](../development/M0_M1_FIRST_ADAPTATION.md) is now implemented
+The first real [gain-only adaptation](../../delete/cleanup-20260913/docs/development/M0_M1_FIRST_ADAPTATION.md) is now implemented
 and completed under `whip_response_gain_v1`. It updates only nominal feedforward_xy
 and is **not promoted** because held-out errors increased. Saturation, lag, broader
 drone/NN fitting and physical capability identification below remain proposals.

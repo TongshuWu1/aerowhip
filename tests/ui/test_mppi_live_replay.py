@@ -60,9 +60,10 @@ def test_live_view_follows_selected_run_loads_and_animates_without_archiving(tmp
         atomic_json(job/'identity.json',dict(name=name))
         atomic_json(job/'status.json',dict(status='completed',iterations=iteration))
         q=np.zeros((1,3,3,3));q[:,:,:,2]=[1.2,.9,.6];q[0,:,2,0]=[0,.1,.2]
+        q[...,1]=iteration*.01
         np.savez(job/'live.npz',schema='mppi_live_v1',cable_positions_m=q,
             origin_positions_m=q[:,:,0],origin_rotations=np.tile(np.eye(3),(1,3,1,1)),
-            time_s=np.array([0.,.1,.2]),target_position_m=[1.,0.,1.],
+            time_s=np.array([0.,.1,.2]),target_position_m=[iteration*.1,0.,1.],
             labels=['Best proposal'],failed=[False],success=[True],scores=[5.],
             frame_counts=[3],committed_origin_m=q[0,:1,0],committed_tip_m=q[0,:1,-1],
             iteration=iteration,command_step=0,series_iterations=[iteration],
@@ -76,6 +77,20 @@ def test_live_view_follows_selected_run_loads_and_animates_without_archiving(tmp
     live.last_tick=time.perf_counter()-.04;live.tick();assert live.clock>.1
     page.progress_runs.setCurrentIndex(page.progress_runs.findData(str(jobs[1])))
     assert live.job==jobs[1] and int(live.data['iteration'])==7
+    assert live.run_selector.currentData()==str(jobs[1]) and 'Run: b' in live.run_note.text()
+    np.testing.assert_allclose(live.data['target_position_m'],[.7,0.,1.])
+    np.testing.assert_allclose(live.data['cable_positions_m'][...,1],.07)
+    # A frozen old preview must not survive an explicit run change in Live 3D.
+    live.follow.setChecked(False)
+    live.run_selector.setCurrentIndex(live.run_selector.findData(str(jobs[0])))
+    assert page.current_run==jobs[0] and page.progress_runs.currentData()==str(jobs[0])
+    assert live.job==jobs[0] and int(live.data['iteration'])==3
+    assert live.follow.isChecked() and live.candidate.currentIndex()==0
+    assert 'Run: a' in live.run_note.text() and live.run_note.toolTip()==str(jobs[0])
+    np.testing.assert_allclose(live.data['target_position_m'],[.3,0.,1.])
+    np.testing.assert_allclose(live.data['cable_positions_m'][...,1],.03)
+    page.refresh_library()
+    assert live.run_selector.currentData()==page.progress_runs.currentData()==str(jobs[0])
     page.set_page_active(False);assert not live.timer.isActive()
     assert not any((job/'ARCHIVED').exists() for job in jobs)
     page.shutdown();page.close();qapp.processEvents()

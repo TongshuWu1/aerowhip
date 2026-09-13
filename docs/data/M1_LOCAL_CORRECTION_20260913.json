@@ -1,0 +1,18 @@
+{
+  "M1_fitting_changed": false,
+  "csv": "exports/M1_local_fixed_tip_reference/fullstate_30hz.csv",
+  "direct_measured_trajectory_anchor": false,
+  "elapsed_s": 174.4084378000116,
+  "job": "runs/reference_tracking/M1-local-20260913-032256-816506",
+  "local_iterations": 12,
+  "new_MPPI_motion": false,
+  "physical_M1_execution_pending": true,
+  "quadrotor_rmse_m": 0.044260127967881646,
+  "reference_sha256": "0cdf777855e0594dfe81552a70f407467850ec3fc1de0e83907b59e907a26b2f",
+  "rehearsal": "runs/rehearsals_pva/20260913-032256-816506-M1-local-fixed-tip-reference",
+  "sha256": "1b35a8803362f7f97b3439850116bcb57aed8cbc000a7ef99460b4e31923ae26",
+  "tests": "14 targeted tests passed; actual export and offscreen UI verified",
+  "tip_rmse_after_m": 0.037347285698441236,
+  "tip_rmse_before_m": 0.1441143925289969,
+  "total_duration_s": 7.2
+}

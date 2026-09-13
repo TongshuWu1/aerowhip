@@ -14,7 +14,7 @@ RMS and 14.89 to 8.81 cm command-driven tip RMS. Take 004's tip error worsens
 The v1 attempt is preserved after failing the cable NN gradient check at its
 final physical iterate, before any cable NN training. V2 resumes the saved drone
 optimizer at update 400, removes the routine neural ceiling, and uses the best
-numerically verified physical iterate. Read [the detailed review](../development/TRAINING_HORIZON_RESIDUAL_REVIEW.md).
+numerically verified physical iterate. Read [the detailed review](../../delete/cleanup-20260913/docs/development/TRAINING_HORIZON_RESIDUAL_REVIEW.md).
 No integration substeps, smoothing, data roles or training-window lengths changed.
 The separately frozen continuation is implemented by `whip_full_continuation.py`
 and `tools/continue_full_whip.py`; do not invoke the v1 fitter on its v2 protocol.

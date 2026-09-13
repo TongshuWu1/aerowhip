@@ -1,6 +1,6 @@
 # Comparing M0 to M1 to M2
 
-Read [the current system comparison](../development/M0_M1_M2_SYSTEM_COMPARISON.md) for exact
+Read [the current system comparison](../../delete/cleanup-20260913/docs/development/M0_M1_M2_SYSTEM_COMPARISON.md) for exact
 model identities, all 13 flights, matched-model results, related work and the
 clean paper design. All current runs are development evidence.
 
@@ -82,7 +82,7 @@ are explicitly in-sample for M1. Validation takes do not enter selection loss.
 If initialization or drone response dominates, investigate that issue before
 expanding the fit. The proposed small drone-response update needs a new versioned
 protocol and comparison support; the current fitter remains cable-only. See
-[the integrated adaptation procedure](../development/M0_TO_M1_ADAPTATION.md).
+[the integrated adaptation procedure](../../delete/cleanup-20260913/docs/development/M0_TO_M1_ADAPTATION.md).
 
 **Prospective check:** freeze a new M1 plan and forecast before recording it.
 This is the next evidence for real task performance. If feasible, also repeat

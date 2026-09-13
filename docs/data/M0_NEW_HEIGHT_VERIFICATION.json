@@ -1,0 +1,144 @@
+{
+  "job": "runs/mppi_pva/20260913-004041-503837",
+  "export": "exports/M0_Bspline_origin1p4_target1p25",
+  "os": "Windows",
+  "device": "NVIDIA GeForce RTX 4080",
+  "iterations": 38,
+  "stop_reason": "reward_plateau",
+  "minimum_tip_distance_m": 0.0449361174192323,
+  "strike_angle_deg": 35.80281064390145,
+  "directed_tip_speed_m_s": 3.9977973702941396,
+  "total_duration_s": 6.7,
+  "whip_end_s": 1.1333333333333333,
+  "recovery": {
+    "brake_coefficients_normalized": [
+      [
+        0.6333432816107071,
+        -0.10739713036982339,
+        2.0778461653123377
+      ],
+      [
+        -1.341438071743728,
+        -0.13268395857891419,
+        0.1350673135774949
+      ],
+      [
+        -0.29964025615656814,
+        -0.01795631883692063,
+        -0.44427199486319896
+      ],
+      [
+        1.740958413285819,
+        0.15662571702814168,
+        0.4572953462401037
+      ],
+      [
+        -0.820539163950148,
+        -0.0753201387079174,
+        -0.15460234064285203
+      ]
+    ],
+    "brake_end_s": 0.5666666666666667,
+    "brake_metrics": {
+      "minimum_az_m_s2": -2.767092009528575,
+      "minimum_height_m": 2.0713344896238852,
+      "minimum_specific_vertical_m_s2": 7.039557990471424,
+      "minimum_vz_m_s": -0.07719340264205593,
+      "peak_absolute_jerk_m_s3": [
+        57.405915520517546,
+        5.164536160911655,
+        15.078739281680605
+      ],
+      "peak_height_m": 2.090565801060342,
+      "peak_horizontal_acceleration_m_s2": 6.792232808478206,
+      "peak_specific_force_m_s2": 12.089527951360179,
+      "peak_speed_m_s": 2.4152552943909757
+    },
+    "braking_position_m": [
+      -0.08731579695391822,
+      -0.17673182946543392,
+      2.0713344896238852
+    ],
+    "hold_s": 3.0,
+    "hover_position_m": [
+      0.0,
+      0.0,
+      1.4
+    ],
+    "phase_description": "Smooth braking, rest-to-rest return, final hold",
+    "return_coefficients_normalized": [
+      [
+        -0.08731579695391822,
+        -0.17673182946543392,
+        2.0713344896238852
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.8731579695391807,
+        1.767318294654336,
+        -6.713344896238842
+      ],
+      [
+        -1.3097369543087711,
+        -2.650977441981504,
+        10.070017344358263
+      ],
+      [
+        0.5238947817235085,
+        1.0603909767926016,
+        -4.028006937743305
+      ]
+    ],
+    "return_end_s": 2.5666666666666664,
+    "return_metrics": {
+      "minimum_az_m_s2": -0.9689878707515739,
+      "minimum_height_m": 1.4000000000000017,
+      "minimum_specific_vertical_m_s2": 8.837662129248425,
+      "minimum_vz_m_s": -0.6293760840223914,
+      "peak_absolute_jerk_m_s3": [
+        0.6548684771543856,
+        1.325488720990752,
+        5.035008672179131
+      ],
+      "peak_height_m": 2.0713344896238852,
+      "peak_horizontal_acceleration_m_s2": 0.28452514513914584,
+      "peak_specific_force_m_s2": 10.779393585902316,
+      "peak_speed_m_s": 0.6559473754707205
+    },
+    "return_s": 2.0,
+    "schema": "brake_return_hold_v1",
+    "settings": {
+      "braking_downward_acceleration_m_s2": 3.5,
+      "braking_horizontal_acceleration_m_s2": 8.0,
+      "braking_tilt_deg": 60.0,
+      "hold_s": 3.0,
+      "maximum_brake_s": 6.0,
+      "maximum_return_s": 12.0,
+      "minimum_brake_s": 0.2,
+      "minimum_return_s": 2.0,
+      "return_speed_m_s": 1.0,
+      "schema": "brake_return_hold_v1"
+    },
+    "stationary_braking_waypoint": true,
+    "total_duration_s": 5.566666666666666,
+    "vehicle_limits_verified": false
+  },
+  "predicted_drone_height_range_m": [
+    1.3705264398098882,
+    2.118465188307989
+  ],
+  "minimum_predicted_cable_height_m": 0.3894245848292235,
+  "training_export_prefix_max_difference_m": 2.220446049250313e-15,
+  "training_export_cable_max_difference_m": 1.5679679776781086e-12,
+  "independent_score_difference": 8.109282134682871e-10,
+  "csv_sha256": "3c0f301a969b17c5c61c0fdbd214d4001384f935c460f753b03a9bdc7a92c4cd"
+}

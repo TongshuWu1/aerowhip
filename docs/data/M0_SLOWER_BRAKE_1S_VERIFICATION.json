@@ -1,0 +1,32 @@
+{
+  "rehearsal": "runs/rehearsals_pva/20260913-012740-484590-M0-slower-brake-1s",
+  "csv": "exports/M0_Bspline_slower_brake_1s/fullstate_30hz.csv",
+  "csv_sha256": "49f9fd4b8e356543cb5523abca866646968f58b603f73bb94466f0734a1e8d90",
+  "brake_s": 1.0,
+  "total_s": 7.133333333333334,
+  "peak_braking_acceleration_m_s2": 4.07919860844994,
+  "peak_axis_jerk_m_s3": [
+    21.66854790264048,
+    1.8522436293332387,
+    9.638243541411413
+  ],
+  "stopping_position_m": [
+    -0.7058011707011818,
+    -0.23379110013854731,
+    1.966432205910197
+  ],
+  "minimum_predicted_cable_height_m": 0.38097164914111936,
+  "unchanged_strike_prefix": true,
+  "final_command_pva": [
+    0.0,
+    0.0,
+    1.4,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "physical_collision_avoidance_verified": false
+}

@@ -125,7 +125,10 @@ def optimize(job,model,cfg):
     preferred=weights.get('schema')=='preferred_fold_v1'
     selection=s.get('selection_criterion','legacy_v1')
     contact_priority=selection=='tip_contact_then_score_v1' or not preferred
-    timed=s.get('proposal_parameterization')=='timed_baselines_v1'
+    from planning.position_spline import SCHEMA as SPLINE_SCHEMA,PositionSpline,replay as replay_spline,fit_bounded_positions,RetainedM0SplineProposals
+    spline_mode=cfg.get('command_contract')==SPLINE_SCHEMA
+    timed=s.get('proposal_parameterization')=='timed_baselines_v1' or spline_mode
+    action_rows=9 if spline_mode else steps
     baselines=None
     if timed:
         with np.load(job/'proposal_baselines.npz') as data:
@@ -148,13 +151,40 @@ def optimize(job,model,cfg):
     # Smooth perturbations remain fully editable; every candidate uses this job's frozen model.
     native_latent=torch.atanh(native.clamp(-1+1e-12,1-1e-12))
     offset=native_latent if preferred else torch.zeros_like(native)
+    if spline_mode:
+        from simulator.pva_commands import jerk_packets
+        spline=PositionSpline(steps/30,device=device)
+        packets=jerk_packets(actual.hover,(native*actual.limit)[None])[0]
+        native=fit_bounded_positions(spline,packets[...,:3],actual.origin0[0],actual.limit)
+        # Both legacy family slots now retain the selected M0 spline seed.
+        baselines=native[None].repeat(2,1,1)
+        np.savez_compressed(job/'spline_initialization.npz',control_points=native.cpu().numpy(),
+            knots_s=spline.knots,degree=spline.degree,source='Selected M0 command positions; bounded least-squares B-spline conversion')
+    def evaluate(target,values,capture,trace=False):
+        if spline_mode:
+            result=replay_spline(target,values,observer=capture,trace=trace)
+            _,jerk=spline.decode(values,target.origin0[0]);objective_actions=jerk/target.limit
+        else:
+            result=target.rollout(actions=values,observer=capture,trace=trace);objective_actions=values
+        score,terms=capture.score(target,result,objective_actions,weights)
+        return result,score,terms
+    def save_plan(values,means,cutoff,complete):
+        if spline_mode:
+            packets,jerk=spline.decode(values,actual.origin0[0])
+            payload=dict(position_control_points_m=values.cpu().numpy(),command_packets=packets.cpu().numpy(),
+                jerk_samples_m_s3=jerk.cpu().numpy(),spline_knots_s=spline.knots,spline_degree=spline.degree,
+                command_contract=SPLINE_SCHEMA,committed_steps=steps,planner_mode='position_bspline')
+        else:
+            payload=dict(normalized_jerk=values[:cutoff].cpu().numpy(),committed_steps=cutoff,planner_mode='offline_control_point_mppi_v1')
+        np.savez_compressed(job/'plan.tmp.npz',**payload,proposal_mean=means.cpu().numpy(),plan_complete=complete)
+        replace_with_retry(job/'plan.tmp.npz',job/'plan.npz')
     if timed:
         from planning.mppi_timing import TimedProposals
-        sampler=TimedProposals(baselines,basis,s)
+        sampler=RetainedM0SplineProposals(native,s,spline.scratch_noise_basis()) if spline_mode else TimedProposals(baselines,basis,s)
         means=baselines.new_zeros(groups,sampler.rows,3)
         candidates=sampler.sample(means,rng);candidates[:,0].zero_()
         controls=candidates.reshape(samples,sampler.rows,3)
-        seed_actions=sampler.decode(candidates).reshape(samples,steps,3)
+        seed_actions=sampler.decode(candidates).reshape(samples,action_rows,3)
         actions=torch.cat((seed_actions,sampler.decode(means),native[None],baselines))
     else:
         bank=wave_seed_bank(actual,steps,s['seed'])
@@ -165,7 +195,7 @@ def optimize(job,model,cfg):
         actions=torch.cat((seed_actions,seed_actions[:groups],native[None],native[None]))
     progress(job,stage='Screening diverse complete whip proposals',iteration=0)
     capture=capture_factory();env.branch_from(actual)
-    result=env.rollout(actions=actions,observer=capture);score,terms=capture.score(env,result,actions,weights)
+    result,score,terms=evaluate(env,actions,capture)
     if not bool(torch.isfinite(score[:samples]).any()):raise ValueError('No feasible control-point initialization')
     # Favor good but distinct initial controls; retain multiple basins throughout refinement.
     baseline_scores=[];baseline_hits=[]
@@ -197,18 +227,21 @@ def optimize(job,model,cfg):
         hit=bool(result['success'][i]);value=float(score[i])
         if candidate_better(value,hit,best,best_hit,contact_priority):
             best,best_hit=value,hit;best_actions=actions[i].clone()
-            best_preview=series(capture,i,iteration,score,result,f'Best complete whip · iteration {iteration}')
+            best_preview=series(capture,i,iteration,score,result,f'Best complete whip Ãƒâ€šÃ‚Â· iteration {iteration}')
             best_terms={k:float(v[i]) for k,v in terms.items()}
             best_metrics=dict(best_success=hit,best_failed=False,best_minimum_tip_distance_m=float(result['minimum_tip_distance_m'][i]),
                 best_candidate_wave_stages=int(env.wave_stage[i]),cutoff=int(result['cutoffs'][i]),
                 scored_duration_s=float(result['duration_s'][i]),legacy_reward=float(result['reward'][i]))
+            if spline_mode:
+                velocity=env.encounter_tip_velocity[i];cosine=(velocity*env.direction).sum()/velocity.norm().clamp_min(1e-12)
+                best_metrics.update(strike_angle_deg=float(torch.rad2deg(torch.acos(cosine.clamp(-1,1)))),directed_tip_speed_m_s=float((velocity*env.direction).sum()))
             if env.extra_tick_fields:
                 from learning.two_target_whip import details
                 best_metrics.update(details(env,i))
     def winner():
         return candidate_index(score,result['success'],result['failed'],contact_priority)
     record_candidate(winner(),0)
-    atomic_json(job/'initialization.json',dict(type='timed_baseline_screen' if timed else 'diverse_control_point_wave_screen',candidate_count=samples,
+    atomic_json(job/'initialization.json',dict(type='selected_M0_bspline_screen' if spline_mode else 'timed_baseline_screen' if timed else 'diverse_control_point_wave_screen',candidate_count=samples,
         selected_indices=chosen,objective_components=best_terms,**best_metrics))
     np.savez_compressed(job/'initial_screen.npz',scores=score.cpu().numpy(),legacy_reward=result['reward'].cpu().numpy(),
         distance_m=result['minimum_tip_distance_m'].cpu().numpy(),failed=result['failed'].cpu().numpy(),
@@ -218,7 +251,7 @@ def optimize(job,model,cfg):
         iteration+=1;progress(job,stage=f"Optimizing complete {cfg['task']['duration_s']:g} s whip",iteration=iteration)
         if timed:
             sampled=sampler.sample(means,rng)
-            interpolated=sampler.decode(sampled).reshape(samples,steps,3)
+            interpolated=sampler.decode(sampled).reshape(samples,action_rows,3)
             mean_actions=sampler.decode(means)
             actions=torch.cat((interpolated,mean_actions,best_actions[None],baselines))
         else:
@@ -230,7 +263,7 @@ def optimize(job,model,cfg):
             mean_actions=torch.tanh(offset+torch.einsum('hp,gpc->ghc',basis,means))
             actions=torch.cat((interpolated,mean_actions,best_actions[None],native[None]))
         env.branch_from(actual);capture=capture_factory()
-        result=env.rollout(actions=actions,observer=capture);score,terms=capture.score(env,result,actions,weights)
+        result,score,terms=evaluate(env,actions,capture)
         if not bool(torch.isfinite(score).any()):raise ValueError('All complete trajectories infeasible')
         importance,temperatures,ess=adaptive_weights(score[:samples].reshape(groups,per),s['target_ess_fraction'])
         updated=(importance[:,:,None,None]*sampled).sum(1)
@@ -251,11 +284,7 @@ def optimize(job,model,cfg):
             if timed:labels.update({samples+groups:'Incumbent',len(score)-2:'Command baseline 1 / current model',len(score)-1:'Command baseline 2 / current model'})
             row['live_snapshot_seconds']=publish(job,actual,capture,score,result,best_preview,iteration,labels=labels)
         history.append(row);atomic_json(job/'history.json',history)
-        temporary=job/'plan.tmp.npz'
-        cutoff=best_metrics['cutoff'];selected=best_actions[:cutoff]
-        np.savez_compressed(temporary,normalized_jerk=selected.cpu().numpy(),proposal_mean=means.cpu().numpy(),
-            plan_complete=False,committed_steps=len(selected),planner_mode='offline_control_point_mppi_v1')
-        replace_with_retry(temporary,job/'plan.npz')
+        save_plan(best_actions,means,best_metrics['cutoff'],False)
         temp=job/'checkpoints/search.tmp.pt'
         torch.save(dict(iteration=iteration,means=means,rng=rng.get_state(),best_actions=best_actions,
             best=best,best_hit=best_hit,best_metrics=best_metrics,anchor=anchor,improved_at=improved_at),temp)
@@ -264,21 +293,17 @@ def optimize(job,model,cfg):
         if iteration>=s['minimum_iterations'] and iteration-improved_at>=s['patience']:
             reason='reward_plateau';break
     # Independent batch-one replay before declaring a completed plan.
-    check=capture_factory();verification=actual.rollout(actions=best_actions[None],observer=check,trace=True)
-    verified,verified_terms=check.score(actual,verification,best_actions[None],weights)
+    check=capture_factory();verification,verified,verified_terms=evaluate(actual,best_actions[None],check,trace=True)
     if bool(verification['failed'][0]) or bool(verification['success'][0])!=best_hit:
         raise ValueError('Selected trajectory fails independent outcome replay')
     if abs(float(verified[0])-best)>1e-5:raise ValueError('Batch and independent objective disagree')
-    selected=best_actions[:int(verification['cutoffs'][0])]
-    np.savez_compressed(job/'plan.tmp.npz',normalized_jerk=selected.cpu().numpy(),proposal_mean=means.cpu().numpy(),
-        plan_complete=True,committed_steps=len(selected),planner_mode='offline_control_point_mppi_v1')
-    replace_with_retry(job/'plan.tmp.npz',job/'plan.npz')
+    cutoff=int(verification['cutoffs'][0]);save_plan(best_actions,means,cutoff,True)
     summary=dict(iterations=iteration,stop_reason=reason,best_reward=best,**best_metrics,
-        command_steps=len(selected),maneuver_duration_s=len(selected)/30,elapsed_s=time.perf_counter()-start,
+        command_steps=cutoff,maneuver_duration_s=cutoff/30,elapsed_s=time.perf_counter()-start,
         objective_components=best_terms,independent_score_difference=abs(float(verified[0])-best),
-        planner_mode='offline_control_point_mppi_v1',selection_criterion=selection,
+        planner_mode='position_bspline' if spline_mode else 'offline_control_point_mppi_v1',selection_criterion=selection,
         evidence='Frozen job model simulation only; prospective physical validation pending')
-    if timed:summary.update(proposal_parameterization='timed_baselines_v1',baseline_scores=baseline_scores,
+    if timed:summary.update(proposal_parameterization='position_bspline' if spline_mode else 'timed_baselines_v1',baseline_scores=baseline_scores,
         improvement_over_best_baseline=best-max(baseline_scores))
     atomic_json(job/'result.json',summary)
     return summary

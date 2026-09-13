@@ -583,12 +583,17 @@ class LabWindow(QMainWindow):
         self.plan_status.setText(f'{generation} · '+(model.get('status', 'Frozen model available') if model_available else 'Model not available yet')+
                                 (' · complete command exported' if exported and exported.exists() else ''))
         baseline = self.snapshot.get('baseline') or {}
-        settings_file = plan / 'settings.json' if plan else self.resolve(baseline.get('mppi_settings'))
+        study = self.snapshot.get('study') or {}
+        settings_file = plan / 'settings.json' if plan else self.resolve(study.get('planner_profile', baseline.get('mppi_settings')))
         setup = read_json(settings_file, {}) if settings_file else {}
         launch = setup.get('launch', {})
         fill(self.plan_details, [
             ['Model', model.get('model', 'Awaiting retained baseline / completed update')],
             ['Plan', model.get('plan', 'Not generated')],
+            ['Objective', setup.get('trajectory_objective', {}).get('schema', 'Historical saved objective')],
+            ['Trajectory', 'Quintic position spline · 12 points, 9 adjustable' if setup.get('command_contract')=='position_spline_pva_30hz_v1' else 'Historical saved representation'],
+            ['Recovery', setup.get('recovery', {}).get('schema', 'Historical saved recovery')],
+            ['Fold evaluation', setup.get('fold_requirement', 'Historical required fold / saved task')],
             ['Command rate', '30 Hz · full sequence generated before flight'],
             ['Launch tracked origin [m]', str(launch.get('origin_m', 'See the retained setup'))],
             ['Target [m]', str(launch.get('target_m', 'See the retained setup'))],

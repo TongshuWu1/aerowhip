@@ -1,0 +1,30 @@
+{
+  "M1_CSV_PVA_recovery_and_offscreen_UI_verified": true,
+  "M1_and_M2_prepared_measurements_and_source_snapshots_verified": true,
+  "M2_CSV_PVA_recovery_and_offscreen_UI_verified": true,
+  "active_model_dependency_hashes_verified": true,
+  "active_models": [
+    "M0",
+    "M1",
+    "M2-selected"
+  ],
+  "all_moved_file_hashes_verified": true,
+  "archive": "delete/cleanup-20260913",
+  "current_CSV_sha256": "c9a39713d627ceb5fe3cc555ccb2d3fdf853d3e20ae1a9c583faa661fbf8f379",
+  "full_research_window_opens": true,
+  "hardware": "Windows / RTX 4080",
+  "live_Dropbox_manuscript_untouched": true,
+  "manifest": "delete/cleanup-20260913/file_manifest.json",
+  "moved_bytes": 1161621585,
+  "moved_files": 29596,
+  "moved_units": 251,
+  "permanent_deletion": false,
+  "selected_rehearsal_unchanged": true,
+  "status": "passed",
+  "targeted_tests": {
+    "passed": 20,
+    "skip_reason": "Superseded private recording candidate was archived",
+    "skipped": 1
+  },
+  "training_or_planning_started": false
+}
