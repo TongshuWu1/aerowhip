@@ -1,0 +1,88 @@
+\section{Experiments}
+\label{sec:experiments}
+
+\subsection{Setup and Evaluation}
+\label{subsec:experimental_setup}
+\label{subsec:experimental_metrics}
+
+The platform uses a 145\,g quadrotor and a 0.9525\,m cable
+weighing 17\,g with tracking markers. OptiTrack measures vehicle
+pose and cable motion. The vehicle starts at $(0,0,1.4)$\,m,
+with target $(1.25,0,1.25)$\,m and strike direction $+x$.
+Commands are executed at 30\,Hz without online cable feedback.
+The predictor uses 12 cable nodes and 150\,Hz rollout samples;
+the command spline has 12 control points over $T=1.5$\,s.
+Correction uses $(w_{\mathrm{tip}},w_q,w_d)=(1,0.1,0.01)$
+in~\eqref{eq:reference_tracking_cost}.
+
+Five flights were collected for each model--command pair:
+the initial M0 plan and two corrections, M1 and M2, toward
+the same M0 trajectory and timing. In each preceding batch,
+recordings 1, 2, and 4 contribute to fitting; recordings 3
+and 5 support development checks. M2 retains the M1 vehicle
+network and updates the nominal vehicle response and cable
+model. It is selected using the two M1 development recordings
+and frozen before the five M2 flights.
+
+Tip and vehicle tracking errors, $E_{\mathrm{tip}}$ and $E_q$,
+are three-dimensional RMSEs against the original M0 reference
+at matching timestamps over $[0,T_h]$, with $T_h=34/30$\,s.
+Target metrics are $d_{\min}$ from~\eqref{eq:target_distance}
+over $[0,1.5]$\,s and distance $d_\star$ at the original
+strike time $t_\star=1.11725$\,s. Tip speed is estimated from
+local position derivatives. Clock alignment uses measured
+vehicle streams; missing observations are masked. Statistics
+average per-flight metrics, without spatial or target-based
+temporal alignment.
+
+\subsection{Results}
+\label{subsec:physical_results}
+\label{subsec:prediction_results}
+
+\begin{table}[t]
+\centering
+\caption{Physical performance: mean $\pm$ sample standard
+deviation, five flights per batch. Distances are in cm;
+tip speed at $t_\star$ is in m/s.}
+\label{tab:physical_performance}
+\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Metric & M0 & M1 & M2 \\
+\midrule
+$d_\star$ & $24.12\pm6.94$ & $11.18\pm4.04$ & $13.10\pm7.52$ \\
+$d_{\min}$ & $14.73\pm6.02$ & $7.83\pm1.82$ & $8.60\pm6.55$ \\
+$E_{\mathrm{tip}}$ & $18.09\pm1.80$ & $16.06\pm2.34$ & $13.28\pm2.60$ \\
+$E_q$ & $15.66\pm3.58$ & $11.17\pm2.87$ & $12.63\pm5.65$ \\
+Tip speed & $5.98\pm0.53$ & $5.85\pm0.32$ & $5.82\pm0.79$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Table~\ref{tab:physical_performance} shows that M1 substantially
+improves target approach. M2 further reduces tip-reference
+RMSE by 17.4\% relative to M1, but target accuracy and
+repeatability worsen. Mean tip speed remains similar.
+Thus, better average trajectory tracking does not ensure
+better target approach.
+
+An exploratory subset selected after reviewing the outcomes,
+M2 recordings 2 and 4, gives mean $d_\star$, $d_{\min}$,
+and $E_{\mathrm{tip}}$ of 6.17, 4.41, and 10.57\,cm.
+No independent fault evidence supports excluding the other
+three flights; the primary comparison retains all five.
+
+On the two M1 recordings used for model selection, M2 reduces
+vehicle-prediction RMSE from 7.46 to 6.72\,cm and command-driven
+tip-prediction RMSE from 9.95 to 8.46\,cm. These are development
+comparisons using the same commands and measured initial
+states, not independent test results.
+
+The study uses successive batches at one target. Small cable
+motions observed during hover differ from the stationary
+planning state; their effect, including possible propeller
+airflow, remains unquantified. Fixed-time error is also
+sensitive to clock alignment: a $\pm10$\,ms shift changes
+M2 recording 2's $d_\star$ from 2.64 to 6.80--7.15\,cm.
+

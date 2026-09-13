@@ -64,3 +64,8 @@ remain the primary analysis. No hardware defect is treated as established.
 Abstract numbers use the full batches, not the selected pair. The source
 bibliography and existing figures are unchanged. The prior manuscript is backed
 up at `tmp/experiments_20260913/before/main.tex`.
+
+The experiments section was subsequently shortened by about half to two
+subsections (Setup and Evaluation; Results), retaining metric definitions,
+all results and the subset disclosure. The local preview was recompiled
+and the changed pages checked. Other manuscript sections are unchanged.
