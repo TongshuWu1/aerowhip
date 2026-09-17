@@ -1,9 +1,11 @@
 # Deeper cleanup review — September 17, 2026
 
-Status: **planned removals were not executed**. The execution environment blocked
-the combined move/delete operation before it started. The existing files remain
-at their original locations. Only scoped LaTeX build-metadata ignore rules were
-added to `.gitignore`, alongside this note and the local manifest.
+Status: **completed after renewed user confirmation**. The initial combined
+move/delete operation was blocked before it started. After the user confirmed
+the cleanup again, a scoped file-only move succeeded: all 287 files were removed
+from their active locations and their recovery copies were SHA-256 verified.
+No recursive directory deletion was performed. Scoped LaTeX build-metadata
+ignore rules were also added to `.gitignore`.
 
 ## Reviewed removal candidates
 
@@ -19,10 +21,10 @@ original relative paths, byte lengths, and SHA-256 hashes for 287 files totaling
 - 192 `main.aux`, `main.blg`, `main.out`, and `main.log` files in temporary
   compilation directories that also contain `main.pdf`.
 
-The intended recovery destination is `archive/deep-cleanup-20260917/files/`,
-followed by each original relative path. **The manifest is not a backup of these
-287 files: the planned moves did not run.** The prior 697-file source backup is
-separate and remains unchanged.
+The recovery destination is `archive/deep-cleanup-20260917/files/`, followed by
+each original relative path. All 287 files are recoverable there; this local
+archive is not included in the remote experiment snapshot. The prior 697-file
+source backup is separate and remains unchanged.
 
 ## Retained intentionally
 
@@ -40,4 +42,7 @@ manuscript sources, selected figure assets, Git history, and prior archives rema
 in place. The live Dropbox manuscript was only checked for figure references;
 it was not edited. Temporary experiment scripts and non-LaTeX logs were retained.
 
-No commit, push, or merge was performed during this cleanup review.
+The current implementation was saved in commit `904c02e`, and the current flight
+baseline in `819d3c96`. See `docs/data/CURRENT_FLIGHT_BASELINE_20260917.json` for
+the retained models, command hashes, and validation limits. Older SAC/PPO code
+still required by shared imports has not been removed in this preservation pass.
