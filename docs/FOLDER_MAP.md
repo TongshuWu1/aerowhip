@@ -1,29 +1,28 @@
-# Where files belong
+# Repository map
 
 | Location | Purpose |
 |---|---|
-| `exports/M2_selected_fixed_tip_reference/` | Current next-flight CSV and new raw takes |
-| `exports/M0_Bspline_slower_brake_1s/` | Original flown M0 command and recordings |
-| `exports/M1_local_fixed_tip_reference/` | Original flown M1 command and recordings |
-| `data/flight_batches/` | Retained preliminary, M0 and M1 original measurements |
-| `data/raw_takes/` | Imported preliminary measurements |
-| `runs/adaptation/` | Active model lineage and required fitting dependencies |
-| `runs/reference_tracking/` | Fixed M0 reference and command corrections |
-| `runs/rehearsals_pva/` | Original commands and predicted motion |
-| `runs/data_review/`, `runs/evaluation/` | Current data checks and prediction evidence |
-| `config/` | Settings, calibration and active model/flight selection |
-| `paper/figures/` | Retained recent figures and provenance |
-| `docs/` | Current guides and technical references |
-| `delete/cleanup-20260913/` | Reversible holding area for obsolete files; no permanent deletion |
+| `simulator/` | Simulation and research UI |
+| `planning/` | Planning, fixed-reference correction, and job execution |
+| `experimental_data/` | Recording import, fitting, and model evaluation |
+| `deployment/` | Lab UI, rehearsal, and flight export |
+| `learning/` | Shared PVA environment and learning implementations |
+| `tools/` | Workflow commands and historical experiment utilities |
+| `tests/` | Regression and integration checks |
+| `config/` | Configuration, UI selections, and model catalog |
+| `runs/` | Saved planning, fitting, correction, rehearsal, and audit artifacts |
+| `data/` | Recordings and dataset metadata |
+| `exports/` | Exported commands and associated flight recordings |
+| `paper/`, `docs/` | Manuscript assets and documentation |
+| `output/`, `tmp/` | Generated reports, working artifacts, and experiment scripts; not necessarily disposable |
+| `workspace/`, `experiments/` | Local lab/runtime workspaces |
+| `requirements/`, `third_party/` | Dependency specifications and external components |
+| `archive/`, `delete/` | Recoverable local snapshots and earlier archives |
 
-Python packages, entry points, tests and dependencies retain their original
-locations. Some older runs remain because current models or frozen forecasts
-reference them. The cleanup plan lists these dependencies.
+The model catalog is `config/evaluation/campaign.json`. It contains M0–M7 as of
+September 17, 2026; this workspace is no longer an M0-only reset. Use catalog
+entries and saved job metadata rather than a hard-coded model or export path.
 
-Compatibility links remain: `rehearsal_csv_and_result_in_real_flight` points to
-`data/flight_batches`, `policies` to `exports`, `output/pdf` to `paper/figures`,
-and `.natnet_download` to `third_party/natnet`. They are not duplicate datasets.
-
-The live manuscript is in Dropbox Overleaf, outside this repository. See the
-[paper handoff](paper/PAPER_WRITING_HANDOFF.md). The repository's manuscript is
-historical; cleanup did not edit or move the Dropbox source.
+Historical jobs can depend on files elsewhere in this tree, including old-looking
+directories. The minimal cleanup did not relocate source, recordings, fitted
+models, commands, or results. See the [preservation note](development/REPOSITORY_BASELINE_20260917.md).

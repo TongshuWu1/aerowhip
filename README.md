@@ -1,111 +1,30 @@
 # AeroWhip
 
-Current flight: [M2 selected CSV](exports/M2_selected_fixed_tip_reference/fullstate_30hz.csv).
-See [HANDOFF.md](HANDOFF.md) for the active model, measurements and next steps,
-and [the folder map](docs/FOLDER_MAP.md) for repository organization.
+Research implementation for aerial cable whipping: simulation, planning,
+recorded-flight fitting, fixed-reference command correction, and evaluation.
 
-Obsolete artifacts were moved to `delete/cleanup-20260913/`; nothing was
-permanently deleted. The original README is preserved in its `before_cleanup/` folder.
+## Entry points
 
+- Research UI: `.venv/Scripts/python.exe run_simulation.py`.
+- Lab UI: `.venv/Scripts/python.exe run_lab.py` (no job starts automatically).
+- Command-correction options: `.venv/Scripts/python.exe tools/correct_reference.py --help`.
+- Tests: see the [test guide](tests/README.md).
 
-**AeroWhip: Aerial Cable Whipping through Iterative Model Refinement**
+The research UI has five pages: Models & fitting, Recordings, MPPI, Rehearsals,
+and Flight comparison. `run_simulation.py --headless` instead runs the historical
+constant-force simulator; it is not a headless version of the PVA planning workflow.
 
-Repository: [TongshuWu1/aerowhip](https://github.com/TongshuWu1/aerowhip).
+## Models and experiment records
 
-AeroWhip combines a loaded-UAV response model, distributed cable dynamics and
-offline trajectory planning. Recorded flights refine the model between trials;
-each planned maneuver is exported as a frozen 30 Hz position, velocity and
-acceleration (PVA) CSV for the laboratory's separate flight program.
+Use the [model catalog](config/evaluation/campaign.json) and the selected job's
+saved configuration to identify models and artifacts. The catalog contains M0–M7
+as of September 17, 2026; earlier M0-reset instructions describe a historical
+collection, not the current workspace. A catalog entry is not flight approval.
 
-The paper studies the complete plan–fly–measure–refine loop. Its main outcome is
-continuous minimum 3D tip-to-target distance, supported by prediction error on
-common recordings. The existing M0 and preliminary recordings are retained.
-Historical M0/M1/M2 trials are development evidence; the planned new study uses
-20 executions at one target.
+Recordings, fitted assets, commands, and results remain in their existing locations.
+Do not move these based only on directory names: saved jobs can reference them.
+The current implementation and UI are retained; no replacement repository has
+been created.
 
-
-## M0 B-spline planner on main
-
-The selected M0 motion initializes a smooth position B-spline with 9 adjustable
-XYZ points. Its original objective and target are restored. Strike alignment is
-a smooth reward; recovery brakes firmly, returns to launch, and holds.
-See the [planner guide](docs/methods/POSITION_SPLINE_PLANNER.md).
-
-A short development refinement passed complete coupled replay and CSV checks.
-The result is simulation evidence; physical validation is pending.
-
-```sh
-python tools/plan_fold_strike.py --check
-python run_simulation.py
-```
-
-## Start here
-
-- [Current decisions and evidence boundaries](HANDOFF.md)
-- [Paper-writing handoff](docs/paper/PAPER_WRITING_HANDOFF.md)
-- [One-day experiment protocol](docs/paper/PAPER_EXPERIMENT_PROTOCOL.md)
-- [Architecture and source map](docs/ARCHITECTURE.md)
-- [Documentation index](docs/README.md)
-
-## Research and lab versions
-
-The main research checkout keeps five pages: **Models & fitting**, **Recordings**,
-**MPPI**, **Rehearsals**, and **Flight comparison**. Run it from the
-repository root using the existing environment:
-
-```sh
-# Linux
-.venv/bin/python run_simulation.py
-```
-
-```powershell
-# Windows
-.venv/Scripts/python.exe run_simulation.py
-```
-
-See [installation](docs/setup/INSTALL.md) for environment setup. Opening the interface
-does not start training, fitting or planning.
-
-Both branches include the five-page operator app (`python run_lab.py`).
-The **`deployment` branch** provides its curated lab defaults,
-`setup_lab.py`, `run_lab.py`, and the [operator runbook](docs/lab/LAB_RUNBOOK.md). It keeps studies and
-generated CSVs in the checkout; exports go to `exports/<study>/<generation>/`.
-The private colleague bundle contains the retained M0/preliminary assets. These
-assets are not included in the source-only branch, so a source-only user must
-import the baseline separately. Neither version sends commands to the aircraft.
-
-## Repository layout
-
-| Path | Purpose |
-|---|---|
-| `config/` | Active configuration and experiment catalogs |
-| `simulator/` | Loaded-aircraft response, geometry, cable physics and research UI |
-| `planning/` | Offline MPPI search, PPO trajectory generation and immutable jobs |
-| `learning/` | Shared PVA environment, objectives and learning implementations |
-| `experimental_data/` | Recording review, staged fitting and model comparison |
-| `deployment/` | Saved rehearsal, recovery and CSV export |
-| `tools/` | Workflow and analysis entry points |
-| `tests/` | Physics, fitting, flight, training and UI checks |
-| `docs/` | Active paper and implementation guides |
-| `data/` | Preliminary takes and paired flight batches in `data/flight_batches/` |
-| `runs/` | Fitted models, saved commands, original forecasts and audit evidence |
-| `exports/` | CSVs and bundles handed to the separate flight program |
-| `paper/figures/` | Manuscript figures and provenance sidecars |
-| `third_party/` | Optional locally installed SDKs |
-
-Retained evidence focuses on the current work and the recent M0/M1/M2 lineage,
-including the preliminary inputs and calibration required to reproduce it.
-Obsolete measurements, failed legacy runs and superseded guides are outside the
-active paper workspace. Saved evidence retains its original model, settings,
-source and data identities.
-Do not regenerate an old forecast with a newer model and call it the original.
-Use the [reproducibility guide](docs/setup/REPRODUCIBILITY.md) when transferring research
-assets; ordinary generated outputs are not necessarily tracked by Git.
-
-For checks, see [the test guide](tests/README.md) and run the subset relevant to a
-change. Report the actual environment tested. Existing Windows/RTX 4080 checks
-do not establish Ubuntu/RTX 5080 validation.
-
-See the [folder map](docs/FOLDER_MAP.md) for renamed paths and where to save each kind of file.
-
-Only `main` and `deployment` are active branches. Read the [Git workflow](docs/GIT_WORKFLOW.md) before moving between their checkouts.
+See the [folder map](docs/FOLDER_MAP.md), [documentation index](docs/README.md),
+and [baseline preservation note](docs/development/REPOSITORY_BASELINE_20260917.md).

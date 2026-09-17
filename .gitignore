@@ -43,3 +43,12 @@ tmp/
 
 # Reversible local cleanup holding area.
 /delete/
+
+# Regenerable manuscript build metadata; retain PDFs, figures, and bibliography output.
+/paper/**/*.aux
+/paper/**/*.blg
+/paper/**/*.log
+/paper/**/*.out
+/paper/**/*.fls
+/paper/**/*.fdb_latexmk
+/paper/**/*.synctex.gz
