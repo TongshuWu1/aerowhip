@@ -17,7 +17,6 @@ from learning.point_force_env import (
 )
 from .cable import DderState, FREE_ENDPOINTS
 from .point_mass import ForceControlledPointCable
-from .rollout import _build_policy_agent, _build_sac_agent
 from .strike_plan import StrikePlan, compile_strike_plan
 
 
@@ -128,49 +127,6 @@ class LiveFlight:
         self.history = deque(maxlen=int(round(600 / self.dt_s)) + 1)
         self.history.append(self.snapshot())
 
-    @classmethod
-    def from_checkpoint(cls, model_config, task_config, ppo_config, checkpoint_path,
-                        *, physics=None):
-        path = Path(checkpoint_path).resolve()
-        checkpoint = torch.load(path, map_location="cpu", weights_only=False)
-        schema = checkpoint.get("schema")
-        if schema not in {"force_ppo_checkpoint_v1", "force_sac_checkpoint_v1"}:
-            raise ValueError("Live strikes require a point-force PPO or SAC checkpoint.")
-        if (int(checkpoint.get("observation_dim", POINT_FORCE_OBSERVATION_DIM)) != POINT_FORCE_OBSERVATION_DIM
-                or int(checkpoint.get("action_dim", 3)) != 3):
-            raise ValueError("Checkpoint does not match the cable state and 3D force inputs.")
-        saved_config = path.parent.parent / "ppo.json"
-        if saved_config.is_file():
-            ppo_config = json.loads(saved_config.read_text(encoding="utf-8"))
-        saved_model = path.parent.parent / "model.json"
-        if saved_model.is_file():
-            trained_config = json.loads(saved_model.read_text(encoding="utf-8"))
-            trained_model = ForceControlledPointCable.from_mapping(trained_config)
-            current_model = ForceControlledPointCable.from_mapping(model_config)
-            if (float(trained_config["simulation"]["dt_s"]) != float(model_config["simulation"]["dt_s"])
-                    or trained_model.point_mass_kg != current_model.point_mass_kg
-                    or trained_model.dder.parameters != current_model.dder.parameters):
-                raise ValueError("Checkpoint cable/drone parameters differ from the live model.")
-        saved_task = path.parent.parent / "task.json"
-        if saved_task.is_file():
-            trained = json.loads(saved_task.read_text(encoding="utf-8"))
-            for key in ("control_dt_s", "episode_duration_s"):
-                if float(trained[key]) != float(task_config[key]):
-                    raise ValueError(f"Checkpoint and live task disagree on {key}.")
-        if schema == "force_sac_checkpoint_v1":
-            agent = _build_sac_agent(Path(__file__).resolve().parents[1], torch.device("cpu"), checkpoint=checkpoint)
-            agent.actor.load_state_dict(checkpoint["actor"])
-            agent.actor.eval()
-        else:
-            agent = _build_policy_agent(ppo_config, torch.device("cpu"))
-            agent.policy.set_action_prior(checkpoint.get("action_prior"))
-            agent.policy.load_state_dict(checkpoint["policy"])
-            agent.policy.eval()
-        flight = cls(model_config, task_config, ppo_config, policy=agent.deterministic_action,
-                     checkpoint_path=path, physics=physics)
-        flight.checkpoint_episodes = int(checkpoint.get("episodes", 0))
-        flight.algorithm = "SAC" if schema == "force_sac_checkpoint_v1" else "PPO"
-        return flight
 
     @property
     def ready(self) -> bool:

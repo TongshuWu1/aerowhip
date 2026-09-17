@@ -14,7 +14,7 @@ from simulator.research_reference import reference_packet_validity
 from simulator.cable import DderState
 from simulator.pva_commands import SCHEMA
 from learning.pva_env import PVAEnvironment
-from planning.pva_job import load_policy,freeze_model_assets
+from planning.pva_job import freeze_model_assets
 from deployment.research_rehearsal import complete_packets,FIELDS
 
 
@@ -51,6 +51,8 @@ def complete_pva_packets(whip,hover,limits=None,*,recovery_settings=None,jerk_li
 def generate(job,output,*,checkpoint=None,origin=None,target=None,device='cuda',progress=None):
     job=Path(job).resolve();output=Path(output).resolve()
     cfg=read_json(job/'settings.json');model=read_json(job/'model.json')
+    if cfg.get('method') != 'mppi' or checkpoint is not None:
+        raise ValueError('Only saved MPPI plans can be rehearsed; policy checkpoints were retired')
     if read_json(job/'status.json',{}).get('status')=='running':raise ValueError('Stop or finish the run before rehearsing its saved plan')
     if origin is not None:cfg['launch']['origin_m']=list(origin)
     if target is not None:cfg['launch']['target_m']=list(target)
@@ -84,14 +86,10 @@ def generate(job,output,*,checkpoint=None,origin=None,target=None,device='cuda',
         if saved_actions.ndim!=2 or saved_actions.shape[1]!=3 or not len(saved_actions) or not np.isfinite(saved_actions).all() or np.abs(saved_actions).max()>1+1e-6:
             raise ValueError('Saved plan requires finite bounded XYZ jerk actions')
     env=PVAEnvironment(model,cfg,root=job,device=device)
-    if cfg['method']=='ppo':
-        checkpoint=Path(checkpoint or job/'checkpoints/best.pt').resolve()
-        agent=load_policy(checkpoint,env,cfg);result=env.rollout(policy=agent.deterministic_action,trace=True)
-    else:
-        if len(saved_actions)>env.steps:raise ValueError('Saved plan exceeds its frozen maneuver time limit')
-        actions=env.tensor(saved_actions)[None]
-        result=replay_spline(env,env.tensor(free)[None],trace=True) if spline_mode else env.rollout(actions=actions,trace=True,max_steps=len(saved_actions))
-        if bool(env.active.any()):raise ValueError('Saved plan ends before a modeled hit or maneuver time limit; no CSV exported')
+    if len(saved_actions)>env.steps:raise ValueError('Saved plan exceeds its frozen maneuver time limit')
+    actions=env.tensor(saved_actions)[None]
+    result=replay_spline(env,env.tensor(free)[None],trace=True) if spline_mode else env.rollout(actions=actions,trace=True,max_steps=len(saved_actions))
+    if bool(env.active.any()):raise ValueError('Saved plan ends before a modeled hit or maneuver time limit; no CSV exported')
     if bool(result['failed'][0]):raise ValueError('Whip fails the command, workspace or model envelope; no CSV exported')
     from planning.strike_objective import requires_fold, strike_direction_allowed, strike_angle_deg, uses_templates, rewarded_speed, strike_speed_allowed
     if env.targeted_strike and requires_fold(cfg) and not bool(result['fold_valid'][0]):
@@ -143,8 +141,6 @@ def generate(job,output,*,checkpoint=None,origin=None,target=None,device='cuda',
     cable_difference=float(np.max(np.abs(positions[1:prefix+1]-streamed_q)))
     if cable_difference>1e-8:raise AssertionError(f'PVA training/export cable mismatch: {cable_difference}')
     output.mkdir(parents=True);saved=freeze_model_assets(model,output,source_root=job)
-    from learning.ppo_trajectory_reward import freeze_reference
-    freeze_reference(cfg,output,source_root=job)
     atomic_json(output/'model.json',saved);atomic_json(output/'settings.json',cfg)
     atomic_json(output/'task.json',dict(desired_strike_direction_world=cfg['task']['strike_direction'],
         target_position_m=cfg['launch']['target_m'],

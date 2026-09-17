@@ -26,11 +26,11 @@ ROOT_REQUIRED = ('README.md', 'run_lab.py', 'setup_lab.py', 'start_lab.cmd', 'st
                  'requirements.txt', 'pytest.ini')
 ROOT_OPTIONAL = ('SOURCE_SNAPSHOT.json', 'SOURCE_INTEGRATION.json', '.editorconfig',
                  '.gitattributes', '.github/workflows/smoke.yml',
-                 'run_simulation.py', 'run_ppo.py', 'run_sac.py', 'run_tests.py')
-CONFIGS = ('model.json', 'task.json', 'ppo.json', 'sac.json', 'cable_fit.json', 'baseline.json',
+                 'run_simulation.py', 'run_tests.py')
+CONFIGS = ('model.json', 'task.json', 'ppo.json', 'cable_fit.json', 'baseline.json',
            'current_vehicle.json', 'research_workspace.json', 'experiment.json',
            'research_30hz/model.json', 'research_30hz/task.json', 'research_30hz/ppo.json',
-           'pva/mppi.json', 'pva/ppo.json')
+           'pva/mppi.json')
 REQUIRED_IMPLEMENTATION = ('deployment/lab_gui.py', 'deployment/lab_seed.py', 'tools/check_lab.py',
                            'deployment/lab_workflow.py', 'tools/lab.py')
 RELEASE_SCHEMA = 'deployment_lab_release_v1'
@@ -74,7 +74,7 @@ def _clean_configs(root):
     configurations['research_workspace.json'] = dict(schema='research_workspace_v1',
         config_directory='config/research_30hz', bundle=None,
         model_label='Unfitted structural template', selected_by_user=False)
-    for method in ('mppi', 'ppo'):
+    for method in ('mppi',):
         settings = configurations.get('pva/' + method + '.json')
         if settings is not None:
             settings['model_path'] = ''

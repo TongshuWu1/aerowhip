@@ -15,13 +15,17 @@ import zipfile
 
 ROOT=Path(__file__).resolve().parents[1]
 PACKAGES=('simulator','learning','planning','experimental_data','tools','tests','deployment')
+# Local manuscript video edits depend on privately held recordings outside the
+# checkout. Preserve them locally, but do not ship them as portable pipeline code.
+LOCAL_MEDIA_TOOLS={'tools/build_m4_background_only.py','tools/build_m4_video_sequence.py',
+                   'tools/inspect_m4_target_response.py','tools/reselect_m4_video_frames.py'}
 GUIDES=('README.md','setup/INSTALL.md','ARCHITECTURE.md','setup/REPRODUCIBILITY.md','setup/PUBLICATION.md',
         'setup/CONTROLLER_INTERFACE_REVIEW.md','setup/LAB_SETUP.md',
-        'paper/PAPER_READINESS_REVIEW.md','methods/SIM_REAL_EVALUATION.md','development/M0_TO_M1_ADAPTATION.md',
-        'methods/DIRECT_PVA_WORKFLOW.md','methods/FUTURE_ADAPTATION_FITTING.md','development/M2_PPO_MPPI_MATCH.md',
+        'methods/SIM_REAL_EVALUATION.md','FRESH_MODEL_ITERATIONS.md',
+        'methods/DIRECT_PVA_WORKFLOW.md','methods/FUTURE_ADAPTATION_FITTING.md',
         'paper/PAPER_EXPERIMENT_PROTOCOL.md','methods/FROZEN_SYSTEM_IDENTIFICATION.md',
         'methods/DRONE_COMMAND_CHAIN_AUDIT.md','methods/DRONE_RESPONSE_ADAPTATION.md')
-CONFIGS=('model','task','ppo','sac','cable_fit')
+CONFIGS=('model','task','ppo','cable_fit')
 
 
 def encoded(value):return (json.dumps(value,indent=2,sort_keys=True,ensure_ascii=False)+'\n').encode('utf-8')
@@ -98,34 +102,19 @@ def portable_configs(root):
         raise ValueError('An enabled residual requires a separately reviewed checkpoint export')
     model['cable'].pop('previous_parameter_source',None)
     model['cable']['parameter_source']='bundled physical values; original fit data not distributed'
-    for name in ('ppo','sac'):
-        # Compatibility configurations are retained for independent legacy tests.
-        # Never distribute a local selected prior as a fresh-system default.
-        result[name]['bootstrap']={'enabled':False}
-        result[name]['training']['device']='auto'
-        result[name]['training']['collection_batch']=64
-    result['ppo']['curriculum']['meaning']='Disabled; compatibility configuration, not the selected PVA experiment'
-    # GPU comparison settings remain documented in the original config hashes.
-    # Smaller defaults avoid allocating a workstation-size buffer on first use.
-    result['sac']['sac']['replay_capacity']=65536
-    result['sac']['sac']['updates_per_collection']=16
+    # Retained only as the force-physics regression fixture, not a trainer.
+    result['ppo']['bootstrap']={'enabled':False}
     result['baseline']=dict(version='bundled-physical-baseline',model_sha256=canonical(model))
-    for name in ('research_30hz/model','research_30hz/task','research_30hz/ppo','current_vehicle','pva/ppo','pva/mppi'):
+    for name in ('research_30hz/model','research_30hz/task','research_30hz/ppo','current_vehicle','pva/mppi'):
         value=json.loads((root/f'config/{name}.json').read_text(encoding='utf-8'))
         original[name]=canonical(value);result[name]=value
     structural=result['research_30hz/model']
     if structural.get('motion_residual',{}).get('enabled') or structural.get('fullstate_execution',{}).get('enabled'):
         raise ValueError('Source release requires an unfitted structural template; fitted models need separate reviewed assets')
-    for method in ('ppo','mppi'):
+    for method in ('mppi',):
         result['pva/'+method]['device']='auto'
         result['pva/'+method]['model_path']=''
         result['pva/'+method].pop('development_model_review',None)
-    objective=result['pva/ppo'].get('ppo_objective')
-    if objective:
-        # The reference is a separately reviewed research asset, like the model.
-        # Keep its checksum but never distribute a workstation path/authorization.
-        objective['reference_source']='config/pva/wave_reference.npz'
-        objective['source_mppi_run']='separately held selected MPPI run; see source settings checksum'
     result['research_workspace']=dict(schema='research_workspace_v1',config_directory='config/research_30hz',
         bundle=None,model_label='Unfitted structural template',selected_by_user=False)
     result['experiment']=dict(schema='unseen_system_experiment_v1',preliminary_batch=None,fit_job=None,
@@ -148,13 +137,14 @@ def build(root,output):
     for folder in PACKAGES:
         for path in sorted((root/folder).rglob('*')):
             if '__pycache__' in path.parts:continue
+            if path.relative_to(root).as_posix() in LOCAL_MEDIA_TOOLS:continue
             if folder=='deployment' and 'reference' in path.relative_to(root/folder).parts:continue
             if path.is_file() and path.suffix in ('.py','.svg'):add(path.relative_to(root))
     for path in sorted((root/'requirements').glob('*')):
         if path.suffix in ('.txt','.json'):add(path.relative_to(root))
     if (root/'experimental_data/default_processing.json').is_file():
         add('experimental_data/default_processing.json')
-    for name in ('run_simulation.py','run_ppo.py','run_sac.py','run_tests.py',
+    for name in ('run_simulation.py','run_tests.py',
                  'requirements.txt','pytest.ini','.editorconfig','.github/workflows/smoke.yml','tests/README.md'):
         add(name)
     for name in ('exports/README.md','paper/README.md','third_party/README.md'):
@@ -193,7 +183,7 @@ def build(root,output):
         transformations=['Removed local provenance paths; preserved physical/reward/action values',
             'Compatibility force priors disabled; current PVA and structural configurations included',
             'No selected model, replay, flight package, evaluation candidate or fit job is distributed',
-            'Device auto and collection batch64; SAC replay65536 and16 updates/collection for smaller development runs',
+            'PVA device auto; no SAC or PPO training entry points',
             'Empty dataset manifest; no raw data, fit reports or checkpoints; no Git history',
             'Included linked current guides; portable documentation links; absent research evidence labeled separately held'],
         byte_count=sum(len(raw) for raw in files.values()),scan_findings=[],

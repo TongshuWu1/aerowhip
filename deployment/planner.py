@@ -1,19 +1,16 @@
-"""Generate a frozen plan from a verified policy package and one initial state.
+"""Shared force/acceleration conversion and saved-plan validation helpers.
 
 This module neither connects to ROS nor authorizes a flight.
 """
-import argparse
 import csv
 import hashlib
 import json
 from pathlib import Path
-import time
 
 import numpy as np
 import torch
 
 from simulator.cable import DderState
-from simulator.live_flight import LiveFlight
 from simulator.point_mass import ForceControlledPointCable
 
 
@@ -123,96 +120,3 @@ def write_plan(plan, output, *, task, metadata, controller_mass_kg=None, control
                 for start, end in zip(starts, ends):
                     writer.writerow([start*plan.dt_s, end*plan.dt_s, *values[start]])
     return metadata
-
-
-def create_plan(package, initial_path, output, *, target_position_m=None, device='cpu',
-                controller_mass_kg=None, controller_gravity_m_s2=None):
-    package, initial_path, output = Path(package),Path(initial_path),Path(output)
-    verify_package(package)
-    if output.exists():
-        raise ValueError('Choose a new output directory')
-    setup_path = package.parent/'experiment_setup.json'
-    if controller_mass_kg is None and controller_gravity_m_s2 is None and setup_path.is_file():
-        controller = json.loads(setup_path.read_text(encoding='utf-8')).get('controller_export', {})
-        controller_mass_kg = controller.get('controller_mass_kg')
-        controller_gravity_m_s2 = controller.get('controller_gravity_m_s2')
-    if (controller_mass_kg is None) != (controller_gravity_m_s2 is None):
-        raise ValueError('Supply both controller mass and controller gravity')
-    if controller_mass_kg is not None:
-        controller_force([0., 0., 0.], controller_mass_kg, controller_gravity_m_s2)
-    model,task,ppo = [json.loads((package/f'{name}.json').read_text(encoding='utf-8')) for name in ('model','task','ppo')]
-    with np.load(initial_path,allow_pickle=False) as initial:
-        if 'attachment_position_m' in initial:
-            from deployment.rehearsal import assumed_hanging_state
-            state = assumed_hanging_state(model, initial['attachment_position_m'], initial['attachment_velocity_m_s'])
-            initialization = 'assumed_vertical_cable'
-        else:
-            state = validate_initial_state(model,initial['positions_m'],initial['velocities_m_s'])
-            initialization = 'measured_full_state'
-        if 'state_time_s' not in initial or not np.isfinite(initial['state_time_s']).all() or initial['state_time_s'].size!=1:
-            raise ValueError('Supply scalar state_time_s in the agreed tracking clock')
-        state_time = float(initial['state_time_s'].item())
-    if target_position_m is not None:
-        target = np.asarray(target_position_m, dtype=float)
-        if target.shape != (3,) or not np.isfinite(target).all():
-            raise ValueError('Expected finite target XYZ')
-        task['target_position_m'] = target.tolist()
-    torch.set_num_threads(1)
-    started = time.perf_counter()
-    flight = LiveFlight.from_checkpoint(model,task,ppo,package/'checkpoints/policy.pt')
-    if device == 'cuda':
-        from simulator.gpu_rehearsal import prepare_gpu_rehearsal
-        _live, flight.physics, flight.policy = prepare_gpu_rehearsal(flight)
-    elif device != 'cpu':
-        raise ValueError('Planner device must be cpu or cuda')
-    initialization_seconds = time.perf_counter()-started
-    started = time.perf_counter()
-    plan = flight.plan_strike(state)
-    elapsed = time.perf_counter()-started
-    metadata = dict(schema='frozen_open_loop_force_plan_v1',flight_ready=False,
-        initialization=initialization,
-        planning_device=device, initialization_wall_seconds=initialization_seconds,
-        state_time_s=state_time,initial_file_sha256=hashlib.sha256(initial_path.read_bytes()).hexdigest(),
-        policy_sha256=hashlib.sha256((package/'checkpoints/policy.pt').read_bytes()).hexdigest(),
-        policy_manifest_sha256=hashlib.sha256((package/'policy_manifest.json').read_bytes()).hexdigest(),
-        physics_dt_s=plan.dt_s,policy_dt_s=task['control_dt_s'],cutoff_s=plan.duration_s,
-        planning_wall_seconds=elapsed,force_units='N',frame='verified_common_world_z_up_required',
-        gravity_convention='total commanded thrust vector; simulator applies gravity separately',
-        launch_position_drift_m=ppo['deployment']['launch_position_drift_m'],
-        launch_velocity_drift_m_s=ppo['deployment']['launch_velocity_drift_m_s'],
-        next_step='Recheck current initial state and controller readiness before launch; no flight is authorized by this file')
-    return write_plan(plan, output, task=task, metadata=metadata,
-                      controller_mass_kg=controller_mass_kg, controller_gravity_m_s2=controller_gravity_m_s2)
-
-
-def main():
-    parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--package',type=Path,default=Path('policy'))
-    parser.add_argument('--initial',type=Path)
-    parser.add_argument('--output',type=Path)
-    parser.add_argument('--device', choices=('cpu','cuda'), default='cpu')
-    parser.add_argument('--controller-mass-kg', type=float, help='Actual configured compensation mass, including cable if firmware compensates total weight')
-    parser.add_argument('--controller-gravity-m-s2', type=float, help='Gravity magnitude added by the controller, in the common Z-up frame')
-    parser.add_argument('--target', type=float, nargs=3, metavar=('X','Y','Z'),
-                        help='Known world target for this attempt; saved package remains unchanged')
-    parser.add_argument('--verify',action='store_true')
-    parser.add_argument('--example-initial',type=Path,help='Write a synthetic hanging state for offline checks only')
-    args=parser.parse_args()
-    verify_package(args.package)
-    if args.verify:
-        print('Policy package hashes verified; no vehicle connection.');return
-    if args.example_initial:
-        if args.example_initial.exists():raise ValueError('Example output already exists')
-        model=json.loads((args.package/'model.json').read_text(encoding='utf-8'))
-        task=json.loads((args.package/'task.json').read_text(encoding='utf-8'))
-        state=ForceControlledPointCable.from_mapping(model).hanging_state(
-            torch.tensor([task['initial_root_position_m']],dtype=torch.float64))
-        np.savez_compressed(args.example_initial,positions_m=state.positions_m[0].numpy(),
-            velocities_m_s=state.velocities_m_s[0].numpy(),state_time_s=0.)
-        print('Synthetic state written. Do not substitute it for live measurements.');return
-    if args.initial is None or args.output is None:parser.error('--initial and --output are required')
-    print(json.dumps(create_plan(args.package,args.initial,args.output,target_position_m=args.target,device=args.device,
-        controller_mass_kg=args.controller_mass_kg, controller_gravity_m_s2=args.controller_gravity_m_s2),indent=2))
-
-
-if __name__=='__main__':main()

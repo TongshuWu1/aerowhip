@@ -9,7 +9,7 @@ import pytest
 import torch
 
 from experimental_data.io import atomic_json, sha256_file
-from simulator.workflow import read_json, prepare_training, apply_baseline
+from simulator.workflow import read_json, apply_baseline
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -35,8 +35,6 @@ def test_recommended_fit_dispatch_and_complete_application(workspace):
     assert actual['cable']['external_drag_s_inv']==.3
     assert actual['cable']['substeps']==12
     assert read_json(workspace/'data/baselines'/version/'manifest.json')['reviewed_candidate_sha256']==digest
-
-
 
 
 def test_fit_window_sampling_excludes_disabled_and_protected(tmp_path):
@@ -66,27 +64,6 @@ def workspace(tmp_path):
     return tmp_path
 
 
-def test_launch_snapshots_isolate_algorithms_and_future_edits(workspace):
-    before = sha256_file(workspace / 'config/ppo.json')
-    ppo, command = prepare_training(workspace, 'PPO', seed=17, episodes=16, batch=8, device='cpu',
-                                    overrides={'learning_rate': .0002})
-    sac, _ = prepare_training(workspace, 'SAC', seed=19, episodes=16, batch=4, device='cpu')
-    assert read_json(ppo / 'launch_config/ppo.json')['seed'] == 17
-    assert read_json(sac / 'launch_config/sac.json')['seed'] == 19
-    assert sha256_file(workspace / 'config/ppo.json') == before
-    assert read_json(ppo / 'launch_config/ppo.json')['validation']['every_episodes'] == 8
-    pointer=read_json(workspace/'config/research_workspace.json',{})
-    task_path=workspace/pointer.get('config_directory','config')/'task.json'
-    task = read_json(task_path)
-    original_target_x=task['target_position_m'][0]
-    task['target_position_m'][0] = 2
-    atomic_json(task_path, task)
-    assert read_json(ppo / 'launch_config/task.json')['target_position_m'][0] == original_target_x
-    assert '--config-directory' in command
-
-
-
-
 def test_apply_baseline_versions_model_without_touching_raw_data(workspace):
     raw = workspace / 'data/raw_takes/take/recording.csv'
     raw.parent.mkdir(parents=True)
@@ -109,111 +86,6 @@ def test_apply_baseline_versions_model_without_touching_raw_data(workspace):
     apply_baseline(workspace, model, fit_directory=fit)
     assert read_json(workspace / 'config/model.json')['cable']['EI_n_m2'] == 4e-5
     assert 'fullstate_execution' not in read_json(workspace / 'config/model.json')
-
-
-def test_validation_journal_keeps_actual_execution_and_reused_policy_identity(tmp_path, monkeypatch):
-    from learning.deployment_rollout import evaluate_deployment
-    from simulator.cable import DderState
-    from simulator.cable.dder import DderModel
-    from run_ppo import load_configs, _atomic_json, _atomic_checkpoint
-    torch.set_num_threads(1)
-    model, task, shared = load_configs()
-    task['episode_duration_s'] = .2
-    shared['deployment']['nominal_fraction'] = 1.
-    shared['deployment']['recovery_duration_s'] = .03
-    task['target_position_m'] = [.2, 0, task['initial_root_position_m'][2] - .9525]
-    def dynamics(_self, state, *args, **kwargs):
-        q = state.positions_m.clone()
-        q[:, -1, 0] += .1
-        v = torch.zeros_like(q)
-        v[:, -1, 0] = 10
-        return DderState(q, v)
-    monkeypatch.setattr(DderModel, 'step_runtime', dynamics)
-    calls = []
-    class Agent:
-        def deterministic_action(self, observation):
-            calls.append(observation.clone())
-            return torch.zeros((len(observation), 3))
-    result = evaluate_deployment(model, task, shared, Agent(), episodes=2, batch_size=2, device=torch.device('cpu'))
-    assert len(calls) == 1
-    assert result['success_rate'] == 1
-    assert result.recording[0]['positions_m'][-1, 0, -1, 0] > .2  # PID motion after contact
-    assert len(result.trials) == 2
-    for name, value in zip(('model', 'task', 'ppo'), (model, task, shared)):
-        atomic_json(tmp_path / f'{name}.json', value)
-    result['training_episodes'] = 2
-    checkpoint = tmp_path / 'checkpoints/latest.pt'
-    _atomic_checkpoint(checkpoint, {'episodes': 2, 'actor': {'weights': 1}})
-    _atomic_json(tmp_path / 'validation_latest.json', result)
-    first = read_json(tmp_path / 'validation/latest.json')
-    frozen_hash = sha256_file(tmp_path / first['checkpoint'])
-    _atomic_json(tmp_path / 'validation_latest.json', result)
-    assert len((tmp_path / 'validation_history.jsonl').read_text().splitlines()) == 1
-    reused = deepcopy(result)
-    reused['training_episodes'] = 4
-    _atomic_checkpoint(checkpoint, {'episodes': 4, 'actor': {'weights': 1}})
-    _atomic_json(tmp_path / 'validation_latest.json', reused)
-    second = read_json(tmp_path / 'validation/latest.json')
-    assert first['evaluation_id'] == second['evaluation_id']
-    assert second['evaluation_reused']
-    assert second['evaluated_at_training_episodes'] == 2
-    assert first['scenario_id'] == second['scenario_id']
-    assert first['checkpoint_sha256'] != second['checkpoint_sha256']
-    assert sha256_file(tmp_path / first['checkpoint']) == frozen_hash
-    assert len((tmp_path / 'validation_history.jsonl').read_text().splitlines()) == 2
-    from simulator.gui.research_widgets import export_learning
-    export_learning(tmp_path, tmp_path / 'figures', 'PPO')
-    assert (tmp_path / 'figures/ppo_learning.svg').stat().st_size > 1000
-    assert (tmp_path / 'figures/source_validation_history.csv').exists()
-
-
-@pytest.mark.parametrize('algorithm', ['ppo', 'sac'])
-def test_real_short_training_writes_batch_validation_and_run_snapshot(workspace, monkeypatch, algorithm):
-    import run_ppo
-    import run_sac
-    torch.set_num_threads(1)
-    model = read_json(workspace / 'config/model.json')
-    task = read_json(workspace / 'config/task.json')
-    shared = read_json(workspace / 'config/ppo.json')
-    task['episode_duration_s'] = .1
-    # This short synthetic task cannot use the production one-second prior.
-    shared['bootstrap']['enabled'] = False
-    shared['deployment']['recovery_duration_s'] = .5
-    shared['ppo'].update(hidden_dim=8, minibatch_transitions=2, update_epochs=1)
-    shared['validation'].update(episodes=2, every_episodes=2)
-    shared['update_guard'].update(validation_episodes=2)
-    shared['deployment']['holdout_episodes'] = 2
-    for name, value in (('model', model), ('task', task), ('ppo', shared)):
-        atomic_json(workspace / 'config' / f'{name}.json', value)
-    sac = read_json(workspace / 'config/sac.json')
-    sac['bootstrap']['enabled'] = False
-    sac['sac'].update(hidden_dim=8, replay_capacity=32, minibatch_transitions=2, updates_per_collection=1)
-    sac['validation']['episodes'] = 2
-    atomic_json(workspace / 'config/sac.json', sac)
-    directory, command = prepare_training(workspace, algorithm, seed=23, episodes=2, batch=2, device='cpu')
-    # Keep smoke artifacts and active-run pointers entirely in pytest's workspace.
-    monkeypatch.setattr(run_ppo, 'write_active_run', lambda root, artifact: None)
-    if algorithm == 'ppo':
-        run_ppo.train(device_name='cpu', requested_episodes=2, batch_size=2, artifact=directory,
-                      resume_checkpoint=None, config_directory=directory / 'launch_config')
-    else:
-        # Source hashes need the real source root, so intercept only the active pointer.
-        original_write = Path.write_text
-        def write(path, data, *args, **kwargs):
-            if str(path).endswith('ACTIVE_RUN.txt') and ROOT in path.parents:
-                return len(data)
-            return original_write(path, data, *args, **kwargs)
-        monkeypatch.setattr(Path, 'write_text', write)
-        run_sac.run(directory, 2, device_name='cpu', batch_override=2,
-                    config_directory=directory / 'launch_config')
-    assert read_json(directory / f'{algorithm}.json')['seed'] == 23
-    latest = read_json(directory / 'validation/latest.json')
-    assert latest['training_episodes'] == 2
-    assert len((directory / 'validation_history.jsonl').read_text().splitlines()) == 2
-    with np.load(directory / latest['replay']) as data:
-        assert data['positions_m'].shape[1:] == (1, 12, 3)
-
-
 
 
 def test_fitting_emits_measured_and_predicted_validation_window(workspace):

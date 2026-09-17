@@ -5,20 +5,21 @@ from simulator.workflow import read_json
 from planning.pva_job import load_settings,settings_path
 
 
-def test_planner_setup_edits_are_independent_and_do_not_translate_saved_runs(tmp_path):
+def test_planner_setup_edits_do_not_translate_saved_runs(tmp_path):
     os.environ.setdefault('QT_QPA_PLATFORM','offscreen')
     from PySide6.QtWidgets import QApplication
     from simulator.gui.pva_workspace import PVAPlannerPage
     app=QApplication.instance() or QApplication([])
-    ppo=load_settings(tmp_path,'ppo');mppi=load_settings(tmp_path,'mppi')
-    atomic_json(settings_path(tmp_path,'ppo'),ppo);atomic_json(settings_path(tmp_path,'mppi'),mppi)
+    mppi=load_settings(tmp_path,'mppi')
+    frozen=tmp_path/'runs/mppi_pva/existing/settings.json'
+    atomic_json(frozen,mppi);atomic_json(settings_path(tmp_path,'mppi'),mppi)
     page=PVAPlannerPage(tmp_path,'mppi')
     page.fields[('launch','origin_m')][0].setValue(.4)
     page.fields[('launch','target_m')][0].setValue(1.7)
     page.fields[('reward','success')].setValue(240.)
     page.horizon.setValue(15)
     page.save_settings()
-    assert read_json(settings_path(tmp_path,'ppo'))==ppo
+    assert read_json(frozen)==mppi
     saved=read_json(settings_path(tmp_path,'mppi'))
     assert saved['launch']['origin_m'][0]==.4 and saved['launch']['target_m'][0]==1.7
     assert saved['reward']['success']==240.
@@ -51,23 +52,22 @@ def test_wave_setup_keeps_mixture_scales_and_task_controls(tmp_path):
     page.shutdown();page.close();app.processEvents()
 
 
-def test_campaign_run_appears_without_reopening_ui_and_evaluation_reward_is_visible(tmp_path):
+def test_mppi_run_and_progress_appear_without_reopening_ui(tmp_path):
     os.environ.setdefault('QT_QPA_PLATFORM','offscreen')
     from PySide6.QtWidgets import QApplication
     from simulator.gui.pva_workspace import PVAPlannerPage
     app=QApplication.instance() or QApplication([])
-    page=PVAPlannerPage(tmp_path,'ppo')
-    job=tmp_path/'runs/ppo_pva/campaign-run'
-    atomic_json(job/'identity.json',dict(name='Fresh overnight PPO',model_source='model.json'))
+    page=PVAPlannerPage(tmp_path,'mppi')
+    job=tmp_path/'runs/mppi_pva/campaign-run'
+    atomic_json(job/'identity.json',dict(name='Fresh MPPI',model_source='model.json'))
     atomic_json(job/'model.json',dict(provenance=dict(label='Fresh M0')))
-    atomic_json(job/'status.json',dict(status='running',attempts=1024))
-    atomic_json(job/'history.json',[dict(attempts=1024,reward=10,success=.2,minimum_tip_distance_m=.1,
-        failures=.05,evaluation_reward=15,evaluation_success=.4)])
+    atomic_json(job/'status.json',dict(status='running',iteration=1,best_failed=False,best_success=False))
+    atomic_json(job/'history.json',[dict(iteration=1,best_reward=10,best_distance_m=.1)])
     page.poll()
     assert page.current_run==job and page.library.rowCount()==1
     assert page.library.item(0,1).text()=='Fresh M0'
-    assert [line.get_label() for line in page.figure.axes[0].lines]==['Training batch','Deterministic evaluation']
-    atomic_json(job/'status.json',dict(status='completed',attempts=2048,stop_reason='reward_plateau'))
+    assert page.figure.axes[0].lines  # MPPI progress refreshed without reopening.
+    atomic_json(job/'status.json',dict(status='completed',iteration=2,stop_reason='reward_plateau'))
     page.poll()
     assert page.library.item(0,2).text()=='completed' and not page.stop.isEnabled()
     page.shutdown();page.close();app.processEvents()

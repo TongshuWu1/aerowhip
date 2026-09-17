@@ -22,27 +22,3 @@ def test_success_selector_hides_unrequired_gates_and_preserves_legacy_profiles(t
     page.success_rule.setCurrentIndex(page.success_rule.findData('legacy_strike_v1'))
     assert not page.first_contact.isHidden()
     page.shutdown();page.close();app.processEvents()
-
-
-def test_ppo_matched_objective_controls_and_review_are_model_bound(tmp_path):
-    from pathlib import Path
-    from copy import deepcopy
-    from experimental_data.io import sha256_file
-    from planning.whip_objective import WAVE_OBJECTIVE
-    from PySide6.QtWidgets import QApplication
-    from simulator.gui.pva_workspace import PVAPlannerPage
-    app=QApplication.instance() or QApplication([])
-    model=tmp_path/'development.json';atomic_json(model,dict(provenance=dict(fit_complete=False)))
-    cfg=defaults('ppo');cfg['model_path']=str(model);cfg['trajectory_objective']=deepcopy(WAVE_OBJECTIVE)
-    cfg['training']['success_priority']=False
-    cfg['ppo_objective']=dict(schema='mppi_preferred_fold_v1',reference_sha256='a'*64,failure_penalty=10000,potential_scale=300)
-    cfg['development_model_review']=dict(model_sha256=sha256_file(model),reason='Authorized simulation only')
-    atomic_json(tmp_path/'config/pva/ppo.json',cfg)
-    page=PVAPlannerPage(tmp_path,'ppo')
-    assert ('trajectory_objective','fold') in page.fields
-    assert ('reward','success') not in page.fields
-    assert page.collect()['trajectory_objective']==cfg['trajectory_objective']
-    assert page.run.isEnabled()
-    atomic_json(model,dict(provenance=dict(fit_complete=False),changed=True))
-    page.describe_model();assert not page.run.isEnabled()
-    page.shutdown();page.close();app.processEvents()

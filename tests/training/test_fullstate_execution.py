@@ -1,7 +1,7 @@
 from copy import deepcopy
 import pytest
 import torch
-from run_ppo import load_configs
+from tests.force_config import load_configs
 from simulator.drone_tracking import DroneTrackingResidual
 from simulator.cable import DderState
 from simulator.cable.residual import MotionResidual

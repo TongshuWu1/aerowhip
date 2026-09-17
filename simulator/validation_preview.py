@@ -1,12 +1,10 @@
 """Record five deterministic validation trials without touching a training job.
 
-This module runs in a separate process. The actor plans from the initial state
-estimate; the recorded positions come from the independent execution plant,
-including PID recovery. Refused plans remain at their initial state.
+Historical recording helpers remain for independent execution-plant tests.
+This module does not load agents or launch policy replay jobs.
 """
 from __future__ import annotations
 
-import argparse
 import io
 import json
 import os
@@ -17,7 +15,6 @@ import torch
 
 from learning.deployment_rollout import execute_batch, plan_batch, sample_batch
 from learning.point_force_env import PointForceWhipEnvironment
-from simulator.rollout import _build_policy_agent, _build_sac_agent, load_json, resolve_device
 
 TRIAL_COUNT = 5
 SCHEMA = "five_trial_validation_preview_v1"
@@ -117,75 +114,3 @@ def read_recording(path: Path):
             raise ValueError("Unsupported validation preview recording.")
         arrays = {name: payload[name].copy() for name in payload.files if name != "metadata"}
     return arrays, metadata
-
-
-def generate(checkpoint_path: Path, output: Path, *, device_name="auto", cancel_file=None):
-    def check_cancel():
-        if cancel_file is not None and cancel_file.exists():
-            raise InterruptedError("Validation preview cancelled.")
-
-    check_cancel()
-    root = Path(__file__).resolve().parents[1]
-    artifact = checkpoint_path.parent.parent
-    # Saved task/reward settings must win over edits made for the next run.
-    configs = [load_json(artifact / name if (artifact / name).is_file() else root / "config" / name)
-               for name in ("model.json", "task.json", "ppo.json")]
-    model, task, shared = configs
-    if not shared.get("deployment", {}).get("enabled"):
-        raise ValueError("This run does not use initial-state-only validation.")
-    if device_name == "auto":
-        snapshot = artifact / "config_snapshot.json"
-        effective = load_json(snapshot).get("effective_run", {}) if snapshot.is_file() else {}
-        status_path = artifact / "status.json"
-        try:
-            status = load_json(status_path) if status_path.is_file() else {}
-        except (OSError, ValueError):
-            status = {}
-        device_name = effective.get("device", status.get("device", shared["training"]["device"]))
-    device = resolve_device(device_name)
-    torch.set_num_threads(1)
-    if device.type == "cuda":
-        torch.set_float32_matmul_precision("highest")
-    payload, signature = load_snapshot(checkpoint_path)
-    schema = payload.get("schema")
-    if schema == "force_ppo_checkpoint_v1":
-        algorithm = "PPO"
-        agent = _build_policy_agent(shared, device)
-        agent.policy.set_action_prior(payload.get("action_prior"))
-        agent.policy.load_state_dict(payload["policy"])
-        agent.policy.eval()
-    elif schema == "force_sac_checkpoint_v1":
-        algorithm = "SAC"
-        agent = _build_sac_agent(root, device, checkpoint=payload)
-        agent.actor.load_state_dict(payload["actor"])
-        agent.actor.eval()
-    else:
-        raise ValueError("The preview requires a PPO or SAC checkpoint.")
-    arrays, metadata = record_trials(model, task, shared, agent, device=device, check_cancel=check_cancel)
-    check_cancel()
-    metadata.update(schema=SCHEMA, algorithm=algorithm, device=str(device),
-                    checkpoint_signature=signature, episodes=int(payload.get("episodes", 0)),
-                    execution_mode="initial_state_only_open_loop_once_with_pid_recovery")
-    write_recording(output, arrays, metadata)
-    print(f"Saved five {algorithm} validation trials at {metadata['episodes']:,} episodes.", flush=True)
-    return metadata
-
-
-def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--checkpoint", type=Path, required=True)
-    parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--device", default="auto")
-    parser.add_argument("--cancel-file", type=Path)
-    args = parser.parse_args()
-    try:
-        generate(args.checkpoint, args.output, device_name=args.device, cancel_file=args.cancel_file)
-    except InterruptedError:
-        print("Validation preview cancelled.", flush=True)
-    finally:
-        if args.cancel_file is not None:
-            args.cancel_file.unlink(missing_ok=True)
-
-
-if __name__ == "__main__":
-    main()

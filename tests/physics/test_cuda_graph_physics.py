@@ -2,7 +2,7 @@ from copy import deepcopy
 from dataclasses import replace
 import pytest
 import torch
-from run_ppo import load_configs
+from tests.force_config import load_configs
 from learning.point_force_env import PointForceWhipEnvironment
 from learning.deployment_rollout import sample_batch,execute_batch
 from simulator.cuda_graph_physics import CudaGraphPhysics

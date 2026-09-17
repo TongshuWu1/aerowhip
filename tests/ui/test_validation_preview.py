@@ -7,9 +7,9 @@ import torch
 from simulator.cable import DderState
 from simulator.cable.dder import DderModel
 from simulator.validation_preview import (
-    checkpoint_signature, generate, latest_checkpoint, read_recording, record_trials,
+    checkpoint_signature, latest_checkpoint, read_recording, record_trials,
 )
-from run_ppo import load_configs
+from tests.force_config import load_configs
 
 
 @pytest.fixture
@@ -73,35 +73,3 @@ def test_refused_plans_show_actual_held_state_and_repeat_fixed_trials(short_task
     assert len(first['positions_m']) == 1
     np.testing.assert_array_equal(first['positions_m'], second['positions_m'])
     assert not np.allclose(first['positions_m'][0, 0], first['positions_m'][0, 1])
-
-
-@pytest.mark.parametrize('algorithm', ['ppo', 'sac'])
-def test_checkpoint_preview_uses_saved_configs_latest_weights_and_identity(tmp_path, short_task, algorithm):
-    from simulator.rollout import _build_policy_agent
-    from run_sac import build_agent, checkpoint, configs
-    model, task, shared = short_task
-    task['episode_duration_s'] = .1
-    run = tmp_path / algorithm
-    (run / 'checkpoints').mkdir(parents=True)
-    for name, config in zip(('model', 'task', 'ppo'), (model, task, shared)):
-        (run / f'{name}.json').write_text(json.dumps(config), encoding='utf-8')
-    if algorithm == 'ppo':
-        agent = _build_policy_agent(shared, torch.device('cpu'))
-        payload = {**agent.checkpoint(), 'episodes': 42}
-    else:
-        config = configs()[-1]
-        config['sac']['hidden_dim'] = 32
-        payload = checkpoint(build_agent(config, torch.device('cpu'), task), 42)
-    path = run / 'checkpoints/latest.pt'
-    torch.save(payload, path)
-    torch.save({**payload, 'episodes': 12}, run / 'checkpoints/best_validation.pt')
-    assert latest_checkpoint(run) == path
-    destination = run / 'validation_preview/latest.npz'
-    metadata = generate(path, destination, device_name='cpu')
-    arrays, loaded = read_recording(destination)
-    assert loaded == metadata
-    assert loaded['episodes'] == 42 and loaded['algorithm'] == algorithm.upper()
-    assert loaded['checkpoint_signature'] == checkpoint_signature(path)
-    assert loaded['recovery_duration_s'] == .03
-    assert arrays['positions_m'].shape[1:] == (5, 12, 3)
-    assert not list(destination.parent.glob('*.tmp'))

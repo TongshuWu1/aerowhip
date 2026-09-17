@@ -15,14 +15,12 @@ from simulator import artifact_io
 
 
 @pytest.mark.skipif(os.name != "nt", reason="Actual Windows file sharing semantics")
-@pytest.mark.parametrize("kind", ["ppo_status", "evaluation_json", "checkpoint"])
+@pytest.mark.parametrize("kind", ["evaluation_json"])
 def test_publication_survives_native_windows_reader_lock(tmp_path, monkeypatch, kind):
     from experimental_data.io import atomic_json
-    from run_ppo import _atomic_checkpoint, _atomic_json
 
     destination = tmp_path / ("latest.pt" if kind == "checkpoint" else "status.json")
-    writer = {"ppo_status": _atomic_json, "evaluation_json": atomic_json,
-              "checkpoint": _atomic_checkpoint}[kind]
+    writer = atomic_json
     writer(destination, {"episodes": 1})
     old_bytes = destination.read_bytes()
 
@@ -90,22 +88,3 @@ def test_missing_source_is_not_retried(tmp_path, monkeypatch):
     monkeypatch.setattr(artifact_io.time, "sleep", unexpected_sleep)
     with pytest.raises(FileNotFoundError):
         artifact_io.replace_with_retry(tmp_path / "missing", tmp_path / "destination")
-
-
-def test_whip_only_selection_prefers_hits_before_reward():
-    from run_ppo import validation_rank
-
-    current = dict(evaluation_mode="30hz_frozen_reference_tracked_pose_and_cable_whip_only",
-                   success_rate=204 / 256, hit_and_recovery_rate=0.,
-                   mean_episode_reward=202.93, mean_point_displacement_cost_integral_s=1.02)
-    previous = dict(current, success_rate=203 / 256, mean_episode_reward=203.00)
-    assert validation_rank(current) > validation_rank(previous)
-
-
-def test_legacy_hit_and_recovery_selection_is_preserved():
-    from run_ppo import validation_rank
-
-    safe = dict(success_rate=.7, hit_and_recovery_rate=.7,
-                mean_episode_reward=10., mean_point_displacement_cost_integral_s=1.)
-    unsafe = dict(safe, success_rate=.9, hit_and_recovery_rate=.4, mean_episode_reward=100.)
-    assert validation_rank(safe) > validation_rank(unsafe)

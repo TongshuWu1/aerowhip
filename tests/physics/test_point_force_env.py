@@ -6,7 +6,6 @@ from pathlib import Path
 
 import torch
 
-from learning.simple_ppo import PPORollout
 from learning.point_force_env import (
     POINT_FORCE_OBSERVATION_DIM,
     PointForceWhipEnvironment,
@@ -149,36 +148,3 @@ def test_invalid_tip_entry_is_recorded_but_episode_continues_until_timeout() -> 
             assert not result.done.item()
     assert result.newly_timed_out.item() is True
     assert result.done.item() == 1.0
-
-
-def test_short_point_force_rollout_updates_ppo() -> None:
-    from run_ppo import build_agent, collect_rollout
-
-    torch.set_num_threads(1)
-    model, task, ppo = _configs()
-    task = copy.deepcopy(task)
-    task["episode_duration_s"] = 0.2
-    # This case checks rollout-to-update accounting; full PID recovery has
-    # separate coverage. Keep this isolated training smoke test short.
-    ppo['deployment']['recovery_duration_s'] = .05
-    device = torch.device("cpu")
-    environment = PointForceWhipEnvironment(
-        model, task, ppo, batch_size=4, device=device
-    )
-    agent = build_agent(ppo, device)
-    rollout = PPORollout.allocate(
-        environment.control_step_count,
-        4,
-        POINT_FORCE_OBSERVATION_DIM,
-        3,
-        device=device,
-    )
-    collect_rollout(environment, agent, rollout)
-    metrics = agent.update(
-        rollout,
-        minibatch_size=8,
-        epochs=2,
-        generator=torch.Generator().manual_seed(9),
-    )
-    assert metrics.valid_transitions == environment.control_step_count * environment.batch_size
-    assert torch.isfinite(rollout.rewards).all()

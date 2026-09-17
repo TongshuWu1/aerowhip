@@ -2,7 +2,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 from experimental_data.adaptation_progress import load_study,comparison_arrays
-from simulator.workflow import prepare_training,read_json
+from simulator.workflow import read_json
 
 ROOT=Path(__file__).resolve().parents[2]
 STUDY=ROOT/'runs/adaptation/20260908-adp0-first'
@@ -19,29 +19,6 @@ def test_saved_progress_and_separate_heldout_predictions():
     _,fitted=comparison_arrays(s,'whip_adp_0_001','all_five')
     assert not np.array_equal(heldout['cable'],fitted['cable'])
     np.testing.assert_array_equal(baseline['measured_sites'],heldout['measured_sites'])
-
-
-def test_model_switch_freezes_m1_and_preserves_parent(tmp_path,monkeypatch):
-    if not MODEL.exists():pytest.skip('Local model required')
-    import simulator.research_config
-    monkeypatch.setattr(simulator.research_config,'freeze_training_source',lambda root,directory,command:command)
-    (tmp_path/'config').mkdir();(tmp_path/'config/ppo.json').write_text('{"cuda_graph_physics":true}')
-    original={p:p.read_bytes() for p in [PARENT,PARENT.parent.parent/'model.json',PARENT.parent.parent/'ppo.json',PARENT.parent.parent/'task.json',MODEL]}
-    directory,command=prepare_training(tmp_path,'ppo',seed=655,episodes=334848,batch=2048,device='cuda',
-        resume=PARENT,model_path=MODEL,run_name='test M1 continuation',keep_optimizer_state=False,live_scene=False)
-    model=read_json(directory/'launch_config/model.json');config=read_json(directory/'launch_config/ppo.json')
-    assert model['motion_residual']['sha256']==read_json(MODEL)['motion_residual']['sha256']
-    assert model['fullstate_execution']['sha256']==read_json(MODEL)['fullstate_execution']['sha256']
-    assert config['deployment']['reset_optimizer_on_resume']
-    assert 'reward_plateau_resume' not in config
-    assert config['reward']==read_json(PARENT.parent.parent/'ppo.json')['reward']
-    assert read_json(directory/'launch_config/task.json')==read_json(PARENT.parent.parent/'task.json')
-    assert read_json(directory/'run.json')['model_amendment']['optimizer_state_reset']
-    assert all(p.read_bytes()==value for p,value in original.items())
-    with pytest.raises(ValueError,match='convergence'):
-        prepare_training(tmp_path,'ppo',seed=655,episodes=334848,batch=2048,device='cuda',resume=PARENT,model_path=MODEL,keep_stopping_history=True)
-
-
 
 
 def test_measured_round_metrics_do_not_use_fitted_predictions():

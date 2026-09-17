@@ -10,8 +10,6 @@ from simulator.gui.rehearsal_workspace import RehearsalWorkspace
 ROOT=Path(__file__).resolve().parents[2]
 
 
-
-
 def test_editing_launch_setup_invalidates_old_rehearsal_and_exports(tmp_path):
     app=QApplication.instance() or QApplication([]);shutil.copytree(ROOT/'config',tmp_path/'config')
     folder=tmp_path/'saved';folder.mkdir();n=31;t=np.arange(n)/30;q=np.zeros((n,12,3));q[:,:,2]=1.5-np.arange(12)/12
@@ -26,5 +24,5 @@ def test_editing_launch_setup_invalidates_old_rehearsal_and_exports(tmp_path):
     assert page.save.isEnabled() and page.table.rowCount()==31 and page.viewer is None
     page.start_spins[0].setValue(.02)
     assert page.arrays is None and page.table.rowCount()==0 and not page.save.isEnabled() and not page.package.isEnabled()
-    assert not page.job.running and (folder/'rehearsal.npz').exists()
+    assert not hasattr(page,'job') and (folder/'rehearsal.npz').exists()
     page.shutdown();page.close();app.processEvents()

@@ -14,11 +14,12 @@ def test_recordings_shortcut_selects_and_loads_flight():
     calls=[];page.load_flight=lambda:calls.append((page.batches.currentData(),page.takes.currentText()))
     workspace=QTabWidget();workspace.addTab(QWidget(),'Models');workspace.addTab(page,'Ghost')
     tabs=QTabWidget()
-    for i in range(6):tabs.addTab(QWidget(),str(i))
+    for i in range(4):tabs.addTab(QWidget(),str(i))
+    tabs.addTab(workspace,'Flight comparison')
     owner=SimpleNamespace(adaptation_check_page=page,flight_workspace=workspace,main_tabs=tabs)
     PVAResearchWindow.open_flight_comparison(owner,'batch','whip_m0_002')
     assert calls==[('batch','whip_m0_002')]
-    assert workspace.currentWidget() is page and tabs.currentIndex()==5
+    assert workspace.currentWidget() is page and tabs.currentWidget() is workspace
     workspace.close();tabs.close()
 
 

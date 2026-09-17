@@ -15,9 +15,13 @@ ROOT=Path(__file__).resolve().parents[2]
 
 def test_native_clock_contract_rejects_silent_retiming_or_ignored_uncertainties():
     from copy import deepcopy
-    from simulator.research_config import workspace_configs
-    from run_ppo import validate_contract
-    model,task,config=workspace_configs(ROOT);validate_contract(model,task,config)
+    from simulator.research_config import validate_research_contract as validate_contract
+    # A contract unit fixture must not depend on the UI's unfitted template.
+    model=dict(fullstate_execution=dict(schema='tracked_pose_execution_v1',enabled=True,command_rate_hz=30),
+               motion_residual=dict(enabled=True),cable=dict(external_drag_s_inv=0.))
+    task=dict(control_dt_s=1/30,episode_duration_s=1.)
+    config=dict(deployment=dict(enabled=True,planning_cable_state='hanging'))
+    validate_contract(model,task,config)
     changed=deepcopy(task);changed['control_dt_s']=1/50
     with pytest.raises(ValueError,match='30 Hz'):validate_contract(model,changed,config)
     changed=deepcopy(task);changed['episode_duration_s']=.75
@@ -58,8 +62,12 @@ def test_packet_reference_has_consistent_pva_without_hermite_ripple():
 
 @pytest.mark.skipif(not torch.cuda.is_available(),reason='CUDA required')
 def test_pose_graph_and_complete_schedule_match_checked_predictor():
-    model=read_json(ROOT/'config/research_30hz/model.json');execution=model['fullstate_execution']
-    tracker=ResearchPoseModel(execution['checkpoint'],execution['sha256'],'cuda')
+    # Test the complete predictor directly; no historical fitted asset is needed.
+    tracker=object.__new__(ResearchPoseModel)
+    tracker.parameters=PoseResponseParameters(6,21,6,2,.3,1.9,.022,.06,
+        attitude_drive_model='independent_scale_v3',attitude_acceleration_scale_z=.46)
+    tracker.residual=DronePoseResidual().double().to('cuda')
+    with torch.no_grad():tracker.residual.net[-1].bias.fill_(.1)
     root=torch.tensor([[0,0,1.5],[.03,-.02,1.52]],device='cuda',dtype=torch.float64)
     initial=settled_initial(root,torch.zeros_like(root),[0,0,-.055])
     packets=root.new_zeros(2,5,11);packets[:,:,:3]=initial.position[:,None]

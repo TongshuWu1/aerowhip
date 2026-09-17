@@ -28,7 +28,7 @@ def test_invalid_followthrough_is_rejected(duration):
 def test_live_and_training_compile_the_same_single_strike_tail():
     from copy import deepcopy
     from types import SimpleNamespace
-    from run_ppo import load_configs
+    from tests.force_config import load_configs
     from simulator.cable import DderState
     from simulator.strike_plan import compile_strike_plan
     from learning.point_force_env import PointForceWhipEnvironment

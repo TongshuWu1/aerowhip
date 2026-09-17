@@ -14,6 +14,11 @@ The research UI has five pages: Models & fitting, Recordings, MPPI, Rehearsals,
 and Flight comparison. `run_simulation.py --headless` instead runs the historical
 constant-force simulator; it is not a headless version of the PVA planning workflow.
 
+Legacy SAC/PPO trainers and policy launch/replay controls have been retired.
+The active workflow remains MPPI planning, recorded-flight fitting, fixed-reference
+command correction, and PVA rehearsal/export. Existing experiment snapshots are
+immutable; the pre-cleanup implementation remains in Git history.
+
 ## Models and experiment records
 
 Use the [model catalog](config/evaluation/campaign.json) and the selected job's

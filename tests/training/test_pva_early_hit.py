@@ -16,11 +16,10 @@ def test_earlier_valid_hits_get_more_bonus_without_rewarding_early_failure():
     assert bonus[0]>bonus[1]>0 and not bonus[2:].any()
 
 
-def test_missing_weight_preserves_old_scores_and_ppo_defaults():
+def test_missing_weight_preserves_old_scores_and_mppi_default():
     time=torch.tensor([.2,1.],dtype=torch.float64);hit=torch.ones(2,dtype=torch.bool)
     assert not hit_time_bonus({},hit,~hit,time).any()
     assert defaults('mppi')['reward'].get('early_hit',0)==0
-    assert defaults('ppo')['reward'].get('early_hit',0)==0
 
 
 def test_bonus_is_once_per_hit_and_reversible_not_per_remaining_timestep():

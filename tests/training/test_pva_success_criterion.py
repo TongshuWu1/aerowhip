@@ -8,7 +8,6 @@ from planning.pva_job import validate_settings
 def test_missing_version_preserves_historical_success_and_new_mppi_uses_tip_contact():
     assert criterion({})==LEGACY
     assert criterion(defaults('mppi')['task'])==TIP_CONTACT
-    assert criterion(defaults('ppo')['task'])==LEGACY
 
 
 def test_geometric_hit_ignores_legacy_motion_gates_but_not_invalidity_or_misses():

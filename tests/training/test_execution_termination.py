@@ -7,7 +7,6 @@ from simulator.workflow import read_json
 from simulator.cable import DderState
 from learning.point_force_env import PointForceWhipEnvironment,POINT_FORCE_OBSERVATION_DIM
 from learning.deployment_rollout import DeploymentBatch,plan_batch,trim_terminal_rollout
-from learning.simple_ppo import PPORollout
 
 ROOT=Path(__file__).resolve().parents[2]
 
@@ -95,16 +94,6 @@ def test_virtual_hit_does_not_cut_off_execution_candidate():
     assert env.episode_success.all() and env.episode_hit_time_s[0]==1/150
     assert len(forces)==10 and cutoffs.tolist()==[10]
     assert len(env._virtual_reference_positions)==11
-
-
-def test_credit_excludes_all_actions_after_execution_terminal():
-    rollout=PPORollout.allocate(150,3,POINT_FORCE_OBSERVATION_DIM,3,device=torch.device('cpu'))
-    rollout.masks.fill_(1);rollout.rewards.fill_(123);rollout.dones.fill_(0)
-    trim_terminal_rollout(rollout,torch.tensor([151,300,750]),5)
-    assert rollout.masks[:,:,0].sum(0).tolist()==[31,60,150]
-    assert rollout.dones[:,:,0].sum(0).tolist()==[1,1,1]
-    assert rollout.dones[30,0,0]==1 and rollout.dones[59,1,0]==1 and rollout.dones[149,2,0]==1
-    assert rollout.rewards.sum()==0
 
 
 def test_export_uses_short_prefix_and_only_completes_terminal_packet():

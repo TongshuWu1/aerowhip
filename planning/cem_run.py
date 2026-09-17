@@ -107,7 +107,7 @@ def prepare_job(root, seed_directory, output, settings, origin=None, target=None
         for path in (root/folder).rglob('*'):
             if path.is_file() and path.suffix in ('.py','.cu','.cuh','.h') and '__pycache__' not in path.parts:
                 dest = snapshot/path.relative_to(root); dest.parent.mkdir(parents=True, exist_ok=True); shutil.copy2(path,dest)
-    for name in ('run_ppo.py','requirements.txt'):
+    for name in ('requirements.txt',):
         shutil.copy2(root/name,snapshot/name)
     atomic_json(output/'source_manifest.json', {p.relative_to(snapshot).as_posix():sha256_file(p) for p in snapshot.rglob('*') if p.is_file()})
     atomic_json(output/'run.json', dict(status='PREPARED', display_name=settings['display_name']))

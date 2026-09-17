@@ -1,7 +1,7 @@
 from copy import deepcopy
 from types import SimpleNamespace
 import torch
-from run_ppo import load_configs
+from tests.force_config import load_configs
 from learning.point_force_env import PointForceWhipEnvironment
 from learning.deployment_rollout import sample_batch,plan_batch,execute_batch
 from simulator.cable import DderState

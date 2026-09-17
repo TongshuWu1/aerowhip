@@ -1,7 +1,6 @@
-"""Native 30 Hz offline rehearsal: configure, generate, inspect, export."""
+"""Inspect and export saved native 30 Hz command rehearsals."""
 from pathlib import Path
 import shutil
-import sys
 import time
 import numpy as np
 from PySide6.QtCore import Qt,QTimer,Signal,QUrl
@@ -11,22 +10,20 @@ from PySide6.QtWidgets import (QWidget,QVBoxLayout,QHBoxLayout,QFormLayout,QLabe
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from simulator.workflow import read_json,stamp
-from simulator.research_config import workspace_configs
-from .research_widgets import note,BackgroundJob,style_axes
+from .research_widgets import note,style_axes
 
 
 class RehearsalWorkspace(QWidget):
     flight_finished=Signal()
-    def __init__(self,root,inspection_only=False):
+    def __init__(self,root,inspection_only=True):
+        if not inspection_only:raise ValueError('Generate MPPI rehearsals from the planner page; this page inspects saved commands')
         super().__init__();self.root=Path(root);self.thread=None;self.viewer=None;self.arrays=None;self.directory=None;self.active=False;self.playing=False;self.legacy=None
         self.inspection_only=inspection_only
         outer=QVBoxLayout(self);outer.setContentsMargins(20,12,20,16);outer.setSpacing(10)
         self.tabs=QTabWidget();outer.addWidget(self.tabs,1)
         current=QWidget();layout=QVBoxLayout(current);self.tabs.addTab(current,'Plan, inspect & export')
-        row=QHBoxLayout();row.addWidget(QLabel('Policy'));self.checkpoints=QComboBox();row.addWidget(self.checkpoints,1)
-        refresh=QPushButton('Refresh');refresh.clicked.connect(self.refresh_checkpoints);row.addWidget(refresh)
+        row=QHBoxLayout()
         self.load_saved=QPushButton('Open saved rehearsal…');self.load_saved.clicked.connect(self.open_saved);row.addWidget(self.load_saved);layout.addLayout(row)
-        self.policy_note=note('');layout.addWidget(self.policy_note)
         split=QSplitter(Qt.Orientation.Horizontal);layout.addWidget(split,1)
         controls=QFrame();controls.setObjectName('contentCard');cl=QVBoxLayout(controls);cl.setContentsMargins(12,12,12,12)
         title=QLabel('Launch setup');title.setStyleSheet('font-size: 14pt; font-weight: 650;');cl.addWidget(title)
@@ -39,7 +36,6 @@ class RehearsalWorkspace(QWidget):
                 column=QVBoxLayout();column.addWidget(QLabel(axis));column.addWidget(spin);form.addLayout(column)
             cl.addLayout(form)
         self.launch_note=note('Settled level hover · zero initial velocity\nHanging cable · 10 s pre-hold\nTarget fixed when the plan is frozen\nNew rehearsals: unchanged whip → curved recovery → slow approach → hold');cl.addWidget(self.launch_note)
-        self.start=QPushButton('Generate rehearsal');self.start.setObjectName('primaryButton');self.start.clicked.connect(self.generate);cl.addWidget(self.start)
         self.progress=QProgressBar();self.progress.setRange(0,1000);self.progress.setValue(0);cl.addWidget(self.progress)
         self.save=QPushButton('Save complete CSV…');self.save.clicked.connect(self.save_csv);self.save.setEnabled(False);cl.addWidget(self.save)
         self.package=QPushButton('Export policy + trajectory ZIP…');self.package.clicked.connect(self.export_package);self.package.setEnabled(False);cl.addWidget(self.package)
@@ -66,71 +62,15 @@ class RehearsalWorkspace(QWidget):
         self.whip_note=note('Saved modeled motion: positive velocity is toward the target. A bend moving upward in the bottom plot travels toward the tip. Cyan marks the strongest bend above 0.05 rad; this is a shape diagnostic, not measured energy transfer.');wl.addWidget(self.whip_note)
         self.views.setTabVisible(3,False)
         self.status=note('Ready · GPU planning runs in an isolated process.');layout.addWidget(self.status)
-        self.job=BackgroundJob(root);self.job.finished.connect(self.finished);self.job.progress.connect(self.job_progress);layout.addWidget(self.job)
         self.tabs.currentChanged.connect(lambda _:self.set_page_active(self.active))
         self.timer=QTimer(self);self.timer.setInterval(33);self.timer.timeout.connect(self.tick)
-        if inspection_only:
-            for i in range(row.count()):
-                if row.itemAt(i).widget():row.itemAt(i).widget().hide()
-            self.policy_note.hide();self.start.hide();self.job.hide();self.progress.hide()
-            for spin in self.start_spins+self.target_spins:spin.setEnabled(False)
-            self.package.setText('Export trajectory ZIP…')
-            self.views.setTabText(1,'PVA and tracking')
-        else:
-            self.checkpoints.currentIndexChanged.connect(self.selection_changed);self.refresh_checkpoints()
+        self.progress.hide()
+        for spin in self.start_spins+self.target_spins:spin.setEnabled(False)
+        self.package.setText('Export trajectory ZIP…')
+        self.views.setTabText(1,'PVA and tracking')
         for spin in self.start_spins+self.target_spins:
             spin.valueChanged.connect(lambda _:self.clear_result() if self.arrays is not None else None)
 
-    def refresh_checkpoints(self):
-        if self.job.running:return
-        from simulator.policy_library import deleted_checkpoints,checkpoint_key
-        deleted=deleted_checkpoints(self.root);previous=self.checkpoints.currentData();self.checkpoints.blockSignals(True);self.checkpoints.clear()
-        for run in sorted((self.root/'runs/ppo').glob('*'),reverse=True):
-            model=read_json(run/'model.json',{})
-            if model.get('fullstate_execution',{}).get('schema')!='tracked_pose_execution_v1':continue
-            for p in sorted((run/'checkpoints').glob('*.pt'),key=lambda p:(p.name!='best_validation.pt',p.name)):
-                if checkpoint_key(self.root,p) not in deleted:self.checkpoints.addItem(read_json(run/'run.json',{}).get('display_name',run.name)+' / '+p.name,str(p.resolve()))
-        index=self.checkpoints.findData(previous)
-        if index<0:
-            retained=str((self.root/'runs/ppo/20260908-195207-486249-seed655/checkpoints/best_validation.pt').resolve())
-            index=self.checkpoints.findData(retained)
-        self.checkpoints.setCurrentIndex(index if index>=0 else 0);self.checkpoints.blockSignals(False);self.selection_changed()
-
-    def selection_changed(self):
-        path=self.checkpoints.currentData()
-        if self.arrays is not None and self.metadata.get('checkpoint')!=path:self.clear_result()
-        model,task,config=([read_json(Path(path).parent.parent/(n+'.json')) for n in ('model','task','ppo')] if path else workspace_configs(self.root))
-        origin=np.asarray(task['initial_root_position_m'])-np.asarray(model['recorded_data']['optitrack_to_attachment_offset_body_m'])
-        from simulator.launch_setup import launch_positions
-        origin,target=launch_positions(self.root,origin,task['target_position_m'])
-        for spins,values in [(self.start_spins,origin),(self.target_spins,target)]:
-            for spin,v in zip(spins,values):spin.setValue(float(v))
-        self.policy_note.setText('Native 30 Hz PPO · both residuals · saved model travels with the policy' if path else 'No native 30 Hz checkpoint yet. Start a new PPO run; its saved checkpoints will appear here.')
-        self.start.setEnabled(bool(path) and not self.job.running)
-
-    def generate(self):
-        if self.job.running:return
-        self.clear_result()
-        self.playing=False;self.timer.stop();self.directory=self.root/'runs/rehearsals'/stamp()
-        command=[sys.executable,'-u','tools/rehearse_research.py','--checkpoint',self.checkpoints.currentData(),
-            '--output',str(self.directory),'--origin',*[str(s.value()) for s in self.start_spins],
-            '--target',*[str(s.value()) for s in self.target_spins],'--device','cuda']
-        try:
-            self.job.start(self.directory,command);self.start.setEnabled(False);self.checkpoints.setEnabled(False)
-            for w in self.start_spins+self.target_spins+[self.save,self.package,self.open,self.play,self.load_saved]:w.setEnabled(False)
-            self.status.setText('Generating frozen force plan and complete FullState reference…');self.progress.setValue(0)
-        except Exception as e:self.status.setText(str(e))
-
-    def job_progress(self,value):
-        self.progress.setValue(int(1000*value.get('step',0)/max(value.get('total',1),1)));self.status.setText(value['label'])
-
-    def finished(self,code):
-        self.start.setEnabled(bool(self.checkpoints.currentData()));self.checkpoints.setEnabled(True)
-        self.load_saved.setEnabled(True)
-        for w in self.start_spins+self.target_spins:w.setEnabled(True)
-        if code:
-            self.status.setText('Generation failed. Open the job log; no new CSV is available.');self.flight_finished.emit();return
-        self.load_result(self.directory);self.flight_finished.emit()
 
     def load_result(self,directory):
         self.directory=Path(directory);self.metadata=read_json(self.directory/'rehearsal.json')
@@ -300,11 +240,13 @@ class RehearsalWorkspace(QWidget):
                 except (OSError,ValueError) as e:self.status.setText(str(e))
             return
         cem=self.metadata.get('schema') in ('cem_fullstate_30hz_v1','mppi_fullstate_30hz_v1','mppi_force_fullstate_30hz_v1')
-        prefix=self.metadata.get('optimizer','cem').upper()+'-' if cem else 'PPO-30Hz-'
+        if not cem:
+            self.status.setText('Legacy policy package export was retired; open a saved PVA command.')
+            return
+        prefix=self.metadata.get('optimizer','cem').upper()+'-'
         path,_=QFileDialog.getSaveFileName(self,'Export trajectory bundle',str(self.root/'exports'/(prefix+stamp()+'.zip')),'ZIP (*.zip)')
         if path:
-            if cem:from planning.cem_run import export_package
-            else:from deployment.research_rehearsal import export_package
+            from planning.cem_run import export_package
             try:export_package(self.directory,Path(path));self.status.setText('Trajectory, model assets and provenance exported: '+path)
             except (OSError,ValueError) as e:self.status.setText('Package export failed: '+str(e))
 

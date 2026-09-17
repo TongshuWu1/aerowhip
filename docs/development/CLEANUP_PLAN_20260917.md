@@ -44,5 +44,7 @@ it was not edited. Temporary experiment scripts and non-LaTeX logs were retained
 
 The current implementation was saved in commit `904c02e`, and the current flight
 baseline in `819d3c96`. See `docs/data/CURRENT_FLIGHT_BASELINE_20260917.json` for
-the retained models, command hashes, and validation limits. Older SAC/PPO code
-still required by shared imports has not been removed in this preservation pass.
+the retained models, command hashes, and validation limits. That preservation
+pass initially retained shared SAC/PPO dependencies. The subsequent
+[trainer retirement](LEGACY_TRAINING_RETIREMENT_20260917.md) separates the shared
+numerical helpers and removes the trainers and policy launch paths.

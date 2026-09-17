@@ -37,12 +37,3 @@ def test_reviewed_physical_candidate_freezes_without_fake_nn(tmp_path):
     assert (job/'assets/drone_residual.pt').read_bytes()==b'frozen drone weights'
     assert read_json(job/'identity.json')['development_review']
     assert sha256_file(source)==digest
-
-
-def test_explicit_development_review_enables_simulation_ppo(tmp_path):
-    cfg=defaults('ppo');cfg['model_path']=str(fixture_model(tmp_path))
-    with pytest.raises(ValueError,match='fit checks'):
-        prepare(tmp_path,cfg,'unreviewed PPO')
-    job,_=prepare(tmp_path,cfg,'PPO',development_review='User-authorized same M0 PPO simulation; not flight validation')
-    assert read_json(job/'model.json')['provenance']['fit_complete'] is False
-    assert read_json(job/'identity.json')['evidence']=='simulation only'

@@ -44,8 +44,6 @@ def test_replay_rejects_corruption_and_detached_cable(tmp_path):
     with pytest.raises(ValueError,match='attachment disagree'):load_replay(tmp_path)
 
 
-
-
 def test_video_encodes_all_fixed_time_frames(tmp_path):
     from PIL import Image
     import imageio_ffmpeg
@@ -58,34 +56,3 @@ def test_video_encodes_all_fixed_time_frames(tmp_path):
     assert tuple(meta['size'])==(64,48) and meta['fps']==30
     assert len(list(reader))==3
     with pytest.raises(ValueError,match='already exists'):encode(tmp_path)
-
-
-def test_new_native_run_freezes_live_recording_setting(tmp_path):
-    from pathlib import Path
-    import shutil
-    from simulator.workflow import prepare_training
-    root=Path(__file__).resolve().parents[2]
-    shutil.copytree(root/'config',tmp_path/'config')
-    # Synthetic launch-only assets: never depend on the live selected fit.
-    from experimental_data.io import atomic_json,sha256_file
-    component=tmp_path/'drone.json';weight=tmp_path/'weights.pt'
-    from dataclasses import asdict
-    from simulator.drone_pose_response import PoseResponseParameters
-    from simulator.drone_pose_residual import DronePoseResidual,save_residual
-    save_residual(weight,DronePoseResidual())
-    atomic_json(component,dict(nominal=dict(parameters=asdict(PoseResponseParameters(4.,4.,3.,3.,1.,1.,.1,.02))),
-        residual=dict(checkpoint=weight.name,sha256=sha256_file(weight))))
-    model_path=tmp_path/'config/research_30hz/model.json'
-    model=json.loads(model_path.read_text(encoding='utf-8'))
-    model['motion_residual']=dict(enabled=False)
-    model['fullstate_execution'].update(enabled=True,checkpoint=str(component),sha256=sha256_file(component),source_job='synthetic-launch-test')
-    atomic_json(model_path,model)
-    before=(tmp_path/'config/research_30hz/ppo.json').read_bytes()
-    run,command=prepare_training(tmp_path,'PPO',seed=123,episodes=8,batch=4,device='cuda')
-    config=json.loads((run/'launch_config/ppo.json').read_text(encoding='utf-8'))
-    assert config['live_scene']['enabled']
-    assert config['live_scene']['source']=='actual_training_collection'
-    assert (run/'source_snapshot/learning/live_scene.py').is_file()
-    assert (run/'source_snapshot/tools/view_multidrone_isaac.py').is_file()
-    assert str(run/'source_snapshot/run_ppo.py')==command[2]
-    assert (tmp_path/'config/research_30hz/ppo.json').read_bytes()==before

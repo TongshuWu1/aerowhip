@@ -8,7 +8,7 @@ from learning.point_force_env import PointForceWhipEnvironment
 from simulator.cable import DderState
 from simulator.cable.dder import DderModel
 from simulator.live_flight import HoverPID
-from run_ppo import load_configs, guarded_update_is_acceptable
+from tests.force_config import load_configs
 
 
 @pytest.fixture
@@ -121,46 +121,3 @@ def test_batched_recovery_pid_matches_independent_live_controllers(env):
                               for i, pid in enumerate(individual)])
         torch.testing.assert_close(commands, expected)
     assert batch_pid.integral[0, 0] != 0 and batch_pid.integral[1, 0] == 0
-
-
-def test_update_guard_rejects_loss_of_open_loop_hits_even_if_shaping_improves():
-    _, _, config = load_configs()
-    accepted = dict(success_rate=.8, plan_success_rate=1., hit_and_recovery_rate=.8,
-                    mean_episode_reward=90., mean_point_displacement_cost_integral_s=1.)
-    candidate = {**accepted, "success_rate": .7, "mean_episode_reward": 100.}
-    assert not guarded_update_is_acceptable(candidate, accepted, config["update_guard"])
-
-
-def test_whole_plan_reward_including_recovery_reaches_every_planning_action(env, monkeypatch):
-    import learning.deployment_rollout as deployment
-    from learning.simple_ppo import PPORollout, generalized_advantage_estimate
-    batch = canonical_batch(env)
-    q = batch.estimate.positions_m.clone()
-    q[:, -1] = env.target + q.new_tensor([-.151, 0., 0.])
-    batch.estimate = batch.truth = DderState(q, torch.zeros_like(q))
-    monkeypatch.setattr(deployment, "sample_batch", lambda *_: batch)
-    def dynamics(_self, state, *args, **kwargs):
-        q = state.positions_m.clone()
-        q[:, -1, 0] += .01
-        v = torch.zeros_like(q)
-        v[:, -1, 0] = 5.
-        return DderState(q, v)
-    monkeypatch.setattr(DderModel, "step_runtime", dynamics)
-    env.ppo_config = deepcopy(env.ppo_config)
-    env.ppo_config["deployment"]["recovery_duration_s"] = .02
-    class Agent:
-        def act(self, observation):
-            return torch.zeros((2, 3)), torch.zeros((2, 1)), torch.zeros((2, 1))
-    rollout = PPORollout.allocate(env.control_step_count, 2, 79, 3, device=env.device)
-    result = deployment.collect_deployment_rollout(env, Agent(), rollout)
-    # The mocked tip reaches the target on physics step 11, hence the third
-    # policy query at 20 Hz. Execution follow-through adds no actor queries.
-    assert rollout.masks.sum() == 6
-    assert torch.count_nonzero(rollout.rewards[:2]) == 0
-    torch.testing.assert_close(rollout.rewards[2, :, 0], result.episode_reward.float())
-    _, returns = generalized_advantage_estimate(rollout.rewards, rollout.dones,
-                                               rollout.masks, rollout.values,
-                                               gamma=1., gae_lambda=1.)
-    torch.testing.assert_close(returns[0], returns[1])
-    torch.testing.assert_close(returns[1], returns[2])
-    assert not result.deployment["recovered"].any()

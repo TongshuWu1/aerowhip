@@ -9,7 +9,7 @@ from learning.deployment_rollout import sample_batch, plan_batch, execute_batch,
 from learning.point_force_env import PointForceWhipEnvironment
 from simulator.cable import DderState
 from simulator.cable.dder import DderModel
-from run_ppo import load_configs, validate_contract
+from tests.force_config import load_configs
 
 
 @pytest.mark.parametrize('device_name', ['cpu', 'cuda'])
@@ -95,39 +95,3 @@ def test_validation_saves_actual_targets_and_first_trial_replay(monkeypatch):
     np.testing.assert_array_equal(targets, second.scenarios['target_position_m'])
     np.testing.assert_allclose(first.recording[1]['target_position_m'], targets[0])
     np.testing.assert_allclose([row['target_x_m'] for row in first.trials], targets[:, 0])
-
-
-@pytest.mark.parametrize('radius', [-.01, float('nan'), float('inf')])
-def test_invalid_randomization_radius_is_rejected(radius):
-    model, task, config = deepcopy(load_configs())
-    config['deployment']['target_position_radius_m'] = radius
-    with pytest.raises(ValueError, match='target_position_radius_m'):
-        validate_contract(model, task, config)
-
-
-def test_new_ppo_run_updates_with_varied_targets_and_saves_the_scenarios(tmp_path, monkeypatch):
-    import run_ppo
-    from simulator.workflow import atomic_json, read_json
-    torch.set_num_threads(1)
-    monkeypatch.setattr(run_ppo, 'write_active_run', lambda *args: None)
-    model, task, config = load_configs()
-    task['episode_duration_s'] = .1
-    config['bootstrap'] = None
-    config['cuda_graph_physics'] = False
-    config['deployment'].update(initial_position_radius_m=.05, target_position_radius_m=.05,
-        nominal_fraction=0., recovery_duration_s=.5, evaluate_final_holdout=False)
-    config['ppo'].update(hidden_dim=16, minibatch_transitions=4, update_epochs=1)
-    config['validation'].update(enabled=True, episodes=2, every_episodes=2)
-    for name, data in [('model', model), ('task', task), ('ppo', config)]:
-        atomic_json(tmp_path/'config'/f'{name}.json', data)
-    output = run_ppo.train(device_name='cpu', requested_episodes=4, batch_size=2,
-        artifact=tmp_path/'run', resume_checkpoint=None, config_directory=tmp_path/'config')
-    assert read_json(output/'status.json')['status'] == 'COMPLETED'
-    checkpoint = torch.load(output/'checkpoints/latest.pt', weights_only=False)
-    assert checkpoint['episodes'] == 4
-    with np.load(output/'attempts/0000000004.npz') as attempts:
-        targets = np.stack([attempts[f'target_{axis}_m'] for axis in 'xyz'], axis=1)
-        assert (np.linalg.norm(targets-np.array(task['target_position_m']), axis=1) <= .05).all()
-        assert not np.allclose(targets, task['target_position_m'])
-    record = read_json(output/'validation/latest.json')
-    assert record['training_episodes'] == 4

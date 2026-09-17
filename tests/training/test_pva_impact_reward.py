@@ -28,8 +28,7 @@ def test_success_velocity_interpolates_at_tip_hit_and_ignores_other_events():
     torch.testing.assert_close(record_hit_velocity(new,new*10,torch.ones(2),torch.zeros(2,dtype=torch.bool),value),value)
 
 
-def test_defaults_replace_timing_preference_and_preserve_ppo():
+def test_mppi_defaults_replace_timing_preference():
     cfg=defaults('mppi');assert cfg['reward']['impact']==200 and cfg['reward'].get('early_hit',0)==0
-    assert defaults('ppo')['reward'].get('impact',0)==0
     cfg['reward']['impact_scale_m_s']=0
     with pytest.raises(ValueError,match='impact speed scale'):validate_settings(cfg)

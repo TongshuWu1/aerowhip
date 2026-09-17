@@ -12,7 +12,7 @@ bounded XYZ jerk → desired PVA packets → loaded-UAV pose response
                                             ↓
                           predicted motion → planning score and rehearsal
 
-recorded command + native tracking → review → staged model update → new plan
+recorded command + native tracking → review → staged model update → command correction
 ```
 
 ## Model and optimization
@@ -30,10 +30,10 @@ selection; it is not a jointly optimized fitting objective. Retained M0 has its
 cable residual disabled, while full M1/M2 enable it.
 
 The main study uses MPPI-inspired whole-maneuver trajectory search. Saved jobs
-bind model assets, score/ranking, proposals, settings and source. The separate
-PPO path generates PVA trajectories using the shared model/environment. Research
-support for receding search and historical methods does not change how the
-paper's frozen open-loop commands are executed.
+bind model assets, score/ranking, proposals, settings and source. Command
+correction tracks a frozen desired motion under an updated model; it is not
+MPPI replanning. Legacy SAC/PPO trainers have been retired. Research support for
+receding search does not change how frozen open-loop commands are executed.
 
 ## Source map
 
@@ -44,7 +44,7 @@ paper's frozen open-loop commands are executed.
 | Cable physics and correction | `simulator/cable/dder.py`, `simulator/cable/residual.py`, `simulator/research_physics.py` |
 | Shared PVA environment/contact | `learning/pva_env.py`, `learning/pva_tick_graph.py`, `learning/pva_success.py` |
 | Whole-maneuver MPPI | `planning/mppi_trajectory.py`, `planning/pva_job.py`, `planning/whip_objective.py` |
-| PPO learning and generation | `learning/simple_ppo.py`, `planning/ppo_whip.py` |
+| Fixed-reference command correction | `planning/correction_job.py`, `planning/local_reference_correction.py`, `planning/jerk_reference_correction.py` |
 | Full update preparation/fitting | `experimental_data/whip_adaptation.py`, `experimental_data/whip_full_data.py`, `experimental_data/whip_full_fit.py` |
 | Model and flight evaluation | `experimental_data/model_evaluation.py`, `experimental_data/flight_performance.py`, `experimental_data/system_comparison.py` |
 | Native recording/original forecast review | `experimental_data/adaptation_check.py` |
@@ -53,17 +53,16 @@ paper's frozen open-loop commands are executed.
 
 ## Interfaces and saved evidence
 
-The research UI has six pages: Models & fitting, Recordings, PPO, MPPI,
-Rehearsals and Flight comparison. Inspection does not launch a job. PPO and MPPI
-have independent setup and run libraries; model selection and flight selection
-are separate operations.
+The research UI has five pages: Models & fitting, Recordings, MPPI, Rehearsals
+and Flight comparison. Inspection does not launch a job. MPPI setup changes
+affect new runs, not saved plans; model selection and flight selection are
+separate operations.
 
-The `deployment` branch wraps the existing numerical backend in the five-page
-lab workflow. Its additional `deployment/lab_workflow.py`,
+The lab workflow wraps the same numerical backend. Its `deployment/lab_workflow.py`,
 `deployment/lab_gui.py` and `tools/lab.py` manage study slots, reviewed imports,
 updates, exports and reports. Runtime data stay in repository-relative folders;
 CSV exports use `exports/<study>/<generation>/`. Those branch-specific modules
-are not the entry points for this research checkout.
+are available through `run_lab.py`, separately from the research UI.
 
 A saved command and its original preflight prediction remain paired. Postflight
 predictions with common causal initialization are separate diagnostic artifacts.

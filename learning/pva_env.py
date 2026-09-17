@@ -1,6 +1,6 @@
 """Direct PVA planning in the fitted loaded-drone and DDER cable model.
 
-No virtual force rollout. Training and MPPI call this same environment. The
+No virtual force rollout. MPPI and command replay use this environment. The
 open-loop sequence is frozen before export; observations here are simulated.
 """
 from copy import deepcopy
@@ -17,8 +17,8 @@ from simulator.pva_commands import SCHEMA,integrate_jerk,sphere_entry
 from learning.pva_success import criterion,contact_success,TIP_CONTACT,TWO_TARGET
 
 
-def defaults(method='ppo'):
-    if method not in ('ppo','mppi'):raise ValueError('Unknown PVA planner')
+def defaults(method='mppi'):
+    if method != 'mppi':raise ValueError('Only MPPI is supported; legacy policy training was retired')
     cfg=dict(schema='pva_planner_settings_v1',method=method,command_contract=SCHEMA,
         model_path='runs/adaptation/20260909-pva-M0-bootstrap/candidate/model.json',
         performance=dict(fused_ticks=True,fast_solve=True,fast_geometry=True),
@@ -80,6 +80,9 @@ def update_pullback(env,running):
 
 class PVAEnvironment:
     def __init__(self,model,settings,*,root=None,batch_size=1,device='cuda',graph=True,fused_ticks=None,fast_solve=None,fast_geometry=None):
+        if settings.get('method') != 'mppi':raise ValueError('Only MPPI plans are supported')
+        if settings.get('ppo_objective') or settings.get('policy_timing') or settings.get('reward',{}).get('joint_strike',0):
+            raise ValueError('Legacy policy objectives and timing are not supported')
         performance=settings.get('performance',{})
         fused_ticks=performance.get('fused_ticks',True) if fused_ticks is None else fused_ticks
         fast_solve=performance.get('fast_solve',True) if fast_solve is None else fast_solve
@@ -288,12 +291,6 @@ class PVAEnvironment:
             reward+=update(self,running,clock_left+self.dt)
             quality*=previous_wave_ready
         quality_weight=weights['strike_quality']
-        if weights.get('joint_strike',0.):
-            from learning.ppo_strike import joint_quality
-            backward=self.pull_peak-((self.pose.position-self.origin0)*self.direction).sum(-1)
-            quality=joint_quality(dist,v[:,-1],self.pose.velocity,backward,self.pull_ready,
-                self.wave_credit,self.direction,task,weights['proximity_scale_m'])
-            quality_weight=weights['joint_strike']
         reward+=running*(weights['progress']*progress+quality_weight*(quality-self.best_quality).clamp_min(0))
         self.minimum_distance=torch.where(running,torch.minimum(self.minimum_distance,dist),self.minimum_distance)
         self.best_quality=torch.where(running,torch.maximum(self.best_quality,quality),self.best_quality)
@@ -331,11 +328,7 @@ class PVAEnvironment:
         invalid_contact=any_contact&~hit&~self.contact
         if criterion(task) in (TIP_CONTACT,TWO_TARGET):invalid_contact=torch.zeros_like(hit)
         self.contact|=any_contact;self.success|=hit;self.active&=~hit
-        terminal_contact=invalid_contact&task['first_contact_only'] if (
-            self.settings['method']=='ppo' and self.settings['training'].get('terminate_invalid_contact',False)) else torch.zeros_like(hit)
-        # A rejected first contact makes success impossible under this task.
-        # Stop PPO credit collection here instead of rewarding a later release.
-        self.active&=~terminal_contact;self.evolving&=~terminal_contact
+        terminal_contact=torch.zeros_like(hit)
         reward+=hit*weights['success']-invalid_contact*weights['invalid_contact']
         duration=torch.where(hit,tip.clamp(0,1)*self.dt,self.total.new_full(self.total.shape,self.dt))
         duration=torch.where(terminal_contact,entry.amin(-1).clamp(0,1)*self.dt,duration)
@@ -426,7 +419,8 @@ class PVAEnvironment:
 
     @torch.no_grad()
     def rollout(self,policy=None,actions=None,*,trace=False,max_steps=None,observer=None,packets=None):
-        if (policy is None)==(actions is None):raise ValueError('Supply one policy or action sequence')
+        if policy is not None:raise ValueError('Policy replay was retired; supply a frozen action sequence')
+        if actions is None:raise ValueError('Supply an action sequence')
         count=self.steps-self.index if max_steps is None else min(int(max_steps),self.steps-self.index)
         if count<1:raise ValueError('Rollout needs at least one remaining interval')
         if packets is not None:
@@ -434,22 +428,14 @@ class PVAEnvironment:
                 raise ValueError('Finite complete spline PVA packets required')
             if not torch.allclose(packets[:,0],self.command,atol=1e-9,rtol=0):
                 raise ValueError('Spline initial PVA must equal the rollout initial command')
-        from learning.ppo_trajectory_reward import enabled,TrajectoryReward
-        objective=TrajectoryReward(self) if enabled(self.settings) else None
-        from learning.pva_ppo_rollout import decision_steps
-        repeat=decision_steps(self.settings) if policy is not None else 1
-        if policy is not None and self.index%repeat:
-            raise ValueError('Policy rollout must start at a decision boundary')
         if observer is not None:observer(self)
         for i in range(count):
-            if policy is not None and i%repeat==0:held_action=policy(self.observation())
-            self.step(held_action if policy is not None else actions[:,i],trace=trace,
+            self.step(actions[:,i],trace=trace,
                       next_packet=None if packets is None else packets[:,i+1])
-            if objective is not None:objective.observe(self)
             if observer is not None:observer(self)
             if not bool(self.active.any()):break
         result=self.result()
-        return objective.finish(self,result) if objective is not None else result
+        return result
 
     def result(self):
         extra={}

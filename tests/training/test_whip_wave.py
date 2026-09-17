@@ -53,10 +53,10 @@ def test_wave_seed_and_sampling_expand_search_reproducibly():
     assert std[1]>2*std[0] and std[2]>5*std[0]
 
 
-def test_wave_and_mixture_validation_preserves_separate_ppo_contract():
+def test_wave_requires_pullback_and_mixture_requires_zero_prior():
     from learning.pva_env import defaults
     from planning.pva_job import validate_settings
-    cfg=defaults('ppo');cfg['task'].update(DEFAULTS,require_wave=True)
+    cfg=defaults('mppi');cfg['task'].update(DEFAULTS,require_wave=True,require_pullback=False)
     with pytest.raises(ValueError,match='requires pullback'):validate_settings(cfg)
     cfg=defaults('mppi');cfg['mppi'].update(noise_scales=[.05,.15,.35],control_prior=.5)
     with pytest.raises(ValueError,match='zero control prior'):validate_settings(cfg)

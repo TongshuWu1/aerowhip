@@ -5,8 +5,6 @@ import numpy as np
 from PySide6.QtWidgets import QApplication
 
 
-
-
 def test_shared_launch_defaults_override_checkpoint_fallback(tmp_path):
     from simulator.launch_setup import launch_positions
     folder=tmp_path/'config';folder.mkdir()
@@ -22,7 +20,7 @@ def test_shared_launch_defaults_override_checkpoint_fallback(tmp_path):
         shutil.copy2(root/'config/research_30hz'/file,folder/file)
     app=QApplication.instance() or QApplication([])
     page=RehearsalWorkspace(tmp_path)
-    np.testing.assert_array_equal([s.value() for s in page.start_spins],origin)
-    page.refresh_checkpoints()
-    np.testing.assert_array_equal([s.value() for s in page.target_spins],target)
+    # The inspector no longer creates policy plans or applies new-launch defaults.
+    assert all(not spin.isEnabled() for spin in page.start_spins+page.target_spins)
+    assert not hasattr(page,'checkpoints') and not hasattr(page,'generate')
     page.shutdown();page.close();app.processEvents()

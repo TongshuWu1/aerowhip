@@ -29,7 +29,7 @@ if __name__=='__main__':
                     if min(startup['viewport_size'])<100:raise ValueError('Startup replay viewport did not lay out')
                 window.grab().save(str(out/'startup-replay.png'))
             window.main_tabs.setCurrentIndex(index);app.processEvents()
-            if index==4 and window.rehearsals.count():
+            if index==3 and window.rehearsals.count():
                 if args.rehearsal:
                     selected=window.rehearsals.findData(str(args.rehearsal.resolve()))
                     if selected<0:raise ValueError('Requested rehearsal missing from library')
@@ -53,16 +53,14 @@ if __name__=='__main__':
                     inspector.views.setCurrentIndex(0);app.processEvents()
             if not window.grab().save(str(out/f'page-{index}.png')):raise ValueError('Screenshot save failed')
             if index==2:
-                p=window.ppo_page;p.tabs.setCurrentIndex(2);app.processEvents();window.grab().save(str(out/'ppo-library.png'));p.tabs.setCurrentIndex(0)
-            if index==3:
                 p=window.mppi_page
                 for tab,label in ((1,'progress'),(2,'library')):
                     p.tabs.setCurrentIndex(tab);p.poll();app.processEvents();window.grab().save(str(out/f'mppi-{label}.png'))
                 p.tabs.setCurrentIndex(0)
         except Exception as e:errors.append(dict(page=index,error=str(e)))
-        if index<5:QTimer.singleShot(600,lambda:capture(index+1))
+        if index<4:QTimer.singleShot(600,lambda:capture(index+1))
         else:
-            atomic_json(out/'result.json',dict(errors=errors,platform=app.platformName(),pages=6,started_jobs=False,startup=startup,
+            atomic_json(out/'result.json',dict(errors=errors,platform=app.platformName(),pages=5,started_jobs=False,startup=startup,
                 rendered_rehearsal=str(window.inspector.directory) if window.inspector.arrays is not None else None))
             window.close();QTimer.singleShot(300,app.quit)
     QTimer.singleShot(600,lambda:capture(0));app.exec()

@@ -42,6 +42,7 @@ def prepare(job,whip_source,preliminary_source,contract=None):
     if not np.isfinite(c['cable_tip_weight']) or not 0<=c['cable_tip_weight']<=1:
         raise ValueError('cable_tip_weight must be between 0 and 1')
     source_protocol=read_json(src/'protocol.json')
+    if source_protocol.get('diagnostics_only'):raise ValueError('Final diagnostic recordings cannot enter a fit')
     if not any(r['role']=='validation' for r in source_protocol['takes'].values()):
         c['evaluate_before_training']=True
     for label,budget in c.get('stage_budgets',{}).items():
@@ -49,7 +50,6 @@ def prepare(job,whip_source,preliminary_source,contract=None):
             raise ValueError('Invalid residual stage budget')
     if 'stage_budgets' in c and set(c['stage_budgets'])!={'drone_residual','cable_residual'}:
         raise ValueError('Specify budgets for both residual stages')
-    if read_json(src/'protocol.json').get('diagnostics_only'):raise ValueError('Final diagnostic recordings cannot enter a fit')
     if c.get('schema')!=FULL_SCHEMA:raise ValueError('Expected full-model contract')
     for name in ('prepared_hashes.json','source_hashes.json'):verify_hashes(read_json(src/name))
     # Parent source snapshot is evidence, not an assertion that later GUI code is identical.

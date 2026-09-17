@@ -3,7 +3,7 @@ import json
 import zipfile
 import numpy as np
 import torch
-from deployment.research_rehearsal import complete_packets,export_package,FIELDS
+from deployment.research_rehearsal import complete_packets,FIELDS
 
 
 def test_complete_export_preserves_native_whip_and_recovers_continuously():
@@ -22,20 +22,6 @@ def test_complete_export_preserves_native_whip_and_recovers_continuously():
     np.testing.assert_allclose((pp-pm)/(2*h),v,atol=1e-8)
     np.testing.assert_allclose((vp-vm)/(2*h),a,atol=1e-8)
     assert FIELDS[-2:]==['yaw_rad','yaw_rate_rad_s']
-
-
-def test_zip_uses_relative_model_paths_and_does_not_change_source(tmp_path):
-    directory=tmp_path/'generated';directory.mkdir();(directory/'assets').mkdir()
-    model={'motion_residual':{'checkpoint':'C:/somewhere/cable.pt'},'fullstate_execution':{'checkpoint':'C:/somewhere/drone.json'}}
-    (directory/'model.json').write_text(json.dumps(model));original=(directory/'model.json').read_bytes()
-    (directory/'rehearsal.json').write_text('{}');(directory/'fullstate_30hz.csv').write_text('test csv bytes')
-    archive=export_package(directory,tmp_path/'policy.zip')
-    with zipfile.ZipFile(archive) as z:
-        packed=json.loads(z.read('model.json'));assert packed['motion_residual']['checkpoint']=='assets/cable_residual.pt'
-        assert packed['fullstate_execution']['checkpoint']=='assets/drone_model.json'
-        assert z.read('fullstate_30hz.csv')==b'test csv bytes'
-        assert 'tools/rehearse_research.py' in z.namelist() and 'simulator/research_pose.py' in z.namelist()
-    assert (directory/'model.json').read_bytes()==original
 
 
 def test_reference_correction_ignores_unexecuted_tail():
