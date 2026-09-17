@@ -88,6 +88,7 @@ def optimize(job, model, cfg):
             coordinate=torch.arange(9,device=env.device,dtype=seeds.dtype)
             covariance=torch.exp(-.5*((coordinate[:,None]-coordinate[None,:])/s['position_correlation_length']).square())
             noise_basis=torch.linalg.cholesky(covariance+torch.eye(9,device=env.device,dtype=seeds.dtype)*1e-10)
+            if s.get('position_noise_basis')=='jerk':noise_basis=spline.scratch_noise_basis()
         best_free=means[0].clone()
         np.savez_compressed(job/'spline_initialization.npz',control_points=seeds.cpu().numpy(),
             knots_s=spline.knots,degree=spline.degree,noise_basis=noise_basis.cpu().numpy(),source=('Least-squares fit to command positions only' if templates else 'Stationary launch; random smooth position proposals; no previous trajectories'))
@@ -132,7 +133,8 @@ def optimize(job, model, cfg):
             break
         search_score=score[:samples];gain_search_groups=0
         if 'minimum_tip_speed_gain_m_s' in cfg['trajectory_objective']:
-            search_score,missing=gain_guided_scores(search_score,env.maximum_directional_speed_gain[:samples],
+            guide=env.whip_guidance if cfg['trajectory_objective'].get('free_target',False) else env.maximum_directional_speed_gain
+            search_score,missing=gain_guided_scores(search_score,guide[:samples],
                 result['failed'][:samples]|recovery_rejected[:samples],groups)
             gain_search_groups=int(missing.sum())
         weights,temperatures,ess=adaptive_weights(search_score.reshape(groups,per),s['target_ess_fraction'])
@@ -155,6 +157,22 @@ def optimize(job, model, cfg):
                     tip_velocity_m_s=env.strike_velocity[index].cpu().tolist(),
                     fold_completed_time_s=float(env.fold_completed_time_s[index]) if bool(torch.isfinite(env.fold_completed_time_s[index])) else None,
                     fold_valid=bool(result['fold_valid'][index]))
+                if cfg['trajectory_objective'].get('free_target') or cfg['trajectory_objective'].get('horizontal_cable_weight',0)>0:
+                    best_metrics['horizontal_cable_rms_m']=float(env.strike_horizontal_error_m[index])
+                if cfg['trajectory_objective'].get('free_target',False):
+                    best_metrics.update(free_target=True,selected_strike_position_m=env.strike_position[index].cpu().tolist(),
+                        backward_travel_m=float(env.strike_backward_travel[index]),
+                        strike_distance_m=None,minimum_tip_distance_m=None,closest_approach_time_s=None,
+                        target_note='Strike location selected from the motion; no target accuracy measured')
+                    if cfg['trajectory_objective'].get('curved_release'):
+                        from planning.free_whip import loading_turn_deg
+                        best_metrics.update(loading_velocity_m_s=env.strike_loading_velocity[index].cpu().tolist(),
+                            loading_to_release_turn_deg=float(loading_turn_deg(env.strike_loading_velocity[index],env.strike_velocity[index])),
+                            aligned_release_duration_s=float(env.strike_aligned_duration[index]))
+                    if cfg['trajectory_objective'].get('velocity_propagation'):
+                        best_metrics.update(velocity_peak_times_s=env.strike_velocity_peak_times[index].cpu().tolist(),
+                            velocity_peak_speeds_m_s=env.strike_velocity_peaks[index].cpu().tolist(),
+                            propagation_note='Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement')
                 best_preview=series(capture,index,iteration,score,result,'Best feasible strike candidate')
         peak_gain=env.maximum_directional_speed_gain[:samples].masked_fill(result['failed'][:samples],-torch.inf).max()
         row=dict(iteration=iteration,best_score=best if math.isfinite(best) else None,

@@ -22,18 +22,30 @@ def tracking_cost(tip, quadrotor, commands, reference, weights):
 
 class CoupledRollout:
     """Reusable inference batch using production pose and DDER propagation."""
-    def __init__(self, engine, count, origin, initial_cable, limits):
+    def __init__(self, engine, count, origin, initial_cable, limits,*,initial_velocity=None,production=False):
         self.engine=engine;self.limits=limits
         self.origin=torch.as_tensor(origin,device='cuda',dtype=torch.float64)
         root=(self.origin+self.origin.new_tensor(engine.offset))[None].expand(count,-1)
         self.pose=settled_initial(root,torch.zeros_like(root),engine.offset)
-        q=torch.as_tensor(initial_cable,device='cuda',dtype=torch.float64)[None].expand(count,-1,-1).clone()
+        q=torch.as_tensor(initial_cable,device='cuda',dtype=torch.float64)
+        if q.ndim==2:q=q[None]
+        if q.ndim!=3 or q.shape[0] not in (1,count) or q.shape[1:]!=(engine.cable.node_count,3):
+            raise ValueError('Initial cable must be nodes x 3 or batch x nodes x 3')
+        q=q.expand(count,-1,-1).clone()
+        v=torch.zeros_like(q) if initial_velocity is None else torch.as_tensor(initial_velocity,device=q.device,dtype=q.dtype)
+        if v.ndim==2:v=v[None]
+        if v.ndim!=3 or v.shape[0] not in (1,count) or v.shape[1:]!=q.shape[1:]:
+            raise ValueError('Initial velocity shape differs from initial cable')
+        v=v.expand_as(q).clone()
+        if not bool(torch.isfinite(q).all() & torch.isfinite(v).all()):raise ValueError('Nonfinite initial cable state')
         if not torch.allclose(q[:,0],root,atol=1e-10,rtol=0):
             raise ValueError('Frozen initial cable root differs from the model attachment')
-        self.state=DderState(q,torch.zeros_like(q))
+        if not torch.allclose(v[:,0],torch.zeros_like(root),atol=1e-10,rtol=0):
+            raise ValueError('Initial root velocity must match the settled vehicle')
+        self.state=DderState(q,v)
         self.hover=torch.cat((self.pose.position,root.new_zeros(count,8)),-1)
         self.step=ResearchPhysics(engine.physics,self.state,engine.dt_s,
-            graph=True,fast_solve=True,fast_geometry=True)
+            graph=True,fast_solve=not production,fast_geometry=not production)
 
     @torch.no_grad()
     def __call__(self,packets,times,grid):

@@ -146,11 +146,16 @@ class RehearsalWorkspace(QWidget):
             for spin,value in zip(spins,values):spin.blockSignals(True);spin.setValue(value);spin.blockSignals(False)
         self.result_label=(m['planner'] if m.get('planner') else 'Policy '+m['checkpoint_sha256'][:8])
         outcome=('travelling fold confirmed' if m.get('predicted_fold_valid') else 'no verified fold') if 'predicted_fold_valid' in m else ('valid hit' if m.get('predicted_valid_hit') else 'miss')
+        if m.get('free_target'):outcome='pullback release'
+        if 'loading_to_release_turn_deg' in m:outcome='curved side release'
+        distance_note=('release point selected after planning; target accuracy not evaluated' if m.get('free_target') else f'closest tip {m["minimum_tip_distance_m"]*100:.1f} cm')
         self.status.setText(f'{self.result_label} · whip {m["whip_end_s"]:.2f} s · total CSV {m["total_duration_s"]:.2f} s · '
-            f'predicted {outcome} · closest tip {m["minimum_tip_distance_m"]*100:.1f} cm. '+
+            f'predicted {outcome} · {distance_note}. '+
             ('Complete recovery replay; physical validation pending.' if m.get('recovery_prediction_complete') else 'Recovery replay incomplete; physical validation pending.'))
         if m.get('fold_requirement')=='diagnostic_only':
             self.status.setText(self.status.text()+' Fold is a diagnostic, not an acceptance condition.')
+        if 'loading_to_release_turn_deg' in m:
+            self.status.setText(self.status.text()+f' Loading-to-release turn {m["loading_to_release_turn_deg"]:.1f} deg; aligned release {1000*m["aligned_release_duration_s"]:.0f} ms.')
         if m.get('speed_metric')=='tip_gain_over_root':
             self.status.setText(self.status.text()+f' Scored event: tip {m["directed_tip_speed_m_s"]:.2f} m/s, root {m["root_forward_speed_m_s"]:.2f} m/s, rewarded gain {m["rewarded_tip_speed_m_s"]:.2f} m/s; angle {m["strike_angle_deg"]:.1f} deg.')
         if m.get('target_positions_m'):

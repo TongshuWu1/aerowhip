@@ -24,7 +24,7 @@ PACKAGES = ('deployment', 'simulator', 'planning', 'learning', 'experimental_dat
 SOURCE_SUFFIXES = {'.py', '.svg', '.cu', '.cuh', '.cpp', '.h'}
 ROOT_REQUIRED = ('README.md', 'run_lab.py', 'setup_lab.py', 'start_lab.cmd', 'start_lab.sh',
                  'requirements.txt', 'pytest.ini')
-ROOT_OPTIONAL = ('AGENTS.md', 'HANDOFF.md', 'SOURCE_SNAPSHOT.json', 'SOURCE_INTEGRATION.json', '.editorconfig',
+ROOT_OPTIONAL = ('SOURCE_SNAPSHOT.json', 'SOURCE_INTEGRATION.json', '.editorconfig',
                  '.gitattributes', '.github/workflows/smoke.yml',
                  'run_simulation.py', 'run_ppo.py', 'run_sac.py', 'run_tests.py')
 CONFIGS = ('model.json', 'task.json', 'ppo.json', 'sac.json', 'cable_fit.json', 'baseline.json',

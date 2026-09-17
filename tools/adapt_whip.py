@@ -15,6 +15,11 @@ def main():
     p.add_argument('--whip-source',type=Path);p.add_argument('--preliminary-source',type=Path)
     p.add_argument('--full-model',action='store_true',help='Prepare reviewed raw takes for full adaptation, including learned parent residuals')
     p.add_argument('--contract',type=Path,help='Frozen full update contract, including candidate/parent IDs and prior replay sources')
+    p.add_argument('--rehearsal',type=Path);p.add_argument('--csv',type=Path)
+    p.add_argument('--take-count',type=int);p.add_argument('--take-prefix',default='whip')
+    p.add_argument('--all-training',action='store_true',help='Predeclare every take for training after frozen-parent evaluation')
+    p.add_argument('--parent-id');p.add_argument('--candidate-id')
+    p.add_argument('--prior-whip-source',type=Path,action='append',default=[])
     a=p.parse_args()
     required={'setup':['batch'],'compare':['batch','output'],'prepare':['batch','comparison','review','job'],
               'diagnose':['job'],'diagnose-drone':['job','output'],'fit':['job','review'],'fit-response':['job'],
@@ -24,13 +29,22 @@ def main():
     import torch
     torch.set_num_threads(4)
     if a.stage=='prepare-full':
-        from experimental_data.whip_full_data import prepare
+        from experimental_data.whip_full_data import prepare,default_contract
         from simulator.workflow import read_json
-        result=prepare(a.job,a.whip_source,a.preliminary_source,read_json(a.contract) if a.contract else None)
+        contract=read_json(a.contract) if a.contract else default_contract()
+        if a.parent_id:contract['parent_id']=a.parent_id
+        if a.candidate_id:contract['candidate_id']=a.candidate_id
+        if a.prior_whip_source:contract['prior_whip_sources']=[str(v.resolve()) for v in a.prior_whip_source]
+        if a.all_training:
+            if any(v['role']!='adaptation' for v in read_json(a.whip_source/'protocol.json')['takes'].values()):
+                p.error('--all-training requires reviewed adaptation roles for every included take')
+            contract['evaluate_before_training']=True
+        result=prepare(a.job,a.whip_source,a.preliminary_source,contract)
     elif a.stage=='fit-full':
         from experimental_data.whip_full_fit import fit
         result=fit(a.job,a.device)
-    elif a.stage=='setup':result=data.setup(a.root,a.batch,a.selection)
+    elif a.stage=='setup':result=data.setup(a.root,a.batch,a.selection,rehearsal=a.rehearsal,command_csv=a.csv,
+        take_count=a.take_count,take_prefix=a.take_prefix,all_training=a.all_training)
     elif a.stage=='compare':result=data.compare(a.root,a.batch,a.output)
     elif a.stage=='prepare':result=data.prepare(a.root,a.batch,a.comparison,a.review,a.job,full_model=a.full_model)
     elif a.stage=='diagnose':result=fitting.diagnose(a.job,a.device)

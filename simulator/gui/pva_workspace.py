@@ -39,8 +39,20 @@ def model_paths(root):
 
 
 def model_label(path):
-    model=read_json(path,{})
-    return model.get('provenance',{}).get('label',path.parent.name)
+    path=Path(path).resolve();model=read_json(path,{})
+    label=model.get('provenance',{}).get('label',path.parent.name)
+    # Registered renaming is authoritative for display; frozen model provenance
+    # remains intact so old forecasts and their hashes stay reproducible.
+    for root in path.parents:
+        catalog=root/'config/evaluation/campaign.json'
+        if not catalog.is_file():continue
+        for entry in read_json(catalog,{}).get('models',[]):
+            source=Path(entry['model']);source=source if source.is_absolute() else root/source
+            previous=entry.get('renaming',{}).get('previous_id')
+            if source.resolve()==path and previous and (label==previous or label.startswith(previous+' ')):
+                return entry['id']+label[len(previous):]
+        break
+    return label
 
 
 class PVAPlannerPage(QWidget):
@@ -348,7 +360,7 @@ class PVAPlannerPage(QWidget):
         reviewed=bool(m) and configured_development_review(self.cfg,path)
         self.run.setEnabled(bool(m) and (m.get('provenance',{}).get('fit_complete') is not False or bool(reviewed)) and not (hasattr(self,'job') and self.job.running))
         provenance=m.get('provenance',{});mass=m.get('mass_measurement',{})
-        self.model_note.setText((f'{provenance.get("label",self.models.currentText())}\nDrone {mass.get("drone_mass_kg",0)*1000:g} g · cable {mass.get("cable_assembly_mass_kg",0)*1000:g} g\n'+
+        self.model_note.setText((f'{self.models.currentText()}\nDrone {mass.get("drone_mass_kg",0)*1000:g} g · cable {mass.get("cable_assembly_mass_kg",0)*1000:g} g\n'+
             (provenance.get('quality_note','Fitted model; next flights provide prospective evidence.') if provenance.get('fit_complete') else 'Unfinished or historical model; inspect its original provenance.')) if m else 'No fitted model available. Collect and review the new preliminary takes before fitting M0 and planning.')
         if reviewed:self.model_note.setText(self.model_note.text()+'\nReviewed for offline planning with retained M0. Physical validation is pending.')
 
@@ -531,6 +543,8 @@ class PVAPlannerPage(QWidget):
             keys=['best_reward','best_minimum_tip_distance_m'];titles=['Best return','Closest tip distance']
             if read_json(p/'settings.json',{}).get('trajectory_objective',{}).get('schema')=='targeted_fold_strike_v1':
                 keys=['best_score','strike_distance_m'];titles=['Best feasible strike score','Distance at scored strike']
+                if read_json(p/'settings.json',{}).get('trajectory_objective',{}).get('free_target'):
+                    keys=['best_score','horizontal_cable_rms_m'];titles=['Best feasible release score','Cable height RMS at release [m]']
         if receding and not search_view:
             x=[r['time_s'] for r in rows]
             keys=['actual_reward','actual_minimum_tip_distance_m'];titles=['Committed return','Committed closest tip distance']

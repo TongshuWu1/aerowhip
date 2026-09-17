@@ -25,19 +25,31 @@ def verify_hashes(hashes):
         if not Path(p).is_file() or sha256_file(p)!=h:raise ValueError('Source changed: '+str(p))
 
 
-def setup(root,batch,selection_path=None):
+def setup(root,batch,selection_path=None,*,rehearsal=None,command_csv=None,take_count=None,take_prefix='whip',all_training=False):
     root=Path(root).resolve();batch=Path(batch).resolve()
-    selection=read_json(selection_path or root/'config/pva/flight_selection.json')
-    rehearsal=Path(selection['rehearsal']);package=Path(selection['package'])
-    # Each selected package binds its own forecast; never reuse an M0 audit for M2.
-    manifest=read_json(package/'manifest.json')
-    verify_hashes({str(package/name):h for name,h in manifest['files'].items()})
+    if take_count is not None and (take_count<1 or not all_training):
+        raise ValueError('A custom take count requires an explicit all-training protocol')
+    if not take_prefix or any(c not in 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-' for c in take_prefix):
+        raise ValueError('Take prefix must be a plain filename prefix')
+    if rehearsal is not None or command_csv is not None:
+        if rehearsal is None or command_csv is None or selection_path is not None:
+            raise ValueError('Supply rehearsal and command CSV together, without a selection file')
+        rehearsal=Path(rehearsal).resolve();command_csv=Path(command_csv).resolve()
+        if sha256_file(command_csv)!=sha256_file(rehearsal/'fullstate_30hz.csv'):
+            raise ValueError('Command CSV does not match the frozen rehearsal')
+        selection=dict(command_sha256=sha256_file(command_csv),forecast_sha256=sha256_file(rehearsal/'rehearsal.npz'))
+    else:
+        selection=read_json(selection_path or root/'config/pva/flight_selection.json')
+        rehearsal=Path(selection['rehearsal']);package=Path(selection['package'])
+        manifest=read_json(package/'manifest.json')
+        verify_hashes({str(package/name):h for name,h in manifest['files'].items()})
+        command_csv=package/'fullstate_30hz.csv'
     hashes={str(f):sha256_file(f) for f in rehearsal.rglob('*') if f.is_file() and f.name!='ARCHIVED'}
     verify_hashes(hashes)
     if sha256_file(rehearsal/'rehearsal.npz')!=selection['forecast_sha256']:raise ValueError('Selected forecast changed')
-    if sha256_file(package/'fullstate_30hz.csv')!=selection['command_sha256']:raise ValueError('Selected command changed')
+    if sha256_file(command_csv)!=selection['command_sha256']:raise ValueError('Selected command changed')
     batch.mkdir(parents=True,exist_ok=False);(batch/'flight_take').mkdir();(batch/'simulation_csv').mkdir()
-    shutil.copy2(package/'fullstate_30hz.csv',batch/'simulation_csv/fullstate_30hz.csv')
+    shutil.copy2(command_csv,batch/'simulation_csv/fullstate_30hz.csv')
     model=read_json(rehearsal/'model.json')
     generation=model.get('provenance',{}).get('generation_index',0)
     if type(generation) is not int or generation<0:raise ValueError('Invalid model generation')
@@ -45,7 +57,9 @@ def setup(root,batch,selection_path=None):
         parent_generation=generation,parent_forecast_model_sha256=sha256_file(rehearsal/'model.json'),
         command_sha256=selection['command_sha256'],forecast_sha256=selection['forecast_sha256'],
         frame='raw_global_xyz',cable_history_s=1.,drone_history_s=.4,cable_velocity_weight_tau_s=.02,
-        planned_roles={'whip_001':'adaptation','whip_002':'adaptation','whip_003':'validation'},
+        planned_roles=({f'{take_prefix}_{i:03d}':'adaptation' for i in range(1,(take_count or 10)+1)} if all_training else
+            {'whip_001':'adaptation','whip_002':'adaptation','whip_003':'validation'}),
+        evaluation_policy='evaluate frozen parent before learning; prior training data measures retention' if all_training else 'whole-take holdout',
         model_update='cable external_drag_s_inv only, if reviewed diagnostics support this scope',
         candidate_bounds_s_inv=[0.,2.],neural_training=False,automatic_selection=False,
         normalization=False,role_unit='whole take',minimum_observation_fraction=.8))
@@ -144,7 +158,8 @@ def prepare(root,batch,comparison,review_path,job,*,full_model=False,diagnostics
     report=read_json(comparison/'report.json');prepared={}
     for name,r in chosen.items():
         m=read_optitrack(batch/'flight_take'/f'{name}.csv')
-        c=read_controller(batch/'flight_take'/f'experiment_{name}.csv',commands_only=True)
+        c=read_controller(batch/'flight_take'/f'experiment_{name}.csv',commands_only=True,
+            command_source=p.get('command_source','snapshots'))
         check=report['takes'][name];t=m['time']+check['alignment']['offset_s']-check['onset_s']
         rotation,rv=normalized_rotations_xyzw(m['quaternion'])
         anchor,av=attachment_positions(m['drone'],m['quaternion'],model['recorded_data']['optitrack_to_attachment_offset_body_m'])

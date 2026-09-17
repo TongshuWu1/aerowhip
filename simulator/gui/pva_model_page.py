@@ -1,23 +1,26 @@
 """Model lineage, reviewed preliminary fitting and essential evidence."""
 from pathlib import Path
 import sys
+import time
 from PySide6.QtCore import Signal,QTimer,QUrl
 from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import (QWidget,QVBoxLayout,QHBoxLayout,QLabel,QPushButton,QComboBox,QTabWidget,
-    QTableWidget,QTableWidgetItem,QHeaderView,QPlainTextEdit,QGroupBox,QProgressBar)
+    QTableWidget,QTableWidgetItem,QHeaderView,QPlainTextEdit,QGroupBox,QProgressBar,QCheckBox)
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from simulator.workflow import read_json,stamp
 from .pva_workspace import model_paths,model_label
 from .research_widgets import note,BackgroundJob
+from . import fit_monitor
+from .command_correction_page import CommandCorrectionPage
 
 
 class PVAModelPage(QWidget):
     model_requested=Signal(str,str)
     def __init__(self,root):
-        super().__init__();self.root=Path(root);self.last_progress=None
+        super().__init__();self.root=Path(root);self.last_progress=None;self.last_job_scan=0;self.job_entries=[]
         outer=QVBoxLayout(self);outer.setContentsMargins(18,12,18,14);self.tabs=QTabWidget();outer.addWidget(self.tabs)
-        library=QWidget();body=QVBoxLayout(library);self.tabs.addTab(library,'Model library')
+        library=QWidget();body=QVBoxLayout(library);self.tabs.addTab(library,'Models')
         banner=note('Select a fitted model for the next plan. Each MPPI plan and exported trajectory keeps its own frozen model.');banner.setObjectName('pipelineBanner');body.addWidget(banner)
         row=QHBoxLayout();self.models=QComboBox();row.addWidget(self.models,1);refresh=QPushButton('Refresh');refresh.clicked.connect(self.refresh);row.addWidget(refresh);body.addLayout(row)
         self.identity=note('');body.addWidget(self.identity)
@@ -27,42 +30,79 @@ class PVAModelPage(QWidget):
         for method in ('mppi',):
             button=QPushButton('Use for '+method.upper()+' setup');button.setObjectName('primaryButton');button.clicked.connect(lambda _,m=method:self.choose(m));row.addWidget(button)
         open_files=QPushButton('Open model files');open_files.clicked.connect(self.open_model);row.addWidget(open_files);body.addLayout(row)
+        view_fit=QPushButton('View fitting history');view_fit.clicked.connect(self.view_model_fit);row.addWidget(view_fit)
         self.models.currentIndexChanged.connect(self.inspect)
 
-        fitting=QWidget();body=QVBoxLayout(fitting);self.tabs.addTab(fitting,'Fit model')
+        fitting=QWidget();body=QVBoxLayout(fitting);self.tabs.addTab(fitting,'Live fitting')
         self.experiment=read_json(self.root/'config/experiment.json',{})
         fresh=self.experiment.get('schema')=='unseen_system_experiment_v1'
-        body.addWidget(note('Review preliminary takes, commands, timing and data roles before preparing an M0 fit. For M0 → M1 adaptation and comparisons, use Flight comparison and the reviewed raw-data workflow.'))
-        row=QHBoxLayout();self.fit_start=QPushButton('Fit new preliminary M0');self.fit_start.setObjectName('primaryButton');self.fit_start.clicked.connect(self.fit);row.addWidget(self.fit_start)
-        self.fit_stop=QPushButton('Stop at update boundary');self.fit_stop.clicked.connect(self.stop);row.addWidget(self.fit_stop);body.addLayout(row)
-        row=QHBoxLayout();row.addWidget(QLabel('Fit job'));self.jobs=QComboBox();row.addWidget(self.jobs,1);body.addLayout(row)
+        row=QHBoxLayout();row.addWidget(QLabel('Fit run'));self.jobs=QComboBox();row.addWidget(self.jobs,1)
+        self.follow_fit=QCheckBox('Follow active fit');self.follow_fit.setChecked(True);row.addWidget(self.follow_fit)
+        refresh_fit=QPushButton('Refresh');refresh_fit.clicked.connect(lambda:self.refresh_jobs(force=True));row.addWidget(refresh_fit)
+        open_fit=QPushButton('Open run folder');open_fit.clicked.connect(self.open_fit);row.addWidget(open_fit);body.addLayout(row)
         self.fit_status=note('');self.fit_status.setObjectName('pipelineBanner');body.addWidget(self.fit_status)
+        self.fit_detail=note('');body.addWidget(self.fit_detail)
         self.fit_progress=QProgressBar();self.fit_progress.setRange(0,100);self.fit_progress.setValue(0);body.addWidget(self.fit_progress)
-        if fresh and not self.experiment.get('preliminary_batch'):
-            self.fit_start.setEnabled(False);self.fit_stop.setEnabled(False)
-            self.fit_status.setText('Waiting for new preliminary recordings and reviewed fit inputs. No fit has started.')
-        self.figure=Figure(layout='constrained',facecolor='white');self.canvas=FigureCanvasQTAgg(self.figure);body.addWidget(self.canvas,1)
-        body.addWidget(note('Stages: drone response → drone residual → cable physics → cable residual → coupled replay checks. Plateau stopping retains the best weights. Update counts show the safety ceiling; completion can occur earlier.'))
+        row=QHBoxLayout();self.stage_cards=[]
+        for title in ('Vehicle parameters','Vehicle residual','Cable parameters','Cable residual'):
+            card=QGroupBox(title);layout=QVBoxLayout(card);value=QLabel('—');value.setStyleSheet('font-size: 20px; font-weight: 600; color: #172033;')
+            detail=note('Waiting');layout.addWidget(value);layout.addWidget(detail);row.addWidget(card,1);self.stage_cards.append((card,value,detail))
+        body.addLayout(row)
+        self.figure=Figure(layout='constrained',facecolor='white');self.canvas=FigureCanvasQTAgg(self.figure);self.canvas.setMinimumHeight(260);body.addWidget(self.canvas,1)
+        row=QHBoxLayout();row.addWidget(note('Evaluated loss and best loss · lower is better · each stage has its own objective · refreshes every 2 s'),1)
+        self.log_scale=QCheckBox('Log scale');row.addWidget(self.log_scale);body.addLayout(row)
+        self.stopping_note=note('');body.addWidget(self.stopping_note)
         self.log=QPlainTextEdit();self.log.setReadOnly(True);self.log.setMaximumHeight(150);self.log.hide();body.addWidget(self.log)
-        show=QPushButton('Show fit log');show.setCheckable(True);show.toggled.connect(self.log.setVisible);body.addWidget(show)
-        self.worker=BackgroundJob(root);body.addWidget(self.worker);self.worker.finished.connect(lambda _:self.refresh())
-        self.jobs.currentIndexChanged.connect(lambda _:self.poll(force=True))
+        row=QHBoxLayout();show=QPushButton('Show fit log');show.setCheckable(True);show.toggled.connect(self.log.setVisible);row.addWidget(show);row.addStretch()
+        self.fit_start=QPushButton('Start reviewed preliminary M0');self.fit_start.clicked.connect(self.fit);row.addWidget(self.fit_start)
+        self.fit_stop=QPushButton('Stop at update boundary');self.fit_stop.clicked.connect(self.stop);row.addWidget(self.fit_stop);body.addLayout(row)
+        if fresh and not self.experiment.get('preliminary_batch'):self.fit_start.setEnabled(False)
+        self.worker=BackgroundJob(root);body.addWidget(self.worker);self.worker.hide();self.worker.finished.connect(lambda _:self.refresh())
+        self.jobs.activated.connect(self.select_job)
+        self.follow_fit.toggled.connect(lambda _:self.poll(force=True))
+        self.log_scale.toggled.connect(lambda _:self.poll(force=True))
 
-        evidence=QWidget();body=QVBoxLayout(evidence);self.tabs.addTab(evidence,'Fit diagnostics')
+        self.correction=CommandCorrectionPage(self.root);self.tabs.addTab(self.correction,'Command correction')
+        evidence=QWidget();body=QVBoxLayout(evidence);self.tabs.addTab(evidence,'Saved diagnostics')
         body.addWidget(note('Retrospective prediction errors from measured initialization. Training and validation roles are shown for preliminary fits. New real flights must establish whether the next trajectory performs better.'))
         self.diagnostics=QTableWidget(0,3);self.diagnostics.setHorizontalHeaderLabels(['Take','Drone RMS [cm]','Cable tip RMS [cm]'])
         self.diagnostics.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch);self.diagnostics.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers);body.addWidget(self.diagnostics,1)
         self.evidence_note=note('Select a completed bootstrap model from the library.');body.addWidget(self.evidence_note)
         self.timer=QTimer(self);self.timer.setInterval(2000);self.timer.timeout.connect(self.poll);self.timer.start();self.refresh()
+        if self.jobs.currentData() and fit_monitor.read(Path(self.jobs.currentData())/'status.json',{}).get('status')=='running':self.tabs.setCurrentIndex(1)
 
     def refresh(self):
         selected=self.models.currentData();self.models.blockSignals(True);self.models.clear()
         for p in model_paths(self.root):self.models.addItem(model_label(p),str(p.resolve()))
         self.models.setCurrentIndex(max(0,self.models.findData(selected)));self.models.blockSignals(False);self.inspect()
-        selected=self.jobs.currentData();self.jobs.blockSignals(True);self.jobs.clear()
-        for p in sorted((self.root/'runs/adaptation').glob('*/protocol.json'),reverse=True):
-            if read_json(p,{}).get('schema') in ('normalized_adp0_cold_pva_bootstrap_v1','preliminary_pva_bootstrap_v1'):self.jobs.addItem(p.parent.name,str(p.parent))
-        self.jobs.setCurrentIndex(max(0,self.jobs.findData(selected)));self.jobs.blockSignals(False);self.poll(force=True)
+        self.refresh_jobs(force=True);self.poll(force=True)
+
+    def refresh_jobs(self,force=False):
+        if not force and time.monotonic()-self.last_job_scan<4:return
+        self.last_job_scan=time.monotonic();self.job_entries=fit_monitor.discover(self.root)
+        selected=self.jobs.currentData();current=next((j for j in self.job_entries if str(j['path'])==selected),None)
+        active=next((j for j in self.job_entries if j['status'].get('status')=='running'),None)
+        if self.follow_fit.isChecked() and active and (current is None or active['modified']>=current['modified']):selected=str(active['path'])
+        self.jobs.blockSignals(True);self.jobs.clear()
+        for j in self.job_entries:self.jobs.addItem(j['label'],str(j['path']))
+        self.jobs.setCurrentIndex(max(0,self.jobs.findData(selected)));self.jobs.blockSignals(False)
+
+    def select_job(self,index):
+        self.follow_fit.setChecked(False);self.poll(force=True)
+
+    def open_fit(self):
+        if self.jobs.currentData():QDesktopServices.openUrl(QUrl.fromLocalFile(self.jobs.currentData()))
+
+    def view_model_fit(self):
+        value=self.models.currentData()
+        if not value:return
+        path=Path(value);model=fit_monitor.read(path,{})
+        source=model.get('provenance',{}).get('source_job')
+        job=Path(source) if source else path.parent.parent
+        if not job.is_absolute():job=self.root/job
+        self.follow_fit.setChecked(False);self.refresh_jobs(force=True)
+        index=self.jobs.findData(str(job))
+        if index>=0:self.jobs.setCurrentIndex(index);self.tabs.setCurrentIndex(1);self.poll(force=True)
 
     def inspect(self):
         path=self.models.currentData();m=read_json(path,{}) if path else {};self.table.setRowCount(0)
@@ -114,7 +154,7 @@ class PVAModelPage(QWidget):
         if experiment.get('schema')=='unseen_system_experiment_v1' and not experiment.get('preliminary_batch'):
             self.fit_status.setText('Collect and review preliminary recordings first. No historical batch will be used.');return
         if any(read_json(Path(self.jobs.itemData(i))/'status.json',{}).get('status')=='running' for i in range(self.jobs.count())):
-            self.fit_status.setText('An existing bootstrap fit is running. Follow it here; no duplicate was started.');return
+            self.fit_status.setText('An existing fit is running. Follow it here; no duplicate was started.');return
         if experiment.get('schema')=='unseen_system_experiment_v1':
             value=experiment.get('fit_job');job=self.root/value if value else None
             if job is None or read_json(job/'status.json',{}).get('status')!='prepared':
@@ -123,48 +163,87 @@ class PVAModelPage(QWidget):
             if not script.exists():
                 self.fit_status.setText('Reviewed fit source snapshot is missing. No job was started.');return
             command=[sys.executable,'-u',str(script),'--job',str(job)]
-            self.active_fit=job;self.worker.start(self.root/'runs/model_jobs'/stamp(),command);self.fit_start.setEnabled(False);return
+            self.active_fit=job;self.worker.show();self.worker.start(self.root/'runs/model_jobs'/stamp(),command);self.fit_start.setEnabled(False);return
         self.fit_status.setText('Prepare a reviewed preliminary job first. The retired normalized bootstrap cannot be launched here.')
 
     def stop(self):
         path=getattr(self,'active_fit',None) if self.worker.running else self.jobs.currentData()
-        if path and Path(path).exists():(Path(path)/'STOP').touch()
+        if path and Path(path).exists() and fit_monitor.snapshot(path)['stop_supported']:(Path(path)/'STOP').touch()
 
     def poll(self,force=False):
-        active=getattr(self,'active_fit',None)
-        if self.worker.running and active is not None and (active/'protocol.json').exists() and self.jobs.findData(str(active))<0:
-            self.jobs.blockSignals(True);self.jobs.addItem(active.name,str(active));self.jobs.setCurrentIndex(self.jobs.count()-1);self.jobs.blockSignals(False)
+        self.refresh_jobs(force=force)
         path=self.jobs.currentData()
-        if not path:return
-        path=Path(path);status=read_json(path/'status.json',{});progress=read_json(path/'progress.json',{})
-        self.fit_status.setText(status.get('status','unknown').upper()+' · '+progress.get('stage','')+'\n'+
-            (f'Update {progress.get("update")} of safety ceiling {progress.get("ceiling")}' if 'update' in progress else status.get('error','Best weights are retained; stopping uses practical plateau checks.')))
-        self.fit_stop.setEnabled(status.get('status')=='running')
-        fresh=read_json(self.root/'config/experiment.json',{}).get('schema')=='unseen_system_experiment_v1'
-        self.fit_start.setEnabled(fresh and status.get('status')=='prepared' and not self.worker.running)
-        if status.get('status')=='running' and 'update' not in progress:self.fit_progress.setRange(0,0)
-        else:
-            self.fit_progress.setRange(0,int(progress.get('ceiling',100)));self.fit_progress.setValue(int(progress.get('update',0)) if status.get('status')!='completed' else self.fit_progress.maximum())
-        self.fit_progress.setFormat('Completed' if status.get('status')=='completed' else ('Update %v / %m ceiling' if 'update' in progress else status.get('status','Waiting')))
-        residual=path/'cable/residual_full_whip/history.json'
-        if not residual.exists():residual=path/'cable/residual/history.json'
-        histories=[path/'drone/history.json',path/'cable/physics/history.json',residual]
-        fingerprint=tuple(p.stat().st_mtime_ns if p.exists() else 0 for p in histories)
-        if force or fingerprint!=self.last_progress:
-            self.last_progress=fingerprint;self.figure.clear();axes=self.figure.subplots(1,3)
-            for ax,p,title in zip(axes,histories,['Drone residual','Cable physics','Cable residual']):
-                rows=read_json(p,[]);ax.set_title(title,loc='left',fontsize=10);ax.set_xlabel('Updates');ax.set_ylabel('Training loss');ax.grid(alpha=.2);ax.spines[['top','right']].set_visible(False)
-                if rows:ax.plot([r['update'] for r in rows],[r['loss'] for r in rows],color='#2563eb')
-                chosen=[r for r in rows if 'selection_loss' in r]
-                if chosen:ax.plot([r['update'] for r in chosen],[r['selection_loss'] for r in chosen],color='#ea580c',label='Rollout selection');ax.legend(fontsize=7)
+        if not path:
+            self.fit_status.setText('No fitting runs yet')
+            self.fit_detail.setText('Reviewed preliminary and model-adaptation runs will appear here automatically.')
+            self.fit_progress.hide();self.fit_stop.hide();self.stopping_note.clear()
+            self.fit_start.setEnabled(False)
+            if force or self.last_progress!='empty':
+                self.last_progress='empty';self.figure.clear()
+                axis=self.figure.subplots();axis.axis('off');axis.text(.5,.5,'Loss curves appear when fitting starts',ha='center',va='center',color='#64748b')
+                for _,value,detail in self.stage_cards:value.setText('—');detail.setText('Waiting')
+                self.canvas.draw_idle()
+            return
+        view=fit_monitor.snapshot(path);status=view['status'];progress=view['progress'];full=view['protocol'].get('full_update',{})
+        stage=progress.get('stage','Preparing').replace('_',' ')
+        state=status.get('status','unavailable')
+        lineage=f"{full.get('parent_id','?')} → {full.get('candidate_id','?')}" if full else 'Preliminary M0'
+        self.fit_status.setText(f'{lineage}  ·  {state.upper()}  ·  {stage}')
+        update=progress.get('update');parts=[]
+        if update is not None:parts.append(f'Update {update}')
+        if progress.get('best_loss') is not None:parts.append(f"Best stage loss {progress['best_loss']:.6g}")
+        if status.get('error'):parts.append(status['error'])
+        if any(v['state']=='Finalizing' for v in view['stages']):parts.append('Finalizing the selected checkpoint')
+        takes=view['protocol'].get('takes',{})
+        if takes:parts.append(f'{len(takes)} whips')
+        parts.append(Path(path).name)
+        self.fit_detail.setText(' · '.join(parts));self.fit_detail.setToolTip(str(path))
+        self.stopping_note.setText(view['stopping'])
+        self.fit_stop.setVisible(view['stop_supported']);self.fit_stop.setEnabled(view['stop_supported'] and state=='running')
+        fresh=self.experiment.get('schema')=='unseen_system_experiment_v1'
+        self.fit_start.setEnabled(fresh and not full and state=='prepared' and not self.worker.running)
+        ceiling=progress.get('ceiling') or progress.get('budget',{}).get('maximum_updates')
+        self.fit_progress.setVisible(state=='running' and isinstance(ceiling,(int,float)) and ceiling>0)
+        if isinstance(ceiling,(int,float)) and ceiling>0:
+            self.fit_progress.setRange(0,int(ceiling));self.fit_progress.setValue(int(update or 0));self.fit_progress.setFormat('Update %v / %m cap')
+        for (card,value,detail),v in zip(self.stage_cards,view['stages']):
+            chosen=v['result'].get('numerically_verified') is True
+            value.setText(('Selected ' if chosen else 'Best ')+f"{v['best']:.5g}" if v['best'] is not None else '—')
+            text=v['state']
+            if v['update'] is not None:text+=f" · {int(v['update'])} updates"
+            if v['reduction'] is not None:text+=f"\n{v['reduction']:.1f}% lower than stage start"
+            detail.setText(text)
+            card.setStyleSheet('QGroupBox {background: #eff6ff; border: 1px solid #93c5fd; border-radius: 6px; margin-top: 10px; padding-top: 8px;} QGroupBox::title {subcontrol-origin: margin; left: 10px;}' if v['active'] else '')
+        if force or view['fingerprint']!=self.last_progress:
+            self.last_progress=view['fingerprint'];self.figure.clear();axes=self.figure.subplots(2,2).flat
+            for ax,v in zip(axes,view['stages']):
+                ax.set_title(v['title'],loc='left',fontsize=10,fontweight='bold');ax.set_xlabel('Update',fontsize=9);ax.set_ylabel('Loss',fontsize=9)
+                ax.grid(alpha=.18);ax.spines[['top','right']].set_visible(False);ax.tick_params(labelsize=8)
+                points=v['points']
+                if points:
+                    x=[r[0] for r in points];y=[r[1] for r in points];best=[];minimum=float('inf')
+                    for _,loss,saved in points:
+                        minimum=min(minimum,loss if saved is None else saved);best.append(minimum)
+                    ax.plot(x,y,color='#2563eb',lw=1.5,label='Evaluated loss')
+                    ax.plot(x,best,color='#d97706',lw=1.5,ls='--',label='Best loss')
+                    if v['selected_update'] is not None and v['best'] is not None:
+                        ax.plot(v['selected_update'],v['best'],'*',color='#15803d',ms=10,label='Selected')
+                    if self.log_scale.isChecked() and min(y+best)>0:ax.set_yscale('log')
+                    ax.legend(frameon=False,fontsize=8,loc='best')
+                    ax.margins(x=.03)
+                else:
+                    text='Waiting for the first saved loss' if v['active'] else 'No saved history yet'
+                    ax.text(.5,.5,text,ha='center',va='center',transform=ax.transAxes,color='#64748b',fontsize=9)
             self.canvas.draw_idle()
         if self.log.isVisible():
             text=[]
-            logs=sorted(path.glob('*.log'),key=lambda p:p.stat().st_mtime_ns,reverse=True)[:3]
+            logs=sorted(Path(path).glob('*.log'),key=fit_monitor.modified,reverse=True)[:3]
             for p in logs:
-                with p.open('rb') as stream:
-                    stream.seek(max(0,p.stat().st_size-12000));text.append(p.name+'\n'+stream.read().decode('utf-8',errors='replace'))
+                try:
+                    with p.open('rb') as stream:
+                        stream.seek(max(0,p.stat().st_size-12000));text.append(p.name+'\n'+stream.read().decode('utf-8',errors='replace'))
+                except OSError:continue
             self.log.setPlainText('\n'.join(text))
 
     def shutdown(self):
-        self.timer.stop();return True
+        self.timer.stop();self.correction.shutdown();return True

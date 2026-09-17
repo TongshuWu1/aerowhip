@@ -32,7 +32,7 @@
     "minimum_specific_vertical_m_s2": 2.0
   },
   "method": "mppi",
-  "model_path": "runs/rehearsals_pva/20260910-022818-648386-M0-development-whip/model.json",
+  "model_path": "runs/rehearsals_pva/20260913-012740-484590-M0-slower-brake-1s/model.json",
   "mppi": {
     "control_point_noise_scales": [
       0.03,
@@ -189,7 +189,7 @@
     "live_mppi": true
   },
   "development_model_review": {
-    "model_sha256": "81163c173c688717ae4df24c51ae76e1f9f3b49a8e5a6549421ce8244d03715e",
+    "model_sha256": "2925dd7387ee769c35a608e83d53d9699dc3e2b805104f462a9126f80c63d5af",
     "reason": "User-authorized offline spline development with retained M0; preserve calibration and assess new commands in simulation before physical experiments."
   },
   "spline_seed_directory": "config/pva/m0_spline",

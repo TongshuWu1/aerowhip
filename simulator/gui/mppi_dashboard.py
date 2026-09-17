@@ -76,19 +76,24 @@ class MPPIDashboard(QWidget):
         offline=s.get('mode')=='open_loop'
         if offline:self.context.setText(f'{data["duration"]:g} s complete whip · {s["samples"]} samples · {s["support_points"]} control points · {s["proposal_count"]} proposals · adaptive temperature')
         spline=settings.get('command_contract')=='position_spline_pva_30hz_v1'
+        free_target=settings.get('trajectory_objective',{}).get('free_target',False)
+        release_metrics=spline or free_target
         gain_mode=settings.get('trajectory_objective',{}).get('speed_metric')=='tip_gain_over_root'
-        for key,label in [('distance','Best scored strike distance' if spline else 'Best lookahead tip distance'),
-                          ('hit_fraction','Feasible strike candidates' if spline else 'Sampled valid hits'),
-                          ('step',('Rewarded tip-speed gain' if gain_mode else 'Forward tip speed at strike') if spline else 'Committed commands')]:self.labels[key].setText(label)
-        if spline:
+        for key,label in [('distance','Best scored strike distance' if release_metrics else 'Best lookahead tip distance'),
+                          ('hit_fraction','Feasible strike candidates' if release_metrics else 'Sampled valid hits'),
+                          ('step',('Rewarded tip-speed gain' if gain_mode else 'Forward tip speed at strike') if release_metrics else 'Committed commands')]:self.labels[key].setText(label)
+        if release_metrics:
             data['step']=data['speed_gain'] if gain_mode else data['directed_speed']
             data['iteration']=data['minimum_done']
+        if free_target:
+            self.labels['distance'].setText('Cable height RMS at release')
+            data['distance']=(history[-1] if history else status).get('horizontal_cable_rms_m')
         for key,value in self.values.items():
             x=data[key]
             if x is None or not math.isfinite(float(x)):text='—'
             elif key in ('hit_fraction','failures'):text=f'{100*x:.1f}%'
             elif key=='distance':text=f'{100*x:.2f} cm'
-            elif key=='step' and spline:text=f'{x:.2f} m/s'
+            elif key=='step' and release_metrics:text=f'{x:.2f} m/s'
             elif key=='elapsed':text=f'{int(x)//60:d}m {int(x)%60:02d}s'
             elif key=='seconds':text=f'{x:.2f} s'
             elif key=='ess':text=f'{x:.1f}'
@@ -110,8 +115,9 @@ class MPPIDashboard(QWidget):
             if parts:text+=' Best score contributions: '+', '.join(f'{k} {v:+.1f}' for k,v in parts.items())+'.'
         if age is not None and data['state']=='running':text+=f' Last status/history write {age:.0f} s ago.'
         if status.get('error'):text+=' '+status['error']
-        if settings.get('command_contract')=='position_spline_pva_30hz_v1' and settings.get('trajectory_objective',{}).get('schema')=='targeted_fold_strike_v1':
-            self.context.setText(f'{data["duration"]:g} s full whip · 12 spline points / 9 adjustable · {s["samples"]} candidates · {s["iterations"]} iterations')
+        if release_metrics and settings.get('trajectory_objective',{}).get('schema')=='targeted_fold_strike_v1':
+            representation='12 spline points / 9 adjustable' if spline else f'{s["support_points"]} jerk controls'
+            self.context.setText(f'{data["duration"]:g} s full whip · {representation} · {s["samples"]} candidates · {s["iterations"]} iterations')
             self.work_label.setText(f'Completed iteration {data["iteration"]} / {s["iterations"]}')
             self.work.setRange(0,s['iterations']);self.work.setValue(int(data['iteration']))
             latest=history[-1] if history else {}

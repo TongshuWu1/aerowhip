@@ -47,6 +47,7 @@ class PVAResearchWindow(QMainWindow):
         current=QWidget();c=QVBoxLayout(current);self.rehearsal_tabs.addTab(current,'Direct PVA rehearsals')
         row=QHBoxLayout();self.rehearsals=QComboBox();row.addWidget(self.rehearsals,1);refresh=QPushButton('Refresh');refresh.clicked.connect(self.refresh_rehearsals);row.addWidget(refresh)
         open_button=QPushButton('Open selected');open_button.clicked.connect(self.open_rehearsal);row.addWidget(open_button);c.addLayout(row)
+        self.export_flights_button=QPushButton('Export flights…');self.export_flights_button.clicked.connect(self.export_flights);row.addWidget(self.export_flights_button)
         self.rehearsal_status=note('Generate a rehearsal in MPPI, then inspect its saved command and predicted drone/cable here.');c.addWidget(self.rehearsal_status)
         self.inspector=RehearsalWorkspace(self.root,inspection_only=True);c.addWidget(self.inspector,1)
         from .recorded_takes_replay import RecordedTakesReplay
@@ -119,6 +120,12 @@ class PVAResearchWindow(QMainWindow):
         if self.rehearsals.currentData():
             try:self.inspector.clear_result();self.inspector.load_result(self.rehearsals.currentData())
             except (OSError,ValueError,KeyError) as e:self.rehearsal_status.setText(str(e))
+
+    def export_flights(self):
+        from .flight_export_dialog import FlightExportDialog
+        dialog=FlightExportDialog(self.root,self.rehearsals.currentData(),self)
+        dialog.exec()
+        if dialog.exported:self.rehearsal_status.setText('Flight commands exported to '+str(dialog.exported))
 
     def open_flight_comparison(self,batch,take):
         page=self.adaptation_check_page

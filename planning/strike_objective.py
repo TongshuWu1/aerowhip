@@ -1,8 +1,8 @@
 """Targeted strike objective with separately reported travelling-fold diagnostics.
 
 Development implementation. This measures pre-contact kinematics, not impact
-energy transferred to an object. No archived shape or vehicle-reversal reward
-enters this objective. The geometric fold test is an operational definition,
+energy transferred to an object. The optional free-target task requires an
+ordered pull and reversal; no archived shape enters its score. The fold test is an operational definition,
 not a measurement of wave energy or a proof of a travelling-wave solution.
 """
 from copy import deepcopy
@@ -10,6 +10,7 @@ import math
 
 import torch
 from planning.mppi_live import RolloutCapture
+from planning import free_whip
 
 SCHEMA = 'targeted_fold_strike_v1'
 OBJECTIVE = dict(schema=SCHEMA, distance_scale_m=0.10, speed_scale_m_s=4.0,
@@ -19,9 +20,9 @@ FOLD = dict(material_samples=21, half_window_fraction=0.10,
             start_material_max=0.40, end_material_min=0.75,
             maximum_backward_step=0.05, maximum_forward_step=0.20,
             minimum_observations=4)
-FIELDS = ('fold_tracking', 'fold_last_s', 'fold_count', 'fold_completed',
+FIELDS = ('strike_horizontal_error_m', 'fold_tracking', 'fold_last_s', 'fold_count', 'fold_completed',
           'fold_completed_time_s', 'encounter_fold_valid', 'strike_value',
-          'strike_distance', 'strike_velocity', 'strike_root_velocity', 'maximum_directional_speed_gain', 'strike_time', 'strike_valid', 'strike_fold_valid')
+          'strike_distance', 'strike_velocity', 'strike_root_velocity', 'maximum_directional_speed_gain', 'strike_time', 'strike_valid', 'strike_fold_valid') + free_whip.FIELDS
 
 
 def enabled(settings):
@@ -51,7 +52,7 @@ def validate_settings(cfg):
     if cfg.get('fold_requirement','required') not in ('required','diagnostic_only'):
         raise ValueError('Fold requirement must be required or diagnostic_only')
     objective = cfg['trajectory_objective']; fold = cfg['fold_constraint']
-    optional = {'lateral_weight', 'lateral_scale_m', 'speed_proximity_scale_m', 'maximum_strike_angle_deg', 'prefer_aligned_strike', 'speed_metric', 'minimum_tip_speed_gain_m_s'}
+    optional = {'lateral_weight', 'lateral_scale_m', 'speed_proximity_scale_m', 'maximum_strike_angle_deg', 'prefer_aligned_strike', 'speed_metric', 'minimum_tip_speed_gain_m_s', 'horizontal_cable_weight', 'horizontal_cable_scale_m', 'free_target', 'pullback', 'minimum_release_time_s', 'velocity_propagation', 'curved_release', 'loading_direction', 'maximum_loading_angle_deg'}
     if not set(OBJECTIVE) <= set(objective) or set(objective)-set(OBJECTIVE)-optional or set(fold) != set(FOLD):
         raise ValueError('Use the explicit targeted-strike objective and fold settings')
     def finite(x):
@@ -59,6 +60,35 @@ def validate_settings(cfg):
         if isinstance(x, list): return all(finite(v) for v in x)
         return math.isfinite(x) if isinstance(x, (int, float)) else True
     if not finite(cfg): raise ValueError('Settings must be finite')
+    if not isinstance(objective.get('free_target',False),bool):raise ValueError('Free-target setting must be boolean')
+    if objective.get('free_target',False):
+        if 'minimum_tip_speed_gain_m_s' not in objective:raise ValueError('Free-target whipping requires a minimum tip speed gain')
+        pullback=objective.get('pullback',{})
+        if set(pullback)!=set(free_whip.DEFAULT_PULLBACK) or any(v<=0 for v in pullback.values()):
+            raise ValueError('Free-target whipping requires explicit positive pullback criteria')
+    elif 'pullback' in objective:raise ValueError('Pullback criteria belong to the free-target task')
+    if 'minimum_release_time_s' in objective and (not objective.get('free_target') or not 0<=objective['minimum_release_time_s']<cfg['task']['duration_s']):
+        raise ValueError('Minimum release time must be inside a free-target maneuver')
+    if 'velocity_propagation' in objective:
+        spec=objective['velocity_propagation']
+        if not objective.get('free_target') or set(spec)!=set(free_whip.DEFAULT_PROPAGATION) or any(x<=0 for x in spec.values()):
+            raise ValueError('Explicit positive velocity-propagation criteria required for the free-target task')
+        if 2*spec['minimum_peak_delay_s']>spec['maximum_peak_span_s'] or spec['minimum_distal_amplification']<=1:
+            raise ValueError('Ordered timing and distal amplification required')
+    if 'curved_release' in objective:
+        spec=objective['curved_release']
+        if not objective.get('free_target') or set(spec)!=set(free_whip.DEFAULT_CURVED_RELEASE):
+            raise ValueError('Explicit curved-release criteria require a free-target task')
+        if not 0<spec['minimum_turn_deg']<spec['maximum_turn_deg']<180 or not 0<spec['minimum_aligned_duration_s']<cfg['task']['duration_s']:
+            raise ValueError('Ordered horizontal turn angles and a positive strike interval required')
+        if 'maximum_strike_angle_deg' not in objective:
+            raise ValueError('Curved release requires an explicit strike direction cone')
+    if 'loading_direction' in objective or 'maximum_loading_angle_deg' in objective:
+        axis=objective.get('loading_direction',[])
+        if not objective.get('free_target') or not objective.get('curved_release') or len(axis)!=3 or axis[2]!=0 or sum(x*x for x in axis[:2])<=0:
+            raise ValueError('A separate loading direction requires a horizontal axis and a free curved-release task')
+        if not 0<objective.get('maximum_loading_angle_deg',0)<=45:
+            raise ValueError('An explicit loading cone in (0,45] degrees is required')
     for key in ('distance_scale_m', 'speed_scale_m_s'):
         if objective[key] <= 0: raise ValueError('Strike scales must be positive')
     if objective.get('speed_proximity_scale_m', objective['distance_scale_m']) <= 0:
@@ -78,6 +108,8 @@ def validate_settings(cfg):
         raise ValueError('Positive strike intensity and nonnegative smoothness weights required')
     if objective.get('lateral_weight', 0) < 0 or objective.get('lateral_scale_m', 1) <= 0:
         raise ValueError('Lateral weight must be nonnegative and its distance scale positive')
+    if objective.get('horizontal_cable_weight', 0) < 0 or objective.get('horizontal_cable_scale_m', .1) <= 0:
+        raise ValueError('Horizontal cable weight must be nonnegative and its height scale positive')
     if objective.get('lateral_weight', 0) > 0 and sum(x*x for x in cfg['task']['strike_direction'][:2]) <= 0:
         raise ValueError('Lateral preference requires a horizontal strike direction')
     task = cfg['task']; s = cfg['mppi']; limits = cfg['limits']
@@ -115,6 +147,8 @@ def validate_settings(cfg):
                 raise ValueError('From-scratch planning must not specify previous motion templates')
         elif s.get('position_correlation_length',0)<=0 or not s.get('initial_strengths') or not all(0<x<=1 for x in s['initial_strengths']):
             raise ValueError('Positive spline correlation length and seed strengths in (0,1] required')
+        if s.get('position_noise_basis','correlated') not in ('correlated','jerk'):
+            raise ValueError('Unknown position-noise basis')
         if s['support_points']!=9 or not s.get('position_noise_scales_m') or min(s['position_noise_scales_m'])<=0:
             raise ValueError('Spline requires nine free control points and positive position noise scales')
     else:
@@ -178,23 +212,43 @@ def strike_speed_allowed(tip_velocity, direction, settings, root_velocity=None):
     return gain >= settings['minimum_tip_speed_gain_m_s']
 
 
-def event_terms(distance, tip_velocity, direction, settings, *, root_velocity=None):
+def horizontal_cable_error(q):
+    """Arclength RMS height relative to the attachment plane, in meters.
+
+    Integrate the squared height of the piecewise-linear centerline exactly.
+    A sideways-moving hanging cable remains costly; horizontal translation or
+    yaw rotation does not change the error. Subdividing segments is invariant.
+    """
+    height=q[...,2]-q[...,:1,2]
+    a,b=height[...,:-1],height[...,1:]
+    length=(q[...,1:,:]-q[...,:-1,:]).norm(dim=-1)
+    return ((length*(a.square()+a*b+b.square())/3).sum(-1)
+            /length.sum(-1).clamp_min(1e-12)).clamp_min(0).sqrt()
+
+
+def event_terms(distance, tip_velocity, direction, settings, *, root_velocity=None, horizontal_error_m=None):
     error = (distance / settings['distance_scale_m']).square()
     forward = rewarded_speed(tip_velocity,direction,settings,root_velocity)
     speed_squared = (forward / settings['speed_scale_m_s']).square()
     # Missing scale preserves every historical objective exactly.
     proximity = (distance / settings.get('speed_proximity_scale_m', settings['distance_scale_m'])).square()
+    if settings.get('free_target',False):
+        error=torch.zeros_like(distance);proximity=torch.zeros_like(distance)
     alignment=1.
     if settings.get('prefer_aligned_strike',False):
         cosine=(tip_velocity*direction).sum(-1)/(tip_velocity.norm(dim=-1)*direction.norm()).clamp_min(1e-12)
         edge=math.cos(math.radians(settings['maximum_strike_angle_deg']))
         # Full speed credit on-axis, zero at the cone edge; no extra angle weight.
         alignment=((cosine-edge)/(1-edge)).clamp(0,1)
-    return dict(target=-error, strike=settings['intensity_weight'] * torch.exp(-proximity)
+    terms=dict(target=-error, strike=settings['intensity_weight'] * torch.exp(-proximity)
                 * speed_squared / (1 + speed_squared) * alignment)
+    if settings.get('horizontal_cable_weight',0)>0:
+        if horizontal_error_m is None:raise ValueError('Horizontal strike requires co-timed cable geometry')
+        terms['horizontal_cable']=-settings['horizontal_cable_weight']*(horizontal_error_m/settings.get('horizontal_cable_scale_m',.1)).square()
+    return terms
 
 
-def strike_terms(distance, tip_velocity, direction, normalized_jerk, settings, *, root_velocity=None):
+def strike_terms(distance, tip_velocity, direction, normalized_jerk, settings, *, root_velocity=None, horizontal_error_m=None):
     """One shared encounter supplies both target error and directed speed.
 
     The negative squared distance provides guidance even far from the target.
@@ -202,7 +256,7 @@ def strike_terms(distance, tip_velocity, direction, normalized_jerk, settings, *
     arbitrarily large miss and has no hard speed cap. Jerk is a dimensionless
     mean over the complete fixed-duration command, not a second motion goal.
     """
-    return dict(**event_terms(distance, tip_velocity, direction, settings,root_velocity=root_velocity),
+    return dict(**event_terms(distance, tip_velocity, direction, settings,root_velocity=root_velocity,horizontal_error_m=horizontal_error_m),
                 smoothness=-settings['jerk_weight'] * normalized_jerk.square().mean((-1, -2)))
 
 
@@ -259,6 +313,8 @@ def advance_fold(tracking, previous_s, count, completed, features, eligible, set
 
 
 def initialize(env):
+    free_whip.initialize(env)
+    env.strike_horizontal_error_m=torch.zeros_like(env.total)
     env.fold_tracking = torch.zeros_like(env.active)
     env.fold_last_s = torch.zeros_like(env.total)
     env.fold_count = torch.zeros_like(env.cutoff)
@@ -300,14 +356,21 @@ def observe(env, previous, current, eligible, clock_left):
     # Task event and reporting event are distinct. Evaluate both endpoints and
     # the closest point of each physics segment, with co-timed velocities.
     # Historical runs require fold completion; new runs record it diagnostically.
-    for event_fraction in (torch.zeros_like(fraction), fraction, torch.ones_like(fraction)):
+    free_target=env.settings['trajectory_objective'].get('free_target',False)
+    fractions=(torch.ones_like(fraction),) if free_target else (torch.zeros_like(fraction), fraction, torch.ones_like(fraction))
+    for event_fraction in fractions:
         event_position = before + event_fraction[:, None]*displacement
         event_velocity = previous.velocities_m_s[:, -1] + event_fraction[:, None]*(
             current.velocities_m_s[:, -1]-previous.velocities_m_s[:, -1])
         event_distance = (event_position-env.target).norm(dim=-1)
         root_velocity=previous.velocities_m_s[:,0]+event_fraction[:,None]*(current.velocities_m_s[:,0]-previous.velocities_m_s[:,0])
+        horizontal_error=torch.zeros_like(event_distance)
+        if free_target or env.settings['trajectory_objective'].get('horizontal_cable_weight',0)>0:
+            event_q=previous.positions_m+event_fraction[:,None,None]*(current.positions_m-previous.positions_m)
+            horizontal_error=horizontal_cable_error(event_q)
         value = sum(event_terms(event_distance, event_velocity, env.direction,
-                               env.settings['trajectory_objective'],root_velocity=root_velocity).values())
+                               env.settings['trajectory_objective'],root_velocity=root_velocity,
+                               horizontal_error_m=horizontal_error).values())
         forward = strike_direction_allowed(event_velocity, env.direction, env.settings['trajectory_objective'])
         fold_allowed=env.fold_completed if requires_fold(env.settings) else torch.ones_like(eligible)
         gain=rewarded_speed(event_velocity,env.direction,env.settings['trajectory_objective'],root_velocity)
@@ -315,8 +378,55 @@ def observe(env, previous, current, eligible, clock_left):
             torch.where(eligible & fold_allowed & forward,gain,-torch.inf))
         speed_allowed=strike_speed_allowed(event_velocity,env.direction,env.settings['trajectory_objective'],root_velocity)
         select = eligible & fold_allowed & forward & speed_allowed & torch.isfinite(value) & (value > env.strike_value)
+        backward=torch.zeros_like(event_distance)
+        if free_target:
+            root_position=previous.positions_m[:,0]+event_fraction[:,None]*(current.positions_m[:,0]-previous.positions_m[:,0])
+            position=((root_position-env.initial_state.positions_m[:,0])*env.direction).sum(-1)
+            root_speed=(root_velocity*env.direction).sum(-1)
+            was_loaded=env.whip_loaded
+            loading={}
+            objective=env.settings['trajectory_objective']
+            if 'loading_direction' in objective:
+                axis=env.whip_loading_axis
+                load_p=((root_position-env.initial_state.positions_m[:,0])*axis).sum(-1)
+                load_v=(root_velocity*axis).sum(-1)
+                load_ok=load_v>=math.cos(math.radians(objective['maximum_loading_angle_deg']))*root_velocity[:,:2].norm(dim=-1)
+                loading=dict(loading_position=load_p,loading_speed=load_v,loading_allowed=load_ok)
+            env.whip_peak_forward,env.whip_loaded,backward,pullback_allowed,deficit=free_whip.advance(
+                env.whip_peak_forward,env.whip_loaded,position,root_speed,eligible,env.settings['trajectory_objective']['pullback'],**loading)
+            env.whip_loading_velocity=torch.where((env.whip_loaded & ~was_loaded)[:,None],root_velocity,env.whip_loading_velocity)
+            curved_spec=env.settings['trajectory_objective'].get('curved_release')
+            if curved_spec:
+                before_allowed=strike_direction_allowed(previous.velocities_m_s[:,-1],env.direction,env.settings['trajectory_objective'])
+                before_allowed &= strike_speed_allowed(previous.velocities_m_s[:,-1],env.direction,env.settings['trajectory_objective'],previous.velocities_m_s[:,0])
+                env.whip_aligned_duration=free_whip.aligned_interval_duration(env.whip_aligned_duration,before_allowed,eligible & forward & speed_allowed,env.dt)
+                curved_allowed,curved_deficit=free_whip.curved_release(env.whip_loading_velocity,event_velocity,env.whip_aligned_duration,curved_spec)
+                select &= curved_allowed;deficit+=curved_deficit
+            tip_forward=(event_velocity*env.direction).sum(-1)
+            deficit+=((env.settings['trajectory_objective']['minimum_tip_speed_gain_m_s']-tip_forward).clamp_min(0)).square()
+            release_time=clock_left+event_fraction*env.dt
+            propagation_spec=env.settings['trajectory_objective'].get('velocity_propagation')
+            if propagation_spec:
+                material=torch.cat((env.wave_material.new_zeros(1),env.wave_material,env.wave_material.new_ones(1)))
+                speeds=free_whip.group_speeds(current.velocities_m_s,material,env.direction)
+                update=eligible[:,None]&(speeds>env.whip_velocity_peaks)
+                env.whip_velocity_peaks=torch.where(update,speeds,env.whip_velocity_peaks)
+                env.whip_velocity_peak_times=torch.where(update,release_time[:,None],env.whip_velocity_peak_times)
+                pulse_allowed,pulse_deficit=free_whip.propagation(env.whip_velocity_peaks,env.whip_velocity_peak_times,release_time,propagation_spec)
+                deficit+=pulse_deficit;select &= pulse_allowed
+            guide=value-4*deficit
+            after_preparation=release_time>=env.settings['trajectory_objective'].get('minimum_release_time_s',0.)
+            env.whip_guidance=torch.maximum(env.whip_guidance,torch.where(eligible & forward & after_preparation,guide,-torch.inf))
+            select &= pullback_allowed & after_preparation
+        env.strike_position=torch.where(select[:,None],event_position,env.strike_position)
+        env.strike_backward_travel=torch.where(select,backward,env.strike_backward_travel)
+        env.strike_loading_velocity=torch.where(select[:,None],env.whip_loading_velocity,env.strike_loading_velocity)
+        env.strike_aligned_duration=torch.where(select,env.whip_aligned_duration,env.strike_aligned_duration)
+        env.strike_velocity_peaks=torch.where(select[:,None],env.whip_velocity_peaks,env.strike_velocity_peaks)
+        env.strike_velocity_peak_times=torch.where(select[:,None],env.whip_velocity_peak_times,env.strike_velocity_peak_times)
         env.strike_fold_valid=torch.where(select,env.fold_completed,env.strike_fold_valid)
         env.strike_value = torch.where(select, value, env.strike_value)
+        env.strike_horizontal_error_m=torch.where(select,horizontal_error,env.strike_horizontal_error_m)
         env.strike_distance = torch.where(select, event_distance, env.strike_distance)
         env.strike_velocity = torch.where(select[:, None], event_velocity, env.strike_velocity)
         env.strike_root_velocity = torch.where(select[:,None],root_velocity,env.strike_root_velocity)
@@ -350,7 +460,8 @@ def lateral_cost(packets, origin, direction, settings):
 class StrikeCapture(RolloutCapture):
     def score(self, env, result, actions, settings):
         terms = strike_terms(env.strike_distance, env.strike_velocity,
-                             env.direction, actions, settings,root_velocity=env.strike_root_velocity)
+                             env.direction, actions, settings,root_velocity=env.strike_root_velocity,
+                             horizontal_error_m=env.strike_horizontal_error_m)
         if settings.get('lateral_weight', 0.) > 0:
             terms['lateral'] = lateral_cost(result['packets'], env.origin0, env.direction, settings)
         total = sum(terms.values())

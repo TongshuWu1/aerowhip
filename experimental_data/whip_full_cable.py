@@ -12,13 +12,17 @@ from simulator.cable.residual import MotionResidual
 from simulator.research_physics import ResearchPhysics
 
 
-def residual_vector(q,data,marker_ids,scale):
-    """Candidate x take x time x observed marker x xyz, fixed missingness."""
+def residual_vector(q,data,marker_ids,scale,*,tip_weight=.5):
+    """Fixed-mask marker residuals; legacy callers retain the extra tip term."""
+    if not np.isfinite(tip_weight) or not 0<=tip_weight<=1:
+        raise ValueError('cable_tip_weight must be between 0 and 1')
     delta=(q[:,:,:,marker_ids]-data['truth'][None])/scale
     factor=torch.sqrt(2/(torch.sqrt(1+delta.square().sum(-1))+1))
-    mask=data['mask'].to(q.dtype);allw=.5*mask/mask.sum((1,2))[:,None,None]
-    tip=mask[:,:,-1];tipw=torch.zeros_like(mask);tipw[:,:,-1]=.5*tip/tip.sum(1)[:,None]
-    weights=(allw+tipw)*data['weights'][:,None,None]
+    mask=data['mask'].to(q.dtype);weights=(1-tip_weight)*mask/mask.sum((1,2))[:,None,None]
+    if tip_weight:
+        tip=mask[:,:,-1]
+        weights[:,:,-1]+=tip_weight*tip/tip.sum(1)[:,None]
+    weights=weights*data['weights'][:,None,None]
     return delta*factor[...,None]*weights.sqrt()[None,:,:,:,None]
 
 
@@ -47,7 +51,8 @@ class FullCableForward:
     def evaluate(self,x):
         if self.cached is None or not np.array_equal(x,self.cached):
             eps=self.contract['cable_log_difference_step'];values=np.r_[x[None],x[None]+eps*np.eye(3),x[None]-eps*np.eye(3)]
-            q=self.predict(np.exp(values));r=residual_vector(q,self.data,self.ids,self.contract['cable_scale_m']).flatten(1)
+            q=self.predict(np.exp(values));r=residual_vector(q,self.data,self.ids,self.contract['cable_scale_m'],
+                tip_weight=self.contract.get('cable_tip_weight',.5)).flatten(1)
             prior=r.new_tensor(np.sqrt(self.contract['nominal_prior'])*(values-self.log_prior))
             r=torch.cat([r,prior],1).cpu().numpy()
             self.value=r[0],((r[1:4]-r[4:7])/(2*eps)).T;self.cached=x.copy()
@@ -90,7 +95,7 @@ def residual_objective(engine,data,parameters,contract):
     reference=deepcopy(net).requires_grad_(False)
     def objective():
         q,v=accelerator(data,gradients=torch.is_grad_enabled())
-        r=residual_vector(q[None],data,ids,contract['cable_scale_m'])
+        r=residual_vector(q[None],data,ids,contract['cable_scale_m'],tip_weight=contract.get('cable_tip_weight',.5))
         extra=net(q.flatten(0,1),v.flatten(0,1)).reshape_as(q)
         mask=data['mask'].any(-1).to(q.dtype)
         penalty=((extra[:,:,1:].square().mean((2,3))*mask).sum(1)/mask.sum(1)*data['weights']).sum()
@@ -100,28 +105,62 @@ def residual_objective(engine,data,parameters,contract):
     return objective,accelerator
 
 
-def gradient_check(net,objective,path,parameter=None):
-    """Full-rollout central difference versus captured VJP, without an update."""
-    net.zero_grad();loss=objective();loss.backward()
-    if parameter is None:parameter=list(net.parameters())[-1]
-    if parameter.grad is None or not bool(torch.isfinite(parameter.grad).all()):raise ValueError('Missing/invalid residual gradient')
-    index=int(parameter.grad.abs().flatten().argmax());analytic=float(parameter.grad.flatten()[index]);original=float(parameter.detach().flatten()[index])
-    if abs(analytic)<1e-8:raise ValueError('Gradient check has no informative direction')
-    checks=[];passed=False
+def gradient_check(net,objective,path,parameter=None,*,atol=1e-6,rtol=.02):
+    """Check every trainable tensor plus two seeded joint directions.
+
+    Requires agreement at two adjacent step sizes. Near-zero derivatives use
+    an absolute tolerance; stationarity alone is neither failure nor proof.
+    No optimizer step or global random-number state change is made.
+    """
+    named=[(n,p) for n,p in net.named_parameters() if p.requires_grad]
+    if parameter is not None:named=[(n,p) for n,p in named if p is parameter]
+    if not named:raise ValueError('No trainable parameters to check')
+    originals=[p.detach().clone() for _,p in named];directions=[];results=[]
     try:
-        for eps in (1e-4,5e-5,1e-5,5e-6,1e-6,5e-7,1e-7,5e-8):
-            with torch.no_grad():
-                parameter.flatten()[index]=original+eps;plus=float(objective())
-                parameter.flatten()[index]=original-eps;minus=float(objective())
-                parameter.flatten()[index]=original
-            finite=(plus-minus)/(2*eps);relative=abs(finite-analytic)/max(abs(finite),abs(analytic),1e-8)
-            stable=len(checks)>0 and abs(finite-checks[-1]['central_difference'])/max(abs(finite),abs(analytic),1e-8)<.02
-            checks.append(dict(epsilon=eps,central_difference=finite,relative_error=relative))
-            if relative<.02 and stable and checks[-2]['relative_error']<.02:passed=True;break
+        net.zero_grad();loss=objective()
+        if not bool(torch.isfinite(loss)):raise ValueError('Nonfinite gradient-check loss')
+        loss.backward()
+        for i,(name,p) in enumerate(named):
+            if p.grad is None or not bool(torch.isfinite(p.grad).all()):
+                raise ValueError('Missing/invalid residual gradient: '+name)
+            index=int(p.grad.abs().flatten().argmax())
+            direction=[torch.zeros_like(v) for v in originals]
+            direction[i].reshape(-1)[index]=1
+            directions.append((name,index,direction))
+        generator=torch.Generator().manual_seed(20260914)
+        for j in range(2):
+            direction=[torch.randn(v.shape,generator=generator,dtype=torch.float64).to(v) for v in originals]
+            norm=torch.sqrt(sum(v.square().sum() for v in direction))
+            directions.append((f'joint_random_{j}',None,[v/norm for v in direction]))
+        gradients=[p.grad.detach().clone() for _,p in named]
+        for name,index,direction in directions:
+            analytic=float(sum((g*d).sum() for g,d in zip(gradients,direction)))
+            checks=[];passed=False
+            # Sensitive full cable rollouts can enter the local linear regime
+            # below 5e-8. Still require two stable, agreeing probes at the
+            # original tolerances; smaller probes do not bypass this gate.
+            for eps in (1e-4,5e-5,1e-5,5e-6,1e-6,5e-7,1e-7,5e-8,2.5e-8,1e-8,5e-9):
+                with torch.no_grad():
+                    for (_,p),v,d in zip(named,originals,direction):p.copy_(v+eps*d)
+                    plus=float(objective())
+                    for (_,p),v,d in zip(named,originals,direction):p.copy_(v-eps*d)
+                    minus=float(objective())
+                    for (_,p),v in zip(named,originals):p.copy_(v)
+                finite=(plus-minus)/(2*eps);error=abs(finite-analytic)
+                agrees=np.isfinite(finite) and error<=atol+rtol*max(abs(finite),abs(analytic))
+                stable=bool(checks) and abs(finite-checks[-1]['central_difference'])<=atol+rtol*max(abs(finite),abs(checks[-1]['central_difference']))
+                checks.append(dict(epsilon=eps,central_difference=finite,absolute_error=error,
+                    relative_error=error/max(abs(finite),abs(analytic),atol),agrees=bool(agrees)))
+                if agrees and stable and checks[-2]['agrees']:passed=True;break
+            results.append(dict(direction=name,index=index,analytic=analytic,checks=checks,
+                **{k:v for k,v in checks[-1].items() if k!='agrees'},passed=passed))
     finally:
-        with torch.no_grad():parameter.flatten()[index]=original
+        with torch.no_grad():
+            for (_,p),v in zip(named,originals):p.copy_(v)
         net.zero_grad()
-    result=dict(loss=float(loss.detach()),analytic=analytic,central_difference=finite,relative_error=relative,epsilon=eps,index=index,checks=checks,passed=passed)
+    result=dict(results[-1],loss=float(loss.detach()),directions=results,
+        absolute_tolerance=atol,relative_tolerance=rtol,passed=all(r['passed'] for r in results))
     atomic_json(path,result)
-    if not passed:raise ValueError(f'Full residual gradient mismatch: {result}')
+    if not result['passed']:
+        raise ValueError('Full residual gradient mismatch: '+', '.join(r['direction'] for r in results if not r['passed']))
     return result

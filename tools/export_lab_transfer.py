@@ -73,7 +73,7 @@ def build(output, root=ROOT):
                  'config', 'requirements', 'docs', 'data', 'runs', 'results', '.run', '.github'):
         if (root/name).exists():
             copy_tree(root/name, full/name)
-    for name in ('README.md', 'HANDOFF.md', 'AGENTS.md', 'requirements.txt', 'pytest.ini',
+    for name in ('README.md', 'requirements.txt', 'pytest.ini',
                  '.editorconfig', '.gitattributes', '.gitignore', 'run_simulation.py',
                  'run_ppo.py', 'run_sac.py', 'run_tests.py'):
         shutil.copy2(root/name, full/name)
@@ -104,8 +104,6 @@ def build(output, root=ROOT):
     shutil.copy2(root/'requirements/headless.txt', small/'requirements.txt')
     shutil.copy2(root/'deployment/README.md', small/'README.md')
     shutil.copy2(root/'deployment/README.md', small/'deployment/README.md')
-    shutil.copy2(root/'HANDOFF.md', small/'HANDOFF.md')
-    shutil.copy2(root/'AGENTS.md', small/'AGENTS.md')
     (small/'docs').mkdir()
     for name in ('CONTROLLER_INTERFACE_REVIEW.md', 'INITIAL_STATE_OPEN_LOOP.md',
                  'FLIGHT_ADAPTATION_QUICKSTART.md', 'LAB_SETUP.md', 'LAB_VALIDATION.json'):

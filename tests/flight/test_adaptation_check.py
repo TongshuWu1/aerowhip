@@ -78,6 +78,33 @@ def test_command_reader_does_not_require_or_expose_controller_state(tmp_path):
     for key in columns: np.testing.assert_array_equal(actual[key],expected[key])
 
 
+def test_explicit_event_log_keeps_commands_missing_from_tf_snapshots(tmp_path):
+    from experimental_data.adaptation_rounds import read_controller
+    from experimental_data.preliminary_prepare import recorded_packets
+    p=tmp_path/'experiment_test.csv'
+    columns=['time_s','cmd_age','cmd_valid',*COMMAND_COLUMNS]
+    values=np.zeros((6,len(columns)));values[:,0]=10+np.arange(6)/30
+    values[:,2]=1;values[:,3]=np.arange(6)
+    np.savetxt(p,values[[0,2,5]],delimiter=',',header=','.join(columns),comments='')
+    event_columns=['time_s','cmd_sequence','cmd_valid',*COMMAND_COLUMNS]
+    events=values.copy();events[:,1]=np.arange(101,107)
+    ep=p.with_suffix('.commands.csv')
+    np.savetxt(ep,events,delimiter=',',header=','.join(event_columns),comments='')
+    assert len(read_controller(p,commands_only=True))==3  # Legacy/default unchanged.
+    actual=read_controller(p,commands_only=True,command_source='event_log')
+    times,packets,_,_=recorded_packets(actual,invalid_rows_break_coverage=True)
+    assert len(actual)==6
+    # Final receipt has no observed hold after EOF; do not fabricate coverage.
+    np.testing.assert_allclose(times,values[:-1,0]);np.testing.assert_array_equal(packets[:,0],np.arange(5))
+    assert not actual['cmd_age'].any()
+    with pytest.raises(ValueError,match='not measured'):
+        read_controller(p,command_source='event_log')
+    events[3,1]+=1
+    np.savetxt(ep,events,delimiter=',',header=','.join(event_columns),comments='')
+    with pytest.raises(ValueError,match='gaps or duplicates'):
+        read_controller(p,commands_only=True,command_source='event_log')
+
+
 def test_explicit_alignment_requires_exact_sources_and_never_fits_motion(tmp_path):
     import json
     from experimental_data.adaptation_check import recorded_alignment, sha256

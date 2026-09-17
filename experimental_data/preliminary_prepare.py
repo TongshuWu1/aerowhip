@@ -52,7 +52,13 @@ def recorded_packets(c,*,invalid_rows_break_coverage=False):
     times=np.array([np.median(receipt[ids[a:b]]) for a,b in zip(starts,ends)])
     knots=values[ids[starts]]
     if len(times)<3 or np.any(np.diff(times)<=0):raise ValueError('Nonmonotone command receipts')
-    end=float(c['time_s'][-1]);valid_until=np.minimum(np.r_[times[1:],end],times+.2)
+    end=float(c['time_s'][-1])
+    # A receipt-only log ends at its final receipt. That packet has no observed
+    # hold interval; omit it rather than inventing command coverage after EOF.
+    supported=times<end
+    times=times[supported];knots=knots[supported]
+    if len(times)<3:raise ValueError('Too few command receipts with observed support')
+    valid_until=np.minimum(np.r_[times[1:],end],times+.2)
     if invalid_rows_break_coverage:
         invalid_time=np.asarray(c['time_s'])[~good]
         if len(invalid_time):

@@ -15,7 +15,7 @@ import zipfile
 
 SCHEMA = 'deployment_lab_seed_v1'
 BASE = 'workspace/baseline'
-M0_REHEARSAL = 'runs/rehearsals_pva/20260910-022818-648386-M0-development-whip'
+M0_REHEARSAL = 'runs/rehearsals_pva/20260913-012740-484590-M0-slower-brake-1s'
 PRELIMINARY = 'runs/adaptation/20260909-preliminary1-M0-v2'
 M0_SIGNATURE = 'fc854eae6a37bd8cd3457f1eb7eeb3ba52ae8e0b1315b8fdcc6534a5f94b2858'
 PATH_KEYS = ('m0_model', 'preliminary', 'm0_rehearsal', 'mppi_settings')

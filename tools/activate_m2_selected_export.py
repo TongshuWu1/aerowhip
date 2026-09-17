@@ -112,21 +112,6 @@ def main():
         'Original M0/M1/M2 artifacts and raw recordings remain intact. Next fit must use\n'
         '`M2-selected` as its actual parent, not the superseded full `M2` candidate.\n')
     doc = ROOT / 'docs/data/M2_SELECTED_20260913.md'; doc.write_text(report, encoding='utf-8')
-    handoff = ROOT / 'HANDOFF.md'
-    prefix = ('## CURRENT: M2-selected replaces the regressing M2 command (2026-09-13)\n\n'
-        'User explicitly authorized saved-model reselection after the regression diagnosis.\n'
-        'M1_003/005 are now development selection data; do not claim independent validation.\n'
-        'Selected: new nominal drone response + M1 drone residual + M2 cable physics/NN100.\n'
-        'No further training. All prior artifacts/raw data retained.\n'
-        'Model: runs/adaptation/M2-selected-20260913/candidate/model.json, ID M2-selected.\n'
-        'CSV: exports/M2_selected_fixed_tip_reference/fullstate_30hz.csv.\n'
-        f'{receipt["rows"]} rows / {summary["total_duration_s"]:.3f} s; 30 Hz, original origin/target/timing.\n'
-        'Same fixed M0 reference and slower brake. Actual CSV/replay/UI verified, 16 tests passed.\n'
-        'UI replay and exports/CURRENT_FLIGHT.json select this replacement.\n'
-        'Next raw takes: exports/M2_selected_fixed_tip_reference/flight_take.\n'
-        'Physical improvement pending. Next fit parent must be M2-selected, not old M2.\n'
-        'Details: docs/data/M2_SELECTED_20260913.md. Windows / RTX 4080 only.\n\n')
-    handoff.write_bytes(prefix.encode('utf-8') + handoff.read_bytes())
     print('Activated verified M2-selected CSV:', export / 'fullstate_30hz.csv')
 
 

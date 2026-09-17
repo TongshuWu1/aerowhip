@@ -1,4 +1,4 @@
-"""Local M1 command inversion toward a fixed M0 physical-motion reference."""
+"""Local command inversion toward a fixed physical-motion reference."""
 import numpy as np
 from scipy.optimize import minimize, LinearConstraint
 
@@ -31,6 +31,37 @@ def residual_vector(tip,quad,commands,reference,weights):
         (np.asarray(tip)-reference['tip']).reshape(-1)*np.sqrt(weights['tip']/len(tip)),
         (np.asarray(quad)-reference['quadrotor']).reshape(-1)*np.sqrt(weights['quadrotor']/len(quad)),
         (np.asarray(commands)[:,:3]-reference['command']).reshape(-1)*np.sqrt(weights['command']/len(commands))])
+
+
+def strike_metrics(tip,grid,reference_tip,strike_time,target=None):
+    """Fixed-time interpolation, distinct from nearest approach."""
+    grid=np.asarray(grid);tip=np.asarray(tip);reference_tip=np.asarray(reference_tip)
+    if (len(grid)<2 or not np.isfinite(grid).all() or np.any(np.diff(grid)<=0)
+            or not grid[0]<=strike_time<=grid[-1]):
+        raise ValueError('Strike time must lie inside a finite increasing rollout grid')
+    at=lambda values:np.array([np.interp(strike_time,grid,values[:,j]) for j in range(3)])
+    point=at(tip)
+    result=dict(time_s=float(strike_time),reference_error_m=float(np.linalg.norm(point-at(reference_tip))))
+    if target is not None:result['target_distance_m']=float(np.linalg.norm(point-np.asarray(target)))
+    return result
+
+
+def strike_allowed(candidate,baseline,mode='none',tolerance=0.):
+    if mode not in ('none','reference','target') or tolerance<0:
+        raise ValueError('Invalid strike guard')
+    if mode=='none':return True
+    key={'reference':'reference_error_m','target':'target_distance_m'}[mode]
+    if key not in baseline or key not in candidate:raise ValueError('Strike guard needs strike metadata')
+    return bool(np.isfinite(candidate[key]) and candidate[key]<=baseline[key]+tolerance)
+
+
+def update_trust(radius,damping,ratio,step_norm,maximum_radius,minimum_radius):
+    """Use actual/predicted reduction, including failed nonlinear trials."""
+    if not np.isfinite(ratio) or ratio<.25:
+        return max(minimum_radius,radius*.5),min(1e8,damping*4)
+    if ratio>.75:
+        return min(maximum_radius,radius*1.5 if step_norm>=.8*radius else radius),max(1e-12,damping*.5)
+    return radius,damping
 
 
 def local_step(residual,jacobian,radius,jerk_map,current_jerk,jerk_limits,damping=1e-4,
@@ -72,7 +103,7 @@ def optimize(spline,baseline,origin,cutoff,engine,initial_q,times,grid,reference
              weights,limits,jerk_limits,finish,job,status,settings):
     """Checked finite-difference Gauss-Newton with nonlinear backtracking.
 
-    No recordings are read here. Finalized M1 supplies the updated dynamics;
+    No recordings are read here. The frozen model supplies updated dynamics;
     the desired M0 physical trajectories and objective remain fixed.
     """
     import time
@@ -99,7 +130,18 @@ def optimize(spline,baseline,origin,cutoff,engine,initial_q,times,grid,reference
         return residual(pred,packets).cpu().numpy(),pred,packets,free
     z=np.zeros(dimension);history=[]
     radius=settings['initial_trust_radius'];h=settings['finite_difference_step']
+    damping=settings['damping'];small_steps=0
+    minimum_radius=settings.get('minimum_trust_radius',1e-4)
+    guard=settings.get('strike_guard','none')
+    strike_time=settings.get('planned_strike_time_s')
+    def strike(prediction):
+        if strike_time is None:return {}
+        return strike_metrics(prediction['cable_positions_m'][0,:,-1].cpu().numpy(),grid,
+            reference['tip'].cpu().numpy(),strike_time,settings.get('target_position_m'))
     r,pred,packets,free=evaluate(z[None],single)
+    baseline_strike=strike(pred)
+    strike_allowed(baseline_strike,baseline_strike,guard,settings.get('strike_tolerance_m',0.))
+    atomic_json(job/'strike_baseline.json',baseline_strike)
     if not bool(pred['complete_valid'][0]):raise ValueError('Original command is outside the M1 model envelope')
     finish(baseline)
     cost=float(r[0]@r[0]);initial_cost=cost;stop='Iteration budget reached'
@@ -111,7 +153,7 @@ def optimize(spline,baseline,origin,cutoff,engine,initial_q,times,grid,reference
         packet_map[:,index*3:index*3+3]=(np.kron(matrix[:cutoff,3:].cpu().numpy(),np.eye(3))@basis).reshape(cutoff,3,dimension)
     for iteration in range(1,settings['maximum_iterations']+1):
         if (job/'STOP').exists():raise InterruptedError('Correction stopped; no export')
-        status('Local M1 command correction',iteration=iteration,best_cost_m2=cost,rollouts=calls)
+        status('Local command correction',iteration=iteration,best_cost_m2=cost,rollouts=calls)
         # Compare complete Jacobians at h and h/2. A probe outside the model
         # domain cannot be treated as a zero sensitivity.
         refinements=[]
@@ -138,35 +180,56 @@ def optimize(spline,baseline,origin,cutoff,engine,initial_q,times,grid,reference
         else:
             raise ValueError(f'Command Jacobian step-size check failed after refinement: {agreement:.6g}')
         jac=jacobians[1];current=decode(z).cpu().numpy()
-        current_jerk=(jerk_basis@np.concatenate((np.tile(origin,(3,1)),current))).reshape(-1)
+        current_jerk=(spline.jerk_values(tensor(current),origin).cpu().numpy().reshape(-1)
+            if hasattr(spline,'jerk_values') else
+            (jerk_basis@np.concatenate((np.tile(origin,(3,1)),current))).reshape(-1))
         current_packets=spline.decode(tensor(current),origin)[0][:cutoff].cpu().numpy()
+        # Unit-radius projected gradient mapping incorporates command and jerk
+        # constraints. It is a local stationarity diagnostic, not a global proof.
+        projected=local_step(jac.T@r[0],np.eye(dimension),1.,jerk_map,current_jerk,jerk_bound,
+            damping=0.,packet_map=packet_map,current_packets=current_packets,limits=limits)
+        optimality=float(np.linalg.norm(projected,np.inf))
         delta=local_step(r[0],jac,radius,jerk_map,current_jerk,jerk_bound,
-            damping=settings['damping'],packet_map=packet_map,current_packets=current_packets,limits=limits)
-        accepted=False;rejections=[];before=cost
+            damping=damping,packet_map=packet_map,current_packets=current_packets,limits=limits)
+        accepted=False;rejections=[];before=cost;attempts=[];ratio=float('-inf')
         for alpha in settings['backtracking_scales']:
             proposal=z+alpha*delta;candidate=decode(proposal)
             cp,_=spline.decode(candidate,origin);cp=cp[:cutoff]
+            attempt=dict(step_scale=alpha,accepted=False,strike=None);attempts.append(attempt)
             if not bool(spline.jerk_valid(candidate,origin,tensor(jerk_limits))) or not bool(command_valid(cp[None],limits)[0]):
-                rejections.append('command envelope');continue
+                attempt['reason']='command envelope; rollout not evaluated';rejections.append(attempt['reason']);continue
             rr,pp,cc,ff=evaluate(proposal[None],single);value=float(rr[0]@rr[0])
+            attempt.update(cost_m2=value,strike=strike(pp))
+            predicted=before-float(np.square(r[0]+jac@(alpha*delta)).sum())
+            ratio=(before-value)/predicted if predicted>0 and np.isfinite(value) else float('-inf')
+            attempt.update(predicted_reduction_m2=predicted,actual_reduction_m2=before-value,
+                reduction_ratio=ratio if np.isfinite(ratio) else None)
             if not bool(pp['complete_valid'][0]) or not np.isfinite(value) or value>=cost-1e-10:
-                rejections.append('nonlinear objective/domain');continue
+                attempt['reason']='nonlinear objective/domain';rejections.append(attempt['reason']);continue
+            if not strike_allowed(attempt['strike'],baseline_strike,guard,settings.get('strike_tolerance_m',0.)):
+                attempt['reason']='fixed-time strike guard';rejections.append(attempt['reason']);continue
             try:finish(candidate)
-            except ValueError as exc:rejections.append(str(exc));continue
+            except ValueError as exc:attempt['reason']=str(exc);rejections.append(str(exc));continue
+            attempt['accepted']=True
             z=proposal;r=rr;cost=value;accepted=True;break
         row=dict(iteration=iteration,cost_m2=cost,accepted=accepted,
             jacobian_relative_difference=agreement,one_sided_columns=checks,derivative_refinements=refinements,
-            step_scale=alpha if accepted else 0.,trust_radius=radius,
+            step_scale=alpha if accepted else 0.,trust_radius=radius,damping=damping,
+            command_feasible_optimality=optimality,attempts=attempts,
             rollout_count=calls,rejections=rejections,elapsed_s=time.perf_counter()-started)
         history.append(row);atomic_json(job/'history.json',history)
-        np.savez_compressed(job/'current_best.npz',position_control_points_m=decode(z).cpu().numpy())
-        if accepted:
-            radius=min(settings['maximum_trust_radius'],radius*1.3) if alpha==1 else max(.025,radius*.7)
-            if (before-cost)/max(before,1e-12)<settings['relative_improvement_stop']:
-                stop='Small verified objective improvement';break
-        else:
-            radius*=.25
-            if radius<.025:stop='No improving feasible local step';break
+        saved_controls={getattr(spline,'control_artifact_key','position_control_points_m'):decode(z).cpu().numpy()}
+        np.savez_compressed(job/'current_best.npz',**saved_controls,
+            command_packets=spline.decode(decode(z),origin)[0][:cutoff].cpu().numpy(),command_time_s=times)
+        radius,damping=update_trust(radius,damping,ratio if accepted else float('-inf'),
+            float(np.linalg.norm(alpha*delta,np.inf)) if accepted else 0.,settings['maximum_trust_radius'],minimum_radius)
+        small=(accepted and alpha>=.5 and ratio>=.25 and
+            (before-cost)/max(before,1e-12)<settings['relative_improvement_stop'])
+        small_steps=small_steps+1 if small else 0
+        if small_steps>=settings.get('small_improvement_patience',3) and optimality<=settings.get('optimality_tolerance',1e-5):
+            stop='Repeated small improvements with command-constrained stationarity';break
+        if not accepted and radius<=minimum_radius:
+            stop='Trust radius exhausted without an improving feasible step; convergence unverified';break
     best=decode(z)
     rr,pp,cc,_=evaluate(z[None],single)
     final,terms=tracking_cost(pp['cable_positions_m'][:,:,-1],pp['position_origin_m'],cc,reference,weights)
@@ -175,6 +238,7 @@ def optimize(spline,baseline,origin,cutoff,engine,initial_q,times,grid,reference
     info=dict(optimizer='Bounded finite-difference Gauss-Newton',active_coordinates=dimension,
         active_controls=active.tolist(),iterations=len(history),rollout_count=calls,
         stop_reason=stop,optimization_elapsed_s=time.perf_counter()-started,
+        baseline_strike=baseline_strike,final_strike=strike(pp),strike_guard=guard,
         maximum_jacobian_relative_difference=max(x['jacobian_relative_difference'] for x in history))
     atomic_json(job/'optimization.json',info)
     return best,cost,{k:float(v[0]) for k,v in terms.items()},info

@@ -93,12 +93,15 @@ def compare_drone_runtime(trials,engine,contract,folder):
     atomic_json(folder/'report.json',reports);return reports
 
 
-def evaluate_pair(job,output,models,device='cuda'):
+def evaluate_pair(job,output,models,device='cuda',*,before_update=False):
     job=Path(job).resolve();output=Path(output).resolve();output.mkdir(parents=True,exist_ok=False)
     model,p,baseline=data.load(job,device)
     rows=old_evaluation.records(job,list(p['takes']),model,baseline,device);ids=list(baseline.cable.marker_node_indices[1:])
     report=dict(schema=REPORT,job=str(job),protocol=p,models={},device=device,
-        evidence='Reinitialized same-flight predictions. Whole validation takes excluded from fitting; prior method-development inspection disclosed.',
+        evidence=('Frozen models evaluated before this update; reinitialized same-flight predictions. '
+            'Novelty must be checked against model training ancestry.' if before_update else
+            'Post-fit reinitialized same-flight predictions. Adaptation takes are training diagnostics; any held-out takes retain their declared roles.'),
+        phase='before_update' if before_update else 'after_update',
         aggregation='Equal take weight, fixed masks; no frame-level confidence intervals',comparison_key=digest(read_json(job/'prepared_hashes.json')))
     hashes={};identity=immutable_identity(job/'source_candidate/model.json')
     for name,path in models.items():
@@ -112,7 +115,8 @@ def evaluate_pair(job,output,models,device='cuda'):
         pose=compare_drone_runtime(native,engine,p['full_update'],output/name/'native_pose')
         metrics=summarize_diagnostics(output/name,p,ids)
         for t,r in metrics.items():
-            r['data_use']='Adaptation training' if r['role']=='adaptation' else 'Held out of optimization; method-development reuse disclosed'
+            r['data_use']=('Evaluated before this update; later training permitted' if before_update else
+                'Adaptation training' if r['role']=='adaptation' else 'Held out of optimization; method-development reuse disclosed')
             r['native_pose']=pose[t]
         signature,mhash=model_identity(path);hashes.update(mhash)
         report['models'][name]=dict(model=dict(id=name,model=str(path),signature=signature),takes=metrics,marker_ids=ids)
@@ -150,11 +154,13 @@ def evaluate_preliminary_retention(job,models,contract):
 
 def validation_changes(report,protocol,parent,candidate):
     names=[t for t,v in protocol['takes'].items() if v['role']=='validation']
-    if not names:raise ValueError('Full model registration needs held-out takes')
+    if not names:
+        return dict(takes={},equal_take_mean={},available=False,
+            qualification='No held-out takes. Post-fit training scores cannot establish generalization; evaluate the frozen model on the next collection.')
     by_take={t:{metric:[report['models'][k]['takes'][t]['metrics'][metric]['rmse_m'] for k in (parent,candidate)]
         for metric in ('drone','command_driven_tip')} for t in names}
     mean={metric:np.mean([r[metric] for r in by_take.values()],axis=0).tolist() for metric in ('drone','command_driven_tip')}
-    return dict(takes=by_take,equal_take_mean=mean)
+    return dict(takes=by_take,equal_take_mean=mean,available=True)
 
 
 def evaluate_prior_retention(job,models,device='cuda'):
@@ -162,6 +168,9 @@ def evaluate_prior_retention(job,models,device='cuda'):
     for index,previous in enumerate(p.get('prior_whip_replay',[])):
         folder=Path(previous['folder']);op=read_json(folder/'protocol.json')
         names=[n for n,r in op['takes'].items() if r['role']=='validation']
+        held_out=bool(names)
+        if not names:names=[n for n,r in op['takes'].items() if r['role']=='adaptation']
+        if not names:continue
         baseline=read_json(job/'source_candidate/model.json')
         engine=ResearchExecutionModel.from_mapping(baseline,root=job/'source_candidate',device=device)
         rows=old_evaluation.records(folder,names,baseline,engine,device)
@@ -171,7 +180,8 @@ def evaluate_prior_retention(job,models,device='cuda'):
             m=read_json(path);e=ResearchExecutionModel.from_mapping(m,root=Path(path).parent,device=device)
             result[name]=old_evaluation.evaluate(rows,e,m['cable']['external_drag_s_inv'],job/'prior_validation'/str(index)/name)
         report[str(index)]=dict(source=previous['source'],takes=names,models=result,
-            qualification='Prior whole-take holdout; excluded from replay, already inspected during development')
+            qualification=('Prior whole-take holdout; excluded from replay, already inspected during development' if held_out else
+                'Prior training takes, including replay; retention diagnostic only, not independent validation'))
     atomic_json(job/'prior_validation/report.json',report)
 
 
@@ -193,8 +203,9 @@ def register(job,comparison):
         if not found:raise ValueError('Missing training-source ancestry')
         sources.update(found)
     r=read_json(Path(comparison)/'report.json');changes=validation_changes(r,p,parent,name)
-    improved=all(b<a for a,b in changes['equal_take_mean'].values())
-    state='Candidate - validation improved; prospective flight pending' if improved else 'Not promoted - validation did not improve both drone and tip'
+    improved=changes['available'] and all(b<a for a,b in changes['equal_take_mean'].values())
+    state=('Candidate - no held-out validation; next-batch evaluation pending' if not changes['available'] else
+        'Candidate - validation improved; prospective flight pending' if improved else 'Not promoted - validation did not improve both drone and tip')
     generation=int(baseline['generation_index'])+1
     if generation!=int(p['parent_generation'])+1:raise ValueError('Wrong parent generation')
     catalog['models'].append(dict(id=name,parent=parent,generation_index=generation,candidate_variant='full',model=str(job/'candidate/model.json'),
@@ -210,12 +221,29 @@ def fit(job,device='cuda'):
     try:
         from .whip_full_continuation import train_to_plateau,verify_selected_residual
         def train(net,objective,folder,label):
+            if 'stage_budgets' in contract:
+                from .whip_bounded_training import train_bounded
+                return train_bounded(net,objective,contract,folder,job,label)
             if contract['residual_stopping']['ceiling'] is not None:
                 return train_residual(net,objective,contract,folder,job,label)
             result=train_to_plateau(net,objective,contract,folder,job,label)
             result=verify_selected_residual(net,objective,folder,result)
             net.requires_grad_(False)
             return result
+        if contract.get('evaluate_before_training',False):
+            catalog=load_catalog(data.ROOT)
+            parent=next(m for m in catalog['models'] if m['id']==contract['parent_id'])
+            if parent['signature']!=model_identity(job/'source_candidate/model.json')[0]:
+                raise ValueError('Frozen parent does not match the catalog before training')
+            raw=read_json(job/'source_hashes.json');ancestry=set(parent['training_sources'])
+            overlap={name:sorted({h for f,h in raw.items() if Path(f).name==name+'.csv'} & ancestry)
+                for name in p['takes']}
+            atomic_json(job/'before_update_ancestry.json',dict(parent_id=contract['parent_id'],overlapping_sources=overlap,
+                qualification='Raw source hash overlap with registered parent ancestry; absence does not establish independence from method development.'))
+            if any(overlap.values()):raise ValueError('This batch overlaps parent training ancestry; cannot treat it as a new collection')
+            progress(job,'Evaluating frozen parent before any update')
+            evaluate_pair(job,job/'before_update',
+                {contract['parent_id']:job/'source_candidate/model.json'},device,before_update=True)
         progress(job,'preparing full model training');trials=data.drone_trials(job,model,device)
         rows=data.cable_rows(job,model,engine,trials);cd=data.cable_data(rows,contract['replay_weight'])
         atomic_json(job/'training_windows.json',[dict(name=t.name,take=t.take,category=t.category,role=t.role,weight=float(t.weights.sum()/len(trials))) for t in trials])
@@ -239,6 +267,7 @@ def fit(job,device='cuda'):
         net=make_residual(engine,contract)
         progress(job,'cable_residual graph preparation',windows=len(rows))
         objective,accelerator=residual_objective(engine,cd,cable,contract)
+        accelerator.verify_eager(cd,job/'cable_capture_eager_check.json')
         gradient_check(net,objective,job/'cable_residual_gradient_check.json')
         rr=train(net,objective,job/'cable_residual','cable_residual')
         candidate=save_model(model,engine,job/'candidate',job,cable_parameters=cable,cable_net=net)
@@ -258,6 +287,9 @@ def fit(job,device='cuda'):
         evaluate_preliminary_retention(job,models,contract)
         evaluate_prior_retention(job,models,device)
         _,hashes=model_identity(job/'candidate/model.json')
+        if contract.get('evaluate_before_training',False):
+            hashes.update(read_json(job/'before_update/evidence_hashes.json'))
+            hashes[str(job/'before_update_ancestry.json')]=sha256_file(job/'before_update_ancestry.json')
         hashes.update({str(job/'fit/selection_frozen.json'):sha256_file(job/'fit/selection_frozen.json'),str(output/'report.json'):sha256_file(output/'report.json'),
             str(job/'preliminary_validation/report.json'):sha256_file(job/'preliminary_validation/report.json'),
             str(job/'prior_validation/report.json'):sha256_file(job/'prior_validation/report.json')})

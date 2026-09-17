@@ -58,6 +58,11 @@ def generate(job,output,*,checkpoint=None,origin=None,target=None,device='cuda',
         frozen=read_json(job/'settings.json')['launch']
         if cfg['launch']['origin_m']!=frozen['origin_m'] or cfg['launch']['target_m']!=frozen['target_m']:
             raise ValueError('MPPI launch changed: optimize a new plan before rehearsing')
+    free_target=cfg.get('trajectory_objective',{}).get('free_target',False)
+    if free_target:
+        # The target never enters this task's score or event selection. Display
+        # the selected release point, without presenting it as a measured hit.
+        cfg['launch']['target_m']=read_json(job/'result.json')['selected_strike_position_m']
     if output.exists():raise FileExistsError('Use a new rehearsal folder')
     from planning.position_spline import SCHEMA as SPLINE_SCHEMA, PositionSpline, replay as replay_spline
     spline_mode=cfg.get('command_contract')==SPLINE_SCHEMA
@@ -97,6 +102,10 @@ def generate(job,output,*,checkpoint=None,origin=None,target=None,device='cuda',
     if env.targeted_strike and 'minimum_tip_speed_gain_m_s' in cfg['trajectory_objective']:
         if not bool(env.strike_valid[0]) or not bool(strike_speed_allowed(env.strike_velocity,env.direction,cfg['trajectory_objective'],env.strike_root_velocity)[0]):
             raise ValueError('No strike meets the saved minimum tip speed gain; no CSV exported')
+    if free_target:
+        saved_result=read_json(job/'result.json')
+        if abs(float(env.strike_time[0])-saved_result['strike_time_s'])>1e-9 or not np.allclose(env.strike_position[0].cpu().numpy(),saved_result['selected_strike_position_m'],atol=1e-8,rtol=0):
+            raise ValueError('Free-target release changed on independent rehearsal replay')
     cutoff=int(result['cutoffs'][0]);whip=result['packets'][0,:cutoff+1].cpu().numpy()
     if len(whip)<2:raise ValueError('Empty maneuver')
     if progress:progress('Appending smooth recovery',0,1)
@@ -140,7 +149,7 @@ def generate(job,output,*,checkpoint=None,origin=None,target=None,device='cuda',
     atomic_json(output/'task.json',dict(desired_strike_direction_world=cfg['task']['strike_direction'],
         target_position_m=cfg['launch']['target_m'],
         **(dict(target_positions_m=cfg['task']['target_sequence_m']) if env.extra_tick_fields else {}),
-        **(dict(target_marker_radius_m=.02,acceptance=('Travelling fold before the scored strike event; continuous distance and speed' if requires_fold(cfg) else 'Feasible targeted strike; continuous distance and speed; fold diagnostic only'),
+        **(dict(target_marker_radius_m=.02,acceptance=('Free-target loading and release; configured kinematic requirements; no target-accuracy measurement' if free_target else 'Travelling fold before the scored strike event; continuous distance and speed' if requires_fold(cfg) else 'Feasible targeted strike; continuous distance and speed; fold diagnostic only'),
                 objective=cfg['trajectory_objective'],fold_constraint=cfg['fold_constraint'])
            if env.targeted_strike else dict(success=dict(tip_target_distance_m=cfg['task']['target_radius_m'])))))
     with (output/'fullstate_30hz.csv').open('w',newline='',encoding='utf-8') as stream:
@@ -196,6 +205,20 @@ def generate(job,output,*,checkpoint=None,origin=None,target=None,device='cuda',
             root_velocity_m_s=env.strike_root_velocity[0].cpu().tolist(),
             directed_tip_speed_m_s=float((env.strike_velocity[0]*env.direction).sum()),
             closest_approach_time_s=float(env.encounter_time[0]))
+        if free_target:
+            metadata.update(free_target=True,minimum_tip_distance_m=None,strike_distance_m=None,
+                closest_approach_time_s=None,selected_strike_position_m=cfg['launch']['target_m'],
+                backward_travel_m=float(env.strike_backward_travel[0]),horizontal_cable_rms_m=float(env.strike_horizontal_error_m[0]),
+                target_note='Release point chosen after optimization; target accuracy is not evaluated')
+            if cfg['trajectory_objective'].get('curved_release'):
+                from planning.free_whip import loading_turn_deg
+                metadata.update(loading_velocity_m_s=env.strike_loading_velocity[0].cpu().tolist(),
+                    loading_to_release_turn_deg=float(loading_turn_deg(env.strike_loading_velocity[0],env.strike_velocity[0])),
+                    aligned_release_duration_s=float(env.strike_aligned_duration[0]))
+            if cfg['trajectory_objective'].get('velocity_propagation'):
+                metadata.update(velocity_peak_times_s=env.strike_velocity_peak_times[0].cpu().tolist(),
+                    velocity_peak_speeds_m_s=env.strike_velocity_peaks[0].cpu().tolist(),
+                    propagation_note='Delayed and amplified material-band velocity peaks; kinematic proxy, not measured energy flux')
     if cfg['task'].get('require_pullback',False):
         forward_speed=(env.pose.velocity[0]*env.direction).sum()
         position=((env.pose.position-env.origin0)*env.direction).sum(-1)[0]
@@ -222,6 +245,10 @@ def generate(job,output,*,checkpoint=None,origin=None,target=None,device='cuda',
         if metadata['success_criterion']=='tip_contact_v1' else 'Historical composite strike requirements in saved settings.')
     if env.targeted_strike:
         metadata['success_meaning']=('Predicted travelling fold before the scored encounter' if requires_fold(cfg) else 'Feasible scored strike; travelling fold is diagnostic only')+'; neither a hit label nor measured impact energy.'
+        if free_target:
+            metadata['success_meaning']='Release selected after loading and pullback; target accuracy and energy transfer are not measured.'
+            if cfg['trajectory_objective'].get('velocity_propagation'):
+                metadata['success_meaning']+=' Delayed material-band velocity peaks satisfy the configured kinematic pulse check.'
     if env.extra_tick_fields:
         from learning.two_target_whip import details
         metadata.update(details(env,0),target_positions_m=cfg['task']['target_sequence_m'],

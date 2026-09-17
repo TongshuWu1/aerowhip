@@ -1,5 +1,6 @@
 """Data weighting, scientific scope and optimizer retention for full adaptation."""
 import numpy as np
+import pytest
 import torch
 from experimental_data.whip_full_data import group_weights,default_contract
 from experimental_data.whip_full_cable import residual_vector
@@ -30,11 +31,56 @@ def test_fixed_missingness_and_padding_have_zero_loss_gradient():
 
 def test_full_scope_has_separate_residuals_and_no_promotion():
     c=default_contract()
+    assert c['cable_tip_weight']==0.
     assert len(c['drone_gain_bounds'][0])==6
     assert len(c['cable_bounds'][0])==3
     assert 'drone_residual' in c['stages'] and 'cable_residual' in c['stages']
     assert c['promotion'] is False
     assert c['residual_stopping']['ceiling'] is None
+
+
+def test_all_marker_loss_counts_tip_once_and_masks_missing_samples():
+    q=torch.zeros(1,1,2,4,3,dtype=torch.float64,requires_grad=True)
+    mask=torch.tensor([[[True,True,False],[True,False,False]]])
+    truth=torch.zeros(1,2,3,3,dtype=torch.float64)
+    truth[0,0,0,0]=1;truth[0,0,1,0]=2
+    truth[~mask]=100  # Missing values must not affect either loss or gradient.
+    data=dict(truth=truth,mask=mask,weights=torch.ones(1,dtype=torch.float64))
+    loss=residual_vector(q,data,[1,2,3],1.,tip_weight=0.).square().sum()
+    expected=2*(np.sqrt(2)-1+np.sqrt(5)-1)/3
+    assert float(loss.detach())==pytest.approx(expected)
+    loss.backward()
+    assert torch.isfinite(q.grad).all()
+    assert not q.grad[0,0,:,3].any()  # No valid tip sample is required by this loss.
+    assert not q.grad[0,0,1,2].any()
+
+
+@pytest.mark.parametrize('weight',[0.,.25,.5,None])
+def test_both_cable_fit_stages_use_contract_weight(monkeypatch,weight):
+    from types import SimpleNamespace
+    from experimental_data import whip_full_cable as cable
+    q=torch.zeros(1,1,3,3,dtype=torch.float64)
+    q[0,0,2,0]=1  # Only the tip has unit error; all-marker loss assigns half.
+    data=dict(q=q[:,0],truth=torch.zeros(1,1,2,3,dtype=torch.float64),
+        mask=torch.ones(1,1,2,dtype=torch.bool),weights=torch.ones(1))
+    c=default_contract();c.update(cable_scale_m=1.,nominal_prior=0.,residual_magnitude=0.,residual_change=0.)
+    if weight is None:c.pop('cable_tip_weight')
+    else:c['cable_tip_weight']=weight
+    effective=.5 if weight is None else weight
+    expected=2*(np.sqrt(2)-1)*((1-effective)/2+effective)
+    forward=cable.FullCableForward.__new__(cable.FullCableForward)
+    forward.contract=c;forward.cached=None;forward.data=data;forward.ids=[1,2];forward.log_prior=np.zeros(3)
+    forward.predict=lambda values:q[None].expand(len(values),-1,-1,-1,-1)
+    r,_=forward.evaluate(np.zeros(3))
+    assert np.square(r).sum()==pytest.approx(expected)
+    class ZeroNet(torch.nn.Module):
+        acceleration_limit=.5
+        def forward(self,q,v):return torch.zeros_like(q)
+    engine=SimpleNamespace(physics=SimpleNamespace(motion_residual=ZeroNet()),
+        cable=SimpleNamespace(marker_node_indices=[0,1,2]))
+    monkeypatch.setattr(cable,'CudaCableFit',lambda *a,**k:lambda *a,**k:(q,torch.zeros_like(q)))
+    objective,_=cable.residual_objective(engine,data,[1,1,1],c)
+    assert float(objective())==pytest.approx(expected)
 
 
 def test_m2_replay_weights_and_new_validation_aggregation():

@@ -132,8 +132,8 @@ def load_comparison(root, batch, take, selected_rehearsal=None):
     # frozen forecast, rather than whichever matching rehearsal sorts first.
     bound_forecast = None
     protocol_path = batch / 'protocol.json'
+    protocol = json.loads(protocol_path.read_text()) if protocol_path.exists() else {}
     if selected_rehearsal is None and protocol_path.exists():
-        protocol = json.loads(protocol_path.read_text())
         if protocol.get('rehearsal'):
             selected_rehearsal = Path(protocol['rehearsal'])
             if not selected_rehearsal.is_absolute(): selected_rehearsal = Path(root)/selected_rehearsal
@@ -143,6 +143,10 @@ def load_comparison(root, batch, take, selected_rehearsal=None):
         raise ValueError('Saved prediction differs from the batch frozen forecast.')
     paths = [csv_path, batch/'flight_take'/f'{take}.csv', batch/'flight_take'/f'experiment_{take}.csv',
              *[rehearsal/name for name in ('rehearsal.npz', 'rehearsal.json', 'model.json', 'task.json')]]
+    command_source=protocol.get('command_source','snapshots')
+    if command_source!='snapshots':
+        from .adaptation_rounds import command_log_path
+        paths.extend([command_log_path(paths[2],command_source),protocol_path])
     if (batch/'time_alignment.json').exists():
         paths.append(batch/'time_alignment.json')
     if paths[1].with_suffix('.tracking.json').exists():
@@ -154,7 +158,7 @@ def load_comparison(root, batch, take, selected_rehearsal=None):
     metadata = json.loads((rehearsal/'rehearsal.json').read_text())
     model = json.loads((rehearsal/'model.json').read_text())
     task = json.loads((rehearsal/'task.json').read_text())
-    m, c = read_optitrack(paths[1]), read_controller(paths[2], commands_only=True)
+    m, c = read_optitrack(paths[1]), read_controller(paths[2], commands_only=True,command_source=command_source)
     reference = np.genfromtxt(csv_path, delimiter=',', names=True)
     onset, packets, jitter = command_onset(c, reference)
     alignment = recorded_alignment(root, batch, take, paths[1], paths[2])
@@ -187,7 +191,7 @@ def load_comparison(root, batch, take, selected_rehearsal=None):
     result=dict(time=time, measured_origin=origin, measured_rotation=rotation, measured_cable=cable,
                 measured_state_source=f"OptiTrack {m.get('drone_label','selected rigid body')} pose and cable1 marker observations",
                 drone_rigid_body=m.get('drone_label'),
-                controller_source='FullState commands, validity and receipt timing only',
+                controller_source='FullState commands, validity and receipt timing only; '+command_source,
                 predicted_origin=po, predicted_rotation=pr, predicted_cable=pq,
                 predicted_marker_indices=marker_indices,
                 target=predicted['target_position_m'], metadata=metadata, task=task,

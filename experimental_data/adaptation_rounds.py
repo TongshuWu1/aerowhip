@@ -84,11 +84,31 @@ def validate_times(t):
         raise ValueError('Need at least three strictly increasing finite timestamps')
 
 
-def read_controller(path, *, commands_only=False, allow_external_filename=False):
+def command_log_path(path, source='snapshots'):
+    if source not in ('snapshots','event_log'):raise ValueError('Unknown command source')
+    return Path(path).with_suffix('.commands.csv') if source=='event_log' else Path(path)
+
+
+def read_controller(path, *, commands_only=False, allow_external_filename=False, command_source='snapshots'):
     if 'fig8vertical_002' in str(path).lower():raise ValueError('Protected recording cannot enter adaptation')
     if not allow_external_filename:safe_name(Path(path).stem)
-    c = np.genfromtxt(path, delimiter=',', names=True, encoding='utf-8-sig')
+    if command_source!='snapshots' and not commands_only:
+        raise ValueError('Event logs contain commands, not measured vehicle poses')
+    c = np.genfromtxt(command_log_path(path,command_source), delimiter=',', names=True, encoding='utf-8-sig')
     required = ['time_s','cmd_age','cmd_valid',*COMMAND_COLUMNS]
+    if command_source=='event_log':
+        if not {'time_s','cmd_sequence','cmd_valid',*COMMAND_COLUMNS}.issubset(c.dtype.names or []):
+            raise ValueError('Command event log is missing receipt/sequence/command fields')
+        validate_times(c['time_s'])
+        seq=c['cmd_sequence']
+        if not np.isfinite(seq).all() or np.any(seq!=np.floor(seq)) or np.any(np.diff(seq)!=1):
+            raise ValueError('Command event sequence has gaps or duplicates')
+        events=np.zeros(len(c),dtype=[(k,'f8') for k in required])
+        for k in required:
+            if k!='cmd_age':events[k]=c[k]
+        # Each row is a command receipt, so its age is zero. Do not infer receipts
+        # from TF snapshots, which can miss commands during measurement gaps.
+        return events
     if not commands_only:
         required += ['x','y','z']
     if not set(required).issubset(c.dtype.names or []):

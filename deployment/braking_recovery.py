@@ -31,6 +31,16 @@ def brake_coefficients(p,v,a,duration):
     return c
 
 
+def stop_height_range(pz,vz,az,minimum_s,maximum_s):
+    """Exact range of the braking endpoint height over a duration interval."""
+    durations=[minimum_s,maximum_s]
+    if az!=0:
+        vertex=-3*vz/az
+        if minimum_s<vertex<maximum_s:durations.append(vertex)
+    heights=[pz+vz*t/2+az*t*t/12 for t in durations]
+    return min(heights),max(heights)
+
+
 def plan(position,velocity,acceleration,hover,limits,jerk_limits,settings):
     validate(settings)
     p,v,a,target=[np.asarray(x,float) for x in (position,velocity,acceleration,hover)]
@@ -38,6 +48,11 @@ def plan(position,velocity,acceleration,hover,limits,jerk_limits,settings):
         raise ValueError('Finite XYZ recovery boundary conditions required')
     jerk_limits=np.asarray(jerk_limits,float)
     if jerk_limits.shape!=(3,) or not np.isfinite(jerk_limits).all() or (jerk_limits<=0).any():raise ValueError('Positive XYZ jerk bounds required')
+    # A necessary condition only: reject when every possible stopping height
+    # is outside the envelope. All other candidates retain the full checks.
+    low,high=stop_height_range(p[2],v[2],a[2],np.ceil(settings['minimum_brake_s']*30)/30,np.floor(settings['maximum_brake_s']*30)/30)
+    if high<limits['minimum_origin_z_m']-1e-8 or low>limits['maximum_origin_z_m']+1e-8:
+        raise ValueError('No smooth braking segment meets the saved recovery envelope')
     initial_tilt=np.degrees(np.arctan2(np.linalg.norm(a[:2]),a[2]+9.80665))
     options=dict(ENVELOPE,maximum_speed_m_s=limits['maximum_speed_m_s'],
         maximum_specific_force_m_s2=limits['maximum_specific_force_m_s2'],

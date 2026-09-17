@@ -10,7 +10,7 @@ from simulator.research_execution import ResearchExecutionModel
 
 
 @pytest.mark.skipif(not torch.cuda.is_available(),reason='CUDA required')
-def test_smoothed_frame_one_second_residual_gradient_matches_numerical_difference():
+def test_smoothed_frame_one_second_residual_gradient_matches_numerical_difference(tmp_path):
     source=Path(__file__).resolve().parents[2]/'runs/adaptation/20260909-preliminary1-M0-v2'
     if not source.exists():pytest.skip('Local preliminary data not installed')
     model=read(source/'candidate/model.json');model['cable']['curvature_frame_regularization']=2e-5
@@ -26,6 +26,7 @@ def test_smoothed_frame_one_second_residual_gradient_matches_numerical_differenc
     data=join_windows(records)
     params=data['q'].new_tensor([model['cable']['EI_n_m2'],model['cable']['Cb_n_m2_s']])
     forward=CudaCableFit(e,data,params,block_steps=3)
+    assert forward.verify_eager(data,tmp_path/'capture_eager.json')['passed']
     ids=list(e.cable.marker_node_indices[1:]);bias=e.physics.motion_residual.correction_head.bias
     q,_=forward(data,gradients=True);loss=cable_objectives(q,data['truth'],ids).mean()
     grad=torch.autograd.grad(loss,bias)[0];index=int(grad.abs().argmax())
@@ -41,3 +42,8 @@ def test_smoothed_frame_one_second_residual_gradient_matches_numerical_differenc
         fd=(scores[1]-scores[0])/(2*eps)
         torch.testing.assert_close(grad[index],fd,rtol=2e-3,atol=1e-6)
     with torch.no_grad():bias.copy_(original)
+    from experimental_data.whip_full_cable import gradient_check
+    checked=gradient_check(e.physics.motion_residual,
+        lambda:cable_objectives(forward(data,gradients=torch.is_grad_enabled())[0],data['truth'],ids).mean(),
+        tmp_path/'all_tensor_gradients.json')
+    assert checked['passed'] and len(checked['directions'])>3

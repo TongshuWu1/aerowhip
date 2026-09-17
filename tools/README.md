@@ -1,7 +1,6 @@
 # Current workflow commands
 
-Run from the repository root with `.venv/Scripts/python.exe`. Read
-`../HANDOFF.md` and `../docs/PAPER_WRITING_HANDOFF.md` for the selected experiment.
+Run from the repository root with `.venv/Scripts/python.exe`.
 Running a script is an explicit action; checking status never requires restarting
 an existing fit, training job or planner.
 
@@ -18,6 +17,9 @@ an existing fit, training job or planner.
 | Inspect live MPPI snapshots | `open_mppi_live.py --help` |
 | Benchmark current PVA execution | `benchmark_pva_performance.py`, `benchmark_pva_rollout.py` |
 | Source-only review export | `build_source_release.py --output <new-folder>` |
+
+The new ten-take workflow, generic fitting/correction commands, and initial-state
+sensitivity diagnostic are documented in `../docs/FRESH_MODEL_ITERATIONS.md`.
 
 The selected M0 flight package and forecast already exist. Do not recreate them
 with current defaults. See `../docs/M0_TO_M1_ADAPTATION.md` for staged commands and

@@ -75,23 +75,6 @@ def main():
     old.write_bytes(b'> Superseded for the next user-requested trial: use `../M2_cable_only_fixed_tip_reference/fullstate_30hz.csv`. This comparison is preserved.\n\n'+old.read_bytes())
     atomic_json(ROOT/'docs/data/M2_CABLE_ONLY_20260913.json',dict(comparison=comparison,export=summary,verification=receipt,
         next_fit_parent='M2-cable-only',no_refitting=True,hardware='Windows / RTX 4080'))
-    handoff=ROOT/'HANDOFF.md'
-    message=('## CURRENT: M2 cable-residual-only CSV (2026-09-13)\n\n'
-        'User explicitly requested NO refitting: disable drone residual, retain existing\n'
-        'fitted nominal parameters and M2 cable physics/residual, generate next CSV.\n'
-        'Model: runs/adaptation/M2-cable-only-20260913/candidate/model.json.\n'
-        'ID M2-cable-only; ablation of M2-selected. Exact-zero checkpoint preserves\n'
-        'the frozen loader and is verified identical to nominal-only drone equations.\n'
-        'M1_003/005 development prediction: drone 6.72 -> 5.79 cm; tip 8.46 -> 9.53 cm.\n'
-        'Mixed offline result; no claim of physical improvement. No training ran.\n'
-        'CSV: exports/M2_cable_only_fixed_tip_reference/fullstate_30hz.csv.\n'
-        f'{receipt["rows"]} rows / {summary["total_duration_s"]:.3f} s, 30 Hz. Original M0 reference/target/timing,\n'
-        'executed M1 spline initialization, same slower brake and recovery.\n'
-        'Serialized CSV, model identity, nominal equivalence, complete replay and UI checked.\n'
-        'Startup replay and CURRENT_FLIGHT select this run. New raw takes go in its flight_take.\n'
-        'All older models, exports and raw data retained. Next fit parent: M2-cable-only.\n'
-        'Details: docs/data/M2_CABLE_ONLY_20260913.json. Windows / RTX 4080 only.\n\n')
-    handoff.write_bytes(message.encode('utf-8')+handoff.read_bytes())
     print('Activated:',export/'fullstate_30hz.csv')
 
 

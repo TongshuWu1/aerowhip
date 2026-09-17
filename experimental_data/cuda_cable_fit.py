@@ -37,6 +37,36 @@ class CudaCableFit:
         self.blocks={size:CudaAutogradBlock(advance,
             (q,data['v'],data['roots'][:,1:size+1]),tuple(physics.motion_residual.parameters())) for size in sorted(sizes)}
 
+    def verify_eager(self,data,path,*,atol=1e-7,rtol=1e-4):
+        """Compare two recurrent graph blocks against identical eager equations.
+
+        This diagnoses capture/VJP execution separately from the whole-window
+        finite-difference check. It does not test different physics equations.
+        """
+        from .io import atomic_json
+        size=max(self.blocks);block=self.blocks[size]
+        if data['roots'].shape[1]-1<2*size:
+            raise ValueError('Eager comparison requires two complete graph blocks')
+        parameters=block.parameters
+        def run(fn):
+            q,v=data['q'],data['v'];outputs=[]
+            for i in (1,1+size):
+                qp,vp=fn(q,v,data['roots'][:,i:i+size]);q,v=qp[:,-1],vp[:,-1]
+                outputs.extend((qp,vp))
+            loss=sum(x.square().mean() for x in outputs)
+            return outputs,torch.autograd.grad(loss,parameters)
+        with torch.enable_grad():
+            expected,eg=run(block.function);actual,ag=run(block)
+        rows=[]
+        for label,observed,wanted in [('output',actual,expected),('gradient',ag,eg)]:
+            for index,(a,e) in enumerate(zip(observed,wanted)):
+                rows.append(dict(kind=label,index=index,maximum_absolute_difference=float((a-e).detach().abs().max()),
+                    passed=bool(torch.allclose(a,e,atol=atol,rtol=rtol))))
+        result=dict(passed=all(r['passed'] for r in rows),steps=2*size,atol=atol,rtol=rtol,checks=rows)
+        atomic_json(path,result)
+        if not result['passed']:raise ValueError('Captured/eager cable forward or gradient mismatch')
+        return result
+
     def __call__(self,data,*,gradients):
         q,v=data['q'],data['v'];qs=[q[:,None]];vs=[v[:,None]]
         with torch.enable_grad() if gradients else torch.no_grad():

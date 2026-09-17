@@ -18,7 +18,7 @@ ROOT=Path(__file__).resolve().parents[1]
 
 def default_contract():
     return dict(schema=FULL_SCHEMA,stages=['drone_nominal','drone_residual','attitude_refinement','cable_physics','cable_residual','combined_validation'],
-        replay_weight=.5,position_scale_m=.02,orientation_scale_rad=.05,cable_scale_m=.02,
+        replay_weight=.5,position_scale_m=.02,orientation_scale_rad=.05,cable_scale_m=.02,cable_tip_weight=0.,
         nominal_prior=.03,residual_magnitude=.01,residual_change=.01,
         delay_candidates_s=[0.,.01,.02,.03,.04,.06,.08,.10,.12],
         drone_gain_bounds=[[.05,.05,.05,.05,.01,.01],[80.,80.,20.,20.,3.,3.]],
@@ -36,7 +36,19 @@ def default_contract():
 
 def prepare(job,whip_source,preliminary_source,contract=None):
     job=Path(job).resolve();src=Path(whip_source).resolve();pre=Path(preliminary_source).resolve()
-    c=contract or default_contract()
+    c=deepcopy(contract or default_contract())
+    # Missing fields in explicitly supplied historical contracts mean 50/50.
+    c.setdefault('cable_tip_weight',.5)
+    if not np.isfinite(c['cable_tip_weight']) or not 0<=c['cable_tip_weight']<=1:
+        raise ValueError('cable_tip_weight must be between 0 and 1')
+    source_protocol=read_json(src/'protocol.json')
+    if not any(r['role']=='validation' for r in source_protocol['takes'].values()):
+        c['evaluate_before_training']=True
+    for label,budget in c.get('stage_budgets',{}).items():
+        if label not in ('drone_residual','cable_residual') or type(budget['maximum_updates']) is not int or budget['maximum_updates']<1 or not np.isfinite(budget['maximum_seconds']) or budget['maximum_seconds']<=0:
+            raise ValueError('Invalid residual stage budget')
+    if 'stage_budgets' in c and set(c['stage_budgets'])!={'drone_residual','cable_residual'}:
+        raise ValueError('Specify budgets for both residual stages')
     if read_json(src/'protocol.json').get('diagnostics_only'):raise ValueError('Final diagnostic recordings cannot enter a fit')
     if c.get('schema')!=FULL_SCHEMA:raise ValueError('Expected full-model contract')
     for name in ('prepared_hashes.json','source_hashes.json'):verify_hashes(read_json(src/name))
