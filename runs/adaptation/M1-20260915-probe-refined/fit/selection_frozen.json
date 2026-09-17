@@ -1,0 +1,96 @@
+{
+  "cable_parameters": [
+    9.999850711298427e-09,
+    9.920329605701307e-05,
+    0.33352688433667854
+  ],
+  "cable_physics": {
+    "active_bounds": [
+      0,
+      0,
+      0
+    ],
+    "baseline_loss": 2.6870176407618653,
+    "best": [
+      -18.42069567293396,
+      -9.21833931784425,
+      -1.0980318041718042
+    ],
+    "best_loss": 2.5998601554518372,
+    "elapsed_s": 16.73435059998883,
+    "nfev": 7,
+    "solver_message": "`xtol` termination condition is satisfied.",
+    "stop_reason": "solver_termination",
+    "updates": 3
+  },
+  "cable_residual": {
+    "baseline_loss": 2.598867381842429,
+    "best_loss": 1.7224867120533824,
+    "ceiling": null,
+    "elapsed_s": 1732.3781869999948,
+    "numerically_verified": true,
+    "optimizer_best_loss": 1.7224867120533824,
+    "selected_update": 270,
+    "stop_reason": "user_requested_early_stop",
+    "updates": 290
+  },
+  "candidate_sha256": "e48290aa46a46e9502a3104789313c21469feccea2c7ed3148bccb089017435f",
+  "drone_parameters": {
+    "attitude_acceleration_scale_xy": 1.0232425513907226,
+    "attitude_acceleration_scale_z": 0.6422813167465811,
+    "attitude_drive_model": "independent_scale_v3",
+    "attitude_time_constant_s": 0.04932517861415656,
+    "delay_s": 0.04,
+    "feedforward_xy": 0.7935513466451508,
+    "feedforward_z": 1.9798457381045025,
+    "gravity_m_s2": 9.80665,
+    "kd_xy": 0.9051432805191137,
+    "kd_z": 2.561363610833058,
+    "kp_xy": 1.7659027012907096,
+    "kp_z": 18.268402034323934
+  },
+  "drone_residual": {
+    "additional_updates": 815,
+    "baseline_loss": 4.128506131402101,
+    "best_loss": 2.6149142592490016,
+    "ceiling": null,
+    "elapsed_s": 420.68565360002685,
+    "numerically_verified": true,
+    "optimizer_best_loss": 2.6149142592490016,
+    "selected_update": 815,
+    "stop_reason": "practical_plateau",
+    "updates": 815
+  },
+  "schema": "whip_full_model_v1",
+  "stages_complete": true,
+  "termination_override": {
+    "best_saved_update": 270,
+    "finalizer_sha256": "64c02c0fad99a315ebfbc62992e78480f45c0bf5bf122ebe12ea86b90baa02a5",
+    "last_saved_update": 290,
+    "optional_preliminary_retention": "Deferred at user request to prioritize next collection; not claimed as checked.",
+    "original_status": {
+      "best_loss": 1.7224867120533824,
+      "model_selected": false,
+      "stage": "cable_residual",
+      "status": "running",
+      "stopping": "practical plateau; no update ceiling",
+      "update": 292
+    },
+    "reason": "User requested stopping because remaining improvement is small; keep the best saved checkpoint.",
+    "state_sha256": "7417aa28e21366030e4efa80e084f238299522cf18873c3b872710c4858a1cc3"
+  },
+  "training_takes": [
+    "M0_002_whip_001",
+    "M0_002_whip_002",
+    "M0_002_whip_003",
+    "M0_002_whip_004",
+    "M0_003_whip_001",
+    "M0_003_whip_002",
+    "M0_003_whip_003",
+    "M0_003_whip_004",
+    "M0_Whip123_001",
+    "M0_Whip123_002",
+    "M0_Whip123_003"
+  ],
+  "validation_used_for_selection": false
+}

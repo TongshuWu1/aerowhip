@@ -1,0 +1,3032 @@
+[
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "accepted": true,
+        "actual_reduction_m2": 0.0005057078511474943,
+        "cost_m2": 0.0003736358925176012,
+        "predicted_reduction_m2": 0.0005021516486900763,
+        "reduction_ratio": 1.007081929267174,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.01606988250361518,
+          "target_distance_m": 0.03259268833703258,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 0.001076051943509996,
+    "cost_m2": 0.0003736358925176012,
+    "damping": 0.0001,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.025344421066925037,
+        "step": 0.01
+      }
+    ],
+    "elapsed_s": 20.104095500020776,
+    "iteration": 1,
+    "jacobian_relative_difference": 0.025344421066925037,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [],
+    "rollout_count": 100,
+    "step_scale": 1.0,
+    "trust_radius": 0.5
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "accepted": true,
+        "actual_reduction_m2": 1.6962809179835582e-05,
+        "cost_m2": 0.0003566730833377656,
+        "predicted_reduction_m2": 1.407063545048892e-05,
+        "reduction_ratio": 1.2055467743104784,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.016095120466490313,
+          "target_distance_m": 0.033366046285307316,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 4.077056960988525e-05,
+    "cost_m2": 0.0003566730833377656,
+    "damping": 5e-05,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.021765145659362377,
+        "step": 0.01
+      }
+    ],
+    "elapsed_s": 31.27711259998614,
+    "iteration": 2,
+    "jacobian_relative_difference": 0.021765145659362377,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [],
+    "rollout_count": 199,
+    "step_scale": 1.0,
+    "trust_radius": 0.5
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "accepted": false,
+        "actual_reduction_m2": -6.39703686450632e-05,
+        "cost_m2": 0.0004206434519828288,
+        "predicted_reduction_m2": 2.5955777214656e-05,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -2.4645907581970676,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.0192721944374027,
+          "target_distance_m": 0.03653416462132041,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -2.3435333377158814e-05,
+        "cost_m2": 0.00038010841671492444,
+        "predicted_reduction_m2": 1.6125803117355414e-05,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.453281626137213,
+        "step_scale": 0.5,
+        "strike": {
+          "reference_error_m": 0.017628157301368897,
+          "target_distance_m": 0.034888002746810906,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -7.909022509664985e-06,
+        "cost_m2": 0.0003645821058474306,
+        "predicted_reduction_m2": 8.849880186184635e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.8936869588372051,
+        "step_scale": 0.25,
+        "strike": {
+          "reference_error_m": 0.016889123576762408,
+          "target_distance_m": 0.034178771564483935,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": true,
+        "actual_reduction_m2": 3.3665066197709095e-06,
+        "cost_m2": 0.0003533065767179947,
+        "predicted_reduction_m2": 4.621684749969029e-06,
+        "reduction_ratio": 0.7284154592745576,
+        "step_scale": 0.125,
+        "strike": {
+          "reference_error_m": 0.016445541188826063,
+          "target_distance_m": 0.033827734740053024,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 6.459728997181401e-05,
+    "cost_m2": 0.0003533065767179947,
+    "damping": 2.5e-05,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.2528694139351792,
+        "step": 0.01
+      },
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.027751236454036314,
+        "step": 0.0025
+      }
+    ],
+    "elapsed_s": 48.19203199999174,
+    "iteration": 3,
+    "jacobian_relative_difference": 0.027751236454036314,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 399,
+    "step_scale": 0.125,
+    "trust_radius": 0.5
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "accepted": false,
+        "actual_reduction_m2": -0.00040940384086417996,
+        "cost_m2": 0.0007627104175821747,
+        "predicted_reduction_m2": 8.255848876841939e-05,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -4.958955123471044,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.018635538972684502,
+          "target_distance_m": 0.030785918615817677,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -0.00010755425356308616,
+        "cost_m2": 0.00046086083028108087,
+        "predicted_reduction_m2": 5.799897081478297e-05,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.85441658795215,
+        "step_scale": 0.5,
+        "strike": {
+          "reference_error_m": 0.01708995905395741,
+          "target_distance_m": 0.03196996218319521,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -2.1395462983127863e-05,
+        "cost_m2": 0.0003747020397011226,
+        "predicted_reduction_m2": 3.317941701503474e-05,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.6448414380949743,
+        "step_scale": 0.25,
+        "strike": {
+          "reference_error_m": 0.01665121685886201,
+          "target_distance_m": 0.03278751099436209,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": true,
+        "actual_reduction_m2": 5.935073221975565e-07,
+        "cost_m2": 0.00035271306939579716,
+        "predicted_reduction_m2": 1.763469140942818e-05,
+        "reduction_ratio": 0.033655668161011586,
+        "step_scale": 0.125,
+        "strike": {
+          "reference_error_m": 0.01663841963074783,
+          "target_distance_m": 0.033318809014227284,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 0.0021727152522580395,
+    "cost_m2": 0.00035271306939579716,
+    "damping": 2.5e-05,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.4646848540591937,
+        "step": 0.0025
+      },
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.2301745423570996,
+        "step": 0.000625
+      },
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.021660255202301953,
+        "step": 0.00015625
+      }
+    ],
+    "elapsed_s": 67.52126130001852,
+    "iteration": 4,
+    "jacobian_relative_difference": 0.021660255202301953,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 697,
+    "step_scale": 0.125,
+    "trust_radius": 0.5
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "accepted": false,
+        "actual_reduction_m2": -0.0002291952362631551,
+        "cost_m2": 0.0005819083056589523,
+        "predicted_reduction_m2": 4.791089740699021e-05,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -4.783780907216225,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.014105292138778695,
+          "target_distance_m": 0.030382096764429874,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -8.442872868918831e-05,
+        "cost_m2": 0.00043714179808498546,
+        "predicted_reduction_m2": 3.2135818445257994e-05,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -2.627246878215007,
+        "step_scale": 0.5,
+        "strike": {
+          "reference_error_m": 0.015396761959977504,
+          "target_distance_m": 0.031873458253605144,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -2.765910750561761e-05,
+        "cost_m2": 0.00038037217690141476,
+        "predicted_reduction_m2": 1.8113001658069726e-05,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.527030584314825,
+        "step_scale": 0.25,
+        "strike": {
+          "reference_error_m": 0.015883049675670953,
+          "target_distance_m": 0.03255079126495212,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.2553208385537992e-05,
+        "cost_m2": 0.00036526627778133515,
+        "predicted_reduction_m2": 9.567773937895093e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.3120302033703457,
+        "step_scale": 0.125,
+        "strike": {
+          "reference_error_m": 0.01623408316588442,
+          "target_distance_m": 0.03303349115978546,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -4.957271264840438e-06,
+        "cost_m2": 0.0003576703406606376,
+        "predicted_reduction_m2": 4.911705246162651e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.0092770262860105,
+        "step_scale": 0.0625,
+        "strike": {
+          "reference_error_m": 0.01638646653792711,
+          "target_distance_m": 0.03317895279328283,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -2.29070661800061e-07,
+        "cost_m2": 0.0003529421400575972,
+        "predicted_reduction_m2": 2.4878071923850544e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.092077337223409,
+        "step_scale": 0.03125,
+        "strike": {
+          "reference_error_m": 0.01648859548122218,
+          "target_distance_m": 0.03327523408431711,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": true,
+        "actual_reduction_m2": 1.9816483155810365e-06,
+        "cost_m2": 0.0003507314210802161,
+        "predicted_reduction_m2": 1.2518922385185475e-06,
+        "reduction_ratio": 1.5829224390160457,
+        "step_scale": 0.015625,
+        "strike": {
+          "reference_error_m": 0.016592688123332634,
+          "target_distance_m": 0.033320707657336565,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 0.0032951414598530403,
+    "cost_m2": 0.0003507314210802161,
+    "damping": 0.0001,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.029945160799009364,
+        "step": 0.00015625
+      }
+    ],
+    "elapsed_s": 84.83430380001664,
+    "iteration": 5,
+    "jacobian_relative_difference": 0.029945160799009364,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 802,
+    "step_scale": 0.015625,
+    "trust_radius": 0.25
+  },
+  {
+    "accepted": false,
+    "attempts": [
+      {
+        "accepted": false,
+        "actual_reduction_m2": -0.00024705617580846875,
+        "cost_m2": 0.0005977875968886849,
+        "predicted_reduction_m2": 5.216021161718671e-05,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -4.736487221747853,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.0176640217830566,
+          "target_distance_m": 0.029782505330214964,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -9.237337382403182e-05,
+        "cost_m2": 0.00044310479490424794,
+        "predicted_reduction_m2": 3.421905765770705e-05,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -2.6994715853382614,
+        "step_scale": 0.5,
+        "strike": {
+          "reference_error_m": 0.016770532301355237,
+          "target_distance_m": 0.03134956932415965,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -3.13461545437539e-05,
+        "cost_m2": 0.00038207757562397,
+        "predicted_reduction_m2": 1.9144266791131957e-05,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.637365112268187,
+        "step_scale": 0.25,
+        "strike": {
+          "reference_error_m": 0.016434627053140798,
+          "target_distance_m": 0.03230359894230226,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.4192559659294713e-05,
+        "cost_m2": 0.00036492398073951083,
+        "predicted_reduction_m2": 1.0080817886135593e-05,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.4078777951949815,
+        "step_scale": 0.125,
+        "strike": {
+          "reference_error_m": 0.01643510673242391,
+          "target_distance_m": 0.0328380122947127,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -7.188521289751043e-06,
+        "cost_m2": 0.00035791994236996716,
+        "predicted_reduction_m2": 5.167580065710241e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.3910807763678144,
+        "step_scale": 0.0625,
+        "strike": {
+          "reference_error_m": 0.01646032633885906,
+          "target_distance_m": 0.03306038852034296,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -3.5377349318699357e-06,
+        "cost_m2": 0.00035426915601208605,
+        "predicted_reduction_m2": 2.615582813515684e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.3525608570254974,
+        "step_scale": 0.03125,
+        "strike": {
+          "reference_error_m": 0.016494146279318642,
+          "target_distance_m": 0.033190098089428605,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.1888103416598248e-06,
+        "cost_m2": 0.00035192023142187594,
+        "predicted_reduction_m2": 1.3157396019229965e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.9035301057461063,
+        "step_scale": 0.015625,
+        "strike": {
+          "reference_error_m": 0.01653178201120066,
+          "target_distance_m": 0.0332584492810445,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 0.004483822713713908,
+    "cost_m2": 0.0003507314210802161,
+    "damping": 5e-05,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.3671240999156433,
+        "step": 0.00015625
+      },
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.03929103167390142,
+        "step": 3.90625e-05
+      }
+    ],
+    "elapsed_s": 97.11508919997141,
+    "iteration": 6,
+    "jacobian_relative_difference": 0.03929103167390142,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 1005,
+    "step_scale": 0.0,
+    "trust_radius": 0.25
+  },
+  {
+    "accepted": false,
+    "attempts": [
+      {
+        "accepted": false,
+        "actual_reduction_m2": -0.00013657184998090092,
+        "cost_m2": 0.00048730327106111704,
+        "predicted_reduction_m2": 3.7653402469704984e-05,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -3.6270785911255516,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.014873028154541043,
+          "target_distance_m": 0.029747729778257147,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -4.768313316655962e-05,
+        "cost_m2": 0.00039841455424677574,
+        "predicted_reduction_m2": 2.450364244307025e-05,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.945961025073831,
+        "step_scale": 0.5,
+        "strike": {
+          "reference_error_m": 0.015496818527330675,
+          "target_distance_m": 0.03146084037687912,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -2.0753127249992915e-05,
+        "cost_m2": 0.00037148454833020903,
+        "predicted_reduction_m2": 1.3671056523589559e-05,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.5180338998806102,
+        "step_scale": 0.25,
+        "strike": {
+          "reference_error_m": 0.01597729503485155,
+          "target_distance_m": 0.03247376059273945,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.0381455359163361e-05,
+        "cost_m2": 0.0003611128764393795,
+        "predicted_reduction_m2": 7.190337087308442e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.4438064910040886,
+        "step_scale": 0.125,
+        "strike": {
+          "reference_error_m": 0.016226110716496978,
+          "target_distance_m": 0.03286877557142399,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -5.42110564235172e-06,
+        "cost_m2": 0.00035615252672256784,
+        "predicted_reduction_m2": 3.6838707500326095e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.4715786763973009,
+        "step_scale": 0.0625,
+        "strike": {
+          "reference_error_m": 0.01636951378186808,
+          "target_distance_m": 0.03309142767519961,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -2.45231463238591e-06,
+        "cost_m2": 0.00035318373571260203,
+        "predicted_reduction_m2": 1.8641109266109086e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.31554115014196,
+        "step_scale": 0.03125,
+        "strike": {
+          "reference_error_m": 0.01645707428113785,
+          "target_distance_m": 0.03320775217883727,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -5.52348361079584e-07,
+        "cost_m2": 0.0003512837694412957,
+        "predicted_reduction_m2": 9.375993512040917e-07,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.5891091545341223,
+        "step_scale": 0.015625,
+        "strike": {
+          "reference_error_m": 0.016522377862925337,
+          "target_distance_m": 0.03326948746394085,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 0.004483822713713908,
+    "cost_m2": 0.0003507314210802161,
+    "damping": 0.0002,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.03929103167390142,
+        "step": 3.90625e-05
+      }
+    ],
+    "elapsed_s": 106.9091241999995,
+    "iteration": 7,
+    "jacobian_relative_difference": 0.03929103167390142,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 1110,
+    "step_scale": 0.0,
+    "trust_radius": 0.125
+  },
+  {
+    "accepted": false,
+    "attempts": [
+      {
+        "accepted": false,
+        "actual_reduction_m2": -6.098754390450328e-05,
+        "cost_m2": 0.0004117189649847194,
+        "predicted_reduction_m2": 2.7044361320273445e-05,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -2.2550927782045562,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.014372140831303172,
+          "target_distance_m": 0.031123790291441047,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -2.4473144007732016e-05,
+        "cost_m2": 0.00037520456508794814,
+        "predicted_reduction_m2": 1.789310390499588e-05,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.3677416806873257,
+        "step_scale": 0.5,
+        "strike": {
+          "reference_error_m": 0.01540481107515037,
+          "target_distance_m": 0.03228002129644551,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.2575677834184744e-05,
+        "cost_m2": 0.00036330709891440086,
+        "predicted_reduction_m2": 1.0039282763712716e-05,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.2526470396510698,
+        "step_scale": 0.25,
+        "strike": {
+          "reference_error_m": 0.01595994545904305,
+          "target_distance_m": 0.03278469897786193,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -6.829522342053805e-06,
+        "cost_m2": 0.0003575609434222699,
+        "predicted_reduction_m2": 5.292824084660052e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.2903361670091198,
+        "step_scale": 0.125,
+        "strike": {
+          "reference_error_m": 0.016228759976520013,
+          "target_distance_m": 0.033040025900946485,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -3.5148731832956685e-06,
+        "cost_m2": 0.0003542462942635118,
+        "predicted_reduction_m2": 2.7147077180309496e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.2947519764098583,
+        "step_scale": 0.0625,
+        "strike": {
+          "reference_error_m": 0.016379560505653448,
+          "target_distance_m": 0.0331816013678478,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.2483930317011235e-06,
+        "cost_m2": 0.00035197981411191724,
+        "predicted_reduction_m2": 1.3744277779407328e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.9083002044469418,
+        "step_scale": 0.03125,
+        "strike": {
+          "reference_error_m": 0.016472820106878137,
+          "target_distance_m": 0.03325419974017461,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -2.9792771225154325e-08,
+        "cost_m2": 0.0003507612138514413,
+        "predicted_reduction_m2": 6.914823687016606e-07,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.04308536641518967,
+        "step_scale": 0.015625,
+        "strike": {
+          "reference_error_m": 0.01653594415468183,
+          "target_distance_m": 0.03329404772485885,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 0.004483822713713908,
+    "cost_m2": 0.0003507314210802161,
+    "damping": 0.0008,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.03929103167390142,
+        "step": 3.90625e-05
+      }
+    ],
+    "elapsed_s": 116.60816300002625,
+    "iteration": 8,
+    "jacobian_relative_difference": 0.03929103167390142,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 1215,
+    "step_scale": 0.0,
+    "trust_radius": 0.0625
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "accepted": false,
+        "actual_reduction_m2": -2.287662264767676e-05,
+        "cost_m2": 0.0003736080437278929,
+        "predicted_reduction_m2": 1.979204930110739e-05,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.1558491139367153,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.015238197910689895,
+          "target_distance_m": 0.03252285800219255,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.345913600409737e-05,
+        "cost_m2": 0.0003641905570843135,
+        "predicted_reduction_m2": 1.353265874364884e-05,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.9945670144393483,
+        "step_scale": 0.5,
+        "strike": {
+          "reference_error_m": 0.015852391714370095,
+          "target_distance_m": 0.03294250272752637,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -7.812408843955868e-06,
+        "cost_m2": 0.000358543829924172,
+        "predicted_reduction_m2": 7.675487895098193e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.017838729046152,
+        "step_scale": 0.25,
+        "strike": {
+          "reference_error_m": 0.016170849334739616,
+          "target_distance_m": 0.033106206433766515,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -4.4429022096863094e-06,
+        "cost_m2": 0.00035517432328990243,
+        "predicted_reduction_m2": 4.0650335783675535e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.0929558450217036,
+        "step_scale": 0.125,
+        "strike": {
+          "reference_error_m": 0.016344462002356962,
+          "target_distance_m": 0.03321212303856923,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -2.059488340321687e-06,
+        "cost_m2": 0.0003527909094205378,
+        "predicted_reduction_m2": 2.089339196888391e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.9857127762638254,
+        "step_scale": 0.0625,
+        "strike": {
+          "reference_error_m": 0.01644467492508361,
+          "target_distance_m": 0.033268519882417184,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -3.9034650164499135e-07,
+        "cost_m2": 0.0003511217675818611,
+        "predicted_reduction_m2": 1.0588752003703626e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.368642594999354,
+        "step_scale": 0.03125,
+        "strike": {
+          "reference_error_m": 0.016515694731294675,
+          "target_distance_m": 0.03329974439114085,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": true,
+        "actual_reduction_m2": 2.0134928739742007e-07,
+        "cost_m2": 0.0003505300717928187,
+        "predicted_reduction_m2": 5.329890006666553e-07,
+        "reduction_ratio": 0.37777381361636947,
+        "step_scale": 0.015625,
+        "strike": {
+          "reference_error_m": 0.016557601703206068,
+          "target_distance_m": 0.033315682280102045,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 0.004483822713713908,
+    "cost_m2": 0.0003505300717928187,
+    "damping": 0.0032,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.03929103167390142,
+        "step": 3.90625e-05
+      }
+    ],
+    "elapsed_s": 133.86137310002232,
+    "iteration": 9,
+    "jacobian_relative_difference": 0.03929103167390142,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 1320,
+    "step_scale": 0.015625,
+    "trust_radius": 0.03125
+  },
+  {
+    "accepted": false,
+    "attempts": [
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.2359506372520014e-05,
+        "cost_m2": 0.0003628895781653387,
+        "predicted_reduction_m2": 1.4868022951213867e-05,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.8312810931940987,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.015648562410861634,
+          "target_distance_m": 0.034026156227141564,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.1054495875802476e-05,
+        "cost_m2": 0.0003615845676686212,
+        "predicted_reduction_m2": 1.0405970805258454e-05,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.0623223995800855,
+        "step_scale": 0.5,
+        "strike": {
+          "reference_error_m": 0.015906109860412288,
+          "target_distance_m": 0.033528491554140005,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -8.657842032688552e-06,
+        "cost_m2": 0.00035918791382550725,
+        "predicted_reduction_m2": 5.945975235042175e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.4560844420717036,
+        "step_scale": 0.25,
+        "strike": {
+          "reference_error_m": 0.016185853703544507,
+          "target_distance_m": 0.033357595967809045,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -6.484671933436911e-06,
+        "cost_m2": 0.0003570147437262556,
+        "predicted_reduction_m2": 3.158735075624243e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -2.0529331451310084,
+        "step_scale": 0.125,
+        "strike": {
+          "reference_error_m": 0.016369328414403708,
+          "target_distance_m": 0.033293651177704484,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -4.5904919505568515e-06,
+        "cost_m2": 0.00035512056374337555,
+        "predicted_reduction_m2": 1.6258044023378156e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -2.8235204333042656,
+        "step_scale": 0.0625,
+        "strike": {
+          "reference_error_m": 0.016479428506886114,
+          "target_distance_m": 0.033275358080872806,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -2.9241166525741167e-06,
+        "cost_m2": 0.0003534541884453928,
+        "predicted_reduction_m2": 8.245114173003991e-07,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -3.5464841252874444,
+        "step_scale": 0.03125,
+        "strike": {
+          "reference_error_m": 0.016540568612902352,
+          "target_distance_m": 0.03327973346656764,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.4848900846903615e-06,
+        "cost_m2": 0.00035201496187750906,
+        "predicted_reduction_m2": 4.1515801268299105e-07,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -3.5766865610858463,
+        "step_scale": 0.015625,
+        "strike": {
+          "reference_error_m": 0.016564462389236957,
+          "target_distance_m": 0.03329436686218893,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 0.0011591722328612598,
+    "cost_m2": 0.0003505300717928187,
+    "damping": 0.0032,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.03899606616045361,
+        "step": 3.90625e-05
+      }
+    ],
+    "elapsed_s": 143.48551799997222,
+    "iteration": 10,
+    "jacobian_relative_difference": 0.03899606616045361,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 1425,
+    "step_scale": 0.0,
+    "trust_radius": 0.03125
+  },
+  {
+    "accepted": false,
+    "attempts": [
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.1021767395758702e-05,
+        "cost_m2": 0.0003615518391885774,
+        "predicted_reduction_m2": 1.2757241228678485e-05,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.8639616668047,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.016056319032915028,
+          "target_distance_m": 0.033630153930103046,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.007417906875597e-05,
+        "cost_m2": 0.00036060425086157467,
+        "predicted_reduction_m2": 8.949048094174326e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.1257263300790712,
+        "step_scale": 0.5,
+        "strike": {
+          "reference_error_m": 0.016223216934712344,
+          "target_distance_m": 0.033389660132797074,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -8.0307833635907e-06,
+        "cost_m2": 0.0003585608551564094,
+        "predicted_reduction_m2": 5.117130917045934e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.5693918122827288,
+        "step_scale": 0.25,
+        "strike": {
+          "reference_error_m": 0.0163744303140756,
+          "target_distance_m": 0.033303109225048734,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -6.021268142700686e-06,
+        "cost_m2": 0.0003565513399355194,
+        "predicted_reduction_m2": 2.719217176012619e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -2.214338816265532,
+        "step_scale": 0.125,
+        "strike": {
+          "reference_error_m": 0.016472683541083034,
+          "target_distance_m": 0.03327157333869231,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -4.2127683386889705e-06,
+        "cost_m2": 0.00035474284013150767,
+        "predicted_reduction_m2": 1.399771517378648e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -3.0096114161389864,
+        "step_scale": 0.0625,
+        "strike": {
+          "reference_error_m": 0.016534369190664703,
+          "target_distance_m": 0.03326764408318985,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -2.5981124180717366e-06,
+        "cost_m2": 0.00035312818421089044,
+        "predicted_reduction_m2": 7.099264910323815e-07,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -3.6596921665700037,
+        "step_scale": 0.03125,
+        "strike": {
+          "reference_error_m": 0.016567826974601185,
+          "target_distance_m": 0.033278765871533084,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.2307811016464302e-06,
+        "cost_m2": 0.00035176085289446513,
+        "predicted_reduction_m2": 3.5747342860191446e-07,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -3.4430002432909186,
+        "step_scale": 0.015625,
+        "strike": {
+          "reference_error_m": 0.016575662030526992,
+          "target_distance_m": 0.03329594408190077,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 0.0011591722328612598,
+    "cost_m2": 0.0003505300717928187,
+    "damping": 0.0128,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.03899606616045361,
+        "step": 3.90625e-05
+      }
+    ],
+    "elapsed_s": 153.12729779997608,
+    "iteration": 11,
+    "jacobian_relative_difference": 0.03899606616045361,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 1530,
+    "step_scale": 0.0,
+    "trust_radius": 0.015625
+  },
+  {
+    "accepted": false,
+    "attempts": [
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.0261124449037408e-05,
+        "cost_m2": 0.0003607911962418561,
+        "predicted_reduction_m2": 1.1276801417037068e-05,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.9099321757617219,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.016377732773104656,
+          "target_distance_m": 0.03340803593048608,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -9.209036409856561e-06,
+        "cost_m2": 0.00035973910820267526,
+        "predicted_reduction_m2": 7.64754377472279e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.2041822421853836,
+        "step_scale": 0.5,
+        "strike": {
+          "reference_error_m": 0.016428598014533394,
+          "target_distance_m": 0.03330224383779881,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -7.3378075991672835e-06,
+        "cost_m2": 0.000357867879391986,
+        "predicted_reduction_m2": 4.326057653912378e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.6961881200383806,
+        "step_scale": 0.25,
+        "strike": {
+          "reference_error_m": 0.016489420055481242,
+          "target_distance_m": 0.03326539753931627,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -5.4570721527636345e-06,
+        "cost_m2": 0.00035598714394558233,
+        "predicted_reduction_m2": 2.288600268593921e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -2.384458407896793,
+        "step_scale": 0.125,
+        "strike": {
+          "reference_error_m": 0.01653544795481892,
+          "target_distance_m": 0.03325633453864177,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -3.73577495696453e-06,
+        "cost_m2": 0.00035426584674978323,
+        "predicted_reduction_m2": 1.1756929947063935e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -3.177508902226186,
+        "step_scale": 0.0625,
+        "strike": {
+          "reference_error_m": 0.016567876438198972,
+          "target_distance_m": 0.03326364257443417,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -2.1864737599783463e-06,
+        "cost_m2": 0.00035271654555279705,
+        "predicted_reduction_m2": 5.956947124554669e-07,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -3.6704602445867827,
+        "step_scale": 0.03125,
+        "strike": {
+          "reference_error_m": 0.016583128487725585,
+          "target_distance_m": 0.03328025274258446,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -9.337849930870796e-07,
+        "cost_m2": 0.0003514638567859058,
+        "predicted_reduction_m2": 2.9980941000326035e-07,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -3.114595346013072,
+        "step_scale": 0.015625,
+        "strike": {
+          "reference_error_m": 0.01658017587971172,
+          "target_distance_m": 0.03329884650865722,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 0.0011591722328612598,
+    "cost_m2": 0.0003505300717928187,
+    "damping": 0.0512,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.03899606616045361,
+        "step": 3.90625e-05
+      }
+    ],
+    "elapsed_s": 162.74420279997867,
+    "iteration": 12,
+    "jacobian_relative_difference": 0.03899606616045361,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 1635,
+    "step_scale": 0.0,
+    "trust_radius": 0.0078125
+  },
+  {
+    "accepted": false,
+    "attempts": [
+      {
+        "accepted": false,
+        "actual_reduction_m2": -9.724310584866436e-06,
+        "cost_m2": 0.00036025438237768514,
+        "predicted_reduction_m2": 9.32602719622437e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.0427066509953253,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.016483880588702107,
+          "target_distance_m": 0.033301746755671775,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -8.14071704070829e-06,
+        "cost_m2": 0.000358670788833527,
+        "predicted_reduction_m2": 5.661289211014958e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.437961696934543,
+        "step_scale": 0.5,
+        "strike": {
+          "reference_error_m": 0.0165077005132433,
+          "target_distance_m": 0.03326122348421621,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -6.268093335719011e-06,
+        "cost_m2": 0.0003567981651285377,
+        "predicted_reduction_m2": 3.080213508733186e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -2.0349541737763888,
+        "step_scale": 0.25,
+        "strike": {
+          "reference_error_m": 0.016538648958011794,
+          "target_distance_m": 0.03324996434452026,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -4.48707036180884e-06,
+        "cost_m2": 0.00035501714215462754,
+        "predicted_reduction_m2": 1.6024989801729519e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -2.800045689467189,
+        "step_scale": 0.125,
+        "strike": {
+          "reference_error_m": 0.0165662498716924,
+          "target_distance_m": 0.03325482894173974,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -2.8650984912274424e-06,
+        "cost_m2": 0.00035339517028404614,
+        "predicted_reduction_m2": 8.168475465379979e-07,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -3.5075070046674424,
+        "step_scale": 0.0625,
+        "strike": {
+          "reference_error_m": 0.01658432480507728,
+          "target_distance_m": 0.03326996661422674,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.447296911394791e-06,
+        "cost_m2": 0.0003519773687042135,
+        "predicted_reduction_m2": 4.1232328738187267e-07,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -3.5101022806271405,
+        "step_scale": 0.03125,
+        "strike": {
+          "reference_error_m": 0.016586044475853913,
+          "target_distance_m": 0.03328971347294141,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -4.841688118296722e-07,
+        "cost_m2": 0.00035101424060464837,
+        "predicted_reduction_m2": 2.0713652221910055e-07,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -2.337438162245179,
+        "step_scale": 0.015625,
+        "strike": {
+          "reference_error_m": 0.01657675646283199,
+          "target_distance_m": 0.0333059440624621,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 0.0011591722328612598,
+    "cost_m2": 0.0003505300717928187,
+    "damping": 0.2048,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.03899606616045361,
+        "step": 3.90625e-05
+      }
+    ],
+    "elapsed_s": 172.3786390000023,
+    "iteration": 13,
+    "jacobian_relative_difference": 0.03899606616045361,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 1740,
+    "step_scale": 0.0,
+    "trust_radius": 0.00390625
+  },
+  {
+    "accepted": false,
+    "attempts": [
+      {
+        "accepted": false,
+        "actual_reduction_m2": -7.87437732526668e-06,
+        "cost_m2": 0.0003584044491180854,
+        "predicted_reduction_m2": 5.237369303840388e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.5034985826744471,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.016523655493554883,
+          "target_distance_m": 0.033253949824822576,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -6.0135908950221194e-06,
+        "cost_m2": 0.0003565436626878408,
+        "predicted_reduction_m2": 2.8294443755105467e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -2.1253610592493177,
+        "step_scale": 0.5,
+        "strike": {
+          "reference_error_m": 0.016548595190109597,
+          "target_distance_m": 0.033247585097123,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -4.257898133484274e-06,
+        "cost_m2": 0.000354787969926303,
+        "predicted_reduction_m2": 1.467412118652848e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -2.9016375695419643,
+        "step_scale": 0.25,
+        "strike": {
+          "reference_error_m": 0.01657238945415929,
+          "target_distance_m": 0.033255259438479574,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -2.659629561308646e-06,
+        "cost_m2": 0.00035318970135412735,
+        "predicted_reduction_m2": 7.46878542050777e-07,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -3.560993403299341,
+        "step_scale": 0.125,
+        "strike": {
+          "reference_error_m": 0.01658707820406147,
+          "target_distance_m": 0.03327192096086382,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.284487730970462e-06,
+        "cost_m2": 0.00035181455952378916,
+        "predicted_reduction_m2": 3.767323917064835e-07,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -3.4095494819336403,
+        "step_scale": 0.0625,
+        "strike": {
+          "reference_error_m": 0.016585854728946574,
+          "target_distance_m": 0.03329201165434308,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -4.0245862462399626e-07,
+        "cost_m2": 0.0003509325304174427,
+        "predicted_reduction_m2": 1.891894760234613e-07,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -2.1272780763666135,
+        "step_scale": 0.03125,
+        "strike": {
+          "reference_error_m": 0.016575841608607766,
+          "target_distance_m": 0.0333072750919893,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -6.977324378356665e-08,
+        "cost_m2": 0.00035059984503660227,
+        "predicted_reduction_m2": 9.480055805427198e-08,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.7360003486859482,
+        "step_scale": 0.015625,
+        "strike": {
+          "reference_error_m": 0.01656793514910242,
+          "target_distance_m": 0.03331360541640714,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 0.0011591722328612598,
+    "cost_m2": 0.0003505300717928187,
+    "damping": 0.8192,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.03899606616045361,
+        "step": 3.90625e-05
+      }
+    ],
+    "elapsed_s": 182.01463480002712,
+    "iteration": 14,
+    "jacobian_relative_difference": 0.03899606616045361,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 1845,
+    "step_scale": 0.0,
+    "trust_radius": 0.001953125
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "accepted": false,
+        "actual_reduction_m2": -4.83031854923581e-06,
+        "cost_m2": 0.0003553603903420545,
+        "predicted_reduction_m2": 1.83598196501543e-06,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -2.630918299459012,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.01656588195559671,
+          "target_distance_m": 0.03325108257318659,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -3.1792081768896446e-06,
+        "cost_m2": 0.00035370927996970834,
+        "predicted_reduction_m2": 9.390811004622687e-07,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -3.385445810084623,
+        "step_scale": 0.5,
+        "strike": {
+          "reference_error_m": 0.016584187084019555,
+          "target_distance_m": 0.033265440438828446,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.7085772615275377e-06,
+        "cost_m2": 0.00035223864905434624,
+        "predicted_reduction_m2": 4.748130797197457e-07,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -3.5984207986351398,
+        "step_scale": 0.25,
+        "strike": {
+          "reference_error_m": 0.01658821860958905,
+          "target_distance_m": 0.03328523430552395,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -6.289559027365449e-07,
+        "cost_m2": 0.00035115902769555524,
+        "predicted_reduction_m2": 2.3872467223200536e-07,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -2.634649769778685,
+        "step_scale": 0.125,
+        "strike": {
+          "reference_error_m": 0.016579372274351842,
+          "target_distance_m": 0.033303133153295146,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.378658659547164e-07,
+        "cost_m2": 0.0003506679376587734,
+        "predicted_reduction_m2": 1.196918692090358e-07,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.1518398606837748,
+        "step_scale": 0.0625,
+        "strike": {
+          "reference_error_m": 0.01657026005612451,
+          "target_distance_m": 0.033312231840484624,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -6.378155450515767e-09,
+        "cost_m2": 0.0003505364499482692,
+        "predicted_reduction_m2": 5.992831787770842e-08,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.10642974267242455,
+        "step_scale": 0.03125,
+        "strike": {
+          "reference_error_m": 0.016564501364673634,
+          "target_distance_m": 0.033314959232437304,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": true,
+        "actual_reduction_m2": 1.3657835809576316e-08,
+        "cost_m2": 0.0003505164139570091,
+        "predicted_reduction_m2": 2.9984754757145064e-08,
+        "reduction_ratio": 0.4554926635283482,
+        "step_scale": 0.015625,
+        "strike": {
+          "reference_error_m": 0.01656121190495375,
+          "target_distance_m": 0.03331558113501703,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 0.0011591722328612598,
+    "cost_m2": 0.0003505164139570091,
+    "damping": 3.2768,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.03899606616045361,
+        "step": 3.90625e-05
+      }
+    ],
+    "elapsed_s": 199.18496789998608,
+    "iteration": 15,
+    "jacobian_relative_difference": 0.03899606616045361,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 1950,
+    "step_scale": 0.015625,
+    "trust_radius": 0.0009765625
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "accepted": false,
+        "actual_reduction_m2": -6.60199716024355e-07,
+        "cost_m2": 0.0003511766136730335,
+        "predicted_reduction_m2": 2.945370646803471e-08,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -22.414826356093805,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.016531997657726297,
+          "target_distance_m": 0.033309558585551284,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.9056122553513062e-07,
+        "cost_m2": 0.00035070697518254425,
+        "predicted_reduction_m2": 1.4873882170081225e-08,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -12.811801475639227,
+        "step_scale": 0.5,
+        "strike": {
+          "reference_error_m": 0.01654743975605041,
+          "target_distance_m": 0.033313945915201995,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -4.61846503987777e-08,
+        "cost_m2": 0.0003505625986074079,
+        "predicted_reduction_m2": 7.473698319124342e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -6.179624655252199,
+        "step_scale": 0.25,
+        "strike": {
+          "reference_error_m": 0.016554791115726934,
+          "target_distance_m": 0.03331541559317971,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -9.701954964836789e-09,
+        "cost_m2": 0.00035052611591197396,
+        "predicted_reduction_m2": 3.746038468137314e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -2.589924008351416,
+        "step_scale": 0.125,
+        "strike": {
+          "reference_error_m": 0.016558132600873885,
+          "target_distance_m": 0.0333156933462342,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.4432384697060652e-09,
+        "cost_m2": 0.00035051785719547883,
+        "predicted_reduction_m2": 1.875316561219219e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.769597250699774,
+        "step_scale": 0.0625,
+        "strike": {
+          "reference_error_m": 0.016559705356983437,
+          "target_distance_m": 0.03331568859750378,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": true,
+        "actual_reduction_m2": 1.3215402405210297e-10,
+        "cost_m2": 0.00035051628180298507,
+        "predicted_reduction_m2": 9.38232612424355e-10,
+        "reduction_ratio": 0.14085422133283382,
+        "step_scale": 0.03125,
+        "strike": {
+          "reference_error_m": 0.016560466859328566,
+          "target_distance_m": 0.033315647922701086,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 0.0001348352575678301,
+    "cost_m2": 0.00035051628180298507,
+    "damping": 3.2768,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.03312936254323903,
+        "step": 3.90625e-05
+      }
+    ],
+    "elapsed_s": 215.41338240000186,
+    "iteration": 16,
+    "jacobian_relative_difference": 0.03312936254323903,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 2054,
+    "step_scale": 0.03125,
+    "trust_radius": 0.0009765625
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "accepted": false,
+        "actual_reduction_m2": -8.574971019934072e-08,
+        "cost_m2": 0.0003506020315131844,
+        "predicted_reduction_m2": 1.2030916248049334e-08,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -7.127446358314064,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.01656840574191719,
+          "target_distance_m": 0.03331349683463661,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.915440627175925e-08,
+        "cost_m2": 0.00035053543620925683,
+        "predicted_reduction_m2": 6.030325112741167e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -3.1763471974817543,
+        "step_scale": 0.5,
+        "strike": {
+          "reference_error_m": 0.01656465136869005,
+          "target_distance_m": 0.03331495446905325,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -3.336132091121078e-09,
+        "cost_m2": 0.0003505196179350762,
+        "predicted_reduction_m2": 3.0188793035497083e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.1050895897687372,
+        "step_scale": 0.25,
+        "strike": {
+          "reference_error_m": 0.016562617420196303,
+          "target_distance_m": 0.033315399653223055,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -8.637930344959632e-11,
+        "cost_m2": 0.0003505163681822885,
+        "predicted_reduction_m2": 1.5103688385696354e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.05719086705430186,
+        "step_scale": 0.125,
+        "strike": {
+          "reference_error_m": 0.01656155714832847,
+          "target_distance_m": 0.033315548385022584,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": true,
+        "actual_reduction_m2": 3.5370186846680335e-10,
+        "cost_m2": 0.0003505159281011166,
+        "predicted_reduction_m2": 7.554167159428554e-10,
+        "reduction_ratio": 0.4682208653873098,
+        "step_scale": 0.0625,
+        "strike": {
+          "reference_error_m": 0.01656101579816309,
+          "target_distance_m": 0.03331560427533166,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 0.0001563722034262106,
+    "cost_m2": 0.0003505159281011166,
+    "damping": 13.1072,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.020924373244130424,
+        "step": 3.90625e-05
+      }
+    ],
+    "elapsed_s": 230.56919930002186,
+    "iteration": 17,
+    "jacobian_relative_difference": 0.020924373244130424,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 2157,
+    "step_scale": 0.0625,
+    "trust_radius": 0.00048828125
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.9981991458066332e-09,
+        "cost_m2": 0.0003505179263002624,
+        "predicted_reduction_m2": 2.150096693840243e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.9293531549214614,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.016559506405647118,
+          "target_distance_m": 0.03331569702091042,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": 6.088878571263931e-11,
+        "cost_m2": 0.0003505158672123309,
+        "predicted_reduction_m2": 1.0758262090969188e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": 0.05659723215309209,
+        "step_scale": 0.5,
+        "strike": {
+          "reference_error_m": 0.01656027137641076,
+          "target_distance_m": 0.0333156667722878,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": true,
+        "actual_reduction_m2": 2.955195170604302e-10,
+        "cost_m2": 0.00035051563258159954,
+        "predicted_reduction_m2": 5.381075701671977e-10,
+        "reduction_ratio": 0.5491829764978183,
+        "step_scale": 0.25,
+        "strike": {
+          "reference_error_m": 0.01656064614388615,
+          "target_distance_m": 0.03331563958719772,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 5.5247330321777914e-05,
+    "cost_m2": 0.00035051563258159954,
+    "damping": 13.1072,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.029137510111404166,
+        "step": 3.90625e-05
+      }
+    ],
+    "elapsed_s": 243.7051505999989,
+    "iteration": 18,
+    "jacobian_relative_difference": 0.029137510111404166,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 2258,
+    "step_scale": 0.25,
+    "trust_radius": 0.00048828125
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "accepted": false,
+        "actual_reduction_m2": -5.215133125905302e-08,
+        "cost_m2": 0.0003505677839128586,
+        "predicted_reduction_m2": 7.978722731008352e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -6.536300736002908,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.016567011584183652,
+          "target_distance_m": 0.033314195295062875,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.134258651315067e-08,
+        "cost_m2": 0.0003505269751681127,
+        "predicted_reduction_m2": 3.9984027779796545e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -2.8367793699067865,
+        "step_scale": 0.5,
+        "strike": {
+          "reference_error_m": 0.016563963894267883,
+          "target_distance_m": 0.03331515312000271,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.865467413408959e-09,
+        "cost_m2": 0.00035051749804901295,
+        "predicted_reduction_m2": 2.001461742108697e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.9320524965136444,
+        "step_scale": 0.25,
+        "strike": {
+          "reference_error_m": 0.016562340769287164,
+          "target_distance_m": 0.03331545611282833,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": 2.73303395973562e-11,
+        "cost_m2": 0.00035051560525125995,
+        "predicted_reduction_m2": 1.0012959593408421e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": 0.027294966430652424,
+        "step_scale": 0.125,
+        "strike": {
+          "reference_error_m": 0.016561502584387378,
+          "target_distance_m": 0.03331556274924139,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": true,
+        "actual_reduction_m2": 2.5430799778297306e-10,
+        "cost_m2": 0.00035051537827360176,
+        "predicted_reduction_m2": 5.00789251755597e-10,
+        "reduction_ratio": 0.5078144087387171,
+        "step_scale": 0.0625,
+        "strike": {
+          "reference_error_m": 0.016561076666451027,
+          "target_distance_m": 0.033315604878431146,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 0.00011991584994827797,
+    "cost_m2": 0.00035051537827360176,
+    "damping": 13.1072,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.02227191538950637,
+        "step": 3.90625e-05
+      }
+    ],
+    "elapsed_s": 258.93089690001216,
+    "iteration": 19,
+    "jacobian_relative_difference": 0.02227191538950637,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 2361,
+    "step_scale": 0.0625,
+    "trust_radius": 0.00048828125
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "accepted": false,
+        "actual_reduction_m2": -5.134087777852216e-10,
+        "cost_m2": 0.00035051589168237955,
+        "predicted_reduction_m2": 1.9924574552634793e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.257676155859162,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.016559964430630646,
+          "target_distance_m": 0.03331568617368332,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": true,
+        "actual_reduction_m2": 3.881154985612735e-10,
+        "cost_m2": 0.0003505149901581032,
+        "predicted_reduction_m2": 9.967384320794422e-10,
+        "reduction_ratio": 0.38938550583583786,
+        "step_scale": 0.5,
+        "strike": {
+          "reference_error_m": 0.01656052679330198,
+          "target_distance_m": 0.03331565536790632,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 5.5434004087804624e-05,
+    "cost_m2": 0.0003505149901581032,
+    "damping": 13.1072,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.0288064188249893,
+        "step": 3.90625e-05
+      }
+    ],
+    "elapsed_s": 271.0423729000031,
+    "iteration": 20,
+    "jacobian_relative_difference": 0.0288064188249893,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 2461,
+    "step_scale": 0.5,
+    "trust_radius": 0.00048828125
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.5869992820176284e-07,
+        "cost_m2": 0.00035067369008630496,
+        "predicted_reduction_m2": 2.123091812935001e-08,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -7.474944193881711,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.016571005605008786,
+          "target_distance_m": 0.03331204133615437,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -3.6679894837340476e-08,
+        "cost_m2": 0.00035055167005294054,
+        "predicted_reduction_m2": 1.0643684517628628e-08,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -3.4461651673900437,
+        "step_scale": 0.5,
+        "strike": {
+          "reference_error_m": 0.01656614833038299,
+          "target_distance_m": 0.03331454139172881,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -6.660305168276412e-09,
+        "cost_m2": 0.0003505216504632715,
+        "predicted_reduction_m2": 5.328898622066272e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.249846476849261,
+        "step_scale": 0.25,
+        "strike": {
+          "reference_error_m": 0.016563445669189904,
+          "target_distance_m": 0.03331528397468368,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -3.40690547930185e-10,
+        "cost_m2": 0.00035051533084865113,
+        "predicted_reduction_m2": 2.666213401913888e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.12778067490232667,
+        "step_scale": 0.125,
+        "strike": {
+          "reference_error_m": 0.016562014511170384,
+          "target_distance_m": 0.033315516321463096,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": true,
+        "actual_reduction_m2": 5.814855748602007e-10,
+        "cost_m2": 0.00035051440867252834,
+        "predicted_reduction_m2": 1.3335477236364746e-09,
+        "reduction_ratio": 0.4360440684301403,
+        "step_scale": 0.0625,
+        "strike": {
+          "reference_error_m": 0.016561277837244023,
+          "target_distance_m": 0.03331559744841573,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 0.00021836149014825535,
+    "cost_m2": 0.00035051440867252834,
+    "damping": 13.1072,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.01897782750168058,
+        "step": 3.90625e-05
+      }
+    ],
+    "elapsed_s": 286.2900085999863,
+    "iteration": 21,
+    "jacobian_relative_difference": 0.01897782750168058,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 2564,
+    "step_scale": 0.0625,
+    "trust_radius": 0.00048828125
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "accepted": false,
+        "actual_reduction_m2": -5.32119343298618e-09,
+        "cost_m2": 0.0003505197298659613,
+        "predicted_reduction_m2": 2.5156051147333033e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -2.1152737374483817,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.01655909157146968,
+          "target_distance_m": 0.033315697166338046,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -6.709180417718667e-10,
+        "cost_m2": 0.0003505150795905701,
+        "predicted_reduction_m2": 1.2591823280133467e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.5328204080106462,
+        "step_scale": 0.5,
+        "strike": {
+          "reference_error_m": 0.016560204034882762,
+          "target_distance_m": 0.03331567740459201,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": true,
+        "actual_reduction_m2": 1.6260447518621698e-10,
+        "cost_m2": 0.00035051424606805315,
+        "predicted_reduction_m2": 6.299361066412421e-10,
+        "reduction_ratio": 0.25812852045139656,
+        "step_scale": 0.25,
+        "strike": {
+          "reference_error_m": 0.01656074574423446,
+          "target_distance_m": 0.03331564504371285,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 5.524164786423026e-05,
+    "cost_m2": 0.00035051424606805315,
+    "damping": 13.1072,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.029700083988451812,
+        "step": 3.90625e-05
+      }
+    ],
+    "elapsed_s": 299.433771800017,
+    "iteration": 22,
+    "jacobian_relative_difference": 0.029700083988451812,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 2665,
+    "step_scale": 0.25,
+    "trust_radius": 0.00048828125
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "accepted": false,
+        "actual_reduction_m2": -9.714017727642564e-08,
+        "cost_m2": 0.0003506113862453296,
+        "predicted_reduction_m2": 1.3430954544390618e-08,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -7.232559454755644,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.016569142113552038,
+          "target_distance_m": 0.03331326093107911,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -2.1839720268043185e-08,
+        "cost_m2": 0.0003505360857883212,
+        "predicted_reduction_m2": 6.732365248401581e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -3.243989216602358,
+        "step_scale": 0.5,
+        "strike": {
+          "reference_error_m": 0.016565185623916175,
+          "target_distance_m": 0.03331488437372468,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -3.8431519629004984e-09,
+        "cost_m2": 0.00035051808922001605,
+        "predicted_reduction_m2": 3.3704046183201213e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.140264270352206,
+        "step_scale": 0.25,
+        "strike": {
+          "reference_error_m": 0.016563031692293107,
+          "target_distance_m": 0.03331537651131913,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.2533558744901377e-10,
+        "cost_m2": 0.0003505143714036406,
+        "predicted_reduction_m2": 1.6862578077034458e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.07432765433401388,
+        "step_scale": 0.125,
+        "strike": {
+          "reference_error_m": 0.016561905755977907,
+          "target_distance_m": 0.03331553873122624,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": true,
+        "actual_reduction_m2": 3.8822682465718475e-10,
+        "cost_m2": 0.0003505138578412285,
+        "predicted_reduction_m2": 8.433927785214505e-10,
+        "reduction_ratio": 0.46031556653565864,
+        "step_scale": 0.0625,
+        "strike": {
+          "reference_error_m": 0.016561330059502024,
+          "target_distance_m": 0.03331559884369408,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 0.00016723185730993975,
+    "cost_m2": 0.0003505138578412285,
+    "damping": 13.1072,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.020547416369783973,
+        "step": 3.90625e-05
+      }
+    ],
+    "elapsed_s": 314.5918424000265,
+    "iteration": 23,
+    "jacobian_relative_difference": 0.020547416369783973,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 2768,
+    "step_scale": 0.0625,
+    "trust_radius": 0.00048828125
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "accepted": false,
+        "actual_reduction_m2": -2.501888334038079e-09,
+        "cost_m2": 0.00035051635972956253,
+        "predicted_reduction_m2": 2.2031033031417492e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.1356200730443486,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.016559703475988844,
+          "target_distance_m": 0.03331569394753116,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -5.044163941788152e-11,
+        "cost_m2": 0.0003505139082828679,
+        "predicted_reduction_m2": 1.1024203354663073e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.04575536008826022,
+        "step_scale": 0.5,
+        "strike": {
+          "reference_error_m": 0.016560528411375165,
+          "target_distance_m": 0.03331566464130053,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": true,
+        "actual_reduction_m2": 2.7503232845468503e-10,
+        "cost_m2": 0.00035051358280890004,
+        "predicted_reduction_m2": 5.514273387408931e-10,
+        "reduction_ratio": 0.4987644049036138,
+        "step_scale": 0.25,
+        "strike": {
+          "reference_error_m": 0.016560932132867332,
+          "target_distance_m": 0.033315636343604946,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 5.516044768821485e-05,
+    "cost_m2": 0.00035051358280890004,
+    "damping": 13.1072,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.02923495301174495,
+        "step": 3.90625e-05
+      }
+    ],
+    "elapsed_s": 327.7163532000268,
+    "iteration": 24,
+    "jacobian_relative_difference": 0.02923495301174495,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 2869,
+    "step_scale": 0.25,
+    "trust_radius": 0.00048828125
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "accepted": false,
+        "actual_reduction_m2": -5.9041752811122596e-08,
+        "cost_m2": 0.00035057262456171116,
+        "predicted_reduction_m2": 8.800218900925812e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -6.709123202027532,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.01656765719475284,
+          "target_distance_m": 0.033314044461525985,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.2931526882729166e-08,
+        "cost_m2": 0.00035052651433578277,
+        "predicted_reduction_m2": 4.4103323038426935e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -2.932098080560055,
+        "step_scale": 0.5,
+        "strike": {
+          "reference_error_m": 0.016564446323969306,
+          "target_distance_m": 0.0333151062621443,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -2.1641288891678136e-09,
+        "cost_m2": 0.0003505157469377892,
+        "predicted_reduction_m2": 2.2077218651849785e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.980254317038477,
+        "step_scale": 0.25,
+        "strike": {
+          "reference_error_m": 0.016562729588354093,
+          "target_distance_m": 0.0333154389297722,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": 4.1102959794439564e-12,
+        "cost_m2": 0.00035051357869860406,
+        "predicted_reduction_m2": 1.1044998608745159e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": 0.003721409232400921,
+        "step_scale": 0.125,
+        "strike": {
+          "reference_error_m": 0.01656184118526796,
+          "target_distance_m": 0.0333155545030413,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": true,
+        "actual_reduction_m2": 2.743766720444442e-10,
+        "cost_m2": 0.000350513308432228,
+        "predicted_reduction_m2": 5.524096625551984e-10,
+        "reduction_ratio": 0.4966905733967455,
+        "step_scale": 0.0625,
+        "strike": {
+          "reference_error_m": 0.016561389261986047,
+          "target_distance_m": 0.033315599623161295,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 0.00012811560331024314,
+    "cost_m2": 0.000350513308432228,
+    "damping": 13.1072,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.021957756513979347,
+        "step": 3.90625e-05
+      }
+    ],
+    "elapsed_s": 342.9039636999951,
+    "iteration": 25,
+    "jacobian_relative_difference": 0.021957756513979347,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 2972,
+    "step_scale": 0.0625,
+    "trust_radius": 0.00048828125
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "accepted": false,
+        "actual_reduction_m2": -8.118938904966462e-10,
+        "cost_m2": 0.0003505141203261185,
+        "predicted_reduction_m2": 2.0219597434084982e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.40153810833444403,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.01656018895277392,
+          "target_distance_m": 0.033315683991511184,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": true,
+        "actual_reduction_m2": 3.2186439190978744e-10,
+        "cost_m2": 0.0003505129865678361,
+        "predicted_reduction_m2": 1.0115432127989418e-09,
+        "reduction_ratio": 0.3181914404024205,
+        "step_scale": 0.5,
+        "strike": {
+          "reference_error_m": 0.01656079615794821,
+          "target_distance_m": 0.03331565290881612,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 5.536160396770988e-05,
+    "cost_m2": 0.0003505129865678361,
+    "damping": 13.1072,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.02887927039959906,
+        "step": 3.90625e-05
+      }
+    ],
+    "elapsed_s": 354.98681620002026,
+    "iteration": 26,
+    "jacobian_relative_difference": 0.02887927039959906,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 3072,
+    "step_scale": 0.5,
+    "trust_radius": 0.00048828125
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.777733441742568e-07,
+        "cost_m2": 0.00035069075991201034,
+        "predicted_reduction_m2": 2.3732363729973057e-08,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -7.490755922880785,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.016571832330523877,
+          "target_distance_m": 0.033311665434790395,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -4.139105007236422e-08,
+        "cost_m2": 0.00035055437761790845,
+        "predicted_reduction_m2": 1.1898085475301086e-08,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -3.4787991864982635,
+        "step_scale": 0.5,
+        "strike": {
+          "reference_error_m": 0.01656673903879922,
+          "target_distance_m": 0.03331443163185055,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -7.559739886116214e-09,
+        "cost_m2": 0.0003505205463077222,
+        "predicted_reduction_m2": 5.957018640195301e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.2690475458825101,
+        "step_scale": 0.25,
+        "strike": {
+          "reference_error_m": 0.016563888940077147,
+          "target_distance_m": 0.03331525133892299,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -4.089070563271027e-10,
+        "cost_m2": 0.0003505133954748924,
+        "predicted_reduction_m2": 2.9805032957744976e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.13719396214284216,
+        "step_scale": 0.125,
+        "strike": {
+          "reference_error_m": 0.01656237441541299,
+          "target_distance_m": 0.03331550477293909,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": true,
+        "actual_reduction_m2": 6.438062868734627e-10,
+        "cost_m2": 0.0003505123427615492,
+        "predicted_reduction_m2": 1.490750141820013e-09,
+        "reduction_ratio": 0.43186733229987057,
+        "step_scale": 0.0625,
+        "strike": {
+          "reference_error_m": 0.016561593393742913,
+          "target_distance_m": 0.03331559193610463,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 0.00023248944229344184,
+    "cost_m2": 0.0003505123427615492,
+    "damping": 13.1072,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.01861101024114542,
+        "step": 3.90625e-05
+      }
+    ],
+    "elapsed_s": 370.15307790000224,
+    "iteration": 27,
+    "jacobian_relative_difference": 0.01861101024114542,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 3175,
+    "step_scale": 0.0625,
+    "trust_radius": 0.00048828125
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "accepted": false,
+        "actual_reduction_m2": -6.206566358839087e-09,
+        "cost_m2": 0.00035051854932790805,
+        "predicted_reduction_m2": 2.613639636043618e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -2.3746832858083837,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.0165592538119517,
+          "target_distance_m": 0.03331569112197928,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -8.661829080597663e-10,
+        "cost_m2": 0.0003505132089444573,
+        "predicted_reduction_m2": 1.3083605970008218e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.662036834528136,
+        "step_scale": 0.5,
+        "strike": {
+          "reference_error_m": 0.016560445348842743,
+          "target_distance_m": 0.03331567532965264,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": true,
+        "actual_reduction_m2": 1.2707250442861584e-10,
+        "cost_m2": 0.0003505122156890448,
+        "predicted_reduction_m2": 6.545654932248353e-10,
+        "reduction_ratio": 0.19413260513103153,
+        "step_scale": 0.25,
+        "strike": {
+          "reference_error_m": 0.01656102477931141,
+          "target_distance_m": 0.03331564219642202,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 5.8121722397129876e-05,
+    "cost_m2": 0.0003505122156890448,
+    "damping": 13.1072,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.0298260603787772,
+        "step": 3.90625e-05
+      }
+    ],
+    "elapsed_s": 383.3169327999931,
+    "iteration": 28,
+    "jacobian_relative_difference": 0.0298260603787772,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 3276,
+    "step_scale": 0.25,
+    "trust_radius": 0.00048828125
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "accepted": false,
+        "actual_reduction_m2": -4.5114281376412366e-09,
+        "cost_m2": 0.0003505167271171824,
+        "predicted_reduction_m2": 3.790858045819769e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -1.190081000953346,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.016563471907596508,
+          "target_distance_m": 0.03331534896966617,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": false,
+        "actual_reduction_m2": -1.8763711087275634e-10,
+        "cost_m2": 0.00035051240332615566,
+        "predicted_reduction_m2": 1.896645033952829e-09,
+        "reason": "nonlinear objective/domain",
+        "reduction_ratio": -0.0989310638067571,
+        "step_scale": 0.5,
+        "strike": {
+          "reference_error_m": 0.016562267947784873,
+          "target_distance_m": 0.03331552779674668,
+          "time_s": 1.1138000791100293
+        }
+      },
+      {
+        "accepted": true,
+        "actual_reduction_m2": 4.2555440492005395e-10,
+        "cost_m2": 0.00035051179013463986,
+        "predicted_reduction_m2": 9.486265197845845e-10,
+        "reduction_ratio": 0.4486005778298181,
+        "step_scale": 0.25,
+        "strike": {
+          "reference_error_m": 0.016561651329471863,
+          "target_distance_m": 0.03331559301162088,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 0.0001777995019212178,
+    "cost_m2": 0.00035051179013463986,
+    "damping": 52.4288,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.020193645860823402,
+        "step": 3.90625e-05
+      }
+    ],
+    "elapsed_s": 396.4416055000038,
+    "iteration": 29,
+    "jacobian_relative_difference": 0.020193645860823402,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [
+      "nonlinear objective/domain",
+      "nonlinear objective/domain"
+    ],
+    "rollout_count": 3377,
+    "step_scale": 0.25,
+    "trust_radius": 0.000244140625
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "accepted": true,
+        "actual_reduction_m2": 2.3328068578416794e-10,
+        "cost_m2": 0.0003505115568539541,
+        "predicted_reduction_m2": 5.961043475239541e-10,
+        "reduction_ratio": 0.39134203055748334,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.01656118975197931,
+          "target_distance_m": 0.0333156353817457,
+          "time_s": 1.1138000791100293
+        }
+      }
+    ],
+    "command_feasible_optimality": 5.500354395649181e-05,
+    "cost_m2": 0.0003505115568539541,
+    "damping": 52.4288,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.029451307995461026,
+        "step": 3.90625e-05
+      }
+    ],
+    "elapsed_s": 407.62822880002204,
+    "iteration": 30,
+    "jacobian_relative_difference": 0.029451307995461026,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [],
+    "rollout_count": 3476,
+    "step_scale": 1.0,
+    "trust_radius": 0.000244140625
+  }
+]

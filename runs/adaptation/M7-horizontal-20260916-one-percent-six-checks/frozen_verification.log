@@ -1,0 +1,7 @@
+combined_validation using frozen source snapshot {}
+combined validation M6
+[W915 22:29:20.000000000 Context.cpp:448] Warning: torch.backends.cuda.preferred_linalg_library is an experimental feature. If you see any error or unexpected behavior when this flag is set please file an issue on GitHub. (function operator ())
+combined validation M7
+preliminary validation {'model': 'M6', 'windows': 26}
+preliminary validation {'model': 'M7', 'windows': 26}
+New M7 registered after frozen-source validation: {'id': 'M7', 'status': 'Candidate - no held-out validation; next-batch evaluation pending', 'validation': {'takes': {}, 'equal_take_mean': {}, 'available': False, 'qualification': 'No held-out takes. Post-fit training scores cannot establish generalization; evaluate the frozen model on the next collection.'}, 'promoted': False}

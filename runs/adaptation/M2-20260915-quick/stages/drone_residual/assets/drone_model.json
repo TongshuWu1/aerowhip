@@ -1,0 +1,58 @@
+{
+  "nominal": {
+    "initialization": "causal moving-history state, not assumed rest",
+    "parameters": {
+      "attitude_acceleration_scale_xy": 1.0212186520787396,
+      "attitude_acceleration_scale_z": 0.579444535250065,
+      "attitude_drive_model": "independent_scale_v3",
+      "attitude_time_constant_s": 0.046550052117756695,
+      "delay_s": 0.04,
+      "feedforward_xy": 0.8018305739299384,
+      "feedforward_z": 1.9819242493500124,
+      "gravity_m_s2": 9.80665,
+      "kd_xy": 0.8827658420210664,
+      "kd_z": 2.6832598523492996,
+      "kp_xy": 1.7876723107491095,
+      "kp_z": 18.294400286313216
+    },
+    "schema": "nominal_loaded_drone_pose_candidate_v3",
+    "training_takes": [
+      "figure8_001",
+      "osci_001",
+      "osci_002",
+      "vertical_figure8_001",
+      "M0_002_whip_001",
+      "M0_002_whip_002",
+      "M0_002_whip_003",
+      "M0_002_whip_004",
+      "M0_003_whip_001",
+      "M0_003_whip_002",
+      "M0_003_whip_003",
+      "M0_003_whip_004",
+      "M0_Whip123_001",
+      "M0_Whip123_002",
+      "M0_Whip123_003",
+      "M1_001_whip_001",
+      "M1_001_whip_002",
+      "M1_001_whip_003",
+      "M1_001_whip_004",
+      "M1_002_whip_001",
+      "M1_002_whip_002",
+      "M1_002_whip_003",
+      "M1_002_whip_004",
+      "M1_003_whip_001",
+      "M1_003_whip_002",
+      "M1_003_whip_003",
+      "M1_003_whip_004"
+    ]
+  },
+  "residual": {
+    "checkpoint": "drone_residual.pt",
+    "sha256": "5396e08fc3981c72149bf1a48e7c60c7eaa89a387dd6ac819bfa649c21ff4075",
+    "specification": {
+      "acceleration_limit": 0.5,
+      "hidden": 16,
+      "hover_gate": true
+    }
+  }
+}

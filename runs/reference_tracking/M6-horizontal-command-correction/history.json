@@ -1,0 +1,254 @@
+[
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "accepted": true,
+        "actual_reduction_m2": 0.001862453129443353,
+        "cost_m2": 0.0002501826622153845,
+        "predicted_reduction_m2": 0.0018585575596922227,
+        "reduction_ratio": 1.002096017812747,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.008934238979895193,
+          "target_distance_m": 0.008934238979741141,
+          "time_s": 1.2933333333333334
+        }
+      }
+    ],
+    "command_feasible_optimality": 0.0016662892122227397,
+    "cost_m2": 0.0002501826622153845,
+    "damping": 0.0001,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 1.0458509042914182e-05,
+        "step": 0.01
+      }
+    ],
+    "elapsed_s": 24.870364900001732,
+    "iteration": 1,
+    "jacobian_relative_difference": 1.0458509042914182e-05,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [],
+    "rollout_count": 112,
+    "step_scale": 1.0,
+    "trust_radius": 0.5
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "accepted": true,
+        "actual_reduction_m2": 1.0456338359416545e-05,
+        "cost_m2": 0.00023972632385596798,
+        "predicted_reduction_m2": 1.0255696759962338e-05,
+        "reduction_ratio": 1.0195639169283457,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.005311197762547997,
+          "target_distance_m": 0.005311197762552673,
+          "time_s": 1.2933333333333334
+        }
+      }
+    ],
+    "command_feasible_optimality": 4.988220732840848e-05,
+    "cost_m2": 0.00023972632385596798,
+    "damping": 5e-05,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 1.2204579884029037e-05,
+        "step": 0.01
+      }
+    ],
+    "elapsed_s": 38.68381329999829,
+    "iteration": 2,
+    "jacobian_relative_difference": 1.2204579884029037e-05,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [],
+    "rollout_count": 223,
+    "step_scale": 1.0,
+    "trust_radius": 0.5
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "accepted": true,
+        "actual_reduction_m2": 1.214265707632768e-06,
+        "cost_m2": 0.0002385120581483352,
+        "predicted_reduction_m2": 1.2306724105341131e-06,
+        "reduction_ratio": 0.9866685051514038,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.0055125447084871035,
+          "target_distance_m": 0.005512544708476957,
+          "time_s": 1.2933333333333334
+        }
+      }
+    ],
+    "command_feasible_optimality": 1.732721332217719e-05,
+    "cost_m2": 0.0002385120581483352,
+    "damping": 2.5e-05,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.008680613001048863,
+        "step": 0.01
+      }
+    ],
+    "elapsed_s": 52.405115900000965,
+    "iteration": 3,
+    "jacobian_relative_difference": 0.008680613001048863,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [],
+    "rollout_count": 334,
+    "step_scale": 1.0,
+    "trust_radius": 0.5
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "accepted": true,
+        "actual_reduction_m2": 1.803949766474868e-07,
+        "cost_m2": 0.00023833166317168772,
+        "predicted_reduction_m2": 1.4405068748154625e-07,
+        "reduction_ratio": 1.252302087559259,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.005417820180421271,
+          "target_distance_m": 0.005417820180421424,
+          "time_s": 1.2933333333333334
+        }
+      }
+    ],
+    "command_feasible_optimality": 2.7234465239884315e-06,
+    "cost_m2": 0.00023833166317168772,
+    "damping": 1.25e-05,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.0007057380416005938,
+        "step": 0.01
+      }
+    ],
+    "elapsed_s": 66.06758009999612,
+    "iteration": 4,
+    "jacobian_relative_difference": 0.0007057380416005938,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [],
+    "rollout_count": 445,
+    "step_scale": 1.0,
+    "trust_radius": 0.5
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "accepted": true,
+        "actual_reduction_m2": 3.044015907166433e-08,
+        "cost_m2": 0.00023830122301261606,
+        "predicted_reduction_m2": 4.7376343999700485e-08,
+        "reduction_ratio": 0.6425181113987346,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.00528231021650076,
+          "target_distance_m": 0.005282310216499748,
+          "time_s": 1.2933333333333334
+        }
+      }
+    ],
+    "command_feasible_optimality": 1.7090052301474843e-06,
+    "cost_m2": 0.00023830122301261606,
+    "damping": 6.25e-06,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.008362649644169171,
+        "step": 0.01
+      }
+    ],
+    "elapsed_s": 79.90733899999759,
+    "iteration": 5,
+    "jacobian_relative_difference": 0.008362649644169171,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [],
+    "rollout_count": 556,
+    "step_scale": 1.0,
+    "trust_radius": 0.5
+  },
+  {
+    "accepted": true,
+    "attempts": [
+      {
+        "accepted": true,
+        "actual_reduction_m2": 1.5569586207483162e-08,
+        "cost_m2": 0.00023828565342640858,
+        "predicted_reduction_m2": 1.5019832833609815e-08,
+        "reduction_ratio": 1.0366018303907596,
+        "step_scale": 1.0,
+        "strike": {
+          "reference_error_m": 0.005307104630563925,
+          "target_distance_m": 0.0053071046305653985,
+          "time_s": 1.2933333333333334
+        }
+      }
+    ],
+    "command_feasible_optimality": 1.5191853241853815e-06,
+    "cost_m2": 0.00023828565342640858,
+    "damping": 6.25e-06,
+    "derivative_refinements": [
+      {
+        "one_sided_columns": [
+          0,
+          0
+        ],
+        "relative_difference": 0.00022110114264837464,
+        "step": 0.01
+      }
+    ],
+    "elapsed_s": 93.80203410000104,
+    "iteration": 6,
+    "jacobian_relative_difference": 0.00022110114264837464,
+    "one_sided_columns": [
+      0,
+      0
+    ],
+    "rejections": [],
+    "rollout_count": 667,
+    "step_scale": 1.0,
+    "trust_radius": 0.5
+  }
+]

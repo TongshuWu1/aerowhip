@@ -1,0 +1,193 @@
+{
+  "checkpoint": null,
+  "checkpoint_sha256": null,
+  "command_contract": "position_spline_pva_30hz_v1",
+  "command_height_range_m": [
+    1.3999750423598378,
+    2.0893952278705457
+  ],
+  "command_semantics": "Desired OptiTrack tracked-origin P/V/A, kinematic acceleration, 30 Hz zero-order hold, no force or mass compensation",
+  "csv_sha256": "49f9fd4b8e356543cb5523abca866646968f58b603f73bb94466f0734a1e8d90",
+  "evidence": "Fitted model simulation only; real flight performance remains to be measured",
+  "execution": "Take off; hold 10 s at saved start; execute complete CSV at saved timestamps; land. Offline artifact, no flight sender.",
+  "initial_tracking_origin_m": [
+    0.0,
+    0.0,
+    1.4
+  ],
+  "jerk_csv_semantics": "Analytic spline jerk sampled at interval midpoints; diagnostic only, not the source of PVA packets",
+  "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260913-012740-484590",
+  "lookahead_s": 1.5,
+  "maximum_predicted_tilt_limit_deg": 60.0,
+  "minimum_predicted_cable_height_m": 0.38097164914111936,
+  "minimum_tip_distance_m": 0.0449361174192323,
+  "plan_sha256": "e5de326b57b7f0571e6cc67b9b62aa283202bb87ac66d308e68529c73ebc28a6",
+  "planner": "MPPI PVA",
+  "planner_mode": "open_loop",
+  "predicted_attitude_checked": true,
+  "predicted_drone_height_range_m": [
+    1.3815294124404982,
+    2.046159554703046
+  ],
+  "predicted_hit_time_s": 1.1172482457473654,
+  "predicted_valid_hit": true,
+  "prediction_valid_through_s": 7.133333333333334,
+  "pullback": {
+    "backward_travel_at_contact_m": 0.14939751374824395,
+    "backward_travel_m": 0.1707268905510193,
+    "contact_evaluation": "Linear interpolation within the intersected physics interval, consistent with sphere-entry timing",
+    "drone_forward_speed_at_contact_m_s": -1.301770190674914,
+    "drone_forward_speed_at_handover_m_s": -1.3506639588941505,
+    "note": "Physical simulated tracked-origin motion, not command reversal; criteria evaluated at the hit, values here at the next 30 Hz handover boundary",
+    "peak_forward_displacement_m": 0.843719572946445,
+    "pull_completed": true,
+    "required": false,
+    "reverse_completed": true,
+    "tip_forward_speed_at_contact_m_s": 3.9977973702902014
+  },
+  "recovery": {
+    "brake_coefficients_normalized": [
+      [
+        0.6333432816107071,
+        -0.10739713036982339,
+        2.0778461653123377
+      ],
+      [
+        -2.3672436560183434,
+        -0.23414816219808388,
+        0.23835408278381454
+      ],
+      [
+        -0.9331357458163023,
+        -0.05591933201809193,
+        -1.3835460047642876
+      ],
+      [
+        3.61142465044008,
+        0.3087072715555398,
+        1.6063739235685688
+      ],
+      [
+        -1.650189700917323,
+        -0.14503374710808792,
+        -0.5725959609902365
+      ]
+    ],
+    "brake_end_s": 1.0,
+    "brake_metrics": {
+      "minimum_az_m_s2": -2.767092009528575,
+      "minimum_height_m": 1.966432205910197,
+      "minimum_specific_vertical_m_s2": 7.039557990471424,
+      "minimum_vz_m_s": -0.24402293682600107,
+      "peak_absolute_jerk_m_s3": [
+        21.66854790264048,
+        1.8522436293332387,
+        9.638243541411413
+      ],
+      "peak_height_m": 2.0894105270678596,
+      "peak_horizontal_acceleration_m_s2": 4.07919860844994,
+      "peak_specific_force_m_s2": 11.108857904586017,
+      "peak_speed_m_s": 2.4639246875216263
+    },
+    "braking_position_m": [
+      -0.7058011707011818,
+      -0.23379110013854731,
+      1.966432205910197
+    ],
+    "hold_s": 3.0,
+    "hover_position_m": [
+      0.0,
+      0.0,
+      1.4
+    ],
+    "phase_description": "Smooth braking, rest-to-rest return, final hold",
+    "return_coefficients_normalized": [
+      [
+        -0.7058011707011818,
+        -0.23379110013854731,
+        1.966432205910197
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        7.058011707011805,
+        2.3379110013854687,
+        -5.66432205910196
+      ],
+      [
+        -10.587017560517708,
+        -3.5068665020782035,
+        8.496483088652942
+      ],
+      [
+        4.234807024207083,
+        1.4027466008312814,
+        -3.3985932354611768
+      ]
+    ],
+    "return_end_s": 3.0,
+    "return_metrics": {
+      "minimum_az_m_s2": -0.8175744663998129,
+      "minimum_height_m": 1.4000000000000026,
+      "minimum_specific_vertical_m_s2": 8.989075533600186,
+      "minimum_vz_m_s": -0.5310301930408083,
+      "peak_absolute_jerk_m_s3": [
+        5.293508780258854,
+        1.7534332510391015,
+        4.24824154432647
+      ],
+      "peak_height_m": 1.966432205910197,
+      "peak_horizontal_acceleration_m_s2": 1.0731705082246936,
+      "peak_specific_force_m_s2": 10.678288273509546,
+      "peak_speed_m_s": 0.8762787048745925
+    },
+    "return_s": 2.0,
+    "schema": "brake_return_hold_v1",
+    "settings": {
+      "braking_downward_acceleration_m_s2": 3.5,
+      "braking_horizontal_acceleration_m_s2": 8.0,
+      "braking_tilt_deg": 60.0,
+      "hold_s": 3.0,
+      "maximum_brake_s": 6.0,
+      "maximum_return_s": 12.0,
+      "minimum_brake_s": 1.0,
+      "minimum_return_s": 2.0,
+      "return_speed_m_s": 1.0,
+      "schema": "brake_return_hold_v1"
+    },
+    "stationary_braking_waypoint": true,
+    "total_duration_s": 6.0,
+    "vehicle_limits_verified": false
+  },
+  "recovery_empirically_validated": false,
+  "recovery_prediction_complete": true,
+  "reference_feasible": true,
+  "schema": "pva_fullstate_30hz_v1",
+  "scored_duration_s": 1.1172482457473654,
+  "success_criterion": "tip_contact_v1",
+  "success_meaning": "Tip enters the target sphere; speed, reversal and wave are diagnostics, not pass/fail gates.",
+  "target_position_m": [
+    1.25,
+    0.0,
+    1.25
+  ],
+  "total_duration_s": 7.133333333333334,
+  "training_export_cable_max_difference_m": 1.5679679776781086e-12,
+  "training_export_prefix_max_difference_m": 2.220446049250313e-15,
+  "trajectory_representation": "position_spline_pva_30hz_v1",
+  "wave": {
+    "completed_stages": 0,
+    "completion_time_s": null,
+    "definition": "Dominant local bend persists through proximal, middle, distal material bands before contact; kinematic proxy only",
+    "required": false
+  },
+  "whip_end_s": 1.1333333333333333
+}

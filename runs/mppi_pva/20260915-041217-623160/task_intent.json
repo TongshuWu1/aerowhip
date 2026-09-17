@@ -1,0 +1,24 @@
+{
+  "maximum_strike_angle_deg": 15.0,
+  "model_id": "M5",
+  "note": "Angle applies at the selected strike event, not to the whole cable plane. Full trajectory review is required. The solver success flag denotes a qualified feasible event, not target contact.",
+  "origin_m": [
+    0.0,
+    0.0,
+    1.4
+  ],
+  "physical_flight_pending": false,
+  "planning_review_distance_m": 0.02,
+  "search_budget": "Initial 512 x 40 sampling search (same sample/iteration budget as prior accuracy comparisons); no claim of convergence. Review and continue if needed.",
+  "strike_direction": [
+    0.0,
+    1.0,
+    0.0
+  ],
+  "target_m": [
+    1.25,
+    0.0,
+    1.25
+  ],
+  "task": "sideways horizontal strike"
+}

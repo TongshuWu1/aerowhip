@@ -1,0 +1,608 @@
+{
+  "full_filtered_physical": {
+    "M0": {
+      "minimum_target_distance_m": {
+        "mean_cm": 12.68888840989574,
+        "n": 8,
+        "sd_cm": 1.4088950999040262
+      },
+      "planned_target_distance_m": {
+        "mean_cm": 30.505835004688493,
+        "n": 8,
+        "sd_cm": 5.649893519906385
+      },
+      "reference_rmse_m": {
+        "mean_cm": 16.53670634378151,
+        "n": 8,
+        "sd_cm": 2.1630768880400155
+      }
+    },
+    "M1": {
+      "minimum_target_distance_m": {
+        "mean_cm": 4.785818249016226,
+        "n": 10,
+        "sd_cm": 1.0478370357115165
+      },
+      "planned_target_distance_m": {
+        "mean_cm": 21.31908513956152,
+        "n": 10,
+        "sd_cm": 4.700253116583214
+      },
+      "reference_rmse_m": {
+        "mean_cm": 7.813350397756942,
+        "n": 10,
+        "sd_cm": 0.827342088987328
+      }
+    },
+    "M2": {
+      "minimum_target_distance_m": {
+        "mean_cm": 4.469407523776274,
+        "n": 6,
+        "sd_cm": 2.2867291215323298
+      },
+      "planned_target_distance_m": {
+        "mean_cm": 11.46231550809887,
+        "n": 6,
+        "sd_cm": 6.863751601784583
+      },
+      "reference_rmse_m": {
+        "mean_cm": 7.255463802126765,
+        "n": 6,
+        "sd_cm": 1.8322725617612918
+      }
+    },
+    "M3": {
+      "minimum_target_distance_m": {
+        "mean_cm": 3.7800933703671697,
+        "n": 7,
+        "sd_cm": 1.292097164392925
+      },
+      "planned_target_distance_m": {
+        "mean_cm": 11.133331660900971,
+        "n": 7,
+        "sd_cm": 6.196368918875808
+      },
+      "reference_rmse_m": {
+        "mean_cm": 6.878763686802487,
+        "n": 7,
+        "sd_cm": 0.508651588515033
+      }
+    },
+    "M4": {
+      "minimum_target_distance_m": {
+        "mean_cm": 3.472457577030161,
+        "n": 10,
+        "sd_cm": 2.0203179713726307
+      },
+      "planned_target_distance_m": {
+        "mean_cm": 13.596378639538845,
+        "n": 10,
+        "sd_cm": 5.727930423580357
+      },
+      "reference_rmse_m": {
+        "mean_cm": 7.0880958420453135,
+        "n": 10,
+        "sd_cm": 0.837331047521973
+      }
+    }
+  },
+  "interval_s": [
+    0.0,
+    1.1333333333333333
+  ],
+  "per_flight_physical": {
+    "M0_002_whip_003": {
+      "collection": "M0",
+      "minimum_target_distance_m": 0.117447139144825,
+      "planned_target_distance_m": 0.3050981411126903,
+      "recording_group": "M0_v2_002",
+      "reference_rmse_m": 0.1806266235949284
+    },
+    "M0_003_whip_002": {
+      "collection": "M0",
+      "minimum_target_distance_m": 0.13155751778676006,
+      "planned_target_distance_m": 0.32248684563763147,
+      "recording_group": "M0_v2_003",
+      "reference_rmse_m": 0.17028657959091256
+    },
+    "M0_003_whip_003": {
+      "collection": "M0",
+      "minimum_target_distance_m": 0.11439584316858752,
+      "planned_target_distance_m": 0.2721265160213628,
+      "recording_group": "M0_v2_003",
+      "reference_rmse_m": 0.18261814260337425
+    },
+    "M0_Whip123_001": {
+      "collection": "M0",
+      "minimum_target_distance_m": 0.14928846298367815,
+      "planned_target_distance_m": 0.3082633108445685,
+      "recording_group": "M0_v2_001",
+      "reference_rmse_m": 0.1367016590620034
+    },
+    "M0_Whip123_002": {
+      "collection": "M0",
+      "minimum_target_distance_m": 0.10995976048537022,
+      "planned_target_distance_m": 0.3683658710998894,
+      "recording_group": "M0_v2_001",
+      "reference_rmse_m": 0.19588671656563822
+    },
+    "M1_001_whip_001": {
+      "collection": "M1",
+      "minimum_target_distance_m": 0.06108286386233016,
+      "planned_target_distance_m": 0.25797654927177915,
+      "recording_group": "M1_v2_001",
+      "reference_rmse_m": 0.07832299722063035
+    },
+    "M1_001_whip_003": {
+      "collection": "M1",
+      "minimum_target_distance_m": 0.04924239172472705,
+      "planned_target_distance_m": 0.15571874165772615,
+      "recording_group": "M1_v2_001",
+      "reference_rmse_m": 0.06829226923854315
+    },
+    "M1_002_whip_002": {
+      "collection": "M1",
+      "minimum_target_distance_m": 0.04482353406431358,
+      "planned_target_distance_m": 0.2526223524204035,
+      "recording_group": "M1_v2_002",
+      "reference_rmse_m": 0.07560314547112384
+    },
+    "M1_003_whip_001": {
+      "collection": "M1",
+      "minimum_target_distance_m": 0.047834401817103925,
+      "planned_target_distance_m": 0.19885989764636736,
+      "recording_group": "M1_v2_003",
+      "reference_rmse_m": 0.08734546945950984
+    },
+    "M1_003_whip_002": {
+      "collection": "M1",
+      "minimum_target_distance_m": 0.04167908923078254,
+      "planned_target_distance_m": 0.2657025142165325,
+      "recording_group": "M1_v2_003",
+      "reference_rmse_m": 0.08413847312811769
+    },
+    "M2_001_whip_003": {
+      "collection": "M2",
+      "minimum_target_distance_m": 0.033816352499663825,
+      "planned_target_distance_m": 0.05136619145497907,
+      "recording_group": "M2_v2_001",
+      "reference_rmse_m": 0.051590586901194634
+    },
+    "M2_002_whip_001": {
+      "collection": "M2",
+      "minimum_target_distance_m": 0.03620292871116562,
+      "planned_target_distance_m": 0.18449028355339592,
+      "recording_group": "M2_v2_002",
+      "reference_rmse_m": 0.06949863760376858
+    },
+    "M2_002_whip_003": {
+      "collection": "M2",
+      "minimum_target_distance_m": 0.06520709371181928,
+      "planned_target_distance_m": 0.19010883605828136,
+      "recording_group": "M2_v2_002",
+      "reference_rmse_m": 0.07400513339462123
+    },
+    "M2_003_whip_003": {
+      "collection": "M2",
+      "minimum_target_distance_m": 0.015358511678694606,
+      "planned_target_distance_m": 0.021477690869597704,
+      "recording_group": "M2_v2_003",
+      "reference_rmse_m": 0.07156391753666269
+    },
+    "M2_003_whip_004": {
+      "collection": "M2",
+      "minimum_target_distance_m": 0.03948429771829522,
+      "planned_target_distance_m": 0.13104455475810536,
+      "recording_group": "M2_v2_003",
+      "reference_rmse_m": 0.0625500109053129
+    },
+    "M3_001_whip_002": {
+      "collection": "M3",
+      "minimum_target_distance_m": 0.05946346735472884,
+      "planned_target_distance_m": 0.14488556232354313,
+      "recording_group": "M3_v2_001",
+      "reference_rmse_m": 0.0687504354886236
+    },
+    "M3_001_whip_004": {
+      "collection": "M3",
+      "minimum_target_distance_m": 0.024362043449070787,
+      "planned_target_distance_m": 0.02812867422992648,
+      "recording_group": "M3_v2_001",
+      "reference_rmse_m": 0.062430861617845064
+    },
+    "M3_002_whip_002": {
+      "collection": "M3",
+      "minimum_target_distance_m": 0.023503181806540936,
+      "planned_target_distance_m": 0.19349807446413117,
+      "recording_group": "M3_v2_002",
+      "reference_rmse_m": 0.07452975583499662
+    },
+    "M3_003_whip_003": {
+      "collection": "M3",
+      "minimum_target_distance_m": 0.04554077677089298,
+      "planned_target_distance_m": 0.08265068970314055,
+      "recording_group": "M3_v2_003",
+      "reference_rmse_m": 0.06547625819205802
+    },
+    "M3_003_whip_004": {
+      "collection": "M3",
+      "minimum_target_distance_m": 0.03723915442622587,
+      "planned_target_distance_m": 0.08966966774795611,
+      "recording_group": "M3_v2_003",
+      "reference_rmse_m": 0.07667793185114359
+    },
+    "M4_001_whip_002": {
+      "collection": "M4",
+      "minimum_target_distance_m": 0.022344012914567758,
+      "planned_target_distance_m": 0.22700043187923188,
+      "recording_group": "M4_v2_001",
+      "reference_rmse_m": 0.0738164083531225
+    },
+    "M4_002_whip_003": {
+      "collection": "M4",
+      "minimum_target_distance_m": 0.01013782120297114,
+      "planned_target_distance_m": 0.07506340049377812,
+      "recording_group": "M4_v2_002",
+      "reference_rmse_m": 0.07060561232098672
+    },
+    "M4_002_whip_004": {
+      "collection": "M4",
+      "minimum_target_distance_m": 0.014494321727907097,
+      "planned_target_distance_m": 0.054712272095486784,
+      "recording_group": "M4_v2_002",
+      "reference_rmse_m": 0.0671720132601776
+    },
+    "M4_003_whip_002": {
+      "collection": "M4",
+      "minimum_target_distance_m": 0.05747304963575179,
+      "planned_target_distance_m": 0.20304765182450782,
+      "recording_group": "M4_v2_003",
+      "reference_rmse_m": 0.0853086700646826
+    },
+    "M4_003_whip_004": {
+      "collection": "M4",
+      "minimum_target_distance_m": 0.06859669806402478,
+      "planned_target_distance_m": 0.0982514341633987,
+      "recording_group": "M4_v2_003",
+      "reference_rmse_m": 0.06856703589611039
+    }
+  },
+  "physical": {
+    "M0": {
+      "minimum_target_distance_m": {
+        "mean_cm": 12.452974471384419,
+        "n": 5,
+        "sd_cm": 1.6027534334097124
+      },
+      "planned_target_distance_m": {
+        "mean_cm": 31.526813694322854,
+        "n": 5,
+        "sd_cm": 3.4947013418236743
+      },
+      "reference_rmse_m": {
+        "mean_cm": 17.322394428337134,
+        "n": 5,
+        "sd_cm": 2.23559684408361
+      }
+    },
+    "M1": {
+      "minimum_target_distance_m": {
+        "mean_cm": 4.893245613985145,
+        "n": 5,
+        "sd_cm": 0.7389667843099669
+      },
+      "planned_target_distance_m": {
+        "mean_cm": 22.617601104256174,
+        "n": 5,
+        "sd_cm": 4.739046454020109
+      },
+      "reference_rmse_m": {
+        "mean_cm": 7.874047090358497,
+        "n": 5,
+        "sd_cm": 0.7455978160879347
+      }
+    },
+    "M2": {
+      "minimum_target_distance_m": {
+        "mean_cm": 3.8013836863927715,
+        "n": 5,
+        "sd_cm": 1.7859153785204005
+      },
+      "planned_target_distance_m": {
+        "mean_cm": 11.56975113388719,
+        "n": 5,
+        "sd_cm": 7.668265088081304
+      },
+      "reference_rmse_m": {
+        "mean_cm": 6.584165726831199,
+        "n": 5,
+        "sd_cm": 0.9037256948392272
+      }
+    },
+    "M3": {
+      "minimum_target_distance_m": {
+        "mean_cm": 3.802172476149188,
+        "n": 5,
+        "sd_cm": 1.511846443902299
+      },
+      "planned_target_distance_m": {
+        "mean_cm": 10.77665336937395,
+        "n": 5,
+        "sd_cm": 6.330128396344602
+      },
+      "reference_rmse_m": {
+        "mean_cm": 6.957304859693339,
+        "n": 5,
+        "sd_cm": 0.5989981875839144
+      }
+    },
+    "M4": {
+      "minimum_target_distance_m": {
+        "mean_cm": 3.460918070904452,
+        "n": 5,
+        "sd_cm": 2.6607316508744066
+      },
+      "planned_target_distance_m": {
+        "mean_cm": 13.161503809128067,
+        "n": 5,
+        "sd_cm": 7.81444893333219
+      },
+      "reference_rmse_m": {
+        "mean_cm": 7.309394797901597,
+        "n": 5,
+        "sd_cm": 0.7271097626730537
+      }
+    }
+  },
+  "physical_contact_test": "Unchanged author-confirmed 17/20 separate fixed-M4 trials; trial-level contacts not independently verified.",
+  "planned_strike_time_s": 1.1138000791100293,
+  "prediction": {
+    "M0": {
+      "mean_cm": 13.940815472695455,
+      "n": 10,
+      "sd_cm": 1.293630542969466
+    },
+    "M1": {
+      "mean_cm": 6.494559150937053,
+      "n": 10,
+      "sd_cm": 1.1073754688306654
+    },
+    "M2": {
+      "mean_cm": 6.225876335587057,
+      "n": 10,
+      "sd_cm": 0.9061615891672861
+    },
+    "M3": {
+      "mean_cm": 6.149850366818294,
+      "n": 10,
+      "sd_cm": 0.8080262878991866
+    },
+    "M4": {
+      "mean_cm": 5.796218242965069,
+      "n": 10,
+      "sd_cm": 0.8082095343946895
+    }
+  },
+  "prediction_takes": [
+    "M4_001_whip_002",
+    "M4_001_whip_003",
+    "M4_002_whip_001",
+    "M4_002_whip_002",
+    "M4_002_whip_003",
+    "M4_002_whip_004",
+    "M4_003_whip_001",
+    "M4_003_whip_002",
+    "M4_003_whip_003",
+    "M4_003_whip_004"
+  ],
+  "recording_group_means": {
+    "M0_v2_001": {
+      "mean_cm": {
+        "minimum_target_distance_m": 12.962411173452418,
+        "planned_target_distance_m": 33.83145909722289,
+        "reference_rmse_m": 16.629418781382082
+      },
+      "n": 2
+    },
+    "M0_v2_002": {
+      "mean_cm": {
+        "minimum_target_distance_m": 11.744713914482501,
+        "planned_target_distance_m": 30.50981411126903,
+        "reference_rmse_m": 18.06266235949284
+      },
+      "n": 1
+    },
+    "M0_v2_003": {
+      "mean_cm": {
+        "minimum_target_distance_m": 12.29766804776738,
+        "planned_target_distance_m": 29.730668082949713,
+        "reference_rmse_m": 17.64523610971434
+      },
+      "n": 2
+    },
+    "M1_v2_001": {
+      "mean_cm": {
+        "minimum_target_distance_m": 5.516262779352861,
+        "planned_target_distance_m": 20.684764546475265,
+        "reference_rmse_m": 7.330763322958675
+      },
+      "n": 2
+    },
+    "M1_v2_002": {
+      "mean_cm": {
+        "minimum_target_distance_m": 4.482353406431358,
+        "planned_target_distance_m": 25.262235242040347,
+        "reference_rmse_m": 7.560314547112385
+      },
+      "n": 1
+    },
+    "M1_v2_003": {
+      "mean_cm": {
+        "minimum_target_distance_m": 4.475674552394324,
+        "planned_target_distance_m": 23.228120593144993,
+        "reference_rmse_m": 8.574197129381377
+      },
+      "n": 2
+    },
+    "M2_v2_001": {
+      "mean_cm": {
+        "minimum_target_distance_m": 3.3816352499663824,
+        "planned_target_distance_m": 5.136619145497907,
+        "reference_rmse_m": 5.159058690119464
+      },
+      "n": 1
+    },
+    "M2_v2_002": {
+      "mean_cm": {
+        "minimum_target_distance_m": 5.070501121149245,
+        "planned_target_distance_m": 18.729955980583863,
+        "reference_rmse_m": 7.17518854991949
+      },
+      "n": 2
+    },
+    "M2_v2_003": {
+      "mean_cm": {
+        "minimum_target_distance_m": 2.7421404698494913,
+        "planned_target_distance_m": 7.6261122813851525,
+        "reference_rmse_m": 6.70569642209878
+      },
+      "n": 2
+    },
+    "M3_v2_001": {
+      "mean_cm": {
+        "minimum_target_distance_m": 4.191275540189982,
+        "planned_target_distance_m": 8.650711827673481,
+        "reference_rmse_m": 6.559064855323434
+      },
+      "n": 2
+    },
+    "M3_v2_002": {
+      "mean_cm": {
+        "minimum_target_distance_m": 2.3503181806540936,
+        "planned_target_distance_m": 19.349807446413116,
+        "reference_rmse_m": 7.452975583499661
+      },
+      "n": 1
+    },
+    "M3_v2_003": {
+      "mean_cm": {
+        "minimum_target_distance_m": 4.138996559855943,
+        "planned_target_distance_m": 8.616017872554831,
+        "reference_rmse_m": 7.107709502160081
+      },
+      "n": 2
+    },
+    "M4_v2_001": {
+      "mean_cm": {
+        "minimum_target_distance_m": 2.2344012914567757,
+        "planned_target_distance_m": 22.70004318792319,
+        "reference_rmse_m": 7.3816408353122505
+      },
+      "n": 1
+    },
+    "M4_v2_002": {
+      "mean_cm": {
+        "minimum_target_distance_m": 1.231607146543912,
+        "planned_target_distance_m": 6.488783629463245,
+        "reference_rmse_m": 6.888881279058216
+      },
+      "n": 2
+    },
+    "M4_v2_003": {
+      "mean_cm": {
+        "minimum_target_distance_m": 6.303487384988829,
+        "planned_target_distance_m": 15.064954299395325,
+        "reference_rmse_m": 7.693785298039649
+      },
+      "n": 2
+    }
+  },
+  "selection_sha256": "8b9c9fc6387163d835ae9bc099427c49b5d3a776f2dae6b467d736c9fa243a6d",
+  "unfiltered_physical": {
+    "M0": {
+      "minimum_target_distance_m": {
+        "mean_cm": 12.62106320428188,
+        "n": 11,
+        "sd_cm": 1.3881027459082251
+      },
+      "planned_target_distance_m": {
+        "mean_cm": 31.554734596765943,
+        "n": 11,
+        "sd_cm": 5.271591749263149
+      },
+      "reference_rmse_m": {
+        "mean_cm": 16.843413808231837,
+        "n": 11,
+        "sd_cm": 2.507658692180922
+      }
+    },
+    "M1": {
+      "minimum_target_distance_m": {
+        "mean_cm": 4.867580642456426,
+        "n": 12,
+        "sd_cm": 1.7516256455803947
+      },
+      "planned_target_distance_m": {
+        "mean_cm": 21.944671175947285,
+        "n": 12,
+        "sd_cm": 4.622820231982951
+      },
+      "reference_rmse_m": {
+        "mean_cm": 7.924522548416818,
+        "n": 12,
+        "sd_cm": 0.8359446536811995
+      }
+    },
+    "M2": {
+      "minimum_target_distance_m": {
+        "mean_cm": 4.6411403890614755,
+        "n": 11,
+        "sd_cm": 2.474400391474019
+      },
+      "planned_target_distance_m": {
+        "mean_cm": 13.804983677546481,
+        "n": 11,
+        "sd_cm": 7.05132218304336
+      },
+      "reference_rmse_m": {
+        "mean_cm": 7.733327441644969,
+        "n": 11,
+        "sd_cm": 1.438197710225993
+      }
+    },
+    "M3": {
+      "minimum_target_distance_m": {
+        "mean_cm": 4.7242989295547275,
+        "n": 12,
+        "sd_cm": 1.8045497377993043
+      },
+      "planned_target_distance_m": {
+        "mean_cm": 12.648067159203457,
+        "n": 12,
+        "sd_cm": 5.921378992598195
+      },
+      "reference_rmse_m": {
+        "mean_cm": 7.856104571402392,
+        "n": 12,
+        "sd_cm": 1.607669945756183
+      }
+    },
+    "M4": {
+      "minimum_target_distance_m": {
+        "mean_cm": 3.8335681168075357,
+        "n": 12,
+        "sd_cm": 2.0254627231947318
+      },
+      "planned_target_distance_m": {
+        "mean_cm": 13.612923548646517,
+        "n": 12,
+        "sd_cm": 5.224576231135263
+      },
+      "reference_rmse_m": {
+        "mean_cm": 7.041154286003,
+        "n": 12,
+        "sd_cm": 0.7696759968227477
+      }
+    }
+  }
+}

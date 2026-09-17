@@ -1,0 +1,18 @@
+{
+  "request": "Retain original video appearance; stitch poses and remove EXIT sign only",
+  "figure_pdf": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\paper\\figures\\AeroWhip_motion_original.pdf",
+  "source_video": "C:/Users/wts28/Downloads/IMG_2594.MOV",
+  "added_exposure_contrast_tone_mapping_or_cable_gain": false,
+  "background_change": "Local EXIT-sign patch only; all selected foreground protected",
+  "manuscript_source_sha256": "29ba10ae72a4caf0b9e8bcabf7685891cee29877e7b99cec6c1777c06d7fd54c",
+  "compiled_pdf_sha256": "cae9761ab69b08eb782845194d56064c00d968793a40945116fef42a00d03c35",
+  "validation": {
+    "os": "Windows",
+    "compile": "Tectonic successful",
+    "pages": 8,
+    "equation_environments_unchanged": 17,
+    "figure_width_column_fraction": 0.78,
+    "new_overfull_or_missing_reference_warnings": false,
+    "independent_pixel_review": "Zero changes outside EXIT mask and protected foreground"
+  }
+}

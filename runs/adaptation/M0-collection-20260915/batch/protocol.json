@@ -1,0 +1,126 @@
+{
+  "actual_take_count": 11,
+  "authorization": "User accepted this as M0 and explicitly requested fitting; all eleven complete whips included. Invalid marker samples are masked individually; interrupted attempt excluded.",
+  "automatic_selection": false,
+  "cable_history_s": 1.0,
+  "cable_touched_or_reset": false,
+  "cable_velocity_weight_tau_s": 0.02,
+  "candidate_bounds_s_inv": [
+    0.0,
+    2.0
+  ],
+  "collection_manifest": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M0-complete-collection\\report.json",
+  "command_sha256": "1e716e6ef8626d48229416a8baf2e6581f97899de38a578833c88ad0defbe634",
+  "drone_history_s": 0.4,
+  "evaluation_policy": "evaluate frozen parent before learning; prior training data measures retention",
+  "forecast_sha256": "66ea65f7c5f33cf9b0ce722c318d829f711700c3145336bde2614a65cfbf9f9a",
+  "frame": "raw_global_xyz",
+  "frozen_hashes": {
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\assets\\drone_model.json": "c644bddaa7ccd3a3dab58b4befa8b4642ad6792487510197ee2eb52da5dc0945",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\assets\\drone_residual.pt": "564b272e1c6d4a553665828ecdd4b8f04ab2d17257ef716e4f73aa42dd9cd6d8",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\fullstate_30hz.csv": "1e716e6ef8626d48229416a8baf2e6581f97899de38a578833c88ad0defbe634",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\jerk_30hz.csv": "11e0c35df7a651d9e26c597157c0671fee588271adef4a494d3754b424144905",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\model.json": "6c4837cbfdc2f41c21c8e3e7387c0a24945a2690bd3c5033f3f4e3bfefe7064f",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\plan.npz": "510165fffaf15b4b9e8cab928756adf9512acd9c94f3fbeaffdaff18c5cde4c7",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\registration.json": "4be2358fd4f2ede35e9fa2e0ec9c352817e2bd6affc94b4d323a96ea92e4a300",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\rehearsal.json": "5d4705462d177d3e162ff72e70aef4c9ef1424d61513f8fbeda67e1e6f2b4771",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\rehearsal.npz": "66ea65f7c5f33cf9b0ce722c318d829f711700c3145336bde2614a65cfbf9f9a",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\settings.json": "8a44e534a20230965bddf3ea5cf1c535cebe042bc7df37a71bcada02501e5224",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\task.json": "1d70b0d70d925f7cd42b59050faacaf8c239d7cbdc268cbc1655bf1c8a2c772a",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\ui_verification.json": "42dd4d6b6a89cc0f4b0f04fe93785ee4fe8f940bd447170811e827b56edde56f"
+  },
+  "minimum_observation_fraction": 0.8,
+  "model_id": "M0",
+  "model_update": "Full drone nominal/residual and cable physics/residual through existing full-model workflow",
+  "neural_training": false,
+  "normalization": false,
+  "parent_forecast_model_sha256": "6c4837cbfdc2f41c21c8e3e7387c0a24945a2690bd3c5033f3f4e3bfefe7064f",
+  "parent_generation": 0,
+  "physical_target_present": false,
+  "planned_roles": {
+    "M0_002_whip_001": "adaptation",
+    "M0_002_whip_002": "adaptation",
+    "M0_002_whip_003": "adaptation",
+    "M0_002_whip_004": "adaptation",
+    "M0_003_whip_001": "adaptation",
+    "M0_003_whip_002": "adaptation",
+    "M0_003_whip_003": "adaptation",
+    "M0_003_whip_004": "adaptation",
+    "M0_Whip123_001": "adaptation",
+    "M0_Whip123_002": "adaptation",
+    "M0_Whip123_003": "adaptation"
+  },
+  "recording_groups": {
+    "M0_002_whip_001": "M0_v2_002",
+    "M0_002_whip_002": "M0_v2_002",
+    "M0_002_whip_003": "M0_v2_002",
+    "M0_002_whip_004": "M0_v2_002",
+    "M0_003_whip_001": "M0_v2_003",
+    "M0_003_whip_002": "M0_v2_003",
+    "M0_003_whip_003": "M0_v2_003",
+    "M0_003_whip_004": "M0_v2_003",
+    "M0_Whip123_001": "M0_v2_001",
+    "M0_Whip123_002": "M0_v2_001",
+    "M0_Whip123_003": "M0_v2_001"
+  },
+  "rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s",
+  "role_unit": "whole segmented whip; retain original recording group for statistical reporting",
+  "schema": "prospective_whip_adaptation_v1",
+  "source_segments": {
+    "M0_002_whip_001": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M0-Whip4567-four-whips",
+      "recording": "M0_v2_002",
+      "repetition": 1
+    },
+    "M0_002_whip_002": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M0-Whip4567-four-whips",
+      "recording": "M0_v2_002",
+      "repetition": 2
+    },
+    "M0_002_whip_003": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M0-Whip4567-four-whips",
+      "recording": "M0_v2_002",
+      "repetition": 3
+    },
+    "M0_002_whip_004": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M0-Whip4567-four-whips",
+      "recording": "M0_v2_002",
+      "repetition": 4
+    },
+    "M0_003_whip_001": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M0-Whip891011-four-whips",
+      "recording": "M0_v2_003",
+      "repetition": 1
+    },
+    "M0_003_whip_002": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M0-Whip891011-four-whips",
+      "recording": "M0_v2_003",
+      "repetition": 2
+    },
+    "M0_003_whip_003": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M0-Whip891011-four-whips",
+      "recording": "M0_v2_003",
+      "repetition": 3
+    },
+    "M0_003_whip_004": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M0-Whip891011-four-whips",
+      "recording": "M0_v2_003",
+      "repetition": 4
+    },
+    "M0_Whip123_001": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M0-Whip123-three-whips",
+      "recording": "M0_v2_001",
+      "repetition": 1
+    },
+    "M0_Whip123_002": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M0-Whip123-three-whips",
+      "recording": "M0_v2_001",
+      "repetition": 2
+    },
+    "M0_Whip123_003": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M0-Whip123-three-whips",
+      "recording": "M0_v2_001",
+      "repetition": 3
+    }
+  }
+}

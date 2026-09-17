@@ -1,0 +1,463 @@
+Evaluating frozen parent before any update {}
+combined validation M6
+[W915 19:28:16.000000000 Context.cpp:448] Warning: torch.backends.cuda.preferred_linalg_library is an experimental feature. If you see any error or unexpected behavior when this flag is set please file an issue on GitHub. (function operator ())
+preparing full model training {}
+drone_nominal {'delay_s': 0.0, 'windows': 81}
+drone_nominal {'update': 1, 'loss': 4.7597540941170795, 'best_loss': 4.7597540941170795}
+drone_nominal {'update': 2, 'loss': 4.58747104383888, 'best_loss': 4.58747104383888}
+drone_nominal {'update': 3, 'loss': 4.545245980063645, 'best_loss': 4.545245980063645}
+drone_nominal {'update': 4, 'loss': 4.529192153431936, 'best_loss': 4.529192153431936}
+drone_nominal {'update': 5, 'loss': 4.521812806946183, 'best_loss': 4.521812806946183}
+drone_nominal {'update': 6, 'loss': 4.518045429259826, 'best_loss': 4.518045429259826}
+drone_nominal {'update': 7, 'loss': 4.516011427741407, 'best_loss': 4.516011427741407}
+drone_nominal {'update': 8, 'loss': 4.514883298645058, 'best_loss': 4.514883298645058}
+drone_nominal {'update': 9, 'loss': 4.514249382311098, 'best_loss': 4.514249382311098}
+drone_nominal {'update': 10, 'loss': 4.513890484614816, 'best_loss': 4.513890484614816}
+drone_nominal {'update': 11, 'loss': 4.513686078152001, 'best_loss': 4.513686078152001}
+drone_nominal {'update': 12, 'loss': 4.513568948988007, 'best_loss': 4.513568948988007}
+drone_nominal {'delay_s': 0.01, 'windows': 81}
+drone_nominal {'update': 1, 'loss': 4.47092545563047, 'best_loss': 4.47092545563047}
+drone_nominal {'update': 2, 'loss': 4.279214819716408, 'best_loss': 4.279214819716408}
+drone_nominal {'update': 3, 'loss': 4.238882654141183, 'best_loss': 4.238882654141183}
+drone_nominal {'update': 4, 'loss': 4.226648701976876, 'best_loss': 4.226648701976876}
+drone_nominal {'update': 5, 'loss': 4.222082788460624, 'best_loss': 4.222082788460624}
+drone_nominal {'update': 6, 'loss': 4.220102130208189, 'best_loss': 4.220102130208189}
+drone_nominal {'update': 7, 'loss': 4.219160365945992, 'best_loss': 4.219160365945992}
+drone_nominal {'update': 8, 'loss': 4.218690306858975, 'best_loss': 4.218690306858975}
+drone_nominal {'update': 9, 'loss': 4.2184498731566284, 'best_loss': 4.2184498731566284}
+drone_nominal {'update': 10, 'loss': 4.218325318212579, 'best_loss': 4.218325318212579}
+drone_nominal {'delay_s': 0.02, 'windows': 81}
+drone_nominal {'update': 1, 'loss': 4.06547708313753, 'best_loss': 4.06547708313753}
+drone_nominal {'update': 2, 'loss': 3.9770200923232215, 'best_loss': 3.9770200923232215}
+drone_nominal {'update': 3, 'loss': 3.9575686586292074, 'best_loss': 3.9575686586292074}
+drone_nominal {'update': 4, 'loss': 3.951988743161732, 'best_loss': 3.951988743161732}
+drone_nominal {'update': 5, 'loss': 3.950091689120964, 'best_loss': 3.950091689120964}
+drone_nominal {'update': 6, 'loss': 3.9493681230033113, 'best_loss': 3.9493681230033113}
+drone_nominal {'update': 7, 'loss': 3.9490736504438493, 'best_loss': 3.9490736504438493}
+drone_nominal {'update': 8, 'loss': 3.948949866782993, 'best_loss': 3.948949866782993}
+drone_nominal {'update': 9, 'loss': 3.948897020785339, 'best_loss': 3.948897020785339}
+drone_nominal {'delay_s': 0.03, 'windows': 81}
+drone_nominal {'update': 1, 'loss': 3.7943226232862344, 'best_loss': 3.7943226232862344}
+drone_nominal {'update': 2, 'loss': 3.750467242906564, 'best_loss': 3.750467242906564}
+drone_nominal {'update': 3, 'loss': 3.738149213812737, 'best_loss': 3.738149213812737}
+drone_nominal {'update': 4, 'loss': 3.7342587041823965, 'best_loss': 3.7342587041823965}
+drone_nominal {'update': 5, 'loss': 3.732916770030216, 'best_loss': 3.732916770030216}
+drone_nominal {'update': 6, 'loss': 3.7324263458957687, 'best_loss': 3.7324263458957687}
+drone_nominal {'update': 7, 'loss': 3.7322412658038484, 'best_loss': 3.7322412658038484}
+drone_nominal {'update': 8, 'loss': 3.7321702588991967, 'best_loss': 3.7321702588991967}
+drone_nominal {'update': 9, 'loss': 3.732142787612152, 'best_loss': 3.732142787612152}
+drone_nominal {'delay_s': 0.04, 'windows': 81}
+drone_nominal {'update': 1, 'loss': 3.631064672691463, 'best_loss': 3.631064672691463}
+drone_nominal {'update': 2, 'loss': 3.606062310142922, 'best_loss': 3.606062310142922}
+drone_nominal {'update': 3, 'loss': 3.5976976131014364, 'best_loss': 3.5976976131014364}
+drone_nominal {'update': 4, 'loss': 3.5948169774581813, 'best_loss': 3.5948169774581813}
+drone_nominal {'update': 5, 'loss': 3.593800563917935, 'best_loss': 3.593800563917935}
+drone_nominal {'update': 6, 'loss': 3.5934347684411647, 'best_loss': 3.5934347684411647}
+drone_nominal {'update': 7, 'loss': 3.59330141493105, 'best_loss': 3.59330141493105}
+drone_nominal {'update': 8, 'loss': 3.593252417002264, 'best_loss': 3.593252417002264}
+drone_nominal {'update': 9, 'loss': 3.5932343259762782, 'best_loss': 3.5932343259762782}
+drone_nominal {'update': 10, 'loss': 3.5932276250805377, 'best_loss': 3.5932276250805377}
+drone_nominal {'delay_s': 0.06, 'windows': 81}
+drone_nominal {'update': 1, 'loss': 3.6651552056605015, 'best_loss': 3.6651552056605015}
+drone_nominal {'update': 2, 'loss': 3.6474441091443475, 'best_loss': 3.6474441091443475}
+drone_nominal {'update': 3, 'loss': 3.643200495151535, 'best_loss': 3.643200495151535}
+drone_nominal {'update': 4, 'loss': 3.6417384012633405, 'best_loss': 3.6417384012633405}
+drone_nominal {'update': 5, 'loss': 3.641201742441674, 'best_loss': 3.641201742441674}
+drone_nominal {'update': 6, 'loss': 3.6410031710729562, 'best_loss': 3.6410031710729562}
+drone_nominal {'update': 7, 'loss': 3.640929742997599, 'best_loss': 3.640929742997599}
+drone_nominal {'update': 8, 'loss': 3.640902634651872, 'best_loss': 3.640902634651872}
+drone_nominal {'delay_s': 0.08, 'windows': 81}
+drone_nominal {'update': 1, 'loss': 4.196044346312634, 'best_loss': 4.196044346312634}
+drone_nominal {'update': 2, 'loss': 4.182728055082636, 'best_loss': 4.182728055082636}
+drone_nominal {'update': 3, 'loss': 4.179949699595252, 'best_loss': 4.179949699595252}
+drone_nominal {'update': 4, 'loss': 4.179194573955642, 'best_loss': 4.179194573955642}
+drone_nominal {'update': 5, 'loss': 4.1789587122638885, 'best_loss': 4.1789587122638885}
+drone_nominal {'update': 6, 'loss': 4.178879201020944, 'best_loss': 4.178879201020944}
+drone_nominal {'update': 7, 'loss': 4.178851419039966, 'best_loss': 4.178851419039966}
+drone_nominal {'delay_s': 0.1, 'windows': 81}
+drone_nominal {'update': 1, 'loss': 5.1926284069234345, 'best_loss': 5.1926284069234345}
+drone_nominal {'update': 2, 'loss': 5.139660855731706, 'best_loss': 5.139660855731706}
+drone_nominal {'update': 3, 'loss': 5.131119519964034, 'best_loss': 5.131119519964034}
+drone_nominal {'update': 4, 'loss': 5.128823088850191, 'best_loss': 5.128823088850191}
+drone_nominal {'update': 5, 'loss': 5.128197150055662, 'best_loss': 5.128197150055662}
+drone_nominal {'update': 6, 'loss': 5.1280254550169735, 'best_loss': 5.1280254550169735}
+drone_nominal {'update': 7, 'loss': 5.127977694107095, 'best_loss': 5.127977694107095}
+drone_nominal {'update': 8, 'loss': 5.127964177699969, 'best_loss': 5.127964177699969}
+drone_nominal {'delay_s': 0.12, 'windows': 81}
+drone_nominal {'update': 1, 'loss': 6.507555150169748, 'best_loss': 6.507555150169748}
+drone_nominal {'update': 2, 'loss': 6.409047738289678, 'best_loss': 6.409047738289678}
+drone_nominal {'update': 3, 'loss': 6.387878697101519, 'best_loss': 6.387878697101519}
+drone_nominal {'update': 4, 'loss': 6.381115306988686, 'best_loss': 6.381115306988686}
+drone_nominal {'update': 5, 'loss': 6.378725580534099, 'best_loss': 6.378725580534099}
+drone_nominal {'update': 6, 'loss': 6.377877641581662, 'best_loss': 6.377877641581662}
+drone_nominal {'update': 7, 'loss': 6.377575155508302, 'best_loss': 6.377575155508302}
+drone_nominal {'update': 8, 'loss': 6.377466148511949, 'best_loss': 6.377466148511949}
+drone_nominal {'update': 9, 'loss': 6.377426379892871, 'best_loss': 6.377426379892871}
+attitude response {'windows': 81}
+attitude response {'update': 1, 'loss': 0.8823753672492927, 'best_loss': 0.8823753672492927}
+attitude response {'update': 2, 'loss': 0.8815108747317392, 'best_loss': 0.8815108747317392}
+attitude response {'update': 3, 'loss': 0.8814756643003331, 'best_loss': 0.8814756643003331}
+attitude response {'update': 4, 'loss': 0.8814741416074953, 'best_loss': 0.8814741416074953}
+attitude response {'update': 5, 'loss': 0.8814740721866124, 'best_loss': 0.8814740721866124}
+drone_residual graph preparation {'windows': 81}
+drone_residual {'update': 1, 'best_loss': 3.5934418497983804, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 2, 'best_loss': 3.5934418497983804, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 3, 'best_loss': 3.5934418497983804, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 4, 'best_loss': 3.5934418497983804, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 5, 'best_loss': 3.5934418497983804, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 6, 'best_loss': 3.5060603897918923, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 7, 'best_loss': 3.5060603897918923, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 8, 'best_loss': 3.5060603897918923, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 9, 'best_loss': 3.5060603897918923, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 10, 'best_loss': 3.5060603897918923, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 11, 'best_loss': 3.4609466636079897, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 12, 'best_loss': 3.4609466636079897, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 13, 'best_loss': 3.4609466636079897, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 14, 'best_loss': 3.4609466636079897, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 15, 'best_loss': 3.4609466636079897, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 16, 'best_loss': 3.430662124445291, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 17, 'best_loss': 3.430662124445291, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 18, 'best_loss': 3.430662124445291, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 19, 'best_loss': 3.430662124445291, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 20, 'best_loss': 3.430662124445291, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 21, 'best_loss': 3.4116286563192575, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 22, 'best_loss': 3.4116286563192575, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 23, 'best_loss': 3.4116286563192575, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 24, 'best_loss': 3.4116286563192575, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 25, 'best_loss': 3.4116286563192575, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 26, 'best_loss': 3.39804072858978, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 27, 'best_loss': 3.39804072858978, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 28, 'best_loss': 3.39804072858978, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 29, 'best_loss': 3.39804072858978, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 30, 'best_loss': 3.39804072858978, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 31, 'best_loss': 3.388461683489579, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 32, 'best_loss': 3.388461683489579, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 33, 'best_loss': 3.388461683489579, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 34, 'best_loss': 3.388461683489579, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 35, 'best_loss': 3.388461683489579, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 36, 'best_loss': 3.3812535567211617, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 37, 'best_loss': 3.3812535567211617, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 38, 'best_loss': 3.3812535567211617, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 39, 'best_loss': 3.3812535567211617, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 40, 'best_loss': 3.3812535567211617, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 41, 'best_loss': 3.374924016196585, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 42, 'best_loss': 3.374924016196585, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 43, 'best_loss': 3.374924016196585, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 44, 'best_loss': 3.374924016196585, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 45, 'best_loss': 3.374924016196585, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 46, 'best_loss': 3.3686484005224124, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 47, 'best_loss': 3.3686484005224124, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 48, 'best_loss': 3.3686484005224124, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 49, 'best_loss': 3.3686484005224124, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 50, 'best_loss': 3.3686484005224124, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 51, 'best_loss': 3.362834745104142, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 52, 'best_loss': 3.362834745104142, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 53, 'best_loss': 3.362834745104142, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 54, 'best_loss': 3.362834745104142, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 55, 'best_loss': 3.362834745104142, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 56, 'best_loss': 3.357451197695269, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 57, 'best_loss': 3.357451197695269, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 58, 'best_loss': 3.357451197695269, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 59, 'best_loss': 3.357451197695269, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 60, 'best_loss': 3.357451197695269, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 61, 'best_loss': 3.352388498887055, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 62, 'best_loss': 3.352388498887055, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 63, 'best_loss': 3.352388498887055, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 64, 'best_loss': 3.352388498887055, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 65, 'best_loss': 3.352388498887055, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 66, 'best_loss': 3.3475087208463004, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 67, 'best_loss': 3.3475087208463004, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 68, 'best_loss': 3.3475087208463004, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 69, 'best_loss': 3.3475087208463004, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 70, 'best_loss': 3.3475087208463004, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 71, 'best_loss': 3.3427665415026078, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 72, 'best_loss': 3.3427665415026078, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 73, 'best_loss': 3.3427665415026078, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 74, 'best_loss': 3.3427665415026078, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 75, 'best_loss': 3.3427665415026078, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 76, 'best_loss': 3.3381201245618106, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 77, 'best_loss': 3.3381201245618106, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 78, 'best_loss': 3.3381201245618106, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 79, 'best_loss': 3.3381201245618106, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 80, 'best_loss': 3.3381201245618106, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 81, 'best_loss': 3.333560870393077, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 82, 'best_loss': 3.333560870393077, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 83, 'best_loss': 3.333560870393077, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 84, 'best_loss': 3.333560870393077, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 85, 'best_loss': 3.333560870393077, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 86, 'best_loss': 3.32909798718494, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 87, 'best_loss': 3.32909798718494, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 88, 'best_loss': 3.32909798718494, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 89, 'best_loss': 3.32909798718494, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 90, 'best_loss': 3.32909798718494, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 91, 'best_loss': 3.3247282964236744, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 92, 'best_loss': 3.3247282964236744, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 93, 'best_loss': 3.3247282964236744, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 94, 'best_loss': 3.3247282964236744, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 95, 'best_loss': 3.3247282964236744, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 96, 'best_loss': 3.3204378468299174, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 97, 'best_loss': 3.3204378468299174, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 98, 'best_loss': 3.3204378468299174, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 99, 'best_loss': 3.3204378468299174, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 100, 'best_loss': 3.3204378468299174, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 101, 'best_loss': 3.3162148823294397, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 102, 'best_loss': 3.3162148823294397, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 103, 'best_loss': 3.3162148823294397, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 104, 'best_loss': 3.3162148823294397, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 105, 'best_loss': 3.3162148823294397, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 106, 'best_loss': 3.312052007111636, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 107, 'best_loss': 3.312052007111636, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 108, 'best_loss': 3.312052007111636, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 109, 'best_loss': 3.312052007111636, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 110, 'best_loss': 3.312052007111636, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 111, 'best_loss': 3.307944213978132, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 112, 'best_loss': 3.307944213978132, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 113, 'best_loss': 3.307944213978132, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 114, 'best_loss': 3.307944213978132, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 115, 'best_loss': 3.307944213978132, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 116, 'best_loss': 3.303886936132643, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 117, 'best_loss': 3.303886936132643, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 118, 'best_loss': 3.303886936132643, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 119, 'best_loss': 3.303886936132643, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 120, 'best_loss': 3.303886936132643, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 121, 'best_loss': 3.2998758973649758, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 122, 'best_loss': 3.2998758973649758, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 123, 'best_loss': 3.2998758973649758, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 124, 'best_loss': 3.2998758973649758, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 125, 'best_loss': 3.2998758973649758, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 126, 'best_loss': 3.29590753703257, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 127, 'best_loss': 3.29590753703257, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 128, 'best_loss': 3.29590753703257, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 129, 'best_loss': 3.29590753703257, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 130, 'best_loss': 3.29590753703257, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 131, 'best_loss': 3.291979087603715, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 132, 'best_loss': 3.291979087603715, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 133, 'best_loss': 3.291979087603715, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 134, 'best_loss': 3.291979087603715, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 135, 'best_loss': 3.291979087603715, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 136, 'best_loss': 3.28808832201114, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 137, 'best_loss': 3.28808832201114, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 138, 'best_loss': 3.28808832201114, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 139, 'best_loss': 3.28808832201114, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 140, 'best_loss': 3.28808832201114, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 141, 'best_loss': 3.284233292155138, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 142, 'best_loss': 3.284233292155138, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 143, 'best_loss': 3.284233292155138, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 144, 'best_loss': 3.284233292155138, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 145, 'best_loss': 3.284233292155138, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 146, 'best_loss': 3.2804123262645786, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 147, 'best_loss': 3.2804123262645786, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 148, 'best_loss': 3.2804123262645786, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 149, 'best_loss': 3.2804123262645786, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 150, 'best_loss': 3.2804123262645786, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 151, 'best_loss': 3.2766240544934773, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 152, 'best_loss': 3.2766240544934773, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 153, 'best_loss': 3.2766240544934773, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 154, 'best_loss': 3.2766240544934773, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 155, 'best_loss': 3.2766240544934773, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 156, 'best_loss': 3.2728673627504627, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 157, 'best_loss': 3.2728673627504627, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 158, 'best_loss': 3.2728673627504627, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 159, 'best_loss': 3.2728673627504627, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 160, 'best_loss': 3.2728673627504627, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 161, 'best_loss': 3.269141312939808, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 162, 'best_loss': 3.269141312939808, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 163, 'best_loss': 3.269141312939808, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 164, 'best_loss': 3.269141312939808, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 165, 'best_loss': 3.269141312939808, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 166, 'best_loss': 3.26544510701241, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 167, 'best_loss': 3.26544510701241, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 168, 'best_loss': 3.26544510701241, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 169, 'best_loss': 3.26544510701241, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 170, 'best_loss': 3.26544510701241, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 171, 'best_loss': 3.2617780698670624, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 172, 'best_loss': 3.2617780698670624, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 173, 'best_loss': 3.2617780698670624, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 174, 'best_loss': 3.2617780698670624, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 175, 'best_loss': 3.2617780698670624, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 176, 'best_loss': 3.2581396377598706, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 177, 'best_loss': 3.2581396377598706, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 178, 'best_loss': 3.2581396377598706, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 179, 'best_loss': 3.2581396377598706, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 180, 'best_loss': 3.2581396377598706, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 181, 'best_loss': 3.254529346974424, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 182, 'best_loss': 3.254529346974424, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 183, 'best_loss': 3.254529346974424, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 184, 'best_loss': 3.254529346974424, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 185, 'best_loss': 3.254529346974424, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 186, 'best_loss': 3.2509468289664567, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 187, 'best_loss': 3.2509468289664567, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 188, 'best_loss': 3.2509468289664567, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 189, 'best_loss': 3.2509468289664567, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 190, 'best_loss': 3.2509468289664567, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 191, 'best_loss': 3.2473918006112075, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 192, 'best_loss': 3.2473918006112075, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 193, 'best_loss': 3.2473918006112075, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 194, 'best_loss': 3.2473918006112075, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 195, 'best_loss': 3.2473918006112075, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 196, 'best_loss': 3.2438640672343526, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 197, 'best_loss': 3.2438640672343526, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 198, 'best_loss': 3.2438640672343526, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 199, 'best_loss': 3.2438640672343526, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 200, 'best_loss': 3.2438640672343526, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 201, 'best_loss': 3.240363521269784, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 202, 'best_loss': 3.240363521269784, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 203, 'best_loss': 3.240363521269784, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 204, 'best_loss': 3.240363521269784, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 205, 'best_loss': 3.240363521269784, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 206, 'best_loss': 3.2368901429583965, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 207, 'best_loss': 3.2368901429583965, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 208, 'best_loss': 3.2368901429583965, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 209, 'best_loss': 3.2368901429583965, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 210, 'best_loss': 3.2368901429583965, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 211, 'best_loss': 3.2334440030431084, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 212, 'best_loss': 3.2334440030431084, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 213, 'best_loss': 3.2334440030431084, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 214, 'best_loss': 3.2334440030431084, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 215, 'best_loss': 3.2334440030431084, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 216, 'best_loss': 3.2300252632808384, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 217, 'best_loss': 3.2300252632808384, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 218, 'best_loss': 3.2300252632808384, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 219, 'best_loss': 3.2300252632808384, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 220, 'best_loss': 3.2300252632808384, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 221, 'best_loss': 3.2266341769922957, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 222, 'best_loss': 3.2266341769922957, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 223, 'best_loss': 3.2266341769922957, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 224, 'best_loss': 3.2266341769922957, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 225, 'best_loss': 3.2266341769922957, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 226, 'best_loss': 3.223271086895838, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 227, 'best_loss': 3.223271086895838, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 228, 'best_loss': 3.223271086895838, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 229, 'best_loss': 3.223271086895838, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 230, 'best_loss': 3.223271086895838, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 231, 'best_loss': 3.219936422179448, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 232, 'best_loss': 3.219936422179448, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 233, 'best_loss': 3.219936422179448, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 234, 'best_loss': 3.219936422179448, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 235, 'best_loss': 3.219936422179448, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 236, 'best_loss': 3.216630693904769, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 237, 'best_loss': 3.216630693904769, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 238, 'best_loss': 3.216630693904769, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 239, 'best_loss': 3.216630693904769, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 240, 'best_loss': 3.216630693904769, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 241, 'best_loss': 3.2133544896025277, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 242, 'best_loss': 3.2133544896025277, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 243, 'best_loss': 3.2133544896025277, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 244, 'best_loss': 3.2133544896025277, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 245, 'best_loss': 3.2133544896025277, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 246, 'best_loss': 3.210108465598309, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 247, 'best_loss': 3.210108465598309, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 248, 'best_loss': 3.210108465598309, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 249, 'best_loss': 3.210108465598309, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 250, 'best_loss': 3.210108465598309, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 251, 'best_loss': 3.2068933378378026, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 252, 'best_loss': 3.2068933378378026, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 253, 'best_loss': 3.2068933378378026, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 254, 'best_loss': 3.2068933378378026, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 255, 'best_loss': 3.2068933378378026, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 256, 'best_loss': 3.203709870646609, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 257, 'best_loss': 3.203709870646609, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 258, 'best_loss': 3.203709870646609, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 259, 'best_loss': 3.203709870646609, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 260, 'best_loss': 3.203709870646609, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 261, 'best_loss': 3.2005588638318243, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 262, 'best_loss': 3.2005588638318243, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 263, 'best_loss': 3.2005588638318243, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 264, 'best_loss': 3.2005588638318243, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 265, 'best_loss': 3.2005588638318243, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 266, 'best_loss': 3.1974411379505554, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 267, 'best_loss': 3.1974411379505554, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 268, 'best_loss': 3.1974411379505554, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 269, 'best_loss': 3.1974411379505554, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 270, 'best_loss': 3.1974411379505554, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 271, 'best_loss': 3.194357518109397, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 272, 'best_loss': 3.194357518109397, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 273, 'best_loss': 3.194357518109397, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 274, 'best_loss': 3.194357518109397, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 275, 'best_loss': 3.194357518109397, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 276, 'best_loss': 3.1913088168051718, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 277, 'best_loss': 3.1913088168051718, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 278, 'best_loss': 3.1913088168051718, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 279, 'best_loss': 3.1913088168051718, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 280, 'best_loss': 3.1913088168051718, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 281, 'best_loss': 3.188295816251584, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 282, 'best_loss': 3.188295816251584, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 283, 'best_loss': 3.188295816251584, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 284, 'best_loss': 3.188295816251584, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 285, 'best_loss': 3.188295816251584, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 286, 'best_loss': 3.185319250771483, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 287, 'best_loss': 3.185319250771483, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 288, 'best_loss': 3.185319250771483, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 289, 'best_loss': 3.185319250771483, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 290, 'best_loss': 3.185319250771483, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 291, 'best_loss': 3.1823797898855, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 292, 'best_loss': 3.1823797898855, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 293, 'best_loss': 3.1823797898855, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 294, 'best_loss': 3.1823797898855, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 295, 'best_loss': 3.1823797898855, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 296, 'best_loss': 3.17947802278771, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 297, 'best_loss': 3.17947802278771, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 298, 'best_loss': 3.17947802278771, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 299, 'best_loss': 3.17947802278771, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 300, 'best_loss': 3.17947802278771, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 301, 'best_loss': 3.1766144449040548, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 302, 'best_loss': 3.1766144449040548, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 303, 'best_loss': 3.1766144449040548, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 304, 'best_loss': 3.1766144449040548, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 305, 'best_loss': 3.1766144449040548, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 306, 'best_loss': 3.1737894470708117, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 307, 'best_loss': 3.1737894470708117, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 308, 'best_loss': 3.1737894470708117, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 309, 'best_loss': 3.1737894470708117, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 310, 'best_loss': 3.1737894470708117, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 311, 'best_loss': 3.17100330776911, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 312, 'best_loss': 3.17100330776911, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 313, 'best_loss': 3.17100330776911, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 314, 'best_loss': 3.17100330776911, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 315, 'best_loss': 3.17100330776911, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 316, 'best_loss': 3.1682561886350906, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 317, 'best_loss': 3.1682561886350906, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 318, 'best_loss': 3.1682561886350906, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 319, 'best_loss': 3.1682561886350906, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 320, 'best_loss': 3.1682561886350906, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 321, 'best_loss': 3.165548133242201, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 322, 'best_loss': 3.165548133242201, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 323, 'best_loss': 3.165548133242201, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 324, 'best_loss': 3.165548133242201, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 325, 'best_loss': 3.165548133242201, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 326, 'best_loss': 3.1628790689494, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 327, 'best_loss': 3.1628790689494, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 328, 'best_loss': 3.1628790689494, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 329, 'best_loss': 3.1628790689494, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 330, 'best_loss': 3.1628790689494, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 331, 'best_loss': 3.1602488114472775, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 332, 'best_loss': 3.1602488114472775, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 333, 'best_loss': 3.1602488114472775, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 334, 'best_loss': 3.1602488114472775, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 335, 'best_loss': 3.1602488114472775, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 336, 'best_loss': 3.157657071492766, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 337, 'best_loss': 3.157657071492766, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 338, 'best_loss': 3.157657071492766, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 339, 'best_loss': 3.157657071492766, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 340, 'best_loss': 3.157657071492766, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 341, 'best_loss': 3.1551034632826918, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 342, 'best_loss': 3.1551034632826918, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 343, 'best_loss': 3.1551034632826918, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 344, 'best_loss': 3.1551034632826918, 'stopping': 'practical plateau; no update ceiling'}
+drone_residual {'update': 345, 'best_loss': 3.1551034632826918, 'stopping': 'practical plateau; no update ceiling'}
+attitude response {'windows': 81}
+attitude response {'update': 1, 'loss': 0.9055087961418302, 'best_loss': 0.9055087961418302}
+attitude response {'update': 2, 'loss': 0.9054919181131744, 'best_loss': 0.9054919181131744}
+attitude response {'update': 3, 'loss': 0.9054913125528067, 'best_loss': 0.9054913125528067}
+cable_physics {'windows': 144, 'parameters': ['EI', 'Cb', 'external damping']}
+Traceback (most recent call last):
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\tools\fit_m7_horizontal.py", line 23, in <module>
+    result=fit(job)
+           ^^^^^^^^
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\experimental_data\whip_full_fit.py", line 263, in fit
+    cable,cr=fit_physics(engine,cd,model,contract,job/'cable_physics',job)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\experimental_data\whip_full_cable.py", line 70, in fit_physics
+    if relative>.02:raise ValueError(f'Cable physical sensitivity check failed: {relative}')
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: Cable physical sensitivity check failed: 0.7509509288351596

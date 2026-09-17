@@ -1,0 +1,2431 @@
+{
+  "command_whip_window_s": [
+    0.0,
+    1.1333333333333333
+  ],
+  "late_diagnostic_window_s": [
+    0.0,
+    1.5
+  ],
+  "method": "Measured native OptiTrack tip in global coordinates; adjacent valid samples linearly interpolated, no gap bridging. Closest distances are estimates, not confirmed physical contacts. Mean and sample SD across own-flight whips.",
+  "models": {
+    "M0": {
+      "at_planned_strike": {
+        "max_cm": 37.523157151368295,
+        "mean_cm": 31.554734596766057,
+        "min_cm": 19.61417472167705,
+        "sd_cm": 5.271591749262806
+      },
+      "closest_during_command_whip": {
+        "max_cm": 14.928846298367809,
+        "mean_cm": 12.575843942249719,
+        "min_cm": 10.995976048537022,
+        "sd_cm": 1.4139148886132349
+      },
+      "closest_prestrike": {
+        "max_cm": 14.928846298367809,
+        "mean_cm": 12.575843942249719,
+        "min_cm": 10.995976048537022,
+        "sd_cm": 1.4139148886132349
+      },
+      "late_motion_diagnostic": {
+        "max_cm": 14.928846298367809,
+        "mean_cm": 12.575843942249719,
+        "min_cm": 10.995976048537022,
+        "sd_cm": 1.4139148886132349
+      },
+      "take_count": 11,
+      "takes": {
+        "M0_002_whip_001": {
+          "at_planned_strike_distance_m": 0.37453554912669057,
+          "at_planned_strike_position_m": [
+            1.3991448597558107,
+            0.0821480703844101,
+            1.5835931397678453
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.14276959215432447,
+            "nearest_native_sample_m": 0.14285347545999721,
+            "position_m": [
+              1.1814217414622026,
+              0.0643919847335472,
+              1.3573957690130751
+            ],
+            "time_s": 1.0727205329679037
+          },
+          "closest_prestrike": {
+            "distance_m": 0.14276959215432447,
+            "nearest_native_sample_m": 0.14285347545999721,
+            "position_m": [
+              1.1814217414622026,
+              0.0643919847335472,
+              1.3573957690130751
+            ],
+            "time_s": 1.0727205329679037
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.14276959215432447,
+            "nearest_native_sample_m": 0.14285347545999721,
+            "position_m": [
+              1.1814217414622026,
+              0.0643919847335472,
+              1.3573957690130751
+            ],
+            "time_s": 1.0727205329679037
+          },
+          "recording_group": "M0_v2_002"
+        },
+        "M0_002_whip_002": {
+          "at_planned_strike_distance_m": 0.34768680940169494,
+          "at_planned_strike_position_m": [
+            1.4665907368517075,
+            0.0015554653002680895,
+            1.5219782172705465
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.11684490144836367,
+            "nearest_native_sample_m": 0.11706212733416387,
+            "position_m": [
+              1.2378386759490088,
+              -0.015029355094708605,
+              1.365234333760567
+            ],
+            "time_s": 1.082502249915504
+          },
+          "closest_prestrike": {
+            "distance_m": 0.11684490144836367,
+            "nearest_native_sample_m": 0.11706212733416387,
+            "position_m": [
+              1.2378386759490088,
+              -0.015029355094708605,
+              1.365234333760567
+            ],
+            "time_s": 1.082502249915504
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.11684490144836367,
+            "nearest_native_sample_m": 0.11706212733416387,
+            "position_m": [
+              1.2378386759490088,
+              -0.015029355094708605,
+              1.365234333760567
+            ],
+            "time_s": 1.082502249915504
+          },
+          "recording_group": "M0_v2_002"
+        },
+        "M0_002_whip_003": {
+          "at_planned_strike_distance_m": 0.3050981411127656,
+          "at_planned_strike_position_m": [
+            1.45026119942975,
+            -0.0039157363639634995,
+            1.480141249501585
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.11559142761468073,
+            "nearest_native_sample_m": 0.11559142761468073,
+            "position_m": [
+              1.231041,
+              -0.014219,
+              1.363136
+            ],
+            "time_s": 1.0848970151691333
+          },
+          "closest_prestrike": {
+            "distance_m": 0.11559142761468073,
+            "nearest_native_sample_m": 0.11559142761468073,
+            "position_m": [
+              1.231041,
+              -0.014219,
+              1.363136
+            ],
+            "time_s": 1.0848970151691333
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.11559142761468073,
+            "nearest_native_sample_m": 0.11559142761468073,
+            "position_m": [
+              1.231041,
+              -0.014219,
+              1.363136
+            ],
+            "time_s": 1.0848970151691333
+          },
+          "recording_group": "M0_v2_002"
+        },
+        "M0_002_whip_004": {
+          "at_planned_strike_distance_m": 0.30833164674072194,
+          "at_planned_strike_position_m": [
+            1.4633345887927143,
+            0.04214064259714892,
+            1.468588480593073
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.1118200488490546,
+            "nearest_native_sample_m": 0.11289305241687812,
+            "position_m": [
+              1.2401151528012777,
+              0.03181002382510802,
+              1.3567433159720501
+            ],
+            "time_s": 1.0842186802661622
+          },
+          "closest_prestrike": {
+            "distance_m": 0.1118200488490546,
+            "nearest_native_sample_m": 0.11289305241687812,
+            "position_m": [
+              1.2401151528012777,
+              0.03181002382510802,
+              1.3567433159720501
+            ],
+            "time_s": 1.0842186802661622
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.1118200488490546,
+            "nearest_native_sample_m": 0.11289305241687812,
+            "position_m": [
+              1.2401151528012777,
+              0.03181002382510802,
+              1.3567433159720501
+            ],
+            "time_s": 1.0842186802661622
+          },
+          "recording_group": "M0_v2_002"
+        },
+        "M0_003_whip_001": {
+          "at_planned_strike_distance_m": 0.3752315715136829,
+          "at_planned_strike_position_m": [
+            1.4855165442212968,
+            0.09754707175399778,
+            1.5253457071590304
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.14398777024716294,
+            "nearest_native_sample_m": 0.14522876206523275,
+            "position_m": [
+              1.2231314422063742,
+              0.088245922755218,
+              1.3605586527591598
+            ],
+            "time_s": 1.0752570044861163
+          },
+          "closest_prestrike": {
+            "distance_m": 0.14398777024716294,
+            "nearest_native_sample_m": 0.14522876206523275,
+            "position_m": [
+              1.2231314422063742,
+              0.088245922755218,
+              1.3605586527591598
+            ],
+            "time_s": 1.0752570044861163
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.14398777024716294,
+            "nearest_native_sample_m": 0.14522876206523275,
+            "position_m": [
+              1.2231314422063742,
+              0.088245922755218,
+              1.3605586527591598
+            ],
+            "time_s": 1.0752570044861163
+          },
+          "recording_group": "M0_v2_003"
+        },
+        "M0_003_whip_002": {
+          "at_planned_strike_distance_m": 0.32248684563765345,
+          "at_planned_strike_position_m": [
+            1.4516746265390734,
+            0.0732082235441746,
+            1.4907606002342475
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.13069666838337174,
+            "nearest_native_sample_m": 0.13094681110664752,
+            "position_m": [
+              1.2316934667264547,
+              0.06885171974200273,
+              1.3595715777680797
+            ],
+            "time_s": 1.0830380955615981
+          },
+          "closest_prestrike": {
+            "distance_m": 0.13069666838337174,
+            "nearest_native_sample_m": 0.13094681110664752,
+            "position_m": [
+              1.2316934667264547,
+              0.06885171974200273,
+              1.3595715777680797
+            ],
+            "time_s": 1.0830380955615981
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.13069666838337174,
+            "nearest_native_sample_m": 0.13094681110664752,
+            "position_m": [
+              1.2316934667264547,
+              0.06885171974200273,
+              1.3595715777680797
+            ],
+            "time_s": 1.0830380955615981
+          },
+          "recording_group": "M0_v2_003"
+        },
+        "M0_003_whip_003": {
+          "at_planned_strike_distance_m": 0.27212651602133375,
+          "at_planned_strike_position_m": [
+            1.4449006402029023,
+            0.03973339616230045,
+            1.4357090153972545
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.11390962250618729,
+            "nearest_native_sample_m": 0.11490314412147308,
+            "position_m": [
+              1.2360505261372934,
+              0.035508119661923236,
+              1.3573312056977387
+            ],
+            "time_s": 1.0875608115936028
+          },
+          "closest_prestrike": {
+            "distance_m": 0.11390962250618729,
+            "nearest_native_sample_m": 0.11490314412147308,
+            "position_m": [
+              1.2360505261372934,
+              0.035508119661923236,
+              1.3573312056977387
+            ],
+            "time_s": 1.0875608115936028
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.11390962250618729,
+            "nearest_native_sample_m": 0.11490314412147308,
+            "position_m": [
+              1.2360505261372934,
+              0.035508119661923236,
+              1.3573312056977387
+            ],
+            "time_s": 1.0875608115936028
+          },
+          "recording_group": "M0_v2_003"
+        },
+        "M0_003_whip_004": {
+          "at_planned_strike_distance_m": 0.2927527969284738,
+          "at_planned_strike_position_m": [
+            1.4484608163188342,
+            0.067936778691053,
+            1.4542109169378294
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.12051567385836895,
+            "nearest_native_sample_m": 0.12296730441869491,
+            "position_m": [
+              1.2338810932594793,
+              0.06407719274131989,
+              1.3507885006407918
+            ],
+            "time_s": 1.0837524692069638
+          },
+          "closest_prestrike": {
+            "distance_m": 0.12051567385836895,
+            "nearest_native_sample_m": 0.12296730441869491,
+            "position_m": [
+              1.2338810932594793,
+              0.06407719274131989,
+              1.3507885006407918
+            ],
+            "time_s": 1.0837524692069638
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.12051567385836895,
+            "nearest_native_sample_m": 0.12296730441869491,
+            "position_m": [
+              1.2338810932594793,
+              0.06407719274131989,
+              1.3507885006407918
+            ],
+            "time_s": 1.0837524692069638
+          },
+          "recording_group": "M0_v2_003"
+        },
+        "M0_Whip123_001": {
+          "at_planned_strike_distance_m": 0.3082633108445788,
+          "at_planned_strike_position_m": [
+            1.440972865946606,
+            0.16215635179092158,
+            1.4296133370851396
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.1492884629836781,
+            "nearest_native_sample_m": 0.1492913287870397,
+            "position_m": [
+              1.221855506673349,
+              0.14385432476617932,
+              1.2782995745812853
+            ],
+            "time_s": 1.0765604960521222
+          },
+          "closest_prestrike": {
+            "distance_m": 0.1492884629836781,
+            "nearest_native_sample_m": 0.1492913287870397,
+            "position_m": [
+              1.221855506673349,
+              0.14385432476617932,
+              1.2782995745812853
+            ],
+            "time_s": 1.0765604960521222
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.1492884629836781,
+            "nearest_native_sample_m": 0.1492913287870397,
+            "position_m": [
+              1.221855506673349,
+              0.14385432476617932,
+              1.2782995745812853
+            ],
+            "time_s": 1.0765604960521222
+          },
+          "recording_group": "M0_v2_001"
+        },
+        "M0_Whip123_002": {
+          "at_planned_strike_distance_m": 0.36836587109989977,
+          "at_planned_strike_position_m": [
+            1.5005941117746202,
+            0.017807779034263137,
+            1.5194046939846149
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.10995976048537022,
+            "nearest_native_sample_m": 0.10995976048537022,
+            "position_m": [
+              1.237097,
+              0.019686,
+              1.357411
+            ],
+            "time_s": 1.0775418333734166
+          },
+          "closest_prestrike": {
+            "distance_m": 0.10995976048537022,
+            "nearest_native_sample_m": 0.10995976048537022,
+            "position_m": [
+              1.237097,
+              0.019686,
+              1.357411
+            ],
+            "time_s": 1.0775418333734166
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.10995976048537022,
+            "nearest_native_sample_m": 0.10995976048537022,
+            "position_m": [
+              1.237097,
+              0.019686,
+              1.357411
+            ],
+            "time_s": 1.0775418333734166
+          },
+          "recording_group": "M0_v2_001"
+        },
+        "M0_Whip123_003": {
+          "at_planned_strike_distance_m": 0.1961417472167705,
+          "at_planned_strike_position_m": [
+            1.3662471431393952,
+            0.12356825429657697,
+            1.3484330901845154
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.12795890511690652,
+            "nearest_native_sample_m": 0.13109329951603174,
+            "position_m": [
+              1.2302834922972623,
+              0.11486583790072656,
+              1.302825940655036
+            ],
+            "time_s": 1.0930838342843758
+          },
+          "closest_prestrike": {
+            "distance_m": 0.12795890511690652,
+            "nearest_native_sample_m": 0.13109329951603174,
+            "position_m": [
+              1.2302834922972623,
+              0.11486583790072656,
+              1.302825940655036
+            ],
+            "time_s": 1.0930838342843758
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.12795890511690652,
+            "nearest_native_sample_m": 0.13109329951603174,
+            "position_m": [
+              1.2302834922972623,
+              0.11486583790072656,
+              1.302825940655036
+            ],
+            "time_s": 1.0930838342843758
+          },
+          "recording_group": "M0_v2_001"
+        }
+      }
+    },
+    "M1": {
+      "at_planned_strike": {
+        "max_cm": 27.59869006323766,
+        "mean_cm": 21.944671175947633,
+        "min_cm": 15.57187416577743,
+        "sd_cm": 4.6228202319821525
+      },
+      "closest_during_command_whip": {
+        "max_cm": 8.701837763594487,
+        "mean_cm": 4.863773903431284,
+        "min_cm": 1.8455256223495013,
+        "sd_cm": 1.755110822847214
+      },
+      "closest_prestrike": {
+        "max_cm": 8.701837763594487,
+        "mean_cm": 4.863773903431284,
+        "min_cm": 1.8455256223495013,
+        "sd_cm": 1.755110822847214
+      },
+      "late_motion_diagnostic": {
+        "max_cm": 8.701837763594487,
+        "mean_cm": 4.863773903431284,
+        "min_cm": 1.8455256223495013,
+        "sd_cm": 1.755110822847214
+      },
+      "take_count": 12,
+      "takes": {
+        "M1_001_whip_001": {
+          "at_planned_strike_distance_m": 0.25797654927179003,
+          "at_planned_strike_position_m": [
+            1.4148026197214976,
+            -0.05058702148870369,
+            1.4419191229763548
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.06108286386233016,
+            "nearest_native_sample_m": 0.06442511493198909,
+            "position_m": [
+              1.2484677700469369,
+              -0.060908513645013075,
+              1.2543498844295167
+            ],
+            "time_s": 1.079432381534559
+          },
+          "closest_prestrike": {
+            "distance_m": 0.06108286386233016,
+            "nearest_native_sample_m": 0.06442511493198909,
+            "position_m": [
+              1.2484677700469369,
+              -0.060908513645013075,
+              1.2543498844295167
+            ],
+            "time_s": 1.079432381534559
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.06108286386233016,
+            "nearest_native_sample_m": 0.06442511493198909,
+            "position_m": [
+              1.2484677700469369,
+              -0.060908513645013075,
+              1.2543498844295167
+            ],
+            "time_s": 1.079432381534559
+          },
+          "recording_group": "M1_v2_001"
+        },
+        "M1_001_whip_002": {
+          "at_planned_strike_distance_m": 0.252931606581042,
+          "at_planned_strike_position_m": [
+            1.4283500425835256,
+            -0.03330160769515873,
+            1.426229006815108
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.03430672884627166,
+            "nearest_native_sample_m": 0.035358753343408475,
+            "position_m": [
+              1.248318308815881,
+              -0.03403913019137325,
+              1.2539320700283192
+            ],
+            "time_s": 1.0798830448900418
+          },
+          "closest_prestrike": {
+            "distance_m": 0.03430672884627166,
+            "nearest_native_sample_m": 0.035358753343408475,
+            "position_m": [
+              1.248318308815881,
+              -0.03403913019137325,
+              1.2539320700283192
+            ],
+            "time_s": 1.0798830448900418
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.03430672884627166,
+            "nearest_native_sample_m": 0.035358753343408475,
+            "position_m": [
+              1.248318308815881,
+              -0.03403913019137325,
+              1.2539320700283192
+            ],
+            "time_s": 1.0798830448900418
+          },
+          "recording_group": "M1_v2_001"
+        },
+        "M1_001_whip_003": {
+          "at_planned_strike_distance_m": 0.1557187416577743,
+          "at_planned_strike_position_m": [
+            1.3632765529544841,
+            -0.05187954829820279,
+            1.3434091083492667
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.04924239172472704,
+            "nearest_native_sample_m": 0.05153592774948365,
+            "position_m": [
+              1.2477858585205281,
+              -0.04915112747067344,
+              1.2520192544767708
+            ],
+            "time_s": 1.0936536529883627
+          },
+          "closest_prestrike": {
+            "distance_m": 0.04924239172472704,
+            "nearest_native_sample_m": 0.05153592774948365,
+            "position_m": [
+              1.2477858585205281,
+              -0.04915112747067344,
+              1.2520192544767708
+            ],
+            "time_s": 1.0936536529883627
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.04924239172472704,
+            "nearest_native_sample_m": 0.05153592774948365,
+            "position_m": [
+              1.2477858585205281,
+              -0.04915112747067344,
+              1.2520192544767708
+            ],
+            "time_s": 1.0936536529883627
+          },
+          "recording_group": "M1_v2_001"
+        },
+        "M1_001_whip_004": {
+          "at_planned_strike_distance_m": 0.15655408049804917,
+          "at_planned_strike_position_m": [
+            1.3318689138632973,
+            -0.03260993319083864,
+            1.3793957237342978
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.05020921117992969,
+            "nearest_native_sample_m": 0.053484055661477216,
+            "position_m": [
+              1.2289690719316768,
+              -0.03637515812982402,
+              1.2774865935125852
+            ],
+            "time_s": 1.093114125978892
+          },
+          "closest_prestrike": {
+            "distance_m": 0.05020921117992969,
+            "nearest_native_sample_m": 0.053484055661477216,
+            "position_m": [
+              1.2289690719316768,
+              -0.03637515812982402,
+              1.2774865935125852
+            ],
+            "time_s": 1.093114125978892
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.05020921117992969,
+            "nearest_native_sample_m": 0.053484055661477216,
+            "position_m": [
+              1.2289690719316768,
+              -0.03637515812982402,
+              1.2774865935125852
+            ],
+            "time_s": 1.093114125978892
+          },
+          "recording_group": "M1_v2_001"
+        },
+        "M1_002_whip_001": {
+          "at_planned_strike_distance_m": 0.25096776026976825,
+          "at_planned_strike_position_m": [
+            1.4294608863647569,
+            -0.02939996093677559,
+            1.4229573625403549
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.030136654782452768,
+            "nearest_native_sample_m": 0.03429046573028722,
+            "position_m": [
+              1.2436237618345614,
+              -0.027817810014355928,
+              1.2596814768676858
+            ],
+            "time_s": 1.0792068417584102
+          },
+          "closest_prestrike": {
+            "distance_m": 0.030136654782452768,
+            "nearest_native_sample_m": 0.03429046573028722,
+            "position_m": [
+              1.2436237618345614,
+              -0.027817810014355928,
+              1.2596814768676858
+            ],
+            "time_s": 1.0792068417584102
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.030136654782452768,
+            "nearest_native_sample_m": 0.03429046573028722,
+            "position_m": [
+              1.2436237618345614,
+              -0.027817810014355928,
+              1.2596814768676858
+            ],
+            "time_s": 1.0792068417584102
+          },
+          "recording_group": "M1_v2_002"
+        },
+        "M1_002_whip_002": {
+          "at_planned_strike_distance_m": 0.25262235242041553,
+          "at_planned_strike_position_m": [
+            1.410164999153531,
+            -0.04053820729952266,
+            1.4411069850568392
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.044763195544907014,
+            "nearest_native_sample_m": 0.047894533310180655,
+            "position_m": [
+              1.2436469223367983,
+              -0.043313762576540224,
+              1.2593434496338352
+            ],
+            "time_s": 1.0788414777939788
+          },
+          "closest_prestrike": {
+            "distance_m": 0.044763195544907014,
+            "nearest_native_sample_m": 0.047894533310180655,
+            "position_m": [
+              1.2436469223367983,
+              -0.043313762576540224,
+              1.2593434496338352
+            ],
+            "time_s": 1.0788414777939788
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.044763195544907014,
+            "nearest_native_sample_m": 0.047894533310180655,
+            "position_m": [
+              1.2436469223367983,
+              -0.043313762576540224,
+              1.2593434496338352
+            ],
+            "time_s": 1.0788414777939788
+          },
+          "recording_group": "M1_v2_002"
+        },
+        "M1_002_whip_003": {
+          "at_planned_strike_distance_m": 0.16131241175337638,
+          "at_planned_strike_position_m": [
+            1.3456357904630842,
+            -0.05756744739404343,
+            1.3664537623639783
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.06000589360970273,
+            "nearest_native_sample_m": 0.06294302570579204,
+            "position_m": [
+              1.2363869140807657,
+              -0.05545591334807659,
+              1.268439979240366
+            ],
+            "time_s": 1.0932742033370133
+          },
+          "closest_prestrike": {
+            "distance_m": 0.06000589360970273,
+            "nearest_native_sample_m": 0.06294302570579204,
+            "position_m": [
+              1.2363869140807657,
+              -0.05545591334807659,
+              1.268439979240366
+            ],
+            "time_s": 1.0932742033370133
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.06000589360970273,
+            "nearest_native_sample_m": 0.06294302570579204,
+            "position_m": [
+              1.2363869140807657,
+              -0.05545591334807659,
+              1.268439979240366
+            ],
+            "time_s": 1.0932742033370133
+          },
+          "recording_group": "M1_v2_002"
+        },
+        "M1_002_whip_004": {
+          "at_planned_strike_distance_m": 0.17926259964110072,
+          "at_planned_strike_position_m": [
+            1.3736523837935044,
+            -0.06017505913354293,
+            1.3649962167662226
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.05891880395410663,
+            "nearest_native_sample_m": 0.05917768428216839,
+            "position_m": [
+              1.2433376502783358,
+              -0.058274915339790005,
+              1.255574297956604
+            ],
+            "time_s": 1.0897803709307994
+          },
+          "closest_prestrike": {
+            "distance_m": 0.05891880395410663,
+            "nearest_native_sample_m": 0.05917768428216839,
+            "position_m": [
+              1.2433376502783358,
+              -0.058274915339790005,
+              1.255574297956604
+            ],
+            "time_s": 1.0897803709307994
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.05891880395410663,
+            "nearest_native_sample_m": 0.05917768428216839,
+            "position_m": [
+              1.2433376502783358,
+              -0.058274915339790005,
+              1.255574297956604
+            ],
+            "time_s": 1.0897803709307994
+          },
+          "recording_group": "M1_v2_002"
+        },
+        "M1_003_whip_001": {
+          "at_planned_strike_distance_m": 0.19885989764636425,
+          "at_planned_strike_position_m": [
+            1.3717506258081817,
+            -0.04500584917739331,
+            1.4006536343639286
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.04783440181710398,
+            "nearest_native_sample_m": 0.05062087696790724,
+            "position_m": [
+              1.2370944747327126,
+              -0.042243702680557035,
+              1.2683588397948309
+            ],
+            "time_s": 1.088187459298104
+          },
+          "closest_prestrike": {
+            "distance_m": 0.04783440181710398,
+            "nearest_native_sample_m": 0.05062087696790724,
+            "position_m": [
+              1.2370944747327126,
+              -0.042243702680557035,
+              1.2683588397948309
+            ],
+            "time_s": 1.088187459298104
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.04783440181710398,
+            "nearest_native_sample_m": 0.05062087696790724,
+            "position_m": [
+              1.2370944747327126,
+              -0.042243702680557035,
+              1.2683588397948309
+            ],
+            "time_s": 1.088187459298104
+          },
+          "recording_group": "M1_v2_003"
+        },
+        "M1_003_whip_002": {
+          "at_planned_strike_distance_m": 0.2657025142165074,
+          "at_planned_strike_position_m": [
+            1.4259161860643992,
+            -0.037658368344897566,
+            1.4455330377075164
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.04167908923078254,
+            "nearest_native_sample_m": 0.04605669874187686,
+            "position_m": [
+              1.2399406908795447,
+              -0.03719819928193551,
+              1.2658824037635388
+            ],
+            "time_s": 1.0781399897522899
+          },
+          "closest_prestrike": {
+            "distance_m": 0.04167908923078254,
+            "nearest_native_sample_m": 0.04605669874187686,
+            "position_m": [
+              1.2399406908795447,
+              -0.03719819928193551,
+              1.2658824037635388
+            ],
+            "time_s": 1.0781399897522899
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.04167908923078254,
+            "nearest_native_sample_m": 0.04605669874187686,
+            "position_m": [
+              1.2399406908795447,
+              -0.03719819928193551,
+              1.2658824037635388
+            ],
+            "time_s": 1.0781399897522899
+          },
+          "recording_group": "M1_v2_003"
+        },
+        "M1_003_whip_003": {
+          "at_planned_strike_distance_m": 0.22546512652515097,
+          "at_planned_strike_position_m": [
+            1.408906547801163,
+            -0.016144064577543957,
+            1.409130768627048
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.018455256223495014,
+            "nearest_native_sample_m": 0.0236822759885954,
+            "position_m": [
+              1.2463097638656468,
+              -0.017265093756952773,
+              1.2553754234355254
+            ],
+            "time_s": 1.0822989996582573
+          },
+          "closest_prestrike": {
+            "distance_m": 0.018455256223495014,
+            "nearest_native_sample_m": 0.0236822759885954,
+            "position_m": [
+              1.2463097638656468,
+              -0.017265093756952773,
+              1.2553754234355254
+            ],
+            "time_s": 1.0822989996582573
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.018455256223495014,
+            "nearest_native_sample_m": 0.0236822759885954,
+            "position_m": [
+              1.2463097638656468,
+              -0.017265093756952773,
+              1.2553754234355254
+            ],
+            "time_s": 1.0822989996582573
+          },
+          "recording_group": "M1_v2_003"
+        },
+        "M1_003_whip_004": {
+          "at_planned_strike_distance_m": 0.27598690063237663,
+          "at_planned_strike_position_m": [
+            1.4264668552483957,
+            -0.08030591074545879,
+            1.4464158318943499
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.08701837763594486,
+            "nearest_native_sample_m": 0.08976211656929664,
+            "position_m": [
+              1.2437921850895113,
+              -0.08611829103116803,
+              1.2608305600178416
+            ],
+            "time_s": 1.0779702691620159
+          },
+          "closest_prestrike": {
+            "distance_m": 0.08701837763594486,
+            "nearest_native_sample_m": 0.08976211656929664,
+            "position_m": [
+              1.2437921850895113,
+              -0.08611829103116803,
+              1.2608305600178416
+            ],
+            "time_s": 1.0779702691620159
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.08701837763594486,
+            "nearest_native_sample_m": 0.08976211656929664,
+            "position_m": [
+              1.2437921850895113,
+              -0.08611829103116803,
+              1.2608305600178416
+            ],
+            "time_s": 1.0779702691620159
+          },
+          "recording_group": "M1_v2_003"
+        }
+      }
+    },
+    "M2": {
+      "at_planned_strike": {
+        "max_cm": 25.250210432992848,
+        "mean_cm": 13.804729027658878,
+        "min_cm": 2.1518483841986393,
+        "sd_cm": 7.054236831510868
+      },
+      "closest_during_command_whip": {
+        "max_cm": 7.993370612661123,
+        "mean_cm": 4.640622121523022,
+        "min_cm": 1.5524083807501832,
+        "sd_cm": 2.466682063225815
+      },
+      "closest_prestrike": {
+        "max_cm": 7.993370612661123,
+        "mean_cm": 4.640622121523022,
+        "min_cm": 1.5524083807501832,
+        "sd_cm": 2.466682063225815
+      },
+      "late_motion_diagnostic": {
+        "max_cm": 7.993370612661123,
+        "mean_cm": 4.640622121523022,
+        "min_cm": 1.5524083807501832,
+        "sd_cm": 2.466682063225815
+      },
+      "take_count": 11,
+      "takes": {
+        "M2_001_whip_001": {
+          "at_planned_strike_distance_m": 0.1373283552335648,
+          "at_planned_strike_position_m": [
+            1.3461254123781055,
+            0.07274608740777677,
+            1.3157798526385962
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.07855455083237232,
+            "nearest_native_sample_m": 0.08181226786368899,
+            "position_m": [
+              1.2534728073894184,
+              0.07847273212630809,
+              1.2508873431942948
+            ],
+            "time_s": 1.0969590667365152
+          },
+          "closest_prestrike": {
+            "distance_m": 0.07855455083237232,
+            "nearest_native_sample_m": 0.08181226786368899,
+            "position_m": [
+              1.2534728073894184,
+              0.07847273212630809,
+              1.2508873431942948
+            ],
+            "time_s": 1.0969590667365152
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.07855455083237232,
+            "nearest_native_sample_m": 0.08181226786368899,
+            "position_m": [
+              1.2534728073894184,
+              0.07847273212630809,
+              1.2508873431942948
+            ],
+            "time_s": 1.0969590667365152
+          },
+          "recording_group": "M2_v2_001"
+        },
+        "M2_001_whip_002": {
+          "at_planned_strike_distance_m": 0.2525021043299285,
+          "at_planned_strike_position_m": [
+            1.4232179494197623,
+            -0.049075436051163615,
+            1.427043656385206
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.03951429172117833,
+            "nearest_native_sample_m": 0.046779390098632044,
+            "position_m": [
+              1.2406577637305247,
+              -0.03598631302533846,
+              1.2633823445835937
+            ],
+            "time_s": 1.079669612233285
+          },
+          "closest_prestrike": {
+            "distance_m": 0.03951429172117833,
+            "nearest_native_sample_m": 0.046779390098632044,
+            "position_m": [
+              1.2406577637305247,
+              -0.03598631302533846,
+              1.2633823445835937
+            ],
+            "time_s": 1.079669612233285
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.03951429172117833,
+            "nearest_native_sample_m": 0.046779390098632044,
+            "position_m": [
+              1.2406577637305247,
+              -0.03598631302533846,
+              1.2633823445835937
+            ],
+            "time_s": 1.079669612233285
+          },
+          "recording_group": "M2_v2_001"
+        },
+        "M2_001_whip_003": {
+          "at_planned_strike_distance_m": 0.05146658237863152,
+          "at_planned_strike_position_m": [
+            1.2923658264092943,
+            -0.02920101405754295,
+            1.2488834730611476
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.03399440784381281,
+            "nearest_native_sample_m": 0.03885944738413038,
+            "position_m": [
+              1.258035034960033,
+              -0.026528239683392074,
+              1.2303197947891027
+            ],
+            "time_s": 1.1076782635838227
+          },
+          "closest_prestrike": {
+            "distance_m": 0.03399440784381281,
+            "nearest_native_sample_m": 0.03885944738413038,
+            "position_m": [
+              1.258035034960033,
+              -0.026528239683392074,
+              1.2303197947891027
+            ],
+            "time_s": 1.1076782635838227
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.03399440784381281,
+            "nearest_native_sample_m": 0.03885944738413038,
+            "position_m": [
+              1.258035034960033,
+              -0.026528239683392074,
+              1.2303197947891027
+            ],
+            "time_s": 1.1076782635838227
+          },
+          "recording_group": "M2_v2_001"
+        },
+        "M2_001_whip_004": {
+          "at_planned_strike_distance_m": 0.1262235411291548,
+          "at_planned_strike_position_m": [
+            1.3412351457692282,
+            0.019979301102894056,
+            1.3349079386105387
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.028288760560813406,
+            "nearest_native_sample_m": 0.029244898461099168,
+            "position_m": [
+              1.2461418305309861,
+              0.026735579610673615,
+              1.2584010288237057
+            ],
+            "time_s": 1.0959929327554407
+          },
+          "closest_prestrike": {
+            "distance_m": 0.028288760560813406,
+            "nearest_native_sample_m": 0.029244898461099168,
+            "position_m": [
+              1.2461418305309861,
+              0.026735579610673615,
+              1.2584010288237057
+            ],
+            "time_s": 1.0959929327554407
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.028288760560813406,
+            "nearest_native_sample_m": 0.029244898461099168,
+            "position_m": [
+              1.2461418305309861,
+              0.026735579610673615,
+              1.2584010288237057
+            ],
+            "time_s": 1.0959929327554407
+          },
+          "recording_group": "M2_v2_001"
+        },
+        "M2_002_whip_001": {
+          "at_planned_strike_distance_m": 0.1843614390790784,
+          "at_planned_strike_position_m": [
+            1.3655880434994607,
+            -0.017685161305082606,
+            1.392533432881162
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.03605412966637805,
+            "nearest_native_sample_m": 0.03605412966637805,
+            "position_m": [
+              1.231959,
+              -0.007309,
+              1.280348
+            ],
+            "time_s": 1.088893488206729
+          },
+          "closest_prestrike": {
+            "distance_m": 0.03605412966637805,
+            "nearest_native_sample_m": 0.03605412966637805,
+            "position_m": [
+              1.231959,
+              -0.007309,
+              1.280348
+            ],
+            "time_s": 1.088893488206729
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.03605412966637805,
+            "nearest_native_sample_m": 0.03605412966637805,
+            "position_m": [
+              1.231959,
+              -0.007309,
+              1.280348
+            ],
+            "time_s": 1.088893488206729
+          },
+          "recording_group": "M2_v2_002"
+        },
+        "M2_002_whip_002": {
+          "at_planned_strike_distance_m": 0.10925851244716674,
+          "at_planned_strike_position_m": [
+            1.272769445101905,
+            0.08391830459528699,
+            1.316156579912898
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.07806224882158953,
+            "nearest_native_sample_m": 0.078391415352703,
+            "position_m": [
+              1.2312845220513917,
+              0.0756829229786407,
+              1.2539421752431943
+            ],
+            "time_s": 1.100563399312682
+          },
+          "closest_prestrike": {
+            "distance_m": 0.07806224882158953,
+            "nearest_native_sample_m": 0.078391415352703,
+            "position_m": [
+              1.2312845220513917,
+              0.0756829229786407,
+              1.2539421752431943
+            ],
+            "time_s": 1.100563399312682
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.07806224882158953,
+            "nearest_native_sample_m": 0.078391415352703,
+            "position_m": [
+              1.2312845220513917,
+              0.0756829229786407,
+              1.2539421752431943
+            ],
+            "time_s": 1.100563399312682
+          },
+          "recording_group": "M2_v2_002"
+        },
+        "M2_002_whip_003": {
+          "at_planned_strike_distance_m": 0.18998139505037087,
+          "at_planned_strike_position_m": [
+            1.3267601894164114,
+            0.011472618200807907,
+            1.42340467934188
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.06519824630385992,
+            "nearest_native_sample_m": 0.06613379657935876,
+            "position_m": [
+              1.2081596328756572,
+              0.005932485628845426,
+              1.2996487725353059
+            ],
+            "time_s": 1.0858089576392564
+          },
+          "closest_prestrike": {
+            "distance_m": 0.06519824630385992,
+            "nearest_native_sample_m": 0.06613379657935876,
+            "position_m": [
+              1.2081596328756572,
+              0.005932485628845426,
+              1.2996487725353059
+            ],
+            "time_s": 1.0858089576392564
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.06519824630385992,
+            "nearest_native_sample_m": 0.06613379657935876,
+            "position_m": [
+              1.2081596328756572,
+              0.005932485628845426,
+              1.2996487725353059
+            ],
+            "time_s": 1.0858089576392564
+          },
+          "recording_group": "M2_v2_002"
+        },
+        "M2_003_whip_001": {
+          "at_planned_strike_distance_m": 0.09037913654573358,
+          "at_planned_strike_position_m": [
+            1.2585984655581826,
+            0.07503245802243456,
+            1.2996445863706074
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.07993370612661123,
+            "nearest_native_sample_m": 0.08000818921210505,
+            "position_m": [
+              1.227674564195146,
+              0.07382759623062016,
+              1.2709870990388694
+            ],
+            "time_s": 1.1069424516429625
+          },
+          "closest_prestrike": {
+            "distance_m": 0.07993370612661123,
+            "nearest_native_sample_m": 0.08000818921210505,
+            "position_m": [
+              1.227674564195146,
+              0.07382759623062016,
+              1.2709870990388694
+            ],
+            "time_s": 1.1069424516429625
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.07993370612661123,
+            "nearest_native_sample_m": 0.08000818921210505,
+            "position_m": [
+              1.227674564195146,
+              0.07382759623062016,
+              1.2709870990388694
+            ],
+            "time_s": 1.1069424516429625
+          },
+          "recording_group": "M2_v2_003"
+        },
+        "M2_003_whip_002": {
+          "at_planned_strike_distance_m": 0.2243925426673353,
+          "at_planned_strike_position_m": [
+            1.414562763475057,
+            0.009652498507474133,
+            1.402243027277861
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.015524083807501832,
+            "nearest_native_sample_m": 0.015658421025122535,
+            "position_m": [
+              1.2495332025938402,
+              0.015387250331532595,
+              1.2520029491952351
+            ],
+            "time_s": 1.0806681418885575
+          },
+          "closest_prestrike": {
+            "distance_m": 0.015524083807501832,
+            "nearest_native_sample_m": 0.015658421025122535,
+            "position_m": [
+              1.2495332025938402,
+              0.015387250331532595,
+              1.2520029491952351
+            ],
+            "time_s": 1.0806681418885575
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.015524083807501832,
+            "nearest_native_sample_m": 0.015658421025122535,
+            "position_m": [
+              1.2495332025938402,
+              0.015387250331532595,
+              1.2520029491952351
+            ],
+            "time_s": 1.0806681418885575
+          },
+          "recording_group": "M2_v2_003"
+        },
+        "M2_003_whip_003": {
+          "at_planned_strike_distance_m": 0.021518483841986392,
+          "at_planned_strike_position_m": [
+            1.2694914762229208,
+            -0.006426992937090397,
+            1.2435330638401378
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.015859709965119845,
+            "nearest_native_sample_m": 0.019556140749135663,
+            "position_m": [
+              1.2565692022721526,
+              -0.006005554080661407,
+              1.2368733362247097
+            ],
+            "time_s": 1.1115344799317755
+          },
+          "closest_prestrike": {
+            "distance_m": 0.015859709965119845,
+            "nearest_native_sample_m": 0.019556140749135663,
+            "position_m": [
+              1.2565692022721526,
+              -0.006005554080661408,
+              1.2368733362247097
+            ],
+            "time_s": 1.1115344799317755
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.015859709965119845,
+            "nearest_native_sample_m": 0.019556140749135663,
+            "position_m": [
+              1.2565692022721526,
+              -0.006005554080661407,
+              1.2368733362247097
+            ],
+            "time_s": 1.1115344799317755
+          },
+          "recording_group": "M2_v2_003"
+        },
+        "M2_003_whip_004": {
+          "at_planned_strike_distance_m": 0.13110810033952525,
+          "at_planned_strike_position_m": [
+            1.354300664845096,
+            0.03505940143761416,
+            1.3212849469267265
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.039484297718295217,
+            "nearest_native_sample_m": 0.040339006408190096,
+            "position_m": [
+              1.254531730407889,
+              0.03889812282667351,
+              1.2449592434716394
+            ],
+            "time_s": 1.0934956922614985
+          },
+          "closest_prestrike": {
+            "distance_m": 0.039484297718295217,
+            "nearest_native_sample_m": 0.040339006408190096,
+            "position_m": [
+              1.254531730407889,
+              0.03889812282667351,
+              1.2449592434716394
+            ],
+            "time_s": 1.0934956922614985
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.039484297718295217,
+            "nearest_native_sample_m": 0.040339006408190096,
+            "position_m": [
+              1.254531730407889,
+              0.03889812282667351,
+              1.2449592434716394
+            ],
+            "time_s": 1.0934956922614985
+          },
+          "recording_group": "M2_v2_003"
+        }
+      }
+    },
+    "M3": {
+      "at_planned_strike": {
+        "max_cm": 21.801333539246713,
+        "mean_cm": 12.648067159203512,
+        "min_cm": 2.812867422995039,
+        "sd_cm": 5.921378992597147
+      },
+      "closest_during_command_whip": {
+        "max_cm": 8.448759597124297,
+        "mean_cm": 4.7110468397454754,
+        "min_cm": 2.350318180654093,
+        "sd_cm": 1.8057839994524159
+      },
+      "closest_prestrike": {
+        "max_cm": 9.891635810798315,
+        "mean_cm": 5.203500597169367,
+        "min_cm": 2.350318180654093,
+        "sd_cm": 2.3211783212069057
+      },
+      "late_motion_diagnostic": {
+        "max_cm": 8.448759597124297,
+        "mean_cm": 4.7110468397454754,
+        "min_cm": 2.350318180654093,
+        "sd_cm": 1.8057839994524159
+      },
+      "take_count": 12,
+      "takes": {
+        "M3_001_whip_001": {
+          "at_planned_strike_distance_m": 0.21801333539246714,
+          "at_planned_strike_position_m": [
+            1.353850707161551,
+            0.07080078356646335,
+            1.4281350444953742
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.06554924481686669,
+            "nearest_native_sample_m": 0.06558223090136535,
+            "position_m": [
+              1.2358579068091264,
+              0.06334741298742155,
+              1.2591547782083035
+            ],
+            "time_s": 1.0807518609409277
+          },
+          "closest_prestrike": {
+            "distance_m": 0.06554924481686669,
+            "nearest_native_sample_m": 0.06558223090136535,
+            "position_m": [
+              1.2358579068091264,
+              0.06334741298742155,
+              1.2591547782083035
+            ],
+            "time_s": 1.0807518609409277
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.06554924481686669,
+            "nearest_native_sample_m": 0.06558223090136535,
+            "position_m": [
+              1.2358579068091264,
+              0.06334741298742155,
+              1.2591547782083035
+            ],
+            "time_s": 1.0807518609409277
+          },
+          "recording_group": "M3_v2_001"
+        },
+        "M3_001_whip_002": {
+          "at_planned_strike_distance_m": 0.14488556232352082,
+          "at_planned_strike_position_m": [
+            1.3297312761524538,
+            -0.05646997600254402,
+            1.356985473701695
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.059463467354728836,
+            "nearest_native_sample_m": 0.05947121329685478,
+            "position_m": [
+              1.235466917221515,
+              -0.05393966281050162,
+              1.2703766098919813
+            ],
+            "time_s": 1.0951431475740174
+          },
+          "closest_prestrike": {
+            "distance_m": 0.059463467354728836,
+            "nearest_native_sample_m": 0.05947121329685478,
+            "position_m": [
+              1.235466917221515,
+              -0.05393966281050162,
+              1.2703766098919813
+            ],
+            "time_s": 1.0951431475740174
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.059463467354728836,
+            "nearest_native_sample_m": 0.05947121329685478,
+            "position_m": [
+              1.235466917221515,
+              -0.05393966281050162,
+              1.2703766098919813
+            ],
+            "time_s": 1.0951431475740174
+          },
+          "recording_group": "M3_v2_001"
+        },
+        "M3_001_whip_003": {
+          "at_planned_strike_distance_m": 0.090325033027551,
+          "at_planned_strike_position_m": [
+            1.2308391145000754,
+            -0.053879956771781146,
+            1.3199172533539323
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.08448759597124297,
+            "nearest_native_sample_m": 0.08448759597124297,
+            "position_m": [
+              1.211858,
+              -0.053603,
+              1.30301
+            ],
+            "time_s": 1.1101171433150654
+          },
+          "closest_prestrike": {
+            "distance_m": 0.08448759597124297,
+            "nearest_native_sample_m": 0.08448759597124297,
+            "position_m": [
+              1.211858,
+              -0.053603,
+              1.30301
+            ],
+            "time_s": 1.1101171433150654
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.08448759597124297,
+            "nearest_native_sample_m": 0.08448759597124297,
+            "position_m": [
+              1.211858,
+              -0.053603,
+              1.30301
+            ],
+            "time_s": 1.1101171433150654
+          },
+          "recording_group": "M3_v2_001"
+        },
+        "M3_001_whip_004": {
+          "at_planned_strike_distance_m": 0.028128674229950388,
+          "at_planned_strike_position_m": [
+            1.2642384440260677,
+            -0.024218441054685874,
+            1.251398620224335
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.024362043449070784,
+            "nearest_native_sample_m": 0.03225001677518945,
+            "position_m": [
+              1.2515678857432762,
+              -0.023855401984463277,
+              1.2453127095812069
+            ],
+            "time_s": 1.1114442123337653
+          },
+          "closest_prestrike": {
+            "distance_m": 0.024362043449070784,
+            "nearest_native_sample_m": 0.045605651020460096,
+            "position_m": [
+              1.2515678857432762,
+              -0.023855401984463277,
+              1.2453127095812069
+            ],
+            "time_s": 1.1114442123337653
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.024362043449070784,
+            "nearest_native_sample_m": 0.03225001677518945,
+            "position_m": [
+              1.2515678857432762,
+              -0.023855401984463277,
+              1.2453127095812069
+            ],
+            "time_s": 1.1114442123337653
+          },
+          "recording_group": "M3_v2_001"
+        },
+        "M3_002_whip_001": {
+          "at_planned_strike_distance_m": 0.18010857268196084,
+          "at_planned_strike_position_m": [
+            1.343802118553687,
+            0.032058873564153316,
+            1.4003744962890012
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.05363965245050693,
+            "nearest_native_sample_m": 0.06074500619804069,
+            "position_m": [
+              1.2266522494154746,
+              0.035654776023510124,
+              1.2825704130211346
+            ],
+            "time_s": 1.0905582680117087
+          },
+          "closest_prestrike": {
+            "distance_m": 0.05363965245050693,
+            "nearest_native_sample_m": 0.06074500619804069,
+            "position_m": [
+              1.2266522494154746,
+              0.035654776023510124,
+              1.2825704130211346
+            ],
+            "time_s": 1.0905582680117087
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.05363965245050693,
+            "nearest_native_sample_m": 0.06074500619804069,
+            "position_m": [
+              1.2266522494154746,
+              0.035654776023510124,
+              1.2825704130211346
+            ],
+            "time_s": 1.0905582680117087
+          },
+          "recording_group": "M3_v2_002"
+        },
+        "M3_002_whip_002": {
+          "at_planned_strike_distance_m": 0.19349807446410708,
+          "at_planned_strike_position_m": [
+            1.3837600466415174,
+            0.004283196919642877,
+            1.3897548173335137
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.023503181806540933,
+            "nearest_native_sample_m": 0.03449728780643496,
+            "position_m": [
+              1.240555022685618,
+              0.01146190250713135,
+              1.268215837874749
+            ],
+            "time_s": 1.0879981117263333
+          },
+          "closest_prestrike": {
+            "distance_m": 0.023503181806540933,
+            "nearest_native_sample_m": 0.03449728780643496,
+            "position_m": [
+              1.240555022685618,
+              0.01146190250713135,
+              1.268215837874749
+            ],
+            "time_s": 1.0879981117263333
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.023503181806540933,
+            "nearest_native_sample_m": 0.03449728780643496,
+            "position_m": [
+              1.240555022685618,
+              0.01146190250713135,
+              1.268215837874749
+            ],
+            "time_s": 1.0879981117263333
+          },
+          "recording_group": "M3_v2_002"
+        },
+        "M3_002_whip_003": {
+          "at_planned_strike_distance_m": 0.17850037477785977,
+          "at_planned_strike_position_m": [
+            1.3596425172031104,
+            -0.04321985989946109,
+            1.3840632161611566
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.043715225788533145,
+            "nearest_native_sample_m": 0.04755856450735243,
+            "position_m": [
+              1.2380604214288113,
+              -0.03927202231570337,
+              1.2650391386894244
+            ],
+            "time_s": 1.0898194866578375
+          },
+          "closest_prestrike": {
+            "distance_m": 0.043715225788533145,
+            "nearest_native_sample_m": 0.04755856450735243,
+            "position_m": [
+              1.2380604214288113,
+              -0.03927202231570337,
+              1.2650391386894244
+            ],
+            "time_s": 1.0898194866578375
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.043715225788533145,
+            "nearest_native_sample_m": 0.04755856450735243,
+            "position_m": [
+              1.2380604214288113,
+              -0.03927202231570337,
+              1.2650391386894244
+            ],
+            "time_s": 1.0898194866578375
+          },
+          "recording_group": "M3_v2_002"
+        },
+        "M3_002_whip_004": {
+          "at_planned_strike_distance_m": 0.06200017301654637,
+          "at_planned_strike_position_m": [
+            1.274332797936915,
+            -0.006941451060863197,
+            1.306601701880885
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.030669287402300693,
+            "nearest_native_sample_m": 0.03934475034868044,
+            "position_m": [
+              1.232337195216803,
+              -0.006621980316281031,
+              1.2741822226779587
+            ],
+            "time_s": 1.1060495954274083
+          },
+          "closest_prestrike": {
+            "distance_m": 0.030669287402300693,
+            "nearest_native_sample_m": 0.03934475034868044,
+            "position_m": [
+              1.232337195216803,
+              -0.006621980316281031,
+              1.2741822226779587
+            ],
+            "time_s": 1.1060495954274083
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.030669287402300693,
+            "nearest_native_sample_m": 0.03934475034868044,
+            "position_m": [
+              1.232337195216803,
+              -0.006621980316281031,
+              1.2741822226779587
+            ],
+            "time_s": 1.1060495954274083
+          },
+          "recording_group": "M3_v2_002"
+        },
+        "M3_003_whip_001": {
+          "at_planned_strike_distance_m": 0.09891635810798315,
+          "at_planned_strike_position_m": [
+            1.1734200541174802,
+            -0.03736202909646175,
+            1.1997602092781803
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.03982190721711611,
+            "nearest_native_sample_m": 0.04503751895919672,
+            "position_m": [
+              1.2584035005783776,
+              -0.036434465919477625,
+              1.236299811475741
+            ],
+            "time_s": 1.1290720224011206
+          },
+          "closest_prestrike": {
+            "distance_m": 0.09891635810798315,
+            "nearest_native_sample_m": 0.14006760096824666,
+            "position_m": [
+              1.1734200541174802,
+              -0.03736202909646175,
+              1.1997602092781803
+            ],
+            "time_s": 1.1138000791100293
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.03982190721711611,
+            "nearest_native_sample_m": 0.04503751895919672,
+            "position_m": [
+              1.2584035005783776,
+              -0.036434465919477625,
+              1.236299811475741
+            ],
+            "time_s": 1.1290720224011206
+          },
+          "recording_group": "M3_v2_003"
+        },
+        "M3_003_whip_002": {
+          "at_planned_strike_distance_m": 0.1510715436314126,
+          "at_planned_strike_position_m": [
+            1.328338520180871,
+            -0.05325656188738237,
+            1.3676835849512772
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.05860309051609734,
+            "nearest_native_sample_m": 0.06563628592478407,
+            "position_m": [
+              1.2304457876402723,
+              -0.0493933409020558,
+              1.2747437440894032
+            ],
+            "time_s": 1.0948970981092996
+          },
+          "closest_prestrike": {
+            "distance_m": 0.05860309051609734,
+            "nearest_native_sample_m": 0.06563628592478407,
+            "position_m": [
+              1.2304457876402723,
+              -0.0493933409020558,
+              1.2747437440894032
+            ],
+            "time_s": 1.0948970981092996
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.05860309051609734,
+            "nearest_native_sample_m": 0.06563628592478407,
+            "position_m": [
+              1.2304457876402723,
+              -0.0493933409020558,
+              1.2747437440894032
+            ],
+            "time_s": 1.0948970981092996
+          },
+          "recording_group": "M3_v2_003"
+        },
+        "M3_003_whip_003": {
+          "at_planned_strike_distance_m": 0.08265068970312066,
+          "at_planned_strike_position_m": [
+            1.2857464850009117,
+            -0.0310552601595721,
+            1.3177413915926033
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.04475957526961874,
+            "nearest_native_sample_m": 0.04524024536847695,
+            "position_m": [
+              1.2325207972192302,
+              -0.02836922861071927,
+              1.279884509641253
+            ],
+            "time_s": 1.1045224798100388
+          },
+          "closest_prestrike": {
+            "distance_m": 0.04475957526961874,
+            "nearest_native_sample_m": 0.04524024536847695,
+            "position_m": [
+              1.2325207972192302,
+              -0.02836922861071927,
+              1.279884509641253
+            ],
+            "time_s": 1.1045224798100388
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.04475957526961874,
+            "nearest_native_sample_m": 0.04524024536847695,
+            "position_m": [
+              1.2325207972192302,
+              -0.02836922861071927,
+              1.279884509641253
+            ],
+            "time_s": 1.1045224798100388
+          },
+          "recording_group": "M3_v2_003"
+        },
+        "M3_003_whip_004": {
+          "at_planned_strike_distance_m": 0.0896696677479418,
+          "at_planned_strike_position_m": [
+            1.2897997470358415,
+            -0.0027623103551273906,
+            1.3303056603945902
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.03675134872683391,
+            "nearest_native_sample_m": 0.03944084265073452,
+            "position_m": [
+              1.2281507010751191,
+              0.0017720358357608407,
+              1.2794979602469279
+            ],
+            "time_s": 1.1023605432717383
+          },
+          "closest_prestrike": {
+            "distance_m": 0.03675134872683391,
+            "nearest_native_sample_m": 0.03944084265073452,
+            "position_m": [
+              1.2281507010751191,
+              0.0017720358357608407,
+              1.2794979602469279
+            ],
+            "time_s": 1.1023605432717383
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.03675134872683391,
+            "nearest_native_sample_m": 0.03944084265073452,
+            "position_m": [
+              1.2281507010751191,
+              0.0017720358357608407,
+              1.2794979602469279
+            ],
+            "time_s": 1.1023605432717383
+          },
+          "recording_group": "M3_v2_003"
+        }
+      }
+    },
+    "M4": {
+      "at_planned_strike": {
+        "max_cm": 22.70004318792396,
+        "mean_cm": 13.612923548645819,
+        "min_cm": 5.471227209547332,
+        "sd_cm": 5.224576231135982
+      },
+      "closest_during_command_whip": {
+        "max_cm": 6.791339839023171,
+        "mean_cm": 3.8060864734637008,
+        "min_cm": 0.8834059465718811,
+        "sd_cm": 2.041410164519482
+      },
+      "closest_prestrike": {
+        "max_cm": 6.791339839023171,
+        "mean_cm": 3.8060864734637008,
+        "min_cm": 0.8834059465718811,
+        "sd_cm": 2.041410164519482
+      },
+      "late_motion_diagnostic": {
+        "max_cm": 6.791339839023171,
+        "mean_cm": 3.8060864734637008,
+        "min_cm": 0.8834059465718811,
+        "sd_cm": 2.041410164519482
+      },
+      "take_count": 12,
+      "takes": {
+        "M4_001_whip_001": {
+          "at_planned_strike_distance_m": 0.12120996026751876,
+          "at_planned_strike_position_m": [
+            1.3373084643088908,
+            -0.06029108555584459,
+            1.308600951618335
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.061721686597976236,
+            "nearest_native_sample_m": 0.06959894775785053,
+            "position_m": [
+              1.2529048136385803,
+              -0.061381662544197566,
+              1.24421898300174
+            ],
+            "time_s": 1.0978910942803441
+          },
+          "closest_prestrike": {
+            "distance_m": 0.061721686597976236,
+            "nearest_native_sample_m": 0.06959894775785053,
+            "position_m": [
+              1.2529048136385803,
+              -0.061381662544197566,
+              1.24421898300174
+            ],
+            "time_s": 1.0978910942803441
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.061721686597976236,
+            "nearest_native_sample_m": 0.06959894775785053,
+            "position_m": [
+              1.2529048136385803,
+              -0.061381662544197566,
+              1.24421898300174
+            ],
+            "time_s": 1.0978910942803441
+          },
+          "recording_group": "M4_v2_001"
+        },
+        "M4_001_whip_002": {
+          "at_planned_strike_distance_m": 0.2270004318792396,
+          "at_planned_strike_position_m": [
+            1.4189690754146627,
+            -0.02570521577869489,
+            1.3993917317278506
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.022344012914567758,
+            "nearest_native_sample_m": 0.02891189338317363,
+            "position_m": [
+              1.250578275280252,
+              -0.022225944157609534,
+              1.247780108757294
+            ],
+            "time_s": 1.080559490383888
+          },
+          "closest_prestrike": {
+            "distance_m": 0.022344012914567758,
+            "nearest_native_sample_m": 0.02891189338317363,
+            "position_m": [
+              1.250578275280252,
+              -0.022225944157609534,
+              1.247780108757294
+            ],
+            "time_s": 1.080559490383888
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.022344012914567758,
+            "nearest_native_sample_m": 0.02891189338317363,
+            "position_m": [
+              1.250578275280252,
+              -0.022225944157609534,
+              1.247780108757294
+            ],
+            "time_s": 1.080559490383888
+          },
+          "recording_group": "M4_v2_001"
+        },
+        "M4_001_whip_003": {
+          "at_planned_strike_distance_m": 0.08999787784308927,
+          "at_planned_strike_position_m": [
+            1.3189781709329067,
+            -0.013542229124721595,
+            1.3061982026522545
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.012813326715753585,
+            "nearest_native_sample_m": 0.0174848891617877,
+            "position_m": [
+              1.2482573104873325,
+              -0.012479901673420902,
+              1.2523230215256922
+            ],
+            "time_s": 1.1007180786871211
+          },
+          "closest_prestrike": {
+            "distance_m": 0.012813326715753585,
+            "nearest_native_sample_m": 0.0174848891617877,
+            "position_m": [
+              1.2482573104873325,
+              -0.012479901673420902,
+              1.2523230215256922
+            ],
+            "time_s": 1.1007180786871211
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.012813326715753585,
+            "nearest_native_sample_m": 0.0174848891617877,
+            "position_m": [
+              1.2482573104873325,
+              -0.012479901673420902,
+              1.2523230215256922
+            ],
+            "time_s": 1.1007180786871211
+          },
+          "recording_group": "M4_v2_001"
+        },
+        "M4_001_whip_004": {
+          "at_planned_strike_distance_m": 0.1527030016162054,
+          "at_planned_strike_position_m": [
+            1.341556132978323,
+            -0.044756493028649855,
+            1.36372131527744
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.051060729715911995,
+            "nearest_native_sample_m": 0.059667099527294,
+            "position_m": [
+              1.23618528724532,
+              -0.04545209271712775,
+              1.2687205528299974
+            ],
+            "time_s": 1.092384910945091
+          },
+          "closest_prestrike": {
+            "distance_m": 0.051060729715911995,
+            "nearest_native_sample_m": 0.059667099527294,
+            "position_m": [
+              1.23618528724532,
+              -0.04545209271712775,
+              1.2687205528299974
+            ],
+            "time_s": 1.092384910945091
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.051060729715911995,
+            "nearest_native_sample_m": 0.059667099527294,
+            "position_m": [
+              1.23618528724532,
+              -0.04545209271712775,
+              1.2687205528299974
+            ],
+            "time_s": 1.092384910945091
+          },
+          "recording_group": "M4_v2_001"
+        },
+        "M4_002_whip_001": {
+          "at_planned_strike_distance_m": 0.16024648772745412,
+          "at_planned_strike_position_m": [
+            1.3429412646814773,
+            -0.0022796491661815957,
+            1.3805207314876522
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.03266616129257474,
+            "nearest_native_sample_m": 0.03356815307698659,
+            "position_m": [
+              1.2328186230052114,
+              -0.006410803777504491,
+              1.2770329423681883
+            ],
+            "time_s": 1.0916901777200476
+          },
+          "closest_prestrike": {
+            "distance_m": 0.03266616129257474,
+            "nearest_native_sample_m": 0.03356815307698659,
+            "position_m": [
+              1.2328186230052114,
+              -0.006410803777504491,
+              1.2770329423681883
+            ],
+            "time_s": 1.0916901777200476
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.03266616129257474,
+            "nearest_native_sample_m": 0.03356815307698659,
+            "position_m": [
+              1.2328186230052114,
+              -0.006410803777504491,
+              1.2770329423681883
+            ],
+            "time_s": 1.0916901777200476
+          },
+          "recording_group": "M4_v2_002"
+        },
+        "M4_002_whip_002": {
+          "at_planned_strike_distance_m": 0.18195261303229449,
+          "at_planned_strike_position_m": [
+            1.3503675116134768,
+            0.006312246520757994,
+            1.4016353242013868
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.032322205504735725,
+            "nearest_native_sample_m": 0.0335362804586316,
+            "position_m": [
+              1.2300822118859729,
+              0.002528597627241141,
+              1.275330078550502
+            ],
+            "time_s": 1.0889557729626866
+          },
+          "closest_prestrike": {
+            "distance_m": 0.032322205504735725,
+            "nearest_native_sample_m": 0.0335362804586316,
+            "position_m": [
+              1.2300822118859729,
+              0.002528597627241141,
+              1.275330078550502
+            ],
+            "time_s": 1.0889557729626866
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.032322205504735725,
+            "nearest_native_sample_m": 0.0335362804586316,
+            "position_m": [
+              1.2300822118859729,
+              0.002528597627241141,
+              1.275330078550502
+            ],
+            "time_s": 1.0889557729626866
+          },
+          "recording_group": "M4_v2_002"
+        },
+        "M4_002_whip_003": {
+          "at_planned_strike_distance_m": 0.0750634004937516,
+          "at_planned_strike_position_m": [
+            1.3034073518603728,
+            0.004496226709481863,
+            1.3025542843764866
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.00883405946571881,
+            "nearest_native_sample_m": 0.009576343195604419,
+            "position_m": [
+              1.2448828704378687,
+              0.0026922077546224586,
+              1.2566788928045125
+            ],
+            "time_s": 1.1030842914218129
+          },
+          "closest_prestrike": {
+            "distance_m": 0.00883405946571881,
+            "nearest_native_sample_m": 0.009576343195604419,
+            "position_m": [
+              1.2448828704378687,
+              0.0026922077546224586,
+              1.2566788928045125
+            ],
+            "time_s": 1.1030842914218129
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.00883405946571881,
+            "nearest_native_sample_m": 0.009576343195604419,
+            "position_m": [
+              1.2448828704378687,
+              0.0026922077546224586,
+              1.2566788928045125
+            ],
+            "time_s": 1.1030842914218129
+          },
+          "recording_group": "M4_v2_002"
+        },
+        "M4_002_whip_004": {
+          "at_planned_strike_distance_m": 0.05471227209547332,
+          "at_planned_strike_position_m": [
+            1.2850950404014616,
+            0.009468264100007083,
+            1.2908915985503306
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.01396741217135932,
+            "nearest_native_sample_m": 0.0167001161972006,
+            "position_m": [
+              1.2446281669270014,
+              0.009773570950857298,
+              1.2584088835804186
+            ],
+            "time_s": 1.1058616974014874
+          },
+          "closest_prestrike": {
+            "distance_m": 0.01396741217135932,
+            "nearest_native_sample_m": 0.0167001161972006,
+            "position_m": [
+              1.2446281669270014,
+              0.009773570950857298,
+              1.2584088835804186
+            ],
+            "time_s": 1.1058616974014874
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.01396741217135932,
+            "nearest_native_sample_m": 0.0167001161972006,
+            "position_m": [
+              1.2446281669270014,
+              0.009773570950857298,
+              1.2584088835804186
+            ],
+            "time_s": 1.1058616974014874
+          },
+          "recording_group": "M4_v2_002"
+        },
+        "M4_003_whip_001": {
+          "at_planned_strike_distance_m": 0.14434455574033364,
+          "at_planned_strike_position_m": [
+            1.320908327520743,
+            0.03488982862085488,
+            1.3707893195563776
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.0506425920610043,
+            "nearest_native_sample_m": 0.0541150638824348,
+            "position_m": [
+              1.2268900734283938,
+              0.030727876253998386,
+              1.2829605983779304
+            ],
+            "time_s": 1.0944613409781467
+          },
+          "closest_prestrike": {
+            "distance_m": 0.0506425920610043,
+            "nearest_native_sample_m": 0.0541150638824348,
+            "position_m": [
+              1.2268900734283938,
+              0.030727876253998386,
+              1.2829605983779304
+            ],
+            "time_s": 1.0944613409781467
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.0506425920610043,
+            "nearest_native_sample_m": 0.0541150638824348,
+            "position_m": [
+              1.2268900734283938,
+              0.030727876253998386,
+              1.2829605983779304
+            ],
+            "time_s": 1.0944613409781467
+          },
+          "recording_group": "M4_v2_003"
+        },
+        "M4_003_whip_002": {
+          "at_planned_strike_distance_m": 0.2030476518244849,
+          "at_planned_strike_position_m": [
+            1.3722740037156747,
+            -0.0500566272273501,
+            1.4041809034783443
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.05747304963575178,
+            "nearest_native_sample_m": 0.06356374750594875,
+            "position_m": [
+              1.2381972456414108,
+              -0.05349181683520561,
+              1.2673917208939542
+            ],
+            "time_s": 1.0862740963318744
+          },
+          "closest_prestrike": {
+            "distance_m": 0.05747304963575178,
+            "nearest_native_sample_m": 0.06356374750594875,
+            "position_m": [
+              1.2381972456414108,
+              -0.05349181683520561,
+              1.2673917208939542
+            ],
+            "time_s": 1.0862740963318744
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.05747304963575178,
+            "nearest_native_sample_m": 0.06356374750594875,
+            "position_m": [
+              1.2381972456414108,
+              -0.05349181683520561,
+              1.2673917208939542
+            ],
+            "time_s": 1.0862740963318744
+          },
+          "recording_group": "M4_v2_003"
+        },
+        "M4_003_whip_003": {
+          "at_planned_strike_distance_m": 0.1250211391542712,
+          "at_planned_strike_position_m": [
+            1.3062196720010104,
+            -0.0035154672732615,
+            1.3616121642357188
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.04497174235005806,
+            "nearest_native_sample_m": 0.04497174235005806,
+            "position_m": [
+              1.224505,
+              -0.004371,
+              1.286788
+            ],
+            "time_s": 1.0971525161718318
+          },
+          "closest_prestrike": {
+            "distance_m": 0.04497174235005806,
+            "nearest_native_sample_m": 0.04497174235005806,
+            "position_m": [
+              1.224505,
+              -0.004371,
+              1.286788
+            ],
+            "time_s": 1.0971525161718318
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.04497174235005806,
+            "nearest_native_sample_m": 0.04497174235005806,
+            "position_m": [
+              1.224505,
+              -0.004371,
+              1.286788
+            ],
+            "time_s": 1.0971525161718318
+          },
+          "recording_group": "M4_v2_003"
+        },
+        "M4_003_whip_004": {
+          "at_planned_strike_distance_m": 0.09825143416338222,
+          "at_planned_strike_position_m": [
+            1.2572468175019011,
+            -0.015643185126183064,
+            1.346727031952622
+          ],
+          "closest_during_command_whip": {
+            "distance_m": 0.06791339839023171,
+            "nearest_native_sample_m": 0.06824585661415641,
+            "position_m": [
+              1.2064666724095836,
+              -0.01762739601461658,
+              1.2990546020222333
+            ],
+            "time_s": 1.1030082041372629
+          },
+          "closest_prestrike": {
+            "distance_m": 0.06791339839023171,
+            "nearest_native_sample_m": 0.06824585661415641,
+            "position_m": [
+              1.2064666724095836,
+              -0.01762739601461658,
+              1.2990546020222333
+            ],
+            "time_s": 1.1030082041372629
+          },
+          "late_motion_diagnostic": {
+            "distance_m": 0.06791339839023171,
+            "nearest_native_sample_m": 0.06824585661415641,
+            "position_m": [
+              1.2064666724095836,
+              -0.01762739601461658,
+              1.2990546020222333
+            ],
+            "time_s": 1.1030082041372629
+          },
+          "recording_group": "M4_v2_003"
+        }
+      }
+    }
+  },
+  "physical_target_present": false,
+  "planned_strike_time_s": 1.1138000791100293,
+  "prestrike_window_s": [
+    0.0,
+    1.1138000791100293
+  ],
+  "target_m": [
+    1.25,
+    0.0,
+    1.25
+  ]
+}

@@ -1,0 +1,17 @@
+[W915 19:35:41.000000000 Context.cpp:448] Warning: torch.backends.cuda.preferred_linalg_library is an experimental feature. If you see any error or unexpected behavior when this flag is set please file an issue on GitHub. (function operator ())
+{"production": false, "step": 0.001, "relative_error": 2.298906844095186, "derivative_norm": 7.8642882343125065, "cost": 1.1502740292235825}
+{"production": false, "step": 0.0003, "relative_error": 0.9348505713675016, "derivative_norm": 16.05606031006041, "cost": 1.1502740292235825, "difference_to_previous_jacobian": 1.0403574742781418}
+{"production": false, "step": 0.0001, "relative_error": 0.821399659839722, "derivative_norm": 71.56379829889319, "cost": 1.1502740292235825, "difference_to_previous_jacobian": 0.9804200593568597}
+{"production": false, "step": 3e-05, "relative_error": 0.6281619364396167, "derivative_norm": 218.93667137481944, "cost": 1.1502740292235825, "difference_to_previous_jacobian": 0.8556347505907355}
+{"production": false, "step": 1e-05, "relative_error": 0.7416375849703839, "derivative_norm": 331.9927284582583, "cost": 1.1502740292235825, "difference_to_previous_jacobian": 0.7724906058420397}
+{"production": false, "step": 3e-06, "relative_error": 0.4934837830888844, "derivative_norm": 383.1785641629447, "cost": 1.1502740292235825, "difference_to_previous_jacobian": 0.9036626619303473}
+{"production": false, "step": 1e-06, "relative_error": 0.7509509288351596, "derivative_norm": 774.078604724163, "cost": 1.1502740292235825, "difference_to_previous_jacobian": 0.7938984299309733}
+{"production": false, "step": 3e-07, "relative_error": 0.4340351228836241, "derivative_norm": 1406.6121371519077, "cost": 1.1502740292235825, "difference_to_previous_jacobian": 0.8720493395398615}
+{"production": true, "step": 0.001, "relative_error": 2.2989028873435573, "derivative_norm": 7.8643060794993005, "cost": 1.1502740276869396}
+{"production": true, "step": 0.0003, "relative_error": 0.9348367399689369, "derivative_norm": 16.05613240144634, "cost": 1.1502740276869396, "difference_to_previous_jacobian": 1.0403567216854364}
+{"production": true, "step": 0.0001, "relative_error": 0.8213957152514052, "derivative_norm": 71.56380106453265, "cost": 1.1502740276869396, "difference_to_previous_jacobian": 0.9804206824800724}
+{"production": true, "step": 3e-05, "relative_error": 0.62816211163165, "derivative_norm": 218.93666489119533, "cost": 1.1502740276869396, "difference_to_previous_jacobian": 0.8556318254250993}
+{"production": true, "step": 1e-05, "relative_error": 0.7416403168537001, "derivative_norm": 331.99148104430776, "cost": 1.1502740276869396, "difference_to_previous_jacobian": 0.772488319409896}
+{"production": true, "step": 3e-06, "relative_error": 0.49351999512751127, "derivative_norm": 383.1735667271413, "cost": 1.1502740276869396, "difference_to_previous_jacobian": 0.9036636720199079}
+{"production": true, "step": 1e-06, "relative_error": 0.7509273068512698, "derivative_norm": 774.0783635299643, "cost": 1.1502740276869396, "difference_to_previous_jacobian": 0.7939249951151793}
+{"production": true, "step": 3e-07, "relative_error": 0.434068711457981, "derivative_norm": 1407.0759810364964, "cost": 1.1502740276869396, "difference_to_previous_jacobian": 0.872007419608951}

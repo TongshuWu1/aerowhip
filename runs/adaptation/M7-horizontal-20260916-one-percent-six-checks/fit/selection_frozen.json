@@ -1,0 +1,78 @@
+{
+  "cable_parameters": [
+    9.973918996565335e-09,
+    9.589318374597831e-05,
+    0.18288296018408484
+  ],
+  "cable_physics": {
+    "active_bounds": [
+      0,
+      0,
+      0
+    ],
+    "baseline_loss": 0.8593335460829449,
+    "best": [
+      -18.42329225131472,
+      -9.25227565528522,
+      -1.6989088925832327
+    ],
+    "best_loss": 0.851043856704052,
+    "elapsed_s": 20.27985710000212,
+    "nfev": 7,
+    "solver_message": "Stopped because `callback` function raised `StopIteration` or returned `True`",
+    "stop_reason": "practical_plateau",
+    "updates": 6
+  },
+  "cable_residual": {
+    "additional_updates": 75,
+    "baseline_loss": 0.8551161244203498,
+    "best_loss": 0.8126122501133691,
+    "ceiling": null,
+    "elapsed_s": 611.4988532999996,
+    "numerically_verified": true,
+    "optimizer_best_loss": 0.8126122501133691,
+    "selected_update": 70,
+    "stop_reason": "practical_plateau",
+    "updates": 75
+  },
+  "candidate_sha256": "c2325d1ac10842f886af82ce7ebd4e00a2ae9d9157195293c5ac37504178c88a",
+  "drone_parameters": {
+    "attitude_acceleration_scale_xy": 1.2493710870069383,
+    "attitude_acceleration_scale_z": 0.3148001273963612,
+    "attitude_drive_model": "independent_scale_v3",
+    "attitude_time_constant_s": 0.06148585549993605,
+    "delay_s": 0.03,
+    "feedforward_xy": 0.7717355143137998,
+    "feedforward_z": 1.2984139026550858,
+    "gravity_m_s2": 9.80665,
+    "kd_xy": 0.9200812891808479,
+    "kd_z": 1.9178584027348982,
+    "kp_xy": 1.7779984122390973,
+    "kp_z": 11.836182065465149
+  },
+  "drone_residual": {
+    "additional_updates": 65,
+    "baseline_loss": 3.2389353478400356,
+    "best_loss": 3.1329802786635716,
+    "ceiling": null,
+    "elapsed_s": 34.64359069999773,
+    "numerically_verified": true,
+    "optimizer_best_loss": 3.1329802786635716,
+    "selected_update": 65,
+    "stop_reason": "practical_plateau",
+    "updates": 65
+  },
+  "schema": "whip_full_model_v1",
+  "stages_complete": true,
+  "training_takes": [
+    "M6_side_001_whip_001",
+    "M6_side_001_whip_002",
+    "M6_side_001_whip_003",
+    "M6_side_001_whip_004",
+    "M6_side_002_whip_001",
+    "M6_side_002_whip_002",
+    "M6_side_002_whip_003",
+    "M6_side_002_whip_004"
+  ],
+  "validation_used_for_selection": false
+}

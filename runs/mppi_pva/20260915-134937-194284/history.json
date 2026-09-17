@@ -1,0 +1,5122 @@
+[
+  {
+    "accepted_fraction": 0.08984375,
+    "aligned_release_duration_s": 0.17333333333333326,
+    "backward_travel_m": 0.10825397043930285,
+    "best_sampled_speed_gain_m_s": 8.196710005489393,
+    "best_score": 2.4836764719217306,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 5.542669462763509,
+    "effective_samples": 9.200000067802492,
+    "elapsed_s": 6.720944200002123,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.42247182940395317,
+    "iteration": 1,
+    "loading_to_release_turn_deg": 99.74097145505154,
+    "loading_velocity_m_s": [
+      1.1184350218051335,
+      -0.057977820519661785,
+      -0.23530121602396423
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012406675715641914,
+      "strike": 2.484917139493295,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.48828125,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 5.542669462763509,
+    "root_forward_speed_m_s": -1.4134284384016371,
+    "root_velocity_m_s": [
+      0.24345560355725768,
+      -1.4134284384016371,
+      0.5918150615658146
+    ],
+    "selected_strike_position_m": [
+      1.2958290727276576,
+      0.9151815966800069,
+      0.9675300454364036
+    ],
+    "strike_angle_deg": 6.974127295005356,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6400000000000001,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.6583243651546441,
+      5.542669462763509,
+      0.16220884122599147
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.0451241149633503,
+      2.2658966903196416,
+      3.5951646724246022
+    ],
+    "velocity_peak_times_s": [
+      1.2866666666666666,
+      1.4266666666666667,
+      1.6333333333333333
+    ]
+  },
+  {
+    "accepted_fraction": 0.255859375,
+    "aligned_release_duration_s": 0.18666666666666656,
+    "backward_travel_m": 0.12441259433837493,
+    "best_sampled_speed_gain_m_s": 8.048736304755936,
+    "best_score": 2.789761127540139,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.087167135609895,
+    "effective_samples": 26.20000085106417,
+    "elapsed_s": 12.588866700003564,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.4275805503383667,
+    "iteration": 2,
+    "loading_to_release_turn_deg": 89.94534923572493,
+    "loading_velocity_m_s": [
+      1.1990480973410127,
+      -0.0065870979682990105,
+      0.11965111780245506
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012774955822615639,
+      "strike": 2.7910386231224003,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.4609375,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.087167135609895,
+    "root_forward_speed_m_s": -1.5148679511509944,
+    "root_velocity_m_s": [
+      1.1402011989448457,
+      -1.5148679511509944,
+      0.488185857584622
+    ],
+    "selected_strike_position_m": [
+      1.632853407978614,
+      1.0592530858414302,
+      1.1896083511307354
+    ],
+    "strike_angle_deg": 0.9107438993310749,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6733333333333333,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      0.03924686384144438,
+      6.087167135609895,
+      0.08845030764614586
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.2131010883146747,
+      2.4420683165400336,
+      3.808785986944804
+    ],
+    "velocity_peak_times_s": [
+      1.3066666666666666,
+      1.4533333333333334,
+      1.6600000000000001
+    ]
+  },
+  {
+    "accepted_fraction": 0.263671875,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.1005034836568629,
+    "best_sampled_speed_gain_m_s": 8.19547888604705,
+    "best_score": 2.8155852874049514,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.286004847575054,
+    "effective_samples": 27.000000554533948,
+    "elapsed_s": 18.403362400000333,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.372671501627805,
+    "iteration": 3,
+    "loading_to_release_turn_deg": 91.68547959174812,
+    "loading_velocity_m_s": [
+      1.2915240263950412,
+      0.030836438246089865,
+      0.2465106643918524
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013683746236178912,
+      "strike": 2.816953662028569,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.458984375,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.286004847575054,
+    "root_forward_speed_m_s": -1.318967958401357,
+    "root_velocity_m_s": [
+      1.1082655955445553,
+      -1.318967958401357,
+      0.3729572113486901
+    ],
+    "selected_strike_position_m": [
+      1.8943868732025797,
+      1.3052097502202635,
+      1.554732601792757
+    ],
+    "strike_angle_deg": 3.0539594385316784,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6866666666666668,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.3352900888211579,
+      6.286004847575054,
+      0.007415368199430117
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.477298925469997,
+      2.7184230098708535,
+      3.9856970058044903
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4666666666666668,
+      1.6733333333333333
+    ]
+  },
+  {
+    "accepted_fraction": 0.314453125,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.1005034836568629,
+    "best_sampled_speed_gain_m_s": 8.005631182218409,
+    "best_score": 2.8155852874049514,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.286004847575054,
+    "effective_samples": 32.19999986710067,
+    "elapsed_s": 22.24423509999906,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.372671501627805,
+    "iteration": 4,
+    "loading_to_release_turn_deg": 91.68547959174812,
+    "loading_velocity_m_s": [
+      1.2915240263950412,
+      0.030836438246089865,
+      0.2465106643918524
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013683746236178912,
+      "strike": 2.816953662028569,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.46875,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.286004847575054,
+    "root_forward_speed_m_s": -1.318967958401357,
+    "root_velocity_m_s": [
+      1.1082655955445553,
+      -1.318967958401357,
+      0.3729572113486901
+    ],
+    "selected_strike_position_m": [
+      1.8943868732025797,
+      1.3052097502202635,
+      1.554732601792757
+    ],
+    "strike_angle_deg": 3.0539594385316784,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6866666666666668,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.3352900888211579,
+      6.286004847575054,
+      0.007415368199430117
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.477298925469997,
+      2.7184230098708535,
+      3.9856970058044903
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4666666666666668,
+      1.6733333333333333
+    ]
+  },
+  {
+    "accepted_fraction": 0.263671875,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.1005034836568629,
+    "best_sampled_speed_gain_m_s": 8.11572500243379,
+    "best_score": 2.8155852874049514,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.286004847575054,
+    "effective_samples": 27.000000548495006,
+    "elapsed_s": 25.910793900002318,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.372671501627805,
+    "iteration": 5,
+    "loading_to_release_turn_deg": 91.68547959174812,
+    "loading_velocity_m_s": [
+      1.2915240263950412,
+      0.030836438246089865,
+      0.2465106643918524
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013683746236178912,
+      "strike": 2.816953662028569,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.4375,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.286004847575054,
+    "root_forward_speed_m_s": -1.318967958401357,
+    "root_velocity_m_s": [
+      1.1082655955445553,
+      -1.318967958401357,
+      0.3729572113486901
+    ],
+    "selected_strike_position_m": [
+      1.8943868732025797,
+      1.3052097502202635,
+      1.554732601792757
+    ],
+    "strike_angle_deg": 3.0539594385316784,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6866666666666668,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.3352900888211579,
+      6.286004847575054,
+      0.007415368199430117
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.477298925469997,
+      2.7184230098708535,
+      3.9856970058044903
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4666666666666668,
+      1.6733333333333333
+    ]
+  },
+  {
+    "accepted_fraction": 0.279296875,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.1005034836568629,
+    "best_sampled_speed_gain_m_s": 8.210874729245438,
+    "best_score": 2.8155852874049514,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.286004847575054,
+    "effective_samples": 28.600000413426468,
+    "elapsed_s": 29.444931600002747,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.372671501627805,
+    "iteration": 6,
+    "loading_to_release_turn_deg": 91.68547959174812,
+    "loading_velocity_m_s": [
+      1.2915240263950412,
+      0.030836438246089865,
+      0.2465106643918524
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013683746236178912,
+      "strike": 2.816953662028569,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.4609375,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.286004847575054,
+    "root_forward_speed_m_s": -1.318967958401357,
+    "root_velocity_m_s": [
+      1.1082655955445553,
+      -1.318967958401357,
+      0.3729572113486901
+    ],
+    "selected_strike_position_m": [
+      1.8943868732025797,
+      1.3052097502202635,
+      1.554732601792757
+    ],
+    "strike_angle_deg": 3.0539594385316784,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6866666666666668,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.3352900888211579,
+      6.286004847575054,
+      0.007415368199430117
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.477298925469997,
+      2.7184230098708535,
+      3.9856970058044903
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4666666666666668,
+      1.6733333333333333
+    ]
+  },
+  {
+    "accepted_fraction": 0.26171875,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.1005034836568629,
+    "best_sampled_speed_gain_m_s": 8.202963947582795,
+    "best_score": 2.8155852874049514,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.286004847575054,
+    "effective_samples": 26.80000024120575,
+    "elapsed_s": 33.04137890000129,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.001953125,
+    "horizontal_cable_rms_m": 0.372671501627805,
+    "iteration": 7,
+    "loading_to_release_turn_deg": 91.68547959174812,
+    "loading_velocity_m_s": [
+      1.2915240263950412,
+      0.030836438246089865,
+      0.2465106643918524
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013683746236178912,
+      "strike": 2.816953662028569,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.515625,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.286004847575054,
+    "root_forward_speed_m_s": -1.318967958401357,
+    "root_velocity_m_s": [
+      1.1082655955445553,
+      -1.318967958401357,
+      0.3729572113486901
+    ],
+    "selected_strike_position_m": [
+      1.8943868732025797,
+      1.3052097502202635,
+      1.554732601792757
+    ],
+    "strike_angle_deg": 3.0539594385316784,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6866666666666668,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.3352900888211579,
+      6.286004847575054,
+      0.007415368199430117
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.477298925469997,
+      2.7184230098708535,
+      3.9856970058044903
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4666666666666668,
+      1.6733333333333333
+    ]
+  },
+  {
+    "accepted_fraction": 0.279296875,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.11148341811170281,
+    "best_sampled_speed_gain_m_s": 7.766631940934311,
+    "best_score": 2.8342910235150223,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.398179324517051,
+    "effective_samples": 28.599999997483838,
+    "elapsed_s": 38.82481949999783,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.4050437831799458,
+    "iteration": 8,
+    "loading_to_release_turn_deg": 93.99370048645041,
+    "loading_velocity_m_s": [
+      1.176459566091309,
+      -0.01280214070847269,
+      0.11342967398170199
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.001277039367356993,
+      "strike": 2.835568062882379,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.45703125,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.398179324517051,
+    "root_forward_speed_m_s": -1.3716349760057978,
+    "root_velocity_m_s": [
+      1.159114394431493,
+      -1.3716349760057978,
+      0.29497926369379535
+    ],
+    "selected_strike_position_m": [
+      1.6856658003429654,
+      1.2464102736296487,
+      1.2800114453086084
+    ],
+    "strike_angle_deg": 3.514726749331942,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.37678664204473145,
+      6.398179324517051,
+      0.11164764855351439
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.399184400391331,
+      2.6345494748338263,
+      4.001912151491625
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4733333333333334,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.28125,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.10587216838532132,
+    "best_sampled_speed_gain_m_s": 8.249512650161641,
+    "best_score": 2.8577767949860764,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.445578423676817,
+    "effective_samples": 28.800000269664096,
+    "elapsed_s": 44.49360410000372,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.00390625,
+    "horizontal_cable_rms_m": 0.41445812716668085,
+    "iteration": 9,
+    "loading_to_release_turn_deg": 95.14820524784707,
+    "loading_velocity_m_s": [
+      1.1771132977553693,
+      -0.04496017492563592,
+      0.15645069738789985
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012818378175654557,
+      "strike": 2.859058632803642,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.494140625,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.445578423676817,
+    "root_forward_speed_m_s": -1.318940559315207,
+    "root_velocity_m_s": [
+      1.040266542866397,
+      -1.318940559315207,
+      0.46275295404327726
+    ],
+    "selected_strike_position_m": [
+      1.6378731498379806,
+      1.2072946985324249,
+      1.3420794812158952
+    ],
+    "strike_angle_deg": 2.9609978115579563,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.3333811495356693,
+      6.445578423676817,
+      -0.0034446075835714574
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.3875860792551467,
+      2.6130982395916695,
+      4.029189403212571
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.48,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.283203125,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.10587216838532132,
+    "best_sampled_speed_gain_m_s": 8.041817226163019,
+    "best_score": 2.8577767949860764,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.445578423676817,
+    "effective_samples": 29.000000060924545,
+    "elapsed_s": 48.00027180000325,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.41445812716668085,
+    "iteration": 10,
+    "loading_to_release_turn_deg": 95.14820524784707,
+    "loading_velocity_m_s": [
+      1.1771132977553693,
+      -0.04496017492563592,
+      0.15645069738789985
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012818378175654557,
+      "strike": 2.859058632803642,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.4921875,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.445578423676817,
+    "root_forward_speed_m_s": -1.318940559315207,
+    "root_velocity_m_s": [
+      1.040266542866397,
+      -1.318940559315207,
+      0.46275295404327726
+    ],
+    "selected_strike_position_m": [
+      1.6378731498379806,
+      1.2072946985324249,
+      1.3420794812158952
+    ],
+    "strike_angle_deg": 2.9609978115579563,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.3333811495356693,
+      6.445578423676817,
+      -0.0034446075835714574
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.3875860792551467,
+      2.6130982395916695,
+      4.029189403212571
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.48,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.28515625,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.10587216838532132,
+    "best_sampled_speed_gain_m_s": 8.342261622994588,
+    "best_score": 2.8577767949860764,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.445578423676817,
+    "effective_samples": 29.200000356560935,
+    "elapsed_s": 52.202303300000494,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.00390625,
+    "horizontal_cable_rms_m": 0.41445812716668085,
+    "iteration": 11,
+    "loading_to_release_turn_deg": 95.14820524784707,
+    "loading_velocity_m_s": [
+      1.1771132977553693,
+      -0.04496017492563592,
+      0.15645069738789985
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012818378175654557,
+      "strike": 2.859058632803642,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.48046875,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.445578423676817,
+    "root_forward_speed_m_s": -1.318940559315207,
+    "root_velocity_m_s": [
+      1.040266542866397,
+      -1.318940559315207,
+      0.46275295404327726
+    ],
+    "selected_strike_position_m": [
+      1.6378731498379806,
+      1.2072946985324249,
+      1.3420794812158952
+    ],
+    "strike_angle_deg": 2.9609978115579563,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.3333811495356693,
+      6.445578423676817,
+      -0.0034446075835714574
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.3875860792551467,
+      2.6130982395916695,
+      4.029189403212571
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.48,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.267578125,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.10587216838532132,
+    "best_sampled_speed_gain_m_s": 8.256841487908497,
+    "best_score": 2.8577767949860764,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.445578423676817,
+    "effective_samples": 27.40000112892293,
+    "elapsed_s": 58.21904930000164,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.001953125,
+    "horizontal_cable_rms_m": 0.41445812716668085,
+    "iteration": 12,
+    "loading_to_release_turn_deg": 95.14820524784707,
+    "loading_velocity_m_s": [
+      1.1771132977553693,
+      -0.04496017492563592,
+      0.15645069738789985
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012818378175654557,
+      "strike": 2.859058632803642,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.466796875,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.445578423676817,
+    "root_forward_speed_m_s": -1.318940559315207,
+    "root_velocity_m_s": [
+      1.040266542866397,
+      -1.318940559315207,
+      0.46275295404327726
+    ],
+    "selected_strike_position_m": [
+      1.6378731498379806,
+      1.2072946985324249,
+      1.3420794812158952
+    ],
+    "strike_angle_deg": 2.9609978115579563,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.3333811495356693,
+      6.445578423676817,
+      -0.0034446075835714574
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.3875860792551467,
+      2.6130982395916695,
+      4.029189403212571
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.48,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.267578125,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.10587216838532132,
+    "best_sampled_speed_gain_m_s": 8.478602807498573,
+    "best_score": 2.8577767949860764,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.445578423676817,
+    "effective_samples": 27.400000137977578,
+    "elapsed_s": 62.20528249999916,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.41445812716668085,
+    "iteration": 13,
+    "loading_to_release_turn_deg": 95.14820524784707,
+    "loading_velocity_m_s": [
+      1.1771132977553693,
+      -0.04496017492563592,
+      0.15645069738789985
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012818378175654557,
+      "strike": 2.859058632803642,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.5078125,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.445578423676817,
+    "root_forward_speed_m_s": -1.318940559315207,
+    "root_velocity_m_s": [
+      1.040266542866397,
+      -1.318940559315207,
+      0.46275295404327726
+    ],
+    "selected_strike_position_m": [
+      1.6378731498379806,
+      1.2072946985324249,
+      1.3420794812158952
+    ],
+    "strike_angle_deg": 2.9609978115579563,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.3333811495356693,
+      6.445578423676817,
+      -0.0034446075835714574
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.3875860792551467,
+      2.6130982395916695,
+      4.029189403212571
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.48,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.255859375,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10067623143382676,
+    "best_sampled_speed_gain_m_s": 8.585946190675,
+    "best_score": 2.86364049202669,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.570641688269485,
+    "effective_samples": 26.200000827802583,
+    "elapsed_s": 67.92996510000376,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.42340018532251883,
+    "iteration": 14,
+    "loading_to_release_turn_deg": 91.87428628677245,
+    "loading_velocity_m_s": [
+      1.1961379887316992,
+      0.010381504423785312,
+      0.20012664005651937
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012762883538473182,
+      "strike": 2.864916780380537,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.466796875,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.570641688269485,
+    "root_forward_speed_m_s": -1.2796075373944615,
+    "root_velocity_m_s": [
+      1.319391143124704,
+      -1.2796075373944615,
+      0.44609125735166616
+    ],
+    "selected_strike_position_m": [
+      1.7048219600053898,
+      1.2842417505938655,
+      1.3175512450438187
+    ],
+    "strike_angle_deg": 4.016987693752456,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.2721237127628199,
+      6.570641688269485,
+      0.3726374880659432
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.425796844281656,
+      2.665336226186817,
+      4.064781697406699
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4733333333333334,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.248046875,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10067623143382676,
+    "best_sampled_speed_gain_m_s": 8.499894986603499,
+    "best_score": 2.86364049202669,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.570641688269485,
+    "effective_samples": 25.400000611181376,
+    "elapsed_s": 71.40863700000045,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.001953125,
+    "horizontal_cable_rms_m": 0.42340018532251883,
+    "iteration": 15,
+    "loading_to_release_turn_deg": 91.87428628677245,
+    "loading_velocity_m_s": [
+      1.1961379887316992,
+      0.010381504423785312,
+      0.20012664005651937
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012762883538473182,
+      "strike": 2.864916780380537,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.462890625,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.570641688269485,
+    "root_forward_speed_m_s": -1.2796075373944615,
+    "root_velocity_m_s": [
+      1.319391143124704,
+      -1.2796075373944615,
+      0.44609125735166616
+    ],
+    "selected_strike_position_m": [
+      1.7048219600053898,
+      1.2842417505938655,
+      1.3175512450438187
+    ],
+    "strike_angle_deg": 4.016987693752456,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.2721237127628199,
+      6.570641688269485,
+      0.3726374880659432
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.425796844281656,
+      2.665336226186817,
+      4.064781697406699
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4733333333333334,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.259765625,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10067623143382676,
+    "best_sampled_speed_gain_m_s": 8.812759104294408,
+    "best_score": 2.86364049202669,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.570641688269485,
+    "effective_samples": 26.60000046605297,
+    "elapsed_s": 74.88514920000307,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.42340018532251883,
+    "iteration": 16,
+    "loading_to_release_turn_deg": 91.87428628677245,
+    "loading_velocity_m_s": [
+      1.1961379887316992,
+      0.010381504423785312,
+      0.20012664005651937
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012762883538473182,
+      "strike": 2.864916780380537,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.470703125,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.570641688269485,
+    "root_forward_speed_m_s": -1.2796075373944615,
+    "root_velocity_m_s": [
+      1.319391143124704,
+      -1.2796075373944615,
+      0.44609125735166616
+    ],
+    "selected_strike_position_m": [
+      1.7048219600053898,
+      1.2842417505938655,
+      1.3175512450438187
+    ],
+    "strike_angle_deg": 4.016987693752456,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.2721237127628199,
+      6.570641688269485,
+      0.3726374880659432
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.425796844281656,
+      2.665336226186817,
+      4.064781697406699
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4733333333333334,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.2578125,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10067623143382676,
+    "best_sampled_speed_gain_m_s": 8.857585367572609,
+    "best_score": 2.86364049202669,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.570641688269485,
+    "effective_samples": 26.40000015525149,
+    "elapsed_s": 78.34045550000155,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.42340018532251883,
+    "iteration": 17,
+    "loading_to_release_turn_deg": 91.87428628677245,
+    "loading_velocity_m_s": [
+      1.1961379887316992,
+      0.010381504423785312,
+      0.20012664005651937
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012762883538473182,
+      "strike": 2.864916780380537,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.482421875,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.570641688269485,
+    "root_forward_speed_m_s": -1.2796075373944615,
+    "root_velocity_m_s": [
+      1.319391143124704,
+      -1.2796075373944615,
+      0.44609125735166616
+    ],
+    "selected_strike_position_m": [
+      1.7048219600053898,
+      1.2842417505938655,
+      1.3175512450438187
+    ],
+    "strike_angle_deg": 4.016987693752456,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.2721237127628199,
+      6.570641688269485,
+      0.3726374880659432
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.425796844281656,
+      2.665336226186817,
+      4.064781697406699
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4733333333333334,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.25,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10067623143382676,
+    "best_sampled_speed_gain_m_s": 8.64246590488909,
+    "best_score": 2.86364049202669,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.570641688269485,
+    "effective_samples": 25.600000441243672,
+    "elapsed_s": 81.7827527000045,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.00390625,
+    "horizontal_cable_rms_m": 0.42340018532251883,
+    "iteration": 18,
+    "loading_to_release_turn_deg": 91.87428628677245,
+    "loading_velocity_m_s": [
+      1.1961379887316992,
+      0.010381504423785312,
+      0.20012664005651937
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012762883538473182,
+      "strike": 2.864916780380537,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.45703125,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.570641688269485,
+    "root_forward_speed_m_s": -1.2796075373944615,
+    "root_velocity_m_s": [
+      1.319391143124704,
+      -1.2796075373944615,
+      0.44609125735166616
+    ],
+    "selected_strike_position_m": [
+      1.7048219600053898,
+      1.2842417505938655,
+      1.3175512450438187
+    ],
+    "strike_angle_deg": 4.016987693752456,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.2721237127628199,
+      6.570641688269485,
+      0.3726374880659432
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.425796844281656,
+      2.665336226186817,
+      4.064781697406699
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4733333333333334,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.25,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10067623143382676,
+    "best_sampled_speed_gain_m_s": 8.424193546778545,
+    "best_score": 2.86364049202669,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.570641688269485,
+    "effective_samples": 25.60000087754177,
+    "elapsed_s": 85.22530940000433,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.42340018532251883,
+    "iteration": 19,
+    "loading_to_release_turn_deg": 91.87428628677245,
+    "loading_velocity_m_s": [
+      1.1961379887316992,
+      0.010381504423785312,
+      0.20012664005651937
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012762883538473182,
+      "strike": 2.864916780380537,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.462890625,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.570641688269485,
+    "root_forward_speed_m_s": -1.2796075373944615,
+    "root_velocity_m_s": [
+      1.319391143124704,
+      -1.2796075373944615,
+      0.44609125735166616
+    ],
+    "selected_strike_position_m": [
+      1.7048219600053898,
+      1.2842417505938655,
+      1.3175512450438187
+    ],
+    "strike_angle_deg": 4.016987693752456,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.2721237127628199,
+      6.570641688269485,
+      0.3726374880659432
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.425796844281656,
+      2.665336226186817,
+      4.064781697406699
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4733333333333334,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.267578125,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10067623143382676,
+    "best_sampled_speed_gain_m_s": 8.145477668793554,
+    "best_score": 2.86364049202669,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.570641688269485,
+    "effective_samples": 27.400000178965175,
+    "elapsed_s": 88.65135480000026,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.42340018532251883,
+    "iteration": 20,
+    "loading_to_release_turn_deg": 91.87428628677245,
+    "loading_velocity_m_s": [
+      1.1961379887316992,
+      0.010381504423785312,
+      0.20012664005651937
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012762883538473182,
+      "strike": 2.864916780380537,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.486328125,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.570641688269485,
+    "root_forward_speed_m_s": -1.2796075373944615,
+    "root_velocity_m_s": [
+      1.319391143124704,
+      -1.2796075373944615,
+      0.44609125735166616
+    ],
+    "selected_strike_position_m": [
+      1.7048219600053898,
+      1.2842417505938655,
+      1.3175512450438187
+    ],
+    "strike_angle_deg": 4.016987693752456,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.2721237127628199,
+      6.570641688269485,
+      0.3726374880659432
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.425796844281656,
+      2.665336226186817,
+      4.064781697406699
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4733333333333334,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.271484375,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10067623143382676,
+    "best_sampled_speed_gain_m_s": 8.158433670958864,
+    "best_score": 2.86364049202669,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.570641688269485,
+    "effective_samples": 27.800000255543445,
+    "elapsed_s": 92.24084550000407,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.42340018532251883,
+    "iteration": 21,
+    "loading_to_release_turn_deg": 91.87428628677245,
+    "loading_velocity_m_s": [
+      1.1961379887316992,
+      0.010381504423785312,
+      0.20012664005651937
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012762883538473182,
+      "strike": 2.864916780380537,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.45703125,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.570641688269485,
+    "root_forward_speed_m_s": -1.2796075373944615,
+    "root_velocity_m_s": [
+      1.319391143124704,
+      -1.2796075373944615,
+      0.44609125735166616
+    ],
+    "selected_strike_position_m": [
+      1.7048219600053898,
+      1.2842417505938655,
+      1.3175512450438187
+    ],
+    "strike_angle_deg": 4.016987693752456,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.2721237127628199,
+      6.570641688269485,
+      0.3726374880659432
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.425796844281656,
+      2.665336226186817,
+      4.064781697406699
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4733333333333334,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.248046875,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10067623143382676,
+    "best_sampled_speed_gain_m_s": 8.179554623314221,
+    "best_score": 2.86364049202669,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.570641688269485,
+    "effective_samples": 25.40000018455364,
+    "elapsed_s": 95.81493860000046,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.42340018532251883,
+    "iteration": 22,
+    "loading_to_release_turn_deg": 91.87428628677245,
+    "loading_velocity_m_s": [
+      1.1961379887316992,
+      0.010381504423785312,
+      0.20012664005651937
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012762883538473182,
+      "strike": 2.864916780380537,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.46875,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.570641688269485,
+    "root_forward_speed_m_s": -1.2796075373944615,
+    "root_velocity_m_s": [
+      1.319391143124704,
+      -1.2796075373944615,
+      0.44609125735166616
+    ],
+    "selected_strike_position_m": [
+      1.7048219600053898,
+      1.2842417505938655,
+      1.3175512450438187
+    ],
+    "strike_angle_deg": 4.016987693752456,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.2721237127628199,
+      6.570641688269485,
+      0.3726374880659432
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.425796844281656,
+      2.665336226186817,
+      4.064781697406699
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4733333333333334,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.234375,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10067623143382676,
+    "best_sampled_speed_gain_m_s": 8.479257631912528,
+    "best_score": 2.86364049202669,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.570641688269485,
+    "effective_samples": 24.000000539412635,
+    "elapsed_s": 99.29056270000001,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.001953125,
+    "horizontal_cable_rms_m": 0.42340018532251883,
+    "iteration": 23,
+    "loading_to_release_turn_deg": 91.87428628677245,
+    "loading_velocity_m_s": [
+      1.1961379887316992,
+      0.010381504423785312,
+      0.20012664005651937
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012762883538473182,
+      "strike": 2.864916780380537,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.474609375,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.570641688269485,
+    "root_forward_speed_m_s": -1.2796075373944615,
+    "root_velocity_m_s": [
+      1.319391143124704,
+      -1.2796075373944615,
+      0.44609125735166616
+    ],
+    "selected_strike_position_m": [
+      1.7048219600053898,
+      1.2842417505938655,
+      1.3175512450438187
+    ],
+    "strike_angle_deg": 4.016987693752456,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.2721237127628199,
+      6.570641688269485,
+      0.3726374880659432
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.425796844281656,
+      2.665336226186817,
+      4.064781697406699
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4733333333333334,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.19921875,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10067623143382676,
+    "best_sampled_speed_gain_m_s": 8.623544744835252,
+    "best_score": 2.86364049202669,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.570641688269485,
+    "effective_samples": 20.400000406014534,
+    "elapsed_s": 102.74221170000237,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.42340018532251883,
+    "iteration": 24,
+    "loading_to_release_turn_deg": 91.87428628677245,
+    "loading_velocity_m_s": [
+      1.1961379887316992,
+      0.010381504423785312,
+      0.20012664005651937
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012762883538473182,
+      "strike": 2.864916780380537,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.46875,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 1,
+    "rewarded_tip_speed_m_s": 6.570641688269485,
+    "root_forward_speed_m_s": -1.2796075373944615,
+    "root_velocity_m_s": [
+      1.319391143124704,
+      -1.2796075373944615,
+      0.44609125735166616
+    ],
+    "selected_strike_position_m": [
+      1.7048219600053898,
+      1.2842417505938655,
+      1.3175512450438187
+    ],
+    "strike_angle_deg": 4.016987693752456,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.2721237127628199,
+      6.570641688269485,
+      0.3726374880659432
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.425796844281656,
+      2.665336226186817,
+      4.064781697406699
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4733333333333334,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.26171875,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10067623143382676,
+    "best_sampled_speed_gain_m_s": 9.38370487867637,
+    "best_score": 2.86364049202669,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.570641688269485,
+    "effective_samples": 26.8000002759547,
+    "elapsed_s": 106.2211599000002,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.00390625,
+    "horizontal_cable_rms_m": 0.42340018532251883,
+    "iteration": 25,
+    "loading_to_release_turn_deg": 91.87428628677245,
+    "loading_velocity_m_s": [
+      1.1961379887316992,
+      0.010381504423785312,
+      0.20012664005651937
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012762883538473182,
+      "strike": 2.864916780380537,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.490234375,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.570641688269485,
+    "root_forward_speed_m_s": -1.2796075373944615,
+    "root_velocity_m_s": [
+      1.319391143124704,
+      -1.2796075373944615,
+      0.44609125735166616
+    ],
+    "selected_strike_position_m": [
+      1.7048219600053898,
+      1.2842417505938655,
+      1.3175512450438187
+    ],
+    "strike_angle_deg": 4.016987693752456,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.2721237127628199,
+      6.570641688269485,
+      0.3726374880659432
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.425796844281656,
+      2.665336226186817,
+      4.064781697406699
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4733333333333334,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.24609375,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10067623143382676,
+    "best_sampled_speed_gain_m_s": 8.521601219823179,
+    "best_score": 2.86364049202669,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.570641688269485,
+    "effective_samples": 25.20000084814579,
+    "elapsed_s": 109.69584790000226,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.001953125,
+    "horizontal_cable_rms_m": 0.42340018532251883,
+    "iteration": 26,
+    "loading_to_release_turn_deg": 91.87428628677245,
+    "loading_velocity_m_s": [
+      1.1961379887316992,
+      0.010381504423785312,
+      0.20012664005651937
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012762883538473182,
+      "strike": 2.864916780380537,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.498046875,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.570641688269485,
+    "root_forward_speed_m_s": -1.2796075373944615,
+    "root_velocity_m_s": [
+      1.319391143124704,
+      -1.2796075373944615,
+      0.44609125735166616
+    ],
+    "selected_strike_position_m": [
+      1.7048219600053898,
+      1.2842417505938655,
+      1.3175512450438187
+    ],
+    "strike_angle_deg": 4.016987693752456,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.2721237127628199,
+      6.570641688269485,
+      0.3726374880659432
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.425796844281656,
+      2.665336226186817,
+      4.064781697406699
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4733333333333334,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.23828125,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10067623143382676,
+    "best_sampled_speed_gain_m_s": 8.389159212189808,
+    "best_score": 2.86364049202669,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.570641688269485,
+    "effective_samples": 24.400000617680227,
+    "elapsed_s": 113.16862090000359,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.00390625,
+    "horizontal_cable_rms_m": 0.42340018532251883,
+    "iteration": 27,
+    "loading_to_release_turn_deg": 91.87428628677245,
+    "loading_velocity_m_s": [
+      1.1961379887316992,
+      0.010381504423785312,
+      0.20012664005651937
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012762883538473182,
+      "strike": 2.864916780380537,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.48828125,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.570641688269485,
+    "root_forward_speed_m_s": -1.2796075373944615,
+    "root_velocity_m_s": [
+      1.319391143124704,
+      -1.2796075373944615,
+      0.44609125735166616
+    ],
+    "selected_strike_position_m": [
+      1.7048219600053898,
+      1.2842417505938655,
+      1.3175512450438187
+    ],
+    "strike_angle_deg": 4.016987693752456,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.2721237127628199,
+      6.570641688269485,
+      0.3726374880659432
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.425796844281656,
+      2.665336226186817,
+      4.064781697406699
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4733333333333334,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.240234375,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10067623143382676,
+    "best_sampled_speed_gain_m_s": 8.163988080493247,
+    "best_score": 2.86364049202669,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.570641688269485,
+    "effective_samples": 24.60000043745075,
+    "elapsed_s": 116.64755410000362,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.42340018532251883,
+    "iteration": 28,
+    "loading_to_release_turn_deg": 91.87428628677245,
+    "loading_velocity_m_s": [
+      1.1961379887316992,
+      0.010381504423785312,
+      0.20012664005651937
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012762883538473182,
+      "strike": 2.864916780380537,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.4765625,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.570641688269485,
+    "root_forward_speed_m_s": -1.2796075373944615,
+    "root_velocity_m_s": [
+      1.319391143124704,
+      -1.2796075373944615,
+      0.44609125735166616
+    ],
+    "selected_strike_position_m": [
+      1.7048219600053898,
+      1.2842417505938655,
+      1.3175512450438187
+    ],
+    "strike_angle_deg": 4.016987693752456,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.2721237127628199,
+      6.570641688269485,
+      0.3726374880659432
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.425796844281656,
+      2.665336226186817,
+      4.064781697406699
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4733333333333334,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.25390625,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10067623143382676,
+    "best_sampled_speed_gain_m_s": 8.679492588781033,
+    "best_score": 2.86364049202669,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.570641688269485,
+    "effective_samples": 26.00000007355999,
+    "elapsed_s": 120.14654829999927,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.42340018532251883,
+    "iteration": 29,
+    "loading_to_release_turn_deg": 91.87428628677245,
+    "loading_velocity_m_s": [
+      1.1961379887316992,
+      0.010381504423785312,
+      0.20012664005651937
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012762883538473182,
+      "strike": 2.864916780380537,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.46875,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.570641688269485,
+    "root_forward_speed_m_s": -1.2796075373944615,
+    "root_velocity_m_s": [
+      1.319391143124704,
+      -1.2796075373944615,
+      0.44609125735166616
+    ],
+    "selected_strike_position_m": [
+      1.7048219600053898,
+      1.2842417505938655,
+      1.3175512450438187
+    ],
+    "strike_angle_deg": 4.016987693752456,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.2721237127628199,
+      6.570641688269485,
+      0.3726374880659432
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.425796844281656,
+      2.665336226186817,
+      4.064781697406699
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4733333333333334,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.23828125,
+    "aligned_release_duration_s": 0.19333333333333322,
+    "backward_travel_m": 0.10131004435325164,
+    "best_sampled_speed_gain_m_s": 8.346140975624426,
+    "best_score": 2.874400394923287,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.401967149402932,
+    "effective_samples": 24.400000178424918,
+    "elapsed_s": 125.66777849999926,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.00390625,
+    "horizontal_cable_rms_m": 0.4278710831601349,
+    "iteration": 30,
+    "loading_to_release_turn_deg": 87.90759613287446,
+    "loading_velocity_m_s": [
+      1.1993915942401623,
+      0.05622373161817016,
+      0.4977442892951211
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013211797092635325,
+      "strike": 2.8757215746325504,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.453125,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.401967149402932,
+    "root_forward_speed_m_s": -1.3437649193387413,
+    "root_velocity_m_s": [
+      0.973497211696661,
+      -1.3437649193387413,
+      0.48148513550885225
+    ],
+    "selected_strike_position_m": [
+      1.4791212152561681,
+      1.2816675663244532,
+      1.5010418017150513
+    ],
+    "strike_angle_deg": 0.6005257037673715,
+    "strike_distance_m": null,
+    "strike_time_s": 1.68,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.06609144570683703,
+      6.401967149402932,
+      -0.011604235236538751
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.4456299040570504,
+      2.6191365017131973,
+      4.015505057663536
+    ],
+    "velocity_peak_times_s": [
+      1.3,
+      1.46,
+      1.6733333333333333
+    ]
+  },
+  {
+    "accepted_fraction": 0.24609375,
+    "aligned_release_duration_s": 0.19333333333333322,
+    "backward_travel_m": 0.10131004435325164,
+    "best_sampled_speed_gain_m_s": 8.591037352425172,
+    "best_score": 2.874400394923287,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.401967149402932,
+    "effective_samples": 25.200000351709214,
+    "elapsed_s": 129.16704359999858,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.4278710831601349,
+    "iteration": 31,
+    "loading_to_release_turn_deg": 87.90759613287446,
+    "loading_velocity_m_s": [
+      1.1993915942401623,
+      0.05622373161817016,
+      0.4977442892951211
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013211797092635325,
+      "strike": 2.8757215746325504,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.48046875,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.401967149402932,
+    "root_forward_speed_m_s": -1.3437649193387413,
+    "root_velocity_m_s": [
+      0.973497211696661,
+      -1.3437649193387413,
+      0.48148513550885225
+    ],
+    "selected_strike_position_m": [
+      1.4791212152561681,
+      1.2816675663244532,
+      1.5010418017150513
+    ],
+    "strike_angle_deg": 0.6005257037673715,
+    "strike_distance_m": null,
+    "strike_time_s": 1.68,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.06609144570683703,
+      6.401967149402932,
+      -0.011604235236538751
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.4456299040570504,
+      2.6191365017131973,
+      4.015505057663536
+    ],
+    "velocity_peak_times_s": [
+      1.3,
+      1.46,
+      1.6733333333333333
+    ]
+  },
+  {
+    "accepted_fraction": 0.208984375,
+    "aligned_release_duration_s": 0.19333333333333322,
+    "backward_travel_m": 0.10131004435325164,
+    "best_sampled_speed_gain_m_s": 8.807429441607793,
+    "best_score": 2.874400394923287,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.401967149402932,
+    "effective_samples": 21.400000385761313,
+    "elapsed_s": 132.64547080000193,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.4278710831601349,
+    "iteration": 32,
+    "loading_to_release_turn_deg": 87.90759613287446,
+    "loading_velocity_m_s": [
+      1.1993915942401623,
+      0.05622373161817016,
+      0.4977442892951211
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013211797092635325,
+      "strike": 2.8757215746325504,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.48046875,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.401967149402932,
+    "root_forward_speed_m_s": -1.3437649193387413,
+    "root_velocity_m_s": [
+      0.973497211696661,
+      -1.3437649193387413,
+      0.48148513550885225
+    ],
+    "selected_strike_position_m": [
+      1.4791212152561681,
+      1.2816675663244532,
+      1.5010418017150513
+    ],
+    "strike_angle_deg": 0.6005257037673715,
+    "strike_distance_m": null,
+    "strike_time_s": 1.68,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.06609144570683703,
+      6.401967149402932,
+      -0.011604235236538751
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.4456299040570504,
+      2.6191365017131973,
+      4.015505057663536
+    ],
+    "velocity_peak_times_s": [
+      1.3,
+      1.46,
+      1.6733333333333333
+    ]
+  },
+  {
+    "accepted_fraction": 0.20703125,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.10109543055282666,
+    "best_sampled_speed_gain_m_s": 8.462650289997148,
+    "best_score": 2.8808138554999108,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.534727327349537,
+    "effective_samples": 21.200000116342288,
+    "elapsed_s": 138.2594429000019,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0078125,
+    "horizontal_cable_rms_m": 0.42276180676837427,
+    "iteration": 33,
+    "loading_to_release_turn_deg": 86.71706901167417,
+    "loading_velocity_m_s": [
+      1.2316919981358558,
+      0.09172001589460611,
+      0.48507025743305116
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013409275246155886,
+      "strike": 2.8821547830245264,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.486328125,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.534727327349537,
+    "root_forward_speed_m_s": -1.3458044353439058,
+    "root_velocity_m_s": [
+      1.0937579278376242,
+      -1.3458044353439058,
+      0.4581151525117954
+    ],
+    "selected_strike_position_m": [
+      1.5699133800546965,
+      1.3509328531857596,
+      1.487308440868121
+    ],
+    "strike_angle_deg": 2.889085929967092,
+    "strike_distance_m": null,
+    "strike_time_s": 1.68,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.11130721008449657,
+      6.534727327349537,
+      0.3104355019810452
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.4875319460663023,
+      2.673574335868466,
+      4.051042297448225
+    ],
+    "velocity_peak_times_s": [
+      1.3,
+      1.4533333333333334,
+      1.6666666666666667
+    ]
+  },
+  {
+    "accepted_fraction": 0.205078125,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.10915240305183194,
+    "best_sampled_speed_gain_m_s": 8.396938380604077,
+    "best_score": 2.8941648331029026,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.491239204776635,
+    "effective_samples": 21.000000528680932,
+    "elapsed_s": 143.88317580000148,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.00390625,
+    "horizontal_cable_rms_m": 0.42178314855200016,
+    "iteration": 34,
+    "loading_to_release_turn_deg": 87.95298618547243,
+    "loading_velocity_m_s": [
+      1.2272305481213968,
+      0.05885794746630923,
+      0.5054211643686579
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013491242433283247,
+      "strike": 2.895513957346231,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.453125,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.491239204776635,
+    "root_forward_speed_m_s": -1.4123895672953635,
+    "root_velocity_m_s": [
+      1.1295358489051832,
+      -1.4123895672953635,
+      0.45446833421265426
+    ],
+    "selected_strike_position_m": [
+      1.5540798546307368,
+      1.282293587496922,
+      1.4876400505104699
+    ],
+    "strike_angle_deg": 1.0484148406338665,
+    "strike_distance_m": null,
+    "strike_time_s": 1.68,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.07917188228600336,
+      6.491239204776635,
+      -0.08856249055074139
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.450220942526756,
+      2.6296124669132914,
+      4.0217216999210565
+    ],
+    "velocity_peak_times_s": [
+      1.3,
+      1.46,
+      1.6666666666666667
+    ]
+  },
+  {
+    "accepted_fraction": 0.2265625,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.10915240305183194,
+    "best_sampled_speed_gain_m_s": 8.612291810517592,
+    "best_score": 2.8941648331029026,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.491239204776635,
+    "effective_samples": 23.20000035030088,
+    "elapsed_s": 147.33720110000286,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0078125,
+    "horizontal_cable_rms_m": 0.42178314855200016,
+    "iteration": 35,
+    "loading_to_release_turn_deg": 87.95298618547243,
+    "loading_velocity_m_s": [
+      1.2272305481213968,
+      0.05885794746630923,
+      0.5054211643686579
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013491242433283247,
+      "strike": 2.895513957346231,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.4765625,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.491239204776635,
+    "root_forward_speed_m_s": -1.4123895672953635,
+    "root_velocity_m_s": [
+      1.1295358489051832,
+      -1.4123895672953635,
+      0.45446833421265426
+    ],
+    "selected_strike_position_m": [
+      1.5540798546307368,
+      1.282293587496922,
+      1.4876400505104699
+    ],
+    "strike_angle_deg": 1.0484148406338665,
+    "strike_distance_m": null,
+    "strike_time_s": 1.68,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.07917188228600336,
+      6.491239204776635,
+      -0.08856249055074139
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.450220942526756,
+      2.6296124669132914,
+      4.0217216999210565
+    ],
+    "velocity_peak_times_s": [
+      1.3,
+      1.46,
+      1.6666666666666667
+    ]
+  },
+  {
+    "accepted_fraction": 0.232421875,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.10915240305183194,
+    "best_sampled_speed_gain_m_s": 8.689584203935055,
+    "best_score": 2.8941648331029026,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.491239204776635,
+    "effective_samples": 23.80000023101021,
+    "elapsed_s": 150.81691980000323,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.001953125,
+    "horizontal_cable_rms_m": 0.42178314855200016,
+    "iteration": 36,
+    "loading_to_release_turn_deg": 87.95298618547243,
+    "loading_velocity_m_s": [
+      1.2272305481213968,
+      0.05885794746630923,
+      0.5054211643686579
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013491242433283247,
+      "strike": 2.895513957346231,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.447265625,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 1,
+    "rewarded_tip_speed_m_s": 6.491239204776635,
+    "root_forward_speed_m_s": -1.4123895672953635,
+    "root_velocity_m_s": [
+      1.1295358489051832,
+      -1.4123895672953635,
+      0.45446833421265426
+    ],
+    "selected_strike_position_m": [
+      1.5540798546307368,
+      1.282293587496922,
+      1.4876400505104699
+    ],
+    "strike_angle_deg": 1.0484148406338665,
+    "strike_distance_m": null,
+    "strike_time_s": 1.68,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.07917188228600336,
+      6.491239204776635,
+      -0.08856249055074139
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.450220942526756,
+      2.6296124669132914,
+      4.0217216999210565
+    ],
+    "velocity_peak_times_s": [
+      1.3,
+      1.46,
+      1.6666666666666667
+    ]
+  },
+  {
+    "accepted_fraction": 0.2421875,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.10915240305183194,
+    "best_sampled_speed_gain_m_s": 8.5005928986269,
+    "best_score": 2.8941648331029026,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.491239204776635,
+    "effective_samples": 24.800000253186244,
+    "elapsed_s": 154.29728559999785,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.001953125,
+    "horizontal_cable_rms_m": 0.42178314855200016,
+    "iteration": 37,
+    "loading_to_release_turn_deg": 87.95298618547243,
+    "loading_velocity_m_s": [
+      1.2272305481213968,
+      0.05885794746630923,
+      0.5054211643686579
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013491242433283247,
+      "strike": 2.895513957346231,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.470703125,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.491239204776635,
+    "root_forward_speed_m_s": -1.4123895672953635,
+    "root_velocity_m_s": [
+      1.1295358489051832,
+      -1.4123895672953635,
+      0.45446833421265426
+    ],
+    "selected_strike_position_m": [
+      1.5540798546307368,
+      1.282293587496922,
+      1.4876400505104699
+    ],
+    "strike_angle_deg": 1.0484148406338665,
+    "strike_distance_m": null,
+    "strike_time_s": 1.68,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.07917188228600336,
+      6.491239204776635,
+      -0.08856249055074139
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.450220942526756,
+      2.6296124669132914,
+      4.0217216999210565
+    ],
+    "velocity_peak_times_s": [
+      1.3,
+      1.46,
+      1.6666666666666667
+    ]
+  },
+  {
+    "accepted_fraction": 0.205078125,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.10915240305183194,
+    "best_sampled_speed_gain_m_s": 8.958261467247231,
+    "best_score": 2.8941648331029026,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.491239204776635,
+    "effective_samples": 21.00000051743676,
+    "elapsed_s": 157.7743874000007,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.005859375,
+    "horizontal_cable_rms_m": 0.42178314855200016,
+    "iteration": 38,
+    "loading_to_release_turn_deg": 87.95298618547243,
+    "loading_velocity_m_s": [
+      1.2272305481213968,
+      0.05885794746630923,
+      0.5054211643686579
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013491242433283247,
+      "strike": 2.895513957346231,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.478515625,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.491239204776635,
+    "root_forward_speed_m_s": -1.4123895672953635,
+    "root_velocity_m_s": [
+      1.1295358489051832,
+      -1.4123895672953635,
+      0.45446833421265426
+    ],
+    "selected_strike_position_m": [
+      1.5540798546307368,
+      1.282293587496922,
+      1.4876400505104699
+    ],
+    "strike_angle_deg": 1.0484148406338665,
+    "strike_distance_m": null,
+    "strike_time_s": 1.68,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.07917188228600336,
+      6.491239204776635,
+      -0.08856249055074139
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.450220942526756,
+      2.6296124669132914,
+      4.0217216999210565
+    ],
+    "velocity_peak_times_s": [
+      1.3,
+      1.46,
+      1.6666666666666667
+    ]
+  },
+  {
+    "accepted_fraction": 0.208984375,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.10915240305183194,
+    "best_sampled_speed_gain_m_s": 8.496328919908851,
+    "best_score": 2.8941648331029026,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.491239204776635,
+    "effective_samples": 21.400000376168553,
+    "elapsed_s": 161.2504859000037,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.001953125,
+    "horizontal_cable_rms_m": 0.42178314855200016,
+    "iteration": 39,
+    "loading_to_release_turn_deg": 87.95298618547243,
+    "loading_velocity_m_s": [
+      1.2272305481213968,
+      0.05885794746630923,
+      0.5054211643686579
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013491242433283247,
+      "strike": 2.895513957346231,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.4453125,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.491239204776635,
+    "root_forward_speed_m_s": -1.4123895672953635,
+    "root_velocity_m_s": [
+      1.1295358489051832,
+      -1.4123895672953635,
+      0.45446833421265426
+    ],
+    "selected_strike_position_m": [
+      1.5540798546307368,
+      1.282293587496922,
+      1.4876400505104699
+    ],
+    "strike_angle_deg": 1.0484148406338665,
+    "strike_distance_m": null,
+    "strike_time_s": 1.68,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.07917188228600336,
+      6.491239204776635,
+      -0.08856249055074139
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.450220942526756,
+      2.6296124669132914,
+      4.0217216999210565
+    ],
+    "velocity_peak_times_s": [
+      1.3,
+      1.46,
+      1.6666666666666667
+    ]
+  },
+  {
+    "accepted_fraction": 0.208984375,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.11456812031910357,
+    "best_sampled_speed_gain_m_s": 8.397416453600924,
+    "best_score": 2.923716674050658,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.70380375653756,
+    "effective_samples": 21.400000580720647,
+    "elapsed_s": 166.78476819999923,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.001953125,
+    "horizontal_cable_rms_m": 0.40479717527219267,
+    "iteration": 40,
+    "loading_to_release_turn_deg": 82.95984678129909,
+    "loading_velocity_m_s": [
+      1.0248074161602116,
+      0.1669812496340975,
+      0.3275727952171015
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012111616885513285,
+      "strike": 2.9249278357392097,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.44921875,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.70380375653756,
+    "root_forward_speed_m_s": -1.5721111407132393,
+    "root_velocity_m_s": [
+      0.7170573813170322,
+      -1.5721111407132393,
+      -0.11339972151526155
+    ],
+    "selected_strike_position_m": [
+      1.2527755369257854,
+      1.3970325681842741,
+      1.081054676809951
+    ],
+    "strike_angle_deg": 2.7238414699364073,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6533333333333333,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.25920340588421437,
+      6.70380375653756,
+      0.1858380413756801
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.488475611322883,
+      2.8108973905817076,
+      4.191624267295562
+    ],
+    "velocity_peak_times_s": [
+      1.2866666666666666,
+      1.44,
+      1.6400000000000001
+    ]
+  },
+  {
+    "accepted_fraction": 0.185546875,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.11456812031910357,
+    "best_sampled_speed_gain_m_s": 8.39755249016162,
+    "best_score": 2.923716674050658,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.70380375653756,
+    "effective_samples": 19.00000050556787,
+    "elapsed_s": 170.26890980000462,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.00390625,
+    "horizontal_cable_rms_m": 0.40479717527219267,
+    "iteration": 41,
+    "loading_to_release_turn_deg": 82.95984678129909,
+    "loading_velocity_m_s": [
+      1.0248074161602116,
+      0.1669812496340975,
+      0.3275727952171015
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012111616885513285,
+      "strike": 2.9249278357392097,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.419921875,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.70380375653756,
+    "root_forward_speed_m_s": -1.5721111407132393,
+    "root_velocity_m_s": [
+      0.7170573813170322,
+      -1.5721111407132393,
+      -0.11339972151526155
+    ],
+    "selected_strike_position_m": [
+      1.2527755369257854,
+      1.3970325681842741,
+      1.081054676809951
+    ],
+    "strike_angle_deg": 2.7238414699364073,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6533333333333333,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.25920340588421437,
+      6.70380375653756,
+      0.1858380413756801
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.488475611322883,
+      2.8108973905817076,
+      4.191624267295562
+    ],
+    "velocity_peak_times_s": [
+      1.2866666666666666,
+      1.44,
+      1.6400000000000001
+    ]
+  },
+  {
+    "accepted_fraction": 0.171875,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.11456812031910357,
+    "best_sampled_speed_gain_m_s": 8.898379265708899,
+    "best_score": 2.923716674050658,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.70380375653756,
+    "effective_samples": 17.600000170754974,
+    "elapsed_s": 173.78485580000415,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.40479717527219267,
+    "iteration": 42,
+    "loading_to_release_turn_deg": 82.95984678129909,
+    "loading_velocity_m_s": [
+      1.0248074161602116,
+      0.1669812496340975,
+      0.3275727952171015
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012111616885513285,
+      "strike": 2.9249278357392097,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.40234375,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.70380375653756,
+    "root_forward_speed_m_s": -1.5721111407132393,
+    "root_velocity_m_s": [
+      0.7170573813170322,
+      -1.5721111407132393,
+      -0.11339972151526155
+    ],
+    "selected_strike_position_m": [
+      1.2527755369257854,
+      1.3970325681842741,
+      1.081054676809951
+    ],
+    "strike_angle_deg": 2.7238414699364073,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6533333333333333,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.25920340588421437,
+      6.70380375653756,
+      0.1858380413756801
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.488475611322883,
+      2.8108973905817076,
+      4.191624267295562
+    ],
+    "velocity_peak_times_s": [
+      1.2866666666666666,
+      1.44,
+      1.6400000000000001
+    ]
+  },
+  {
+    "accepted_fraction": 0.2109375,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.11456812031910357,
+    "best_sampled_speed_gain_m_s": 8.9388388885878,
+    "best_score": 2.923716674050658,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.70380375653756,
+    "effective_samples": 21.60000044154014,
+    "elapsed_s": 177.2867486000032,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0078125,
+    "horizontal_cable_rms_m": 0.40479717527219267,
+    "iteration": 43,
+    "loading_to_release_turn_deg": 82.95984678129909,
+    "loading_velocity_m_s": [
+      1.0248074161602116,
+      0.1669812496340975,
+      0.3275727952171015
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012111616885513285,
+      "strike": 2.9249278357392097,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.455078125,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.70380375653756,
+    "root_forward_speed_m_s": -1.5721111407132393,
+    "root_velocity_m_s": [
+      0.7170573813170322,
+      -1.5721111407132393,
+      -0.11339972151526155
+    ],
+    "selected_strike_position_m": [
+      1.2527755369257854,
+      1.3970325681842741,
+      1.081054676809951
+    ],
+    "strike_angle_deg": 2.7238414699364073,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6533333333333333,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.25920340588421437,
+      6.70380375653756,
+      0.1858380413756801
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.488475611322883,
+      2.8108973905817076,
+      4.191624267295562
+    ],
+    "velocity_peak_times_s": [
+      1.2866666666666666,
+      1.44,
+      1.6400000000000001
+    ]
+  },
+  {
+    "accepted_fraction": 0.1875,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.11456812031910357,
+    "best_sampled_speed_gain_m_s": 8.962022616895148,
+    "best_score": 2.923716674050658,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.70380375653756,
+    "effective_samples": 19.200000091482963,
+    "elapsed_s": 180.80006990000402,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0078125,
+    "horizontal_cable_rms_m": 0.40479717527219267,
+    "iteration": 44,
+    "loading_to_release_turn_deg": 82.95984678129909,
+    "loading_velocity_m_s": [
+      1.0248074161602116,
+      0.1669812496340975,
+      0.3275727952171015
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012111616885513285,
+      "strike": 2.9249278357392097,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.421875,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.70380375653756,
+    "root_forward_speed_m_s": -1.5721111407132393,
+    "root_velocity_m_s": [
+      0.7170573813170322,
+      -1.5721111407132393,
+      -0.11339972151526155
+    ],
+    "selected_strike_position_m": [
+      1.2527755369257854,
+      1.3970325681842741,
+      1.081054676809951
+    ],
+    "strike_angle_deg": 2.7238414699364073,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6533333333333333,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.25920340588421437,
+      6.70380375653756,
+      0.1858380413756801
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.488475611322883,
+      2.8108973905817076,
+      4.191624267295562
+    ],
+    "velocity_peak_times_s": [
+      1.2866666666666666,
+      1.44,
+      1.6400000000000001
+    ]
+  },
+  {
+    "accepted_fraction": 0.19921875,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.11456812031910357,
+    "best_sampled_speed_gain_m_s": 8.895788485554515,
+    "best_score": 2.923716674050658,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.70380375653756,
+    "effective_samples": 20.40000014923089,
+    "elapsed_s": 184.31747529999848,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.005859375,
+    "horizontal_cable_rms_m": 0.40479717527219267,
+    "iteration": 45,
+    "loading_to_release_turn_deg": 82.95984678129909,
+    "loading_velocity_m_s": [
+      1.0248074161602116,
+      0.1669812496340975,
+      0.3275727952171015
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0012111616885513285,
+      "strike": 2.9249278357392097,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.375,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.70380375653756,
+    "root_forward_speed_m_s": -1.5721111407132393,
+    "root_velocity_m_s": [
+      0.7170573813170322,
+      -1.5721111407132393,
+      -0.11339972151526155
+    ],
+    "selected_strike_position_m": [
+      1.2527755369257854,
+      1.3970325681842741,
+      1.081054676809951
+    ],
+    "strike_angle_deg": 2.7238414699364073,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6533333333333333,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.25920340588421437,
+      6.70380375653756,
+      0.1858380413756801
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.488475611322883,
+      2.8108973905817076,
+      4.191624267295562
+    ],
+    "velocity_peak_times_s": [
+      1.2866666666666666,
+      1.44,
+      1.6400000000000001
+    ]
+  },
+  {
+    "accepted_fraction": 0.16796875,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.10022329212588799,
+    "best_sampled_speed_gain_m_s": 10.250398769172651,
+    "best_score": 2.9427560419941177,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.71730671117832,
+    "effective_samples": 17.20000031260136,
+    "elapsed_s": 190.097059300002,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.001953125,
+    "horizontal_cable_rms_m": 0.44897574144339664,
+    "iteration": 46,
+    "loading_to_release_turn_deg": 93.35102814381402,
+    "loading_velocity_m_s": [
+      1.102518677166217,
+      -0.07761030975638114,
+      0.08261839852762298
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013022718259930635,
+      "strike": 2.944058313820111,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.37109375,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.71730671117832,
+    "root_forward_speed_m_s": -1.2767956906907518,
+    "root_velocity_m_s": [
+      1.437384911270645,
+      -1.2767956906907518,
+      0.5475467208882145
+    ],
+    "selected_strike_position_m": [
+      1.4132310028544843,
+      1.1915024055849912,
+      1.2493570625541355
+    ],
+    "strike_angle_deg": 1.6245497518256518,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      0.07920906826123272,
+      6.71730671117832,
+      0.17326477915077526
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.42226442121303,
+      2.6456158267379823,
+      4.167574015504856
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.17578125,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.10022329212588799,
+    "best_sampled_speed_gain_m_s": 9.070665402358625,
+    "best_score": 2.9427560419941177,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.71730671117832,
+    "effective_samples": 18.000000758003054,
+    "elapsed_s": 193.61181529999885,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.00390625,
+    "horizontal_cable_rms_m": 0.44897574144339664,
+    "iteration": 47,
+    "loading_to_release_turn_deg": 93.35102814381402,
+    "loading_velocity_m_s": [
+      1.102518677166217,
+      -0.07761030975638114,
+      0.08261839852762298
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013022718259930635,
+      "strike": 2.944058313820111,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.412109375,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.71730671117832,
+    "root_forward_speed_m_s": -1.2767956906907518,
+    "root_velocity_m_s": [
+      1.437384911270645,
+      -1.2767956906907518,
+      0.5475467208882145
+    ],
+    "selected_strike_position_m": [
+      1.4132310028544843,
+      1.1915024055849912,
+      1.2493570625541355
+    ],
+    "strike_angle_deg": 1.6245497518256518,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      0.07920906826123272,
+      6.71730671117832,
+      0.17326477915077526
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.42226442121303,
+      2.6456158267379823,
+      4.167574015504856
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.173828125,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.10022329212588799,
+    "best_sampled_speed_gain_m_s": 8.883846115849936,
+    "best_score": 2.9427560419941177,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.71730671117832,
+    "effective_samples": 17.800000688498216,
+    "elapsed_s": 197.15687710000202,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0078125,
+    "horizontal_cable_rms_m": 0.44897574144339664,
+    "iteration": 48,
+    "loading_to_release_turn_deg": 93.35102814381402,
+    "loading_velocity_m_s": [
+      1.102518677166217,
+      -0.07761030975638114,
+      0.08261839852762298
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013022718259930635,
+      "strike": 2.944058313820111,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.39453125,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.71730671117832,
+    "root_forward_speed_m_s": -1.2767956906907518,
+    "root_velocity_m_s": [
+      1.437384911270645,
+      -1.2767956906907518,
+      0.5475467208882145
+    ],
+    "selected_strike_position_m": [
+      1.4132310028544843,
+      1.1915024055849912,
+      1.2493570625541355
+    ],
+    "strike_angle_deg": 1.6245497518256518,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      0.07920906826123272,
+      6.71730671117832,
+      0.17326477915077526
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.42226442121303,
+      2.6456158267379823,
+      4.167574015504856
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.189453125,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.10022329212588799,
+    "best_sampled_speed_gain_m_s": 9.723859657568694,
+    "best_score": 2.9427560419941177,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.71730671117832,
+    "effective_samples": 19.400000371909677,
+    "elapsed_s": 200.83703120000428,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.00390625,
+    "horizontal_cable_rms_m": 0.44897574144339664,
+    "iteration": 49,
+    "loading_to_release_turn_deg": 93.35102814381402,
+    "loading_velocity_m_s": [
+      1.102518677166217,
+      -0.07761030975638114,
+      0.08261839852762298
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013022718259930635,
+      "strike": 2.944058313820111,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.404296875,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.71730671117832,
+    "root_forward_speed_m_s": -1.2767956906907518,
+    "root_velocity_m_s": [
+      1.437384911270645,
+      -1.2767956906907518,
+      0.5475467208882145
+    ],
+    "selected_strike_position_m": [
+      1.4132310028544843,
+      1.1915024055849912,
+      1.2493570625541355
+    ],
+    "strike_angle_deg": 1.6245497518256518,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      0.07920906826123272,
+      6.71730671117832,
+      0.17326477915077526
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.42226442121303,
+      2.6456158267379823,
+      4.167574015504856
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.1875,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.10022329212588799,
+    "best_sampled_speed_gain_m_s": 9.204085291572088,
+    "best_score": 2.9427560419941177,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.71730671117832,
+    "effective_samples": 19.200000703417103,
+    "elapsed_s": 204.64224919999833,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.00390625,
+    "horizontal_cable_rms_m": 0.44897574144339664,
+    "iteration": 50,
+    "loading_to_release_turn_deg": 93.35102814381402,
+    "loading_velocity_m_s": [
+      1.102518677166217,
+      -0.07761030975638114,
+      0.08261839852762298
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013022718259930635,
+      "strike": 2.944058313820111,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.40625,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.71730671117832,
+    "root_forward_speed_m_s": -1.2767956906907518,
+    "root_velocity_m_s": [
+      1.437384911270645,
+      -1.2767956906907518,
+      0.5475467208882145
+    ],
+    "selected_strike_position_m": [
+      1.4132310028544843,
+      1.1915024055849912,
+      1.2493570625541355
+    ],
+    "strike_angle_deg": 1.6245497518256518,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      0.07920906826123272,
+      6.71730671117832,
+      0.17326477915077526
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.42226442121303,
+      2.6456158267379823,
+      4.167574015504856
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.17578125,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.10022329212588799,
+    "best_sampled_speed_gain_m_s": 8.878471062198798,
+    "best_score": 2.9427560419941177,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.71730671117832,
+    "effective_samples": 18.00000029208136,
+    "elapsed_s": 208.42525549999846,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.001953125,
+    "horizontal_cable_rms_m": 0.44897574144339664,
+    "iteration": 51,
+    "loading_to_release_turn_deg": 93.35102814381402,
+    "loading_velocity_m_s": [
+      1.102518677166217,
+      -0.07761030975638114,
+      0.08261839852762298
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013022718259930635,
+      "strike": 2.944058313820111,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.4375,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.71730671117832,
+    "root_forward_speed_m_s": -1.2767956906907518,
+    "root_velocity_m_s": [
+      1.437384911270645,
+      -1.2767956906907518,
+      0.5475467208882145
+    ],
+    "selected_strike_position_m": [
+      1.4132310028544843,
+      1.1915024055849912,
+      1.2493570625541355
+    ],
+    "strike_angle_deg": 1.6245497518256518,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      0.07920906826123272,
+      6.71730671117832,
+      0.17326477915077526
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.42226442121303,
+      2.6456158267379823,
+      4.167574015504856
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.171875,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.10022329212588799,
+    "best_sampled_speed_gain_m_s": 8.465546248858548,
+    "best_score": 2.9427560419941177,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.71730671117832,
+    "effective_samples": 17.60000015822574,
+    "elapsed_s": 212.0240472000005,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.001953125,
+    "horizontal_cable_rms_m": 0.44897574144339664,
+    "iteration": 52,
+    "loading_to_release_turn_deg": 93.35102814381402,
+    "loading_velocity_m_s": [
+      1.102518677166217,
+      -0.07761030975638114,
+      0.08261839852762298
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013022718259930635,
+      "strike": 2.944058313820111,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.380859375,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.71730671117832,
+    "root_forward_speed_m_s": -1.2767956906907518,
+    "root_velocity_m_s": [
+      1.437384911270645,
+      -1.2767956906907518,
+      0.5475467208882145
+    ],
+    "selected_strike_position_m": [
+      1.4132310028544843,
+      1.1915024055849912,
+      1.2493570625541355
+    ],
+    "strike_angle_deg": 1.6245497518256518,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      0.07920906826123272,
+      6.71730671117832,
+      0.17326477915077526
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.42226442121303,
+      2.6456158267379823,
+      4.167574015504856
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.169921875,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.10022329212588799,
+    "best_sampled_speed_gain_m_s": 9.019828834289994,
+    "best_score": 2.9427560419941177,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.71730671117832,
+    "effective_samples": 17.39999990571964,
+    "elapsed_s": 215.58734299999924,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.005859375,
+    "horizontal_cable_rms_m": 0.44897574144339664,
+    "iteration": 53,
+    "loading_to_release_turn_deg": 93.35102814381402,
+    "loading_velocity_m_s": [
+      1.102518677166217,
+      -0.07761030975638114,
+      0.08261839852762298
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013022718259930635,
+      "strike": 2.944058313820111,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.3515625,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.71730671117832,
+    "root_forward_speed_m_s": -1.2767956906907518,
+    "root_velocity_m_s": [
+      1.437384911270645,
+      -1.2767956906907518,
+      0.5475467208882145
+    ],
+    "selected_strike_position_m": [
+      1.4132310028544843,
+      1.1915024055849912,
+      1.2493570625541355
+    ],
+    "strike_angle_deg": 1.6245497518256518,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      0.07920906826123272,
+      6.71730671117832,
+      0.17326477915077526
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.42226442121303,
+      2.6456158267379823,
+      4.167574015504856
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.158203125,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.10022329212588799,
+    "best_sampled_speed_gain_m_s": 9.957410618904836,
+    "best_score": 2.9427560419941177,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.71730671117832,
+    "effective_samples": 16.200000311935643,
+    "elapsed_s": 219.38109059999988,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.009765625,
+    "horizontal_cable_rms_m": 0.44897574144339664,
+    "iteration": 54,
+    "loading_to_release_turn_deg": 93.35102814381402,
+    "loading_velocity_m_s": [
+      1.102518677166217,
+      -0.07761030975638114,
+      0.08261839852762298
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013022718259930635,
+      "strike": 2.944058313820111,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.400390625,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.71730671117832,
+    "root_forward_speed_m_s": -1.2767956906907518,
+    "root_velocity_m_s": [
+      1.437384911270645,
+      -1.2767956906907518,
+      0.5475467208882145
+    ],
+    "selected_strike_position_m": [
+      1.4132310028544843,
+      1.1915024055849912,
+      1.2493570625541355
+    ],
+    "strike_angle_deg": 1.6245497518256518,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      0.07920906826123272,
+      6.71730671117832,
+      0.17326477915077526
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.42226442121303,
+      2.6456158267379823,
+      4.167574015504856
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.14453125,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.10022329212588799,
+    "best_sampled_speed_gain_m_s": 10.131810298092178,
+    "best_score": 2.9427560419941177,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.71730671117832,
+    "effective_samples": 15.100000653298316,
+    "elapsed_s": 223.04163770000014,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.00390625,
+    "horizontal_cable_rms_m": 0.44897574144339664,
+    "iteration": 55,
+    "loading_to_release_turn_deg": 93.35102814381402,
+    "loading_velocity_m_s": [
+      1.102518677166217,
+      -0.07761030975638114,
+      0.08261839852762298
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013022718259930635,
+      "strike": 2.944058313820111,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.3671875,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.71730671117832,
+    "root_forward_speed_m_s": -1.2767956906907518,
+    "root_velocity_m_s": [
+      1.437384911270645,
+      -1.2767956906907518,
+      0.5475467208882145
+    ],
+    "selected_strike_position_m": [
+      1.4132310028544843,
+      1.1915024055849912,
+      1.2493570625541355
+    ],
+    "strike_angle_deg": 1.6245497518256518,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      0.07920906826123272,
+      6.71730671117832,
+      0.17326477915077526
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.42226442121303,
+      2.6456158267379823,
+      4.167574015504856
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.119140625,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.10022329212588799,
+    "best_sampled_speed_gain_m_s": 9.064152235230004,
+    "best_score": 2.9427560419941177,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.71730671117832,
+    "effective_samples": 12.300000205433511,
+    "elapsed_s": 226.55223090000072,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.01171875,
+    "horizontal_cable_rms_m": 0.44897574144339664,
+    "iteration": 56,
+    "loading_to_release_turn_deg": 93.35102814381402,
+    "loading_velocity_m_s": [
+      1.102518677166217,
+      -0.07761030975638114,
+      0.08261839852762298
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013022718259930635,
+      "strike": 2.944058313820111,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.380859375,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.71730671117832,
+    "root_forward_speed_m_s": -1.2767956906907518,
+    "root_velocity_m_s": [
+      1.437384911270645,
+      -1.2767956906907518,
+      0.5475467208882145
+    ],
+    "selected_strike_position_m": [
+      1.4132310028544843,
+      1.1915024055849912,
+      1.2493570625541355
+    ],
+    "strike_angle_deg": 1.6245497518256518,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      0.07920906826123272,
+      6.71730671117832,
+      0.17326477915077526
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.42226442121303,
+      2.6456158267379823,
+      4.167574015504856
+    ],
+    "velocity_peak_times_s": [
+      1.32,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.115234375,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10192223318384985,
+    "best_sampled_speed_gain_m_s": 8.931472374342503,
+    "best_score": 2.9464268888612546,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.771677267959666,
+    "effective_samples": 12.500000261456492,
+    "elapsed_s": 232.46265159999894,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0078125,
+    "horizontal_cable_rms_m": 0.4386437086593261,
+    "iteration": 57,
+    "loading_to_release_turn_deg": 93.18037033049676,
+    "loading_velocity_m_s": [
+      1.0901501456248421,
+      -0.0404321837491662,
+      0.20163124380271347
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013349269947464928,
+      "strike": 2.9477618158560013,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.357421875,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.771677267959666,
+    "root_forward_speed_m_s": -1.294213576621589,
+    "root_velocity_m_s": [
+      1.2813251011993265,
+      -1.294213576621589,
+      0.5484565617479342
+    ],
+    "selected_strike_position_m": [
+      1.347137166759643,
+      1.2948327585910178,
+      1.4712176778286608
+    ],
+    "strike_angle_deg": 2.283146281692482,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.12485873892820451,
+      6.771677267959666,
+      0.2393771419111107
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.5044755014595035,
+      2.707508804795262,
+      4.210515272576837
+    ],
+    "velocity_peak_times_s": [
+      1.3133333333333332,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.123046875,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10192223318384985,
+    "best_sampled_speed_gain_m_s": 8.710382802505974,
+    "best_score": 2.9464268888612546,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.771677267959666,
+    "effective_samples": 12.600000522259938,
+    "elapsed_s": 235.95516299999872,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.009765625,
+    "horizontal_cable_rms_m": 0.4386437086593261,
+    "iteration": 58,
+    "loading_to_release_turn_deg": 93.18037033049676,
+    "loading_velocity_m_s": [
+      1.0901501456248421,
+      -0.0404321837491662,
+      0.20163124380271347
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013349269947464928,
+      "strike": 2.9477618158560013,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.396484375,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.771677267959666,
+    "root_forward_speed_m_s": -1.294213576621589,
+    "root_velocity_m_s": [
+      1.2813251011993265,
+      -1.294213576621589,
+      0.5484565617479342
+    ],
+    "selected_strike_position_m": [
+      1.347137166759643,
+      1.2948327585910178,
+      1.4712176778286608
+    ],
+    "strike_angle_deg": 2.283146281692482,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.12485873892820451,
+      6.771677267959666,
+      0.2393771419111107
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.5044755014595035,
+      2.707508804795262,
+      4.210515272576837
+    ],
+    "velocity_peak_times_s": [
+      1.3133333333333332,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.16015625,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10192223318384985,
+    "best_sampled_speed_gain_m_s": 8.97995422014253,
+    "best_score": 2.9464268888612546,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.771677267959666,
+    "effective_samples": 16.40000059623038,
+    "elapsed_s": 239.46142959999997,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.005859375,
+    "horizontal_cable_rms_m": 0.4386437086593261,
+    "iteration": 59,
+    "loading_to_release_turn_deg": 93.18037033049676,
+    "loading_velocity_m_s": [
+      1.0901501456248421,
+      -0.0404321837491662,
+      0.20163124380271347
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013349269947464928,
+      "strike": 2.9477618158560013,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.41015625,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.771677267959666,
+    "root_forward_speed_m_s": -1.294213576621589,
+    "root_velocity_m_s": [
+      1.2813251011993265,
+      -1.294213576621589,
+      0.5484565617479342
+    ],
+    "selected_strike_position_m": [
+      1.347137166759643,
+      1.2948327585910178,
+      1.4712176778286608
+    ],
+    "strike_angle_deg": 2.283146281692482,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.12485873892820451,
+      6.771677267959666,
+      0.2393771419111107
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.5044755014595035,
+      2.707508804795262,
+      4.210515272576837
+    ],
+    "velocity_peak_times_s": [
+      1.3133333333333332,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.13671875,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10192223318384985,
+    "best_sampled_speed_gain_m_s": 9.26370963960629,
+    "best_score": 2.9464268888612546,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.771677267959666,
+    "effective_samples": 14.000000265416688,
+    "elapsed_s": 242.98450520000188,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.005859375,
+    "horizontal_cable_rms_m": 0.4386437086593261,
+    "iteration": 60,
+    "loading_to_release_turn_deg": 93.18037033049676,
+    "loading_velocity_m_s": [
+      1.0901501456248421,
+      -0.0404321837491662,
+      0.20163124380271347
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013349269947464928,
+      "strike": 2.9477618158560013,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.37890625,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.771677267959666,
+    "root_forward_speed_m_s": -1.294213576621589,
+    "root_velocity_m_s": [
+      1.2813251011993265,
+      -1.294213576621589,
+      0.5484565617479342
+    ],
+    "selected_strike_position_m": [
+      1.347137166759643,
+      1.2948327585910178,
+      1.4712176778286608
+    ],
+    "strike_angle_deg": 2.283146281692482,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.12485873892820451,
+      6.771677267959666,
+      0.2393771419111107
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.5044755014595035,
+      2.707508804795262,
+      4.210515272576837
+    ],
+    "velocity_peak_times_s": [
+      1.3133333333333332,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.130859375,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10192223318384985,
+    "best_sampled_speed_gain_m_s": 9.128898214102318,
+    "best_score": 2.9464268888612546,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.771677267959666,
+    "effective_samples": 13.400000123829683,
+    "elapsed_s": 246.48443000000407,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.4386437086593261,
+    "iteration": 61,
+    "loading_to_release_turn_deg": 93.18037033049676,
+    "loading_velocity_m_s": [
+      1.0901501456248421,
+      -0.0404321837491662,
+      0.20163124380271347
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013349269947464928,
+      "strike": 2.9477618158560013,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.390625,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.771677267959666,
+    "root_forward_speed_m_s": -1.294213576621589,
+    "root_velocity_m_s": [
+      1.2813251011993265,
+      -1.294213576621589,
+      0.5484565617479342
+    ],
+    "selected_strike_position_m": [
+      1.347137166759643,
+      1.2948327585910178,
+      1.4712176778286608
+    ],
+    "strike_angle_deg": 2.283146281692482,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.12485873892820451,
+      6.771677267959666,
+      0.2393771419111107
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.5044755014595035,
+      2.707508804795262,
+      4.210515272576837
+    ],
+    "velocity_peak_times_s": [
+      1.3133333333333332,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.1484375,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.10221800005079473,
+    "best_sampled_speed_gain_m_s": 8.804150857881899,
+    "best_score": 2.9534088769139784,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.742219197523161,
+    "effective_samples": 15.20000031704018,
+    "elapsed_s": 251.9899205000038,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.005859375,
+    "horizontal_cable_rms_m": 0.41366959823976185,
+    "iteration": 62,
+    "loading_to_release_turn_deg": 87.3742187674128,
+    "loading_velocity_m_s": [
+      1.2097116907219652,
+      0.06958846798849112,
+      0.5676015875708096
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.001381226623686307,
+      "strike": 2.9547901035376647,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.359375,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 1,
+    "rewarded_tip_speed_m_s": 6.742219197523161,
+    "root_forward_speed_m_s": -1.356048111767194,
+    "root_velocity_m_s": [
+      0.8336078736172703,
+      -1.356048111767194,
+      0.5622957305166931
+    ],
+    "selected_strike_position_m": [
+      1.547544717234211,
+      1.3214967102220523,
+      1.5687421480792694
+    ],
+    "strike_angle_deg": 1.0685269406399562,
+    "strike_distance_m": null,
+    "strike_time_s": 1.68,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.07843565899197705,
+      6.742219197523161,
+      0.09829291762109205
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.5079977289467843,
+      2.6966583656888554,
+      4.1148067668299575
+    ],
+    "velocity_peak_times_s": [
+      1.2933333333333334,
+      1.4666666666666668,
+      1.6666666666666667
+    ]
+  },
+  {
+    "accepted_fraction": 0.181640625,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.10221800005079473,
+    "best_sampled_speed_gain_m_s": 8.643220184294243,
+    "best_score": 2.9534088769139784,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.742219197523161,
+    "effective_samples": 18.600000411106866,
+    "elapsed_s": 255.46551680000266,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.00390625,
+    "horizontal_cable_rms_m": 0.41366959823976185,
+    "iteration": 63,
+    "loading_to_release_turn_deg": 87.3742187674128,
+    "loading_velocity_m_s": [
+      1.2097116907219652,
+      0.06958846798849112,
+      0.5676015875708096
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.001381226623686307,
+      "strike": 2.9547901035376647,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.416015625,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.742219197523161,
+    "root_forward_speed_m_s": -1.356048111767194,
+    "root_velocity_m_s": [
+      0.8336078736172703,
+      -1.356048111767194,
+      0.5622957305166931
+    ],
+    "selected_strike_position_m": [
+      1.547544717234211,
+      1.3214967102220523,
+      1.5687421480792694
+    ],
+    "strike_angle_deg": 1.0685269406399562,
+    "strike_distance_m": null,
+    "strike_time_s": 1.68,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.07843565899197705,
+      6.742219197523161,
+      0.09829291762109205
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.5079977289467843,
+      2.6966583656888554,
+      4.1148067668299575
+    ],
+    "velocity_peak_times_s": [
+      1.2933333333333334,
+      1.4666666666666668,
+      1.6666666666666667
+    ]
+  },
+  {
+    "accepted_fraction": 0.126953125,
+    "aligned_release_duration_s": 0.19999999999999987,
+    "backward_travel_m": 0.10221800005079473,
+    "best_sampled_speed_gain_m_s": 9.907190100299951,
+    "best_score": 2.9534088769139784,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.742219197523161,
+    "effective_samples": 13.000000257341068,
+    "elapsed_s": 258.94449840000016,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.017578125,
+    "horizontal_cable_rms_m": 0.41366959823976185,
+    "iteration": 64,
+    "loading_to_release_turn_deg": 87.3742187674128,
+    "loading_velocity_m_s": [
+      1.2097116907219652,
+      0.06958846798849112,
+      0.5676015875708096
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.001381226623686307,
+      "strike": 2.9547901035376647,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.408203125,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.742219197523161,
+    "root_forward_speed_m_s": -1.356048111767194,
+    "root_velocity_m_s": [
+      0.8336078736172703,
+      -1.356048111767194,
+      0.5622957305166931
+    ],
+    "selected_strike_position_m": [
+      1.547544717234211,
+      1.3214967102220523,
+      1.5687421480792694
+    ],
+    "strike_angle_deg": 1.0685269406399562,
+    "strike_distance_m": null,
+    "strike_time_s": 1.68,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.07843565899197705,
+      6.742219197523161,
+      0.09829291762109205
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.5079977289467843,
+      2.6966583656888554,
+      4.1148067668299575
+    ],
+    "velocity_peak_times_s": [
+      1.2933333333333334,
+      1.4666666666666668,
+      1.6666666666666667
+    ]
+  },
+  {
+    "accepted_fraction": 0.138671875,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10131408192391844,
+    "best_sampled_speed_gain_m_s": 9.321554680533861,
+    "best_score": 2.9595023671574077,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.879042886689254,
+    "effective_samples": 14.200000089932859,
+    "elapsed_s": 264.62776390000363,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.009765625,
+    "horizontal_cable_rms_m": 0.44527280849505674,
+    "iteration": 65,
+    "loading_to_release_turn_deg": 94.07778386328897,
+    "loading_velocity_m_s": [
+      1.0611093052739133,
+      -0.06215362044970813,
+      0.1527196753803861
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013180046764900925,
+      "strike": 2.960820371833898,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.365234375,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.879042886689254,
+    "root_forward_speed_m_s": -1.2946307031596327,
+    "root_velocity_m_s": [
+      1.4664617181477935,
+      -1.2946307031596327,
+      0.48969408025534283
+    ],
+    "selected_strike_position_m": [
+      1.2971736485800425,
+      1.3010455406702361,
+      1.3692436389157958
+    ],
+    "strike_angle_deg": 2.8942129254536115,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.08711681711726876,
+      6.879042886689254,
+      0.3366928426631162
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.5076319239180624,
+      2.7113535643788578,
+      4.232864391093199
+    ],
+    "velocity_peak_times_s": [
+      1.3133333333333332,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.12890625,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10131408192391844,
+    "best_sampled_speed_gain_m_s": 8.663648622672996,
+    "best_score": 2.9595023671574077,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.879042886689254,
+    "effective_samples": 13.200000430675026,
+    "elapsed_s": 268.14884249999886,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.44527280849505674,
+    "iteration": 66,
+    "loading_to_release_turn_deg": 94.07778386328897,
+    "loading_velocity_m_s": [
+      1.0611093052739133,
+      -0.06215362044970813,
+      0.1527196753803861
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013180046764900925,
+      "strike": 2.960820371833898,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.41796875,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.879042886689254,
+    "root_forward_speed_m_s": -1.2946307031596327,
+    "root_velocity_m_s": [
+      1.4664617181477935,
+      -1.2946307031596327,
+      0.48969408025534283
+    ],
+    "selected_strike_position_m": [
+      1.2971736485800425,
+      1.3010455406702361,
+      1.3692436389157958
+    ],
+    "strike_angle_deg": 2.8942129254536115,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.08711681711726876,
+      6.879042886689254,
+      0.3366928426631162
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.5076319239180624,
+      2.7113535643788578,
+      4.232864391093199
+    ],
+    "velocity_peak_times_s": [
+      1.3133333333333332,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.115234375,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10131408192391844,
+    "best_sampled_speed_gain_m_s": 9.072979450779993,
+    "best_score": 2.9595023671574077,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.879042886689254,
+    "effective_samples": 12.300000446992506,
+    "elapsed_s": 271.60871249999764,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.01171875,
+    "horizontal_cable_rms_m": 0.44527280849505674,
+    "iteration": 67,
+    "loading_to_release_turn_deg": 94.07778386328897,
+    "loading_velocity_m_s": [
+      1.0611093052739133,
+      -0.06215362044970813,
+      0.1527196753803861
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013180046764900925,
+      "strike": 2.960820371833898,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.33203125,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.879042886689254,
+    "root_forward_speed_m_s": -1.2946307031596327,
+    "root_velocity_m_s": [
+      1.4664617181477935,
+      -1.2946307031596327,
+      0.48969408025534283
+    ],
+    "selected_strike_position_m": [
+      1.2971736485800425,
+      1.3010455406702361,
+      1.3692436389157958
+    ],
+    "strike_angle_deg": 2.8942129254536115,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.08711681711726876,
+      6.879042886689254,
+      0.3366928426631162
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.5076319239180624,
+      2.7113535643788578,
+      4.232864391093199
+    ],
+    "velocity_peak_times_s": [
+      1.3133333333333332,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.138671875,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10131408192391844,
+    "best_sampled_speed_gain_m_s": 8.531553499384382,
+    "best_score": 2.9595023671574077,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.879042886689254,
+    "effective_samples": 14.300000458966448,
+    "elapsed_s": 275.05406159999984,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.00390625,
+    "horizontal_cable_rms_m": 0.44527280849505674,
+    "iteration": 68,
+    "loading_to_release_turn_deg": 94.07778386328897,
+    "loading_velocity_m_s": [
+      1.0611093052739133,
+      -0.06215362044970813,
+      0.1527196753803861
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013180046764900925,
+      "strike": 2.960820371833898,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.37109375,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.879042886689254,
+    "root_forward_speed_m_s": -1.2946307031596327,
+    "root_velocity_m_s": [
+      1.4664617181477935,
+      -1.2946307031596327,
+      0.48969408025534283
+    ],
+    "selected_strike_position_m": [
+      1.2971736485800425,
+      1.3010455406702361,
+      1.3692436389157958
+    ],
+    "strike_angle_deg": 2.8942129254536115,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.08711681711726876,
+      6.879042886689254,
+      0.3366928426631162
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.5076319239180624,
+      2.7113535643788578,
+      4.232864391093199
+    ],
+    "velocity_peak_times_s": [
+      1.3133333333333332,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.140625,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10131408192391844,
+    "best_sampled_speed_gain_m_s": 8.710973523498968,
+    "best_score": 2.9595023671574077,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.879042886689254,
+    "effective_samples": 14.400000229844423,
+    "elapsed_s": 278.4943577000013,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0078125,
+    "horizontal_cable_rms_m": 0.44527280849505674,
+    "iteration": 69,
+    "loading_to_release_turn_deg": 94.07778386328897,
+    "loading_velocity_m_s": [
+      1.0611093052739133,
+      -0.06215362044970813,
+      0.1527196753803861
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013180046764900925,
+      "strike": 2.960820371833898,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.408203125,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.879042886689254,
+    "root_forward_speed_m_s": -1.2946307031596327,
+    "root_velocity_m_s": [
+      1.4664617181477935,
+      -1.2946307031596327,
+      0.48969408025534283
+    ],
+    "selected_strike_position_m": [
+      1.2971736485800425,
+      1.3010455406702361,
+      1.3692436389157958
+    ],
+    "strike_angle_deg": 2.8942129254536115,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.08711681711726876,
+      6.879042886689254,
+      0.3366928426631162
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.5076319239180624,
+      2.7113535643788578,
+      4.232864391093199
+    ],
+    "velocity_peak_times_s": [
+      1.3133333333333332,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.11328125,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10131408192391844,
+    "best_sampled_speed_gain_m_s": 10.041607039407427,
+    "best_score": 2.9595023671574077,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.879042886689254,
+    "effective_samples": 11.600000157736673,
+    "elapsed_s": 281.94080699999904,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.015625,
+    "horizontal_cable_rms_m": 0.44527280849505674,
+    "iteration": 70,
+    "loading_to_release_turn_deg": 94.07778386328897,
+    "loading_velocity_m_s": [
+      1.0611093052739133,
+      -0.06215362044970813,
+      0.1527196753803861
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013180046764900925,
+      "strike": 2.960820371833898,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.37109375,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.879042886689254,
+    "root_forward_speed_m_s": -1.2946307031596327,
+    "root_velocity_m_s": [
+      1.4664617181477935,
+      -1.2946307031596327,
+      0.48969408025534283
+    ],
+    "selected_strike_position_m": [
+      1.2971736485800425,
+      1.3010455406702361,
+      1.3692436389157958
+    ],
+    "strike_angle_deg": 2.8942129254536115,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.08711681711726876,
+      6.879042886689254,
+      0.3366928426631162
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.5076319239180624,
+      2.7113535643788578,
+      4.232864391093199
+    ],
+    "velocity_peak_times_s": [
+      1.3133333333333332,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.1328125,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10131408192391844,
+    "best_sampled_speed_gain_m_s": 8.94458178923321,
+    "best_score": 2.9595023671574077,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.879042886689254,
+    "effective_samples": 13.600000284125219,
+    "elapsed_s": 285.39100250000047,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.00390625,
+    "horizontal_cable_rms_m": 0.44527280849505674,
+    "iteration": 71,
+    "loading_to_release_turn_deg": 94.07778386328897,
+    "loading_velocity_m_s": [
+      1.0611093052739133,
+      -0.06215362044970813,
+      0.1527196753803861
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013180046764900925,
+      "strike": 2.960820371833898,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.37109375,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.879042886689254,
+    "root_forward_speed_m_s": -1.2946307031596327,
+    "root_velocity_m_s": [
+      1.4664617181477935,
+      -1.2946307031596327,
+      0.48969408025534283
+    ],
+    "selected_strike_position_m": [
+      1.2971736485800425,
+      1.3010455406702361,
+      1.3692436389157958
+    ],
+    "strike_angle_deg": 2.8942129254536115,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.08711681711726876,
+      6.879042886689254,
+      0.3366928426631162
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.5076319239180624,
+      2.7113535643788578,
+      4.232864391093199
+    ],
+    "velocity_peak_times_s": [
+      1.3133333333333332,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.130859375,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10131408192391844,
+    "best_sampled_speed_gain_m_s": 9.13044961027981,
+    "best_score": 2.9595023671574077,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.879042886689254,
+    "effective_samples": 13.400000132613533,
+    "elapsed_s": 288.88855210000474,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.005859375,
+    "horizontal_cable_rms_m": 0.44527280849505674,
+    "iteration": 72,
+    "loading_to_release_turn_deg": 94.07778386328897,
+    "loading_velocity_m_s": [
+      1.0611093052739133,
+      -0.06215362044970813,
+      0.1527196753803861
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013180046764900925,
+      "strike": 2.960820371833898,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.365234375,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.879042886689254,
+    "root_forward_speed_m_s": -1.2946307031596327,
+    "root_velocity_m_s": [
+      1.4664617181477935,
+      -1.2946307031596327,
+      0.48969408025534283
+    ],
+    "selected_strike_position_m": [
+      1.2971736485800425,
+      1.3010455406702361,
+      1.3692436389157958
+    ],
+    "strike_angle_deg": 2.8942129254536115,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.08711681711726876,
+      6.879042886689254,
+      0.3366928426631162
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.5076319239180624,
+      2.7113535643788578,
+      4.232864391093199
+    ],
+    "velocity_peak_times_s": [
+      1.3133333333333332,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.14453125,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10131408192391844,
+    "best_sampled_speed_gain_m_s": 9.175917140079937,
+    "best_score": 2.9595023671574077,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.879042886689254,
+    "effective_samples": 14.799999985516752,
+    "elapsed_s": 292.4186580000023,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.009765625,
+    "horizontal_cable_rms_m": 0.44527280849505674,
+    "iteration": 73,
+    "loading_to_release_turn_deg": 94.07778386328897,
+    "loading_velocity_m_s": [
+      1.0611093052739133,
+      -0.06215362044970813,
+      0.1527196753803861
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013180046764900925,
+      "strike": 2.960820371833898,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.369140625,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.879042886689254,
+    "root_forward_speed_m_s": -1.2946307031596327,
+    "root_velocity_m_s": [
+      1.4664617181477935,
+      -1.2946307031596327,
+      0.48969408025534283
+    ],
+    "selected_strike_position_m": [
+      1.2971736485800425,
+      1.3010455406702361,
+      1.3692436389157958
+    ],
+    "strike_angle_deg": 2.8942129254536115,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.08711681711726876,
+      6.879042886689254,
+      0.3366928426631162
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.5076319239180624,
+      2.7113535643788578,
+      4.232864391093199
+    ],
+    "velocity_peak_times_s": [
+      1.3133333333333332,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.140625,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10131408192391844,
+    "best_sampled_speed_gain_m_s": 9.20539656821094,
+    "best_score": 2.9595023671574077,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.879042886689254,
+    "effective_samples": 14.400000129499706,
+    "elapsed_s": 295.91576160000113,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.017578125,
+    "horizontal_cable_rms_m": 0.44527280849505674,
+    "iteration": 74,
+    "loading_to_release_turn_deg": 94.07778386328897,
+    "loading_velocity_m_s": [
+      1.0611093052739133,
+      -0.06215362044970813,
+      0.1527196753803861
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013180046764900925,
+      "strike": 2.960820371833898,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.384765625,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.879042886689254,
+    "root_forward_speed_m_s": -1.2946307031596327,
+    "root_velocity_m_s": [
+      1.4664617181477935,
+      -1.2946307031596327,
+      0.48969408025534283
+    ],
+    "selected_strike_position_m": [
+      1.2971736485800425,
+      1.3010455406702361,
+      1.3692436389157958
+    ],
+    "strike_angle_deg": 2.8942129254536115,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.08711681711726876,
+      6.879042886689254,
+      0.3366928426631162
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.5076319239180624,
+      2.7113535643788578,
+      4.232864391093199
+    ],
+    "velocity_peak_times_s": [
+      1.3133333333333332,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.140625,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10131408192391844,
+    "best_sampled_speed_gain_m_s": 8.757204306206674,
+    "best_score": 2.9595023671574077,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.879042886689254,
+    "effective_samples": 14.400000140875704,
+    "elapsed_s": 299.42688720000297,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.02734375,
+    "horizontal_cable_rms_m": 0.44527280849505674,
+    "iteration": 75,
+    "loading_to_release_turn_deg": 94.07778386328897,
+    "loading_velocity_m_s": [
+      1.0611093052739133,
+      -0.06215362044970813,
+      0.1527196753803861
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013180046764900925,
+      "strike": 2.960820371833898,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.3671875,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.879042886689254,
+    "root_forward_speed_m_s": -1.2946307031596327,
+    "root_velocity_m_s": [
+      1.4664617181477935,
+      -1.2946307031596327,
+      0.48969408025534283
+    ],
+    "selected_strike_position_m": [
+      1.2971736485800425,
+      1.3010455406702361,
+      1.3692436389157958
+    ],
+    "strike_angle_deg": 2.8942129254536115,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.08711681711726876,
+      6.879042886689254,
+      0.3366928426631162
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.5076319239180624,
+      2.7113535643788578,
+      4.232864391093199
+    ],
+    "velocity_peak_times_s": [
+      1.3133333333333332,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.16015625,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10131408192391844,
+    "best_sampled_speed_gain_m_s": 8.88066301226099,
+    "best_score": 2.9595023671574077,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.879042886689254,
+    "effective_samples": 16.40000011891926,
+    "elapsed_s": 302.9466395999989,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.01953125,
+    "horizontal_cable_rms_m": 0.44527280849505674,
+    "iteration": 76,
+    "loading_to_release_turn_deg": 94.07778386328897,
+    "loading_velocity_m_s": [
+      1.0611093052739133,
+      -0.06215362044970813,
+      0.1527196753803861
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013180046764900925,
+      "strike": 2.960820371833898,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.349609375,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.879042886689254,
+    "root_forward_speed_m_s": -1.2946307031596327,
+    "root_velocity_m_s": [
+      1.4664617181477935,
+      -1.2946307031596327,
+      0.48969408025534283
+    ],
+    "selected_strike_position_m": [
+      1.2971736485800425,
+      1.3010455406702361,
+      1.3692436389157958
+    ],
+    "strike_angle_deg": 2.8942129254536115,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.08711681711726876,
+      6.879042886689254,
+      0.3366928426631162
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.5076319239180624,
+      2.7113535643788578,
+      4.232864391093199
+    ],
+    "velocity_peak_times_s": [
+      1.3133333333333332,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.1171875,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10131408192391844,
+    "best_sampled_speed_gain_m_s": 9.027317755574598,
+    "best_score": 2.9595023671574077,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.879042886689254,
+    "effective_samples": 11.999999890982437,
+    "elapsed_s": 306.5184939000028,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.01171875,
+    "horizontal_cable_rms_m": 0.44527280849505674,
+    "iteration": 77,
+    "loading_to_release_turn_deg": 94.07778386328897,
+    "loading_velocity_m_s": [
+      1.0611093052739133,
+      -0.06215362044970813,
+      0.1527196753803861
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013180046764900925,
+      "strike": 2.960820371833898,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.373046875,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 1,
+    "rewarded_tip_speed_m_s": 6.879042886689254,
+    "root_forward_speed_m_s": -1.2946307031596327,
+    "root_velocity_m_s": [
+      1.4664617181477935,
+      -1.2946307031596327,
+      0.48969408025534283
+    ],
+    "selected_strike_position_m": [
+      1.2971736485800425,
+      1.3010455406702361,
+      1.3692436389157958
+    ],
+    "strike_angle_deg": 2.8942129254536115,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.08711681711726876,
+      6.879042886689254,
+      0.3366928426631162
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.5076319239180624,
+      2.7113535643788578,
+      4.232864391093199
+    ],
+    "velocity_peak_times_s": [
+      1.3133333333333332,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.115234375,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10131408192391844,
+    "best_sampled_speed_gain_m_s": 10.022443247716264,
+    "best_score": 2.9595023671574077,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.879042886689254,
+    "effective_samples": 11.800000110641248,
+    "elapsed_s": 310.0020747000017,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.021484375,
+    "horizontal_cable_rms_m": 0.44527280849505674,
+    "iteration": 78,
+    "loading_to_release_turn_deg": 94.07778386328897,
+    "loading_velocity_m_s": [
+      1.0611093052739133,
+      -0.06215362044970813,
+      0.1527196753803861
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013180046764900925,
+      "strike": 2.960820371833898,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.369140625,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.879042886689254,
+    "root_forward_speed_m_s": -1.2946307031596327,
+    "root_velocity_m_s": [
+      1.4664617181477935,
+      -1.2946307031596327,
+      0.48969408025534283
+    ],
+    "selected_strike_position_m": [
+      1.2971736485800425,
+      1.3010455406702361,
+      1.3692436389157958
+    ],
+    "strike_angle_deg": 2.8942129254536115,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.08711681711726876,
+      6.879042886689254,
+      0.3366928426631162
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.5076319239180624,
+      2.7113535643788578,
+      4.232864391093199
+    ],
+    "velocity_peak_times_s": [
+      1.3133333333333332,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.12109375,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10131408192391844,
+    "best_sampled_speed_gain_m_s": 9.412689122024222,
+    "best_score": 2.9595023671574077,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.879042886689254,
+    "effective_samples": 12.400000109225772,
+    "elapsed_s": 313.49780810000084,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.021484375,
+    "horizontal_cable_rms_m": 0.44527280849505674,
+    "iteration": 79,
+    "loading_to_release_turn_deg": 94.07778386328897,
+    "loading_velocity_m_s": [
+      1.0611093052739133,
+      -0.06215362044970813,
+      0.1527196753803861
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013180046764900925,
+      "strike": 2.960820371833898,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.373046875,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 6.879042886689254,
+    "root_forward_speed_m_s": -1.2946307031596327,
+    "root_velocity_m_s": [
+      1.4664617181477935,
+      -1.2946307031596327,
+      0.48969408025534283
+    ],
+    "selected_strike_position_m": [
+      1.2971736485800425,
+      1.3010455406702361,
+      1.3692436389157958
+    ],
+    "strike_angle_deg": 2.8942129254536115,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.08711681711726876,
+      6.879042886689254,
+      0.3366928426631162
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.5076319239180624,
+      2.7113535643788578,
+      4.232864391093199
+    ],
+    "velocity_peak_times_s": [
+      1.3133333333333332,
+      1.4866666666666668,
+      1.68
+    ]
+  },
+  {
+    "accepted_fraction": 0.115234375,
+    "aligned_release_duration_s": 0.20666666666666653,
+    "backward_travel_m": 0.10131408192391844,
+    "best_sampled_speed_gain_m_s": 9.326349784432784,
+    "best_score": 2.9595023671574077,
+    "closest_approach_time_s": null,
+    "directed_tip_speed_m_s": 6.879042886689254,
+    "effective_samples": 11.800000443017993,
+    "elapsed_s": 317.00737140000274,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "free_target": true,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.037109375,
+    "horizontal_cable_rms_m": 0.44527280849505674,
+    "iteration": 80,
+    "loading_to_release_turn_deg": 94.07778386328897,
+    "loading_velocity_m_s": [
+      1.0611093052739133,
+      -0.06215362044970813,
+      0.1527196753803861
+    ],
+    "minimum_tip_distance_m": null,
+    "objective_components": {
+      "smoothness": -0.0013180046764900925,
+      "strike": 2.960820371833898,
+      "target": -0.0
+    },
+    "physics_valid_fraction": 0.345703125,
+    "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+    "recovery_reference_rejections": 1,
+    "rewarded_tip_speed_m_s": 6.879042886689254,
+    "root_forward_speed_m_s": -1.2946307031596327,
+    "root_velocity_m_s": [
+      1.4664617181477935,
+      -1.2946307031596327,
+      0.48969408025534283
+    ],
+    "selected_strike_position_m": [
+      1.2971736485800425,
+      1.3010455406702361,
+      1.3692436389157958
+    ],
+    "strike_angle_deg": 2.8942129254536115,
+    "strike_distance_m": null,
+    "strike_time_s": 1.6933333333333334,
+    "target_note": "Strike location selected from the motion; no target accuracy measured",
+    "tip_velocity_m_s": [
+      -0.08711681711726876,
+      6.879042886689254,
+      0.3366928426631162
+    ],
+    "velocity_peak_speeds_m_s": [
+      2.5076319239180624,
+      2.7113535643788578,
+      4.232864391093199
+    ],
+    "velocity_peak_times_s": [
+      1.3133333333333332,
+      1.4866666666666668,
+      1.68
+    ]
+  }
+]

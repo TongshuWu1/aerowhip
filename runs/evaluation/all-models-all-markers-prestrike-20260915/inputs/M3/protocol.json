@@ -1,0 +1,948 @@
+{
+  "actual_take_count": 12,
+  "authorization": "User requests starting M4 after reviewing the complete M3 collection.",
+  "automatic_selection": false,
+  "cable_history_s": 1.0,
+  "cable_touched_or_reset": false,
+  "cable_velocity_weight_tau_s": 0.02,
+  "command_sha256": "48d7d33b0f37a6cec68ba9a8e1fb29190e5c5e0e3f552760a2460123b37cf925",
+  "comparison": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M3-collection-20260915\\saved_forecast_inputs",
+  "diagnostics_only": true,
+  "drone_history_s": 0.4,
+  "evaluation_only": true,
+  "evaluation_policy": "evaluate frozen parent before learning; prior training data measures retention",
+  "evaluation_qualification": "These 12 recordings train M4; post-fit scores on them are training diagnostics.",
+  "evaluation_role_note": "Mixed development data; inspect per-model training exposure.",
+  "evidence": "M4 development; training takes cannot independently validate the updated model",
+  "forecast_sha256": "06ab6c21f53363f35a4dcfa5e1998c9c12c3efaeb2ac623d9a21256c057ce50d",
+  "frame": "raw_global_xyz",
+  "frozen_hashes": {
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M3-MPPI-2cm-brake-1p3s\\assets\\cable_residual.pt": "a95c117667ce8702b2502f7a43f1fd095d231360176d3ad45b16dad6655634ee",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M3-MPPI-2cm-brake-1p3s\\assets\\drone_model.json": "8b574e02761231da81c99c806d6293d00882c8b4b71a73defbfd7b4128773e17",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M3-MPPI-2cm-brake-1p3s\\assets\\drone_residual.pt": "b0384605725e7b3e7ef28fb2b5da6aff67a97963c2c03b16ecba4b73f2877e97",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M3-MPPI-2cm-brake-1p3s\\fullstate_30hz.csv": "48d7d33b0f37a6cec68ba9a8e1fb29190e5c5e0e3f552760a2460123b37cf925",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M3-MPPI-2cm-brake-1p3s\\model.json": "d4c61a5123776f673a680c3cd112204de0e1876b3821571612c088634827888c",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M3-MPPI-2cm-brake-1p3s\\plan.npz": "9a07c1fe27c801a22ba68c8b6c02bfbb0e9c8989c259713e136e1206b168e023",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M3-MPPI-2cm-brake-1p3s\\rehearsal.json": "40bfb8e3488f522a63c4a803a88709ba3fc95fecfa5902e902d3e1b38ef8bc85",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M3-MPPI-2cm-brake-1p3s\\rehearsal.npz": "06ab6c21f53363f35a4dcfa5e1998c9c12c3efaeb2ac623d9a21256c057ce50d",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M3-MPPI-2cm-brake-1p3s\\settings.json": "bee30c5b8afcebfd1aa6c4382bba4b32d07a277c4b3a7d3842080a7833589922",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M3-MPPI-2cm-brake-1p3s\\task.json": "53d40757b794020705e4dd13e2003d2e7d0d296b217454bd4f6b7c3fa29536bf"
+  },
+  "full_update": {
+    "attitude_bounds": [
+      [
+        0.1,
+        0.05,
+        0.02
+      ],
+      [
+        3.0,
+        3.0,
+        0.3
+      ]
+    ],
+    "cable_bounds": [
+      [
+        1e-10,
+        1e-08,
+        0.0001
+      ],
+      [
+        0.0001,
+        0.001,
+        2.0
+      ]
+    ],
+    "cable_history_s": 1.0,
+    "cable_log_difference_step": 1e-06,
+    "cable_loss_change": "User requested 75% all-marker plus 25% extra tip, replacing the 50/50 loss used for M1-M3. Training loss across this change is not directly comparable.",
+    "cable_residual": {
+      "acceleration_limit": 0.5,
+      "hidden": 32,
+      "mode": "acceleration"
+    },
+    "cable_scale_m": 0.02,
+    "cable_tip_weight": 0.25,
+    "cable_velocity_weight_tau_s": 0.02,
+    "candidate_id": "M4",
+    "collection_recording_groups": {
+      "M3_001_whip_001": "M3_v2_001",
+      "M3_001_whip_002": "M3_v2_001",
+      "M3_001_whip_003": "M3_v2_001",
+      "M3_001_whip_004": "M3_v2_001",
+      "M3_002_whip_001": "M3_v2_002",
+      "M3_002_whip_002": "M3_v2_002",
+      "M3_002_whip_003": "M3_v2_002",
+      "M3_002_whip_004": "M3_v2_002",
+      "M3_003_whip_001": "M3_v2_003",
+      "M3_003_whip_002": "M3_v2_003",
+      "M3_003_whip_003": "M3_v2_003",
+      "M3_003_whip_004": "M3_v2_003"
+    },
+    "delay_candidates_s": [
+      0.0,
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.06,
+      0.08,
+      0.1,
+      0.12
+    ],
+    "drone_gain_bounds": [
+      [
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.01,
+        0.01
+      ],
+      [
+        80.0,
+        80.0,
+        20.0,
+        20.0,
+        3.0,
+        3.0
+      ]
+    ],
+    "evaluate_before_training": true,
+    "interpretation": "Effective loaded PVA response and cable dynamics; no identified motor ceiling or explicit cable reaction added",
+    "nominal_prior": 0.03,
+    "nominal_stopping": {
+      "ceiling": 80,
+      "minimum": 6,
+      "patience": 5,
+      "relative": 0.001
+    },
+    "orientation_scale_rad": 0.05,
+    "parent_id": "M3",
+    "performance_evaluation": "deferred_by_user",
+    "position_scale_m": 0.02,
+    "promotion": false,
+    "replay_weight": 0.5,
+    "residual_change": 0.01,
+    "residual_magnitude": 0.01,
+    "residual_stopping": {
+      "ceiling": null,
+      "check_every": 5,
+      "minimum": 40,
+      "patience": 6,
+      "relative": 0.005
+    },
+    "runner": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\tmp\\fit_m4_standard.py",
+    "runner_sha256": "a09fe62191705f0ce43f1f176a10b35b02cb37f18f2dc6367d45ba8a52c323bf",
+    "schema": "whip_full_model_v1",
+    "seed": 20260910,
+    "stages": [
+      "drone_nominal",
+      "drone_residual",
+      "attitude_refinement",
+      "cable_physics",
+      "cable_residual",
+      "combined_validation"
+    ],
+    "stopping_authorization": "Same standard criteria as M2/M3; no residual time/update cap; no shortened patience.",
+    "training": "Whole adaptation takes and all eligible preliminary training windows; no validation gradients or selection"
+  },
+  "minimum_observation_fraction": 0.8,
+  "model_id": "M3",
+  "model_update": "Full drone nominal/residual and cable physics/residual",
+  "neural_training": true,
+  "normalization": false,
+  "parent_forecast_model_sha256": "d4c61a5123776f673a680c3cd112204de0e1876b3821571612c088634827888c",
+  "parent_generation": 3,
+  "physical_target_present": false,
+  "planned_roles": {
+    "M3_001_whip_001": "adaptation",
+    "M3_001_whip_002": "adaptation",
+    "M3_001_whip_003": "adaptation",
+    "M3_001_whip_004": "adaptation",
+    "M3_002_whip_001": "adaptation",
+    "M3_002_whip_002": "adaptation",
+    "M3_002_whip_003": "adaptation",
+    "M3_002_whip_004": "adaptation",
+    "M3_003_whip_001": "adaptation",
+    "M3_003_whip_002": "adaptation",
+    "M3_003_whip_003": "adaptation",
+    "M3_003_whip_004": "adaptation"
+  },
+  "preliminary_source": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\20260909-preliminary1-M0-v2",
+  "preparation_scope": "full_model",
+  "prior_whip_replay": [],
+  "recording_groups": {
+    "M3_001_whip_001": "M3_v2_001",
+    "M3_001_whip_002": "M3_v2_001",
+    "M3_001_whip_003": "M3_v2_001",
+    "M3_001_whip_004": "M3_v2_001",
+    "M3_002_whip_001": "M3_v2_002",
+    "M3_002_whip_002": "M3_v2_002",
+    "M3_002_whip_003": "M3_v2_002",
+    "M3_002_whip_004": "M3_v2_002",
+    "M3_003_whip_001": "M3_v2_003",
+    "M3_003_whip_002": "M3_v2_003",
+    "M3_003_whip_003": "M3_v2_003",
+    "M3_003_whip_004": "M3_v2_003"
+  },
+  "rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M3-MPPI-2cm-brake-1p3s",
+  "review_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M3-collection-20260915\\saved_forecast_inputs\\review.json",
+  "role_unit": "whole take",
+  "schema": "prospective_whip_adaptation_v1",
+  "scored_interval_s": [
+    0.0,
+    1.1138000791100293
+  ],
+  "source_prepared_job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M4-20260915",
+  "source_segments": {
+    "M3_001_whip_001": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M3-session1-four-whips",
+      "recording": "M3_v2_001",
+      "repetition": 1
+    },
+    "M3_001_whip_002": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M3-session1-four-whips",
+      "recording": "M3_v2_001",
+      "repetition": 2
+    },
+    "M3_001_whip_003": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M3-session1-four-whips",
+      "recording": "M3_v2_001",
+      "repetition": 3
+    },
+    "M3_001_whip_004": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M3-session1-four-whips",
+      "recording": "M3_v2_001",
+      "repetition": 4
+    },
+    "M3_002_whip_001": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M3-session2-four-whips",
+      "recording": "M3_v2_002",
+      "repetition": 1
+    },
+    "M3_002_whip_002": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M3-session2-four-whips",
+      "recording": "M3_v2_002",
+      "repetition": 2
+    },
+    "M3_002_whip_003": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M3-session2-four-whips",
+      "recording": "M3_v2_002",
+      "repetition": 3
+    },
+    "M3_002_whip_004": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M3-session2-four-whips",
+      "recording": "M3_v2_002",
+      "repetition": 4
+    },
+    "M3_003_whip_001": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M3-session3-four-whips",
+      "recording": "M3_v2_003",
+      "repetition": 1
+    },
+    "M3_003_whip_002": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M3-session3-four-whips",
+      "recording": "M3_v2_003",
+      "repetition": 2
+    },
+    "M3_003_whip_003": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M3-session3-four-whips",
+      "recording": "M3_v2_003",
+      "repetition": 3
+    },
+    "M3_003_whip_004": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M3-session3-four-whips",
+      "recording": "M3_v2_003",
+      "repetition": 4
+    }
+  },
+  "source_whip_job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M3-collection-20260915\\whip_inputs",
+  "takes": {
+    "M3_001_whip_001": {
+      "end_s": 1.1138000791100293,
+      "history_masked_node_samples": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "history_node_coverage": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "masked_markers": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        14
+      ],
+      "original_role": "adaptation",
+      "review": {
+        "accepted": true,
+        "cable_only_update_justification": "",
+        "clock_reviewed": true,
+        "free_motion_end_s": 1.5,
+        "no_intervention": true,
+        "notes": "Estimated measured-stream alignment, not verified synchronization; no target or cable resets per user. Continuous native 100 Hz OptiTrack positions; individual invalid marker samples masked. No performance-based exclusions. Session 1 whip 4 has a partial recovery tail after the fitting interval.",
+        "physical_contact": "none",
+        "reviewed_by": "Codex: M3 collection checks; explicit user M4 request",
+        "role": "adaptation",
+        "same_controller_and_hardware": true
+      },
+      "role": "adaptation"
+    },
+    "M3_001_whip_002": {
+      "end_s": 1.1138000791100293,
+      "history_masked_node_samples": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "history_node_coverage": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "masked_markers": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3
+      ],
+      "original_role": "adaptation",
+      "review": {
+        "accepted": true,
+        "cable_only_update_justification": "",
+        "clock_reviewed": true,
+        "free_motion_end_s": 1.5,
+        "no_intervention": true,
+        "notes": "Estimated measured-stream alignment, not verified synchronization; no target or cable resets per user. Continuous native 100 Hz OptiTrack positions; individual invalid marker samples masked. No performance-based exclusions. Session 1 whip 4 has a partial recovery tail after the fitting interval.",
+        "physical_contact": "none",
+        "reviewed_by": "Codex: M3 collection checks; explicit user M4 request",
+        "role": "adaptation",
+        "same_controller_and_hardware": true
+      },
+      "role": "adaptation"
+    },
+    "M3_001_whip_003": {
+      "end_s": 1.1138000791100293,
+      "history_masked_node_samples": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "history_node_coverage": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "masked_markers": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        0,
+        4
+      ],
+      "original_role": "adaptation",
+      "review": {
+        "accepted": true,
+        "cable_only_update_justification": "",
+        "clock_reviewed": true,
+        "free_motion_end_s": 1.5,
+        "no_intervention": true,
+        "notes": "Estimated measured-stream alignment, not verified synchronization; no target or cable resets per user. Continuous native 100 Hz OptiTrack positions; individual invalid marker samples masked. No performance-based exclusions. Session 1 whip 4 has a partial recovery tail after the fitting interval.",
+        "physical_contact": "none",
+        "reviewed_by": "Codex: M3 collection checks; explicit user M4 request",
+        "role": "adaptation",
+        "same_controller_and_hardware": true
+      },
+      "role": "adaptation"
+    },
+    "M3_001_whip_004": {
+      "end_s": 1.1138000791100293,
+      "history_masked_node_samples": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "history_node_coverage": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "masked_markers": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1
+      ],
+      "original_role": "adaptation",
+      "review": {
+        "accepted": true,
+        "cable_only_update_justification": "",
+        "clock_reviewed": true,
+        "free_motion_end_s": 1.5,
+        "no_intervention": true,
+        "notes": "Estimated measured-stream alignment, not verified synchronization; no target or cable resets per user. Continuous native 100 Hz OptiTrack positions; individual invalid marker samples masked. No performance-based exclusions. Session 1 whip 4 has a partial recovery tail after the fitting interval.",
+        "physical_contact": "none",
+        "reviewed_by": "Codex: M3 collection checks; explicit user M4 request",
+        "role": "adaptation",
+        "same_controller_and_hardware": true
+      },
+      "role": "adaptation"
+    },
+    "M3_002_whip_001": {
+      "end_s": 1.1138000791100293,
+      "history_masked_node_samples": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "history_node_coverage": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "masked_markers": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        14
+      ],
+      "original_role": "adaptation",
+      "review": {
+        "accepted": true,
+        "cable_only_update_justification": "",
+        "clock_reviewed": true,
+        "free_motion_end_s": 1.5,
+        "no_intervention": true,
+        "notes": "Estimated measured-stream alignment, not verified synchronization; no target or cable resets per user. Continuous native 100 Hz OptiTrack positions; individual invalid marker samples masked. No performance-based exclusions. Session 1 whip 4 has a partial recovery tail after the fitting interval.",
+        "physical_contact": "none",
+        "reviewed_by": "Codex: M3 collection checks; explicit user M4 request",
+        "role": "adaptation",
+        "same_controller_and_hardware": true
+      },
+      "role": "adaptation"
+    },
+    "M3_002_whip_002": {
+      "end_s": 1.1138000791100293,
+      "history_masked_node_samples": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "history_node_coverage": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "masked_markers": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        7
+      ],
+      "original_role": "adaptation",
+      "review": {
+        "accepted": true,
+        "cable_only_update_justification": "",
+        "clock_reviewed": true,
+        "free_motion_end_s": 1.5,
+        "no_intervention": true,
+        "notes": "Estimated measured-stream alignment, not verified synchronization; no target or cable resets per user. Continuous native 100 Hz OptiTrack positions; individual invalid marker samples masked. No performance-based exclusions. Session 1 whip 4 has a partial recovery tail after the fitting interval.",
+        "physical_contact": "none",
+        "reviewed_by": "Codex: M3 collection checks; explicit user M4 request",
+        "role": "adaptation",
+        "same_controller_and_hardware": true
+      },
+      "role": "adaptation"
+    },
+    "M3_002_whip_003": {
+      "end_s": 1.1138000791100293,
+      "history_masked_node_samples": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "history_node_coverage": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "masked_markers": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        5
+      ],
+      "original_role": "adaptation",
+      "review": {
+        "accepted": true,
+        "cable_only_update_justification": "",
+        "clock_reviewed": true,
+        "free_motion_end_s": 1.5,
+        "no_intervention": true,
+        "notes": "Estimated measured-stream alignment, not verified synchronization; no target or cable resets per user. Continuous native 100 Hz OptiTrack positions; individual invalid marker samples masked. No performance-based exclusions. Session 1 whip 4 has a partial recovery tail after the fitting interval.",
+        "physical_contact": "none",
+        "reviewed_by": "Codex: M3 collection checks; explicit user M4 request",
+        "role": "adaptation",
+        "same_controller_and_hardware": true
+      },
+      "role": "adaptation"
+    },
+    "M3_002_whip_004": {
+      "end_s": 1.1138000791100293,
+      "history_masked_node_samples": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "history_node_coverage": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "masked_markers": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        15
+      ],
+      "original_role": "adaptation",
+      "review": {
+        "accepted": true,
+        "cable_only_update_justification": "",
+        "clock_reviewed": true,
+        "free_motion_end_s": 1.5,
+        "no_intervention": true,
+        "notes": "Estimated measured-stream alignment, not verified synchronization; no target or cable resets per user. Continuous native 100 Hz OptiTrack positions; individual invalid marker samples masked. No performance-based exclusions. Session 1 whip 4 has a partial recovery tail after the fitting interval.",
+        "physical_contact": "none",
+        "reviewed_by": "Codex: M3 collection checks; explicit user M4 request",
+        "role": "adaptation",
+        "same_controller_and_hardware": true
+      },
+      "role": "adaptation"
+    },
+    "M3_003_whip_001": {
+      "end_s": 1.1138000791100293,
+      "history_masked_node_samples": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "history_node_coverage": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "masked_markers": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2
+      ],
+      "original_role": "adaptation",
+      "review": {
+        "accepted": true,
+        "cable_only_update_justification": "",
+        "clock_reviewed": true,
+        "free_motion_end_s": 1.5,
+        "no_intervention": true,
+        "notes": "Estimated measured-stream alignment, not verified synchronization; no target or cable resets per user. Continuous native 100 Hz OptiTrack positions; individual invalid marker samples masked. No performance-based exclusions. Session 1 whip 4 has a partial recovery tail after the fitting interval.",
+        "physical_contact": "none",
+        "reviewed_by": "Codex: M3 collection checks; explicit user M4 request",
+        "role": "adaptation",
+        "same_controller_and_hardware": true
+      },
+      "role": "adaptation"
+    },
+    "M3_003_whip_002": {
+      "end_s": 1.1138000791100293,
+      "history_masked_node_samples": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "history_node_coverage": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "masked_markers": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        4
+      ],
+      "original_role": "adaptation",
+      "review": {
+        "accepted": true,
+        "cable_only_update_justification": "",
+        "clock_reviewed": true,
+        "free_motion_end_s": 1.5,
+        "no_intervention": true,
+        "notes": "Estimated measured-stream alignment, not verified synchronization; no target or cable resets per user. Continuous native 100 Hz OptiTrack positions; individual invalid marker samples masked. No performance-based exclusions. Session 1 whip 4 has a partial recovery tail after the fitting interval.",
+        "physical_contact": "none",
+        "reviewed_by": "Codex: M3 collection checks; explicit user M4 request",
+        "role": "adaptation",
+        "same_controller_and_hardware": true
+      },
+      "role": "adaptation"
+    },
+    "M3_003_whip_003": {
+      "end_s": 1.1138000791100293,
+      "history_masked_node_samples": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "history_node_coverage": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "masked_markers": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3
+      ],
+      "original_role": "adaptation",
+      "review": {
+        "accepted": true,
+        "cable_only_update_justification": "",
+        "clock_reviewed": true,
+        "free_motion_end_s": 1.5,
+        "no_intervention": true,
+        "notes": "Estimated measured-stream alignment, not verified synchronization; no target or cable resets per user. Continuous native 100 Hz OptiTrack positions; individual invalid marker samples masked. No performance-based exclusions. Session 1 whip 4 has a partial recovery tail after the fitting interval.",
+        "physical_contact": "none",
+        "reviewed_by": "Codex: M3 collection checks; explicit user M4 request",
+        "role": "adaptation",
+        "same_controller_and_hardware": true
+      },
+      "role": "adaptation"
+    },
+    "M3_003_whip_004": {
+      "end_s": 1.1138000791100293,
+      "history_masked_node_samples": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "history_node_coverage": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "masked_markers": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        18
+      ],
+      "original_role": "adaptation",
+      "review": {
+        "accepted": true,
+        "cable_only_update_justification": "",
+        "clock_reviewed": true,
+        "free_motion_end_s": 1.5,
+        "no_intervention": true,
+        "notes": "Estimated measured-stream alignment, not verified synchronization; no target or cable resets per user. Continuous native 100 Hz OptiTrack positions; individual invalid marker samples masked. No performance-based exclusions. Session 1 whip 4 has a partial recovery tail after the fitting interval.",
+        "physical_contact": "none",
+        "reviewed_by": "Codex: M3 collection checks; explicit user M4 request",
+        "role": "adaptation",
+        "same_controller_and_hardware": true
+      },
+      "role": "adaptation"
+    }
+  },
+  "validation_qualification": "Whole validation takes excluded from updates and selection; outcomes previously inspected in method development."
+}

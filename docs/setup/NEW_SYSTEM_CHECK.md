@@ -1,8 +1,7 @@
 # Fresh unseen-system MPPI adaptation check
 
 This is a retained development record, not the current collection checklist.
-Read [HANDOFF](../../HANDOFF.md) and [the current experiment protocol](../paper/PAPER_EXPERIMENT_PROTOCOL.md)
-for retained-M0 collection and current job status. During the 11 September
+See [the experiment protocol](../paper/PAPER_EXPERIMENT_PROTOCOL.md) for collection definitions. During the 11 September
 cleanup, the retired two-target/swing-and-settle outputs referenced below were
 removed. Their old paths and availability statements are historical; they are
 not runnable examples or evidence included in the active paper workspace.
@@ -287,7 +286,7 @@ Eleven other MPPI runs and three rehearsals are archived in place and hidden fro
 active lists; all original files and paths retained. Live-view run binding fixed,
 eight UI tests and native VTK saved-snapshot animation check passed. No new
 optimization, fit, flight or controller change; prospective real-flight evidence
-still pending. See latest HANDOFF and audit `mppi-live-fix-and-flight-selection-20260910`.
+still pending. See audit `mppi-live-fix-and-flight-selection-20260910`.
 
 Latest: one new MPPI run `20260910-022818-648386` authorized with tip-contact
 success. Same previous development M0, 512 samples / complete 1.5 s, reward,
@@ -326,7 +325,7 @@ Job `20260910-015017-245988` stopped at plateau after 31 updates / 94.51 s:
 fold or strict strike. Rehearsal/recovery frozen and selected; all optimization
 stopped. It uses unchanged development M0 and bounds, a soft
 full-sequence shape preference, first-encounter scoring and exact editable old
-command timing. Read latest HANDOFF and audit `mppi-preferred-fold-20260910`
+command timing. Read audit `mppi-preferred-fold-20260910`
 status before acting. No new fit, controller change or real flight.
 
 Latest: [preferred-wave review](../methods/WHIP_WAVE_REWARD_REVIEW.md) is complete. The user
@@ -334,13 +333,13 @@ wants the old strong travelling fold, not the current target-contact sweep.
 Saved-motion comparisons plus two bounded diagnostic replays identify genuine
 shape differences and sensitivity to predicted attachment motion. The report
 proposes a tested soft fold/propagation objective; no criterion, reward, model,
-fit, replay selection or optimizer was changed. Read latest HANDOFF before acting.
+fit, replay selection or optimizer was changed.
 
 Latest outcome: whole-whip job `20260910-011618-458510` completed after 20 updates
 at plateau (63.28 s). Closest tip 3.59 cm and first tip contact at 1.12488 s,
 but strict success false: dominant-bend stages 0/3. Complete simulated recovery
 passed; rehearsal and original forecast saved and selected for playback. Read
-latest HANDOFF and [trial details](../../delete/cleanup-20260913/docs/development/MPPI_WHOLE_WHIP.md). No optimizer, fit or flight
+[trial details](../../delete/cleanup-20260913/docs/development/MPPI_WHOLE_WHIP.md). No optimizer, fit or flight
 is currently authorized to start automatically. Launch notes below are historical.
 
 Latest 10 September 01:17: user-authorized [whole-whip MPPI](../../delete/cleanup-20260913/docs/development/MPPI_WHOLE_WHIP.md)
@@ -357,7 +356,7 @@ is running: `runs/mppi_pva/20260910-004200-654955`. Read its live status and
 cable with 0.4/s damping and inherited preliminary drone fit. Live view opened.
 No fit-complete/flight-ready claim or global selection change. The one-run worker
 will check and freeze a rehearsal after completion if recovery passes; no retry,
-flight or M1 fit is automatic. See latest HANDOFF for exact paths and checks.
+flight or M1 fit is automatic.
 
 10 September update: [gradient and damping investigation](../../delete/cleanup-20260913/docs/development/PRELIMINARY1_DAMPING_RESOLUTION.md)
 completed; a separate unselected M0 development candidate is staged. New real
@@ -369,17 +368,17 @@ Latest status: the user authorized and completed the small
 Its physical pair is diagnostic only; no new M0 was published or selected.
 MPPI `20260909-224132-314704` remains stopped. No drone or residual training ran.
 See [method comparison and proposed next steps](../../delete/cleanup-20260913/docs/development/PRELIMINARY1_METHOD_COMPARISON.md)
-and the latest HANDOFF; older running-status descriptions below are historical.
+for historical context; older running-status descriptions below are historical.
 
 The new experiment is `20260909-unseen-145g-17g`. The user reports a repaired
 145 g drone and 17 g cable assembly. Geometry and tracking-to-attachment convention
 are unchanged. Total mass is 162 g. Cable node masses retain the old proportions,
 scaled to 17 g; this distribution remains provisional. No old learned model,
-recording or policy is active. Historical evidence is recoverable through HANDOFF.
+recording or policy is active. Historical evidence remains in the archived records.
 
 The first five preliminary pairs have now been collected, reviewed and fitted
 under the user's subsequent authorization. See [preliminary1 fit details](../../delete/cleanup-20260913/docs/development/PRELIMINARY1_FIT.md)
-and the job status in HANDOFF. Collection instructions below remain applicable to
+for the historical fit. Collection instructions below remain applicable to
 additional takes; imports do not automatically enter an existing frozen fit.
 
 ## Collect additional takes

@@ -12,8 +12,7 @@ flights also retain raw measurements, masks, clock/frame mapping, sent commands,
 vehicle identity and the exact original saved forecast.
 
 Current example: the selected package `runs/flight_packages/20260910-022818-648386`.
-Its command CSV and original forecast are frozen and checksummed. See
-[paper handoff](../paper/PAPER_WRITING_HANDOFF.md) for exact identities and evidence limits.
+Its command CSV and original forecast are frozen and checksummed.
 The current code/release audit is `runs/audits/paper-readiness-cleanup-20260910`;
 its reported tests must be distinguished from experimental validation.
 

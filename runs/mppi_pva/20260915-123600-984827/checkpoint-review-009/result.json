@@ -1,0 +1,56 @@
+{
+  "minimum_tip_distance_m": null,
+  "strike_time_s": 1.06,
+  "strike_distance_m": null,
+  "closest_approach_time_s": null,
+  "directed_tip_speed_m_s": 6.515110694900943,
+  "strike_angle_deg": 20.579256871764635,
+  "root_velocity_m_s": [
+    1.100557273197787,
+    -1.3935018389203024,
+    -0.22189033172109737
+  ],
+  "root_forward_speed_m_s": -1.3935018389203024,
+  "rewarded_tip_speed_m_s": 6.515110694900943,
+  "tip_velocity_m_s": [
+    2.3356722451542553,
+    6.515110694900943,
+    0.7269248175893649
+  ],
+  "fold_completed_time_s": null,
+  "fold_valid": false,
+  "horizontal_cable_rms_m": 0.42124881771483064,
+  "free_target": true,
+  "selected_strike_position_m": [
+    -0.596785097344446,
+    1.1637307516743867,
+    1.1502934511019023
+  ],
+  "backward_travel_m": 0.103240704566115,
+  "target_note": "Strike location selected from the motion; no target accuracy measured",
+  "loading_velocity_m_s": [
+    -0.8385364643059473,
+    1.7456215874275787,
+    -0.09951447554654713
+  ],
+  "loading_to_release_turn_deg": 45.38082180358023,
+  "aligned_release_duration_s": 0.08,
+  "velocity_peak_times_s": [
+    0.7000000000000001,
+    0.8466666666666668,
+    1.04
+  ],
+  "velocity_peak_speeds_m_s": [
+    2.2888039325295257,
+    2.456111797675922,
+    4.365534507936152
+  ],
+  "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+  "best_score": 1.5193107990865804,
+  "checkpoint_iteration": 9,
+  "checkpoint_sha256": "fa75f595229cb17b2ad7452bcc722ea9383f14a3f5a6509206aedd169c779900",
+  "status": "checkpoint_preview",
+  "whip_end_s": 1.5333333333333334,
+  "target_invariance_score_difference": 0.0,
+  "evidence": "Independent frozen-model replay; no complete recovery or flight CSV in this diagnostic artifact"
+}

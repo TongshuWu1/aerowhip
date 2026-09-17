@@ -1,0 +1,40 @@
+{
+  "schema": "optitrack_tf_pva_v2",
+  "created_utc": "2026-09-15T03:58:51.037297+00:00",
+  "drone": "cf_3",
+  "child_frame": "cf_3_mocap",
+  "parent_frame": "mocap",
+  "expected_rate_hz": 100.0,
+  "command_timeout_s": 0.2,
+  "files": {
+    "samples": "experiment_M2_v2_002.csv",
+    "commands": "experiment_M2_v2_002.commands.csv"
+  },
+  "time_s": "Host monotonic callback time minus logger start; shared with command-event time_s.",
+  "cmd_age": "Sample callback monotonic time minus most recent command callback monotonic time.",
+  "tf_stamp_ns": "Unmodified TF source timestamp; its clock and capture-time meaning require publisher verification.",
+  "tf_time_s": "TF source time relative to first accepted TF sample.",
+  "command_header": "Publisher timestamp retained separately; not assumed synchronized with receiver.",
+  "command_snapshot": "Latest command received when the TF callback runs, not necessarily the command at TF capture time. Use event log for reconstruction.",
+  "velocity": "Backward difference of adjacent valid TF samples using TF timestamps; NaN across detected gaps.",
+  "measurement": "Selected TF translation and quaternion, unchanged. No coordinate transform.",
+  "motive_frame_ids_available": false,
+  "cable_markers_recorded": false,
+  "clock_verified": false,
+  "logger_start_monotonic_ns": 373280980096045,
+  "status": "complete",
+  "counts": {
+    "samples": 10823,
+    "commands": 3051,
+    "duplicate_samples": 0,
+    "out_of_order_samples": 0,
+    "bad_stamps": 0,
+    "invalid_poses": 0,
+    "tracking_gaps": 82
+  },
+  "first_tf_stamp_ns": 1789444731132374373,
+  "last_tf_stamp_ns": 1789444825341994683,
+  "tf_topic": "/tf",
+  "command_topic": "/cf_3/cmd_full_state",
+  "closed_utc": "2026-09-15T04:00:25.345578+00:00"
+}

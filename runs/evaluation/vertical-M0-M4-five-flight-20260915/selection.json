@@ -1,0 +1,154 @@
+{
+  "algorithm": "Allocate five slots to the least-filled eligible recording, with fixed-seed random tie breaking; sample uniformly without replacement within each recording.",
+  "base_seed": 20260915,
+  "collections": {
+    "M0": {
+      "quotas": {
+        "M0_v2_001": 2,
+        "M0_v2_002": 1,
+        "M0_v2_003": 2
+      },
+      "seed": 20260915,
+      "selected_by_recording": {
+        "M0_v2_001": [
+          "M0_Whip123_001",
+          "M0_Whip123_002"
+        ],
+        "M0_v2_002": [
+          "M0_002_whip_003"
+        ],
+        "M0_v2_003": [
+          "M0_003_whip_002",
+          "M0_003_whip_003"
+        ]
+      },
+      "selected_takes": [
+        "M0_002_whip_003",
+        "M0_003_whip_002",
+        "M0_003_whip_003",
+        "M0_Whip123_001",
+        "M0_Whip123_002"
+      ]
+    },
+    "M1": {
+      "quotas": {
+        "M1_v2_001": 2,
+        "M1_v2_002": 1,
+        "M1_v2_003": 2
+      },
+      "seed": 20260916,
+      "selected_by_recording": {
+        "M1_v2_001": [
+          "M1_001_whip_001",
+          "M1_001_whip_003"
+        ],
+        "M1_v2_002": [
+          "M1_002_whip_002"
+        ],
+        "M1_v2_003": [
+          "M1_003_whip_001",
+          "M1_003_whip_002"
+        ]
+      },
+      "selected_takes": [
+        "M1_001_whip_001",
+        "M1_001_whip_003",
+        "M1_002_whip_002",
+        "M1_003_whip_001",
+        "M1_003_whip_002"
+      ]
+    },
+    "M2": {
+      "quotas": {
+        "M2_v2_001": 1,
+        "M2_v2_002": 2,
+        "M2_v2_003": 2
+      },
+      "seed": 20260917,
+      "selected_by_recording": {
+        "M2_v2_001": [
+          "M2_001_whip_003"
+        ],
+        "M2_v2_002": [
+          "M2_002_whip_001",
+          "M2_002_whip_003"
+        ],
+        "M2_v2_003": [
+          "M2_003_whip_003",
+          "M2_003_whip_004"
+        ]
+      },
+      "selected_takes": [
+        "M2_001_whip_003",
+        "M2_002_whip_001",
+        "M2_002_whip_003",
+        "M2_003_whip_003",
+        "M2_003_whip_004"
+      ]
+    },
+    "M3": {
+      "quotas": {
+        "M3_v2_001": 2,
+        "M3_v2_002": 1,
+        "M3_v2_003": 2
+      },
+      "seed": 20260918,
+      "selected_by_recording": {
+        "M3_v2_001": [
+          "M3_001_whip_002",
+          "M3_001_whip_004"
+        ],
+        "M3_v2_002": [
+          "M3_002_whip_002"
+        ],
+        "M3_v2_003": [
+          "M3_003_whip_003",
+          "M3_003_whip_004"
+        ]
+      },
+      "selected_takes": [
+        "M3_001_whip_002",
+        "M3_001_whip_004",
+        "M3_002_whip_002",
+        "M3_003_whip_003",
+        "M3_003_whip_004"
+      ]
+    },
+    "M4": {
+      "quotas": {
+        "M4_v2_001": 1,
+        "M4_v2_002": 2,
+        "M4_v2_003": 2
+      },
+      "seed": 20260919,
+      "selected_by_recording": {
+        "M4_v2_001": [
+          "M4_001_whip_002"
+        ],
+        "M4_v2_002": [
+          "M4_002_whip_003",
+          "M4_002_whip_004"
+        ],
+        "M4_v2_003": [
+          "M4_003_whip_002",
+          "M4_003_whip_004"
+        ]
+      },
+      "selected_takes": [
+        "M4_001_whip_002",
+        "M4_002_whip_003",
+        "M4_002_whip_004",
+        "M4_003_whip_002",
+        "M4_003_whip_004"
+      ]
+    }
+  },
+  "frozen_at_utc": "2026-09-16T00:49:16.520856+00:00",
+  "numpy_version": "2.5.1",
+  "rng": "NumPy PCG64",
+  "schema": "five_flight_physical_subset_v1",
+  "scope": "Physical execution only. The ten-flight common-M4 prediction set and separate 17/20 contact test are unchanged.",
+  "selection_inputs": "Flight name, collection, recording group, and frozen pre-command filter-pass flag only. No outcome values.",
+  "selector_sha256": "695e7b4f1129aa2bdd358123c3c46e5587843b93b9876a7032fd220bf176f099",
+  "source_filter_sha256": "a27de851ec5df2ea7910303b7610da97147cc4635c3c1c3fe5bedc7a2d27d28c"
+}

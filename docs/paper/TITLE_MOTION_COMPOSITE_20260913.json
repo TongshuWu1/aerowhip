@@ -1,0 +1,35 @@
+{
+  "date": "2026-09-13",
+  "scope": "Replace the large three-panel title strip with one compact registered photographic motion composite.",
+  "manuscript": "C:\\Users\\wts28\\Lehigh University Dropbox\\TonyLehigh Wu\\Apps\\Overleaf\\AeroWhip-ICRA\\main.tex",
+  "before_sha256": "fb221f45928fb55af30bb9093aaaecd84f3c80c03638d07962e4e7979c208c55",
+  "after_sha256": "8e6498bf56aaa5ce2f5bbc984764e3df89085255f32918ee709bd6437c27a884",
+  "figure": "paper/figures/AeroWhip_motion_composite.pdf",
+  "pdf": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\paper\\figures\\AeroWhip_methodology_20260913.pdf",
+  "pdf_sha256": "9d9d7b2559a6cf348a86787067d3faa0dd510f19baa903ed933e162056ea0755",
+  "provenance": "paper/figures/AeroWhip_motion_composite_provenance.json",
+  "source_package": "paper/figures/title_motion_sources",
+  "backup": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\tmp\\pdfs\\title_composite_20260913\\before",
+  "checks": {
+    "compile": "Tectonic on Windows",
+    "pages": 8,
+    "figure_on_page": 1,
+    "placement": "Top of right column",
+    "numbered_equations": 17,
+    "all_pages_visually_checked": true,
+    "overfull_boxes": 0,
+    "undefined_references": 0,
+    "source_video_hash_reverified": true,
+    "reproducible_composite_byte_identical": true,
+    "existing_class_font_author_and_underfull_warnings_remain": true
+  },
+  "evidence_scope": "Five registered photographic poses from a single supplied video, with background/stand removal and uniform cable-contrast enhancement explicitly captioned. No model/take identity or numerical result inferred.",
+  "preserved": [
+    "Original source video",
+    "Section structure",
+    "All equations",
+    "Both result tables",
+    "Models and recorded experimental evidence"
+  ],
+  "cloud_sync_verified": false
+}

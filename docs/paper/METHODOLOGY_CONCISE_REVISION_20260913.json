@@ -1,0 +1,41 @@
+{
+  "scope": "Concise methodology revision with unchanged section structure and numbered equations; fixed-yaw correction in Problem Statement; study-specific M0 capacity detail moved to Experiments",
+  "source": "C:\\Users\\wts28\\Lehigh University Dropbox\\TonyLehigh Wu\\Apps\\Overleaf\\AeroWhip-ICRA\\main.tex",
+  "source_sha256": "061e47dbf6e17fb87a97710dfe668b56e007545d2d6b49bd350c54ba3aaddc41",
+  "before": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\tmp\\methodology_edit_20260913\\before\\main.tex",
+  "method_whitespace_tokens_before": 2798,
+  "method_whitespace_tokens_after": 2304,
+  "reduction_percent": 17.7,
+  "numbered_equations_unchanged": true,
+  "headings_unchanged": true,
+  "results_unchanged": true,
+  "audited_implementation_hashes_unchanged": true,
+  "prior_code_audit": "docs/paper/METHOD_CODE_AUDIT_20260913.json",
+  "new_code_tests_run": false,
+  "reason": "Documentation-only changes; all audited numerical source files and numbered equations unchanged",
+  "compilation": "Tectonic 0.17 with local OT1 QA wrapper; live preamble unchanged",
+  "pages": 7,
+  "visually_reviewed_pages": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "overfull_boxes": false,
+  "unresolved_references": false,
+  "remaining_warnings": [
+    "Existing class/caption and missing-author warnings",
+    "Existing figure font substitutions",
+    "Three underfull paragraphs"
+  ],
+  "preview": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\paper\\figures\\AeroWhip_methodology_20260913.pdf",
+  "preview_sha256": "1538a832c551645efa7066fef73da761de791bbc1c741c95ee46eb770d2ed57a",
+  "cloud_sync_verified": false,
+  "open_loop_clarification": "Abstract, Problem Statement and Framework explicitly describe commands fixed per flight and adaptation between flights; onboard vehicle feedback remains active",
+  "latest_edit_before": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\tmp\\sim_planning_tip_metrics_20260913\\before\\main.tex",
+  "simulation_planning_clarification": "MPPI and correction run offline in simulation with current identified physical parameters and learned corrections held fixed",
+  "experimental_metric_scope": "Removed vehicle tracking and prediction errors; retained tip tracking/prediction, target approach and tip speed"
+}

@@ -1,0 +1,11 @@
+{
+  "action": "Use frozen code for final verification if unrelated workspace changes block live-code hash checks.",
+  "changes": [
+    {
+      "current_sha256": "81f012ea22656f269b0dca382126f5a11ba8a736b958937113fa6438073a7ba1",
+      "frozen_sha256": "ddeb5eb02f9d00d98d499aaa4441e3ea925ad6a9fb286533c87e5a770f064a85",
+      "path": "tools/build_fig1_photographic.py"
+    }
+  ],
+  "optimization_source": "Modules loaded when fit started; frozen source snapshot retained"
+}

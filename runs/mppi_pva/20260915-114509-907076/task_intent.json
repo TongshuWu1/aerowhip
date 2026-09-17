@@ -1,0 +1,25 @@
+{
+  "free_target": true,
+  "initial_hover_m": [
+    0.0,
+    0.0,
+    2.0
+  ],
+  "initialization_command_source": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260915-113930-986208\\plan.npz",
+  "maneuver_duration_s": 1.3,
+  "minimum_tip_forward_speed_m_s": 2.0,
+  "model_id": "M5",
+  "physical_flight_pending": false,
+  "pullback": {
+    "minimum_backward_distance_m": 0.1,
+    "minimum_backward_speed_m_s": 0.5,
+    "minimum_pull_distance_m": 0.25,
+    "minimum_pull_speed_m_s": 1.0
+  },
+  "reason": "Earlier 1.4 m launch search repeatedly rejected descending exits below the unchanged recovery height floor.",
+  "review": "Compare cable-shape evolution and node velocities with original M0. Existing travelling-bend detector is diagnostic; it does not certify original M0 either.",
+  "search_budget": "512 samples x 80 iterations; no convergence claim",
+  "source_sha256": "0155abe449a65cd31d05c96859f784c3752fa8f3c26efc3a95b1ed6e2697a806",
+  "target_accuracy_evaluated": false,
+  "task": "Horizontal side whip preserving pullback and release"
+}

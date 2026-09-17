@@ -1,8 +1,7 @@
 # Nominal loaded-drone pose response
 
 Technical model reference. The implementation-status statements below describe
-the original 8 September integration stage; see [current architecture](../ARCHITECTURE.md)
-and [HANDOFF.md](../../HANDOFF.md) for the active PVA integration and stop state.
+the original 8 September integration stage. See [architecture](../ARCHITECTURE.md) for the source map.
 
 Implemented 8 September 2026 as a standalone engine with no default fitted
 gains. The [first fit](../../delete/cleanup-20260913/docs/history/20260909-doc-cleanup/NOMINAL_DRONE_FIT_RESULTS_20260908.md) found useful position

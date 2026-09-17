@@ -1,0 +1,112 @@
+{
+  "attitude_bounds": [
+    [
+      0.1,
+      0.05,
+      0.02
+    ],
+    [
+      3.0,
+      3.0,
+      0.3
+    ]
+  ],
+  "cable_bounds": [
+    [
+      1e-10,
+      1e-08,
+      0.0001
+    ],
+    [
+      0.0001,
+      0.001,
+      2.0
+    ]
+  ],
+  "cable_history_s": 1.0,
+  "cable_log_difference_step": 1e-06,
+  "cable_residual": {
+    "acceleration_limit": 0.5,
+    "hidden": 32,
+    "mode": "acceleration"
+  },
+  "cable_scale_m": 0.02,
+  "cable_velocity_weight_tau_s": 0.02,
+  "candidate_id": "M1",
+  "collection_recording_groups": {
+    "M0_002_whip_001": "M0_v2_002",
+    "M0_002_whip_002": "M0_v2_002",
+    "M0_002_whip_003": "M0_v2_002",
+    "M0_002_whip_004": "M0_v2_002",
+    "M0_003_whip_001": "M0_v2_003",
+    "M0_003_whip_002": "M0_v2_003",
+    "M0_003_whip_003": "M0_v2_003",
+    "M0_003_whip_004": "M0_v2_003",
+    "M0_Whip123_001": "M0_v2_001",
+    "M0_Whip123_002": "M0_v2_001",
+    "M0_Whip123_003": "M0_v2_001"
+  },
+  "delay_candidates_s": [
+    0.0,
+    0.01,
+    0.02,
+    0.03,
+    0.04,
+    0.06,
+    0.08,
+    0.1,
+    0.12
+  ],
+  "drone_gain_bounds": [
+    [
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.01,
+      0.01
+    ],
+    [
+      80.0,
+      80.0,
+      20.0,
+      20.0,
+      3.0,
+      3.0
+    ]
+  ],
+  "evaluate_before_training": true,
+  "interpretation": "Effective loaded PVA response and cable dynamics; no identified motor ceiling or explicit cable reaction added",
+  "nominal_prior": 0.03,
+  "nominal_stopping": {
+    "ceiling": 80,
+    "minimum": 6,
+    "patience": 5,
+    "relative": 0.001
+  },
+  "orientation_scale_rad": 0.05,
+  "parent_id": "M0",
+  "position_scale_m": 0.02,
+  "promotion": false,
+  "replay_weight": 0.5,
+  "residual_change": 0.01,
+  "residual_magnitude": 0.01,
+  "residual_stopping": {
+    "ceiling": null,
+    "check_every": 5,
+    "minimum": 40,
+    "patience": 6,
+    "relative": 0.005
+  },
+  "schema": "whip_full_model_v1",
+  "seed": 20260910,
+  "stages": [
+    "drone_nominal",
+    "drone_residual",
+    "attitude_refinement",
+    "cable_physics",
+    "cable_residual",
+    "combined_validation"
+  ],
+  "training": "All 11 complete whips and existing preliminary training replay; no current-batch holdout; preliminary validation excluded from updates and selection."
+}

@@ -1,0 +1,32 @@
+{
+  "command_event_consistency_passed": true,
+  "command_source": "event_log",
+  "comparison_loads": [
+    {
+      "command_source": "event_log",
+      "comparison_frames": 930,
+      "packets": 187,
+      "take": "M4_002_whip_001"
+    },
+    {
+      "command_source": "event_log",
+      "comparison_frames": 930,
+      "packets": 187,
+      "take": "M4_002_whip_002"
+    },
+    {
+      "command_source": "event_log",
+      "comparison_frames": 930,
+      "packets": 187,
+      "take": "M4_002_whip_003"
+    },
+    {
+      "command_source": "event_log",
+      "comparison_frames": 930,
+      "packets": 187,
+      "take": "M4_002_whip_004"
+    }
+  ],
+  "original_hashes_unchanged": true,
+  "raw_rows_byte_preserved": true
+}

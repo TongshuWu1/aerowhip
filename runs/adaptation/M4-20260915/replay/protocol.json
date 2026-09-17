@@ -1,0 +1,40 @@
+{
+  "alignment": "Causal moving-history effective attitude alignment; not mounting calibration",
+  "cable_history_s": 1.0,
+  "cable_velocity_weight_tau_s": 0.02,
+  "cable_window_s": 1.0,
+  "evidence": "Retrospective short-window identification; final whole-take checks are not prospective flight evidence",
+  "history_s": 0.4,
+  "initial_memory": "Causal moving-history mean acceleration minus nominal feedback/feedforward; fixed during each rollout; not observed firmware integral",
+  "normalization_applied": false,
+  "schema": "preliminary_pva_bootstrap_v1",
+  "selection": "Training-only plateau; whole figure8_002 excluded from optimization and checkpoint selection",
+  "source_batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\rehearsal_csv_and_result_in_real_flight\\preliminary1",
+  "stopping": {
+    "cable": {
+      "ceiling": 120,
+      "check_every": 3,
+      "minimum": 12,
+      "patience": 4,
+      "relative": 0.005
+    },
+    "drone": {
+      "ceiling": 400,
+      "check_every": 5,
+      "minimum": 40,
+      "patience": 5,
+      "relative": 0.005
+    }
+  },
+  "training_takes": [
+    "figure8_001",
+    "osci_001",
+    "osci_002",
+    "vertical_figure8_001"
+  ],
+  "validation_takes": [
+    "figure8_002"
+  ],
+  "window_s": 2.0,
+  "window_stride_s": 2.0
+}

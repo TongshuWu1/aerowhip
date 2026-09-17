@@ -1,0 +1,3 @@
+[W915 19:41:48.000000000 Context.cpp:448] Warning: torch.backends.cuda.preferred_linalg_library is an experimental feature. If you see any error or unexpected behavior when this flag is set please file an issue on GitHub. (function operator ())
+{"production": true, "step": 3e-08, "relative_error": 0.006623648948052804, "derivative_norm": 1383.0265143207432, "cost": 1.1502740276869396}
+{"production": true, "step": 1e-08, "relative_error": 0.002575441510659286, "derivative_norm": 1378.5997819003242, "cost": 1.1502740276869396, "difference_to_previous_jacobian": 0.010901229616869445}

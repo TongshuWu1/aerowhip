@@ -1,0 +1,18 @@
+{
+  "free_target": true,
+  "initialization_command_source": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\plan.npz",
+  "minimum_tip_forward_speed_m_s": 2.0,
+  "model_id": "M5",
+  "physical_flight_pending": false,
+  "pullback": {
+    "minimum_backward_distance_m": 0.1,
+    "minimum_backward_speed_m_s": 0.5,
+    "minimum_pull_distance_m": 0.25,
+    "minimum_pull_speed_m_s": 1.0
+  },
+  "review": "Compare cable-shape evolution and node velocities with original M0. Existing travelling-bend detector is diagnostic; it does not certify original M0 either.",
+  "search_budget": "512 samples x 80 iterations; no convergence claim",
+  "source_sha256": "510165fffaf15b4b9e8cab928756adf9512acd9c94f3fbeaffdaff18c5cde4c7",
+  "target_accuracy_evaluated": false,
+  "task": "Horizontal side whip preserving pullback and release"
+}

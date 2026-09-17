@@ -1,0 +1,70 @@
+{
+  "clock_verified": false,
+  "controller_position_update_interval_median_s": 0.09999966621398926,
+  "controller_row_interval_median_s": 0.009999990463256836,
+  "convention": "controller_time = OptiTrack_time + offset_s",
+  "correction": "Previous all-row interpolation weighted stale cached positions and biased the estimate by about half of a 0.1-second update interval.",
+  "fitting_performed": false,
+  "fitting_state_source": "Native OptiTrack drone positions, quaternion and cable markers; controller XYZ excluded from fitting targets.",
+  "fresh_samples": 845,
+  "includes_logging_latency": true,
+  "method": "Match first logged occurrence of each changed controller XYZ to native 100 Hz measured OptiTrack XYZ; no command/forecast matching or spatial transform.",
+  "offset_s": 0.7461595602725004,
+  "optitrack_interval_median_s": 0.009999999999999787,
+  "original_files_unchanged": true,
+  "per_axis": {
+    "x": {
+      "fresh_samples": 845,
+      "offset_s": 0.7457326429059972,
+      "rms_m": 0.0024079495502750616
+    },
+    "y": {
+      "fresh_samples": 845,
+      "offset_s": 0.7509277446668237,
+      "rms_m": 0.001081902233663155
+    },
+    "z": {
+      "fresh_samples": 845,
+      "offset_s": 0.7474982661470694,
+      "rms_m": 0.0011796165234449149
+    }
+  },
+  "per_whip": [
+    {
+      "fresh_samples": 135,
+      "offset_s": 0.746203858428947,
+      "repetition": 1,
+      "rms_m": 0.003661403660993707
+    },
+    {
+      "fresh_samples": 135,
+      "offset_s": 0.7442419737906593,
+      "repetition": 2,
+      "rms_m": 0.0020250301520809326
+    },
+    {
+      "fresh_samples": 135,
+      "offset_s": 0.7458026027360145,
+      "repetition": 3,
+      "rms_m": 0.0048246818531182374
+    },
+    {
+      "fresh_samples": 118,
+      "offset_s": 0.7480031889504618,
+      "repetition": 4,
+      "rms_m": 0.0031591187140328197
+    }
+  ],
+  "previous_offset_s": 0.794726702230409,
+  "recording": "M0_v2_001",
+  "rms_m": 0.002931429695046712,
+  "schema": "cached_position_alignment_review_v1",
+  "source_hashes": {
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M0_MPPI_2cm_brake_1p3s\\flight_take\\M0\\M0_v2_001.csv": "2176d1f7c9fe8f66f26f1cec6ace896ef37c60a34c821d0b7e6341c10424ecda",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M0_MPPI_2cm_brake_1p3s\\flight_take\\M0\\experiment_M0_v2_001.csv": "e7dacebece2502e947298a6fe5885b2df29bc1ad8d9b5135cbf329e59c694b25",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M0_MPPI_2cm_brake_1p3s\\fullstate_30hz.csv": "1e716e6ef8626d48229416a8baf2e6581f97899de38a578833c88ad0defbe634",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\model.json": "6c4837cbfdc2f41c21c8e3e7387c0a24945a2690bd3c5033f3f4e3bfefe7064f",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\rehearsal.npz": "66ea65f7c5f33cf9b0ce722c318d829f711700c3145336bde2614a65cfbf9f9a"
+  },
+  "timing_limit": "No shared clock/frame event. Fresh-update timestamps still include unknown transport/estimator latency; not a verified physical actuation delay."
+}

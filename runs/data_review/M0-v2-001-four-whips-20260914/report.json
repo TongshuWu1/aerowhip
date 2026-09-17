@@ -1,0 +1,335 @@
+{
+  "alignment": {
+    "clock_verified": false,
+    "half_offsets_s": [
+      0.7856778769982752,
+      0.7947709188775102
+    ],
+    "includes_logging_latency": true,
+    "method": "measured XYZ constant-offset least squares; no spatial fit",
+    "offset_s": 0.794726702230409,
+    "rms_m": 0.013036592139045608
+  },
+  "fitting_performed": false,
+  "grouping": "Four repeated executions from one battery/recording; preserve recording group in later evaluation.",
+  "metric_interval_s": [
+    0.0,
+    1.5
+  ],
+  "nominal_virtual_target_m": [
+    1.25,
+    0.0,
+    1.25
+  ],
+  "pre_hover_interval_s": [
+    -2.0,
+    -0.2
+  ],
+  "recording": "M0_v2_001",
+  "rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s",
+  "repetitions": [
+    {
+      "alignment_sensitivity": [
+        {
+          "offset_change_s": -0.01,
+          "planned_time_virtual_distance_m": 0.2221878944697245,
+          "tip_reference_rmse_m": 0.20007743942697373
+        },
+        {
+          "offset_change_s": 0.0,
+          "planned_time_virtual_distance_m": 0.27845946384197406,
+          "tip_reference_rmse_m": 0.20976503631918952
+        },
+        {
+          "offset_change_s": 0.01,
+          "planned_time_virtual_distance_m": 0.3312826760454945,
+          "tip_reference_rmse_m": 0.2204735498396739
+        }
+      ],
+      "all_marker_valid_fraction_whip": 1.0,
+      "all_moving_packets_present": true,
+      "cable_history_1s": {
+        "passed": true
+      },
+      "complete_csv_observed": true,
+      "complete_whip_observed": true,
+      "expected_moving_packets": 146,
+      "fixed_tip_reference_rmse_m": 0.20976503631918952,
+      "gap_after_previous_csv_s": null,
+      "interpretation": "No physical target or intervention, as confirmed by user; no hit/contact score.",
+      "local_alignment_offset_s": 0.7947518139260739,
+      "local_alignment_rms_m": 0.01906791549466634,
+      "moving_packets_matched": 146,
+      "nominal_vehicle_forecast_rmse_m": 0.11294574537737105,
+      "onset_controller_s": 21.377774477005005,
+      "onset_estimate_range_ms": 0.4720052083335702,
+      "pre_hover_drone_speed_rms_m_s": 0.06398716995221791,
+      "pre_hover_last_command_m": [
+        0.0,
+        0.0,
+        1.4
+      ],
+      "pre_hover_position_mean_m": [
+        -0.06252894444444447,
+        -0.09265223888888893,
+        1.3985178444444446
+      ],
+      "pre_hover_position_spread_rms_m": 0.034435829286419486,
+      "pre_hover_relative_tip_speed_rms_m_s": 0.11049451679796514,
+      "pre_hover_tip_motion_rms_m": 0.024677113597694967,
+      "pre_hover_tip_relative_mean_m": [
+        -0.005007987106338779,
+        0.02307062389572753,
+        -0.9386879437589585
+      ],
+      "repetition": 1,
+      "tip_valid_fraction_1p5s": 1.0,
+      "tip_valid_fraction_whip": 1.0,
+      "tracking_coverage_relative_s": [
+        -8.893047774774596,
+        76.5169522252254
+      ],
+      "virtual_target_closest": {
+        "distance_m": 0.0899363630036991,
+        "position_m": [
+          1.2349413157147278,
+          -0.018926625386581943,
+          1.3366231393416657
+        ],
+        "time_s": 1.1515499194563927
+      },
+      "virtual_target_distance_at_planned_time_m": 0.27845946384197406
+    },
+    {
+      "alignment_sensitivity": [
+        {
+          "offset_change_s": -0.01,
+          "planned_time_virtual_distance_m": 0.37489405679741805,
+          "tip_reference_rmse_m": 0.19602931675431984
+        },
+        {
+          "offset_change_s": 0.0,
+          "planned_time_virtual_distance_m": 0.4219019897958995,
+          "tip_reference_rmse_m": 0.21319288076096268
+        },
+        {
+          "offset_change_s": 0.01,
+          "planned_time_virtual_distance_m": 0.46599631429539273,
+          "tip_reference_rmse_m": 0.22994619661582974
+        }
+      ],
+      "all_marker_valid_fraction_whip": 1.0,
+      "all_moving_packets_present": true,
+      "cable_history_1s": {
+        "passed": true
+      },
+      "complete_csv_observed": true,
+      "complete_whip_observed": true,
+      "expected_moving_packets": 146,
+      "fixed_tip_reference_rmse_m": 0.21319288076096268,
+      "gap_after_previous_csv_s": 15.03329271475474,
+      "interpretation": "No physical target or intervention, as confirmed by user; no hit/contact score.",
+      "local_alignment_offset_s": 0.7855675728866032,
+      "local_alignment_rms_m": 0.017566308087696388,
+      "moving_packets_matched": 146,
+      "nominal_vehicle_forecast_rmse_m": 0.18010782243390835,
+      "onset_controller_s": 44.34440052509308,
+      "onset_estimate_range_ms": 0.48251152038858436,
+      "pre_hover_drone_speed_rms_m_s": 0.04153787745726454,
+      "pre_hover_last_command_m": [
+        0.0,
+        0.0,
+        1.4
+      ],
+      "pre_hover_position_mean_m": [
+        -0.04405515555555558,
+        0.01542986666666667,
+        1.4004595722222228
+      ],
+      "pre_hover_position_spread_rms_m": 0.019881502634708465,
+      "pre_hover_relative_tip_speed_rms_m_s": 0.062119059232890524,
+      "pre_hover_tip_motion_rms_m": 0.013923630434295684,
+      "pre_hover_tip_relative_mean_m": [
+        -0.0059115074179129845,
+        0.0267111451061176,
+        -0.944959174309256
+      ],
+      "repetition": 2,
+      "tip_valid_fraction_1p5s": 1.0,
+      "tip_valid_fraction_whip": 1.0,
+      "tracking_coverage_relative_s": [
+        -31.859673822862668,
+        53.55032617713732
+      ],
+      "virtual_target_closest": {
+        "distance_m": 0.14303165635095777,
+        "position_m": [
+          1.2397167765247639,
+          0.14200445962621377,
+          1.2363236159850692
+        ],
+        "time_s": 1.1773035454334444
+      },
+      "virtual_target_distance_at_planned_time_m": 0.4219019897958995
+    },
+    {
+      "alignment_sensitivity": [
+        {
+          "offset_change_s": -0.01,
+          "planned_time_virtual_distance_m": 0.22068598579515208,
+          "tip_reference_rmse_m": 0.17024016481564
+        },
+        {
+          "offset_change_s": 0.0,
+          "planned_time_virtual_distance_m": 0.2737536400236259,
+          "tip_reference_rmse_m": 0.1816784854652629
+        },
+        {
+          "offset_change_s": 0.01,
+          "planned_time_virtual_distance_m": 0.3247918631281153,
+          "tip_reference_rmse_m": 0.19405777523508316
+        }
+      ],
+      "all_marker_valid_fraction_whip": 1.0,
+      "all_moving_packets_present": true,
+      "cable_history_1s": {
+        "passed": true
+      },
+      "complete_csv_observed": true,
+      "complete_whip_observed": true,
+      "expected_moving_packets": 146,
+      "fixed_tip_reference_rmse_m": 0.1816784854652629,
+      "gap_after_previous_csv_s": 15.033258064587915,
+      "interpretation": "No physical target or intervention, as confirmed by user; no hit/contact score.",
+      "local_alignment_offset_s": 0.7946490770268334,
+      "local_alignment_rms_m": 0.019848243081462914,
+      "moving_packets_matched": 146,
+      "nominal_vehicle_forecast_rmse_m": 0.10050985745742184,
+      "onset_controller_s": 67.31099192301433,
+      "onset_estimate_range_ms": 0.6348609924202719,
+      "pre_hover_drone_speed_rms_m_s": 0.030529169911072653,
+      "pre_hover_last_command_m": [
+        0.0,
+        0.0,
+        1.4
+      ],
+      "pre_hover_position_mean_m": [
+        0.026608577777777784,
+        -0.018297211111111118,
+        1.3994648833333332
+      ],
+      "pre_hover_position_spread_rms_m": 0.013188030258626126,
+      "pre_hover_relative_tip_speed_rms_m_s": 0.09975705142360979,
+      "pre_hover_tip_motion_rms_m": 0.017864448875125307,
+      "pre_hover_tip_relative_mean_m": [
+        0.002294109726434006,
+        0.02735423646879565,
+        -0.9449857750493303
+      ],
+      "repetition": 3,
+      "tip_valid_fraction_1p5s": 1.0,
+      "tip_valid_fraction_whip": 1.0,
+      "tracking_coverage_relative_s": [
+        -54.82626522078392,
+        30.583734779216073
+      ],
+      "virtual_target_closest": {
+        "distance_m": 0.13005656088023673,
+        "position_m": [
+          1.2174929741610416,
+          0.061079097657788246,
+          1.3601242304327725
+        ],
+        "time_s": 1.1476584354620527
+      },
+      "virtual_target_distance_at_planned_time_m": 0.2737536400236259
+    },
+    {
+      "alignment_sensitivity": [
+        {
+          "offset_change_s": -0.01,
+          "planned_time_virtual_distance_m": 0.2884438892935767,
+          "tip_reference_rmse_m": 0.18293323700617373
+        },
+        {
+          "offset_change_s": 0.0,
+          "planned_time_virtual_distance_m": 0.3328044861105815,
+          "tip_reference_rmse_m": 0.19277209583783114
+        },
+        {
+          "offset_change_s": 0.01,
+          "planned_time_virtual_distance_m": 0.3755223828639674,
+          "tip_reference_rmse_m": 0.20347874386419917
+        }
+      ],
+      "all_marker_valid_fraction_whip": 1.0,
+      "all_moving_packets_present": true,
+      "cable_history_1s": {
+        "passed": true
+      },
+      "complete_csv_observed": false,
+      "complete_whip_observed": true,
+      "expected_moving_packets": 146,
+      "fixed_tip_reference_rmse_m": 0.19277209583783114,
+      "gap_after_previous_csv_s": 15.033362881342558,
+      "interpretation": "No physical target or intervention, as confirmed by user; no hit/contact score.",
+      "local_alignment_offset_s": 0.7948912278816848,
+      "local_alignment_rms_m": 0.019657259757168623,
+      "moving_packets_matched": 146,
+      "nominal_vehicle_forecast_rmse_m": 0.10529332786596039,
+      "onset_controller_s": 90.27768813769022,
+      "onset_estimate_range_ms": 0.4841009775873317,
+      "pre_hover_drone_speed_rms_m_s": 0.02428081770711557,
+      "pre_hover_last_command_m": [
+        0.0,
+        0.0,
+        1.4
+      ],
+      "pre_hover_position_mean_m": [
+        0.022464744444444455,
+        0.006868733333333331,
+        1.400256094444444
+      ],
+      "pre_hover_position_spread_rms_m": 0.011130960151467141,
+      "pre_hover_relative_tip_speed_rms_m_s": 0.0523650279968525,
+      "pre_hover_tip_motion_rms_m": 0.010685843960005355,
+      "pre_hover_tip_relative_mean_m": [
+        -0.0008200398466347592,
+        0.022853470935795293,
+        -0.9456974822801097
+      ],
+      "repetition": 4,
+      "tip_valid_fraction_1p5s": 1.0,
+      "tip_valid_fraction_whip": 1.0,
+      "tracking_coverage_relative_s": [
+        -77.79296143545982,
+        7.617038564540181
+      ],
+      "virtual_target_closest": {
+        "distance_m": 0.107627452923217,
+        "position_m": [
+          1.2447888000462306,
+          0.07942116778637835,
+          1.3224485343207788
+        ],
+        "time_s": 1.1698800534015303
+      },
+      "virtual_target_distance_at_planned_time_m": 0.3328044861105815
+    }
+  ],
+  "source_hashes": {
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M0_MPPI_2cm_brake_1p3s\\flight_take\\M0\\M0_v2_001.csv": "2176d1f7c9fe8f66f26f1cec6ace896ef37c60a34c821d0b7e6341c10424ecda",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M0_MPPI_2cm_brake_1p3s\\flight_take\\M0\\experiment_M0_v2_001.csv": "e7dacebece2502e947298a6fe5885b2df29bc1ad8d9b5135cbf329e59c694b25",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M0_MPPI_2cm_brake_1p3s\\fullstate_30hz.csv": "1e716e6ef8626d48229416a8baf2e6581f97899de38a578833c88ad0defbe634",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\model.json": "6c4837cbfdc2f41c21c8e3e7387c0a24945a2690bd3c5033f3f4e3bfefe7064f",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\rehearsal.npz": "66ea65f7c5f33cf9b0ce722c318d829f711700c3145336bde2614a65cfbf9f9a"
+  },
+  "user_context": {
+    "applies_to_future_supplied_data": true,
+    "cable_touched_or_reset": false,
+    "known_clock_sync": false,
+    "optitrack_manually_trimmed": true,
+    "physical_target_present": false
+  },
+  "velocity_diagnostic": "Centered quadratic fit over 11 contiguous 100 Hz samples; offline diagnostic, not initial-state fitting."
+}

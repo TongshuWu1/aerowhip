@@ -1,0 +1,14 @@
+{
+  "partial_report_sha256": "7a6307e144824aa68bbc80ec40b0db5ecae796ecf45bac00a9dc5260e434667f",
+  "previous_status": {
+    "stage": "Freezing reviewed inputs",
+    "status": "running"
+  },
+  "progress": {
+    "completed": 10,
+    "label": "M0 on M2 collection",
+    "total": 20
+  },
+  "reason": "User explicitly prioritizes M4 flight CSV; preserve completed evaluations and release GPU.",
+  "time": "2026-09-15T06:03:26.821439+00:00"
+}

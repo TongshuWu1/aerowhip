@@ -1,0 +1,82 @@
+{
+  "cable_parameters": [
+    9.983300755688288e-09,
+    9.647885238736933e-05,
+    0.188346576997388
+  ],
+  "cable_physics": {
+    "active_bounds": [
+      0,
+      0,
+      0
+    ],
+    "baseline_loss": 0.9296369480769625,
+    "best": [
+      -18.422352064261563,
+      -9.246186719880258,
+      -1.6694715186360518
+    ],
+    "best_loss": 0.9182291392030342,
+    "elapsed_s": 20.319130200019572,
+    "nfev": 9,
+    "solver_message": "Stopped because `callback` function raised `StopIteration` or returned `True`",
+    "stop_reason": "practical_plateau",
+    "updates": 7
+  },
+  "cable_residual": {
+    "additional_updates": 290,
+    "baseline_loss": 0.9221423383417866,
+    "best_loss": 0.8197579406616361,
+    "ceiling": null,
+    "elapsed_s": 1733.676371199952,
+    "numerically_verified": true,
+    "optimizer_best_loss": 0.8197579406616361,
+    "selected_update": 290,
+    "stop_reason": "practical_plateau",
+    "updates": 290
+  },
+  "candidate_sha256": "f2a7c541d3f8dabf767960caef6d77622fe742997235753fb2046d7eac5091b2",
+  "drone_parameters": {
+    "attitude_acceleration_scale_xy": 1.0238349940524305,
+    "attitude_acceleration_scale_z": 0.5107898386329144,
+    "attitude_drive_model": "independent_scale_v3",
+    "attitude_time_constant_s": 0.045429965147462024,
+    "delay_s": 0.04,
+    "feedforward_xy": 0.7865396560060667,
+    "feedforward_z": 1.8018068114194905,
+    "gravity_m_s2": 9.80665,
+    "kd_xy": 0.8873767708794431,
+    "kd_z": 2.3065399448150856,
+    "kp_xy": 1.7917578233037799,
+    "kp_z": 17.394212446535324
+  },
+  "drone_residual": {
+    "additional_updates": 75,
+    "baseline_loss": 1.901664694429495,
+    "best_loss": 1.8497499795576628,
+    "ceiling": null,
+    "elapsed_s": 41.85360999999102,
+    "numerically_verified": true,
+    "optimizer_best_loss": 1.8497499795576628,
+    "selected_update": 75,
+    "stop_reason": "practical_plateau",
+    "updates": 75
+  },
+  "schema": "whip_full_model_v1",
+  "stages_complete": true,
+  "training_takes": [
+    "M4_001_whip_001",
+    "M4_001_whip_002",
+    "M4_001_whip_003",
+    "M4_001_whip_004",
+    "M4_002_whip_001",
+    "M4_002_whip_002",
+    "M4_002_whip_003",
+    "M4_002_whip_004",
+    "M4_003_whip_001",
+    "M4_003_whip_002",
+    "M4_003_whip_003",
+    "M4_003_whip_004"
+  ],
+  "validation_used_for_selection": false
+}

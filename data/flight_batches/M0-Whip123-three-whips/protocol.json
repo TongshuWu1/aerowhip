@@ -1,0 +1,25 @@
+{
+  "command_sha256": "1e716e6ef8626d48229416a8baf2e6581f97899de38a578833c88ad0defbe634",
+  "fitting_performed": false,
+  "forecast_sha256": "66ea65f7c5f33cf9b0ce722c318d829f711700c3145336bde2614a65cfbf9f9a",
+  "frame": "raw_global_xyz",
+  "normalization": false,
+  "planned_roles": {
+    "M0_Whip123_001": "unassigned",
+    "M0_Whip123_002": "unassigned",
+    "M0_Whip123_003": "unassigned"
+  },
+  "purpose": "Individual playback and original M0 forecast comparison; completed whips 1, 2 and 3 only.",
+  "recording_groups": {
+    "M0_Whip123_001": "M0_Whip123",
+    "M0_Whip123_002": "M0_Whip123",
+    "M0_Whip123_003": "M0_Whip123"
+  },
+  "rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s",
+  "schema": "segmented_flight_review_v1",
+  "user_context": {
+    "cable_touched_or_reset": false,
+    "fourth_connection_lost": true,
+    "physical_target_present": false
+  }
+}

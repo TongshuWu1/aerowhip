@@ -1,0 +1,17 @@
+{
+  "comparison": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\evaluation\\M7-horizontal-20260916-one-percent-six-checks-frozen-verification",
+  "model_selected": false,
+  "registration": {
+    "id": "M7",
+    "promoted": false,
+    "status": "Candidate - no held-out validation; next-batch evaluation pending",
+    "validation": {
+      "available": false,
+      "equal_take_mean": {},
+      "qualification": "No held-out takes. Post-fit training scores cannot establish generalization; evaluate the frozen model on the next collection.",
+      "takes": {}
+    }
+  },
+  "stage": "All adaptation stages and frozen-source validation complete",
+  "status": "completed"
+}

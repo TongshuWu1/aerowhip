@@ -1,0 +1,16 @@
+{
+  "best_saved_update": 270,
+  "finalizer_sha256": "64c02c0fad99a315ebfbc62992e78480f45c0bf5bf122ebe12ea86b90baa02a5",
+  "last_saved_update": 290,
+  "optional_preliminary_retention": "Deferred at user request to prioritize next collection; not claimed as checked.",
+  "original_status": {
+    "best_loss": 1.7224867120533824,
+    "model_selected": false,
+    "stage": "cable_residual",
+    "status": "running",
+    "stopping": "practical plateau; no update ceiling",
+    "update": 292
+  },
+  "reason": "User requested stopping because remaining improvement is small; keep the best saved checkpoint.",
+  "state_sha256": "7417aa28e21366030e4efa80e084f238299522cf18873c3b872710c4858a1cc3"
+}

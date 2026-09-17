@@ -1,0 +1,119 @@
+{
+  "attitude_bounds": [
+    [
+      0.1,
+      0.05,
+      0.02
+    ],
+    [
+      3.0,
+      3.0,
+      0.3
+    ]
+  ],
+  "before_update_comparison": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\evaluation\\M0-M1-M2-M3-M4-on-new-M4-prestrike-events-20260915",
+  "cable_bounds": [
+    [
+      1e-10,
+      1e-08,
+      0.0001
+    ],
+    [
+      0.0001,
+      0.001,
+      2.0
+    ]
+  ],
+  "cable_history_s": 1.0,
+  "cable_log_difference_step": 1e-06,
+  "cable_loss_change": "User requested equal weighting of all ten tracked markers with no extra tip loss, replacing the 75/25 loss used for M4. Training losses across this change are not directly comparable.",
+  "cable_residual": {
+    "acceleration_limit": 0.5,
+    "hidden": 32,
+    "mode": "acceleration"
+  },
+  "cable_scale_m": 0.02,
+  "cable_tip_weight": 0.0,
+  "cable_velocity_weight_tau_s": 0.02,
+  "candidate_id": "M5",
+  "collection_recording_groups": {
+    "M4_001_whip_001": "M4_v2_001",
+    "M4_001_whip_002": "M4_v2_001",
+    "M4_001_whip_003": "M4_v2_001",
+    "M4_001_whip_004": "M4_v2_001",
+    "M4_002_whip_001": "M4_v2_002",
+    "M4_002_whip_002": "M4_v2_002",
+    "M4_002_whip_003": "M4_v2_002",
+    "M4_002_whip_004": "M4_v2_002",
+    "M4_003_whip_001": "M4_v2_003",
+    "M4_003_whip_002": "M4_v2_003",
+    "M4_003_whip_003": "M4_v2_003",
+    "M4_003_whip_004": "M4_v2_003"
+  },
+  "delay_candidates_s": [
+    0.0,
+    0.01,
+    0.02,
+    0.03,
+    0.04,
+    0.06,
+    0.08,
+    0.1,
+    0.12
+  ],
+  "drone_gain_bounds": [
+    [
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.01,
+      0.01
+    ],
+    [
+      80.0,
+      80.0,
+      20.0,
+      20.0,
+      3.0,
+      3.0
+    ]
+  ],
+  "interpretation": "Effective loaded PVA response and cable dynamics; no identified motor ceiling or explicit cable reaction added",
+  "nominal_prior": 0.03,
+  "nominal_stopping": {
+    "ceiling": 80,
+    "minimum": 6,
+    "patience": 5,
+    "relative": 0.001
+  },
+  "orientation_scale_rad": 0.05,
+  "parent_id": "M4",
+  "performance_evaluation": "deferred_by_user",
+  "position_scale_m": 0.02,
+  "promotion": false,
+  "replay_weight": 0.5,
+  "residual_change": 0.01,
+  "residual_magnitude": 0.01,
+  "residual_stopping": {
+    "ceiling": null,
+    "check_every": 5,
+    "minimum": 40,
+    "patience": 6,
+    "relative": 0.005
+  },
+  "runner": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\tmp\\fit_m5_standard.py",
+  "runner_sha256": "10dc34fa13106c55158e92af57515cf824cf219ed039b793c9fb317c69a01c1d",
+  "schema": "whip_full_model_v1",
+  "seed": 20260910,
+  "stages": [
+    "drone_nominal",
+    "drone_residual",
+    "attitude_refinement",
+    "cable_physics",
+    "cable_residual",
+    "combined_validation"
+  ],
+  "stopping_authorization": "Same standard criteria as M2/M4; no residual time/update cap; no shortened patience.",
+  "training": "Whole adaptation takes and all eligible preliminary training windows; no validation gradients or selection"
+}

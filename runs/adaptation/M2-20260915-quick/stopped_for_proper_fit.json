@@ -1,0 +1,15 @@
+{
+  "previous_status": {
+    "best_loss": 1.31871755081975,
+    "budget": {
+      "maximum_seconds": 120,
+      "maximum_updates": 30
+    },
+    "model_selected": false,
+    "stage": "cable_residual",
+    "status": "running",
+    "update": 10
+  },
+  "reason": "User clarified that speed must not truncate proper fitting. Shortened plateau rules rejected; standard stopping criteria restored in separate run.",
+  "replacement": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M2-20260915"
+}

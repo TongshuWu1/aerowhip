@@ -1,0 +1,97 @@
+preparing full model training {}
+drone_nominal {'delay_s': 0.0, 'windows': 81}
+drone_nominal {'update': 1, 'loss': 3.087978302955149, 'best_loss': 3.087978302955149}
+drone_nominal {'update': 2, 'loss': 2.951205272288149, 'best_loss': 2.951205272288149}
+drone_nominal {'update': 3, 'loss': 2.9346961690592352, 'best_loss': 2.9346961690592352}
+drone_nominal {'update': 4, 'loss': 2.9321953896055435, 'best_loss': 2.9321953896055435}
+drone_nominal {'delay_s': 0.01, 'windows': 81}
+drone_nominal {'update': 1, 'loss': 2.7360392345462707, 'best_loss': 2.7360392345462707}
+drone_nominal {'update': 2, 'loss': 2.623619871989697, 'best_loss': 2.623619871989697}
+drone_nominal {'update': 3, 'loss': 2.6113352995454147, 'best_loss': 2.6113352995454147}
+drone_nominal {'update': 4, 'loss': 2.6096036512925402, 'best_loss': 2.6096036512925402}
+drone_nominal {'delay_s': 0.02, 'windows': 81}
+drone_nominal {'update': 1, 'loss': 2.3869427848045928, 'best_loss': 2.3869427848045928}
+drone_nominal {'update': 2, 'loss': 2.352822275836101, 'best_loss': 2.352822275836101}
+drone_nominal {'update': 3, 'loss': 2.3493656720599567, 'best_loss': 2.3493656720599567}
+drone_nominal {'update': 4, 'loss': 2.348944084279055, 'best_loss': 2.348944084279055}
+drone_nominal {'delay_s': 0.03, 'windows': 81}
+drone_nominal {'update': 1, 'loss': 2.1824751985950455, 'best_loss': 2.1824751985950455}
+drone_nominal {'update': 2, 'loss': 2.176720506344299, 'best_loss': 2.176720506344299}
+drone_nominal {'update': 3, 'loss': 2.176161362087049, 'best_loss': 2.176161362087049}
+drone_nominal {'delay_s': 0.04, 'windows': 81}
+drone_nominal {'update': 1, 'loss': 2.11826795227895, 'best_loss': 2.11826795227895}
+drone_nominal {'update': 2, 'loss': 2.116722469975105, 'best_loss': 2.116722469975105}
+drone_nominal {'update': 3, 'loss': 2.1165698017440264, 'best_loss': 2.1165698017440264}
+drone_nominal {'delay_s': 0.06, 'windows': 81}
+drone_nominal {'update': 1, 'loss': 2.4163786554879674, 'best_loss': 2.4163786554879674}
+drone_nominal {'update': 2, 'loss': 2.3958193610201923, 'best_loss': 2.3958193610201923}
+drone_nominal {'update': 3, 'loss': 2.3920418871585056, 'best_loss': 2.3920418871585056}
+drone_nominal {'update': 4, 'loss': 2.3912781727812233, 'best_loss': 2.3912781727812233}
+drone_nominal {'update': 5, 'loss': 2.391125272988762, 'best_loss': 2.391125272988762}
+drone_nominal {'delay_s': 0.08, 'windows': 81}
+drone_nominal {'update': 1, 'loss': 3.1849883959419767, 'best_loss': 3.1849883959419767}
+drone_nominal {'update': 2, 'loss': 3.145703263962676, 'best_loss': 3.145703263962676}
+drone_nominal {'update': 3, 'loss': 3.1339742540903033, 'best_loss': 3.1339742540903033}
+drone_nominal {'update': 4, 'loss': 3.1306667572493936, 'best_loss': 3.1306667572493936}
+drone_nominal {'delay_s': 0.1, 'windows': 81}
+drone_nominal {'update': 1, 'loss': 4.29587159404365, 'best_loss': 4.29587159404365}
+drone_nominal {'update': 2, 'loss': 4.19718274569173, 'best_loss': 4.19718274569173}
+drone_nominal {'update': 3, 'loss': 4.169574508565292, 'best_loss': 4.169574508565292}
+drone_nominal {'update': 4, 'loss': 4.160491165774236, 'best_loss': 4.160491165774236}
+drone_nominal {'delay_s': 0.12, 'windows': 81}
+drone_nominal {'update': 1, 'loss': 5.593267170300637, 'best_loss': 5.593267170300637}
+drone_nominal {'update': 2, 'loss': 5.4356677912235885, 'best_loss': 5.4356677912235885}
+drone_nominal {'update': 3, 'loss': 5.383338743330362, 'best_loss': 5.383338743330362}
+drone_nominal {'update': 4, 'loss': 5.3625172003299815, 'best_loss': 5.3625172003299815}
+drone_nominal {'update': 5, 'loss': 5.354387747390499, 'best_loss': 5.354387747390499}
+drone_nominal {'update': 6, 'loss': 5.351350514965343, 'best_loss': 5.351350514965343}
+attitude response {'windows': 81}
+attitude response {'update': 1, 'loss': 0.8617409794053533, 'best_loss': 0.8617409794053533}
+attitude response {'update': 2, 'loss': 0.8608569813980851, 'best_loss': 0.8608569813980851}
+attitude response {'update': 3, 'loss': 0.8608003985996509, 'best_loss': 0.8608003985996509}
+drone_residual graph preparation {'windows': 81}
+[W914 23:04:05.000000000 Context.cpp:448] Warning: torch.backends.cuda.preferred_linalg_library is an experimental feature. If you see any error or unexpected behavior when this flag is set please file an issue on GitHub. (function operator ())
+drone_residual {'update': 1, 'best_loss': 2.121390046391338, 'budget': {'maximum_seconds': 60, 'maximum_updates': 80}}
+drone_residual {'update': 2, 'best_loss': 2.121390046391338, 'budget': {'maximum_seconds': 60, 'maximum_updates': 80}}
+drone_residual {'update': 3, 'best_loss': 2.121390046391338, 'budget': {'maximum_seconds': 60, 'maximum_updates': 80}}
+drone_residual {'update': 4, 'best_loss': 2.121390046391338, 'budget': {'maximum_seconds': 60, 'maximum_updates': 80}}
+drone_residual {'update': 5, 'best_loss': 2.121390046391338, 'budget': {'maximum_seconds': 60, 'maximum_updates': 80}}
+drone_residual {'update': 6, 'best_loss': 2.026436531311135, 'budget': {'maximum_seconds': 60, 'maximum_updates': 80}}
+drone_residual {'update': 7, 'best_loss': 2.026436531311135, 'budget': {'maximum_seconds': 60, 'maximum_updates': 80}}
+drone_residual {'update': 8, 'best_loss': 2.026436531311135, 'budget': {'maximum_seconds': 60, 'maximum_updates': 80}}
+drone_residual {'update': 9, 'best_loss': 2.026436531311135, 'budget': {'maximum_seconds': 60, 'maximum_updates': 80}}
+drone_residual {'update': 10, 'best_loss': 2.026436531311135, 'budget': {'maximum_seconds': 60, 'maximum_updates': 80}}
+drone_residual {'update': 11, 'best_loss': 2.0079668622867706, 'budget': {'maximum_seconds': 60, 'maximum_updates': 80}}
+drone_residual {'update': 12, 'best_loss': 2.0079668622867706, 'budget': {'maximum_seconds': 60, 'maximum_updates': 80}}
+drone_residual {'update': 13, 'best_loss': 2.0079668622867706, 'budget': {'maximum_seconds': 60, 'maximum_updates': 80}}
+drone_residual {'update': 14, 'best_loss': 2.0079668622867706, 'budget': {'maximum_seconds': 60, 'maximum_updates': 80}}
+drone_residual {'update': 15, 'best_loss': 2.0079668622867706, 'budget': {'maximum_seconds': 60, 'maximum_updates': 80}}
+drone_residual {'update': 16, 'best_loss': 1.994280809478553, 'budget': {'maximum_seconds': 60, 'maximum_updates': 80}}
+drone_residual {'update': 17, 'best_loss': 1.994280809478553, 'budget': {'maximum_seconds': 60, 'maximum_updates': 80}}
+drone_residual {'update': 18, 'best_loss': 1.994280809478553, 'budget': {'maximum_seconds': 60, 'maximum_updates': 80}}
+drone_residual {'update': 19, 'best_loss': 1.994280809478553, 'budget': {'maximum_seconds': 60, 'maximum_updates': 80}}
+drone_residual {'update': 20, 'best_loss': 1.994280809478553, 'budget': {'maximum_seconds': 60, 'maximum_updates': 80}}
+drone_residual {'update': 21, 'best_loss': 1.9875393783424038, 'budget': {'maximum_seconds': 60, 'maximum_updates': 80}}
+drone_residual {'update': 22, 'best_loss': 1.9875393783424038, 'budget': {'maximum_seconds': 60, 'maximum_updates': 80}}
+drone_residual {'update': 23, 'best_loss': 1.9875393783424038, 'budget': {'maximum_seconds': 60, 'maximum_updates': 80}}
+drone_residual {'update': 24, 'best_loss': 1.9875393783424038, 'budget': {'maximum_seconds': 60, 'maximum_updates': 80}}
+drone_residual {'update': 25, 'best_loss': 1.9875393783424038, 'budget': {'maximum_seconds': 60, 'maximum_updates': 80}}
+attitude response {'windows': 81}
+attitude response {'update': 1, 'loss': 0.9039354709280893, 'best_loss': 0.9039354709280893}
+attitude response {'update': 2, 'loss': 0.9038631774671858, 'best_loss': 0.9038631774671858}
+attitude response {'update': 3, 'loss': 0.9038566822695833, 'best_loss': 0.9038566822695833}
+cable_physics {'windows': 144, 'parameters': ['EI', 'Cb', 'external damping']}
+cable_physics {'update': 1, 'loss': 1.322606955317745, 'best_loss': 1.322606955317745}
+cable_physics {'update': 2, 'loss': 1.3186935161211089, 'best_loss': 1.3186935161211089}
+cable_physics {'update': 3, 'loss': 1.3155898524299894, 'best_loss': 1.3155898524299894}
+cable_residual graph preparation {'windows': 144}
+cable_residual {'update': 1, 'best_loss': 1.31871755081975, 'budget': {'maximum_seconds': 120, 'maximum_updates': 30}}
+cable_residual {'update': 2, 'best_loss': 1.31871755081975, 'budget': {'maximum_seconds': 120, 'maximum_updates': 30}}
+cable_residual {'update': 3, 'best_loss': 1.31871755081975, 'budget': {'maximum_seconds': 120, 'maximum_updates': 30}}
+cable_residual {'update': 4, 'best_loss': 1.31871755081975, 'budget': {'maximum_seconds': 120, 'maximum_updates': 30}}
+cable_residual {'update': 5, 'best_loss': 1.31871755081975, 'budget': {'maximum_seconds': 120, 'maximum_updates': 30}}
+cable_residual {'update': 6, 'best_loss': 1.31871755081975, 'budget': {'maximum_seconds': 120, 'maximum_updates': 30}}
+cable_residual {'update': 7, 'best_loss': 1.31871755081975, 'budget': {'maximum_seconds': 120, 'maximum_updates': 30}}
+cable_residual {'update': 8, 'best_loss': 1.31871755081975, 'budget': {'maximum_seconds': 120, 'maximum_updates': 30}}
+cable_residual {'update': 9, 'best_loss': 1.31871755081975, 'budget': {'maximum_seconds': 120, 'maximum_updates': 30}}
+cable_residual {'update': 10, 'best_loss': 1.31871755081975, 'budget': {'maximum_seconds': 120, 'maximum_updates': 30}}

@@ -1,0 +1,27 @@
+{
+  "command_event_consistency_passed": true,
+  "comparison_loads": [
+    {
+      "comparison_frames": 890,
+      "packets": 175,
+      "take": "M3_001_whip_001"
+    },
+    {
+      "comparison_frames": 890,
+      "packets": 175,
+      "take": "M3_001_whip_002"
+    },
+    {
+      "comparison_frames": 890,
+      "packets": 175,
+      "take": "M3_001_whip_003"
+    },
+    {
+      "comparison_frames": 820,
+      "packets": 175,
+      "take": "M3_001_whip_004"
+    }
+  ],
+  "original_hashes_unchanged": true,
+  "raw_rows_byte_preserved": true
+}

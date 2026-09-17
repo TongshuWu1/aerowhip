@@ -1,0 +1,25 @@
+{
+  "horizontal_shape": "Arclength RMS vertical offset from attachment at the strike",
+  "initialization_provenance": "Saved command jerk prefix, refitted to the new duration; same M5 and initially hanging cable.",
+  "minimum_tip_speed_gain_m_s": 2.0,
+  "model_id": "M5",
+  "physical_flight_pending": false,
+  "review_criteria": {
+    "horizontal_cable_rms_m": 0.1,
+    "target_error_m": 0.02
+  },
+  "search_budget": "512 x 80, 1.1 s horizon; fixed budget, not a convergence claim",
+  "source_plan": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260915-111014-822939\\plan.npz",
+  "source_plan_sha256": "5ec79b2c4661df1293f01d287457e88db69fd4f6aa50241a7d855b6ecf538e7a",
+  "strike_direction": [
+    0,
+    1,
+    0
+  ],
+  "target_m": [
+    0.15,
+    1.25,
+    1.4
+  ],
+  "task": "horizontal side whip"
+}

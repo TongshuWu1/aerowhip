@@ -1,0 +1,119 @@
+{
+  "M0_to_M2_reduction_percent": {
+    "command_driven_markers": 49.34124462239237,
+    "command_driven_tip": 50.16715428717728,
+    "conditional_cable_markers": 39.65462334022551,
+    "conditional_cable_tip": 48.365680009565715,
+    "drone": 51.577956903338716
+  },
+  "M2_lower_than_M0_take_count": {
+    "command_driven_markers": 10,
+    "command_driven_tip": 10,
+    "conditional_cable_markers": 11,
+    "conditional_cable_tip": 11,
+    "drone": 10
+  },
+  "elapsed_s": 117.8570355999982,
+  "equal_take_mean_rmse_m": {
+    "M0": {
+      "command_driven_markers": 0.10624672950662366,
+      "command_driven_tip": 0.12730005350727389,
+      "conditional_cable_markers": 0.045461672764999676,
+      "conditional_cable_tip": 0.0790043959844044,
+      "drone": 0.08735786108658782
+    },
+    "M1": {
+      "command_driven_markers": 0.05082256066305373,
+      "command_driven_tip": 0.06652594435002777,
+      "conditional_cable_markers": 0.02712388527026012,
+      "conditional_cable_tip": 0.04428223219674061,
+      "drone": 0.043556951700527397
+    },
+    "M2": {
+      "command_driven_markers": 0.05382327079746895,
+      "command_driven_tip": 0.06343723925662056,
+      "conditional_cable_markers": 0.02743401766587317,
+      "conditional_cable_tip": 0.04079338262909718,
+      "drone": 0.042300461143669046
+    }
+  },
+  "interval_note": "Command-driven predictions start from measured pre-whip history and then roll out open loop; scores cover the executed whip. Conditional cable additionally uses measured attachment motion.",
+  "recording_sessions": 3,
+  "scored_interval_s": [
+    0.0,
+    1.1333333333333333
+  ],
+  "session_mean_rmse_m": {
+    "M0": {
+      "M2_v2_001": {
+        "command_driven_markers": 0.11059026625141788,
+        "command_driven_tip": 0.13514260340283524,
+        "conditional_cable_markers": 0.04597064400924001,
+        "conditional_cable_tip": 0.07846220507462048,
+        "drone": 0.09085811617361733
+      },
+      "M2_v2_002": {
+        "command_driven_markers": 0.10084760479001757,
+        "command_driven_tip": 0.11717241864614335,
+        "conditional_cable_markers": 0.04557003202506807,
+        "conditional_cable_tip": 0.08031334621192616,
+        "drone": 0.08408303130286171
+      },
+      "M2_v2_003": {
+        "command_driven_markers": 0.105952536299284,
+        "command_driven_tip": 0.12705322975756048,
+        "conditional_cable_markers": 0.04487143207570804,
+        "conditional_cable_tip": 0.07856487422354697,
+        "drone": 0.08631372833735289
+      }
+    },
+    "M1": {
+      "M2_v2_001": {
+        "command_driven_markers": 0.04321653994997688,
+        "command_driven_tip": 0.060679300634854064,
+        "conditional_cable_markers": 0.02805713874361373,
+        "conditional_cable_tip": 0.04402529659659438,
+        "drone": 0.035916486480864186
+      },
+      "M2_v2_002": {
+        "command_driven_markers": 0.07232995488427071,
+        "command_driven_tip": 0.08824510815610535,
+        "conditional_cable_markers": 0.027203086666024556,
+        "conditional_cable_tip": 0.0451781613311275,
+        "drone": 0.06607575421115341
+      },
+      "M2_v2_003": {
+        "command_driven_markers": 0.04229803571021785,
+        "command_driven_tip": 0.05608321521064331,
+        "conditional_cable_markers": 0.026131230750083192,
+        "conditional_cable_tip": 0.043867220946096665,
+        "drone": 0.03430831503722107
+      }
+    },
+    "M2": {
+      "M2_v2_001": {
+        "command_driven_markers": 0.0441763042023455,
+        "command_driven_tip": 0.05721141576999644,
+        "conditional_cable_markers": 0.028759693146237077,
+        "conditional_cable_tip": 0.04103777444337428,
+        "drone": 0.029503495929787554
+      },
+      "M2_v2_002": {
+        "command_driven_markers": 0.07672358552620155,
+        "command_driven_tip": 0.0847404303823225,
+        "conditional_cable_markers": 0.02746730608138548,
+        "conditional_cable_tip": 0.04171192045938584,
+        "drone": 0.06930450213049748
+      },
+      "M2_v2_003": {
+        "command_driven_markers": 0.04629500134604294,
+        "command_driven_tip": 0.05368566939896823,
+        "conditional_cable_markers": 0.026083375873875034,
+        "conditional_cable_tip": 0.03986008744210357,
+        "drone": 0.034844395617429205
+      }
+    }
+  },
+  "significance": "Descriptive comparison across 11 whips in three batteries; no claim of statistical significance.",
+  "takes": 11
+}

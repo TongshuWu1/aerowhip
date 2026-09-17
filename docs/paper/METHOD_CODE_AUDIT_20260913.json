@@ -1,0 +1,31 @@
+{
+  "scope": "Problem Statement and AeroWhip Framework, against current source and selected study configuration. No fitting, planning, flights, manuscript edits or data exclusions.",
+  "user_priority": "User suspects M2 collection problems and intends to recollect on Monday; review focuses on methodology. No defect established or old data replaced.",
+  "head": "0aaf242da6443bb22d46bdccc2e2982c69ddaa67",
+  "manuscript": "C:\\Users\\wts28\\Lehigh University Dropbox\\TonyLehigh Wu\\Apps\\Overleaf\\AeroWhip-ICRA\\main.tex",
+  "manuscript_sha256": "e3509e33022a4f5e614832dd98cfc4a30945d9c73e245349465c6e2a8f57c48f",
+  "source_hashes": {
+    "simulator/drone_pose_response.py": "3772a5c948a5a99f71e203153258e9f491694e6385c4cd86d14c7e41921e5128",
+    "simulator/research_pose.py": "9b3475debfab5d320ac64390236a29d5a2f40c577e15ffabf2d7a07deb421d14",
+    "simulator/drone_pose_residual.py": "3fb0198061a699b06468074ba983e7f0868a43bfa562a174e320a028f0ae2c5c",
+    "simulator/cable/dder.py": "c840f9d56b497df6a6fd55fb63bace6a13f327469ebd738c9a8d107fe88522e4",
+    "simulator/cable/residual.py": "0c1deca4c5b063ae414c99a8dc0dea4fb676b543dd04f0a83b3fd2f3db539a0c",
+    "planning/position_spline.py": "818495f2874931fd4cdd7c662552cc4352303af96d5f24c9e5c80d1aa9a1b646",
+    "planning/mppi_trajectory.py": "2fe080ed8e8e886fec587e576c19b4b04b66f4000769bbf51d629e8379e53a3b",
+    "planning/whip_objective.py": "637bbdf444a78f80f315b8e7d86d86633d5c3772e9ced92e963c5f55696770c9",
+    "planning/reference_correction.py": "d7daf7a4f70e875004cc2305933f1daaecb4e8d87f9480b6e54f0c3afe9b75e6",
+    "planning/local_reference_correction.py": "957d0471fe3d6d910346b5ac7cf3da72f3ddf6a3e9488eb867e984c723d2e97e",
+    "experimental_data/whip_full_data.py": "1c768557399f133ea460d7d281ee42fc869d728ddec1af15adc5ce58bff175f5",
+    "experimental_data/whip_full_optim.py": "668ac231d1f21f9c33f82b4a8d00e2021fa4d2702d3c4244c4c32835bd59b966",
+    "experimental_data/whip_full_cable.py": "2b30b0b8fa4d3f0993772e2043bea727d41de3ef96bb8154b9bc03aab5a52c1a",
+    "experimental_data/whip_bounded_fit.py": "4542dc08f66c844da2760f3457e132db32b8edde588b1f2aee82c7f6751ee2f5",
+    "experimental_data/whip_bounded_training.py": "e1b26067f7b749c96726f0b92fd0b956bd4e22102597b54d01ea078061b77780"
+  },
+  "checks": {
+    "pytest": "65 passed, 1 warning in 22.34 s on Windows; targeted physics and planning/correction tests",
+    "pytest_command": "python -m pytest tests/physics/test_smooth_curvature_damping.py tests/physics/test_damping_precision.py tests/physics/test_drone_pose_response.py tests/flight/test_position_spline.py tests/flight/test_m0_spline_restore.py tests/flight/test_local_reference_correction.py tests/flight/test_reference_correction_cost.py tests/flight/test_bounded_residual_training.py -q --disable-warnings --maxfail=3",
+    "direct_bending_rate_comparison": "Four deterministic float64 CPU states, including exactly straight and nearly straight rods; manuscript formula vs implemented Jv. Maximum absolute difference 5.329070518200751e-15.",
+    "damping_power_identity_max_abs_difference": 8.881784197001252e-16,
+    "limitations": "These are targeted software/algebra checks, not proof of physical accuracy, generalization, or global convergence."
+  }
+}

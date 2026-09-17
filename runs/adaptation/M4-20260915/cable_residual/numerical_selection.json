@@ -1,0 +1,13 @@
+[
+  {
+    "error": "Full residual gradient mismatch: net.0.weight, net.0.bias, net.2.weight, net.2.bias, net.4.weight, net.4.bias, joint_random_0, joint_random_1",
+    "loss": 1.0349946791666322,
+    "passed": false,
+    "update": 110
+  },
+  {
+    "loss": 1.0389836545913027,
+    "passed": true,
+    "update": 105
+  }
+]

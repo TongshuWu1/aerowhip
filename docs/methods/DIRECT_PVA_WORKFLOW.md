@@ -1,9 +1,7 @@
 # Direct PVA workflow
 
 The current application plans offline in desired position, velocity and
-acceleration at 30 Hz. Read [the paper handoff](../paper/PAPER_WRITING_HANDOFF.md) for exact
-equations, selected model and experiment identity, and [HANDOFF](../../HANDOFF.md)
-for live status. Earlier force-policy commands are not PVA jerk actions.
+acceleration at 30 Hz. Earlier force-policy commands are not PVA jerk actions.
 
 ## Six-page desktop
 

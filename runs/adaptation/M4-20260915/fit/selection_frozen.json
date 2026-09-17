@@ -1,0 +1,82 @@
+{
+  "cable_parameters": [
+    9.982223208040328e-09,
+    9.805788076860036e-05,
+    0.2179711708221957
+  ],
+  "cable_physics": {
+    "active_bounds": [
+      0,
+      0,
+      0
+    ],
+    "baseline_loss": 1.1456502590540207,
+    "best": [
+      -18.42246000509507,
+      -9.229952633553342,
+      -1.5233924688729303
+    ],
+    "best_loss": 1.122968239039596,
+    "elapsed_s": 35.23647790000541,
+    "nfev": 14,
+    "solver_message": "`xtol` termination condition is satisfied.",
+    "stop_reason": "solver_termination",
+    "updates": 10
+  },
+  "cable_residual": {
+    "additional_updates": 135,
+    "baseline_loss": 1.1258266196234707,
+    "best_loss": 1.0389836545913027,
+    "ceiling": null,
+    "elapsed_s": 803.7663987999549,
+    "numerically_verified": true,
+    "optimizer_best_loss": 1.0349946791666322,
+    "selected_update": 105,
+    "stop_reason": "practical_plateau",
+    "updates": 135
+  },
+  "candidate_sha256": "b14491884ce3b12cf94fb824a7a9ca32fdb294eef245f7e9c9ab13671d5a205f",
+  "drone_parameters": {
+    "attitude_acceleration_scale_xy": 1.0120655676161894,
+    "attitude_acceleration_scale_z": 0.502419426626485,
+    "attitude_drive_model": "independent_scale_v3",
+    "attitude_time_constant_s": 0.045282407957443586,
+    "delay_s": 0.04,
+    "feedforward_xy": 0.7874763302703827,
+    "feedforward_z": 1.853888877689646,
+    "gravity_m_s2": 9.80665,
+    "kd_xy": 0.8911347224526148,
+    "kd_z": 2.379019356300967,
+    "kp_xy": 1.7885238673253316,
+    "kp_z": 18.43758429783839
+  },
+  "drone_residual": {
+    "additional_updates": 70,
+    "baseline_loss": 2.1677576501013407,
+    "best_loss": 2.023313031822102,
+    "ceiling": null,
+    "elapsed_s": 37.269217299995944,
+    "numerically_verified": true,
+    "optimizer_best_loss": 2.023313031822102,
+    "selected_update": 70,
+    "stop_reason": "practical_plateau",
+    "updates": 70
+  },
+  "schema": "whip_full_model_v1",
+  "stages_complete": true,
+  "training_takes": [
+    "M3_001_whip_001",
+    "M3_001_whip_002",
+    "M3_001_whip_003",
+    "M3_001_whip_004",
+    "M3_002_whip_001",
+    "M3_002_whip_002",
+    "M3_002_whip_003",
+    "M3_002_whip_004",
+    "M3_003_whip_001",
+    "M3_003_whip_002",
+    "M3_003_whip_003",
+    "M3_003_whip_004"
+  ],
+  "validation_used_for_selection": false
+}

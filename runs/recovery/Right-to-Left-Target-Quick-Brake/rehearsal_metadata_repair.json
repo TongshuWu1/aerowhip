@@ -1,0 +1,34 @@
+{
+  "changed": {
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\Right_to_Left_Target_Y1p25_Z1p3_Quick_Brake\\export.json": {
+      "after_sha256": "63feabd629a2123ccd3110b02af7a6a0762b1c389fae828bf492aa65aa492bb6",
+      "before_sha256": "284066545d207ce139da308cd9d70a93f360887b7dd2e3ba5aa11e4a9bc274b6",
+      "old_value": null
+    },
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\Right_to_Left_Target_Y1p25_Z1p3_Quick_Brake\\rehearsal.json": {
+      "after_sha256": "696a67812c0f56a007260025b389ee2361fbdf5c12c4a933c959f56f8c35e168",
+      "before_sha256": "1b8aee87f0a37f99e7415641d7a896b444db8270ec37231e35d402d6f3af5169",
+      "old_value": null
+    },
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\recovery\\Right-to-Left-Target-Quick-Brake\\result.json": {
+      "after_sha256": "696a67812c0f56a007260025b389ee2361fbdf5c12c4a933c959f56f8c35e168",
+      "before_sha256": "1b8aee87f0a37f99e7415641d7a896b444db8270ec37231e35d402d6f3af5169",
+      "old_value": null
+    },
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\Right-to-Left-Target-Y1p25-Z1p3-Quick-Brake\\rehearsal.json": {
+      "after_sha256": "696a67812c0f56a007260025b389ee2361fbdf5c12c4a933c959f56f8c35e168",
+      "before_sha256": "1b8aee87f0a37f99e7415641d7a896b444db8270ec37231e35d402d6f3af5169",
+      "old_value": null
+    }
+  },
+  "derivation": "Saved tip velocity interpolated at the saved strike time, projected onto the unit strike direction",
+  "directed_tip_speed_m_s": 2.313650504975789,
+  "reason": "Rehearsal diagnostic renderer requires directed_tip_speed_m_s",
+  "unchanged_data_hashes": {
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M6_Horizontal_Command_Correction\\fullstate_30hz.csv": "16b45834deb1be3f8de377117c29af08b52bb875af2f3711067e67f0ed6ee7ec",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\Right_to_Left_Target_Y1p25_Z1p3_Quick_Brake\\fullstate_30hz.csv": "6b40453c5f6de1e515b961cf658b3a576ad1a8eaca149e424c2f594164292948",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\Right_to_Left_Target_Y1p25_Z1p3_Quick_Brake\\rehearsal.npz": "4b153c89afcdde346f552fb7580fd0671637ae9c221594508b421c64b3dd2835",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\Right-to-Left-Target-Y1p25-Z1p3-Quick-Brake\\fullstate_30hz.csv": "6b40453c5f6de1e515b961cf658b3a576ad1a8eaca149e424c2f594164292948",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\Right-to-Left-Target-Y1p25-Z1p3-Quick-Brake\\rehearsal.npz": "4b153c89afcdde346f552fb7580fd0671637ae9c221594508b421c64b3dd2835"
+  }
+}

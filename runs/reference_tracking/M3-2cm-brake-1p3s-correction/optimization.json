@@ -1,0 +1,30 @@
+{
+  "active_controls": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "active_coordinates": 24,
+  "baseline_strike": {
+    "reference_error_m": 0.03156763451192855,
+    "target_distance_m": 0.031919394442571206,
+    "time_s": 1.1138000791100293
+  },
+  "final_strike": {
+    "reference_error_m": 0.013274935373425143,
+    "target_distance_m": 0.02863798354764056,
+    "time_s": 1.1138000791100293
+  },
+  "iterations": 11,
+  "maximum_jacobian_relative_difference": 0.006293205417222255,
+  "optimization_elapsed_s": 146.9048436000012,
+  "optimizer": "Bounded finite-difference Gauss-Newton",
+  "rollout_count": 1100,
+  "stop_reason": "Repeated small improvements with command-constrained stationarity",
+  "strike_guard": "reference"
+}

@@ -1,0 +1,28 @@
+{
+  "command_sha256": "6adda89b275bbe0523ff6272842e34326d11fb533a7dd744befe6ec4fb2f4d00",
+  "command_source": "event_log",
+  "fitting_performed": false,
+  "forecast_sha256": "8da8f3dd3a062ca46d12b1515b600134337e16d698f656097e7bf1e96ebc1b43",
+  "frame": "raw_global_xyz",
+  "normalization": false,
+  "planned_roles": {
+    "M5_side_002_whip_001": "unassigned",
+    "M5_side_002_whip_002": "unassigned",
+    "M5_side_002_whip_003": "unassigned",
+    "M5_side_002_whip_004": "unassigned"
+  },
+  "purpose": "Individual playback and original M5 curved-side forecast comparison; four complete whips.",
+  "recording_groups": {
+    "M5_side_002_whip_001": "M5_horizontal_v1_002",
+    "M5_side_002_whip_002": "M5_horizontal_v1_002",
+    "M5_side_002_whip_003": "M5_horizontal_v1_002",
+    "M5_side_002_whip_004": "M5_horizontal_v1_002"
+  },
+  "rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M5-Curved-Side-Whip-1p3m",
+  "schema": "segmented_flight_review_v1",
+  "user_context": {
+    "cable_touched_or_reset": null,
+    "physical_target_present": null,
+    "review_status": "operator confirmation pending"
+  }
+}

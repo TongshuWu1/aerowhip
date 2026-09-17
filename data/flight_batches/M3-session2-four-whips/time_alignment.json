@@ -1,0 +1,38 @@
+{
+  "M3_002_whip_001": {
+    "clock_verified": false,
+    "controller_sha256": "028fb8af7ac8d1e1431018005d67543a432f87007975717e19eb755b26eb10ff",
+    "offset_s": 3.0485849793620794,
+    "optitrack_sha256": "0564f22f82c43f980b1411e5501b01ae1b1d251ce667d5b2d395850fe71691dd",
+    "rms_m": 0.0002843573497463325,
+    "source": "Estimated per repetition from measured native-rate TF XYZ and native Motive XYZ, excluding interpolation across logger gaps; no command/forecast or spatial fitting. Includes unknown transport latency; original timestamps retained.",
+    "source_report": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M3-session2-four-whips\\report.json"
+  },
+  "M3_002_whip_002": {
+    "clock_verified": false,
+    "controller_sha256": "17ba06f2cd4a2be03cf10c32a3e6c5d3670aef055bbabcef4a30c1bc1fcbc2f3",
+    "offset_s": 3.047237544585368,
+    "optitrack_sha256": "c1b4ca4d1f5285571e91eb05bfb4d73e8efade710e9fb6729e0fd9babfc78178",
+    "rms_m": 0.0003511759396783628,
+    "source": "Estimated per repetition from measured native-rate TF XYZ and native Motive XYZ, excluding interpolation across logger gaps; no command/forecast or spatial fitting. Includes unknown transport latency; original timestamps retained.",
+    "source_report": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M3-session2-four-whips\\report.json"
+  },
+  "M3_002_whip_003": {
+    "clock_verified": false,
+    "controller_sha256": "04efc293e16778c9a254bfc65b2d0ce212751e472ef07791750c1e8c2fb9b4c1",
+    "offset_s": 3.045859020728079,
+    "optitrack_sha256": "a36565276576fb0b64b32644643d9cdaf4e86b4647db9bd8dcf3a152d6f80dee",
+    "rms_m": 0.0002687802223477862,
+    "source": "Estimated per repetition from measured native-rate TF XYZ and native Motive XYZ, excluding interpolation across logger gaps; no command/forecast or spatial fitting. Includes unknown transport latency; original timestamps retained.",
+    "source_report": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M3-session2-four-whips\\report.json"
+  },
+  "M3_002_whip_004": {
+    "clock_verified": false,
+    "controller_sha256": "6e4c485cf0851c4ba7a17e14e4ae95446ca3b4cc26ed6e18f48bb7ac2141bac4",
+    "offset_s": 3.044459187677206,
+    "optitrack_sha256": "c94613d957ea302862e247a7aff14550e6847c50ca5070ee649ea93937215cde",
+    "rms_m": 0.00021082611128351038,
+    "source": "Estimated per repetition from measured native-rate TF XYZ and native Motive XYZ, excluding interpolation across logger gaps; no command/forecast or spatial fitting. Includes unknown transport latency; original timestamps retained.",
+    "source_report": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M3-session2-four-whips\\report.json"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "date": "2026-09-13",
+  "scope": "Frame the principal contribution as the aerial whipping system.",
+  "source": "C:\\Users\\wts28\\Lehigh University Dropbox\\TonyLehigh Wu\\Apps\\Overleaf\\AeroWhip-ICRA\\main.tex",
+  "previous_sha256": "7ac5e79db61f9721a8526a930b91ddcead2a0abcf3735bfb8d0c3eff62f50215",
+  "source_sha256": "3a37c14ccd7dda0314dcfd86c3f595dd6924dc17708a230581a945b5e43fb01c",
+  "pdf": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\paper\\figures\\AeroWhip_methodology_20260913.pdf",
+  "pdf_sha256": "f963d798d648874d657aedad4be30ba8dda3c69666581725aa1686de090bec34",
+  "changed": [
+    "Abstract",
+    "Introduction: aerial related work and contribution paragraph",
+    "Framework opening"
+  ],
+  "unchanged": [
+    "Section structure",
+    "Problem Statement",
+    "17 numbered equations",
+    "Detailed methodology",
+    "Experimental results",
+    "Bibliography",
+    "Figures"
+  ],
+  "checks": {
+    "compile": "Tectonic on Windows",
+    "pages": 7,
+    "visually_checked_pages": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "overfull_boxes": 0,
+    "unresolved_references": 0,
+    "unresolved_citations": 0,
+    "existing_class_font_author_warnings_remain": true
+  },
+  "boundaries": [
+    "No claim of new MPPI or Gauss-Newton algorithms",
+    "No first-of-kind or comparative-superiority claim",
+    "Prediction comparison remains retrospective",
+    "No component ablation or cross-task generalization asserted"
+  ],
+  "primary_sources_checked": [
+    "https://arxiv.org/abs/2403.17565",
+    "https://proceedings.mlr.press/v270/chen25d.html",
+    "https://arxiv.org/abs/2604.22102",
+    "https://arxiv.org/abs/2602.21302"
+  ],
+  "backup": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\tmp\\pdfs\\aerial_system_contribution_20260913\\before",
+  "cloud_sync_verified": false
+}

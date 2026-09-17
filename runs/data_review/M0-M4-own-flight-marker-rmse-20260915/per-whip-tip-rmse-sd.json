@@ -1,0 +1,36 @@
+{
+  "ddof": 1,
+  "error_bars": "Sample standard deviation across per-whip tip RMSE values; not standard error or confidence intervals.",
+  "marker": "c10 (tip)",
+  "models": {
+    "M0": {
+      "mean_cm": 15.612320456570774,
+      "sample_sd_cm": 2.5416967138790376,
+      "whips": 11
+    },
+    "M1": {
+      "mean_cm": 5.915394084179288,
+      "sample_sd_cm": 0.8299329782757937,
+      "whips": 12
+    },
+    "M2": {
+      "mean_cm": 5.914633602823813,
+      "sample_sd_cm": 1.9053985451886106,
+      "whips": 11
+    },
+    "M3": {
+      "mean_cm": 5.759639732349943,
+      "sample_sd_cm": 0.9084241256197335,
+      "whips": 12
+    },
+    "M4": {
+      "mean_cm": 5.292611829948447,
+      "sample_sd_cm": 0.6660356775895759,
+      "whips": 12
+    }
+  },
+  "scored_interval_s": [
+    0.0,
+    1.1138000791100293
+  ]
+}

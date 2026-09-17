@@ -1,0 +1,12 @@
+{
+  "command_contract": "position_spline_pva_30hz_v1",
+  "development_review": "User-requested offline M0 reward and search-budget comparison; no flight activation.",
+  "evidence": "simulation only",
+  "method": "mppi",
+  "model_source": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-brake-1p3s\\model.json",
+  "model_source_sha256": "b6b515ad3b99f251caf4ebce22461bb66e13520da6d7b110d27bd18074cf0c91",
+  "name": "target_reward_512x80",
+  "source_checkpoint": null,
+  "source_checkpoint_sha256": null,
+  "success_criterion": "tip_contact_v1"
+}

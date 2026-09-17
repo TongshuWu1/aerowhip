@@ -1,6 +1,5 @@
 # Flight data, saved replay and adaptation
 
-Read [HANDOFF.md](../../HANDOFF.md) for the active model/run and stopped-job state.
 This guide describes the current data/replay workflow; it does not launch a vehicle.
 
 1. Associate each recording with its actual vehicle, policy/plan, exact sent

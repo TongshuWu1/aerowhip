@@ -1,0 +1,14 @@
+{
+  "full_csv_translation_max_error": 1.1102230246251565e-15,
+  "full_csv_translation_pass": true,
+  "whip_cable_translation_max_error_m": 7.66275931596283e-13,
+  "whip_cable_translation_pass": true,
+  "full_cable_rigid_translation_pass": false,
+  "full_cable_comparison_tolerance_m": 1e-07,
+  "full_cable_translation_max_error_m": 0.013835092767343578,
+  "maximum_difference_time_s": 8.586666666666668,
+  "first_over_tolerance_time_s": 6.333333333333334,
+  "full_recovery_limits_pass": true,
+  "note": "Strict full-cable translation comparison failed during late settling. Whip prefix and commands match; cause of late divergence not established. Tolerance was not relaxed.",
+  "rows": 288
+}

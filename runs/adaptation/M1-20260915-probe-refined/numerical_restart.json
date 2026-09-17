@@ -1,0 +1,7 @@
+{
+  "diagnostic_sha256": "6436d712e04b7a0644bdf838dee31e9b17c2343f2d0c56e6ab2ebf4ef051cfdd",
+  "failed_check_sha256": "1e26ed7bc622a4d4d8d0027b8c5cb23527a20cb644462e64fdce350fec1f9ac0",
+  "reason": "Full cable gradient checker exhausted its probe range before two adjacent steps agreed; smaller-step diagnostics passed unchanged tolerances. Entire fitting workflow rerun with extended probe range. No data, objective, optimizer, or stopping changes.",
+  "regression_tests": "14 passed: tests/test_gradient_probe_scale.py and tests/test_iteration_improvements.py",
+  "source": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M1-20260915"
+}

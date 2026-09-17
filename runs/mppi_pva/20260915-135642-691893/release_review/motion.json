@@ -1,0 +1,73 @@
+{
+  "aligned_release_duration_s": 0.08,
+  "backward_travel_m": 0.10268024754025162,
+  "best_score": 2.4686842200161823,
+  "closest_approach_time_s": null,
+  "command_steps": 52,
+  "complete_recovery_attitude_checked": true,
+  "complete_recovery_prediction_checked": false,
+  "directed_tip_speed_m_s": 5.170011588652511,
+  "elapsed_s": 373.71261719999893,
+  "evidence": "Independent frozen-model replay; no complete recovery or flight CSV in this diagnostic artifact",
+  "fold_completed_time_s": null,
+  "fold_requirement": "diagnostic_only",
+  "fold_valid": false,
+  "free_target": true,
+  "horizontal_cable_rms_m": 0.030405581305260925,
+  "independent_score_difference": 1.9397816686250735e-12,
+  "initialization": "templates",
+  "iterations": 80,
+  "loading_to_release_turn_deg": 103.91347073140558,
+  "loading_velocity_m_s": [
+    1.4093149142197725,
+    -0.335757078475022,
+    -0.20376058745208425
+  ],
+  "maneuver_duration_s": 1.7333333333333334,
+  "minimum_tip_distance_m": null,
+  "objective_components": {
+    "horizontal_cable": -0.029583979984346646,
+    "smoothness": -0.0017088193833201413,
+    "strike": 2.499977019383849,
+    "target": -0.0
+  },
+  "planner_mode": "targeted_fold_strike_v1",
+  "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+  "proposal_baselines_sha256": "cff9d551b80638a5ff9a461e646d8afb7b306e2e2ba2076fe3f2c0fd9bfafc03",
+  "random_candidate_budget": 40960,
+  "recovery_reference_checked": true,
+  "rewarded_tip_speed_m_s": 5.170011588652511,
+  "root_forward_speed_m_s": -1.2366676404864163,
+  "root_velocity_m_s": [
+    1.7768001621710992,
+    -1.2366676404864163,
+    -0.45123673775475653
+  ],
+  "selected_strike_position_m": [
+    3.094675731056458,
+    0.9716866435640339,
+    2.361623729865534
+  ],
+  "stop_reason": "fixed_budget",
+  "strike_angle_deg": 0.8818086868552544,
+  "strike_distance_m": null,
+  "strike_time_s": 1.7066666666666668,
+  "target_note": "Strike location selected from the motion; no target accuracy measured",
+  "tip_velocity_m_s": [
+    -0.04629575077053136,
+    5.170011588652511,
+    -0.06472179211443063
+  ],
+  "velocity_peak_speeds_m_s": [
+    2.084288160252769,
+    2.404488187092483,
+    3.483797372711039
+  ],
+  "velocity_peak_times_s": [
+    1.2666666666666666,
+    1.5,
+    1.6666666666666667
+  ],
+  "whip_end_s": 1.7333333333333334,
+  "target_invariance_score_difference": 0.0
+}

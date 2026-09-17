@@ -1,0 +1,112 @@
+{
+  "candidate_hashes": {
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M2-20260915\\candidate\\assets\\drone_model.json": "3a6232d16a547653f6f9844f229fcfbdf1943a165e9783b492b9f771f9157d16",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M2-20260915\\candidate\\assets\\drone_residual.pt": "95cf6fbb0611508e9da1db478f393c90e930b158f4d5e682a2ac726806a5fc34",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M2-20260915\\candidate\\cable_residual.pt": "6ba4a1e5bac184454a9702598f94bac8eb587bca983160a5de37ae6df4060090",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M2-20260915\\candidate\\model.json": "04e26284ec7836f3dab5b3d8aa6458a707c7312e2e808c8b5e87449194e311e5",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M2-20260915\\fit\\selection_frozen.json": "6b077ad3706ec895d4f340644987b2571b5e74bef617f5f418af766b0345c544",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\tmp\\fit_m2_standard.py": "d1d17f3b46b9fcb1c9e7d6ee76534463240ee2b7f80539209841440995218529"
+  },
+  "comparison": null,
+  "elapsed_s": 1682.7346462000278,
+  "model_selected": false,
+  "performance_evaluation": "deferred_by_user",
+  "schema": "whip_full_model_v1",
+  "stages": {
+    "cable_parameters": [
+      9.987978495167488e-09,
+      9.750909145769583e-05,
+      0.3096111541928604
+    ],
+    "cable_physics": {
+      "active_bounds": [
+        0,
+        0,
+        0
+      ],
+      "baseline_loss": 1.3263185640436503,
+      "best": [
+        -18.421883617598134,
+        -9.235564938587627,
+        -1.1724381101608319
+      ],
+      "best_loss": 1.3145546117436728,
+      "elapsed_s": 23.29759509995347,
+      "nfev": 9,
+      "solver_message": "`xtol` termination condition is satisfied.",
+      "stop_reason": "solver_termination",
+      "updates": 6
+    },
+    "cable_residual": {
+      "additional_updates": 245,
+      "baseline_loss": 1.3176710731210926,
+      "best_loss": 1.1342161036767933,
+      "ceiling": null,
+      "elapsed_s": 1475.8993311999948,
+      "numerically_verified": true,
+      "optimizer_best_loss": 1.1342161036767933,
+      "selected_update": 240,
+      "stop_reason": "practical_plateau",
+      "updates": 245
+    },
+    "candidate_sha256": "04e26284ec7836f3dab5b3d8aa6458a707c7312e2e808c8b5e87449194e311e5",
+    "drone_parameters": {
+      "attitude_acceleration_scale_xy": 1.020539150850921,
+      "attitude_acceleration_scale_z": 0.5779704074194544,
+      "attitude_drive_model": "independent_scale_v3",
+      "attitude_time_constant_s": 0.04657532034772172,
+      "delay_s": 0.04,
+      "feedforward_xy": 0.8020504971311041,
+      "feedforward_z": 1.9820939175745036,
+      "gravity_m_s2": 9.80665,
+      "kd_xy": 0.8821924033970712,
+      "kd_z": 2.688556458051402,
+      "kp_xy": 1.7883413138066755,
+      "kp_z": 18.29500336236506
+    },
+    "drone_residual": {
+      "additional_updates": 105,
+      "baseline_loss": 2.1213661670611126,
+      "best_loss": 1.9501537858697953,
+      "ceiling": null,
+      "elapsed_s": 58.27642349997768,
+      "numerically_verified": true,
+      "optimizer_best_loss": 1.9501537858697953,
+      "selected_update": 105,
+      "stop_reason": "practical_plateau",
+      "updates": 105
+    },
+    "schema": "whip_full_model_v1",
+    "stages_complete": true,
+    "training_takes": [
+      "M1_001_whip_001",
+      "M1_001_whip_002",
+      "M1_001_whip_003",
+      "M1_001_whip_004",
+      "M1_002_whip_001",
+      "M1_002_whip_002",
+      "M1_002_whip_003",
+      "M1_002_whip_004",
+      "M1_003_whip_001",
+      "M1_003_whip_002",
+      "M1_003_whip_003",
+      "M1_003_whip_004"
+    ],
+    "validation_used_for_selection": false
+  },
+  "status": "completed",
+  "training_takes": [
+    "M1_001_whip_001",
+    "M1_001_whip_002",
+    "M1_001_whip_003",
+    "M1_001_whip_004",
+    "M1_002_whip_001",
+    "M1_002_whip_002",
+    "M1_002_whip_003",
+    "M1_002_whip_004",
+    "M1_003_whip_001",
+    "M1_003_whip_002",
+    "M1_003_whip_003",
+    "M1_003_whip_004"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "command_contract": "position_spline_pva_30hz_v1",
+  "development_review": "User clarified a side whip sweeping horizontally, not a sideways-moving hanging cable. New task-specific soft objective penalizes arclength RMS cable height relative to the attachment plane at the same strike event; old objectives unchanged. M5 and the original physical limits are frozen. Three-second preparation from rest. Offline review only.",
+  "evidence": "simulation only",
+  "method": "mppi",
+  "model_source": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M5-20260915\\candidate\\model.json",
+  "model_source_sha256": "f2a7c541d3f8dabf767960caef6d77622fe742997235753fb2046d7eac5091b2",
+  "name": "M5 horizontal side whip - cable plane objective",
+  "source_checkpoint": null,
+  "source_checkpoint_sha256": null,
+  "success_criterion": "targeted_fold_strike_v1"
+}

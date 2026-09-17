@@ -1,0 +1,445 @@
+[
+  {
+    "common_full_command_prediction": {
+      "closest_time_s": 1.122692635896256,
+      "closest_tip_distance_m": 0.04288895868538249,
+      "interval_s": [
+        0.0,
+        1.5
+      ],
+      "note": "Complete exported command; swept tip distance under nominal free-motion simulation, without target contact dynamics.",
+      "vehicle_x_range_m": [
+        -1.1426974825539604,
+        0.8437195729464448
+      ]
+    },
+    "encounter_distance_m": 0.05000000000000009,
+    "encounter_time_s": 1.1172482457473654,
+    "encounter_tip_velocity_m_s": [
+      3.9977973702881213,
+      -0.5503055381063677,
+      2.8306034406378284
+    ],
+    "failed": false,
+    "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-brake-1p3s",
+    "minimum_tip_distance_m": 0.0449361174192323,
+    "name": "retained_M0",
+    "original_reward": {
+      "score": 650.8790189268612,
+      "terms": {
+        "approach": -4.551680963661623,
+        "cast": 68.37848098657459,
+        "contact": 440.71517120380497,
+        "distance": -0.0,
+        "exit": -5.64778414527054,
+        "fold": 158.09167209750137,
+        "hit": 0.0,
+        "jerk": -0.0030805609994952487,
+        "joint": 0.0,
+        "lateral": -0.04336184719927386,
+        "miss": -6.0603978438886985,
+        "pull": 0.0,
+        "release": 0.0,
+        "vertical": -0.0,
+        "wave": 0.0
+      }
+    },
+    "planning_target_radius_m": 0.05,
+    "simulated_success": true,
+    "target_reward": {
+      "score": 604.938568900298,
+      "terms": {
+        "approach": -4.551680963661623,
+        "cast": 54.35118046049605,
+        "contact": 700.6119310102669,
+        "distance": -0.0,
+        "exit": -5.64778414527054,
+        "fold": 125.66042526098101,
+        "hit": 0.0,
+        "jerk": -0.0030805609994952487,
+        "joint": 0.0,
+        "lateral": -0.04336184719927386,
+        "miss": -265.43906031431493,
+        "pull": 0.0,
+        "release": 0.0,
+        "vertical": -0.0,
+        "wave": 0.0
+      }
+    }
+  },
+  {
+    "common_full_command_prediction": {
+      "closest_time_s": 1.12298242715341,
+      "closest_tip_distance_m": 0.04538919460906581,
+      "interval_s": [
+        0.0,
+        1.5
+      ],
+      "note": "Complete exported command; swept tip distance under nominal free-motion simulation, without target contact dynamics.",
+      "vehicle_x_range_m": [
+        -1.1141816569812766,
+        0.8466459278564038
+      ]
+    },
+    "encounter_distance_m": 0.04999999999999995,
+    "encounter_time_s": 1.1185684366070392,
+    "encounter_tip_velocity_m_s": [
+      3.9905421390388534,
+      -0.565076361900082,
+      2.8438453301061264
+    ],
+    "failed": false,
+    "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260914-190525-941925",
+    "minimum_tip_distance_m": 0.04774598087474646,
+    "name": "original_reward_512x40",
+    "original_reward": {
+      "score": 651.2042702121721,
+      "terms": {
+        "approach": -4.592434808710132,
+        "cast": 68.23580568189685,
+        "contact": 440.07539126771684,
+        "distance": -0.0,
+        "exit": -5.511011561123361,
+        "fold": 159.10536132130156,
+        "hit": 0.0,
+        "jerk": -0.0030873961883799866,
+        "joint": 0.0,
+        "lateral": -0.04535644883252345,
+        "miss": -6.060397843888666,
+        "pull": 0.0,
+        "release": 0.0,
+        "vertical": -0.0,
+        "wave": 0.0
+      }
+    },
+    "planning_target_radius_m": 0.05,
+    "recovery": {
+      "brake_s": 1.3,
+      "duration_s": 7.8,
+      "minimum_cable_height_m": 0.39242479505135563,
+      "passed": true,
+      "rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\audits\\M0-mppi-accuracy-20260914\\original_reward_512x40_rehearsal"
+    },
+    "simulated_success": true,
+    "target_reward": {
+      "score": 604.707850196447,
+      "terms": {
+        "approach": -4.592434808710132,
+        "cast": 54.237773857718295,
+        "contact": 699.594862650175,
+        "distance": -0.0,
+        "exit": -5.511011561123361,
+        "fold": 126.4661642177217,
+        "hit": 0.0,
+        "jerk": -0.0030873961883799866,
+        "joint": 0.0,
+        "lateral": -0.04535644883252345,
+        "miss": -265.4390603143136,
+        "pull": 0.0,
+        "release": 0.0,
+        "vertical": -0.0,
+        "wave": 0.0
+      }
+    }
+  },
+  {
+    "common_full_command_prediction": {
+      "closest_time_s": 1.120804684652829,
+      "closest_tip_distance_m": 0.04088556456709196,
+      "interval_s": [
+        0.0,
+        1.5
+      ],
+      "note": "Complete exported command; swept tip distance under nominal free-motion simulation, without target contact dynamics.",
+      "vehicle_x_range_m": [
+        -1.209414985762874,
+        0.8407899951976956
+      ]
+    },
+    "encounter_distance_m": 0.04999999999999996,
+    "encounter_time_s": 1.1146436691432413,
+    "encounter_tip_velocity_m_s": [
+      4.000754545763323,
+      -0.5396629069827582,
+      2.9142225875702166
+    ],
+    "failed": false,
+    "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260914-190526-272022",
+    "minimum_tip_distance_m": 0.04108724178849355,
+    "name": "target_reward_512x40",
+    "original_reward": {
+      "score": 648.3259861769532,
+      "terms": {
+        "approach": -4.503503829617685,
+        "cast": 67.32865643220653,
+        "contact": 440.909403234167,
+        "distance": -0.0,
+        "exit": -6.07256719295383,
+        "fold": 156.765877274003,
+        "hit": 0.0,
+        "jerk": -0.003067445951435872,
+        "joint": 0.0,
+        "lateral": -0.038414451011753975,
+        "miss": -6.0603978438886985,
+        "pull": 0.0,
+        "release": 0.0,
+        "vertical": -0.0,
+        "wave": 0.0
+      }
+    },
+    "planning_target_radius_m": 0.05,
+    "recovery": {
+      "brake_s": 1.3,
+      "duration_s": 7.933333333333334,
+      "minimum_cable_height_m": 0.39237780273341666,
+      "passed": true,
+      "rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\audits\\M0-mppi-accuracy-20260914\\target_reward_512x40_rehearsal"
+    },
+    "simulated_success": true,
+    "target_reward": {
+      "score": 602.987417260163,
+      "terms": {
+        "approach": -4.503503829617685,
+        "cast": 53.51671904832289,
+        "contact": 700.9207047642647,
+        "distance": -0.0,
+        "exit": -6.07256719295383,
+        "fold": 124.60660668142397,
+        "hit": 0.0,
+        "jerk": -0.003067445951435872,
+        "joint": 0.0,
+        "lateral": -0.038414451011753975,
+        "miss": -265.43906031431374,
+        "pull": 0.0,
+        "release": 0.0,
+        "vertical": -0.0,
+        "wave": 0.0
+      }
+    }
+  },
+  {
+    "common_full_command_prediction": {
+      "closest_time_s": 1.123288698734036,
+      "closest_tip_distance_m": 0.04461888165941263,
+      "interval_s": [
+        0.0,
+        1.5
+      ],
+      "note": "Complete exported command; swept tip distance under nominal free-motion simulation, without target contact dynamics.",
+      "vehicle_x_range_m": [
+        -1.14767441597291,
+        0.8458140196900954
+      ]
+    },
+    "encounter_distance_m": 0.04999999999999997,
+    "encounter_time_s": 1.1185681993939098,
+    "encounter_tip_velocity_m_s": [
+      4.0005339511333045,
+      -0.5824445790501693,
+      2.802066161991202
+    ],
+    "failed": false,
+    "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260914-190526-603396",
+    "minimum_tip_distance_m": 0.04750204622862485,
+    "name": "target_reward_512x80",
+    "original_reward": {
+      "score": 654.4813773846121,
+      "terms": {
+        "approach": -4.583346273997993,
+        "cast": 69.02880010980742,
+        "contact": 440.909403234167,
+        "distance": -0.0,
+        "exit": -5.871660373003605,
+        "fold": 161.11429053326015,
+        "hit": 0.0,
+        "jerk": -0.00309295712917319,
+        "joint": 0.0,
+        "lateral": -0.05261904460296016,
+        "miss": -6.0603978438886985,
+        "pull": 0.0,
+        "release": 0.0,
+        "vertical": -0.0,
+        "wave": 0.0
+      }
+    },
+    "planning_target_radius_m": 0.05,
+    "recovery": {
+      "brake_s": 1.3,
+      "duration_s": 7.866666666666666,
+      "minimum_cable_height_m": 0.3924332540981817,
+      "passed": true,
+      "rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\audits\\M0-mppi-accuracy-20260914\\target_reward_512x80_rehearsal"
+    },
+    "simulated_success": true,
+    "target_reward": {
+      "score": 607.9019952078861,
+      "terms": {
+        "approach": -4.583346273997993,
+        "cast": 54.868091797422125,
+        "contact": 700.9207047642645,
+        "distance": -0.0,
+        "exit": -5.871660373003605,
+        "fold": 128.06297760924704,
+        "hit": 0.0,
+        "jerk": -0.00309295712917319,
+        "joint": 0.0,
+        "lateral": -0.05261904460296016,
+        "miss": -265.4390603143139,
+        "pull": 0.0,
+        "release": 0.0,
+        "vertical": -0.0,
+        "wave": 0.0
+      }
+    }
+  },
+  {
+    "common_full_command_prediction": {
+      "closest_time_s": 1.1229876216349963,
+      "closest_tip_distance_m": 0.04614783028102311,
+      "interval_s": [
+        0.0,
+        1.5
+      ],
+      "note": "Complete exported command; swept tip distance under nominal free-motion simulation, without target contact dynamics.",
+      "vehicle_x_range_m": [
+        -1.1086129614146214,
+        0.8507641548343963
+      ]
+    },
+    "encounter_distance_m": 0.04999999999999996,
+    "encounter_time_s": 1.118946438850732,
+    "encounter_tip_velocity_m_s": [
+      3.998870398494932,
+      -0.4694806830669848,
+      2.895942912891184
+    ],
+    "failed": false,
+    "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260914-190526-936828",
+    "minimum_tip_distance_m": 0.04849894271003528,
+    "name": "target_reward_1024x40",
+    "original_reward": {
+      "score": 648.4482281225728,
+      "terms": {
+        "approach": -4.6392499389397255,
+        "cast": 68.15289864657433,
+        "contact": 440.8097928490686,
+        "distance": -0.0,
+        "exit": -5.4889077334148535,
+        "fold": 155.70123237141757,
+        "hit": 0.0,
+        "jerk": -0.003087345510644195,
+        "joint": 0.0,
+        "lateral": -0.024052882733665737,
+        "miss": -6.0603978438886985,
+        "pull": 0.0,
+        "release": 0.0,
+        "vertical": -0.0,
+        "wave": 0.0
+      }
+    },
+    "planning_target_radius_m": 0.05,
+    "recovery": {
+      "brake_s": 1.3,
+      "duration_s": 7.766666666666667,
+      "minimum_cable_height_m": 0.39235961472859265,
+      "passed": true,
+      "rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\audits\\M0-mppi-accuracy-20260914\\target_reward_1024x40_rehearsal"
+    },
+    "simulated_success": true,
+    "target_reward": {
+      "score": 603.1002340702034,
+      "terms": {
+        "approach": -4.6392499389397255,
+        "cast": 54.171874540078534,
+        "contact": 700.7623525476578,
+        "distance": -0.0,
+        "exit": -5.4889077334148535,
+        "fold": 123.76036519737977,
+        "hit": 0.0,
+        "jerk": -0.003087345510644195,
+        "joint": 0.0,
+        "lateral": -0.024052882733665737,
+        "miss": -265.43906031431374,
+        "pull": 0.0,
+        "release": 0.0,
+        "vertical": -0.0,
+        "wave": 0.0
+      }
+    }
+  },
+  {
+    "common_full_command_prediction": {
+      "closest_time_s": 1.1156465180548258,
+      "closest_tip_distance_m": 0.017726030023577942,
+      "interval_s": [
+        0.0,
+        1.5
+      ],
+      "note": "Complete exported command; swept tip distance under nominal free-motion simulation, without target contact dynamics.",
+      "vehicle_x_range_m": [
+        -1.1551811637484233,
+        0.8446760831863706
+      ]
+    },
+    "encounter_distance_m": 0.04999999999999997,
+    "encounter_time_s": 1.1060742731163729,
+    "encounter_tip_velocity_m_s": [
+      4.1675201506298345,
+      -0.41284383384158496,
+      2.5708076252276006
+    ],
+    "failed": false,
+    "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260914-190739-634097",
+    "minimum_tip_distance_m": 0.04737857835021749,
+    "name": "target_reward_2cm_512x40",
+    "original_reward": {
+      "score": 630.0915793983976,
+      "terms": {
+        "approach": -4.476368971218998,
+        "cast": 68.13050398650935,
+        "contact": 440.909403234167,
+        "distance": -0.0,
+        "exit": -5.831143262378128,
+        "fold": 137.44367047635654,
+        "hit": 0.0,
+        "jerk": -0.0030223026803488573,
+        "joint": 0.0,
+        "lateral": -0.021065918469037846,
+        "miss": -6.0603978438886985,
+        "pull": 0.0,
+        "release": 0.0,
+        "vertical": -0.0,
+        "wave": 0.0
+      }
+    },
+    "planning_target_radius_m": 0.02,
+    "recovery": {
+      "brake_s": 1.3,
+      "duration_s": 7.933333333333334,
+      "minimum_cable_height_m": 0.39239113680560134,
+      "passed": true,
+      "rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\audits\\M0-mppi-accuracy-20260914\\target_reward_2cm_512x40_rehearsal"
+    },
+    "simulated_success": true,
+    "target_reward": {
+      "score": 588.5523146078326,
+      "terms": {
+        "approach": -4.476368971218998,
+        "cast": 54.154073966082414,
+        "contact": 700.9207047642645,
+        "distance": -0.0,
+        "exit": -5.831143262378128,
+        "fold": 109.24819664654618,
+        "hit": 0.0,
+        "jerk": -0.0030223026803488573,
+        "joint": 0.0,
+        "lateral": -0.021065918469037846,
+        "miss": -265.4390603143139,
+        "pull": 0.0,
+        "release": 0.0,
+        "vertical": -0.0,
+        "wave": 0.0
+      }
+    }
+  }
+]

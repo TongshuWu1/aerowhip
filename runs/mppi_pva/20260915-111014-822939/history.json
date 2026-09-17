@@ -1,0 +1,3122 @@
+[
+  {
+    "accepted_fraction": 0.681640625,
+    "best_sampled_speed_gain_m_s": 3.4690574913362044,
+    "best_score": -123.94017668788332,
+    "closest_approach_time_s": 1.040988265950404,
+    "directed_tip_speed_m_s": 3.4184168430961464,
+    "effective_samples": 69.80000240121109,
+    "elapsed_s": 5.981122099998174,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.45269103415348094,
+    "iteration": 1,
+    "minimum_tip_distance_m": 0.5620534639256962,
+    "objective_components": {
+      "horizontal_cable": -81.97166896117922,
+      "smoothness": -0.001185433234556799,
+      "strike": 8.694005528438756e-21,
+      "target": -41.96732229346955
+    },
+    "physics_valid_fraction": 0.69921875,
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 3.4184168430961464,
+    "root_forward_speed_m_s": -0.0439843178333732,
+    "root_velocity_m_s": [
+      -0.8605513647549412,
+      -0.0439843178333732,
+      0.5042528421767001
+    ],
+    "strike_angle_deg": 14.93447311114614,
+    "strike_distance_m": 0.6478219068036334,
+    "strike_time_s": 0.9666666666666668,
+    "tip_velocity_m_s": [
+      -0.6985317091017875,
+      3.4184168430961464,
+      -0.5859894793996231
+    ]
+  },
+  {
+    "accepted_fraction": 0.78515625,
+    "best_sampled_speed_gain_m_s": 3.6347510390135813,
+    "best_score": -120.28942898410989,
+    "closest_approach_time_s": 1.0338618546819962,
+    "directed_tip_speed_m_s": 3.351101488220287,
+    "effective_samples": 80.4000002070696,
+    "elapsed_s": 11.021349599999667,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.4369247707448889,
+    "iteration": 2,
+    "minimum_tip_distance_m": 0.5581916212176579,
+    "objective_components": {
+      "horizontal_cable": -76.36130211618946,
+      "smoothness": -0.0011934301502727076,
+      "strike": 8.233702151649041e-21,
+      "target": -43.92693343777016
+    },
+    "physics_valid_fraction": 0.80078125,
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 3.311005850422377,
+    "root_forward_speed_m_s": 0.04009563779791003,
+    "root_velocity_m_s": [
+      -1.1553275253710638,
+      0.04009563779791003,
+      0.5337666619251058
+    ],
+    "strike_angle_deg": 14.536806625276292,
+    "strike_distance_m": 0.6627739692970007,
+    "strike_time_s": 0.9533333333333335,
+    "tip_velocity_m_s": [
+      -0.7820963537414253,
+      3.351101488220287,
+      -0.3786831285327254
+    ]
+  },
+  {
+    "accepted_fraction": 0.8203125,
+    "best_sampled_speed_gain_m_s": 3.7528119995757834,
+    "best_score": -112.17464735532944,
+    "closest_approach_time_s": 1.0266666666666666,
+    "directed_tip_speed_m_s": 3.228640944841428,
+    "effective_samples": 84.0000025893455,
+    "elapsed_s": 16.386798399998952,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.4045001062441755,
+    "iteration": 3,
+    "minimum_tip_distance_m": 0.6038568948391426,
+    "objective_components": {
+      "horizontal_cable": -65.4481343806197,
+      "smoothness": -0.0011989870914795753,
+      "strike": 6.09106004054158e-22,
+      "target": -46.72531398761824
+    },
+    "physics_valid_fraction": 0.830078125,
+    "recovery_reference_rejections": 1,
+    "rewarded_tip_speed_m_s": 2.928693758201413,
+    "root_forward_speed_m_s": 0.29994718664001496,
+    "root_velocity_m_s": [
+      -1.1773335559412512,
+      0.29994718664001496,
+      0.0009745090690405078
+    ],
+    "strike_angle_deg": 14.340281626120829,
+    "strike_distance_m": 0.683559170720562,
+    "strike_time_s": 0.9533333333333335,
+    "tip_velocity_m_s": [
+      -0.5334554715452714,
+      3.228640944841428,
+      -0.6298338708966954
+    ]
+  },
+  {
+    "accepted_fraction": 0.833984375,
+    "best_sampled_speed_gain_m_s": 3.6466502671835475,
+    "best_score": -106.7291563054781,
+    "closest_approach_time_s": 1.04,
+    "directed_tip_speed_m_s": 3.5987296814390177,
+    "effective_samples": 85.40000205148576,
+    "elapsed_s": 21.583884599996964,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.4382608463629046,
+    "iteration": 4,
+    "minimum_tip_distance_m": 0.47465613980284266,
+    "objective_components": {
+      "horizontal_cable": -76.82902778189178,
+      "smoothness": -0.0011888855686681512,
+      "strike": 6.012837567796865e-15,
+      "target": -29.89893963801766
+    },
+    "physics_valid_fraction": 0.845703125,
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 3.5987296814390177,
+    "root_forward_speed_m_s": -0.05172464273884847,
+    "root_velocity_m_s": [
+      -1.1023376191647172,
+      -0.05172464273884847,
+      0.4493147574958111
+    ],
+    "strike_angle_deg": 14.7531772219838,
+    "strike_distance_m": 0.5467992285841089,
+    "strike_time_s": 0.9800000000000001,
+    "tip_velocity_m_s": [
+      -0.7846193950464689,
+      3.5987296814390177,
+      -0.5314786032276108
+    ]
+  },
+  {
+    "accepted_fraction": 0.841796875,
+    "best_sampled_speed_gain_m_s": 3.967509689977589,
+    "best_score": -106.24864914571076,
+    "closest_approach_time_s": 1.0266666666666666,
+    "directed_tip_speed_m_s": 3.4227905415423825,
+    "effective_samples": 86.20000148031956,
+    "elapsed_s": 26.74891459999708,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.41351657676494474,
+    "iteration": 5,
+    "minimum_tip_distance_m": 0.5391650682910325,
+    "objective_components": {
+      "horizontal_cable": -68.3983837037594,
+      "smoothness": -0.0011815972558304874,
+      "strike": 2.7856457549561233e-19,
+      "target": -37.849083844695535
+    },
+    "physics_valid_fraction": 0.859375,
+    "recovery_reference_rejections": 2,
+    "rewarded_tip_speed_m_s": 3.101823696970947,
+    "root_forward_speed_m_s": 0.3209668445714353,
+    "root_velocity_m_s": [
+      -1.327590413546137,
+      0.3209668445714353,
+      0.3417536307601998
+    ],
+    "strike_angle_deg": 14.961631389459773,
+    "strike_distance_m": 0.6152160908550388,
+    "strike_time_s": 0.9600000000000001,
+    "tip_velocity_m_s": [
+      -0.7693042938527312,
+      3.4227905415423825,
+      -0.49477900414146425
+    ]
+  },
+  {
+    "accepted_fraction": 0.865234375,
+    "best_sampled_speed_gain_m_s": 4.015952937523081,
+    "best_score": -97.868887760351,
+    "closest_approach_time_s": 1.04,
+    "directed_tip_speed_m_s": 3.4543784475628287,
+    "effective_samples": 88.60000281835659,
+    "elapsed_s": 31.632460099997843,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.42154550775874844,
+    "iteration": 6,
+    "minimum_tip_distance_m": 0.44541359102674366,
+    "objective_components": {
+      "horizontal_cable": -71.08024604463242,
+      "smoothness": -0.0011304285115291443,
+      "strike": 3.970735788542325e-14,
+      "target": -26.7875112872071
+    },
+    "physics_valid_fraction": 0.869140625,
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 3.033862815060579,
+    "root_forward_speed_m_s": 0.42051563250224966,
+    "root_velocity_m_s": [
+      -1.1302433221380637,
+      0.42051563250224966,
+      0.39189280099449775
+    ],
+    "strike_angle_deg": 14.911535816247124,
+    "strike_distance_m": 0.5175665298993657,
+    "strike_time_s": 0.9800000000000001,
+    "tip_velocity_m_s": [
+      -0.7272919664604129,
+      3.4543784475628287,
+      -0.5632340787881035
+    ]
+  },
+  {
+    "accepted_fraction": 0.873046875,
+    "best_sampled_speed_gain_m_s": 3.9514617844941613,
+    "best_score": -95.32930088743306,
+    "closest_approach_time_s": 1.010707354270004,
+    "directed_tip_speed_m_s": 3.6875137460353664,
+    "effective_samples": 89.40000207811372,
+    "elapsed_s": 36.94518409999728,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.39346370849713597,
+    "iteration": 7,
+    "minimum_tip_distance_m": 0.5106891797096559,
+    "objective_components": {
+      "horizontal_cable": -61.92547596172768,
+      "smoothness": -0.0011261038613326684,
+      "strike": 3.8981877190909665e-16,
+      "target": -33.40269882184405
+    },
+    "physics_valid_fraction": 0.876953125,
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 2.945040318419325,
+    "root_forward_speed_m_s": 0.7424734276160416,
+    "root_velocity_m_s": [
+      -1.4715108755034956,
+      0.7424734276160416,
+      0.5054099856867111
+    ],
+    "strike_angle_deg": 14.313181968298663,
+    "strike_distance_m": 0.5779506797456341,
+    "strike_time_s": 0.9533333333333335,
+    "tip_velocity_m_s": [
+      -0.8036028877911884,
+      3.6875137460353664,
+      -0.4892856704237147
+    ]
+  },
+  {
+    "accepted_fraction": 0.82421875,
+    "best_sampled_speed_gain_m_s": 4.180162868406907,
+    "best_score": -94.08158574955094,
+    "closest_approach_time_s": 1.0266666666666666,
+    "directed_tip_speed_m_s": 3.506259095243925,
+    "effective_samples": 84.40000179298951,
+    "elapsed_s": 41.99856649999856,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.40317064046268886,
+    "iteration": 8,
+    "minimum_tip_distance_m": 0.4662525219572981,
+    "objective_components": {
+      "horizontal_cable": -65.01862613243787,
+      "smoothness": -0.0011750122104930488,
+      "strike": 7.193204714736032e-15,
+      "target": -29.06178460490258
+    },
+    "physics_valid_fraction": 0.830078125,
+    "recovery_reference_rejections": 1,
+    "rewarded_tip_speed_m_s": 3.0983407280191564,
+    "root_forward_speed_m_s": 0.4079183672247688,
+    "root_velocity_m_s": [
+      -1.3997865489580374,
+      0.4079183672247688,
+      0.36996411476627467
+    ],
+    "strike_angle_deg": 14.847973328598608,
+    "strike_distance_m": 0.5390898311497128,
+    "strike_time_s": 0.9666666666666668,
+    "tip_velocity_m_s": [
+      -0.8112977381887826,
+      3.506259095243925,
+      -0.453686366077041
+    ]
+  },
+  {
+    "accepted_fraction": 0.822265625,
+    "best_sampled_speed_gain_m_s": 4.0507031427937195,
+    "best_score": -88.2830899605616,
+    "closest_approach_time_s": 1.0252303562181055,
+    "directed_tip_speed_m_s": 3.772235908496531,
+    "effective_samples": 84.20000343575639,
+    "elapsed_s": 47.307416899999225,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.42652755315189234,
+    "iteration": 9,
+    "minimum_tip_distance_m": 0.3553180082734066,
+    "objective_components": {
+      "horizontal_cable": -72.77030143909613,
+      "smoothness": -0.0011559664410327253,
+      "strike": 2.19677545941809e-08,
+      "target": -15.511632576992191
+    },
+    "physics_valid_fraction": 0.826171875,
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 3.071221450911639,
+    "root_forward_speed_m_s": 0.701014457584892,
+    "root_velocity_m_s": [
+      -1.235520192177464,
+      0.701014457584892,
+      0.7374872563094326
+    ],
+    "strike_angle_deg": 14.378343267786635,
+    "strike_distance_m": 0.3938480998683654,
+    "strike_time_s": 0.9866666666666668,
+    "tip_velocity_m_s": [
+      -0.8677526665738876,
+      3.772235908496531,
+      -0.42678373879801024
+    ]
+  },
+  {
+    "accepted_fraction": 0.7890625,
+    "best_sampled_speed_gain_m_s": 3.84555564859527,
+    "best_score": -79.0091279212226,
+    "closest_approach_time_s": 1.006921771519548,
+    "directed_tip_speed_m_s": 3.5719391995854504,
+    "effective_samples": 80.80000367765292,
+    "elapsed_s": 52.73579939999763,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.3572903800660831,
+    "iteration": 10,
+    "minimum_tip_distance_m": 0.4427378659180891,
+    "objective_components": {
+      "horizontal_cable": -51.06256627510645,
+      "smoothness": -0.001156027195097436,
+      "strike": 5.776310419875884e-15,
+      "target": -27.945405618921065
+    },
+    "physics_valid_fraction": 0.791015625,
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 2.3484279988838623,
+    "root_forward_speed_m_s": 1.223511200701588,
+    "root_velocity_m_s": [
+      -1.7610513120814795,
+      1.223511200701588,
+      0.5291573611509448
+    ],
+    "strike_angle_deg": 14.941696800364523,
+    "strike_distance_m": 0.5286341420956564,
+    "strike_time_s": 0.9400000000000001,
+    "tip_velocity_m_s": [
+      -0.9531067553363762,
+      3.5719391995854504,
+      0.013585786114615112
+    ]
+  },
+  {
+    "accepted_fraction": 0.828125,
+    "best_sampled_speed_gain_m_s": 3.8360342502902314,
+    "best_score": -78.69406454899828,
+    "closest_approach_time_s": 1.030943151913955,
+    "directed_tip_speed_m_s": 3.4475076865394643,
+    "effective_samples": 84.80000357788174,
+    "elapsed_s": 57.58689679999952,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.37520142351155,
+    "iteration": 11,
+    "minimum_tip_distance_m": 0.40672112261348925,
+    "objective_components": {
+      "horizontal_cable": -56.3104432820374,
+      "smoothness": -0.0011528131161982174,
+      "strike": 2.5292077527063034e-11,
+      "target": -22.38246845386999
+    },
+    "physics_valid_fraction": 0.83984375,
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 2.6377426283032306,
+    "root_forward_speed_m_s": 0.8097650582362337,
+    "root_velocity_m_s": [
+      -1.348897304112584,
+      0.8097650582362337,
+      0.1532853088922148
+    ],
+    "strike_angle_deg": 14.149372300137422,
+    "strike_distance_m": 0.473101135634549,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -0.7076529862047509,
+      3.4475076865394643,
+      -0.504563731337103
+    ]
+  },
+  {
+    "accepted_fraction": 0.8203125,
+    "best_sampled_speed_gain_m_s": 3.873863332422482,
+    "best_score": -71.64396812830157,
+    "closest_approach_time_s": 0.9933333333333334,
+    "directed_tip_speed_m_s": 3.848711713278166,
+    "effective_samples": 84.00000275859188,
+    "elapsed_s": 63.478611399998044,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.32846010532797426,
+    "iteration": 12,
+    "minimum_tip_distance_m": 0.48645554786290673,
+    "objective_components": {
+      "horizontal_cable": -43.15441631682558,
+      "smoothness": -0.001119425488605994,
+      "strike": 2.1444158052950787e-14,
+      "target": -28.488432385987387
+    },
+    "physics_valid_fraction": 0.8359375,
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 2.3751394049497137,
+    "root_forward_speed_m_s": 1.4735723083284524,
+    "root_velocity_m_s": [
+      -1.8133522689507295,
+      1.4735723083284524,
+      0.2427047678123628
+    ],
+    "strike_angle_deg": 14.629878309032003,
+    "strike_distance_m": 0.5337455609743971,
+    "strike_time_s": 0.9466666666666668,
+    "tip_velocity_m_s": [
+      -0.9272600919450776,
+      3.848711713278166,
+      -0.38668589855097607
+    ]
+  },
+  {
+    "accepted_fraction": 0.85546875,
+    "best_sampled_speed_gain_m_s": 4.005950603077437,
+    "best_score": -67.81405085307581,
+    "closest_approach_time_s": 1.0133333333333334,
+    "directed_tip_speed_m_s": 3.6758997379144165,
+    "effective_samples": 87.60000087077034,
+    "elapsed_s": 68.98840659999769,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.3464254459433441,
+    "iteration": 13,
+    "minimum_tip_distance_m": 0.3977584173133186,
+    "objective_components": {
+      "horizontal_cable": -48.004235838817934,
+      "smoothness": -0.0011509535626643918,
+      "strike": 1.6443271754804573e-10,
+      "target": -19.808664060859645
+    },
+    "physics_valid_fraction": 0.875,
+    "recovery_reference_rejections": 1,
+    "rewarded_tip_speed_m_s": 2.492243231157536,
+    "root_forward_speed_m_s": 1.1836565067568805,
+    "root_velocity_m_s": [
+      -1.6978225622979348,
+      1.1836565067568805,
+      0.24535649716825866
+    ],
+    "strike_angle_deg": 14.549083828964113,
+    "strike_distance_m": 0.4450692537219308,
+    "strike_time_s": 0.9666666666666668,
+    "tip_velocity_m_s": [
+      -0.8922926448977506,
+      3.6758997379144165,
+      -0.337570899083044
+    ]
+  },
+  {
+    "accepted_fraction": 0.82421875,
+    "best_sampled_speed_gain_m_s": 3.831820227307652,
+    "best_score": -62.32225960847159,
+    "closest_approach_time_s": 1.0,
+    "directed_tip_speed_m_s": 3.827766015207613,
+    "effective_samples": 84.40000225917927,
+    "elapsed_s": 74.2784501999995,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.33748820319580014,
+    "iteration": 14,
+    "minimum_tip_distance_m": 0.3816742971202991,
+    "objective_components": {
+      "horizontal_cable": -45.559314918531875,
+      "smoothness": -0.0012067354910604037,
+      "strike": 8.997567696972676e-10,
+      "target": -16.761737955348416
+    },
+    "physics_valid_fraction": 0.861328125,
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 2.745287131589292,
+    "root_forward_speed_m_s": 1.0824788836183208,
+    "root_velocity_m_s": [
+      -1.8062637875705776,
+      1.0824788836183208,
+      0.2691902132128776
+    ],
+    "strike_angle_deg": 14.898807283456257,
+    "strike_distance_m": 0.4094110154276313,
+    "strike_time_s": 0.9666666666666668,
+    "tip_velocity_m_s": [
+      -0.9472772345421139,
+      3.827766015207613,
+      -0.3739164254637857
+    ]
+  },
+  {
+    "accepted_fraction": 0.84375,
+    "best_sampled_speed_gain_m_s": 3.3348811825847657,
+    "best_score": -62.32225960847159,
+    "closest_approach_time_s": 1.0,
+    "directed_tip_speed_m_s": 3.827766015207613,
+    "effective_samples": 86.40000031873038,
+    "elapsed_s": 77.52675149999777,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.33748820319580014,
+    "iteration": 15,
+    "minimum_tip_distance_m": 0.3816742971202991,
+    "objective_components": {
+      "horizontal_cable": -45.559314918531875,
+      "smoothness": -0.0012067354910604037,
+      "strike": 8.997567696972676e-10,
+      "target": -16.761737955348416
+    },
+    "physics_valid_fraction": 0.888671875,
+    "recovery_reference_rejections": 2,
+    "rewarded_tip_speed_m_s": 2.745287131589292,
+    "root_forward_speed_m_s": 1.0824788836183208,
+    "root_velocity_m_s": [
+      -1.8062637875705776,
+      1.0824788836183208,
+      0.2691902132128776
+    ],
+    "strike_angle_deg": 14.898807283456257,
+    "strike_distance_m": 0.4094110154276313,
+    "strike_time_s": 0.9666666666666668,
+    "tip_velocity_m_s": [
+      -0.9472772345421139,
+      3.827766015207613,
+      -0.3739164254637857
+    ]
+  },
+  {
+    "accepted_fraction": 0.865234375,
+    "best_sampled_speed_gain_m_s": 4.032087685997853,
+    "best_score": -49.48957490046956,
+    "closest_approach_time_s": 1.002455889948289,
+    "directed_tip_speed_m_s": 3.9661092198053156,
+    "effective_samples": 88.60000265963569,
+    "elapsed_s": 83.35457529999985,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.31061879746182225,
+    "iteration": 16,
+    "minimum_tip_distance_m": 0.3230213181624257,
+    "objective_components": {
+      "horizontal_cable": -38.59361493465142,
+      "smoothness": -0.001191576646480044,
+      "strike": 2.4404321076398543e-06,
+      "target": -10.894770829603772
+    },
+    "physics_valid_fraction": 0.89453125,
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 2.6079188499032364,
+    "root_forward_speed_m_s": 1.3581903699020792,
+    "root_velocity_m_s": [
+      -1.9530534668779296,
+      1.3581903699020792,
+      0.11954543202782329
+    ],
+    "strike_angle_deg": 14.144629445352248,
+    "strike_distance_m": 0.33007227738184514,
+    "strike_time_s": 0.9866666666666668,
+    "tip_velocity_m_s": [
+      -0.9296073164016924,
+      3.9661092198053156,
+      -0.3671999520039945
+    ]
+  },
+  {
+    "accepted_fraction": 0.81640625,
+    "best_sampled_speed_gain_m_s": 3.0397036679996856,
+    "best_score": -49.48957490046956,
+    "closest_approach_time_s": 1.002455889948289,
+    "directed_tip_speed_m_s": 3.9661092198053156,
+    "effective_samples": 83.60000053928367,
+    "elapsed_s": 86.55683990000034,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.31061879746182225,
+    "iteration": 17,
+    "minimum_tip_distance_m": 0.3230213181624257,
+    "objective_components": {
+      "horizontal_cable": -38.59361493465142,
+      "smoothness": -0.001191576646480044,
+      "strike": 2.4404321076398543e-06,
+      "target": -10.894770829603772
+    },
+    "physics_valid_fraction": 0.873046875,
+    "recovery_reference_rejections": 1,
+    "rewarded_tip_speed_m_s": 2.6079188499032364,
+    "root_forward_speed_m_s": 1.3581903699020792,
+    "root_velocity_m_s": [
+      -1.9530534668779296,
+      1.3581903699020792,
+      0.11954543202782329
+    ],
+    "strike_angle_deg": 14.144629445352248,
+    "strike_distance_m": 0.33007227738184514,
+    "strike_time_s": 0.9866666666666668,
+    "tip_velocity_m_s": [
+      -0.9296073164016924,
+      3.9661092198053156,
+      -0.3671999520039945
+    ]
+  },
+  {
+    "accepted_fraction": 0.787109375,
+    "best_sampled_speed_gain_m_s": 2.9072268274290787,
+    "best_score": -49.484951036843825,
+    "closest_approach_time_s": 1.0009676376944616,
+    "directed_tip_speed_m_s": 3.846972508325521,
+    "effective_samples": 80.60000076157931,
+    "elapsed_s": 92.70311189999848,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.2977229292844239,
+    "iteration": 18,
+    "minimum_tip_distance_m": 0.3639246371617031,
+    "objective_components": {
+      "horizontal_cable": -35.45557704867923,
+      "smoothness": -0.0011651536878958414,
+      "strike": 3.511530460081479e-08,
+      "target": -14.028208869592003
+    },
+    "physics_valid_fraction": 0.859375,
+    "recovery_reference_rejections": 4,
+    "rewarded_tip_speed_m_s": 2.2557650711914197,
+    "root_forward_speed_m_s": 1.5912074371341012,
+    "root_velocity_m_s": [
+      -1.87246617552394,
+      1.5912074371341012,
+      0.007779591770684657
+    ],
+    "strike_angle_deg": 14.656675037416159,
+    "strike_distance_m": 0.37454250586004256,
+    "strike_time_s": 0.9800000000000001,
+    "tip_velocity_m_s": [
+      -0.9349505997070285,
+      3.846972508325521,
+      -0.3716941344158604
+    ]
+  },
+  {
+    "accepted_fraction": 0.767578125,
+    "best_sampled_speed_gain_m_s": 2.6935759668387917,
+    "best_score": -41.46701990316173,
+    "closest_approach_time_s": 0.9933333333333334,
+    "directed_tip_speed_m_s": 4.011141786033286,
+    "effective_samples": 78.60000289632922,
+    "elapsed_s": 98.78145389999918,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.26172784464698234,
+    "iteration": 19,
+    "minimum_tip_distance_m": 0.3647613955676443,
+    "objective_components": {
+      "horizontal_cable": -27.400585865421974,
+      "smoothness": -0.0011422974538611917,
+      "strike": 3.100450963794825e-08,
+      "target": -14.065291771290402
+    },
+    "physics_valid_fraction": 0.85546875,
+    "recovery_reference_rejections": 0,
+    "rewarded_tip_speed_m_s": 2.347982802535882,
+    "root_forward_speed_m_s": 1.6631589834974037,
+    "root_velocity_m_s": [
+      -2.1843152881510894,
+      1.6631589834974037,
+      -0.11039588817026712
+    ],
+    "strike_angle_deg": 14.704258628379794,
+    "strike_distance_m": 0.37503722176992516,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -1.0074412301989466,
+      4.011141786033286,
+      -0.3050823894509104
+    ]
+  },
+  {
+    "accepted_fraction": 0.78125,
+    "best_sampled_speed_gain_m_s": 2.8912688127346167,
+    "best_score": -41.46701990316173,
+    "closest_approach_time_s": 0.9933333333333334,
+    "directed_tip_speed_m_s": 4.011141786033286,
+    "effective_samples": 80.00000032626036,
+    "elapsed_s": 101.94353079999928,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.26172784464698234,
+    "iteration": 20,
+    "minimum_tip_distance_m": 0.3647613955676443,
+    "objective_components": {
+      "horizontal_cable": -27.400585865421974,
+      "smoothness": -0.0011422974538611917,
+      "strike": 3.100450963794825e-08,
+      "target": -14.065291771290402
+    },
+    "physics_valid_fraction": 0.8671875,
+    "recovery_reference_rejections": 1,
+    "rewarded_tip_speed_m_s": 2.347982802535882,
+    "root_forward_speed_m_s": 1.6631589834974037,
+    "root_velocity_m_s": [
+      -2.1843152881510894,
+      1.6631589834974037,
+      -0.11039588817026712
+    ],
+    "strike_angle_deg": 14.704258628379794,
+    "strike_distance_m": 0.37503722176992516,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -1.0074412301989466,
+      4.011141786033286,
+      -0.3050823894509104
+    ]
+  },
+  {
+    "accepted_fraction": 0.732421875,
+    "best_sampled_speed_gain_m_s": 3.1139156586368735,
+    "best_score": -41.46701990316173,
+    "closest_approach_time_s": 0.9933333333333334,
+    "directed_tip_speed_m_s": 4.011141786033286,
+    "effective_samples": 75.00000025562709,
+    "elapsed_s": 105.70791949999693,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.26172784464698234,
+    "iteration": 21,
+    "minimum_tip_distance_m": 0.3647613955676443,
+    "objective_components": {
+      "horizontal_cable": -27.400585865421974,
+      "smoothness": -0.0011422974538611917,
+      "strike": 3.100450963794825e-08,
+      "target": -14.065291771290402
+    },
+    "physics_valid_fraction": 0.8671875,
+    "recovery_reference_rejections": 9,
+    "rewarded_tip_speed_m_s": 2.347982802535882,
+    "root_forward_speed_m_s": 1.6631589834974037,
+    "root_velocity_m_s": [
+      -2.1843152881510894,
+      1.6631589834974037,
+      -0.11039588817026712
+    ],
+    "strike_angle_deg": 14.704258628379794,
+    "strike_distance_m": 0.37503722176992516,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -1.0074412301989466,
+      4.011141786033286,
+      -0.3050823894509104
+    ]
+  },
+  {
+    "accepted_fraction": 0.73828125,
+    "best_sampled_speed_gain_m_s": 2.665866355418581,
+    "best_score": -41.46701990316173,
+    "closest_approach_time_s": 0.9933333333333334,
+    "directed_tip_speed_m_s": 4.011141786033286,
+    "effective_samples": 75.60000272929483,
+    "elapsed_s": 109.70575859999735,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.26172784464698234,
+    "iteration": 22,
+    "minimum_tip_distance_m": 0.3647613955676443,
+    "objective_components": {
+      "horizontal_cable": -27.400585865421974,
+      "smoothness": -0.0011422974538611917,
+      "strike": 3.100450963794825e-08,
+      "target": -14.065291771290402
+    },
+    "physics_valid_fraction": 0.849609375,
+    "recovery_reference_rejections": 13,
+    "rewarded_tip_speed_m_s": 2.347982802535882,
+    "root_forward_speed_m_s": 1.6631589834974037,
+    "root_velocity_m_s": [
+      -2.1843152881510894,
+      1.6631589834974037,
+      -0.11039588817026712
+    ],
+    "strike_angle_deg": 14.704258628379794,
+    "strike_distance_m": 0.37503722176992516,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -1.0074412301989466,
+      4.011141786033286,
+      -0.3050823894509104
+    ]
+  },
+  {
+    "accepted_fraction": 0.677734375,
+    "best_sampled_speed_gain_m_s": 3.2134733254762087,
+    "best_score": -41.46701990316173,
+    "closest_approach_time_s": 0.9933333333333334,
+    "directed_tip_speed_m_s": 4.011141786033286,
+    "effective_samples": 69.40000282996205,
+    "elapsed_s": 115.08006279999972,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.26172784464698234,
+    "iteration": 23,
+    "minimum_tip_distance_m": 0.3647613955676443,
+    "objective_components": {
+      "horizontal_cable": -27.400585865421974,
+      "smoothness": -0.0011422974538611917,
+      "strike": 3.100450963794825e-08,
+      "target": -14.065291771290402
+    },
+    "physics_valid_fraction": 0.84375,
+    "recovery_reference_rejections": 31,
+    "rewarded_tip_speed_m_s": 2.347982802535882,
+    "root_forward_speed_m_s": 1.6631589834974037,
+    "root_velocity_m_s": [
+      -2.1843152881510894,
+      1.6631589834974037,
+      -0.11039588817026712
+    ],
+    "strike_angle_deg": 14.704258628379794,
+    "strike_distance_m": 0.37503722176992516,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -1.0074412301989466,
+      4.011141786033286,
+      -0.3050823894509104
+    ]
+  },
+  {
+    "accepted_fraction": 0.69921875,
+    "best_sampled_speed_gain_m_s": 2.6772363683829914,
+    "best_score": -41.46701990316173,
+    "closest_approach_time_s": 0.9933333333333334,
+    "directed_tip_speed_m_s": 4.011141786033286,
+    "effective_samples": 71.60000055879469,
+    "elapsed_s": 121.09305010000026,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.26172784464698234,
+    "iteration": 24,
+    "minimum_tip_distance_m": 0.3647613955676443,
+    "objective_components": {
+      "horizontal_cable": -27.400585865421974,
+      "smoothness": -0.0011422974538611917,
+      "strike": 3.100450963794825e-08,
+      "target": -14.065291771290402
+    },
+    "physics_valid_fraction": 0.830078125,
+    "recovery_reference_rejections": 40,
+    "rewarded_tip_speed_m_s": 2.347982802535882,
+    "root_forward_speed_m_s": 1.6631589834974037,
+    "root_velocity_m_s": [
+      -2.1843152881510894,
+      1.6631589834974037,
+      -0.11039588817026712
+    ],
+    "strike_angle_deg": 14.704258628379794,
+    "strike_distance_m": 0.37503722176992516,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -1.0074412301989466,
+      4.011141786033286,
+      -0.3050823894509104
+    ]
+  },
+  {
+    "accepted_fraction": 0.654296875,
+    "best_sampled_speed_gain_m_s": 2.6258737196765436,
+    "best_score": -41.46701990316173,
+    "closest_approach_time_s": 0.9933333333333334,
+    "directed_tip_speed_m_s": 4.011141786033286,
+    "effective_samples": 67.000001204853,
+    "elapsed_s": 128.79372169999988,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.26172784464698234,
+    "iteration": 25,
+    "minimum_tip_distance_m": 0.3647613955676443,
+    "objective_components": {
+      "horizontal_cable": -27.400585865421974,
+      "smoothness": -0.0011422974538611917,
+      "strike": 3.100450963794825e-08,
+      "target": -14.065291771290402
+    },
+    "physics_valid_fraction": 0.845703125,
+    "recovery_reference_rejections": 60,
+    "rewarded_tip_speed_m_s": 2.347982802535882,
+    "root_forward_speed_m_s": 1.6631589834974037,
+    "root_velocity_m_s": [
+      -2.1843152881510894,
+      1.6631589834974037,
+      -0.11039588817026712
+    ],
+    "strike_angle_deg": 14.704258628379794,
+    "strike_distance_m": 0.37503722176992516,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -1.0074412301989466,
+      4.011141786033286,
+      -0.3050823894509104
+    ]
+  },
+  {
+    "accepted_fraction": 0.62109375,
+    "best_sampled_speed_gain_m_s": 2.6148072444215047,
+    "best_score": -41.46701990316173,
+    "closest_approach_time_s": 0.9933333333333334,
+    "directed_tip_speed_m_s": 4.011141786033286,
+    "effective_samples": 63.600001767491094,
+    "elapsed_s": 136.81765379999706,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.26172784464698234,
+    "iteration": 26,
+    "minimum_tip_distance_m": 0.3647613955676443,
+    "objective_components": {
+      "horizontal_cable": -27.400585865421974,
+      "smoothness": -0.0011422974538611917,
+      "strike": 3.100450963794825e-08,
+      "target": -14.065291771290402
+    },
+    "physics_valid_fraction": 0.8359375,
+    "recovery_reference_rejections": 63,
+    "rewarded_tip_speed_m_s": 2.347982802535882,
+    "root_forward_speed_m_s": 1.6631589834974037,
+    "root_velocity_m_s": [
+      -2.1843152881510894,
+      1.6631589834974037,
+      -0.11039588817026712
+    ],
+    "strike_angle_deg": 14.704258628379794,
+    "strike_distance_m": 0.37503722176992516,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -1.0074412301989466,
+      4.011141786033286,
+      -0.3050823894509104
+    ]
+  },
+  {
+    "accepted_fraction": 0.625,
+    "best_sampled_speed_gain_m_s": 2.7236236311555064,
+    "best_score": -41.46701990316173,
+    "closest_approach_time_s": 0.9933333333333334,
+    "directed_tip_speed_m_s": 4.011141786033286,
+    "effective_samples": 64.0000013533548,
+    "elapsed_s": 144.6218560999987,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.26172784464698234,
+    "iteration": 27,
+    "minimum_tip_distance_m": 0.3647613955676443,
+    "objective_components": {
+      "horizontal_cable": -27.400585865421974,
+      "smoothness": -0.0011422974538611917,
+      "strike": 3.100450963794825e-08,
+      "target": -14.065291771290402
+    },
+    "physics_valid_fraction": 0.8203125,
+    "recovery_reference_rejections": 62,
+    "rewarded_tip_speed_m_s": 2.347982802535882,
+    "root_forward_speed_m_s": 1.6631589834974037,
+    "root_velocity_m_s": [
+      -2.1843152881510894,
+      1.6631589834974037,
+      -0.11039588817026712
+    ],
+    "strike_angle_deg": 14.704258628379794,
+    "strike_distance_m": 0.37503722176992516,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -1.0074412301989466,
+      4.011141786033286,
+      -0.3050823894509104
+    ]
+  },
+  {
+    "accepted_fraction": 0.65625,
+    "best_sampled_speed_gain_m_s": 2.9129537777563406,
+    "best_score": -40.86054140728542,
+    "closest_approach_time_s": 0.9881249131290293,
+    "directed_tip_speed_m_s": 4.18246093888227,
+    "effective_samples": 67.20000184955481,
+    "elapsed_s": 154.62460519999877,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.27332806428433093,
+    "iteration": 28,
+    "minimum_tip_distance_m": 0.32424192437038746,
+    "objective_components": {
+      "horizontal_cable": -29.883292290167738,
+      "smoothness": -0.0010551780647272077,
+      "strike": 3.3948018369651123e-06,
+      "target": -10.976197333854792
+    },
+    "physics_valid_fraction": 0.837890625,
+    "recovery_reference_rejections": 50,
+    "rewarded_tip_speed_m_s": 2.0098540749780343,
+    "root_forward_speed_m_s": 2.172606863904236,
+    "root_velocity_m_s": [
+      -1.768881896759361,
+      2.172606863904236,
+      0.09375366734807322
+    ],
+    "strike_angle_deg": 13.014407776904486,
+    "strike_distance_m": 0.3313034460106745,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -0.8449035525001477,
+      4.18246093888227,
+      -0.469741031893431
+    ]
+  },
+  {
+    "accepted_fraction": 0.59765625,
+    "best_sampled_speed_gain_m_s": 2.652978546483799,
+    "best_score": -40.86054140728542,
+    "closest_approach_time_s": 0.9881249131290293,
+    "directed_tip_speed_m_s": 4.18246093888227,
+    "effective_samples": 61.200000080731556,
+    "elapsed_s": 163.7106875999998,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.27332806428433093,
+    "iteration": 29,
+    "minimum_tip_distance_m": 0.32424192437038746,
+    "objective_components": {
+      "horizontal_cable": -29.883292290167738,
+      "smoothness": -0.0010551780647272077,
+      "strike": 3.3948018369651123e-06,
+      "target": -10.976197333854792
+    },
+    "physics_valid_fraction": 0.806640625,
+    "recovery_reference_rejections": 77,
+    "rewarded_tip_speed_m_s": 2.0098540749780343,
+    "root_forward_speed_m_s": 2.172606863904236,
+    "root_velocity_m_s": [
+      -1.768881896759361,
+      2.172606863904236,
+      0.09375366734807322
+    ],
+    "strike_angle_deg": 13.014407776904486,
+    "strike_distance_m": 0.3313034460106745,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -0.8449035525001477,
+      4.18246093888227,
+      -0.469741031893431
+    ]
+  },
+  {
+    "accepted_fraction": 0.5859375,
+    "best_sampled_speed_gain_m_s": 2.6689195279617204,
+    "best_score": -40.86054140728542,
+    "closest_approach_time_s": 0.9881249131290293,
+    "directed_tip_speed_m_s": 4.18246093888227,
+    "effective_samples": 60.00000206206502,
+    "elapsed_s": 172.34466769999926,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.27332806428433093,
+    "iteration": 30,
+    "minimum_tip_distance_m": 0.32424192437038746,
+    "objective_components": {
+      "horizontal_cable": -29.883292290167738,
+      "smoothness": -0.0010551780647272077,
+      "strike": 3.3948018369651123e-06,
+      "target": -10.976197333854792
+    },
+    "physics_valid_fraction": 0.791015625,
+    "recovery_reference_rejections": 72,
+    "rewarded_tip_speed_m_s": 2.0098540749780343,
+    "root_forward_speed_m_s": 2.172606863904236,
+    "root_velocity_m_s": [
+      -1.768881896759361,
+      2.172606863904236,
+      0.09375366734807322
+    ],
+    "strike_angle_deg": 13.014407776904486,
+    "strike_distance_m": 0.3313034460106745,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -0.8449035525001477,
+      4.18246093888227,
+      -0.469741031893431
+    ]
+  },
+  {
+    "accepted_fraction": 0.55859375,
+    "best_sampled_speed_gain_m_s": 2.6715117806872644,
+    "best_score": -40.86054140728542,
+    "closest_approach_time_s": 0.9881249131290293,
+    "directed_tip_speed_m_s": 4.18246093888227,
+    "effective_samples": 57.20000090645256,
+    "elapsed_s": 181.51374679999935,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.27332806428433093,
+    "iteration": 31,
+    "minimum_tip_distance_m": 0.32424192437038746,
+    "objective_components": {
+      "horizontal_cable": -29.883292290167738,
+      "smoothness": -0.0010551780647272077,
+      "strike": 3.3948018369651123e-06,
+      "target": -10.976197333854792
+    },
+    "physics_valid_fraction": 0.775390625,
+    "recovery_reference_rejections": 79,
+    "rewarded_tip_speed_m_s": 2.0098540749780343,
+    "root_forward_speed_m_s": 2.172606863904236,
+    "root_velocity_m_s": [
+      -1.768881896759361,
+      2.172606863904236,
+      0.09375366734807322
+    ],
+    "strike_angle_deg": 13.014407776904486,
+    "strike_distance_m": 0.3313034460106745,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -0.8449035525001477,
+      4.18246093888227,
+      -0.469741031893431
+    ]
+  },
+  {
+    "accepted_fraction": 0.576171875,
+    "best_sampled_speed_gain_m_s": 2.8507972431930613,
+    "best_score": -40.86054140728542,
+    "closest_approach_time_s": 0.9881249131290293,
+    "directed_tip_speed_m_s": 4.18246093888227,
+    "effective_samples": 59.00000116527058,
+    "elapsed_s": 190.15027869999903,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.27332806428433093,
+    "iteration": 32,
+    "minimum_tip_distance_m": 0.32424192437038746,
+    "objective_components": {
+      "horizontal_cable": -29.883292290167738,
+      "smoothness": -0.0010551780647272077,
+      "strike": 3.3948018369651123e-06,
+      "target": -10.976197333854792
+    },
+    "physics_valid_fraction": 0.7890625,
+    "recovery_reference_rejections": 73,
+    "rewarded_tip_speed_m_s": 2.0098540749780343,
+    "root_forward_speed_m_s": 2.172606863904236,
+    "root_velocity_m_s": [
+      -1.768881896759361,
+      2.172606863904236,
+      0.09375366734807322
+    ],
+    "strike_angle_deg": 13.014407776904486,
+    "strike_distance_m": 0.3313034460106745,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -0.8449035525001477,
+      4.18246093888227,
+      -0.469741031893431
+    ]
+  },
+  {
+    "accepted_fraction": 0.6796875,
+    "best_sampled_speed_gain_m_s": 2.7197619854685935,
+    "best_score": -39.192562482885805,
+    "closest_approach_time_s": 0.9853362284068383,
+    "directed_tip_speed_m_s": 4.096149369577227,
+    "effective_samples": 69.6000024992119,
+    "elapsed_s": 197.88855039999908,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.26140192599294654,
+    "iteration": 33,
+    "minimum_tip_distance_m": 0.34049764185469467,
+    "objective_components": {
+      "horizontal_cable": -27.33238676512876,
+      "smoothness": -0.001156366252671007,
+      "strike": 1.5294214265805946e-06,
+      "target": -11.8590208809258
+    },
+    "physics_valid_fraction": 0.759765625,
+    "recovery_reference_rejections": 21,
+    "rewarded_tip_speed_m_s": 2.2338839223655746,
+    "root_forward_speed_m_s": 1.8622654472116527,
+    "root_velocity_m_s": [
+      -2.1043034630645217,
+      1.8622654472116527,
+      -0.026313571656810808
+    ],
+    "strike_angle_deg": 13.17658130743123,
+    "strike_distance_m": 0.3443692913272872,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -0.9110766906227941,
+      4.096149369577227,
+      -0.2992927295490786
+    ]
+  },
+  {
+    "accepted_fraction": 0.5703125,
+    "best_sampled_speed_gain_m_s": 2.583258930205304,
+    "best_score": -39.192562482885805,
+    "closest_approach_time_s": 0.9853362284068383,
+    "directed_tip_speed_m_s": 4.096149369577227,
+    "effective_samples": 58.400000763434534,
+    "elapsed_s": 205.76294049999706,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.26140192599294654,
+    "iteration": 34,
+    "minimum_tip_distance_m": 0.34049764185469467,
+    "objective_components": {
+      "horizontal_cable": -27.33238676512876,
+      "smoothness": -0.001156366252671007,
+      "strike": 1.5294214265805946e-06,
+      "target": -11.8590208809258
+    },
+    "physics_valid_fraction": 0.755859375,
+    "recovery_reference_rejections": 65,
+    "rewarded_tip_speed_m_s": 2.2338839223655746,
+    "root_forward_speed_m_s": 1.8622654472116527,
+    "root_velocity_m_s": [
+      -2.1043034630645217,
+      1.8622654472116527,
+      -0.026313571656810808
+    ],
+    "strike_angle_deg": 13.17658130743123,
+    "strike_distance_m": 0.3443692913272872,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -0.9110766906227941,
+      4.096149369577227,
+      -0.2992927295490786
+    ]
+  },
+  {
+    "accepted_fraction": 0.6796875,
+    "best_sampled_speed_gain_m_s": 2.8756108242938896,
+    "best_score": -37.85609117217473,
+    "closest_approach_time_s": 0.9874782613426668,
+    "directed_tip_speed_m_s": 4.064796538234393,
+    "effective_samples": 69.6000005760423,
+    "elapsed_s": 214.14790739999808,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.24344943282454776,
+    "iteration": 35,
+    "minimum_tip_distance_m": 0.3642943389291562,
+    "objective_components": {
+      "horizontal_cable": -23.707050537037592,
+      "smoothness": -0.0012055476468187964,
+      "strike": 4.858736966801866e-08,
+      "target": -14.147835136077685
+    },
+    "physics_valid_fraction": 0.767578125,
+    "recovery_reference_rejections": 28,
+    "rewarded_tip_speed_m_s": 2.3299217432924397,
+    "root_forward_speed_m_s": 1.7348747949419538,
+    "root_velocity_m_s": [
+      -2.2023883868304504,
+      1.7348747949419538,
+      -0.18281669481373664
+    ],
+    "strike_angle_deg": 14.487171263219626,
+    "strike_distance_m": 0.37613608090793,
+    "strike_time_s": 0.9666666666666668,
+    "tip_velocity_m_s": [
+      -1.000910587979226,
+      4.064796538234393,
+      -0.3181471346532548
+    ]
+  },
+  {
+    "accepted_fraction": 0.576171875,
+    "best_sampled_speed_gain_m_s": 2.8070225037353125,
+    "best_score": -37.85609117217473,
+    "closest_approach_time_s": 0.9874782613426668,
+    "directed_tip_speed_m_s": 4.064796538234393,
+    "effective_samples": 59.000001976449894,
+    "elapsed_s": 222.78601899999921,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.24344943282454776,
+    "iteration": 36,
+    "minimum_tip_distance_m": 0.3642943389291562,
+    "objective_components": {
+      "horizontal_cable": -23.707050537037592,
+      "smoothness": -0.0012055476468187964,
+      "strike": 4.858736966801866e-08,
+      "target": -14.147835136077685
+    },
+    "physics_valid_fraction": 0.759765625,
+    "recovery_reference_rejections": 78,
+    "rewarded_tip_speed_m_s": 2.3299217432924397,
+    "root_forward_speed_m_s": 1.7348747949419538,
+    "root_velocity_m_s": [
+      -2.2023883868304504,
+      1.7348747949419538,
+      -0.18281669481373664
+    ],
+    "strike_angle_deg": 14.487171263219626,
+    "strike_distance_m": 0.37613608090793,
+    "strike_time_s": 0.9666666666666668,
+    "tip_velocity_m_s": [
+      -1.000910587979226,
+      4.064796538234393,
+      -0.3181471346532548
+    ]
+  },
+  {
+    "accepted_fraction": 0.5546875,
+    "best_sampled_speed_gain_m_s": 2.9580691976311972,
+    "best_score": -37.85609117217473,
+    "closest_approach_time_s": 0.9874782613426668,
+    "directed_tip_speed_m_s": 4.064796538234393,
+    "effective_samples": 56.80000122232473,
+    "elapsed_s": 231.3720547999983,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.24344943282454776,
+    "iteration": 37,
+    "minimum_tip_distance_m": 0.3642943389291562,
+    "objective_components": {
+      "horizontal_cable": -23.707050537037592,
+      "smoothness": -0.0012055476468187964,
+      "strike": 4.858736966801866e-08,
+      "target": -14.147835136077685
+    },
+    "physics_valid_fraction": 0.740234375,
+    "recovery_reference_rejections": 73,
+    "rewarded_tip_speed_m_s": 2.3299217432924397,
+    "root_forward_speed_m_s": 1.7348747949419538,
+    "root_velocity_m_s": [
+      -2.2023883868304504,
+      1.7348747949419538,
+      -0.18281669481373664
+    ],
+    "strike_angle_deg": 14.487171263219626,
+    "strike_distance_m": 0.37613608090793,
+    "strike_time_s": 0.9666666666666668,
+    "tip_velocity_m_s": [
+      -1.000910587979226,
+      4.064796538234393,
+      -0.3181471346532548
+    ]
+  },
+  {
+    "accepted_fraction": 0.5078125,
+    "best_sampled_speed_gain_m_s": 2.732119080907695,
+    "best_score": -37.85609117217473,
+    "closest_approach_time_s": 0.9874782613426668,
+    "directed_tip_speed_m_s": 4.064796538234393,
+    "effective_samples": 52.000000090563006,
+    "elapsed_s": 241.52932679999867,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.24344943282454776,
+    "iteration": 38,
+    "minimum_tip_distance_m": 0.3642943389291562,
+    "objective_components": {
+      "horizontal_cable": -23.707050537037592,
+      "smoothness": -0.0012055476468187964,
+      "strike": 4.858736966801866e-08,
+      "target": -14.147835136077685
+    },
+    "physics_valid_fraction": 0.759765625,
+    "recovery_reference_rejections": 93,
+    "rewarded_tip_speed_m_s": 2.3299217432924397,
+    "root_forward_speed_m_s": 1.7348747949419538,
+    "root_velocity_m_s": [
+      -2.2023883868304504,
+      1.7348747949419538,
+      -0.18281669481373664
+    ],
+    "strike_angle_deg": 14.487171263219626,
+    "strike_distance_m": 0.37613608090793,
+    "strike_time_s": 0.9666666666666668,
+    "tip_velocity_m_s": [
+      -1.000910587979226,
+      4.064796538234393,
+      -0.3181471346532548
+    ]
+  },
+  {
+    "accepted_fraction": 0.4296875,
+    "best_sampled_speed_gain_m_s": 2.8058068397465092,
+    "best_score": -37.85609117217473,
+    "closest_approach_time_s": 0.9874782613426668,
+    "directed_tip_speed_m_s": 4.064796538234393,
+    "effective_samples": 44.00000016989303,
+    "elapsed_s": 253.25554649999685,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.24344943282454776,
+    "iteration": 39,
+    "minimum_tip_distance_m": 0.3642943389291562,
+    "objective_components": {
+      "horizontal_cable": -23.707050537037592,
+      "smoothness": -0.0012055476468187964,
+      "strike": 4.858736966801866e-08,
+      "target": -14.147835136077685
+    },
+    "physics_valid_fraction": 0.72265625,
+    "recovery_reference_rejections": 119,
+    "rewarded_tip_speed_m_s": 2.3299217432924397,
+    "root_forward_speed_m_s": 1.7348747949419538,
+    "root_velocity_m_s": [
+      -2.2023883868304504,
+      1.7348747949419538,
+      -0.18281669481373664
+    ],
+    "strike_angle_deg": 14.487171263219626,
+    "strike_distance_m": 0.37613608090793,
+    "strike_time_s": 0.9666666666666668,
+    "tip_velocity_m_s": [
+      -1.000910587979226,
+      4.064796538234393,
+      -0.3181471346532548
+    ]
+  },
+  {
+    "accepted_fraction": 0.443359375,
+    "best_sampled_speed_gain_m_s": 2.776131976573054,
+    "best_score": -37.85609117217473,
+    "closest_approach_time_s": 0.9874782613426668,
+    "directed_tip_speed_m_s": 4.064796538234393,
+    "effective_samples": 45.40000065648051,
+    "elapsed_s": 265.89848820000043,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.24344943282454776,
+    "iteration": 40,
+    "minimum_tip_distance_m": 0.3642943389291562,
+    "objective_components": {
+      "horizontal_cable": -23.707050537037592,
+      "smoothness": -0.0012055476468187964,
+      "strike": 4.858736966801866e-08,
+      "target": -14.147835136077685
+    },
+    "physics_valid_fraction": 0.724609375,
+    "recovery_reference_rejections": 124,
+    "rewarded_tip_speed_m_s": 2.3299217432924397,
+    "root_forward_speed_m_s": 1.7348747949419538,
+    "root_velocity_m_s": [
+      -2.2023883868304504,
+      1.7348747949419538,
+      -0.18281669481373664
+    ],
+    "strike_angle_deg": 14.487171263219626,
+    "strike_distance_m": 0.37613608090793,
+    "strike_time_s": 0.9666666666666668,
+    "tip_velocity_m_s": [
+      -1.000910587979226,
+      4.064796538234393,
+      -0.3181471346532548
+    ]
+  },
+  {
+    "accepted_fraction": 0.5078125,
+    "best_sampled_speed_gain_m_s": 2.6978204627001188,
+    "best_score": -37.47779840829321,
+    "closest_approach_time_s": 0.9887644688905743,
+    "directed_tip_speed_m_s": 3.99298708653488,
+    "effective_samples": 52.0000000740144,
+    "elapsed_s": 278.8798233999987,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.23918527681941967,
+    "iteration": 41,
+    "minimum_tip_distance_m": 0.3761891163007544,
+    "objective_components": {
+      "horizontal_cable": -22.883838658872968,
+      "smoothness": -0.0011586195434425577,
+      "strike": 1.6691405413156223e-09,
+      "target": -14.592801131545942
+    },
+    "physics_valid_fraction": 0.7421875,
+    "recovery_reference_rejections": 92,
+    "rewarded_tip_speed_m_s": 2.1647471041099964,
+    "root_forward_speed_m_s": 1.8282399824248838,
+    "root_velocity_m_s": [
+      -2.1395108950298725,
+      1.8282399824248838,
+      -0.2339873701684869
+    ],
+    "strike_angle_deg": 14.96974126349846,
+    "strike_distance_m": 0.38200525037682326,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -1.025146627619856,
+      3.99298708653488,
+      -0.29827442107954966
+    ]
+  },
+  {
+    "accepted_fraction": 0.5078125,
+    "best_sampled_speed_gain_m_s": 2.802551545750434,
+    "best_score": -37.47779840829321,
+    "closest_approach_time_s": 0.9887644688905743,
+    "directed_tip_speed_m_s": 3.99298708653488,
+    "effective_samples": 52.000001071893905,
+    "elapsed_s": 289.6555344999979,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.23918527681941967,
+    "iteration": 42,
+    "minimum_tip_distance_m": 0.3761891163007544,
+    "objective_components": {
+      "horizontal_cable": -22.883838658872968,
+      "smoothness": -0.0011586195434425577,
+      "strike": 1.6691405413156223e-09,
+      "target": -14.592801131545942
+    },
+    "physics_valid_fraction": 0.76171875,
+    "recovery_reference_rejections": 105,
+    "rewarded_tip_speed_m_s": 2.1647471041099964,
+    "root_forward_speed_m_s": 1.8282399824248838,
+    "root_velocity_m_s": [
+      -2.1395108950298725,
+      1.8282399824248838,
+      -0.2339873701684869
+    ],
+    "strike_angle_deg": 14.96974126349846,
+    "strike_distance_m": 0.38200525037682326,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -1.025146627619856,
+      3.99298708653488,
+      -0.29827442107954966
+    ]
+  },
+  {
+    "accepted_fraction": 0.4765625,
+    "best_sampled_speed_gain_m_s": 2.643794629021558,
+    "best_score": -37.47779840829321,
+    "closest_approach_time_s": 0.9887644688905743,
+    "directed_tip_speed_m_s": 3.99298708653488,
+    "effective_samples": 48.80000123423315,
+    "elapsed_s": 301.655829299998,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.23918527681941967,
+    "iteration": 43,
+    "minimum_tip_distance_m": 0.3761891163007544,
+    "objective_components": {
+      "horizontal_cable": -22.883838658872968,
+      "smoothness": -0.0011586195434425577,
+      "strike": 1.6691405413156223e-09,
+      "target": -14.592801131545942
+    },
+    "physics_valid_fraction": 0.759765625,
+    "recovery_reference_rejections": 121,
+    "rewarded_tip_speed_m_s": 2.1647471041099964,
+    "root_forward_speed_m_s": 1.8282399824248838,
+    "root_velocity_m_s": [
+      -2.1395108950298725,
+      1.8282399824248838,
+      -0.2339873701684869
+    ],
+    "strike_angle_deg": 14.96974126349846,
+    "strike_distance_m": 0.38200525037682326,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -1.025146627619856,
+      3.99298708653488,
+      -0.29827442107954966
+    ]
+  },
+  {
+    "accepted_fraction": 0.5,
+    "best_sampled_speed_gain_m_s": 2.6160231221666788,
+    "best_score": -37.47779840829321,
+    "closest_approach_time_s": 0.9887644688905743,
+    "directed_tip_speed_m_s": 3.99298708653488,
+    "effective_samples": 51.20000180870723,
+    "elapsed_s": 313.3923160999984,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.23918527681941967,
+    "iteration": 44,
+    "minimum_tip_distance_m": 0.3761891163007544,
+    "objective_components": {
+      "horizontal_cable": -22.883838658872968,
+      "smoothness": -0.0011586195434425577,
+      "strike": 1.6691405413156223e-09,
+      "target": -14.592801131545942
+    },
+    "physics_valid_fraction": 0.75390625,
+    "recovery_reference_rejections": 109,
+    "rewarded_tip_speed_m_s": 2.1647471041099964,
+    "root_forward_speed_m_s": 1.8282399824248838,
+    "root_velocity_m_s": [
+      -2.1395108950298725,
+      1.8282399824248838,
+      -0.2339873701684869
+    ],
+    "strike_angle_deg": 14.96974126349846,
+    "strike_distance_m": 0.38200525037682326,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -1.025146627619856,
+      3.99298708653488,
+      -0.29827442107954966
+    ]
+  },
+  {
+    "accepted_fraction": 0.45703125,
+    "best_sampled_speed_gain_m_s": 2.594486994540685,
+    "best_score": -37.47779840829321,
+    "closest_approach_time_s": 0.9887644688905743,
+    "directed_tip_speed_m_s": 3.99298708653488,
+    "effective_samples": 46.80000126271876,
+    "elapsed_s": 324.9071125999981,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.23918527681941967,
+    "iteration": 45,
+    "minimum_tip_distance_m": 0.3761891163007544,
+    "objective_components": {
+      "horizontal_cable": -22.883838658872968,
+      "smoothness": -0.0011586195434425577,
+      "strike": 1.6691405413156223e-09,
+      "target": -14.592801131545942
+    },
+    "physics_valid_fraction": 0.71875,
+    "recovery_reference_rejections": 112,
+    "rewarded_tip_speed_m_s": 2.1647471041099964,
+    "root_forward_speed_m_s": 1.8282399824248838,
+    "root_velocity_m_s": [
+      -2.1395108950298725,
+      1.8282399824248838,
+      -0.2339873701684869
+    ],
+    "strike_angle_deg": 14.96974126349846,
+    "strike_distance_m": 0.38200525037682326,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -1.025146627619856,
+      3.99298708653488,
+      -0.29827442107954966
+    ]
+  },
+  {
+    "accepted_fraction": 0.484375,
+    "best_sampled_speed_gain_m_s": 2.768305677443159,
+    "best_score": -37.47779840829321,
+    "closest_approach_time_s": 0.9887644688905743,
+    "directed_tip_speed_m_s": 3.99298708653488,
+    "effective_samples": 49.60000148872265,
+    "elapsed_s": 336.2415605999995,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.23918527681941967,
+    "iteration": 46,
+    "minimum_tip_distance_m": 0.3761891163007544,
+    "objective_components": {
+      "horizontal_cable": -22.883838658872968,
+      "smoothness": -0.0011586195434425577,
+      "strike": 1.6691405413156223e-09,
+      "target": -14.592801131545942
+    },
+    "physics_valid_fraction": 0.75390625,
+    "recovery_reference_rejections": 111,
+    "rewarded_tip_speed_m_s": 2.1647471041099964,
+    "root_forward_speed_m_s": 1.8282399824248838,
+    "root_velocity_m_s": [
+      -2.1395108950298725,
+      1.8282399824248838,
+      -0.2339873701684869
+    ],
+    "strike_angle_deg": 14.96974126349846,
+    "strike_distance_m": 0.38200525037682326,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -1.025146627619856,
+      3.99298708653488,
+      -0.29827442107954966
+    ]
+  },
+  {
+    "accepted_fraction": 0.490234375,
+    "best_sampled_speed_gain_m_s": 2.6649352517456415,
+    "best_score": -37.47779840829321,
+    "closest_approach_time_s": 0.9887644688905743,
+    "directed_tip_speed_m_s": 3.99298708653488,
+    "effective_samples": 50.20000086836697,
+    "elapsed_s": 348.2728941999994,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.23918527681941967,
+    "iteration": 47,
+    "minimum_tip_distance_m": 0.3761891163007544,
+    "objective_components": {
+      "horizontal_cable": -22.883838658872968,
+      "smoothness": -0.0011586195434425577,
+      "strike": 1.6691405413156223e-09,
+      "target": -14.592801131545942
+    },
+    "physics_valid_fraction": 0.779296875,
+    "recovery_reference_rejections": 121,
+    "rewarded_tip_speed_m_s": 2.1647471041099964,
+    "root_forward_speed_m_s": 1.8282399824248838,
+    "root_velocity_m_s": [
+      -2.1395108950298725,
+      1.8282399824248838,
+      -0.2339873701684869
+    ],
+    "strike_angle_deg": 14.96974126349846,
+    "strike_distance_m": 0.38200525037682326,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -1.025146627619856,
+      3.99298708653488,
+      -0.29827442107954966
+    ]
+  },
+  {
+    "accepted_fraction": 0.431640625,
+    "best_sampled_speed_gain_m_s": 2.6710833515761103,
+    "best_score": -37.47779840829321,
+    "closest_approach_time_s": 0.9887644688905743,
+    "directed_tip_speed_m_s": 3.99298708653488,
+    "effective_samples": 44.200000859510816,
+    "elapsed_s": 362.51370779999706,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.23918527681941967,
+    "iteration": 48,
+    "minimum_tip_distance_m": 0.3761891163007544,
+    "objective_components": {
+      "horizontal_cable": -22.883838658872968,
+      "smoothness": -0.0011586195434425577,
+      "strike": 1.6691405413156223e-09,
+      "target": -14.592801131545942
+    },
+    "physics_valid_fraction": 0.787109375,
+    "recovery_reference_rejections": 153,
+    "rewarded_tip_speed_m_s": 2.1647471041099964,
+    "root_forward_speed_m_s": 1.8282399824248838,
+    "root_velocity_m_s": [
+      -2.1395108950298725,
+      1.8282399824248838,
+      -0.2339873701684869
+    ],
+    "strike_angle_deg": 14.96974126349846,
+    "strike_distance_m": 0.38200525037682326,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -1.025146627619856,
+      3.99298708653488,
+      -0.29827442107954966
+    ]
+  },
+  {
+    "accepted_fraction": 0.509765625,
+    "best_sampled_speed_gain_m_s": 2.8101093788712053,
+    "best_score": -37.47779840829321,
+    "closest_approach_time_s": 0.9887644688905743,
+    "directed_tip_speed_m_s": 3.99298708653488,
+    "effective_samples": 52.200001786972365,
+    "elapsed_s": 374.8323565999999,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.23918527681941967,
+    "iteration": 49,
+    "minimum_tip_distance_m": 0.3761891163007544,
+    "objective_components": {
+      "horizontal_cable": -22.883838658872968,
+      "smoothness": -0.0011586195434425577,
+      "strike": 1.6691405413156223e-09,
+      "target": -14.592801131545942
+    },
+    "physics_valid_fraction": 0.78515625,
+    "recovery_reference_rejections": 122,
+    "rewarded_tip_speed_m_s": 2.1647471041099964,
+    "root_forward_speed_m_s": 1.8282399824248838,
+    "root_velocity_m_s": [
+      -2.1395108950298725,
+      1.8282399824248838,
+      -0.2339873701684869
+    ],
+    "strike_angle_deg": 14.96974126349846,
+    "strike_distance_m": 0.38200525037682326,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -1.025146627619856,
+      3.99298708653488,
+      -0.29827442107954966
+    ]
+  },
+  {
+    "accepted_fraction": 0.48046875,
+    "best_sampled_speed_gain_m_s": 2.670661964523122,
+    "best_score": -37.47779840829321,
+    "closest_approach_time_s": 0.9887644688905743,
+    "directed_tip_speed_m_s": 3.99298708653488,
+    "effective_samples": 49.200000848463766,
+    "elapsed_s": 387.5695212999999,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.23918527681941967,
+    "iteration": 50,
+    "minimum_tip_distance_m": 0.3761891163007544,
+    "objective_components": {
+      "horizontal_cable": -22.883838658872968,
+      "smoothness": -0.0011586195434425577,
+      "strike": 1.6691405413156223e-09,
+      "target": -14.592801131545942
+    },
+    "physics_valid_fraction": 0.767578125,
+    "recovery_reference_rejections": 127,
+    "rewarded_tip_speed_m_s": 2.1647471041099964,
+    "root_forward_speed_m_s": 1.8282399824248838,
+    "root_velocity_m_s": [
+      -2.1395108950298725,
+      1.8282399824248838,
+      -0.2339873701684869
+    ],
+    "strike_angle_deg": 14.96974126349846,
+    "strike_distance_m": 0.38200525037682326,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -1.025146627619856,
+      3.99298708653488,
+      -0.29827442107954966
+    ]
+  },
+  {
+    "accepted_fraction": 0.51171875,
+    "best_sampled_speed_gain_m_s": 2.659384272133889,
+    "best_score": -37.47779840829321,
+    "closest_approach_time_s": 0.9887644688905743,
+    "directed_tip_speed_m_s": 3.99298708653488,
+    "effective_samples": 52.40000069463872,
+    "elapsed_s": 400.29309659999853,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.23918527681941967,
+    "iteration": 51,
+    "minimum_tip_distance_m": 0.3761891163007544,
+    "objective_components": {
+      "horizontal_cable": -22.883838658872968,
+      "smoothness": -0.0011586195434425577,
+      "strike": 1.6691405413156223e-09,
+      "target": -14.592801131545942
+    },
+    "physics_valid_fraction": 0.775390625,
+    "recovery_reference_rejections": 128,
+    "rewarded_tip_speed_m_s": 2.1647471041099964,
+    "root_forward_speed_m_s": 1.8282399824248838,
+    "root_velocity_m_s": [
+      -2.1395108950298725,
+      1.8282399824248838,
+      -0.2339873701684869
+    ],
+    "strike_angle_deg": 14.96974126349846,
+    "strike_distance_m": 0.38200525037682326,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -1.025146627619856,
+      3.99298708653488,
+      -0.29827442107954966
+    ]
+  },
+  {
+    "accepted_fraction": 0.486328125,
+    "best_sampled_speed_gain_m_s": 2.8123208721002877,
+    "best_score": -37.47779840829321,
+    "closest_approach_time_s": 0.9887644688905743,
+    "directed_tip_speed_m_s": 3.99298708653488,
+    "effective_samples": 49.80000117644185,
+    "elapsed_s": 414.9327400000002,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.23918527681941967,
+    "iteration": 52,
+    "minimum_tip_distance_m": 0.3761891163007544,
+    "objective_components": {
+      "horizontal_cable": -22.883838658872968,
+      "smoothness": -0.0011586195434425577,
+      "strike": 1.6691405413156223e-09,
+      "target": -14.592801131545942
+    },
+    "physics_valid_fraction": 0.79296875,
+    "recovery_reference_rejections": 142,
+    "rewarded_tip_speed_m_s": 2.1647471041099964,
+    "root_forward_speed_m_s": 1.8282399824248838,
+    "root_velocity_m_s": [
+      -2.1395108950298725,
+      1.8282399824248838,
+      -0.2339873701684869
+    ],
+    "strike_angle_deg": 14.96974126349846,
+    "strike_distance_m": 0.38200525037682326,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -1.025146627619856,
+      3.99298708653488,
+      -0.29827442107954966
+    ]
+  },
+  {
+    "accepted_fraction": 0.51171875,
+    "best_sampled_speed_gain_m_s": 2.6599760022360126,
+    "best_score": -37.24635848901623,
+    "closest_approach_time_s": 0.9709121764364425,
+    "directed_tip_speed_m_s": 4.2136934382072075,
+    "effective_samples": 52.40000068208401,
+    "elapsed_s": 430.72085460000017,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.24041320663972227,
+    "iteration": 53,
+    "minimum_tip_distance_m": 0.37272679893071275,
+    "objective_components": {
+      "horizontal_cable": -23.119403970717517,
+      "smoothness": -0.0011931244632063054,
+      "strike": 3.7077065919186753e-09,
+      "target": -14.125761397543213
+    },
+    "physics_valid_fraction": 0.7734375,
+    "recovery_reference_rejections": 112,
+    "rewarded_tip_speed_m_s": 2.261408115986926,
+    "root_forward_speed_m_s": 1.9522853222202816,
+    "root_velocity_m_s": [
+      -2.34246529449697,
+      1.9522853222202816,
+      0.09067272293294959
+    ],
+    "strike_angle_deg": 14.960580853672045,
+    "strike_distance_m": 0.3758425388050588,
+    "strike_time_s": 0.9600000000000001,
+    "tip_velocity_m_s": [
+      -1.1257967289882804,
+      4.2136934382072075,
+      0.018528587853526818
+    ]
+  },
+  {
+    "accepted_fraction": 0.748046875,
+    "best_sampled_speed_gain_m_s": 2.701236673415217,
+    "best_score": -33.308716181257,
+    "closest_approach_time_s": 0.9737158773270695,
+    "directed_tip_speed_m_s": 4.196800655949329,
+    "effective_samples": 76.6000006582811,
+    "elapsed_s": 437.29769699999815,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.24331701996757749,
+    "iteration": 54,
+    "minimum_tip_distance_m": 0.31025778078581273,
+    "objective_components": {
+      "horizontal_cable": -23.681268882361003,
+      "smoothness": -0.001210203518650165,
+      "strike": 2.176078496426416e-05,
+      "target": -9.626258856162302
+    },
+    "physics_valid_fraction": 0.796875,
+    "recovery_reference_rejections": 5,
+    "rewarded_tip_speed_m_s": 2.0311749157463814,
+    "root_forward_speed_m_s": 2.1656257402029477,
+    "root_velocity_m_s": [
+      -1.8985881858609275,
+      2.1656257402029477,
+      -0.0904484798370575
+    ],
+    "strike_angle_deg": 11.583723660688717,
+    "strike_distance_m": 0.31026212879051646,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -0.7999707758484029,
+      4.196800655949329,
+      -0.3163140781008756
+    ]
+  },
+  {
+    "accepted_fraction": 0.681640625,
+    "best_sampled_speed_gain_m_s": 2.6555592099751517,
+    "best_score": -33.308716181257,
+    "closest_approach_time_s": 0.9737158773270695,
+    "directed_tip_speed_m_s": 4.196800655949329,
+    "effective_samples": 69.8000004703494,
+    "elapsed_s": 441.90080589999707,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.24331701996757749,
+    "iteration": 55,
+    "minimum_tip_distance_m": 0.31025778078581273,
+    "objective_components": {
+      "horizontal_cable": -23.681268882361003,
+      "smoothness": -0.001210203518650165,
+      "strike": 2.176078496426416e-05,
+      "target": -9.626258856162302
+    },
+    "physics_valid_fraction": 0.7734375,
+    "recovery_reference_rejections": 19,
+    "rewarded_tip_speed_m_s": 2.0311749157463814,
+    "root_forward_speed_m_s": 2.1656257402029477,
+    "root_velocity_m_s": [
+      -1.8985881858609275,
+      2.1656257402029477,
+      -0.0904484798370575
+    ],
+    "strike_angle_deg": 11.583723660688717,
+    "strike_distance_m": 0.31026212879051646,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -0.7999707758484029,
+      4.196800655949329,
+      -0.3163140781008756
+    ]
+  },
+  {
+    "accepted_fraction": 0.603515625,
+    "best_sampled_speed_gain_m_s": 2.69755499718789,
+    "best_score": -33.308716181257,
+    "closest_approach_time_s": 0.9737158773270695,
+    "directed_tip_speed_m_s": 4.196800655949329,
+    "effective_samples": 61.8000012745969,
+    "elapsed_s": 448.9258123999971,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.24331701996757749,
+    "iteration": 56,
+    "minimum_tip_distance_m": 0.31025778078581273,
+    "objective_components": {
+      "horizontal_cable": -23.681268882361003,
+      "smoothness": -0.001210203518650165,
+      "strike": 2.176078496426416e-05,
+      "target": -9.626258856162302
+    },
+    "physics_valid_fraction": 0.7578125,
+    "recovery_reference_rejections": 55,
+    "rewarded_tip_speed_m_s": 2.0311749157463814,
+    "root_forward_speed_m_s": 2.1656257402029477,
+    "root_velocity_m_s": [
+      -1.8985881858609275,
+      2.1656257402029477,
+      -0.0904484798370575
+    ],
+    "strike_angle_deg": 11.583723660688717,
+    "strike_distance_m": 0.31026212879051646,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -0.7999707758484029,
+      4.196800655949329,
+      -0.3163140781008756
+    ]
+  },
+  {
+    "accepted_fraction": 0.494140625,
+    "best_sampled_speed_gain_m_s": 2.844082844257732,
+    "best_score": -33.308716181257,
+    "closest_approach_time_s": 0.9737158773270695,
+    "directed_tip_speed_m_s": 4.196800655949329,
+    "effective_samples": 50.600001476492025,
+    "elapsed_s": 459.06441209999684,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.24331701996757749,
+    "iteration": 57,
+    "minimum_tip_distance_m": 0.31025778078581273,
+    "objective_components": {
+      "horizontal_cable": -23.681268882361003,
+      "smoothness": -0.001210203518650165,
+      "strike": 2.176078496426416e-05,
+      "target": -9.626258856162302
+    },
+    "physics_valid_fraction": 0.740234375,
+    "recovery_reference_rejections": 94,
+    "rewarded_tip_speed_m_s": 2.0311749157463814,
+    "root_forward_speed_m_s": 2.1656257402029477,
+    "root_velocity_m_s": [
+      -1.8985881858609275,
+      2.1656257402029477,
+      -0.0904484798370575
+    ],
+    "strike_angle_deg": 11.583723660688717,
+    "strike_distance_m": 0.31026212879051646,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -0.7999707758484029,
+      4.196800655949329,
+      -0.3163140781008756
+    ]
+  },
+  {
+    "accepted_fraction": 0.4765625,
+    "best_sampled_speed_gain_m_s": 2.5665339945319374,
+    "best_score": -33.308716181257,
+    "closest_approach_time_s": 0.9737158773270695,
+    "directed_tip_speed_m_s": 4.196800655949329,
+    "effective_samples": 48.80000121054107,
+    "elapsed_s": 470.18285409999953,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.24331701996757749,
+    "iteration": 58,
+    "minimum_tip_distance_m": 0.31025778078581273,
+    "objective_components": {
+      "horizontal_cable": -23.681268882361003,
+      "smoothness": -0.001210203518650165,
+      "strike": 2.176078496426416e-05,
+      "target": -9.626258856162302
+    },
+    "physics_valid_fraction": 0.736328125,
+    "recovery_reference_rejections": 107,
+    "rewarded_tip_speed_m_s": 2.0311749157463814,
+    "root_forward_speed_m_s": 2.1656257402029477,
+    "root_velocity_m_s": [
+      -1.8985881858609275,
+      2.1656257402029477,
+      -0.0904484798370575
+    ],
+    "strike_angle_deg": 11.583723660688717,
+    "strike_distance_m": 0.31026212879051646,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -0.7999707758484029,
+      4.196800655949329,
+      -0.3163140781008756
+    ]
+  },
+  {
+    "accepted_fraction": 0.42578125,
+    "best_sampled_speed_gain_m_s": 2.5350247966607475,
+    "best_score": -33.308716181257,
+    "closest_approach_time_s": 0.9737158773270695,
+    "directed_tip_speed_m_s": 4.196800655949329,
+    "effective_samples": 43.60000048160296,
+    "elapsed_s": 482.6226188999972,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.24331701996757749,
+    "iteration": 59,
+    "minimum_tip_distance_m": 0.31025778078581273,
+    "objective_components": {
+      "horizontal_cable": -23.681268882361003,
+      "smoothness": -0.001210203518650165,
+      "strike": 2.176078496426416e-05,
+      "target": -9.626258856162302
+    },
+    "physics_valid_fraction": 0.7265625,
+    "recovery_reference_rejections": 129,
+    "rewarded_tip_speed_m_s": 2.0311749157463814,
+    "root_forward_speed_m_s": 2.1656257402029477,
+    "root_velocity_m_s": [
+      -1.8985881858609275,
+      2.1656257402029477,
+      -0.0904484798370575
+    ],
+    "strike_angle_deg": 11.583723660688717,
+    "strike_distance_m": 0.31026212879051646,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -0.7999707758484029,
+      4.196800655949329,
+      -0.3163140781008756
+    ]
+  },
+  {
+    "accepted_fraction": 0.462890625,
+    "best_sampled_speed_gain_m_s": 2.60845749899119,
+    "best_score": -33.308716181257,
+    "closest_approach_time_s": 0.9737158773270695,
+    "directed_tip_speed_m_s": 4.196800655949329,
+    "effective_samples": 47.40000062511146,
+    "elapsed_s": 493.8979545999973,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.24331701996757749,
+    "iteration": 60,
+    "minimum_tip_distance_m": 0.31025778078581273,
+    "objective_components": {
+      "horizontal_cable": -23.681268882361003,
+      "smoothness": -0.001210203518650165,
+      "strike": 2.176078496426416e-05,
+      "target": -9.626258856162302
+    },
+    "physics_valid_fraction": 0.7265625,
+    "recovery_reference_rejections": 114,
+    "rewarded_tip_speed_m_s": 2.0311749157463814,
+    "root_forward_speed_m_s": 2.1656257402029477,
+    "root_velocity_m_s": [
+      -1.8985881858609275,
+      2.1656257402029477,
+      -0.0904484798370575
+    ],
+    "strike_angle_deg": 11.583723660688717,
+    "strike_distance_m": 0.31026212879051646,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -0.7999707758484029,
+      4.196800655949329,
+      -0.3163140781008756
+    ]
+  },
+  {
+    "accepted_fraction": 0.44921875,
+    "best_sampled_speed_gain_m_s": 2.815636603420542,
+    "best_score": -33.308716181257,
+    "closest_approach_time_s": 0.9737158773270695,
+    "directed_tip_speed_m_s": 4.196800655949329,
+    "effective_samples": 46.000001025413,
+    "elapsed_s": 507.1349900999994,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.24331701996757749,
+    "iteration": 61,
+    "minimum_tip_distance_m": 0.31025778078581273,
+    "objective_components": {
+      "horizontal_cable": -23.681268882361003,
+      "smoothness": -0.001210203518650165,
+      "strike": 2.176078496426416e-05,
+      "target": -9.626258856162302
+    },
+    "physics_valid_fraction": 0.7578125,
+    "recovery_reference_rejections": 139,
+    "rewarded_tip_speed_m_s": 2.0311749157463814,
+    "root_forward_speed_m_s": 2.1656257402029477,
+    "root_velocity_m_s": [
+      -1.8985881858609275,
+      2.1656257402029477,
+      -0.0904484798370575
+    ],
+    "strike_angle_deg": 11.583723660688717,
+    "strike_distance_m": 0.31026212879051646,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -0.7999707758484029,
+      4.196800655949329,
+      -0.3163140781008756
+    ]
+  },
+  {
+    "accepted_fraction": 0.53125,
+    "best_sampled_speed_gain_m_s": 2.7104302925979296,
+    "best_score": -33.308716181257,
+    "closest_approach_time_s": 0.9737158773270695,
+    "directed_tip_speed_m_s": 4.196800655949329,
+    "effective_samples": 54.40000066396858,
+    "elapsed_s": 518.097026899999,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.24331701996757749,
+    "iteration": 62,
+    "minimum_tip_distance_m": 0.31025778078581273,
+    "objective_components": {
+      "horizontal_cable": -23.681268882361003,
+      "smoothness": -0.001210203518650165,
+      "strike": 2.176078496426416e-05,
+      "target": -9.626258856162302
+    },
+    "physics_valid_fraction": 0.759765625,
+    "recovery_reference_rejections": 107,
+    "rewarded_tip_speed_m_s": 2.0311749157463814,
+    "root_forward_speed_m_s": 2.1656257402029477,
+    "root_velocity_m_s": [
+      -1.8985881858609275,
+      2.1656257402029477,
+      -0.0904484798370575
+    ],
+    "strike_angle_deg": 11.583723660688717,
+    "strike_distance_m": 0.31026212879051646,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -0.7999707758484029,
+      4.196800655949329,
+      -0.3163140781008756
+    ]
+  },
+  {
+    "accepted_fraction": 0.501953125,
+    "best_sampled_speed_gain_m_s": 2.614595664994403,
+    "best_score": -33.308716181257,
+    "closest_approach_time_s": 0.9737158773270695,
+    "directed_tip_speed_m_s": 4.196800655949329,
+    "effective_samples": 51.400000702594895,
+    "elapsed_s": 529.6931990999983,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.24331701996757749,
+    "iteration": 63,
+    "minimum_tip_distance_m": 0.31025778078581273,
+    "objective_components": {
+      "horizontal_cable": -23.681268882361003,
+      "smoothness": -0.001210203518650165,
+      "strike": 2.176078496426416e-05,
+      "target": -9.626258856162302
+    },
+    "physics_valid_fraction": 0.76953125,
+    "recovery_reference_rejections": 116,
+    "rewarded_tip_speed_m_s": 2.0311749157463814,
+    "root_forward_speed_m_s": 2.1656257402029477,
+    "root_velocity_m_s": [
+      -1.8985881858609275,
+      2.1656257402029477,
+      -0.0904484798370575
+    ],
+    "strike_angle_deg": 11.583723660688717,
+    "strike_distance_m": 0.31026212879051646,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -0.7999707758484029,
+      4.196800655949329,
+      -0.3163140781008756
+    ]
+  },
+  {
+    "accepted_fraction": 0.47265625,
+    "best_sampled_speed_gain_m_s": 2.5964441403707035,
+    "best_score": -33.308716181257,
+    "closest_approach_time_s": 0.9737158773270695,
+    "directed_tip_speed_m_s": 4.196800655949329,
+    "effective_samples": 48.39999969597106,
+    "elapsed_s": 541.1003001999998,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.24331701996757749,
+    "iteration": 64,
+    "minimum_tip_distance_m": 0.31025778078581273,
+    "objective_components": {
+      "horizontal_cable": -23.681268882361003,
+      "smoothness": -0.001210203518650165,
+      "strike": 2.176078496426416e-05,
+      "target": -9.626258856162302
+    },
+    "physics_valid_fraction": 0.751953125,
+    "recovery_reference_rejections": 114,
+    "rewarded_tip_speed_m_s": 2.0311749157463814,
+    "root_forward_speed_m_s": 2.1656257402029477,
+    "root_velocity_m_s": [
+      -1.8985881858609275,
+      2.1656257402029477,
+      -0.0904484798370575
+    ],
+    "strike_angle_deg": 11.583723660688717,
+    "strike_distance_m": 0.31026212879051646,
+    "strike_time_s": 0.9733333333333334,
+    "tip_velocity_m_s": [
+      -0.7999707758484029,
+      4.196800655949329,
+      -0.3163140781008756
+    ]
+  },
+  {
+    "accepted_fraction": 0.490234375,
+    "best_sampled_speed_gain_m_s": 2.5157015728125782,
+    "best_score": -33.055437498501185,
+    "closest_approach_time_s": 0.9731575733270214,
+    "directed_tip_speed_m_s": 4.222252402704205,
+    "effective_samples": 50.19999991073937,
+    "elapsed_s": 556.6252753999979,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.2212893029781619,
+    "iteration": 65,
+    "minimum_tip_distance_m": 0.366970071111849,
+    "objective_components": {
+      "horizontal_cable": -19.587582245024297,
+      "smoothness": -0.0011520950889578412,
+      "strike": 1.5079561794899484e-07,
+      "target": -13.466703309183552
+    },
+    "physics_valid_fraction": 0.748046875,
+    "recovery_reference_rejections": 125,
+    "rewarded_tip_speed_m_s": 2.0245242457603987,
+    "root_forward_speed_m_s": 2.1977281569438065,
+    "root_velocity_m_s": [
+      -2.1291397263893588,
+      2.1977281569438065,
+      -0.0814522222159654
+    ],
+    "strike_angle_deg": 13.98239861352817,
+    "strike_distance_m": 0.366970071111849,
+    "strike_time_s": 0.9731575733270214,
+    "tip_velocity_m_s": [
+      -1.0274227081329232,
+      4.222252402704205,
+      -0.22301458455322826
+    ]
+  },
+  {
+    "accepted_fraction": 0.45703125,
+    "best_sampled_speed_gain_m_s": 2.5778457253572684,
+    "best_score": -33.055437498501185,
+    "closest_approach_time_s": 0.9731575733270214,
+    "directed_tip_speed_m_s": 4.222252402704205,
+    "effective_samples": 46.80000122556845,
+    "elapsed_s": 568.734916999998,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.2212893029781619,
+    "iteration": 66,
+    "minimum_tip_distance_m": 0.366970071111849,
+    "objective_components": {
+      "horizontal_cable": -19.587582245024297,
+      "smoothness": -0.0011520950889578412,
+      "strike": 1.5079561794899484e-07,
+      "target": -13.466703309183552
+    },
+    "physics_valid_fraction": 0.736328125,
+    "recovery_reference_rejections": 123,
+    "rewarded_tip_speed_m_s": 2.0245242457603987,
+    "root_forward_speed_m_s": 2.1977281569438065,
+    "root_velocity_m_s": [
+      -2.1291397263893588,
+      2.1977281569438065,
+      -0.0814522222159654
+    ],
+    "strike_angle_deg": 13.98239861352817,
+    "strike_distance_m": 0.366970071111849,
+    "strike_time_s": 0.9731575733270214,
+    "tip_velocity_m_s": [
+      -1.0274227081329232,
+      4.222252402704205,
+      -0.22301458455322826
+    ]
+  },
+  {
+    "accepted_fraction": 0.4609375,
+    "best_sampled_speed_gain_m_s": 2.673452741595189,
+    "best_score": -33.055437498501185,
+    "closest_approach_time_s": 0.9731575733270214,
+    "directed_tip_speed_m_s": 4.222252402704205,
+    "effective_samples": 47.20000082885036,
+    "elapsed_s": 580.8388607999987,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.2212893029781619,
+    "iteration": 67,
+    "minimum_tip_distance_m": 0.366970071111849,
+    "objective_components": {
+      "horizontal_cable": -19.587582245024297,
+      "smoothness": -0.0011520950889578412,
+      "strike": 1.5079561794899484e-07,
+      "target": -13.466703309183552
+    },
+    "physics_valid_fraction": 0.736328125,
+    "recovery_reference_rejections": 120,
+    "rewarded_tip_speed_m_s": 2.0245242457603987,
+    "root_forward_speed_m_s": 2.1977281569438065,
+    "root_velocity_m_s": [
+      -2.1291397263893588,
+      2.1977281569438065,
+      -0.0814522222159654
+    ],
+    "strike_angle_deg": 13.98239861352817,
+    "strike_distance_m": 0.366970071111849,
+    "strike_time_s": 0.9731575733270214,
+    "tip_velocity_m_s": [
+      -1.0274227081329232,
+      4.222252402704205,
+      -0.22301458455322826
+    ]
+  },
+  {
+    "accepted_fraction": 0.57421875,
+    "best_sampled_speed_gain_m_s": 2.862510305572155,
+    "best_score": -32.43102166895827,
+    "closest_approach_time_s": 0.9744457485587471,
+    "directed_tip_speed_m_s": 4.21143856658994,
+    "effective_samples": 58.80000126907346,
+    "elapsed_s": 592.6952552999974,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.23396470832017238,
+    "iteration": 68,
+    "minimum_tip_distance_m": 0.32280097736740343,
+    "objective_components": {
+      "horizontal_cable": -21.895793895737338,
+      "smoothness": -0.0011920366590892461,
+      "strike": 8.275296045899903e-06,
+      "target": -10.534044011857889
+    },
+    "physics_valid_fraction": 0.767578125,
+    "recovery_reference_rejections": 77,
+    "rewarded_tip_speed_m_s": 2.019257478536782,
+    "root_forward_speed_m_s": 2.192181088053158,
+    "root_velocity_m_s": [
+      -1.9959301899646507,
+      2.192181088053158,
+      -0.046250716545159776
+    ],
+    "strike_angle_deg": 11.771775953754421,
+    "strike_distance_m": 0.32456192031502845,
+    "strike_time_s": 0.9666666666666668,
+    "tip_velocity_m_s": [
+      -0.8573900522266138,
+      4.21143856658994,
+      -0.18749039229466227
+    ]
+  },
+  {
+    "accepted_fraction": 0.517578125,
+    "best_sampled_speed_gain_m_s": 2.48907281630696,
+    "best_score": -32.23350660737007,
+    "closest_approach_time_s": 0.9695839067948245,
+    "directed_tip_speed_m_s": 4.221520348911079,
+    "effective_samples": 53.00000010928885,
+    "elapsed_s": 606.8671675999976,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.22469440858873913,
+    "iteration": 69,
+    "minimum_tip_distance_m": 0.3443736207842206,
+    "objective_components": {
+      "horizontal_cable": -20.1950309004173,
+      "smoothness": -0.001194254704105662,
+      "strike": 1.3231172522490336e-06,
+      "target": -12.037282775365918
+    },
+    "physics_valid_fraction": 0.763671875,
+    "recovery_reference_rejections": 108,
+    "rewarded_tip_speed_m_s": 2.041852753896123,
+    "root_forward_speed_m_s": 2.1796675950149558,
+    "root_velocity_m_s": [
+      -2.126035584842545,
+      2.1796675950149558,
+      -0.10561975325976691
+    ],
+    "strike_angle_deg": 12.803122141850512,
+    "strike_distance_m": 0.34694787469252375,
+    "strike_time_s": 0.9600000000000001,
+    "tip_velocity_m_s": [
+      -0.9441171259918142,
+      4.221520348911079,
+      -0.17026762963861575
+    ]
+  },
+  {
+    "accepted_fraction": 0.6796875,
+    "best_sampled_speed_gain_m_s": 2.8446463770541044,
+    "best_score": -29.957375511571268,
+    "closest_approach_time_s": 0.9650054541537767,
+    "directed_tip_speed_m_s": 4.276306802579518,
+    "effective_samples": 69.60000253405661,
+    "elapsed_s": 613.7193955999974,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.21470938771823517,
+    "iteration": 70,
+    "minimum_tip_distance_m": 0.3392764890286488,
+    "objective_components": {
+      "horizontal_cable": -18.44004846973577,
+      "smoothness": -0.0012107431009518747,
+      "strike": 2.399607527119812e-06,
+      "target": -11.516118698342071
+    },
+    "physics_valid_fraction": 0.728515625,
+    "recovery_reference_rejections": 10,
+    "rewarded_tip_speed_m_s": 2.014123756552885,
+    "root_forward_speed_m_s": 2.2621830460266334,
+    "root_velocity_m_s": [
+      -2.0833512948408237,
+      2.2621830460266334,
+      -0.14561240450522428
+    ],
+    "strike_angle_deg": 12.561147961612095,
+    "strike_distance_m": 0.3393540731793575,
+    "strike_time_s": 0.9666666666666668,
+    "tip_velocity_m_s": [
+      -0.9266999219539647,
+      4.276306802579518,
+      -0.2215855677641998
+    ]
+  },
+  {
+    "accepted_fraction": 0.572265625,
+    "best_sampled_speed_gain_m_s": 2.6327022825511297,
+    "best_score": -29.957375511571268,
+    "closest_approach_time_s": 0.9650054541537767,
+    "directed_tip_speed_m_s": 4.276306802579518,
+    "effective_samples": 58.60000149379467,
+    "elapsed_s": 620.4027347999981,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.21470938771823517,
+    "iteration": 71,
+    "minimum_tip_distance_m": 0.3392764890286488,
+    "objective_components": {
+      "horizontal_cable": -18.44004846973577,
+      "smoothness": -0.0012107431009518747,
+      "strike": 2.399607527119812e-06,
+      "target": -11.516118698342071
+    },
+    "physics_valid_fraction": 0.703125,
+    "recovery_reference_rejections": 49,
+    "rewarded_tip_speed_m_s": 2.014123756552885,
+    "root_forward_speed_m_s": 2.2621830460266334,
+    "root_velocity_m_s": [
+      -2.0833512948408237,
+      2.2621830460266334,
+      -0.14561240450522428
+    ],
+    "strike_angle_deg": 12.561147961612095,
+    "strike_distance_m": 0.3393540731793575,
+    "strike_time_s": 0.9666666666666668,
+    "tip_velocity_m_s": [
+      -0.9266999219539647,
+      4.276306802579518,
+      -0.2215855677641998
+    ]
+  },
+  {
+    "accepted_fraction": 0.470703125,
+    "best_sampled_speed_gain_m_s": 2.7117547363512347,
+    "best_score": -29.957375511571268,
+    "closest_approach_time_s": 0.9650054541537767,
+    "directed_tip_speed_m_s": 4.276306802579518,
+    "effective_samples": 48.2000017559274,
+    "elapsed_s": 629.541181499997,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.21470938771823517,
+    "iteration": 72,
+    "minimum_tip_distance_m": 0.3392764890286488,
+    "objective_components": {
+      "horizontal_cable": -18.44004846973577,
+      "smoothness": -0.0012107431009518747,
+      "strike": 2.399607527119812e-06,
+      "target": -11.516118698342071
+    },
+    "physics_valid_fraction": 0.689453125,
+    "recovery_reference_rejections": 83,
+    "rewarded_tip_speed_m_s": 2.014123756552885,
+    "root_forward_speed_m_s": 2.2621830460266334,
+    "root_velocity_m_s": [
+      -2.0833512948408237,
+      2.2621830460266334,
+      -0.14561240450522428
+    ],
+    "strike_angle_deg": 12.561147961612095,
+    "strike_distance_m": 0.3393540731793575,
+    "strike_time_s": 0.9666666666666668,
+    "tip_velocity_m_s": [
+      -0.9266999219539647,
+      4.276306802579518,
+      -0.2215855677641998
+    ]
+  },
+  {
+    "accepted_fraction": 0.49609375,
+    "best_sampled_speed_gain_m_s": 2.6714673534331093,
+    "best_score": -29.957375511571268,
+    "closest_approach_time_s": 0.9650054541537767,
+    "directed_tip_speed_m_s": 4.276306802579518,
+    "effective_samples": 50.800000339125106,
+    "elapsed_s": 639.2732891999985,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.21470938771823517,
+    "iteration": 73,
+    "minimum_tip_distance_m": 0.3392764890286488,
+    "objective_components": {
+      "horizontal_cable": -18.44004846973577,
+      "smoothness": -0.0012107431009518747,
+      "strike": 2.399607527119812e-06,
+      "target": -11.516118698342071
+    },
+    "physics_valid_fraction": 0.697265625,
+    "recovery_reference_rejections": 85,
+    "rewarded_tip_speed_m_s": 2.014123756552885,
+    "root_forward_speed_m_s": 2.2621830460266334,
+    "root_velocity_m_s": [
+      -2.0833512948408237,
+      2.2621830460266334,
+      -0.14561240450522428
+    ],
+    "strike_angle_deg": 12.561147961612095,
+    "strike_distance_m": 0.3393540731793575,
+    "strike_time_s": 0.9666666666666668,
+    "tip_velocity_m_s": [
+      -0.9266999219539647,
+      4.276306802579518,
+      -0.2215855677641998
+    ]
+  },
+  {
+    "accepted_fraction": 0.462890625,
+    "best_sampled_speed_gain_m_s": 2.504833871843364,
+    "best_score": -29.957375511571268,
+    "closest_approach_time_s": 0.9650054541537767,
+    "directed_tip_speed_m_s": 4.276306802579518,
+    "effective_samples": 47.400000620333614,
+    "elapsed_s": 649.4780164000003,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.21470938771823517,
+    "iteration": 74,
+    "minimum_tip_distance_m": 0.3392764890286488,
+    "objective_components": {
+      "horizontal_cable": -18.44004846973577,
+      "smoothness": -0.0012107431009518747,
+      "strike": 2.399607527119812e-06,
+      "target": -11.516118698342071
+    },
+    "physics_valid_fraction": 0.681640625,
+    "recovery_reference_rejections": 96,
+    "rewarded_tip_speed_m_s": 2.014123756552885,
+    "root_forward_speed_m_s": 2.2621830460266334,
+    "root_velocity_m_s": [
+      -2.0833512948408237,
+      2.2621830460266334,
+      -0.14561240450522428
+    ],
+    "strike_angle_deg": 12.561147961612095,
+    "strike_distance_m": 0.3393540731793575,
+    "strike_time_s": 0.9666666666666668,
+    "tip_velocity_m_s": [
+      -0.9266999219539647,
+      4.276306802579518,
+      -0.2215855677641998
+    ]
+  },
+  {
+    "accepted_fraction": 0.43359375,
+    "best_sampled_speed_gain_m_s": 2.7968503842435557,
+    "best_score": -29.957375511571268,
+    "closest_approach_time_s": 0.9650054541537767,
+    "directed_tip_speed_m_s": 4.276306802579518,
+    "effective_samples": 44.40000065445126,
+    "elapsed_s": 660.6315818999974,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.21470938771823517,
+    "iteration": 75,
+    "minimum_tip_distance_m": 0.3392764890286488,
+    "objective_components": {
+      "horizontal_cable": -18.44004846973577,
+      "smoothness": -0.0012107431009518747,
+      "strike": 2.399607527119812e-06,
+      "target": -11.516118698342071
+    },
+    "physics_valid_fraction": 0.693359375,
+    "recovery_reference_rejections": 110,
+    "rewarded_tip_speed_m_s": 2.014123756552885,
+    "root_forward_speed_m_s": 2.2621830460266334,
+    "root_velocity_m_s": [
+      -2.0833512948408237,
+      2.2621830460266334,
+      -0.14561240450522428
+    ],
+    "strike_angle_deg": 12.561147961612095,
+    "strike_distance_m": 0.3393540731793575,
+    "strike_time_s": 0.9666666666666668,
+    "tip_velocity_m_s": [
+      -0.9266999219539647,
+      4.276306802579518,
+      -0.2215855677641998
+    ]
+  },
+  {
+    "accepted_fraction": 0.4609375,
+    "best_sampled_speed_gain_m_s": 2.565538309098996,
+    "best_score": -29.957375511571268,
+    "closest_approach_time_s": 0.9650054541537767,
+    "directed_tip_speed_m_s": 4.276306802579518,
+    "effective_samples": 47.1999999313935,
+    "elapsed_s": 672.0122028999976,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.21470938771823517,
+    "iteration": 76,
+    "minimum_tip_distance_m": 0.3392764890286488,
+    "objective_components": {
+      "horizontal_cable": -18.44004846973577,
+      "smoothness": -0.0012107431009518747,
+      "strike": 2.399607527119812e-06,
+      "target": -11.516118698342071
+    },
+    "physics_valid_fraction": 0.71875,
+    "recovery_reference_rejections": 111,
+    "rewarded_tip_speed_m_s": 2.014123756552885,
+    "root_forward_speed_m_s": 2.2621830460266334,
+    "root_velocity_m_s": [
+      -2.0833512948408237,
+      2.2621830460266334,
+      -0.14561240450522428
+    ],
+    "strike_angle_deg": 12.561147961612095,
+    "strike_distance_m": 0.3393540731793575,
+    "strike_time_s": 0.9666666666666668,
+    "tip_velocity_m_s": [
+      -0.9266999219539647,
+      4.276306802579518,
+      -0.2215855677641998
+    ]
+  },
+  {
+    "accepted_fraction": 0.482421875,
+    "best_sampled_speed_gain_m_s": 2.6217997579137147,
+    "best_score": -29.957375511571268,
+    "closest_approach_time_s": 0.9650054541537767,
+    "directed_tip_speed_m_s": 4.276306802579518,
+    "effective_samples": 49.40000060044807,
+    "elapsed_s": 683.0454262999992,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.21470938771823517,
+    "iteration": 77,
+    "minimum_tip_distance_m": 0.3392764890286488,
+    "objective_components": {
+      "horizontal_cable": -18.44004846973577,
+      "smoothness": -0.0012107431009518747,
+      "strike": 2.399607527119812e-06,
+      "target": -11.516118698342071
+    },
+    "physics_valid_fraction": 0.724609375,
+    "recovery_reference_rejections": 106,
+    "rewarded_tip_speed_m_s": 2.014123756552885,
+    "root_forward_speed_m_s": 2.2621830460266334,
+    "root_velocity_m_s": [
+      -2.0833512948408237,
+      2.2621830460266334,
+      -0.14561240450522428
+    ],
+    "strike_angle_deg": 12.561147961612095,
+    "strike_distance_m": 0.3393540731793575,
+    "strike_time_s": 0.9666666666666668,
+    "tip_velocity_m_s": [
+      -0.9266999219539647,
+      4.276306802579518,
+      -0.2215855677641998
+    ]
+  },
+  {
+    "accepted_fraction": 0.48046875,
+    "best_sampled_speed_gain_m_s": 2.6643746285026992,
+    "best_score": -29.957375511571268,
+    "closest_approach_time_s": 0.9650054541537767,
+    "directed_tip_speed_m_s": 4.276306802579518,
+    "effective_samples": 49.20000182297257,
+    "elapsed_s": 694.3484494000004,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.21470938771823517,
+    "iteration": 78,
+    "minimum_tip_distance_m": 0.3392764890286488,
+    "objective_components": {
+      "horizontal_cable": -18.44004846973577,
+      "smoothness": -0.0012107431009518747,
+      "strike": 2.399607527119812e-06,
+      "target": -11.516118698342071
+    },
+    "physics_valid_fraction": 0.734375,
+    "recovery_reference_rejections": 114,
+    "rewarded_tip_speed_m_s": 2.014123756552885,
+    "root_forward_speed_m_s": 2.2621830460266334,
+    "root_velocity_m_s": [
+      -2.0833512948408237,
+      2.2621830460266334,
+      -0.14561240450522428
+    ],
+    "strike_angle_deg": 12.561147961612095,
+    "strike_distance_m": 0.3393540731793575,
+    "strike_time_s": 0.9666666666666668,
+    "tip_velocity_m_s": [
+      -0.9266999219539647,
+      4.276306802579518,
+      -0.2215855677641998
+    ]
+  },
+  {
+    "accepted_fraction": 0.44140625,
+    "best_sampled_speed_gain_m_s": 2.6600869296685294,
+    "best_score": -29.957375511571268,
+    "closest_approach_time_s": 0.9650054541537767,
+    "directed_tip_speed_m_s": 4.276306802579518,
+    "effective_samples": 45.20000087107173,
+    "elapsed_s": 707.1141442999979,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.21470938771823517,
+    "iteration": 79,
+    "minimum_tip_distance_m": 0.3392764890286488,
+    "objective_components": {
+      "horizontal_cable": -18.44004846973577,
+      "smoothness": -0.0012107431009518747,
+      "strike": 2.399607527119812e-06,
+      "target": -11.516118698342071
+    },
+    "physics_valid_fraction": 0.734375,
+    "recovery_reference_rejections": 134,
+    "rewarded_tip_speed_m_s": 2.014123756552885,
+    "root_forward_speed_m_s": 2.2621830460266334,
+    "root_velocity_m_s": [
+      -2.0833512948408237,
+      2.2621830460266334,
+      -0.14561240450522428
+    ],
+    "strike_angle_deg": 12.561147961612095,
+    "strike_distance_m": 0.3393540731793575,
+    "strike_time_s": 0.9666666666666668,
+    "tip_velocity_m_s": [
+      -0.9266999219539647,
+      4.276306802579518,
+      -0.2215855677641998
+    ]
+  },
+  {
+    "accepted_fraction": 0.509765625,
+    "best_sampled_speed_gain_m_s": 2.6187970774125224,
+    "best_score": -29.957375511571268,
+    "closest_approach_time_s": 0.9650054541537767,
+    "directed_tip_speed_m_s": 4.276306802579518,
+    "effective_samples": 52.200001874217975,
+    "elapsed_s": 718.2800776999975,
+    "fold_completed_time_s": null,
+    "fold_valid": false,
+    "gain_search_groups": 0,
+    "geometric_fold_fraction": 0.0,
+    "horizontal_cable_rms_m": 0.21470938771823517,
+    "iteration": 80,
+    "minimum_tip_distance_m": 0.3392764890286488,
+    "objective_components": {
+      "horizontal_cable": -18.44004846973577,
+      "smoothness": -0.0012107431009518747,
+      "strike": 2.399607527119812e-06,
+      "target": -11.516118698342071
+    },
+    "physics_valid_fraction": 0.759765625,
+    "recovery_reference_rejections": 112,
+    "rewarded_tip_speed_m_s": 2.014123756552885,
+    "root_forward_speed_m_s": 2.2621830460266334,
+    "root_velocity_m_s": [
+      -2.0833512948408237,
+      2.2621830460266334,
+      -0.14561240450522428
+    ],
+    "strike_angle_deg": 12.561147961612095,
+    "strike_distance_m": 0.3393540731793575,
+    "strike_time_s": 0.9666666666666668,
+    "tip_velocity_m_s": [
+      -0.9266999219539647,
+      4.276306802579518,
+      -0.2215855677641998
+    ]
+  }
+]

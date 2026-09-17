@@ -1,0 +1,74 @@
+{
+  "accepted_drone_windows": 11,
+  "alignment": {
+    "chunks": [
+      {
+        "offset_s": -0.39155480198592585,
+        "rmse_m": 0.0009743668255873949,
+        "samples": 30
+      },
+      {
+        "offset_s": -0.3872728629727831,
+        "rmse_m": 0.0038429163442876054,
+        "samples": 30
+      },
+      {
+        "offset_s": -0.38846057533846123,
+        "rmse_m": 0.0011707950225162869,
+        "samples": 30
+      },
+      {
+        "offset_s": -0.38853664158986,
+        "rmse_m": 0.0007106841107271363,
+        "samples": 30
+      }
+    ],
+    "convention": "controller time = OptiTrack time + offset",
+    "limitation": "Estimated stream alignment; cache/transport latency is not independently known. Fitted command delay is effective, not measured actuator latency.",
+    "matched_updates": 120,
+    "method": "Measured OptiTrack XYZ matched to controller-cached OptiTrack XYZ",
+    "offset_s": -0.38810438044155,
+    "rmse_m": 0.0021516556295073687
+  },
+  "chord_overlength_samples": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "drone": "cf_3",
+  "marker_masked_samples": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "normalization": "None; raw measured and commanded global coordinates retained",
+  "raw_time_span_s": [
+    8.37189561955845,
+    32.86189561955845
+  ],
+  "rejected_drone_windows": [
+    {
+      "reason": "No fresh observed command at time 8.212257867; cannot infer missing input",
+      "start_s": 8.78189561955845
+    }
+  ],
+  "role": "training",
+  "source_hashes": {
+    "experiment_osci_002.csv": "b24d9f82fb0ab6a0c916a122092d859f3a69718a20c8fd79430a2250eb76f417",
+    "osci_002.csv": "25df168f5f46eee7a0ae59f0beadd6803f7775cddd083b3806ac4eb18e48bf09"
+  }
+}

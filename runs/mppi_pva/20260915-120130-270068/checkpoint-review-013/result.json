@@ -1,0 +1,38 @@
+{
+  "minimum_tip_distance_m": null,
+  "strike_time_s": 4.993333333333334,
+  "strike_distance_m": null,
+  "closest_approach_time_s": null,
+  "directed_tip_speed_m_s": 6.8119260402633595,
+  "strike_angle_deg": 10.619310410352618,
+  "root_velocity_m_s": [
+    -1.178734667950465,
+    -1.0393352633675634,
+    -0.6184966469716668
+  ],
+  "root_forward_speed_m_s": -0.5011465350827352,
+  "rewarded_tip_speed_m_s": 6.8119260402633595,
+  "tip_velocity_m_s": [
+    5.687692899292739,
+    -3.77247900110296,
+    1.2050360032056646
+  ],
+  "fold_completed_time_s": null,
+  "fold_valid": false,
+  "horizontal_cable_rms_m": 0.15770397655469354,
+  "free_target": true,
+  "selected_strike_position_m": [
+    -1.8444547925138568,
+    -0.009605382648716703,
+    2.1442627227751605
+  ],
+  "backward_travel_m": 1.879287539793003,
+  "target_note": "Strike location selected from the motion; no target accuracy measured",
+  "best_score": 1.0014456245417083,
+  "checkpoint_iteration": 13,
+  "checkpoint_sha256": "df558a215bcaaaaa7b126019668a7f5d908c87d60f22b8dac67f092d517b8a97",
+  "status": "checkpoint_preview",
+  "whip_end_s": 5.3,
+  "target_invariance_score_difference": 0.0,
+  "evidence": "Independent frozen-model replay; no complete recovery or flight CSV in this diagnostic artifact"
+}

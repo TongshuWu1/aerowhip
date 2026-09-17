@@ -1,0 +1,66 @@
+{
+  "candidate_id": "M1",
+  "comparison": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\evaluation\\M0-collection-before-fit-20260915",
+  "fitting_started": false,
+  "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M1-20260915",
+  "mask_checks": {
+    "M0_002_whip_001": {
+      "fit_samples": 114,
+      "masked_marker_samples": 0,
+      "native_dt_s": 0.010000000000001563
+    },
+    "M0_002_whip_002": {
+      "fit_samples": 113,
+      "masked_marker_samples": 3,
+      "native_dt_s": 0.00999999999999801
+    },
+    "M0_002_whip_003": {
+      "fit_samples": 113,
+      "masked_marker_samples": 6,
+      "native_dt_s": 0.010000000000005116
+    },
+    "M0_002_whip_004": {
+      "fit_samples": 113,
+      "masked_marker_samples": 2,
+      "native_dt_s": 0.010000000000005116
+    },
+    "M0_003_whip_001": {
+      "fit_samples": 114,
+      "masked_marker_samples": 0,
+      "native_dt_s": 0.010000000000001563
+    },
+    "M0_003_whip_002": {
+      "fit_samples": 113,
+      "masked_marker_samples": 0,
+      "native_dt_s": 0.00999999999999801
+    },
+    "M0_003_whip_003": {
+      "fit_samples": 113,
+      "masked_marker_samples": 4,
+      "native_dt_s": 0.010000000000005116
+    },
+    "M0_003_whip_004": {
+      "fit_samples": 113,
+      "masked_marker_samples": 0,
+      "native_dt_s": 0.010000000000005116
+    },
+    "M0_Whip123_001": {
+      "fit_samples": 113,
+      "masked_marker_samples": 0,
+      "native_dt_s": 0.010000000000001563
+    },
+    "M0_Whip123_002": {
+      "fit_samples": 113,
+      "masked_marker_samples": 0,
+      "native_dt_s": 0.00999999999999801
+    },
+    "M0_Whip123_003": {
+      "fit_samples": 113,
+      "masked_marker_samples": 0,
+      "native_dt_s": 0.010000000000005116
+    }
+  },
+  "parent_signature": "fc854eae6a37bd8cd3457f1eb7eeb3ba52ae8e0b1315b8fdcc6534a5f94b2858",
+  "recording_groups": 3,
+  "whips": 11
+}

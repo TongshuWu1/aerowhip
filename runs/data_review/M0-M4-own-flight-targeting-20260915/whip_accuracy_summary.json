@@ -1,0 +1,65 @@
+{
+  "metric": "Estimated closest measured tip-to-target distance during the command whip; adjacent native samples linearly interpolated. Geometric threshold counts are not confirmed contact counts.",
+  "models": {
+    "M0": {
+      "max_cm": 14.928846298367809,
+      "mean_closest_time_s": 1.0819211838979,
+      "mean_cm": 12.575843942249719,
+      "min_cm": 10.995976048537022,
+      "sd_cm": 1.4139148886132349,
+      "whips": 11,
+      "within_2cm": 0,
+      "within_5cm": 0
+    },
+    "M1": {
+      "max_cm": 8.701837763594487,
+      "mean_closest_time_s": 1.0844819014235603,
+      "mean_cm": 4.863773903431284,
+      "min_cm": 1.8455256223495013,
+      "sd_cm": 1.755110822847214,
+      "whips": 12,
+      "within_2cm": 1,
+      "within_5cm": 7
+    },
+    "M2": {
+      "max_cm": 7.993370612661123,
+      "mean_closest_time_s": 1.0952914987447748,
+      "mean_cm": 4.640622121523022,
+      "min_cm": 1.5524083807501832,
+      "sd_cm": 2.466682063225815,
+      "whips": 11,
+      "within_2cm": 2,
+      "within_5cm": 7
+    },
+    "M3": {
+      "max_cm": 8.448759597124297,
+      "mean_closest_time_s": 1.1002278307982716,
+      "mean_cm": 4.7110468397454754,
+      "min_cm": 2.350318180654093,
+      "sd_cm": 1.8057839994524159,
+      "whips": 12,
+      "within_2cm": 0,
+      "within_5cm": 7
+    },
+    "M4": {
+      "max_cm": 6.791339839023171,
+      "mean_closest_time_s": 1.0951701392851327,
+      "mean_cm": 3.8060864734637008,
+      "min_cm": 0.8834059465718811,
+      "sd_cm": 2.041410164519482,
+      "whips": 12,
+      "within_2cm": 3,
+      "within_5cm": 7
+    }
+  },
+  "physical_target_present": false,
+  "target_m": [
+    1.25,
+    0.0,
+    1.25
+  ],
+  "window_s": [
+    0.0,
+    1.1333333333333333
+  ]
+}

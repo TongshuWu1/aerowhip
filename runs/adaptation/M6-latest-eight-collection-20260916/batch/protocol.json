@@ -1,0 +1,60 @@
+{
+  "actual_take_count": 8,
+  "authorization": "User explicitly confirmed this initialization and dataset; user states there is no contact or intervention.",
+  "automatic_selection": false,
+  "cable_history_s": 1.0,
+  "cable_velocity_weight_tau_s": 0.02,
+  "candidate_bounds_s_inv": [
+    0.0,
+    2.0
+  ],
+  "command_sha256": "16b45834deb1be3f8de377117c29af08b52bb875af2f3711067e67f0ed6ee7ec",
+  "command_source": "event_log",
+  "drone_history_s": 0.4,
+  "evaluation_policy": "evaluate frozen parent before learning; prior training data measures retention",
+  "evaluation_qualification": "All eight whips are training data for new M7; post-fit scores are training diagnostics.",
+  "forecast_sha256": "32b53ade87a44c3ffb0dadd442c0e9baaf4ef90f9610f8eca3a3db1871f35f01",
+  "frame": "raw_global_xyz",
+  "frozen_hashes": {
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M6-Horizontal-Command-Correction\\assets\\cable_residual.pt": "6f9f6eb7398f51f71dcfa1130b8abe3ec997a3f3ecdbe5428e6e030fb629824a",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M6-Horizontal-Command-Correction\\assets\\drone_model.json": "dfc9737acec5739e3caae43469e76e92fda22719fd1c70d9023ad9abd4b43a73",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M6-Horizontal-Command-Correction\\assets\\drone_residual.pt": "6679be93e1bd1cb117359259e3360fce99830b27631db37ac72dfb890463d6b0",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M6-Horizontal-Command-Correction\\fullstate_30hz.csv": "16b45834deb1be3f8de377117c29af08b52bb875af2f3711067e67f0ed6ee7ec",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M6-Horizontal-Command-Correction\\model.json": "20e91b6299f8ba6fd37de58073eecc90a137e26078b1b914032b83c6c3112c3e",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M6-Horizontal-Command-Correction\\plan.npz": "b11bb9ea33938d88c7f0ddc375b1c6b88bfd474ec5d26e20c26b09b808f81270",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M6-Horizontal-Command-Correction\\rehearsal.json": "a0315af84aafb0373712a72730ddfccb9c343212d84d841368f4a77e5cab4b1f",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M6-Horizontal-Command-Correction\\rehearsal.npz": "32b53ade87a44c3ffb0dadd442c0e9baaf4ef90f9610f8eca3a3db1871f35f01",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M6-Horizontal-Command-Correction\\settings.json": "7b1d98b52b64ade6914eb698b5e112a12b7ed82ed77cbc6985856fc739acfa5c",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M6-Horizontal-Command-Correction\\task.json": "43e83d919fc0db66ab7d2a570d8ee9a026b90eccf3a70a0e143448585dd8e861"
+  },
+  "minimum_observation_fraction": 0.8,
+  "model_id": "M6",
+  "model_update": "Warm start from renamed M6 (formerly M7); fit new M7 on these eight flights plus preliminary training replay only.",
+  "neural_training": false,
+  "normalization": false,
+  "parent_forecast_model_sha256": "20e91b6299f8ba6fd37de58073eecc90a137e26078b1b914032b83c6c3112c3e",
+  "parent_generation": 7,
+  "planned_roles": {
+    "M6_side_001_whip_001": "adaptation",
+    "M6_side_001_whip_002": "adaptation",
+    "M6_side_001_whip_003": "adaptation",
+    "M6_side_001_whip_004": "adaptation",
+    "M6_side_002_whip_001": "adaptation",
+    "M6_side_002_whip_002": "adaptation",
+    "M6_side_002_whip_003": "adaptation",
+    "M6_side_002_whip_004": "adaptation"
+  },
+  "recording_groups": {
+    "M6_side_001_whip_001": "M6_horizontal_v1_001",
+    "M6_side_001_whip_002": "M6_horizontal_v1_001",
+    "M6_side_001_whip_003": "M6_horizontal_v1_001",
+    "M6_side_001_whip_004": "M6_horizontal_v1_001",
+    "M6_side_002_whip_001": "M6_horizontal_v1_002",
+    "M6_side_002_whip_002": "M6_horizontal_v1_002",
+    "M6_side_002_whip_003": "M6_horizontal_v1_002",
+    "M6_side_002_whip_004": "M6_horizontal_v1_002"
+  },
+  "rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M6-Horizontal-Command-Correction",
+  "role_unit": "whole take",
+  "schema": "prospective_whip_adaptation_v1"
+}

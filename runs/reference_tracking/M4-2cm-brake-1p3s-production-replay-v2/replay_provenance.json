@@ -1,0 +1,17 @@
+{
+  "fitting_changed": false,
+  "inputs": {
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\planning\\correction_job.py": "28554a987ed0bc0869050e230ec448f4b75e22907aa6119407d9abf89f8d9120",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M4-2cm-brake-1p3s-correction\\current_best.npz": "51e41801fe485f55d6a4d8e3d138c292be75dfc260db041aeb4c98c542080a30",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M4-2cm-brake-1p3s-correction\\history.json": "4ed445710e122757c2557f8039ebd7eff3980cd155f67d193cc009e161a2bf0e",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M4-2cm-brake-1p3s-correction\\optimization.json": "e2298ce9140f8d24bee5f3cb8f323f1d4401b7f59a9c9ad32ec4a4956cd1abee",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M4-2cm-brake-1p3s-correction\\status.json": "baef6bfde228c0314bc23a09e840fafb4c8b4a5c2377a4031360322155f19649",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\tmp\\export_m4_production_replay_v2.py": "7cdd031a3fc0156fae3e25ad9e57ade901d0e3a4b27295e07c6953af76bfcbd0"
+  },
+  "method": "Saved optimized controls; standard production cable solver for complete replay",
+  "original_failed_check": {
+    "error": "Standard/fast complete replay differs: cable=1.249551457531417e-05, pose=0.0",
+    "status": "failed"
+  },
+  "thresholds_changed": false
+}

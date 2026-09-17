@@ -1,0 +1,12 @@
+{
+  "command_contract": "position_spline_pva_30hz_v1",
+  "development_review": "User requested a new horizontal whip with M5. Prior sideways-tip candidate kept the cable mostly vertical. This offline search limits vehicle height to 1.6 m (launch 1.4 m, target 1.25 m) to require outward cable extension; retains 15-degree +Y strike direction and 2 m/s tip speed gain. Other limits and M5 unchanged; no flight activation.",
+  "evidence": "simulation only",
+  "method": "mppi",
+  "model_source": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M5-20260915\\candidate\\model.json",
+  "model_source_sha256": "f2a7c541d3f8dabf767960caef6d77622fe742997235753fb2046d7eac5091b2",
+  "name": "M5 horizontal sweep - limited climb",
+  "source_checkpoint": null,
+  "source_checkpoint_sha256": null,
+  "success_criterion": "targeted_fold_strike_v1"
+}

@@ -1,0 +1,22 @@
+{
+  "current_flight": {
+    "csv": "M1_MPPI_2cm_brake_1p3s/fullstate_30hz.csv",
+    "csv_sha256": "96d45cc4d1ebcceaeee9c67fb65ff74288a6368567df05d43a7b8f0c3ea2e468",
+    "flight_take": "M1_MPPI_2cm_brake_1p3s/flight_take/M1",
+    "model_id": "M1",
+    "model_job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M1-20260915-probe-refined",
+    "physical_flight_pending": true,
+    "recorded_takes": 0,
+    "rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M1-MPPI-2cm-brake-1p3s",
+    "selected_at": "2026-09-15T02:21:39.129570+00:00"
+  },
+  "replay": {
+    "camera": "Side XZ",
+    "note": "M1 fitted from all 11 M0 whips; corrected command follows the same M0 reference. Ready for the next collection.",
+    "rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M1-MPPI-2cm-brake-1p3s",
+    "schema": "saved_replay_selection_v1",
+    "selected": true,
+    "speed": "0.5×",
+    "time_s": 0.0
+  }
+}

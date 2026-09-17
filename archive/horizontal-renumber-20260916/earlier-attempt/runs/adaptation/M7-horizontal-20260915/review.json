@@ -1,0 +1,161 @@
+{
+  "comparison": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\archive\\horizontal-renumber-20260916\\intermediate\\runs\\adaptation\\M6-horizontal-collection-20260915\\saved_forecast_inputs",
+  "operator_conditions": {
+    "no_aborted_whips": true,
+    "no_aborted_whips_basis": "All twelve retained whips have complete command sequences verified against the frozen H6 export.",
+    "no_contact_or_intervention_during_whip": true,
+    "source": "user_confirmation",
+    "standing_instruction": "Treat supplied flight recordings as free of contact and manual intervention unless the user reports otherwise. Continue checking recorded command completeness and data quality.",
+    "statement": "I will never have contact or intervention, just do it",
+    "unchanged_setup": true,
+    "unchanged_setup_basis": "Continuation of the uploaded H6 horizontal recordings under the existing H6 protocol; no setup change reported and user instructed proceeding after the flight-condition question."
+  },
+  "report_sha256": "283ceb3fb34c694a153c6187ca083b17cf695646dce9a84880d8d98e1b5f80a0",
+  "schema": "prospective_whip_adaptation_v1",
+  "takes": {
+    "H6_side_001_whip_001": {
+      "accepted": true,
+      "cable_only_update_justification": "",
+      "clock_reviewed": true,
+      "free_motion_end_s": 1.5333333333333334,
+      "no_intervention": true,
+      "notes": "Full event-log command sequence verified. Clock offset estimated from measured streams; clock_verified=false. Native missing-marker masks retained. No target-based alignment or spatial normalization.",
+      "physical_contact": "none",
+      "reviewed_by": "User flight-condition confirmation plus recorded-command and measured-stream checks",
+      "role": "adaptation",
+      "same_controller_and_hardware": true
+    },
+    "H6_side_001_whip_002": {
+      "accepted": true,
+      "cable_only_update_justification": "",
+      "clock_reviewed": true,
+      "free_motion_end_s": 1.5333333333333334,
+      "no_intervention": true,
+      "notes": "Full event-log command sequence verified. Clock offset estimated from measured streams; clock_verified=false. Native missing-marker masks retained. No target-based alignment or spatial normalization.",
+      "physical_contact": "none",
+      "reviewed_by": "User flight-condition confirmation plus recorded-command and measured-stream checks",
+      "role": "adaptation",
+      "same_controller_and_hardware": true
+    },
+    "H6_side_001_whip_003": {
+      "accepted": true,
+      "cable_only_update_justification": "",
+      "clock_reviewed": true,
+      "free_motion_end_s": 1.5333333333333334,
+      "no_intervention": true,
+      "notes": "Full event-log command sequence verified. Clock offset estimated from measured streams; clock_verified=false. Native missing-marker masks retained. No target-based alignment or spatial normalization.",
+      "physical_contact": "none",
+      "reviewed_by": "User flight-condition confirmation plus recorded-command and measured-stream checks",
+      "role": "adaptation",
+      "same_controller_and_hardware": true
+    },
+    "H6_side_001_whip_004": {
+      "accepted": true,
+      "cable_only_update_justification": "",
+      "clock_reviewed": true,
+      "free_motion_end_s": 1.5333333333333334,
+      "no_intervention": true,
+      "notes": "Full event-log command sequence verified. Clock offset estimated from measured streams; clock_verified=false. Native missing-marker masks retained. No target-based alignment or spatial normalization.",
+      "physical_contact": "none",
+      "reviewed_by": "User flight-condition confirmation plus recorded-command and measured-stream checks",
+      "role": "adaptation",
+      "same_controller_and_hardware": true
+    },
+    "H6_side_002_whip_001": {
+      "accepted": true,
+      "cable_only_update_justification": "",
+      "clock_reviewed": true,
+      "free_motion_end_s": 1.5333333333333334,
+      "no_intervention": true,
+      "notes": "Full event-log command sequence verified. Clock offset estimated from measured streams; clock_verified=false. Native missing-marker masks retained. No target-based alignment or spatial normalization.",
+      "physical_contact": "none",
+      "reviewed_by": "User flight-condition confirmation plus recorded-command and measured-stream checks",
+      "role": "adaptation",
+      "same_controller_and_hardware": true
+    },
+    "H6_side_002_whip_002": {
+      "accepted": true,
+      "cable_only_update_justification": "",
+      "clock_reviewed": true,
+      "free_motion_end_s": 1.5333333333333334,
+      "no_intervention": true,
+      "notes": "Full event-log command sequence verified. Clock offset estimated from measured streams; clock_verified=false. Native missing-marker masks retained. No target-based alignment or spatial normalization.",
+      "physical_contact": "none",
+      "reviewed_by": "User flight-condition confirmation plus recorded-command and measured-stream checks",
+      "role": "adaptation",
+      "same_controller_and_hardware": true
+    },
+    "H6_side_002_whip_003": {
+      "accepted": true,
+      "cable_only_update_justification": "",
+      "clock_reviewed": true,
+      "free_motion_end_s": 1.5333333333333334,
+      "no_intervention": true,
+      "notes": "Full event-log command sequence verified. Clock offset estimated from measured streams; clock_verified=false. Native missing-marker masks retained. No target-based alignment or spatial normalization.",
+      "physical_contact": "none",
+      "reviewed_by": "User flight-condition confirmation plus recorded-command and measured-stream checks",
+      "role": "adaptation",
+      "same_controller_and_hardware": true
+    },
+    "H6_side_002_whip_004": {
+      "accepted": true,
+      "cable_only_update_justification": "",
+      "clock_reviewed": true,
+      "free_motion_end_s": 1.5333333333333334,
+      "no_intervention": true,
+      "notes": "Full event-log command sequence verified. Clock offset estimated from measured streams; clock_verified=false. Native missing-marker masks retained. No target-based alignment or spatial normalization.",
+      "physical_contact": "none",
+      "reviewed_by": "User flight-condition confirmation plus recorded-command and measured-stream checks",
+      "role": "adaptation",
+      "same_controller_and_hardware": true
+    },
+    "H6_side_003_whip_001": {
+      "accepted": true,
+      "cable_only_update_justification": "",
+      "clock_reviewed": true,
+      "free_motion_end_s": 1.5333333333333334,
+      "no_intervention": true,
+      "notes": "Full event-log command sequence verified. Clock offset estimated from measured streams; clock_verified=false. Native missing-marker masks retained. No target-based alignment or spatial normalization.",
+      "physical_contact": "none",
+      "reviewed_by": "User flight-condition confirmation plus recorded-command and measured-stream checks",
+      "role": "adaptation",
+      "same_controller_and_hardware": true
+    },
+    "H6_side_003_whip_002": {
+      "accepted": true,
+      "cable_only_update_justification": "",
+      "clock_reviewed": true,
+      "free_motion_end_s": 1.5333333333333334,
+      "no_intervention": true,
+      "notes": "Full event-log command sequence verified. Clock offset estimated from measured streams; clock_verified=false. Native missing-marker masks retained. No target-based alignment or spatial normalization.",
+      "physical_contact": "none",
+      "reviewed_by": "User flight-condition confirmation plus recorded-command and measured-stream checks",
+      "role": "adaptation",
+      "same_controller_and_hardware": true
+    },
+    "H6_side_003_whip_003": {
+      "accepted": true,
+      "cable_only_update_justification": "",
+      "clock_reviewed": true,
+      "free_motion_end_s": 1.5333333333333334,
+      "no_intervention": true,
+      "notes": "Full event-log command sequence verified. Clock offset estimated from measured streams; clock_verified=false. Native missing-marker masks retained. No target-based alignment or spatial normalization.",
+      "physical_contact": "none",
+      "reviewed_by": "User flight-condition confirmation plus recorded-command and measured-stream checks",
+      "role": "adaptation",
+      "same_controller_and_hardware": true
+    },
+    "H6_side_003_whip_004": {
+      "accepted": true,
+      "cable_only_update_justification": "",
+      "clock_reviewed": true,
+      "free_motion_end_s": 1.5333333333333334,
+      "no_intervention": true,
+      "notes": "Full event-log command sequence verified. Clock offset estimated from measured streams; clock_verified=false. Native missing-marker masks retained. No target-based alignment or spatial normalization.",
+      "physical_contact": "none",
+      "reviewed_by": "User flight-condition confirmation plus recorded-command and measured-stream checks",
+      "role": "adaptation",
+      "same_controller_and_hardware": true
+    }
+  }
+}

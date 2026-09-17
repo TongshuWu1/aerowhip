@@ -1,0 +1,114 @@
+{
+  "attitude_bounds": [
+    [
+      0.1,
+      0.05,
+      0.02
+    ],
+    [
+      3.0,
+      3.0,
+      0.3
+    ]
+  ],
+  "cable_bounds": [
+    [
+      1e-10,
+      1e-08,
+      0.0001
+    ],
+    [
+      0.0001,
+      0.001,
+      2.0
+    ]
+  ],
+  "cable_history_s": 1.0,
+  "cable_log_difference_step": 1e-08,
+  "cable_residual": {
+    "acceleration_limit": 0.5,
+    "hidden": 32,
+    "mode": "acceleration"
+  },
+  "cable_scale_m": 0.02,
+  "cable_tip_weight": 0.0,
+  "cable_velocity_weight_tau_s": 0.02,
+  "candidate_id": "M7",
+  "collection_recording_groups": {
+    "M6_side_001_whip_001": "M6_horizontal_v1_001",
+    "M6_side_001_whip_002": "M6_horizontal_v1_001",
+    "M6_side_001_whip_003": "M6_horizontal_v1_001",
+    "M6_side_001_whip_004": "M6_horizontal_v1_001",
+    "M6_side_002_whip_001": "M6_horizontal_v1_002",
+    "M6_side_002_whip_002": "M6_horizontal_v1_002",
+    "M6_side_002_whip_003": "M6_horizontal_v1_002",
+    "M6_side_002_whip_004": "M6_horizontal_v1_002"
+  },
+  "delay_candidates_s": [
+    0.0,
+    0.01,
+    0.02,
+    0.03,
+    0.04,
+    0.06,
+    0.08,
+    0.1,
+    0.12
+  ],
+  "drone_gain_bounds": [
+    [
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.01,
+      0.01
+    ],
+    [
+      80.0,
+      80.0,
+      20.0,
+      20.0,
+      3.0,
+      3.0
+    ]
+  ],
+  "evaluate_before_training": true,
+  "interpretation": "Effective loaded PVA response and cable dynamics; no identified motor ceiling or explicit cable reaction added",
+  "naming": "Parent M6 is the former M7. This fit produces new M7. Historical generation index preserves the actual update count.",
+  "nominal_prior": 0.03,
+  "nominal_stopping": {
+    "ceiling": 80,
+    "minimum": 6,
+    "patience": 6,
+    "relative": 0.01
+  },
+  "orientation_scale_rad": 0.05,
+  "parent_id": "M6",
+  "position_scale_m": 0.02,
+  "promotion": false,
+  "replay_weight": 0.5,
+  "residual_change": 0.01,
+  "residual_magnitude": 0.01,
+  "residual_stopping": {
+    "ceiling": null,
+    "check_every": 5,
+    "minimum": 40,
+    "patience": 6,
+    "relative": 0.01
+  },
+  "runner": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\tools\\refit_horizontal_latest.py",
+  "runner_sha256": "b3d1b73f78651139f6a3517a7fcd81bcfc719935c20230fc164afbe71d0ba070",
+  "schema": "whip_full_model_v1",
+  "seed": 20260910,
+  "stages": [
+    "drone_nominal",
+    "drone_residual",
+    "attitude_refinement",
+    "cable_physics",
+    "cable_residual",
+    "combined_validation"
+  ],
+  "stopping_definition": "Stop after six consecutive checks without improvement greater than 1% from the last meaningful-progress anchor; retain the absolute best weights.",
+  "training": "Whole adaptation takes and all eligible preliminary training windows; no validation gradients or selection"
+}

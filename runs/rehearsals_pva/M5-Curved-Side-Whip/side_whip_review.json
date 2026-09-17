@@ -1,0 +1,53 @@
+{
+  "aligned_duration_s": 0.08000000000000007,
+  "aligned_interval_s": [
+    1.2133333333333334,
+    1.2933333333333334
+  ],
+  "attachment_forward_speed_m_s": -1.2788538542106487,
+  "csv_sha256": "ed879290c37b77fb21ad89a1e278c2dc99a22725a5ca16bb06a948262f6e1d69",
+  "evidence": "M5 simulation only; release location chosen after search, no accuracy or impact-energy measurement",
+  "full_cable_xyz_max_m": [
+    0.6167070811681297,
+    1.4623197880041294,
+    2.5395184400520674
+  ],
+  "full_cable_xyz_min_m": [
+    -1.3682269380615268,
+    -2.627246761130966,
+    0.9925000000000002
+  ],
+  "full_drone_xyz_max_m": [
+    0.08970567701910005,
+    0.9114518452585431,
+    2.3437481184131514
+  ],
+  "full_drone_xyz_min_m": [
+    -0.9794182846734703,
+    -2.290423406974003,
+    1.9790748273776937
+  ],
+  "full_recovery_checked": true,
+  "initial_hover_m": [
+    0.0,
+    0.0,
+    2.0
+  ],
+  "loading_time_s": 0.7133333333333334,
+  "loading_to_release_turn_deg": 45.0690613820839,
+  "release_point_m": [
+    -1.3611358907965303,
+    1.1486852395191898,
+    1.5082286616276737
+  ],
+  "release_time_s": 1.2933333333333334,
+  "tip_elevation_deg": 7.1947127606759205,
+  "tip_horizontal_speed_m_s": 5.8916984860549695,
+  "tip_speed_m_s": 5.938456330529008,
+  "total_command_duration_s": 9.566666666666666,
+  "velocity_peak_times_s": [
+    0.9133333333333334,
+    1.1066666666666667,
+    1.2666666666666666
+  ]
+}

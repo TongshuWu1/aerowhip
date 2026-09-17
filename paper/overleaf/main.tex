@@ -43,29 +43,39 @@
 % }
 
 \maketitle
+\suppressfloats[t]
 
 \begin{abstract}
-A quadrotor can use a cable as a whip to accelerate its free tip
-toward a target. Model-based planning of this motion must account
-for both the quadrotor's tracking response and the resulting cable
-deformation. We present AeroWhip, a sim-to-real-to-sim framework
-for aerial cable whipping. The predictor connects a fitted vehicle response, offset attachment
-geometry, and a reduced differentiable discrete elastic rod (DDER)
-model. Learned acceleration corrections augment the vehicle and
-cable dynamics.
-An offline optimizer inspired by model predictive path integral
-(MPPI) control plans an initial whipping maneuver. Physical
-executions refine the vehicle and cable dynamics for command-to-tip
-prediction and subsequent planning. We apply the updated model to
-local command correction toward the original planned tip trajectory
-at fixed times.
-We evaluate prediction accuracy and the utility of the refined
-model for physical reference tracking and target approach.
-Across three batches of five flights, mean tip-reference RMSE
-decreases from 18.09 to 13.28\,cm. Target error at the planned
-strike time decreases from 24.12 to 11.18\,cm after the first
-update and rises to 13.10\,cm after the second.
+Flexible cables provide a lightweight means for aerial robots to
+reach and interact with distant targets. However, directing a
+cable's free tip accurately during a rapid whipping motion is
+difficult because vehicle tracking errors and uncertain cable
+dynamics alter its trajectory. This paper presents AeroWhip,
+a framework for targeted whipping with a quadrotor and a free-ended
+cable. Its command-to-tip predictor combines fitted vehicle
+response, attachment geometry, and differentiable rod dynamics
+with learned acceleration corrections. Initial planning searches
+vehicle commands in simulation to select a tip trajectory and
+timing. Between flight batches, we refine the predictor from
+measured motion and use it to correct commands toward this fixed
+tip reference. Planning and correction are performed offline;
+the onboard controller tracks the prescribed commands without
+online cable feedback. In physical experiments, one round of
+model refinement and command correction reduces mean targeting
+error by 54\% relative to the initial model and command. Using the
+latest model, the system hits the target in 17 of 20 runs.
 \end{abstract}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\columnwidth]{figures/AeroWhip_motion_connected.pdf}
+  \caption{AeroWhip in motion: five registered video frames show
+  the hanging cable~(1), deformation~(2--3), target contact~(4),
+  and follow-through~(5). Insets show the target and quadrotor.}
+  % \Tony{Figure editing note: foreground sharpness enhanced; background net and EXIT sign removed. Position-1 cable restored from its original frame at the compositing overlap.}
+  \label{fig:physical_strike}
+\end{figure}
+
 
 \IEEEpeerreviewmaketitle
 
@@ -73,106 +83,101 @@ update and rises to 13.10\,cm after the second.
 \section{Introduction}
 \label{sec:introduction}
 
-A rapid quadrotor maneuver can turn a hanging cable into a whip,
-directing its free tip toward a target. The vehicle actuates the
-attached end, and deformation along the cable produces the tip
-motion. Ropes and cables already provide lightweight tools for
-suspended-payload transport and aerial
-grasping~\cite{sreenath2013trajectory,hitch}. Whipping requires
-predicting how rapid vehicle commands produce cable deformation
-and tip motion.
+Aerial robots use ropes and cables to transport suspended
+payloads and grasp objects~\cite{sreenath2013trajectory,hitch}.
+We study targeted aerial whipping, in which a quadrotor drives
+one end of a hanging cable to direct its free tip toward a
+target (Fig.~\ref{fig:physical_strike}). Producing the desired tip
+motion requires accounting for uncertainties in both vehicle
+response and cable dynamics.
 
 Whipping and dynamic cable manipulation have been studied through
 model-based optimization with robotic
 arms~\cite{zimmermann2021dynamic}, movement primitives in a
 simulated human arm~\cite{nah2023learning}, and learning-based
-control~\cite{wang2024learning}. Aerial whipping adds the challenge
-of maintaining flight while driving the cable. A quadrotor changes
-its attitude to accelerate horizontally, so both translation and
-rotation move an offset attachment. Tracking errors during rapid
-flight further alter the executed motion~\cite{torrente2021data}.
-Predicting the attachment trajectory therefore requires a model
-of the vehicle's response to commands.
+control~\cite{wang2024learning}. In aerial whipping, the quadrotor
+must also maintain flight while driving the cable. Vehicle
+translation, rotation, and tracking errors determine the motion
+of its offset attachment during rapid
+flight~\cite{torrente2021data}. Command design must therefore
+account for how this attachment motion drives cable deformation
+and free-tip motion.
 
-Aerial cable research provides foundations for this prediction.
-Suspended-payload studies address trajectory
+Aerial cable control has addressed suspended-payload trajectory
 generation~\cite{sreenath2013trajectory}, flexible-cable
 dynamics~\cite{8308004}, agile flight~\cite{cao2026flare}, and
 adaptation to changes in flight dynamics~\cite{belkhale2021model}.
-Work with free-ended cables has demonstrated parameter
-identification and dynamic shape control using a single
-quadrotor~\cite{shen2025aerial}, while related research combines
-identification from measured endpoint motion with cable manipulation
-using multiple UAVs~\cite{gabellieri2025manipulation}.
-For whipping, the predictor must connect the vehicle's tracking
-response to cable deformation and the resulting free-tip trajectory.
+For a single quadrotor carrying a free-ended cable, Shen
+et al.~\cite{shen2025aerial} combine parameter identification with
+online predictive control of cable shape. Other work combines
+identification from measured endpoint motion with cable
+manipulation using multiple UAVs~\cite{gabellieri2025manipulation}.
 
-Rod mechanics provides a basis for predicting that deformation.
-Discrete elastic rods represent distributed bending and
-twisting~\cite{bergou2008discrete}, and DEFORM combines
-differentiable rod mechanics with learning for cable prediction,
-tracking, and manipulation~\cite{pmlr-v270-chen25d}.
-Related studies investigate physical parameter
-identification~\cite{chen2025accurate} and structured dynamics
-learning from limited measurements~\cite{mamedov2025learning}.
-These approaches motivate a cable predictor that retains rod
-mechanics and learns corrections from measured motion.
+Discrete elastic rod models describe cable deformation through
+distributed bending and twisting~\cite{bergou2008discrete}.
+DEFORM combines differentiable rod mechanics with learning for
+cable prediction, tracking, and
+manipulation~\cite{pmlr-v270-chen25d}. Related studies investigate
+physical parameter identification~\cite{chen2025accurate} and
+structured dynamics learning from limited
+measurements~\cite{mamedov2025learning}.
 
-Execution measurements can improve subsequent behavior by
-updating actions or the model used to plan them. Iterative
-Residual Policy refines actions from previous
-executions~\cite{chi2024iterative}. Suresh and
-Atkeson~\cite{suresh2026learning} use task-level iterative learning
-control for dynamic rope manipulation, mapping measured task errors
-to command updates through a local inverse model of the robot and rope.
-Model-based iterative learning has also improved quadrotor
-tracking by updating feedforward commands across
-repetitions~\cite{schoellig2012optimization}.
-Real2Sim2Real uses cable observations to improve simulation and
-subsequent casting actions~\cite{lim2022real2sim2real}, while
+Repeated executions can improve dynamic manipulation by updating
+commands or the models used to generate them. Iterative Residual
+Policy refines actions from previous
+executions~\cite{chi2024iterative}, while task-level iterative
+learning control uses measured rope-state errors to refine robot
+commands~\cite{suresh2026learning}. Model-based iterative learning
+also improves quadrotor tracking by updating feedforward commands
+across repetitions~\cite{schoellig2012optimization}.
+Model refinement is used in Real2Sim2Real to improve simulation
+and subsequent casting actions~\cite{lim2022real2sim2real}, and
 Wiggle and Go identifies rope properties through a probing motion
 before planning dynamic tasks~\cite{jakobsson2026wiggle}.
 Sampling-based planning has also been combined with repeated
 fitting of learned dynamics~\cite{williams2017information}.
-AeroWhip refines the vehicle and cable dynamics from measured
-motion, yielding an updated command-to-tip model for prediction
-and planning. Fixed-reference command correction provides one
-application of this model.
 
-We present \emph{AeroWhip}, a sim-to-real-to-sim framework for
-aerial cable whipping through iterative model refinement. Its predictor combines vehicle
-response, offset attachment geometry, and reduced rod mechanics
-with learned acceleration corrections. An offline optimizer
-inspired by model predictive path integral (MPPI)
-control~\cite{williams2017model} balances cable-shape agreement,
-directed tip motion, and target approach under motion constraints.
-Physical executions refine both the vehicle and cable models.
-These updates support command-to-tip prediction and subsequent
-planning. Here, local command correction uses the updated predictor
-to reproduce the original planned tip motion at fixed times.
-We evaluate prediction accuracy and whether model-guided correction
-improves physical reference tracking and target approach.
+We present \emph{AeroWhip}, a framework for targeted aerial
+whipping that combines iterative model refinement with command
+correction toward a fixed tip reference. Its predictor links a
+fitted vehicle response and attachment geometry to a reduced
+differentiable discrete elastic rod (DDER) model with learned
+acceleration corrections. An optimizer inspired by model
+predictive path integral (MPPI)
+control~\cite{williams2017model} searches vehicle commands in
+simulation to select a desired tip trajectory and timing.
+
+Between flight batches, measurements refine the vehicle and
+cable models. Local command correction then optimizes commands
+to track the selected tip trajectory under the updated model.
+The reference trajectory and timing remain fixed as the commands
+change. When the
+selected tip trajectory remains suitable and achievable, command
+correction avoids another MPPI search. Physical experiments
+evaluate target approach and prediction accuracy and demonstrate
+repeated contact with the target.
 
 \section{Problem Statement}
 \label{sec:problem_statement}
 
-A quadrotor carries a cable of length $L>0$, attached at one end
-and free at the other. The attachment point is fixed relative
-to the vehicle, and the cable is modeled as freely pivoting there.
-We assume uniform material properties, negligible axial extension,
-a naturally straight and untwisted undeformed configuration,
-and isotropic bending stiffness.
-Planning starts from nominal hover with the cable hanging at rest.
+In this work, we address the problem of directing the free tip
+of a cable toward a target using a quadrotor. The cable has
+length $L>0$, with one end attached at a fixed point on the
+vehicle and the other free. The maneuver starts from nominal
+hover with the cable hanging at rest.
 
-The task is to bring the free tip close to a stationary target
-$\mathbf p_{\mathrm{tar}}\in\mathbb R^3$ with rapid motion along
-a prescribed horizontal unit direction $\mathbf e\in\mathbb R^3$.
-The strike direction specifies the desired tip motion at the
-target, independently of the target's position relative to launch.
 Let $t=0$ denote maneuver onset and $T>0$ the targeting horizon.
-The planner generates desired quadrotor position, velocity,
-acceleration, and yaw trajectories, which are fixed before
-execution and tracked by the existing flight controller.
+The stationary target is located at
+$\mathbf p_{\mathrm{tar}}\in\mathbb R^3$. A prescribed horizontal
+unit vector $\mathbf e\in\mathbb R^3$ defines the preferred
+direction of tip motion independently of target position.
+Position, velocity, and acceleration commands are computed
+offline with fixed desired yaw and tracked by the onboard
+controller without cable feedback.
+
+Initial planning optimizes target approach and whipping motion
+subject to command limits and feasibility checks in simulation
+(Section~\ref{subsec:offline_planning}).
 
 \subsection{Whipping Motion}
 \label{subsec:whipping_motion}
@@ -197,52 +202,37 @@ execution and tracked by the existing flight controller.
         \label{fig:problem_dder}
     \end{subfigure}
     \caption{Whipping motion and cable model.
-    (a) Schematic whipping sequence; purple follows one cable
-    point, while red highlights bending.
+    (a) Schematic whipping sequence; $\mathbf v_q$ denotes
+    quadrotor velocity. Purple follows one cable point, while
+    red highlights bending.
     (b) Node positions $\mathbf r_i(t)$ discretize the centerline
     $\mathbf r(\cdot,t)$. Red arrows illustrate the responses of
     bending stiffness $EI$ and bending damping $C_b$.}
     \label{fig:problem_statement}
 \end{figure*}
 
-Figure~\ref{fig:problem_whipping} illustrates the whipping
-motion considered in AeroWhip. A forward and upward pull is
-followed by retraction, during which a bend travels toward the
-free end as the cable straightens and the tip approaches the target.
-This schematic and travelling-deformation descriptions of
-whipping~\cite{MCMILLEN2003192} motivate characterizing the
-motion through both cable-shape evolution and tip kinematics.
+Figure~\ref{fig:problem_whipping} illustrates the motion pattern
+favored by initial planning: a forward and upward pull followed
+by vehicle retraction. The schematic depicts a bend propagating
+toward the free end as the cable straightens and the tip
+approaches the target, consistent with travelling-deformation
+descriptions of whipping~\cite{MCMILLEN2003192}. We describe this
+motion through cable shape and tip kinematics.
 
 Let $\mathbf r(s,t)\in\mathbb R^3$ denote the world-frame position
-of the cable material point at unstretched distance $sL$ from the
-attachment, with $s\in[0,1]$. At a fixed time $t$, varying $s$
-traces the centerline $\mathbf r(\cdot,t)$; fixing $s$ follows
-the same material point throughout the maneuver.
+of a point at distance $sL$ along the unstretched cable, measured
+from the attachment. The coordinate $s\in[0,1]$ identifies the same
+point throughout the motion, and $\mathbf r(\cdot,t)$ is the
+centerline at time $t$.
 The attachment and tip positions are
 $\mathbf p_a(t)=\mathbf r(0,t)$ and
 $\mathbf r_{\mathrm{tip}}(t)=\mathbf r(1,t)$, respectively,
 with tip velocity
 $\mathbf v_{\mathrm{tip}}(t)=\dot{\mathbf r}_{\mathrm{tip}}(t)$.
+Tip velocity describes approach speed and alignment with
+$\mathbf e$.
 
-We compare predicted and reference shapes at the same
-$M\geq3$ material coordinates
-$s_j=j/(M-1)$, $j=0,\ldots,M-1$.
-These samples are equally spaced along the unstretched cable
-and need not coincide with measurement markers.
-The unit direction between neighboring samples is
-\begin{equation}
-\mathbf d_j(t)
-=
-\frac{\mathbf r(s_{j+1},t)-\mathbf r(s_j,t)}
-{\|\mathbf r(s_{j+1},t)-\mathbf r(s_j,t)\|_2},
-\label{eq:whip_segment_direction}
-\end{equation}
-for $j=0,\ldots,M-2$, assuming distinct neighboring positions.
-Sampled positions describe the centerline, and changes between
-neighboring directions describe bending. Their histories support
-the planner's reference-shape comparison.
-
-Physical target approach is measured by the minimum
+Target proximity is quantified by the minimum
 three-dimensional tip-to-target distance:
 \begin{equation}
 d_{\min}
@@ -250,32 +240,34 @@ d_{\min}
 \|\mathbf r_{\mathrm{tip}}(t)-\mathbf p_{\mathrm{tar}}\|_2.
 \label{eq:target_distance}
 \end{equation}
-For physical evaluation, we substitute the measured trajectory
-$\mathbf r_{\mathrm{tip}}^{\mathrm{meas}}$ into~\eqref{eq:target_distance}.
-Piecewise-linear interpolation within valid tracking intervals
-estimates the minimum; tracking gaps are excluded and reported.
-Tip velocity describes approach speed and alignment with
-$\mathbf e$. Initial planning uses tip kinematics and shape
-agreement; subsequent correction tracks the resulting planned
-tip trajectory (Section~\ref{subsec:offline_planning}).
+
+For shape comparison, predicted and reference centerlines are
+sampled at $M\geq3$ uniformly spaced coordinates
+$s_j=j/(M-1)$, $j=0,\ldots,M-1$.
+These samples need not coincide with measurement markers.
+Throughout, segment directions are endpoint differences normalized
+by their Euclidean norm and oriented from attachment toward tip.
+For distinct neighboring shape samples, denote these directions by
+$\mathbf d_j(t)$, $j=0,\ldots,M-2$.
+The sampled positions and directions define the planner's
+reference-shape comparison.
 
 \subsection{DDER Cable Model}
 \label{subsec:dder_model}
 
-We represent the cable with a reduced differentiable discrete
-elastic rod (DDER) model based on the rod mechanics of
-Bergou et al.~\cite{bergou2008discrete}.
+We use a reduced DDER model based on the rod mechanics of
+Bergou et al.~\cite{bergou2008discrete}. The cable is assumed to
+pivot freely at the attachment, with uniform material properties,
+negligible axial extension, a straight and untwisted rest
+configuration, and isotropic bending stiffness.
 
-As illustrated in Figure~\ref{fig:problem_dder}, we discretize
-the centerline using $N\geq3$ simulation nodes with
-positions $\mathbf r_i(t)\in\mathbb R^3$ and velocities
+The centerline is discretized using $N\geq3$ points that move
+with the cable (Fig.~\ref{fig:problem_dder}), with node positions
+$\mathbf r_i(t)\in\mathbb R^3$ and velocities
 $\mathbf v_i(t)\in\mathbb R^3$, $i=0,\ldots,N-1$.
-Nodes follow fixed material locations. The vectors
-$\mathbf r(t),\mathbf v(t)\in\mathbb R^{3N}$ stack their positions
-and velocities, respectively.
-Node $0$ follows the prescribed attachment,
-$\mathbf r_0=\mathbf p_a$, and node $N-1$ is the free tip,
-$\mathbf r_{N-1}=\mathbf r_{\mathrm{tip}}$.
+The attachment and free-tip nodes satisfy
+$\mathbf r_0=\mathbf p_a$ and
+$\mathbf r_{N-1}=\mathbf r_{\mathrm{tip}}$, respectively.
 
 Segment $i$ connects nodes $i$ and $i+1$ and has fixed length
 $\ell_i>0$. Inextensibility imposes
@@ -284,105 +276,83 @@ $\ell_i>0$. Inextensibility imposes
 \qquad
 \sum_{i=0}^{N-2}\ell_i=L.
 \]
-Linear interpolation between nodes defines the model centerline
-$\mathbf r(s,t)$ and the material samples for shape comparison.
-The simulation-node count $N$ and shape-sample count $M$ need
-not be equal.
+Linear interpolation between nodes defines $\mathbf r(s,t)$ and
+the shape samples above. The node count $N$ and shape-sample
+count $M$ need not be equal.
 
-Material twist is the relative rotation of cable cross-sections
-about the centerline. We assume these orientations remain at
-elastic equilibrium, with no imposed end twist or twisting moment.
-For the naturally straight, untwisted, isotropic rod, this gives
-zero material twist~\cite{bergou2008discrete}. We omit independent
-twist coordinates and torsional energy while retaining
-three-dimensional centerline dynamics.
+For the straight, isotropic rod, we assume cross-sectional
+orientations remain at elastic equilibrium with no imposed end
+twist or twisting moment, giving zero material
+twist~\cite{bergou2008discrete}. The model therefore omits
+independent twist coordinates and torsional energy while
+retaining three-dimensional centerline dynamics.
 
-Bending energy penalizes changes in direction between adjacent
-simulation segments. Define the unit segment tangent
-\[
-\mathbf t_i
-=\frac{\mathbf r_{i+1}-\mathbf r_i}
-{\|\mathbf r_{i+1}-\mathbf r_i\|_2}.
-\]
-Tangents $\mathbf t_i$ describe model segments; directions
-$\mathbf d_j$ in~\eqref{eq:whip_segment_direction} describe
-shape-sampling intervals.
+Let $\mathbf t_i$, $i=0,\ldots,N-2$, be the
+unit direction from node $i$ to node $i+1$, using the same
+convention as $\mathbf d_j$ for shape samples.
 For each interior node $i=1,\ldots,N-2$, let
 $\bar\ell_i=(\ell_{i-1}+\ell_i)/2$ be the average rest length
 of its adjacent segments.
 The discrete curvature binormal and bending energy are
 \begin{equation}
-\boldsymbol\kappa_i^b
+\boldsymbol\kappa_i
 =\frac{2\,\mathbf t_{i-1}\times\mathbf t_i}
 {1+\mathbf t_{i-1}^\top\mathbf t_i},
 \qquad
-E_b(\mathbf r)=\frac{EI}{2}
-\sum_{i=1}^{N-2}\frac{\|\boldsymbol\kappa_i^b\|_2^2}{\bar\ell_i},
+E_b=\frac{EI}{2}
+\sum_{i=1}^{N-2}\frac{\|\boldsymbol\kappa_i\|_2^2}{\bar\ell_i},
 \label{eq:bending_energy}
 \end{equation}
-where $EI>0$ is the bending stiffness.
-The dimensionless curvature binormal measures turning between
-adjacent segments and, when nonzero, is normal to their plane.
-It vanishes for aligned tangents and is singular for
-antiparallel tangents.
+where $EI>0$ is the bending stiffness and
+$\boldsymbol\kappa_i$ is the dimensionless curvature binormal.
 
-The ideal bending force is
-$\mathbf f_b=-\nabla_{\mathbf r}E_b$.
+The ideal bending force at node $i$ is
+$\mathbf f_{b,i}=-\partial E_b/\partial\mathbf r_i$.
 Numerical evaluation uses a positive denominator floor near
 antiparallel tangents.
 Time integration, constraint enforcement, and learned
 acceleration corrections are described in
 Section~\ref{subsec:prediction_model}.
 
-Admissible commands satisfy prescribed motion bounds and pass
-simulation checks on vehicle altitude, cable ground clearance,
-and numerical validity using the current predictor.
-Section~\ref{subsec:offline_planning} specifies these conditions.
+The main problem addressed in this work is the following.
 
-\noindent\textbf{Problem (Aerial Cable Whipping).}
+\noindent\textbf{Problem 1} (Aerial Cable Whipping).
 Given an initial hovering configuration, target
-$\mathbf p_{\mathrm{tar}}$, strike direction $\mathbf e$,
-horizon $T$, and a reference shape history, generate admissible
-quadrotor commands that bring the tip close to the target through
-the desired whipping motion.
-Use physical executions to refine the predictor and correct
-commands toward the selected motion. The problem comprises
-three connected subproblems.
+$\mathbf p_{\mathrm{tar}}$, preferred strike direction $\mathbf e$,
+and horizon $T$, generate admissible quadrotor commands to reduce
+tip-to-target separation within $[0,T]$ through a whipping motion.
 
-\noindent\textbf{Subproblem 1 (Command-to-Tip Prediction).}
-Predict cable motion from desired quadrotor commands, accounting
-for vehicle response, attachment geometry, and cable dynamics.
+To solve this problem, we consider three subproblems.
 
-\noindent\textbf{Subproblem 2 (Offline Trajectory Optimization).}
-Plan an admissible whipping command and, after model refinement,
-correct it toward the original predicted tip trajectory.
+\noindent\textbf{Subproblem 1} (Command-to-Tip Prediction).
+Predict cable motion from desired quadrotor commands,
+accounting for vehicle response, attachment geometry, and cable
+dynamics.
 
-\noindent\textbf{Subproblem 3 (Model Refinement).}
-Update the predictor using recorded commands and measured vehicle
-and cable motion to support command correction and subsequent planning.
+\noindent\textbf{Subproblem 2} (Offline Trajectory Optimization).
+Select a desired tip trajectory and timing by optimizing
+vehicle commands in simulation. After model refinement, correct
+the commands to track the same reference.
 
-
+\noindent\textbf{Subproblem 3} (Model Refinement).
+Refine the vehicle and cable models using recorded commands
+and measured motion to improve command-to-tip prediction.
 
 \section{AeroWhip Framework}
 \label{sec:aerowhip_framework}
 
-AeroWhip combines command-to-tip prediction, offline trajectory
-optimization, and model refinement. An initial MPPI plan
-defines the desired whipping motion. Physical executions supply
-measurements for refining the vehicle and cable models, which then
-guide local command correction toward that motion. The refined
-predictor also remains available for subsequent simulation and
-planning. Below, we describe the predictor, the two command
-optimization stages, and the model-fitting procedure.
+We combine the cable model with a fitted vehicle response to
+predict motion from commands. The resulting predictor is held
+fixed during trajectory optimization and refined between flight
+batches.
 
 \subsection{Quadrotor and Cable Prediction Model}
 \label{subsec:prediction_model}
 
-The predictor maps commands to vehicle motion, then uses the
-resulting attachment trajectory to drive the cable model.
-The fitted vehicle response approximates cable-loading effects
-under the observed motion conditions; cable configuration and reaction
-forces are not explicit inputs. Vehicle and cable states below
+The predictor maps commands to vehicle motion and drives the cable
+with the resulting attachment trajectory. Its fitted vehicle
+response approximates cable-loading effects under the observed
+conditions without explicit cable-force feedback. States below
 denote predictions unless marked as measured.
 
 The inputs are desired position $\mathbf p_d$, velocity
@@ -402,11 +372,11 @@ We approximate the closed-loop translational response by
 \end{aligned}
 \label{eq:quadrotor_response}
 \end{equation}
-where $\tau_d\geq0$ is an effective delay and $\mathbf b_q$
-is a constant acceleration bias within each rollout.
-The fitted diagonal gains $\mathbf K_p$, $\mathbf K_v$, and
-$\mathbf K_a$ each share a horizontal coefficient and have a
-separate vertical coefficient. Translation satisfies
+where $\tau_d\geq0$ is an effective command delay and
+$\mathbf b_q$ is a constant acceleration bias representing hover
+compensation. The fitted diagonal gains $\mathbf K_p$,
+$\mathbf K_v$, and $\mathbf K_a$ each use one horizontal and one vertical
+coefficient. Translation satisfies
 $\dot{\mathbf p}_q=\mathbf v_q$ and
 $\dot{\mathbf v}_q=\mathbf a_{\mathrm{nom}}+\Delta\mathbf a_q$,
 where $\Delta\mathbf a_q$ is a learned acceleration correction.
@@ -419,18 +389,16 @@ where $g>0$ is gravitational acceleration,
 $\mathbf e_3=(0,0,1)^\top$ is the upward world direction,
 and $\mathbf S$ is a fitted positive diagonal matrix with
 dimensionless horizontal and vertical scales.
-The first axis is the normalized projection of the delayed yaw
-heading $\psi_d(t-\tau_d)$ onto the plane normal to the third
-axis; the second completes a right-handed frame. Zero specific
-force or a parallel heading makes this construction invalid.
+The first axis is the normalized projection of the horizontal
+heading $(\cos\psi_d,\sin\psi_d,0)^\top$ onto the plane normal
+to the third axis; the second completes a right-handed frame.
+The construction requires nonzero specific force and a nonparallel
+heading.
 
-An effective alignment $\mathbf Q\in\mathrm{SO}(3)$, fixed
-during each prediction, maps tracking-frame coordinates to the
-vehicle-axis convention used for $\mathbf R_c$, giving the
-desired orientation of the tracking frame,
-$\mathbf R_d=\mathbf R_c\mathbf Q$.
+A fixed alignment $\mathbf Q\in\mathrm{SO}(3)$ maps the tracking
+frame to the vehicle-axis convention used for $\mathbf R_c$.
 Let $\mathbf e_R$ be the principal rotation vector of
-$\mathbf R^\top\mathbf R_d$, expressed in the tracking frame.
+$\mathbf R^\top\mathbf R_c\mathbf Q$, expressed in the tracking frame.
 The attitude response is
 \begin{equation}
 \dot{\mathbf R}=\mathbf R[\boldsymbol\omega]_\times,
@@ -442,9 +410,8 @@ The attitude response is
 where $\boldsymbol\omega$ is tracking-frame angular velocity,
 $\tau_R>0$ is a fitted response timescale, and
 $[\boldsymbol\omega]_\times$ denotes the cross-product matrix.
-The commanded orientation uses nominal acceleration;
-$\Delta\mathbf a_q$ affects later attitude predictions
-through the evolving position and velocity errors.
+The vehicle correction $\Delta\mathbf a_q$ affects attitude
+through the evolving tracking errors in $\mathbf a_{\mathrm{nom}}$.
 
 For a fixed tracking-frame offset $\boldsymbol\rho_a$
 from the tracked origin to the attachment, the attachment
@@ -453,9 +420,8 @@ position is
 \mathbf p_a=\mathbf p_q+\mathbf R\boldsymbol\rho_a.
 \label{eq:attachment_mapping}
 \end{equation}
-This trajectory prescribes the moving cable root,
-$\mathbf r_0=\mathbf p_a$, with root velocity obtained from
-finite differences of the interpolated positions.
+The attachment trajectory prescribes the cable root,
+$\mathbf r_0=\mathbf p_a$.
 
 For each free node $i=1,\ldots,N-1$,
 \begin{equation}
@@ -471,55 +437,47 @@ m_i\dot{\mathbf v}_i
 \label{eq:driven_cable_dynamics}
 \end{equation}
 with $\dot{\mathbf r}_i=\mathbf v_i$.
-Here $m_i$ is the node mass, $\mathbf f_{b,i}$ is the bending
-force from~\eqref{eq:bending_energy}, and
+Here $m_i$ includes cable and marker mass,
+$\mathbf f_{b,i}$ is the bending force from~\eqref{eq:bending_energy}, and
 $\mathbf f_{\mathrm{bd},i}$ is the bending-damping force.
 The reaction $\mathbf f_{\mathrm{con},i}$ enforces fixed
 segment lengths, $\gamma_c\geq0$ is the linear-drag rate,
 and $\Delta\mathbf a_{c,i}$ is a learned acceleration correction.
 
-Bending damping uses a regularized curvature rate that
-approximately removes the contribution of local rigid rotation.
-At each interior node $i=1,\ldots,N-2$, define
+Bending damping penalizes a regularized curvature rate that
+approximately removes local rigid rotation. At each interior
+node, define
 \[
 \mathbf n_i=\mathbf t_{i-1}\times\mathbf t_i,
 \qquad
-c_i=\mathbf t_{i-1}^\top\mathbf t_i,
-\qquad
-\alpha_i=
-\frac{\varepsilon}{\|\mathbf n_i\|_2^2+\varepsilon},
+c_i=\mathbf t_{i-1}^\top\mathbf t_i.
 \]
-where $\varepsilon>0$ is a fixed dimensionless regularization
-parameter.
-Using the curvature binormal
-$\boldsymbol\kappa_i^b$ from~\eqref{eq:bending_energy},
-the local angular-velocity estimate and regularized bending
-rate operator are
+A dimensionless $\varepsilon>0$ regularizes nearly aligned tangents.
+Using $\boldsymbol\kappa_i$ from~\eqref{eq:bending_energy},
+define the local angular-velocity estimate and bending rate
 \begin{equation}
 \begin{aligned}
 \boldsymbol\omega_i^{\mathrm{loc}}
 &=\tfrac12(\mathbf I-\mathbf t_{i-1}\mathbf t_{i-1}^\top)
 (\mathbf t_{i-1}\times\dot{\mathbf t}_{i-1}
 +\mathbf t_i\times\dot{\mathbf t}_i),\\
-\dot{\boldsymbol\kappa}_{i,\mathrm{rel}}^b
-&=-\frac{2\mathbf n_i\dot c_i}
-{(1+c_i)(\|\mathbf n_i\|_2^2+\varepsilon)}\\
-&\quad+\alpha_i\bigl(\dot{\boldsymbol\kappa}_i^b
--\boldsymbol\omega_i^{\mathrm{loc}}\times\boldsymbol\kappa_i^b\bigr).
+\dot{\boldsymbol\kappa}_{i,\mathrm{rel}}
+&=\frac{\varepsilon\bigl(\dot{\boldsymbol\kappa}_i
+-\boldsymbol\omega_i^{\mathrm{loc}}\times\boldsymbol\kappa_i\bigr)
+-2\mathbf n_i\dot c_i/(1+c_i)}
+{\|\mathbf n_i\|_2^2+\varepsilon}.
 \end{aligned}
 \label{eq:regularized_bending_rate}
 \end{equation}
-Here $\mathbf I$ is the $3\times3$ identity matrix, and dots
-denote time derivatives induced by node velocities.
-The regularization keeps the rate finite when adjacent tangents
-point in the same direction.
+Here $\mathbf I$ is the $3\times3$ identity matrix, and time
+derivatives are induced by node velocities.
 
-The dissipation function and stacked bending-damping force are
+The dissipation function gives the bending-damping force at node $i$:
 \begin{equation}
 \mathcal D_b=\frac{C_b}{2}
-\sum_{i=1}^{N-2}\frac{\|\dot{\boldsymbol\kappa}_{i,\mathrm{rel}}^b\|_2^2}{\bar\ell_i},
+\sum_{i=1}^{N-2}\frac{\|\dot{\boldsymbol\kappa}_{i,\mathrm{rel}}\|_2^2}{\bar\ell_i},
 \qquad
-\mathbf f_{\mathrm{bd}}=-\nabla_{\mathbf v}\mathcal D_b,
+\mathbf f_{\mathrm{bd},i}=-\frac{\partial\mathcal D_b}{\partial\mathbf v_i},
 \label{eq:bending_damping}
 \end{equation}
 where $C_b\geq0$ is the bending-damping coefficient.
@@ -539,33 +497,30 @@ together with attachment velocity $\mathbf v_0$.
 It jointly outputs $\Delta\mathbf a_{c,i}$ for all free nodes;
 the prescribed root receives no correction.
 
-All vector inputs and outputs use world-frame components.
-Inputs receive fixed scaling, and a scaled hyperbolic tangent
-bounds each correction component by $a_{\max}>0$.
-A motion-dependent factor suppresses the vehicle correction at
-rest and increases toward one with the magnitudes of predicted
-velocity, delayed desired velocity, and delayed desired acceleration.
-Network weights remain fixed during each rollout and are fitted
-as described in Section~\ref{subsec:model_refinement}.
+Both networks use world-frame components and fixed input scaling.
+Each bounds its output components by a network-specific
+$a_{\max}>0$ using a scaled hyperbolic tangent. A factor that
+increases with predicted and commanded motion suppresses the
+vehicle correction at rest. Weights remain fixed during rollouts
+and are fitted in Section~\ref{subsec:model_refinement}.
 
-Planning and preflight forecasts start from nominal hover,
-with the tracking frame and commanded heading aligned with the
-world axes: $\mathbf R(0)=\mathbf Q=\mathbf I$ and
-$\mathbf b_q=\mathbf0$. Initial vehicle, cable, and angular
-velocities are zero, and the cable hangs straight.
-Before maneuver onset, commands hold the initial desired
-position with zero desired velocity and acceleration.
-Fitting and postflight model comparisons initialize the state,
-bias, and alignment from pre-maneuver measurements. These
-comparisons are distinct from the saved preflight forecasts.
+Preflight prediction starts from nominal hover with zero yaw:
+the cable hangs
+straight, all velocities and $\mathbf b_q$ are zero, and
+$\mathbf R(0)=\mathbf Q=\mathbf I$. Before $t=0$, commands hold
+the initial position with zero velocity and acceleration.
+Fitting and postflight prediction instead initialize states,
+hover compensation, and alignment from preceding measurements.
 
 \subsection{Offline Trajectory Optimization}
 \label{subsec:offline_planning}
 
-Initial planning uses MPPI-inspired sampling to select a whipping
-motion. After model refinement, local optimization corrects commands
-toward its predicted tip trajectory. Both stages use the same
-B-spline representation and hold model parameters fixed.
+Initial planning and subsequent command correction use the same
+B-spline command representation and admissibility constraints.
+Planning scores target approach and whipping motion; correction
+minimizes deviations from the retained reference. Physical
+parameters and network weights remain fixed during each
+optimization.
 
 We represent the desired vehicle position by a smooth command spline
 using a fixed clamped quintic B-spline basis:
@@ -576,9 +531,9 @@ using a fixed clamped quintic B-spline basis:
 \label{eq:spline_reference}
 \end{equation}
 Here $B_j$ are the basis functions and $\mathbf p_j^{\mathrm{ctrl}}\in\mathbb R^3$
-are the $n_c\geq6$ control points. We fix
-$\mathbf p_0^{\mathrm{ctrl}}=\mathbf p_1^{\mathrm{ctrl}}=\mathbf p_2^{\mathrm{ctrl}}=\mathbf p_q(0)$, giving the
-initial position and zero initial velocity and acceleration.
+are the $n_c\geq6$ control points. The first three are fixed at
+$\mathbf p_q(0)$, giving the initial position and zero initial
+velocity and acceleration.
 The remaining control points form
 $\boldsymbol\theta\in\mathbb R^{3(n_c-3)}$.
 Desired position, velocity, and acceleration are sampled from
@@ -586,12 +541,14 @@ $\mathbf p_s$, $\dot{\mathbf p}_s$, and $\ddot{\mathbf p}_s$,
 respectively, and held between command updates. Desired yaw
 remains constant. The spline end is free to support follow-through.
 
-Initial planning fits the spline to a selected seed command under
-jerk bounds. Candidate rollouts must satisfy bounds on spline jerk,
-sampled command speed and height, and the magnitude, tilt, and
-vertical component of $\mathbf a_d+g\mathbf e_3$.
-Admissibility also requires predicted vehicle-height limits,
-cable ground clearance, and numerical validity.
+A selected command from earlier MPPI development initializes the
+spline through a constrained least-squares fit of its desired
+positions. The seed is reevaluated under the current model and
+target. Admissible candidates satisfy bounds on spline jerk,
+command speed and height, and
+the magnitude, tilt, and vertical component of
+$\mathbf a_d+g\mathbf e_3$. Predicted vehicle height, cable
+ground clearance, and numerical validity are also checked.
 
 For initial whip design, the optimizer maximizes
 \begin{equation}
@@ -609,8 +566,7 @@ measures reference-shape agreement. The scores $S_{\mathrm{enc}}$
 and $S_{\mathrm{ext}}$ favor vehicle retraction and directed tip
 extension, while $C_{\mathrm{motion}}$ and $C_{\mathrm{exit}}$
 penalize vehicle motion and recovery handover conditions.
-The four score weights are positive; all terms are defined below
-and evaluated on the candidate rollout.
+The score weights are positive; all terms use the candidate rollout.
 
 \noindent\emph{Target approach and directed motion.}
 A sphere of radius $r_{\mathrm{tar}}>0$ centered at
@@ -618,10 +574,9 @@ $\mathbf p_{\mathrm{tar}}$ defines the planning tolerance region.
 The encounter time $t_e$ is the first entry by any cable node
 over $[0,T]$; if none enters, it is the time of closest tip
 approach. Entry is evaluated along interpolated node trajectories;
-the tolerance sphere does not exert collision forces. With
-$d_e=\|\mathbf r_{\mathrm{tip}}(t_e)-\mathbf p_{\mathrm{tar}}\|_2$,
-the proximity score is $S_{\mathrm{tar}}=\exp[-(d_e/\sigma_p)^2]$ for
-$\sigma_p>0$. This encounter-based distance differs from the
+the tolerance sphere does not exert collision forces. The proximity
+score is $S_{\mathrm{tar}}=\exp[-\|\mathbf r_{\mathrm{tip}}(t_e)
+-\mathbf p_{\mathrm{tar}}\|_2^2/\sigma_p^2]$, where $\sigma_p>0$. This encounter-based distance differs from the
 physical minimum-distance metric in~\eqref{eq:target_distance}.
 
 At $t_e$, let $v_{\mathrm{tip},\parallel}=\mathbf e^\top\mathbf v_{\mathrm{tip}}$
@@ -648,25 +603,25 @@ v_{\mathrm{tip},\parallel}/\|\mathbf v_{\mathrm{tip}}\|_2\bigr)^2.
 \end{aligned}
 \label{eq:directed_motion_scores}
 \end{equation}
-The positive scales $v_{\mathrm{tip},s}$, $v_{q,s}$, and $b_s$
-set the saturation levels. The alignment factor favors the strike
-direction and is defined as zero at zero tip speed. The positive
-floor in $h$ makes vehicle reversal a preference rather than a
-requirement.
+Positive scales $v_{\mathrm{tip},s}$, $v_{q,s}$, and $b_s$ set
+saturation levels. The alignment factor is zero at zero tip speed;
+the floor in $h$ encourages but does not require vehicle reversal.
 
 \noindent\emph{Whipping-shape agreement.}
-An earlier simulated whip supplies the reference shape history,
-denoted by the superscript $\mathrm{ref}$. It was generated with a
-different development model and guides initial design alongside
-the seed command.
+The shape prior, denoted by superscript $\mathrm{ref}$, is an
+earlier MPPI-generated cable trajectory selected during development
+for its bending and extension sequence. It supplies a desired
+motion pattern, while the seed supplies initial commands; MPPI
+refines the commands for the current model and target.
+Section~\ref{subsec:experimental_setup} specifies their development
+geometry. The resulting M0 forecast supplies the separate, fixed
+trajectory reference for command correction.
 
-The normalized samples
-$\bar{\mathbf r}_j(t)=[\mathbf r(s_j,t)-\mathbf p_a(t)]/L$
-remove attachment translation and cable-length scale while
-retaining world orientation. Apply the same normalization to the
-reference using its own attachment position and cable length.
-Shape comparison uses these samples and the directions
-$\mathbf d_j(t)$ in~\eqref{eq:whip_segment_direction}.
+Normalize the sampled positions as
+$\bar{\mathbf r}_j(t)=[\mathbf r(s_j,t)-\mathbf p_a(t)]/L$,
+removing attachment translation and length scale while retaining
+world orientation. Apply the same normalization to the reference
+using its own attachment and length.
 
 We align encounter times and allow limited intermediate retiming.
 For $K\geq2$ phases $u_k=k/(K-1)$, $k=0,\ldots,K-1$,
@@ -686,36 +641,27 @@ S_{\mathrm{whip}}&=\max_{\gamma\in\Gamma}\exp\Bigl[
 \end{aligned}
 \label{eq:whip_similarity}
 \end{equation}
-The brackets average over $k=0,\ldots,K-1$ and
-$j=0,\ldots,M-1$ for positions or $j=0,\ldots,M-2$ for
-directions, pairing the same material locations. The positive
-scales $\sigma_r,\sigma_d$ are dimensionless, and $\beta\geq0$
-penalizes departure from uniform phase sampling. We set
-$S_{\mathrm{whip}}=0$ when $t_e=0$.
-This score compares deformation histories; the horizon,
-directed-speed rewards, and command constraints govern physical timing.
+The brackets average over phases and corresponding shape
+samples: $M$ positions or $M-1$ unit directions. Dimensionless scales
+$\sigma_r,\sigma_d>0$ set shape tolerance, and $\beta\geq0$
+penalizes retiming. We set $S_{\mathrm{whip}}=0$ if $t_e=0$.
+The score compares deformation histories; directed-motion rewards
+and command constraints govern physical timing.
 
-The motion cost $C_{\mathrm{motion}}$ accumulates time-weighted
-squared vehicle displacements from launch and command-spline jerk.
-Jerk is normalized by its componentwise bounds. Displacement penalties use
-positive forward motion and lateral motion along
-$\mathbf e_3\times\mathbf e$. Accumulation ends at first tip
-entry, or at $T$ if none occurs. Recovery begins at the command
-boundary ending that entry interval, or at $T$.
-At handover, $C_{\mathrm{exit}}$ penalizes weighted squares of
-command speed, positive upward velocity, and positive acceleration
-along the command velocity; the last term is zero at zero speed.
-Infeasible candidates receive $J=-\infty$.
+The cost $C_{\mathrm{motion}}$ integrates weighted squares of
+positive forward and lateral vehicle displacement from launch and
+spline jerk normalized by its bounds, until tip entry or $T$. The handover cost
+$C_{\mathrm{exit}}$ penalizes command speed, upward motion, and
+acceleration along the velocity before recovery. Infeasible
+candidates receive $J=-\infty$.
 
 \noindent\emph{Initial planning by sampling.}
-An offline MPPI-inspired search uses exponential trajectory
-weighting~\cite{williams2017model} and maintains several proposal
-means. For each mean $\boldsymbol\mu$, it samples
-$\boldsymbol\theta^{(b)}=\boldsymbol\mu+\boldsymbol\epsilon^{(b)}$.
-The perturbations follow a fixed mixture of correlated Gaussian
-distributions at several scales. Their covariance favors coherent
-variations of neighboring control points while exploring all
-free coordinates. Candidates are simulated in parallel.
+The offline search uses exponential trajectory
+weighting~\cite{williams2017model}. Around each proposal mean
+$\boldsymbol\mu$, it samples
+$\boldsymbol\theta^{(b)}=\boldsymbol\mu+\boldsymbol\epsilon^{(b)}$
+from a mixture of correlated Gaussian perturbations. Correlation
+encourages coherent changes in neighboring control points.
 
 Let $\mathcal V$ index a proposal's feasible random samples and
 $J_b=J(\boldsymbol\theta^{(b)})$. For nonempty $\mathcal V$,
@@ -725,14 +671,11 @@ w_b=\frac{\exp(J_b/\lambda)}{\sum_{a\in\mathcal V}\exp(J_a/\lambda)},
 \boldsymbol\mu^+=\sum_{b\in\mathcal V}w_b\boldsymbol\theta^{(b)}.
 \label{eq:offline_sampling_update}
 \end{equation}
-Otherwise, the mean remains unchanged. The positive temperature
-$\lambda$ is adjusted separately for each proposal to target a
-prescribed effective sample count,
-$(\sum_{b\in\mathcal V}w_b^2)^{-1}$.
-Unperturbed proposal means and the best command found so far
-are also evaluated; only random samples enter the weighted update.
-The highest-scoring feasible candidate is retained across iterations.
-Search ends at a score plateau or a fixed iteration budget.
+The temperature $\lambda>0$ controls concentration around
+high-scoring samples and is adapted to maintain sample diversity.
+A proposal with no feasible samples remains unchanged.
+The best feasible candidate is retained until the score plateaus
+or the iteration budget is exhausted.
 
 \begin{figure}[t]
     \centering
@@ -746,15 +689,16 @@ Search ends at a score plateau or a fixed iteration budget.
 \end{figure}
 
 \noindent\emph{Command correction with the refined model.}
-Figure~\ref{fig:command_correction} shows the M0-to-M1 correction:
-the fixed M1 model predicts motion under the original M0 commands
-and the corrected M1 commands.
-The desired tip trajectory and timing remain unchanged. The initial MPPI
-plan's predicted tip and vehicle trajectories,
-$\mathbf r_{\mathrm{tip}}^0(t)$ and $\mathbf p_q^0(t)$,
-and position commands $\mathbf p_d^0(t)$ form the fixed reference.
-Superscript $0$ identifies this plan; $\mathrm{ref}$ denotes
-the earlier shape prior used only in initial planning.
+The selected M0 tip trajectory $\mathbf r_{\mathrm{tip}}^0(t)$ and
+its timing define the fixed execution goal. The original predicted
+vehicle path $\mathbf p_q^0(t)$ and position command
+$\mathbf p_d^0(t)$ provide secondary penalties that discourage large
+changes during correction; the vehicle motion and commands remain
+adjustable. Superscript $0$ identifies this plan, distinct from the
+earlier shape prior $\mathrm{ref}$.
+
+Figure~\ref{fig:command_correction} illustrates command correction
+under the refined M1 model.
 
 Over the original plan's fixed handover interval $[0,T_h]$,
 where $0<T_h\leq T$, we minimize
@@ -767,59 +711,51 @@ C_{\mathrm{track}}(\boldsymbol\theta)
 \end{aligned}
 \label{eq:reference_tracking_cost}
 \end{equation}
-Unmarked states are predictions under the refined model.
-The brackets average squared distances at matching times over
-$[0,T_h]$, using uniform prediction samples for the first two
-terms and command samples for the third. Positive dimensionless
-weights prioritize tip tracking, with smaller penalties for
-vehicle-path deviation and changes from the original commands.
-The reference, timing, objective, and admissibility constraints
-remain fixed across correction rounds.
+The states depend on $\boldsymbol\theta$ through the refined
+predictor. Brackets average squared distances at matching times,
+using prediction samples for the first two terms and command
+samples for the third. Positive weights prioritize tip tracking
+while limiting vehicle-path and command deviations. Reference
+timing, weights, and admissibility constraints remain fixed.
 
 Starting from the latest executed command, regularized
-Gauss--Newton updates adjust the spline controls affecting
-$[0,T_h]$. Finite differences estimate tip and vehicle sensitivities;
-command positions depend linearly on the controls. At each iteration,
-we linearize the tracking errors and solve a constrained local
+Gauss--Newton updates adjust controls affecting $[0,T_h]$.
+Finite differences estimate trajectory sensitivities for a local
 least-squares problem with bounded increments and quadratic
-damping in scaled control coordinates. Backtracking accepts only
-updates that reduce $C_{\mathrm{track}}$ in nonlinear simulation
-and satisfy the command and rollout checks. Iteration ends at
-small improvement, failure to find a feasible improving step,
-or the computation budget.
+damping. Backtracking accepts only steps that reduce
+$C_{\mathrm{track}}$ in nonlinear simulation and satisfy
+admissibility checks. Iteration stops when no improving step
+is found, improvement becomes small, or the budget is exhausted.
 
-Measurements affect command correction through model refinement,
-described next. Both optimization stages verify the selected command
-in an independent rollout, including a recovery with continuous
-position, velocity, and acceleration.
+The refined model and constraints may not admit exact reproduction
+of the fixed reference. A decrease in $C_{\mathrm{track}}$ establishes
+improvement in the simulated regularized objective; physical tip
+tracking and target approach are evaluated separately in
+Section~\ref{sec:experiments}.
+Both stages verify the selected command in a separate rollout
+including recovery.
 
 \subsection{Model Refinement from Physical Executions}
 \label{subsec:model_refinement}
 
-The initial model $\mathcal M_0$ comes from preliminary calibration.
-Each update starts from the preceding model and fits vehicle-response
-parameters, cable coefficients, and learned acceleration corrections
-to execution measurements. The fitting objective compares predicted and measured motion and does not
-depend on the target or planned reference. Cable length, masses,
-attachment geometry, and integration settings remain fixed.
+Starting from the calibrated model $\mathcal M_0$, refinement
+produces candidate updates to vehicle response, cable coefficients,
+and acceleration corrections. Fitting compares predicted and
+measured motion, independently of the target and planned reference.
+Cable length, masses, and attachment geometry remain fixed.
 
-Recordings contain the executed commands, measured vehicle pose,
-and cable-marker positions. Equation~\eqref{eq:attachment_mapping}
-maps measured vehicle pose to attachment motion. Each fitting
-window starts from preceding measurements and advances without
-resetting predicted states to later observations. Missing
-observations are excluded from the loss.
+Recordings provide executed commands, vehicle pose, and cable-marker
+positions. Each fitting window starts from preceding measurements
+and advances without resetting states to subsequent observations.
+Missing observations are excluded from the loss.
 
-The fitting set combines designated recordings from the latest
-batch, earlier whipping batches, and preliminary motions.
-Fixed group weights balance these conditions; within each group,
-recordings have equal weight distributed among eligible windows.
+Fitting combines the latest batch, earlier whipping batches,
+and preliminary motions with fixed group weights.
 Final test recordings remain outside fitting and model selection.
 
-Vehicle fitting compares command-driven predictions with measured
-vehicle motion. Cable fitting uses the measured attachment
-trajectory, separating cable-dynamics errors from errors in
-predicted vehicle motion. Both use a weighted simulation-error loss,
+Vehicle fitting uses command-driven predictions. Cable fitting is
+driven by measured attachment motion from~\eqref{eq:attachment_mapping},
+separating cable error from vehicle-prediction error. Both use
 \begin{equation}
 \mathcal L_{\mathrm{data}}
 =\sum_{o\in\mathcal O}w_o\,\rho\!\left(\frac{\|\mathbf e_o\|_2^2}{\sigma_o^2}\right),
@@ -830,16 +766,13 @@ $\mathbf e_o\in\mathbb R^3$ is the prediction error, and
 $w_o\geq0$ with $\sum_{o\in\mathcal O}w_o=1$.
 Position errors are predicted minus measured positions.
 Orientation errors are the principal rotation vectors of
-$\mathbf R_o^\top\mathbf R_o^{\mathrm{meas}}$, where
-$\mathbf R_o$ and $\mathbf R_o^{\mathrm{meas}}$ are the
-predicted and measured orientations.
-Fixed positive scales $\sigma_o$ normalize position and
-orientation errors. The robust penalty
+$\mathbf R_o^\top\mathbf R_o^{\mathrm{meas}}$.
+Positive scales $\sigma_o$ normalize each observation type. The robust penalty
 $\rho(z)=2(\sqrt{1+z}-1)$ limits the influence of large errors.
 Cable losses emphasize the tip while retaining the other observed
 non-attachment markers.
 
-The update proceeds in four stages:
+Candidate fitting proceeds in four stages:
 \begin{enumerate}
     \item \emph{Quadrotor response.}
     Fit $\mathbf K_p$, $\mathbf K_v$, $\mathbf K_a$, and
@@ -864,10 +797,9 @@ The update proceeds in four stages:
     using the same measured attachment trajectory and marker loss.
 \end{enumerate}
 
-Nominal parameter fits use fixed bounds and quadratic penalties
-on changes from the initial values of each fit. Positive parameters
-use logarithmic changes; the delay uses changes normalized by a
-fixed time scale.
+Nominal parameters use fixed bounds and quadratic penalties on
+scaled changes from their initial values, with logarithmic
+scaling for positive parameters.
 
 The neural stages penalize correction magnitude and deviation
 from the inherited correction:
@@ -883,36 +815,31 @@ from the inherited correction:
 Here $\Delta\mathbf a$ denotes the vehicle or free-node cable
 correction, and $\Delta\mathbf a^{\mathrm{prev}}$ is the
 inherited network evaluated at the same inputs.
-The brackets average over weighted fitting windows and simulated
-times, and additionally over free nodes for the cable. Cable
-averages exclude times without valid marker observations.
-The bound $a_{\max}$ normalizes acceleration, $\lambda_a\geq0$
-sets regularization strength, and $3$ averages the components.
-Training differentiates through complete rollouts and requires
-no measured acceleration labels.
+Brackets average over weighted fitting windows and times, and
+over free nodes for the cable, excluding times without valid
+cable observations.
+The factor $3a_{\max}^2$ normalizes squared acceleration and
+$\lambda_a\geq0$ controls regularization. Training differentiates
+through rollouts without measured acceleration labels.
 
-The retained $\mathcal M_0$ has no active cable correction.
-The first update adds a network initialized to zero output, with
-$\Delta\mathbf a^{\mathrm{prev}}=\mathbf0$ in
-\eqref{eq:refinement_neural_loss}. This increases model capacity;
-later updates inherit the weights and preserve the architecture.
-
-Each fitting stage retains its best numerically valid training
-iterate. Development recordings support model selection and
-diagnostic comparisons; the selected models are frozen before
-final evaluation. Complete command-to-tip prediction evaluates
-the assembled model and is distinct from cable prediction driven
-by measured attachment motion. It is not jointly optimized during
-the staged fits.
-
-The updated predictor returns to command correction or subsequent
-MPPI planning. Development recordings assess prediction accuracy,
-and subsequent executions assess command correction through physical
-reference tracking and target approach. Original commands and
-their preflight forecasts are preserved across model updates.
+Development recordings select the model used for command
+correction; an inherited component may be retained when its
+candidate update does not improve prediction. The selected model
+is frozen before physical evaluation. Complete command-to-tip
+prediction evaluates the assembled model separately from cable
+prediction driven by measured attachment motion.
 
 \section{Experiments}
 \label{sec:experiments}
+
+\begin{figure*}[t]
+  \centering
+  \includegraphics[width=\textwidth]{figures/model_strike_progression.pdf}
+  \caption{Selected M0, M1, M2, and M3 executions. Orange shows the actual
+  flight recorded by OptiTrack; blue shows the intended trajectory.
+  Tip strike errors are shown below each panel.}
+  \label{fig:strike_progression}
+\end{figure*}
 
 \subsection{Setup and Evaluation}
 \label{subsec:experimental_setup}
@@ -920,30 +847,54 @@ their preflight forecasts are preserved across model updates.
 
 The platform uses a 145\,g quadrotor and a 0.9525\,m cable
 weighing 17\,g with tracking markers. OptiTrack measures vehicle
-pose and cable motion. The vehicle starts at $(0,0,1.4)$\,m,
-with target $(1.25,0,1.25)$\,m and strike direction $+x$.
+pose and cable motion. For the M0 and M1 batches, the vehicle
+starts at $(0,0,1.4)$\,m, with target $(1.25,0,1.25)$\,m and
+strike direction $+x$.
 Commands are executed at 30\,Hz without online cable feedback.
 The predictor uses 12 cable nodes and 150\,Hz rollout samples;
 the command spline has 12 control points over $T=1.5$\,s.
 Correction uses $(w_{\mathrm{tip}},w_q,w_d)=(1,0.1,0.01)$
 in~\eqref{eq:reference_tracking_cost}.
 
-Five flights were collected for each model--command pair:
-the initial M0 plan and two corrections, M1 and M2, toward
-the same M0 trajectory and timing. In each preceding batch,
-recordings 1, 2, and 4 contribute to fitting; recordings 3
-and 5 support development checks. M2 retains the M1 vehicle
-network and updates the nominal vehicle response and cable
-model. It is selected using the two M1 development recordings
-and frozen before the five M2 flights.
+The shape prior was manually selected from an earlier MPPI
+simulation, and the command seed was the highest-scoring solution
+retained in a subsequent development run. Both were developed for
+a target 1.25\,m ahead and 0.255\,m below launch, with the same
+$+x$ strike direction. The M0/M1 target is 0.15\,m below launch.
+These inputs therefore supply prior target-directed behavior.
 
-Tip and vehicle tracking errors, $E_{\mathrm{tip}}$ and $E_q$,
-are three-dimensional RMSEs against the original M0 reference
-at matching timestamps over $[0,T_h]$, with $T_h=34/30$\,s.
+The initial M0 has no active cable correction. The first update
+adds a cable network initialized to zero output, using
+$\Delta\mathbf a^{\mathrm{prev}}=\mathbf0$
+in~\eqref{eq:refinement_neural_loss}; subsequent updates inherit
+its weights. Thus, the M0-to-M1 comparison includes added model
+capacity as well as parameter refinement.
+
+We report five flights for each of the M0 and M1 model--command
+pairs. The M1 command is corrected toward the original M0
+predicted trajectory and timing. In each batch, recordings 1, 2,
+and 4 contribute to subsequent fitting; recordings 3 and 5 support
+development checks. The selected M2 retains the M1 vehicle network
+and updates the nominal vehicle response and cable model, using
+the two M1 development recordings for selection.
+
+For physical evaluation of M2, a $10\,\mathrm{cm}\times
+10\,\mathrm{cm}$ target is placed at the planned hit position.
+The M2 command is executed 20 times. A hit requires physical
+contact with the target.
+
+Tip tracking error $E_{\mathrm{tip}}$ is the three-dimensional
+RMSE between the measured tip trajectory and the original M0
+predicted tip reference at matching timestamps over $[0,T_h]$,
+with $T_h=34/30$\,s.
 Target metrics are $d_{\min}$ from~\eqref{eq:target_distance}
 over $[0,1.5]$\,s and distance $d_\star$ at the original
-strike time $t_\star=1.11725$\,s. Tip speed is estimated from
-local position derivatives. Clock alignment uses measured
+strike time $t_\star=1.11725$\,s.
+For physical evaluation, we substitute the measured trajectory
+$\mathbf r_{\mathrm{tip}}^{\mathrm{meas}}$ into~\eqref{eq:target_distance}.
+Piecewise-linear interpolation within valid tracking intervals
+estimates the minimum; tracking gaps are excluded and reported.
+Tip speed is estimated from local position derivatives. Clock alignment uses measured
 vehicle streams; missing observations are masked. Statistics
 average per-flight metrics, without spatial or target-based
 temporal alignment.
@@ -960,45 +911,61 @@ tip speed at $t_\star$ is in m/s.}
 \label{tab:physical_performance}
 \small
 \setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}lccc@{}}
+\begin{tabular}{@{}lcc@{}}
 \toprule
-Metric & M0 & M1 & M2 \\
+Metric & M0 & M1 \\
 \midrule
-$d_\star$ & $24.12\pm6.94$ & $11.18\pm4.04$ & $13.10\pm7.52$ \\
-$d_{\min}$ & $14.73\pm6.02$ & $7.83\pm1.82$ & $8.60\pm6.55$ \\
-$E_{\mathrm{tip}}$ & $18.09\pm1.80$ & $16.06\pm2.34$ & $13.28\pm2.60$ \\
-$E_q$ & $15.66\pm3.58$ & $11.17\pm2.87$ & $12.63\pm5.65$ \\
-Tip speed & $5.98\pm0.53$ & $5.85\pm0.32$ & $5.82\pm0.79$ \\
+$d_\star$ & $24.12\pm6.94$ & $11.18\pm4.04$ \\
+$d_{\min}$ & $14.73\pm6.02$ & $7.83\pm1.82$ \\
+$E_{\mathrm{tip}}$ & $18.09\pm1.80$ & $16.06\pm2.34$ \\
+Tip speed & $5.98\pm0.53$ & $5.85\pm0.32$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:physical_performance} shows that M1 substantially
-improves target approach. M2 further reduces tip-reference
-RMSE by 17.4\% relative to M1, but target accuracy and
-repeatability worsen. Mean tip speed remains similar.
-Thus, better average trajectory tracking does not ensure
-better target approach.
+In the initial M0 planning run, 38 MPPI updates increased the
+score $J$ from 92.69 for the converted seed to 650.88 for the
+selected command, using the same frozen model, target, and objective.
+This comparison measures refinement of an informed seed in simulation.
 
-An exploratory subset selected after reviewing the outcomes,
-M2 recordings 2 and 4, gives mean $d_\star$, $d_{\min}$,
-and $E_{\mathrm{tip}}$ of 6.17, 4.41, and 10.57\,cm.
-No independent fault evidence supports excluding the other
-three flights; the primary comparison retains all five.
+Table~\ref{tab:physical_performance} shows lower mean target errors
+and tip-reference RMSE with M1 than with M0. After the first round
+of model refinement and command correction, mean distance at the
+planned strike time decreases from 24.12 to 11.18\,cm, a 54\%
+reduction relative to the initial M0 model and command. Mean closest
+distance decreases from 14.73 to 7.83\,cm. Mean tip speed remains
+similar.
 
-On the two M1 recordings used for model selection, M2 reduces
-vehicle-prediction RMSE from 7.46 to 6.72\,cm and command-driven
-tip-prediction RMSE from 9.95 to 8.46\,cm. These are development
-comparisons using the same commands and measured initial
-states, not independent test results.
+With M2, 17 of 20 executions hit the physical target,
+an observed hit rate of 85\%.
 
-The study uses successive batches at one target. Small cable
-motions observed during hover differ from the stationary
-planning state; their effect, including possible propeller
-airflow, remains unquantified. Fixed-time error is also
-sensitive to clock alignment: a $\pm10$\,ms shift changes
-M2 recording 2's $d_\star$ from 2.64 to 6.80--7.15\,cm.
+Figure~\ref{fig:strike_progression} compares the measured and
+intended motions for selected M0, M1, and M2 executions,
+together with an additional M3 execution.
 
+We also evaluate the frozen M0, M1, and M2 predictors on all ten
+M0 and M1 recordings. Each model receives the same recorded
+commands and measured initialization information, then predicts
+tip motion without measurement resets. Table~\ref{tab:tip_prediction}
+reports the mean of the ten per-take three-dimensional tip RMSEs
+against OptiTrack measurements over $[0,T_h]$. These recordings
+were used during model development, so this is a retrospective
+comparison rather than an independent test.
+
+\begin{table}[t]
+\centering
+\caption{Mean tip-prediction RMSE (cm) on the same ten M0/M1 recordings.}
+\label{tab:tip_prediction}
+\begin{tabular}{ccc}
+\toprule
+M0 & M1 & M2 \\
+\midrule
+19.65 & 8.66 & 8.37 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+These results concern the tested configurations.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}

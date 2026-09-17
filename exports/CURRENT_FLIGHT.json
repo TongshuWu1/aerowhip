@@ -1,10 +1,13 @@
 {
-  "csv": "M2_selected_fixed_tip_reference/fullstate_30hz.csv",
-  "csv_sha256": "c9a39713d627ceb5fe3cc555ccb2d3fdf853d3e20ae1a9c583faa661fbf8f379",
-  "flight_take": "M2_selected_fixed_tip_reference/flight_take",
-  "model_id": "M2-selected",
-  "physical_evaluation": "runs/data_review/M2-paper-20260913/REPORT.md",
+  "collection_review": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M4-complete-collection\\report.json",
+  "csv": "M4_MPPI_2cm_brake_1p3s/fullstate_30hz.csv",
+  "csv_sha256": "1513d5e8f6ac5a45f4dae670445fad4aa9db160f3f464bda388ec548fe767c95",
+  "flight_take": "M4_MPPI_2cm_brake_1p3s/flight_take/M4",
+  "model_id": "M4",
+  "model_job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M4-20260915",
   "physical_flight_pending": false,
-  "recorded_takes": 5,
-  "rehearsal": "runs/rehearsals_pva/20260913-042637-826368-M2-selected-local-fixed-tip-reference"
+  "recorded_takes": 12,
+  "recording_sessions": 3,
+  "rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M4-MPPI-2cm-brake-1p3s",
+  "selected_at": "2026-09-15T06:11:25.220709+00:00"
 }

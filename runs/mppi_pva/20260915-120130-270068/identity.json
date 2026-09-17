@@ -1,0 +1,12 @@
+{
+  "command_contract": "bounded_jerk_pva_30hz_v1",
+  "development_review": "User-authorized free-target horizontal whip preserving loading and pullback. Screened two-turn preparation then release, with strike heading selected from twelve horizontal directions. Exact bounded-jerk command representation retains preparation; same 30 Hz PVA export. Kinematic and recovery verification required; no energy-flux or accuracy claim.",
+  "evidence": "simulation only",
+  "method": "mppi",
+  "model_source": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M5-20260915\\candidate\\model.json",
+  "model_source_sha256": "f2a7c541d3f8dabf767960caef6d77622fe742997235753fb2046d7eac5091b2",
+  "name": "M5 horizontal whip - sideways release",
+  "source_checkpoint": null,
+  "source_checkpoint_sha256": null,
+  "success_criterion": "targeted_fold_strike_v1"
+}

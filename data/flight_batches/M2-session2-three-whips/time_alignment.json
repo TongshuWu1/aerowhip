@@ -1,0 +1,29 @@
+{
+  "M2_002_whip_001": {
+    "clock_verified": false,
+    "controller_sha256": "49fe3daebc510fc7986ab0fc0867fd93aa0c02f12a84b5df6234bfedef8d2cc0",
+    "offset_s": -0.7668076467932716,
+    "optitrack_sha256": "ab36af25090fb2397916ced1b16c24c451b669ffed277254469f77381122c39f",
+    "rms_m": 0.00033874483870772684,
+    "source": "Estimated per repetition from measured native-rate TF XYZ and native Motive XYZ, excluding interpolation across logger gaps; no command/forecast or spatial fitting. Includes unknown transport latency; original timestamps retained.",
+    "source_report": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M2-session2-three-whips\\report.json"
+  },
+  "M2_002_whip_002": {
+    "clock_verified": false,
+    "controller_sha256": "f92a8e83e4979fd4ae63c974b63580a146f2b4933c61e5f915ad755e5c470995",
+    "offset_s": -0.7685848218568149,
+    "optitrack_sha256": "17b0c7a7a6710904cd20f4ff34347ef2d458e54daed0db18a41f2409b83e2a4c",
+    "rms_m": 0.0003119088585458488,
+    "source": "Estimated per repetition from measured native-rate TF XYZ and native Motive XYZ, excluding interpolation across logger gaps; no command/forecast or spatial fitting. Includes unknown transport latency; original timestamps retained.",
+    "source_report": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M2-session2-three-whips\\report.json"
+  },
+  "M2_002_whip_003": {
+    "clock_verified": false,
+    "controller_sha256": "35c221a2af0c34c1bbee0b26bf99f44b2203094a6b7203708ac0b18bd2deef07",
+    "offset_s": -0.7702374296508605,
+    "optitrack_sha256": "25ee7168418ca6e71e47b0db2c709991816e6226674ee5bfe374b9d4aff44f92",
+    "rms_m": 0.00035683176654362653,
+    "source": "Estimated per repetition from measured native-rate TF XYZ and native Motive XYZ, excluding interpolation across logger gaps; no command/forecast or spatial fitting. Includes unknown transport latency; original timestamps retained.",
+    "source_report": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M2-session2-three-whips\\report.json"
+  }
+}

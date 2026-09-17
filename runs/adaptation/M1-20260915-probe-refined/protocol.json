@@ -1,0 +1,861 @@
+{
+  "actual_take_count": 11,
+  "authorization": "User accepted this as M0 and explicitly requested fitting; all eleven complete whips included. Invalid marker samples are masked individually; interrupted attempt excluded.",
+  "automatic_selection": false,
+  "cable_history_s": 1.0,
+  "cable_touched_or_reset": false,
+  "cable_velocity_weight_tau_s": 0.02,
+  "collection_manifest": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M0-complete-collection\\report.json",
+  "command_sha256": "1e716e6ef8626d48229416a8baf2e6581f97899de38a578833c88ad0defbe634",
+  "comparison": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\evaluation\\M0-collection-before-fit-20260915",
+  "diagnostics_only": false,
+  "drone_history_s": 0.4,
+  "evaluation_policy": "evaluate frozen parent before learning; prior training data measures retention",
+  "evidence": "M1 development; training takes cannot independently validate the updated model",
+  "forecast_sha256": "66ea65f7c5f33cf9b0ce722c318d829f711700c3145336bde2614a65cfbf9f9a",
+  "frame": "raw_global_xyz",
+  "frozen_hashes": {
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\assets\\drone_model.json": "c644bddaa7ccd3a3dab58b4befa8b4642ad6792487510197ee2eb52da5dc0945",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\assets\\drone_residual.pt": "564b272e1c6d4a553665828ecdd4b8f04ab2d17257ef716e4f73aa42dd9cd6d8",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\fullstate_30hz.csv": "1e716e6ef8626d48229416a8baf2e6581f97899de38a578833c88ad0defbe634",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\jerk_30hz.csv": "11e0c35df7a651d9e26c597157c0671fee588271adef4a494d3754b424144905",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\model.json": "6c4837cbfdc2f41c21c8e3e7387c0a24945a2690bd3c5033f3f4e3bfefe7064f",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\plan.npz": "510165fffaf15b4b9e8cab928756adf9512acd9c94f3fbeaffdaff18c5cde4c7",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\registration.json": "4be2358fd4f2ede35e9fa2e0ec9c352817e2bd6affc94b4d323a96ea92e4a300",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\rehearsal.json": "5d4705462d177d3e162ff72e70aef4c9ef1424d61513f8fbeda67e1e6f2b4771",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\rehearsal.npz": "66ea65f7c5f33cf9b0ce722c318d829f711700c3145336bde2614a65cfbf9f9a",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\settings.json": "8a44e534a20230965bddf3ea5cf1c535cebe042bc7df37a71bcada02501e5224",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\task.json": "1d70b0d70d925f7cd42b59050faacaf8c239d7cbdc268cbc1655bf1c8a2c772a",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s\\ui_verification.json": "42dd4d6b6a89cc0f4b0f04fe93785ee4fe8f940bd447170811e827b56edde56f"
+  },
+  "full_update": {
+    "attitude_bounds": [
+      [
+        0.1,
+        0.05,
+        0.02
+      ],
+      [
+        3.0,
+        3.0,
+        0.3
+      ]
+    ],
+    "cable_bounds": [
+      [
+        1e-10,
+        1e-08,
+        0.0001
+      ],
+      [
+        0.0001,
+        0.001,
+        2.0
+      ]
+    ],
+    "cable_history_s": 1.0,
+    "cable_log_difference_step": 1e-06,
+    "cable_residual": {
+      "acceleration_limit": 0.5,
+      "hidden": 32,
+      "mode": "acceleration"
+    },
+    "cable_scale_m": 0.02,
+    "cable_velocity_weight_tau_s": 0.02,
+    "candidate_id": "M1",
+    "collection_recording_groups": {
+      "M0_002_whip_001": "M0_v2_002",
+      "M0_002_whip_002": "M0_v2_002",
+      "M0_002_whip_003": "M0_v2_002",
+      "M0_002_whip_004": "M0_v2_002",
+      "M0_003_whip_001": "M0_v2_003",
+      "M0_003_whip_002": "M0_v2_003",
+      "M0_003_whip_003": "M0_v2_003",
+      "M0_003_whip_004": "M0_v2_003",
+      "M0_Whip123_001": "M0_v2_001",
+      "M0_Whip123_002": "M0_v2_001",
+      "M0_Whip123_003": "M0_v2_001"
+    },
+    "delay_candidates_s": [
+      0.0,
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.06,
+      0.08,
+      0.1,
+      0.12
+    ],
+    "drone_gain_bounds": [
+      [
+        0.05,
+        0.05,
+        0.05,
+        0.05,
+        0.01,
+        0.01
+      ],
+      [
+        80.0,
+        80.0,
+        20.0,
+        20.0,
+        3.0,
+        3.0
+      ]
+    ],
+    "evaluate_before_training": true,
+    "interpretation": "Effective loaded PVA response and cable dynamics; no identified motor ceiling or explicit cable reaction added",
+    "nominal_prior": 0.03,
+    "nominal_stopping": {
+      "ceiling": 80,
+      "minimum": 6,
+      "patience": 5,
+      "relative": 0.001
+    },
+    "orientation_scale_rad": 0.05,
+    "parent_id": "M0",
+    "position_scale_m": 0.02,
+    "promotion": false,
+    "replay_weight": 0.5,
+    "residual_change": 0.01,
+    "residual_magnitude": 0.01,
+    "residual_stopping": {
+      "ceiling": null,
+      "check_every": 5,
+      "minimum": 40,
+      "patience": 6,
+      "relative": 0.005
+    },
+    "schema": "whip_full_model_v1",
+    "seed": 20260910,
+    "stages": [
+      "drone_nominal",
+      "drone_residual",
+      "attitude_refinement",
+      "cable_physics",
+      "cable_residual",
+      "combined_validation"
+    ],
+    "training": "All 11 complete whips and existing preliminary training replay; no current-batch holdout; preliminary validation excluded from updates and selection."
+  },
+  "minimum_observation_fraction": 0.8,
+  "model_id": "M0",
+  "model_update": "Full drone nominal/residual and cable physics/residual",
+  "neural_training": true,
+  "normalization": false,
+  "parent_forecast_model_sha256": "6c4837cbfdc2f41c21c8e3e7387c0a24945a2690bd3c5033f3f4e3bfefe7064f",
+  "parent_generation": 0,
+  "physical_target_present": false,
+  "planned_roles": {
+    "M0_002_whip_001": "adaptation",
+    "M0_002_whip_002": "adaptation",
+    "M0_002_whip_003": "adaptation",
+    "M0_002_whip_004": "adaptation",
+    "M0_003_whip_001": "adaptation",
+    "M0_003_whip_002": "adaptation",
+    "M0_003_whip_003": "adaptation",
+    "M0_003_whip_004": "adaptation",
+    "M0_Whip123_001": "adaptation",
+    "M0_Whip123_002": "adaptation",
+    "M0_Whip123_003": "adaptation"
+  },
+  "preliminary_source": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\20260909-preliminary1-M0-v2",
+  "preparation_scope": "full_model",
+  "prior_whip_replay": [],
+  "recording_groups": {
+    "M0_002_whip_001": "M0_v2_002",
+    "M0_002_whip_002": "M0_v2_002",
+    "M0_002_whip_003": "M0_v2_002",
+    "M0_002_whip_004": "M0_v2_002",
+    "M0_003_whip_001": "M0_v2_003",
+    "M0_003_whip_002": "M0_v2_003",
+    "M0_003_whip_003": "M0_v2_003",
+    "M0_003_whip_004": "M0_v2_003",
+    "M0_Whip123_001": "M0_v2_001",
+    "M0_Whip123_002": "M0_v2_001",
+    "M0_Whip123_003": "M0_v2_001"
+  },
+  "rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-MPPI-2cm-brake-1p3s",
+  "review_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\evaluation\\M0-collection-before-fit-20260915\\review.json",
+  "role_unit": "whole segmented whip; retain original recording group for statistical reporting",
+  "schema": "prospective_whip_adaptation_v1",
+  "source_segments": {
+    "M0_002_whip_001": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M0-Whip4567-four-whips",
+      "recording": "M0_v2_002",
+      "repetition": 1
+    },
+    "M0_002_whip_002": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M0-Whip4567-four-whips",
+      "recording": "M0_v2_002",
+      "repetition": 2
+    },
+    "M0_002_whip_003": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M0-Whip4567-four-whips",
+      "recording": "M0_v2_002",
+      "repetition": 3
+    },
+    "M0_002_whip_004": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M0-Whip4567-four-whips",
+      "recording": "M0_v2_002",
+      "repetition": 4
+    },
+    "M0_003_whip_001": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M0-Whip891011-four-whips",
+      "recording": "M0_v2_003",
+      "repetition": 1
+    },
+    "M0_003_whip_002": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M0-Whip891011-four-whips",
+      "recording": "M0_v2_003",
+      "repetition": 2
+    },
+    "M0_003_whip_003": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M0-Whip891011-four-whips",
+      "recording": "M0_v2_003",
+      "repetition": 3
+    },
+    "M0_003_whip_004": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M0-Whip891011-four-whips",
+      "recording": "M0_v2_003",
+      "repetition": 4
+    },
+    "M0_Whip123_001": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M0-Whip123-three-whips",
+      "recording": "M0_v2_001",
+      "repetition": 1
+    },
+    "M0_Whip123_002": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M0-Whip123-three-whips",
+      "recording": "M0_v2_001",
+      "repetition": 2
+    },
+    "M0_Whip123_003": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M0-Whip123-three-whips",
+      "recording": "M0_v2_001",
+      "repetition": 3
+    }
+  },
+  "source_whip_job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M1-20260915",
+  "takes": {
+    "M0_002_whip_001": {
+      "end_s": 1.1333333333333333,
+      "history_masked_node_samples": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "history_node_coverage": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "masked_markers": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        2
+      ],
+      "review": {
+        "accepted": true,
+        "cable_only_update_justification": "",
+        "clock_reviewed": true,
+        "free_motion_end_s": 1.5,
+        "no_intervention": true,
+        "notes": "User-designated M0 collection, identical executed CSV and cf_3 identity; no target or cable intervention per user. Measured-stream clock alignment reviewed but remains estimated, not verified synchronization. Strict initial history passed; individual invalid marker samples stay masked. No validation role or performance-based take exclusion.",
+        "physical_contact": "none",
+        "reviewed_by": "Codex: verified collection checks; user authorized all-eleven M0 fit",
+        "role": "adaptation",
+        "same_controller_and_hardware": true
+      },
+      "role": "adaptation"
+    },
+    "M0_002_whip_002": {
+      "end_s": 1.1333333333333333,
+      "history_masked_node_samples": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "history_node_coverage": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "masked_markers": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        3,
+        1,
+        2
+      ],
+      "review": {
+        "accepted": true,
+        "cable_only_update_justification": "",
+        "clock_reviewed": true,
+        "free_motion_end_s": 1.5,
+        "no_intervention": true,
+        "notes": "User-designated M0 collection, identical executed CSV and cf_3 identity; no target or cable intervention per user. Measured-stream clock alignment reviewed but remains estimated, not verified synchronization. Strict initial history passed; individual invalid marker samples stay masked. No validation role or performance-based take exclusion.",
+        "physical_contact": "none",
+        "reviewed_by": "Codex: verified collection checks; user authorized all-eleven M0 fit",
+        "role": "adaptation",
+        "same_controller_and_hardware": true
+      },
+      "role": "adaptation"
+    },
+    "M0_002_whip_003": {
+      "end_s": 1.1333333333333333,
+      "history_masked_node_samples": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "history_node_coverage": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "masked_markers": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        19,
+        0,
+        1
+      ],
+      "review": {
+        "accepted": true,
+        "cable_only_update_justification": "",
+        "clock_reviewed": true,
+        "free_motion_end_s": 1.5,
+        "no_intervention": true,
+        "notes": "User-designated M0 collection, identical executed CSV and cf_3 identity; no target or cable intervention per user. Measured-stream clock alignment reviewed but remains estimated, not verified synchronization. Strict initial history passed; individual invalid marker samples stay masked. No validation role or performance-based take exclusion.",
+        "physical_contact": "none",
+        "reviewed_by": "Codex: verified collection checks; user authorized all-eleven M0 fit",
+        "role": "adaptation",
+        "same_controller_and_hardware": true
+      },
+      "role": "adaptation"
+    },
+    "M0_002_whip_004": {
+      "end_s": 1.1333333333333333,
+      "history_masked_node_samples": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "history_node_coverage": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "masked_markers": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        4
+      ],
+      "review": {
+        "accepted": true,
+        "cable_only_update_justification": "",
+        "clock_reviewed": true,
+        "free_motion_end_s": 1.5,
+        "no_intervention": true,
+        "notes": "User-designated M0 collection, identical executed CSV and cf_3 identity; no target or cable intervention per user. Measured-stream clock alignment reviewed but remains estimated, not verified synchronization. Strict initial history passed; individual invalid marker samples stay masked. No validation role or performance-based take exclusion.",
+        "physical_contact": "none",
+        "reviewed_by": "Codex: verified collection checks; user authorized all-eleven M0 fit",
+        "role": "adaptation",
+        "same_controller_and_hardware": true
+      },
+      "role": "adaptation"
+    },
+    "M0_003_whip_001": {
+      "end_s": 1.1333333333333333,
+      "history_masked_node_samples": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "history_node_coverage": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "masked_markers": [
+        4,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        4,
+        7
+      ],
+      "review": {
+        "accepted": true,
+        "cable_only_update_justification": "",
+        "clock_reviewed": true,
+        "free_motion_end_s": 1.5,
+        "no_intervention": true,
+        "notes": "User-designated M0 collection, identical executed CSV and cf_3 identity; no target or cable intervention per user. Measured-stream clock alignment reviewed but remains estimated, not verified synchronization. Strict initial history passed; individual invalid marker samples stay masked. No validation role or performance-based take exclusion.",
+        "physical_contact": "none",
+        "reviewed_by": "Codex: verified collection checks; user authorized all-eleven M0 fit",
+        "role": "adaptation",
+        "same_controller_and_hardware": true
+      },
+      "role": "adaptation"
+    },
+    "M0_003_whip_002": {
+      "end_s": 1.1333333333333333,
+      "history_masked_node_samples": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "history_node_coverage": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "masked_markers": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        6,
+        2
+      ],
+      "review": {
+        "accepted": true,
+        "cable_only_update_justification": "",
+        "clock_reviewed": true,
+        "free_motion_end_s": 1.5,
+        "no_intervention": true,
+        "notes": "User-designated M0 collection, identical executed CSV and cf_3 identity; no target or cable intervention per user. Measured-stream clock alignment reviewed but remains estimated, not verified synchronization. Strict initial history passed; individual invalid marker samples stay masked. No validation role or performance-based take exclusion.",
+        "physical_contact": "none",
+        "reviewed_by": "Codex: verified collection checks; user authorized all-eleven M0 fit",
+        "role": "adaptation",
+        "same_controller_and_hardware": true
+      },
+      "role": "adaptation"
+    },
+    "M0_003_whip_003": {
+      "end_s": 1.1333333333333333,
+      "history_masked_node_samples": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "history_node_coverage": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "masked_markers": [
+        6,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        3
+      ],
+      "review": {
+        "accepted": true,
+        "cable_only_update_justification": "",
+        "clock_reviewed": true,
+        "free_motion_end_s": 1.5,
+        "no_intervention": true,
+        "notes": "User-designated M0 collection, identical executed CSV and cf_3 identity; no target or cable intervention per user. Measured-stream clock alignment reviewed but remains estimated, not verified synchronization. Strict initial history passed; individual invalid marker samples stay masked. No validation role or performance-based take exclusion.",
+        "physical_contact": "none",
+        "reviewed_by": "Codex: verified collection checks; user authorized all-eleven M0 fit",
+        "role": "adaptation",
+        "same_controller_and_hardware": true
+      },
+      "role": "adaptation"
+    },
+    "M0_003_whip_004": {
+      "end_s": 1.1333333333333333,
+      "history_masked_node_samples": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "history_node_coverage": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "masked_markers": [
+        3,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        7,
+        4,
+        2
+      ],
+      "review": {
+        "accepted": true,
+        "cable_only_update_justification": "",
+        "clock_reviewed": true,
+        "free_motion_end_s": 1.5,
+        "no_intervention": true,
+        "notes": "User-designated M0 collection, identical executed CSV and cf_3 identity; no target or cable intervention per user. Measured-stream clock alignment reviewed but remains estimated, not verified synchronization. Strict initial history passed; individual invalid marker samples stay masked. No validation role or performance-based take exclusion.",
+        "physical_contact": "none",
+        "reviewed_by": "Codex: verified collection checks; user authorized all-eleven M0 fit",
+        "role": "adaptation",
+        "same_controller_and_hardware": true
+      },
+      "role": "adaptation"
+    },
+    "M0_Whip123_001": {
+      "end_s": 1.1333333333333333,
+      "history_masked_node_samples": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "history_node_coverage": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "masked_markers": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        12
+      ],
+      "review": {
+        "accepted": true,
+        "cable_only_update_justification": "",
+        "clock_reviewed": true,
+        "free_motion_end_s": 1.5,
+        "no_intervention": true,
+        "notes": "User-designated M0 collection, identical executed CSV and cf_3 identity; no target or cable intervention per user. Measured-stream clock alignment reviewed but remains estimated, not verified synchronization. Strict initial history passed; individual invalid marker samples stay masked. No validation role or performance-based take exclusion.",
+        "physical_contact": "none",
+        "reviewed_by": "Codex: verified collection checks; user authorized all-eleven M0 fit",
+        "role": "adaptation",
+        "same_controller_and_hardware": true
+      },
+      "role": "adaptation"
+    },
+    "M0_Whip123_002": {
+      "end_s": 1.1333333333333333,
+      "history_masked_node_samples": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "history_node_coverage": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "masked_markers": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        5
+      ],
+      "review": {
+        "accepted": true,
+        "cable_only_update_justification": "",
+        "clock_reviewed": true,
+        "free_motion_end_s": 1.5,
+        "no_intervention": true,
+        "notes": "User-designated M0 collection, identical executed CSV and cf_3 identity; no target or cable intervention per user. Measured-stream clock alignment reviewed but remains estimated, not verified synchronization. Strict initial history passed; individual invalid marker samples stay masked. No validation role or performance-based take exclusion.",
+        "physical_contact": "none",
+        "reviewed_by": "Codex: verified collection checks; user authorized all-eleven M0 fit",
+        "role": "adaptation",
+        "same_controller_and_hardware": true
+      },
+      "role": "adaptation"
+    },
+    "M0_Whip123_003": {
+      "end_s": 1.1333333333333333,
+      "history_masked_node_samples": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "history_node_coverage": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "masked_markers": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        14
+      ],
+      "review": {
+        "accepted": true,
+        "cable_only_update_justification": "",
+        "clock_reviewed": true,
+        "free_motion_end_s": 1.5,
+        "no_intervention": true,
+        "notes": "User-designated M0 collection, identical executed CSV and cf_3 identity; no target or cable intervention per user. Measured-stream clock alignment reviewed but remains estimated, not verified synchronization. Strict initial history passed; individual invalid marker samples stay masked. No validation role or performance-based take exclusion.",
+        "physical_contact": "none",
+        "reviewed_by": "Codex: verified collection checks; user authorized all-eleven M0 fit",
+        "role": "adaptation",
+        "same_controller_and_hardware": true
+      },
+      "role": "adaptation"
+    }
+  },
+  "validation_qualification": "Whole validation takes excluded from updates and selection; outcomes previously inspected in method development."
+}

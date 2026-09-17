@@ -1,0 +1,382 @@
+{
+  "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M2-same-flight-evaluation-inputs\\batch",
+  "evidence": "Frozen M2 forecast comparison before adaptation; timing alignment is estimated unless independently verified.",
+  "new_rollouts": 0,
+  "schema": "prospective_whip_adaptation_v1",
+  "takes": {
+    "M2_001_whip_001": {
+      "alignment": {
+        "clock_verified": false,
+        "includes_logging_latency": true,
+        "method": "Estimated per repetition from measured native-rate TF XYZ and native Motive XYZ, excluding interpolation across logger gaps; no command/forecast or spatial fitting. Includes unknown transport latency; original timestamps retained.",
+        "offset_s": 0.6237799064764707,
+        "rms_m": null
+      },
+      "drone": {
+        "coverage": 1.0,
+        "rmse_m": 0.04892956185574796,
+        "total_count": 147,
+        "valid_count": 147
+      },
+      "forecast_sha256": "57d54cddf0f0f160ba627604fe9df416982671253e4aa639df2ff488b923401a",
+      "frame": "raw_global_xyz",
+      "interpretation": "Observed target distance is sampled geometry, not independently verified physical contact; gaps are not inferred misses.",
+      "minimum_observed_tip_target_m": 0.08181226786368899,
+      "onset_s": 21.82491655966667,
+      "packet_count": 164,
+      "packet_jitter_s": 0.0004969249999966507,
+      "target_distance": {
+        "coverage": 1.0,
+        "rmse_m": 1.2381592421693508,
+        "total_count": 147,
+        "valid_count": 147
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.07367090574939772,
+        "total_count": 147,
+        "valid_count": 147
+      }
+    },
+    "M2_001_whip_002": {
+      "alignment": {
+        "clock_verified": false,
+        "includes_logging_latency": true,
+        "method": "Estimated per repetition from measured native-rate TF XYZ and native Motive XYZ, excluding interpolation across logger gaps; no command/forecast or spatial fitting. Includes unknown transport latency; original timestamps retained.",
+        "offset_s": 0.6223951263427823,
+        "rms_m": null
+      },
+      "drone": {
+        "coverage": 1.0,
+        "rmse_m": 0.07408046343899516,
+        "total_count": 146,
+        "valid_count": 146
+      },
+      "forecast_sha256": "57d54cddf0f0f160ba627604fe9df416982671253e4aa639df2ff488b923401a",
+      "frame": "raw_global_xyz",
+      "interpretation": "Observed target distance is sampled geometry, not independently verified physical contact; gaps are not inferred misses.",
+      "minimum_observed_tip_target_m": 0.046779390098632044,
+      "onset_s": 45.39145618616667,
+      "packet_count": 164,
+      "packet_jitter_s": 0.00038446733333330485,
+      "target_distance": {
+        "coverage": 1.0,
+        "rmse_m": 1.2167195813876663,
+        "total_count": 146,
+        "valid_count": 146
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.0824696291200366,
+        "total_count": 146,
+        "valid_count": 146
+      }
+    },
+    "M2_001_whip_003": {
+      "alignment": {
+        "clock_verified": false,
+        "includes_logging_latency": true,
+        "method": "Estimated per repetition from measured native-rate TF XYZ and native Motive XYZ, excluding interpolation across logger gaps; no command/forecast or spatial fitting. Includes unknown transport latency; original timestamps retained.",
+        "offset_s": 0.6209480276232816,
+        "rms_m": null
+      },
+      "drone": {
+        "coverage": 1.0,
+        "rmse_m": 0.03507442140247955,
+        "total_count": 146,
+        "valid_count": 146
+      },
+      "forecast_sha256": "57d54cddf0f0f160ba627604fe9df416982671253e4aa639df2ff488b923401a",
+      "frame": "raw_global_xyz",
+      "interpretation": "Observed target distance is sampled geometry, not independently verified physical contact; gaps are not inferred misses.",
+      "minimum_observed_tip_target_m": 0.03885944738413038,
+      "onset_s": 68.95809784316667,
+      "packet_count": 164,
+      "packet_jitter_s": 0.00035269833334439227,
+      "target_distance": {
+        "coverage": 1.0,
+        "rmse_m": 1.2457094329710445,
+        "total_count": 146,
+        "valid_count": 146
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.04545115556446753,
+        "total_count": 146,
+        "valid_count": 146
+      }
+    },
+    "M2_001_whip_004": {
+      "alignment": {
+        "clock_verified": false,
+        "includes_logging_latency": true,
+        "method": "Estimated per repetition from measured native-rate TF XYZ and native Motive XYZ, excluding interpolation across logger gaps; no command/forecast or spatial fitting. Includes unknown transport latency; original timestamps retained.",
+        "offset_s": 0.619651336175928,
+        "rms_m": null
+      },
+      "drone": {
+        "coverage": 1.0,
+        "rmse_m": 0.05078714592209807,
+        "total_count": 146,
+        "valid_count": 146
+      },
+      "forecast_sha256": "57d54cddf0f0f160ba627604fe9df416982671253e4aa639df2ff488b923401a",
+      "frame": "raw_global_xyz",
+      "interpretation": "Observed target distance is sampled geometry, not independently verified physical contact; gaps are not inferred misses.",
+      "minimum_observed_tip_target_m": 0.029244898461099168,
+      "onset_s": 92.5247654165,
+      "packet_count": 164,
+      "packet_jitter_s": 0.00045773933332782235,
+      "target_distance": {
+        "coverage": 1.0,
+        "rmse_m": 1.2496547879406839,
+        "total_count": 146,
+        "valid_count": 146
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.0765266576723818,
+        "total_count": 146,
+        "valid_count": 146
+      }
+    },
+    "M2_002_whip_001": {
+      "alignment": {
+        "clock_verified": false,
+        "includes_logging_latency": true,
+        "method": "Estimated per repetition from measured native-rate TF XYZ and native Motive XYZ, excluding interpolation across logger gaps; no command/forecast or spatial fitting. Includes unknown transport latency; original timestamps retained.",
+        "offset_s": -0.7668076467932716,
+        "rms_m": null
+      },
+      "drone": {
+        "coverage": 1.0,
+        "rmse_m": 0.03183897558058718,
+        "total_count": 146,
+        "valid_count": 146
+      },
+      "forecast_sha256": "57d54cddf0f0f160ba627604fe9df416982671253e4aa639df2ff488b923401a",
+      "frame": "raw_global_xyz",
+      "interpretation": "Observed target distance is sampled geometry, not independently verified physical contact; gaps are not inferred misses.",
+      "minimum_observed_tip_target_m": 0.03605412966637805,
+      "onset_s": 21.407864865,
+      "packet_count": 164,
+      "packet_jitter_s": 0.0006902366666672322,
+      "target_distance": {
+        "coverage": 1.0,
+        "rmse_m": 1.236854844797331,
+        "total_count": 146,
+        "valid_count": 146
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.06408110469468585,
+        "total_count": 146,
+        "valid_count": 146
+      }
+    },
+    "M2_002_whip_002": {
+      "alignment": {
+        "clock_verified": false,
+        "includes_logging_latency": true,
+        "method": "Estimated per repetition from measured native-rate TF XYZ and native Motive XYZ, excluding interpolation across logger gaps; no command/forecast or spatial fitting. Includes unknown transport latency; original timestamps retained.",
+        "offset_s": -0.7685848218568149,
+        "rms_m": null
+      },
+      "drone": {
+        "coverage": 1.0,
+        "rmse_m": 0.11611312900632025,
+        "total_count": 147,
+        "valid_count": 147
+      },
+      "forecast_sha256": "57d54cddf0f0f160ba627604fe9df416982671253e4aa639df2ff488b923401a",
+      "frame": "raw_global_xyz",
+      "interpretation": "Observed target distance is sampled geometry, not independently verified physical contact; gaps are not inferred misses.",
+      "minimum_observed_tip_target_m": 0.078391415352703,
+      "onset_s": 44.974550016500004,
+      "packet_count": 164,
+      "packet_jitter_s": 0.00045700499999412614,
+      "target_distance": {
+        "coverage": 1.0,
+        "rmse_m": 1.2540059125167766,
+        "total_count": 147,
+        "valid_count": 147
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.10699699326999638,
+        "total_count": 147,
+        "valid_count": 147
+      }
+    },
+    "M2_002_whip_003": {
+      "alignment": {
+        "clock_verified": false,
+        "includes_logging_latency": true,
+        "method": "Estimated per repetition from measured native-rate TF XYZ and native Motive XYZ, excluding interpolation across logger gaps; no command/forecast or spatial fitting. Includes unknown transport latency; original timestamps retained.",
+        "offset_s": -0.7702374296508605,
+        "rms_m": null
+      },
+      "drone": {
+        "coverage": 1.0,
+        "rmse_m": 0.054916031342531785,
+        "total_count": 146,
+        "valid_count": 146
+      },
+      "forecast_sha256": "57d54cddf0f0f160ba627604fe9df416982671253e4aa639df2ff488b923401a",
+      "frame": "raw_global_xyz",
+      "interpretation": "Observed target distance is sampled geometry, not independently verified physical contact; gaps are not inferred misses.",
+      "minimum_observed_tip_target_m": 0.06613379657935876,
+      "onset_s": 68.54116258316667,
+      "packet_count": 164,
+      "packet_jitter_s": 0.00048541366668075625,
+      "target_distance": {
+        "coverage": 1.0,
+        "rmse_m": 1.2404779409624136,
+        "total_count": 146,
+        "valid_count": 146
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.07476564904704087,
+        "total_count": 146,
+        "valid_count": 146
+      }
+    },
+    "M2_003_whip_001": {
+      "alignment": {
+        "clock_verified": false,
+        "includes_logging_latency": true,
+        "method": "Estimated per repetition from measured native-rate TF XYZ and native Motive XYZ, excluding interpolation across logger gaps; no command/forecast or spatial fitting. Includes unknown transport latency; original timestamps retained.",
+        "offset_s": 1.8899780652165545,
+        "rms_m": null
+      },
+      "drone": {
+        "coverage": 1.0,
+        "rmse_m": 0.08287518356827199,
+        "total_count": 146,
+        "valid_count": 146
+      },
+      "forecast_sha256": "57d54cddf0f0f160ba627604fe9df416982671253e4aa639df2ff488b923401a",
+      "frame": "raw_global_xyz",
+      "interpretation": "Observed target distance is sampled geometry, not independently verified physical contact; gaps are not inferred misses.",
+      "minimum_observed_tip_target_m": 0.08000818921210505,
+      "onset_s": 21.597549786833333,
+      "packet_count": 164,
+      "packet_jitter_s": 0.0005013143333307823,
+      "target_distance": {
+        "coverage": 1.0,
+        "rmse_m": 1.287325226888364,
+        "total_count": 146,
+        "valid_count": 146
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.07409112871882499,
+        "total_count": 146,
+        "valid_count": 146
+      }
+    },
+    "M2_003_whip_002": {
+      "alignment": {
+        "clock_verified": false,
+        "includes_logging_latency": true,
+        "method": "Estimated per repetition from measured native-rate TF XYZ and native Motive XYZ, excluding interpolation across logger gaps; no command/forecast or spatial fitting. Includes unknown transport latency; original timestamps retained.",
+        "offset_s": 1.888556241446652,
+        "rms_m": null
+      },
+      "drone": {
+        "coverage": 1.0,
+        "rmse_m": 0.05993455300388312,
+        "total_count": 146,
+        "valid_count": 146
+      },
+      "forecast_sha256": "57d54cddf0f0f160ba627604fe9df416982671253e4aa639df2ff488b923401a",
+      "frame": "raw_global_xyz",
+      "interpretation": "Observed target distance is sampled geometry, not independently verified physical contact; gaps are not inferred misses.",
+      "minimum_observed_tip_target_m": 0.015658421025122535,
+      "onset_s": 45.16415509550001,
+      "packet_count": 164,
+      "packet_jitter_s": 0.0005026030000010451,
+      "target_distance": {
+        "coverage": 1.0,
+        "rmse_m": 1.1921056240438654,
+        "total_count": 146,
+        "valid_count": 146
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.09109612509564585,
+        "total_count": 146,
+        "valid_count": 146
+      }
+    },
+    "M2_003_whip_003": {
+      "alignment": {
+        "clock_verified": false,
+        "includes_logging_latency": true,
+        "method": "Estimated per repetition from measured native-rate TF XYZ and native Motive XYZ, excluding interpolation across logger gaps; no command/forecast or spatial fitting. Includes unknown transport latency; original timestamps retained.",
+        "offset_s": 1.887103209173392,
+        "rms_m": null
+      },
+      "drone": {
+        "coverage": 1.0,
+        "rmse_m": 0.0354460126534467,
+        "total_count": 147,
+        "valid_count": 147
+      },
+      "forecast_sha256": "57d54cddf0f0f160ba627604fe9df416982671253e4aa639df2ff488b923401a",
+      "frame": "raw_global_xyz",
+      "interpretation": "Observed target distance is sampled geometry, not independently verified physical contact; gaps are not inferred misses.",
+      "minimum_observed_tip_target_m": 0.019556140749135663,
+      "onset_s": 68.73083911983335,
+      "packet_count": 164,
+      "packet_jitter_s": 0.0004905303333373467,
+      "target_distance": {
+        "coverage": 1.0,
+        "rmse_m": 1.254098976225135,
+        "total_count": 147,
+        "valid_count": 147
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.06578035918680783,
+        "total_count": 147,
+        "valid_count": 147
+      }
+    },
+    "M2_003_whip_004": {
+      "alignment": {
+        "clock_verified": false,
+        "includes_logging_latency": true,
+        "method": "Estimated per repetition from measured native-rate TF XYZ and native Motive XYZ, excluding interpolation across logger gaps; no command/forecast or spatial fitting. Includes unknown transport latency; original timestamps retained.",
+        "offset_s": 1.885740065393958,
+        "rms_m": null
+      },
+      "drone": {
+        "coverage": 1.0,
+        "rmse_m": 0.03532980298584749,
+        "total_count": 146,
+        "valid_count": 146
+      },
+      "forecast_sha256": "57d54cddf0f0f160ba627604fe9df416982671253e4aa639df2ff488b923401a",
+      "frame": "raw_global_xyz",
+      "interpretation": "Observed target distance is sampled geometry, not independently verified physical contact; gaps are not inferred misses.",
+      "minimum_observed_tip_target_m": 0.040339006408190096,
+      "onset_s": 92.29748408566668,
+      "packet_count": 164,
+      "packet_jitter_s": 0.0006456823333280681,
+      "target_distance": {
+        "coverage": 1.0,
+        "rmse_m": 1.2308239471734577,
+        "total_count": 146,
+        "valid_count": 146
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.059494455950147955,
+        "total_count": 146,
+        "valid_count": 146
+      }
+    }
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "schema": "current_flight_baseline_v1",
+  "date": "2026-09-17",
+  "implementation_commit": "904c02e",
+  "models": [
+    {
+      "id": "M0",
+      "model": "runs/rehearsals_pva/20260913-012740-484590-M0-slower-brake-1s/model.json",
+      "job": null,
+      "catalog_hash_files": 3
+    },
+    {
+      "id": "M1",
+      "model": "runs/adaptation/M1-20260915-probe-refined/candidate/model.json",
+      "job": "runs/adaptation/M1-20260915-probe-refined",
+      "catalog_hash_files": 44
+    },
+    {
+      "id": "M2",
+      "model": "runs/adaptation/M2-20260915/candidate/model.json",
+      "job": "runs/adaptation/M2-20260915",
+      "catalog_hash_files": 6
+    },
+    {
+      "id": "M3",
+      "model": "runs/adaptation/M3-20260915/candidate/model.json",
+      "job": "runs/adaptation/M3-20260915",
+      "catalog_hash_files": 10
+    },
+    {
+      "id": "M4",
+      "model": "runs/adaptation/M4-20260915/candidate/model.json",
+      "job": "runs/adaptation/M4-20260915",
+      "catalog_hash_files": 6
+    },
+    {
+      "id": "M5",
+      "model": "runs/adaptation/M5-20260915/candidate/model.json",
+      "job": "runs/adaptation/M5-20260915",
+      "catalog_hash_files": 6
+    },
+    {
+      "id": "M6",
+      "model": "runs/adaptation/M6-horizontal-20260915-six-checks/candidate/model.json",
+      "job": "runs/adaptation/M6-horizontal-20260915-six-checks",
+      "catalog_hash_files": 33
+    },
+    {
+      "id": "M7",
+      "model": "runs/adaptation/M7-horizontal-20260916-one-percent-six-checks/candidate/model.json",
+      "job": "runs/adaptation/M7-horizontal-20260916-one-percent-six-checks",
+      "catalog_hash_files": 30
+    }
+  ],
+  "commands": [
+    {
+      "path": "exports/M0_MPPI_2cm_brake_1p3s/fullstate_30hz.csv",
+      "sha256": "1e716e6ef8626d48229416a8baf2e6581f97899de38a578833c88ad0defbe634"
+    },
+    {
+      "path": "exports/M1_MPPI_2cm_brake_1p3s/fullstate_30hz.csv",
+      "sha256": "96d45cc4d1ebcceaeee9c67fb65ff74288a6368567df05d43a7b8f0c3ea2e468"
+    },
+    {
+      "path": "exports/M2_MPPI_2cm_brake_1p3s/fullstate_30hz.csv",
+      "sha256": "0bdbdbb8ca309668b5a674ff82552c53253c83dde08b7d0d9a71b03cc22ddbd9"
+    },
+    {
+      "path": "exports/M3_MPPI_2cm_brake_1p3s/fullstate_30hz.csv",
+      "sha256": "48d7d33b0f37a6cec68ba9a8e1fb29190e5c5e0e3f552760a2460123b37cf925"
+    },
+    {
+      "path": "exports/M4_MPPI_2cm_brake_1p3s/fullstate_30hz.csv",
+      "sha256": "1513d5e8f6ac5a45f4dae670445fad4aa9db160f3f464bda388ec548fe767c95"
+    },
+    {
+      "path": "exports/M5_Curved_Side_Whip_1p3m/fullstate_30hz.csv",
+      "sha256": "6adda89b275bbe0523ff6272842e34326d11fb533a7dd744befe6ec4fb2f4d00"
+    },
+    {
+      "path": "exports/M5_Horizontal_Whip_Firmer_Brake/fullstate_30hz.csv",
+      "sha256": "1ab8e1ed748f3b755958aa4730ca2df625b17b171727831a4b261a6a50053925"
+    },
+    {
+      "path": "exports/M6_Horizontal_Command_Correction/fullstate_30hz.csv",
+      "sha256": "16b45834deb1be3f8de377117c29af08b52bb875af2f3711067e67f0ed6ee7ec"
+    },
+    {
+      "path": "exports/Right_to_Left_Target_Y1p25_Z1p3_Quick_Brake/fullstate_30hz.csv",
+      "sha256": "6b40453c5f6de1e515b961cf658b3a576ad1a8eaca149e424c2f594164292948"
+    }
+  ],
+  "catalog_hash_check": "All eight model entries verified against working files before snapshot",
+  "scientific_changes": false,
+  "retention": "Current vertical M0-M4 and horizontal M5-M7 series, preliminary anchor data, and existing workflow dependencies",
+  "excluded": "Discarded replans, prior reset archives, caches, and unrelated manuscript build previews",
+  "legacy_training": "Existing shared PPO/SAC dependencies retained for this preservation snapshot; removal is not complete",
+  "validation": "35 targeted export, evaluation, UI, jerk-correction and whip-objective tests passed; full suite not run; known source-release packaging failures remain"
+}

@@ -1,0 +1,68 @@
+{
+  "atol": 1e-07,
+  "checks": [
+    {
+      "index": 0,
+      "kind": "output",
+      "maximum_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "index": 1,
+      "kind": "output",
+      "maximum_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "index": 2,
+      "kind": "output",
+      "maximum_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "index": 3,
+      "kind": "output",
+      "maximum_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "index": 0,
+      "kind": "gradient",
+      "maximum_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "index": 1,
+      "kind": "gradient",
+      "maximum_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "index": 2,
+      "kind": "gradient",
+      "maximum_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "index": 3,
+      "kind": "gradient",
+      "maximum_absolute_difference": 0.0,
+      "passed": true
+    },
+    {
+      "index": 4,
+      "kind": "gradient",
+      "maximum_absolute_difference": 4.0657581468206416e-20,
+      "passed": true
+    },
+    {
+      "index": 5,
+      "kind": "gradient",
+      "maximum_absolute_difference": 2.710505431213761e-20,
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "rtol": 0.0001,
+  "steps": 6
+}

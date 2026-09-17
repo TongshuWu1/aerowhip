@@ -1,0 +1,151 @@
+{
+  "cable": {
+    "Cb_n_m2_s": 9.445418499854434e-05,
+    "EI_n_m2": 1.0003229147102255e-08,
+    "attachment": "dynamic_shared_node_0_free_pivot",
+    "bare_cable_mass_kg": 0.007395479808164983,
+    "constraint_iterations": 4,
+    "curvature_frame_regularization": 2e-05,
+    "diameter_m": 0.0035,
+    "external_drag_s_inv": 0.1695549151478517,
+    "gravity_m_s2": [
+      0.0,
+      0.0,
+      -9.80665
+    ],
+    "marker_interval_lengths_m": [
+      0.063,
+      0.087,
+      0.1,
+      0.1,
+      0.1,
+      0.1,
+      0.1,
+      0.1025,
+      0.1,
+      0.1
+    ],
+    "moving_marker_masses_kg": [
+      0.0009604520191835018,
+      0.0009604520191835018,
+      0.0009604520191835018,
+      0.0009604520191835018,
+      0.0009604520191835018,
+      0.0009604520191835018,
+      0.0009604520191835018,
+      0.0009604520191835018,
+      0.0009604520191835018,
+      0.0009604520191835018
+    ],
+    "segments_per_marker_interval": [
+      2,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "substeps": 8
+  },
+  "fullstate_execution": {
+    "checkpoint": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M6-horizontal-20260915-six-checks\\stages\\cable_physics\\assets\\drone_model.json",
+    "command_rate_hz": 30.0,
+    "enabled": true,
+    "feasibility": {
+      "maximum_specific_force_m_s2": 18.28571428571429,
+      "maximum_speed_m_s": 5.0,
+      "maximum_tilt_deg": 60.0,
+      "minimum_specific_vertical_m_s2": 2.0,
+      "source": "Provisional simulation envelope, not measured hardware limits"
+    },
+    "initialization": "settled_hover_pose_and_hanging_planning_cable",
+    "recovery_objective": "excluded",
+    "reference": "bounded_jerk_pva_30hz_v1",
+    "schema": "tracked_pose_execution_v1",
+    "sha256": "dfc9737acec5739e3caae43469e76e92fda22719fd1c70d9023ad9abd4b43a73",
+    "source_job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\20260909-preliminary1-M0-v2"
+  },
+  "mass_measurement": {
+    "cable_assembly_mass_kg": 0.017,
+    "distribution": "Provisional proportional scaling of existing cable/marker distribution to 17 g; geometry unchanged",
+    "drone_mass_kg": 0.145,
+    "source": "User measurement: repaired drone 145 g, cable assembly 17 g; all geometry unchanged",
+    "total_mass_kg": 0.162
+  },
+  "motion_residual": {
+    "checkpoint": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M6-horizontal-20260915-six-checks\\stages\\cable_physics\\assets\\cable_residual.pt",
+    "enabled": true,
+    "sha256": "5916931072482807ed1a4f8734ae2164270e24a4bfcc3a61042dde1792747cd3",
+    "specification": {
+      "acceleration_limit": 0.5,
+      "hidden": 32,
+      "node_count": 12
+    }
+  },
+  "provenance": {
+    "adaptation_generation": "M0 development, not M1; no new whip data",
+    "cable_boundary": "Predicted rotated attachment; loaded drone response includes effective cable loading",
+    "candidate_variant": "full",
+    "causal_cable_initialization": {
+      "history_s": 1.0,
+      "velocity_weight_tau_s": 0.02
+    },
+    "development_stage": "Cable-only diagnostic; inherited drone fit, not a complete new fit",
+    "diagnostic_review": "docs/PRELIMINARY1_FIT.md",
+    "fit_complete": false,
+    "fit_job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\audits\\preliminary1-gradient-resolution",
+    "fit_state": "Native global OptiTrack; no retrospective height normalization",
+    "flight_ready": false,
+    "generation_index": 7,
+    "geometry": "Existing measured lengths and tracking-to-attachment convention preserved",
+    "label": "M7 full adaptation candidate",
+    "learned_prior": false,
+    "mass_distribution": "Provisional structural distribution retained; total 17 g measured",
+    "nominal_estimates": "Kp=10, Kd=5, feedforward=1, attitude tau=.08 s, delay=.02 s, EI=Cb=1e-6",
+    "numerical_change": "Curvature-frame regularization 2e-7 -> 2e-5; explicitly changes regularized damping",
+    "parent_model_sha256": "eee4834f5b896ae2fd6baef0a45bb759646b7d994998b2c4b86b51c5e7c1d449",
+    "prospective_flight_evidence": false,
+    "quality_note": "Unselected preliminary hypothesis. Prospective whip data still required.",
+    "scalar_damping": "0.4 per second effective velocity damping selected on four training takes; not measured aerodynamics",
+    "selected_model": false,
+    "source_drone": "cf_3",
+    "source_job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M6-horizontal-20260915-six-checks",
+    "source_model": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\20260909-preliminary1-M0-v2\\candidate\\model.json",
+    "source_sha256": "4179e6297ed8dd838f42e2d9d8521f3309191bf49325d0e525c7182f0030e43e",
+    "termination": "User-requested early stop; best numerically verified saved checkpoint",
+    "training_takes": [
+      "M6_side_001_whip_001",
+      "M6_side_001_whip_002",
+      "M6_side_001_whip_003",
+      "M6_side_001_whip_004",
+      "M6_side_002_whip_001",
+      "M6_side_002_whip_002",
+      "M6_side_002_whip_003",
+      "M6_side_002_whip_004",
+      "M6_side_003_whip_001",
+      "M6_side_003_whip_002",
+      "M6_side_003_whip_003",
+      "M6_side_003_whip_004"
+    ],
+    "update_schema": "whip_full_model_v1",
+    "validation_takes": [
+      "figure8_002"
+    ]
+  },
+  "recorded_data": {
+    "optitrack_to_attachment_offset_body_m": [
+      0.0066549972854827175,
+      -0.01287427254333901,
+      -0.055
+    ]
+  },
+  "schema": "loaded_drone_cable_pva_model_v1",
+  "simulation": {
+    "device": "auto",
+    "dt_s": 0.006666666666666667
+  }
+}

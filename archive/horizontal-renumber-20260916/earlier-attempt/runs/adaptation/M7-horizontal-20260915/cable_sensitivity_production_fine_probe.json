@@ -1,0 +1,20 @@
+{
+  "original_tolerance": 0.02,
+  "results": [
+    {
+      "cost": 1.1502740276869396,
+      "derivative_norm": 1383.0265143207432,
+      "production": true,
+      "relative_error": 0.006623648948052804,
+      "step": 3e-08
+    },
+    {
+      "cost": 1.1502740276869396,
+      "derivative_norm": 1378.5997819003242,
+      "difference_to_previous_jacobian": 0.010901229616869445,
+      "production": true,
+      "relative_error": 0.002575441510659286,
+      "step": 1e-08
+    }
+  ]
+}

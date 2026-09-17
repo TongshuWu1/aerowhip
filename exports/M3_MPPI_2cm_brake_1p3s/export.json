@@ -1,0 +1,203 @@
+{
+  "baseline_cost_m2": 0.0007922499337853206,
+  "checkpoint": null,
+  "command_contract": "position_spline_pva_30hz_v1",
+  "command_semantics": "Desired tracked-origin P/V/A, 30 Hz zero-order hold, kinematic acceleration, zero yaw",
+  "corrected_cost_m2": 0.0004830337625405332,
+  "corrected_reference_quadrotor_rmse_m": 0.030066827609508556,
+  "corrected_reference_tip_rmse_m": 0.018096353738309784,
+  "correction_job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M3-2cm-brake-1p3s-correction",
+  "csv_sha256": "48d7d33b0f37a6cec68ba9a8e1fb29190e5c5e0e3f552760a2460123b37cf925",
+  "elapsed_s": 181.8490895999712,
+  "evidence": "Simulation-only command correction toward the original M0 physical motion; Physical improvement has not been established.",
+  "independent_cost_difference_m2": 5.421010862427522e-20,
+  "initial_tracking_origin_m": [
+    0.0,
+    0.0,
+    1.4
+  ],
+  "iterations": 11,
+  "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M3-2cm-brake-1p3s-correction",
+  "maximum_predicted_tilt_limit_deg": 60.0,
+  "maximum_reference_quadrotor_deviation_m": 0.05406864797948588,
+  "minimum_predicted_cable_height_m": 0.39171177270501545,
+  "minimum_tip_distance_m": 0.029031760746271788,
+  "objective_schema": "fixed_tip_reference_v1",
+  "optimization": {
+    "active_controls": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "active_coordinates": 24,
+    "baseline_strike": {
+      "reference_error_m": 0.03156763451192855,
+      "target_distance_m": 0.031919394442571206,
+      "time_s": 1.1138000791100293
+    },
+    "final_strike": {
+      "reference_error_m": 0.013274935373425143,
+      "target_distance_m": 0.02863798354764056,
+      "time_s": 1.1138000791100293
+    },
+    "iterations": 11,
+    "maximum_jacobian_relative_difference": 0.006293205417222255,
+    "optimization_elapsed_s": 146.9048436000012,
+    "optimizer": "Bounded finite-difference Gauss-Newton",
+    "rollout_count": 1100,
+    "stop_reason": "Repeated small improvements with command-constrained stationarity",
+    "strike_guard": "reference"
+  },
+  "original_reference_tip_rmse_m": 0.0254122167845407,
+  "planner": "Local fixed-reference command correction",
+  "planner_mode": "open_loop",
+  "predicted_attitude_checked": true,
+  "predicted_hit_time_s": null,
+  "predicted_valid_hit": false,
+  "prediction_valid_through_s": 8.9,
+  "recovery": {
+    "brake_coefficients_normalized": [
+      [
+        0.5565664181187682,
+        -0.11210168647144661,
+        2.093377160760661
+      ],
+      [
+        -3.1731978117849162,
+        -0.11314687376059084,
+        1.1624894349779162
+      ],
+      [
+        -2.195238004236474,
+        0.9836985884611686,
+        -0.4146314281269651
+      ],
+      [
+        6.1001818174335485,
+        -1.198451244187634,
+        -0.6096475308086294
+      ],
+      [
+        -2.6842179080106954,
+        0.4352758573502889,
+        0.3739290034254756
+      ]
+    ],
+    "brake_end_s": 1.3,
+    "brake_metrics": {
+      "minimum_az_m_s2": -0.9317941617407374,
+      "minimum_height_m": 2.093377160760661,
+      "minimum_specific_vertical_m_s2": 8.874855838259261,
+      "minimum_vz_m_s": 0.0,
+      "peak_absolute_jerk_m_s3": [
+        16.65957710723773,
+        3.2729665294154775,
+        2.419850203622957
+      ],
+      "peak_height_m": 2.6055166402284584,
+      "peak_horizontal_acceleration_m_s2": 3.563668542512205,
+      "peak_specific_force_m_s2": 9.806649999999998,
+      "peak_speed_m_s": 2.7761623697491853
+    },
+    "braking_position_m": [
+      -1.3959054884797695,
+      -0.0047253586082139365,
+      2.6055166402284584
+    ],
+    "hold_s": 3.0,
+    "hover_position_m": [
+      0.0,
+      0.0,
+      1.4
+    ],
+    "phase_description": "Smooth braking, rest-to-rest return, final hold",
+    "return_coefficients_normalized": [
+      [
+        -1.3959054884797695,
+        -0.0047253586082139365,
+        2.6055166402284584
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        13.95905488479767,
+        0.04725358608213927,
+        -12.055166402284565
+      ],
+      [
+        -20.938582327196507,
+        -0.07088037912320892,
+        18.082749603426848
+      ],
+      [
+        8.375432930878603,
+        0.028352151649283567,
+        -7.233099841370739
+      ]
+    ],
+    "return_end_s": 4.766666666666667,
+    "return_metrics": {
+      "minimum_az_m_s2": -0.5791464691878931,
+      "minimum_height_m": 1.4000000000000028,
+      "minimum_specific_vertical_m_s2": 9.227503530812106,
+      "minimum_vz_m_s": -0.6520222212774103,
+      "peak_absolute_jerk_m_s3": [
+        2.010346932017757,
+        0.006805339085708638,
+        1.7361538436380746
+      ],
+      "peak_height_m": 2.6055166402284584,
+      "peak_horizontal_acceleration_m_s2": 0.670615684610389,
+      "peak_specific_force_m_s2": 10.407424931069219,
+      "peak_speed_m_s": 0.997577023108568
+    },
+    "return_s": 3.466666666666667,
+    "schema": "brake_return_hold_v1",
+    "settings": {
+      "braking_downward_acceleration_m_s2": 3.5,
+      "braking_horizontal_acceleration_m_s2": 8.0,
+      "braking_tilt_deg": 60.0,
+      "hold_s": 3.0,
+      "maximum_brake_s": 6.0,
+      "maximum_return_s": 12.0,
+      "minimum_brake_s": 1.3,
+      "minimum_return_s": 2.0,
+      "return_speed_m_s": 1.0,
+      "schema": "brake_return_hold_v1"
+    },
+    "stationary_braking_waypoint": true,
+    "total_duration_s": 7.766666666666667,
+    "vehicle_limits_verified": false
+  },
+  "recovery_empirically_validated": false,
+  "recovery_prediction_complete": true,
+  "reference_feasible": true,
+  "reference_sha256": "749032795283254b06df80a156bf8daeb55db26e435315750a2ab96d80ed8ac8",
+  "rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M3-MPPI-2cm-brake-1p3s",
+  "schema": "pva_fullstate_30hz_v1",
+  "standard_fast_cable_max_difference_m": 1.0439444136645104e-06,
+  "standard_fast_pose_max_difference_m": 0.0,
+  "strike_distance_m": 0.02863798354764056,
+  "strike_time_s": 1.1138000791100293,
+  "success_meaning": "No binary hit claim; fixed-time tracking objective",
+  "target_position_m": [
+    1.25,
+    0.0,
+    1.25
+  ],
+  "total_duration_s": 8.9,
+  "whip_end_s": 1.1333333333333333
+}

@@ -1,0 +1,23 @@
+{
+  "current_flight": {
+    "collection_started_at": "2026-09-14T21:15:25.116957+00:00",
+    "csv": "M0_Bspline_slower_brake_1s/fullstate_30hz.csv",
+    "csv_sha256": "49f9fd4b8e356543cb5523abca866646968f58b603f73bb94466f0734a1e8d90",
+    "flight_take": "M0_Bspline_slower_brake_1s/flight_take",
+    "model_id": "M0",
+    "physical_flight_pending": true,
+    "planned_takes": 10,
+    "previous_collection_archive": "delete/reset-to-M0-20260914-211331",
+    "recorded_takes": 0,
+    "rehearsal": "runs/rehearsals_pva/20260913-012740-484590-M0-slower-brake-1s"
+  },
+  "replay": {
+    "camera": "Side XZ",
+    "note": "Retained latest M0; previous collection archived. New collection starts here.",
+    "rehearsal": "runs/rehearsals_pva/20260913-012740-484590-M0-slower-brake-1s",
+    "schema": "saved_replay_selection_v1",
+    "selected": true,
+    "speed": "0.5×",
+    "time_s": 0.0
+  }
+}

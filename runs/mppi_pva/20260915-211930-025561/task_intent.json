@@ -1,0 +1,23 @@
+{
+  "active_flight_selection_changed": false,
+  "desired_tip_direction": [
+    -1.0,
+    0.0,
+    0.0
+  ],
+  "initial_screen": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\tmp\\right_to_left_seed_screen",
+  "model_id": "M6",
+  "origin_m": [
+    0.0,
+    0.0,
+    1.5
+  ],
+  "original_M6_command_unchanged": true,
+  "recovery": "Final export truncates the command at the first 30 Hz update after the selected strike, then appends the shortest admissible smooth deceleration and independently checks the complete vehicle/cable motion",
+  "simulation_target_review_tolerance_m": 0.02,
+  "target_m": [
+    0.0,
+    1.25,
+    1.3
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "scope": "Same ten M0/M1 takes predicted by frozen M0/M1/M2; one equal-take mean tip RMSE per model in Table II",
+  "mean_cm": {
+    "M0": 19.65379714828252,
+    "M1": 8.664101819579937,
+    "M2": 8.373355241423441
+  },
+  "n": 10,
+  "report": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\evaluation\\paper_M0_M1_takes_M0_M1_M2_20260913\\report.json",
+  "summary": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\evaluation\\paper_M0_M1_takes_M0_M1_M2_20260913\\mean_tip_prediction.json",
+  "summary_sha256": "5a0a104cda7e22a9b07ef86fef5e4f10985aef8c261c5f4d8a1ca210d72d2060",
+  "manuscript": "C:\\Users\\wts28\\Lehigh University Dropbox\\TonyLehigh Wu\\Apps\\Overleaf\\AeroWhip-ICRA\\main.tex",
+  "manuscript_sha256": "7ac5e79db61f9721a8526a930b91ddcead2a0abcf3735bfb8d0c3eff62f50215",
+  "before": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\tmp\\all_take_prediction_paper_20260913\\before\\main.tex",
+  "preview": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\paper\\figures\\AeroWhip_methodology_20260913.pdf",
+  "preview_sha256": "61f645e2f82121ec540d73a0b9c2e75f9ed9024cac659f86e498bfeddbc06307",
+  "verification": {
+    "all_30_rmse_values_recomputed": true,
+    "max_rmse_difference_m": 2.7755575615628914e-17,
+    "per_take_common_arrays_equal": true,
+    "four_previous_predictions_reproduced": true,
+    "old_M2_flights_used": false
+  },
+  "platform": "Windows / NVIDIA GeForce RTX 4080; frozen inference only",
+  "source_models_inputs_unchanged": true,
+  "independent_test": false,
+  "old_M2_physical_data_used": false,
+  "compilation": "Tectonic with local OT1 wrapper; preamble unchanged",
+  "pages": 7,
+  "visually_reviewed_changed_pages": [
+    6,
+    7
+  ],
+  "overfull_boxes": false,
+  "unresolved_references": false,
+  "cloud_sync_verified": false
+}

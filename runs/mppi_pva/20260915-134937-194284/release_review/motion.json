@@ -1,0 +1,72 @@
+{
+  "aligned_release_duration_s": 0.20666666666666653,
+  "backward_travel_m": 0.10131408192391844,
+  "best_score": 2.9595023671574077,
+  "closest_approach_time_s": null,
+  "command_steps": 52,
+  "complete_recovery_attitude_checked": true,
+  "complete_recovery_prediction_checked": false,
+  "directed_tip_speed_m_s": 6.879042886689254,
+  "elapsed_s": 319.35360120000405,
+  "evidence": "Independent frozen-model replay; no complete recovery or flight CSV in this diagnostic artifact",
+  "fold_completed_time_s": null,
+  "fold_requirement": "diagnostic_only",
+  "fold_valid": false,
+  "free_target": true,
+  "horizontal_cable_rms_m": 0.44527280849505674,
+  "independent_score_difference": 4.765077221691172e-13,
+  "initialization": "templates",
+  "iterations": 80,
+  "loading_to_release_turn_deg": 94.07778386328897,
+  "loading_velocity_m_s": [
+    1.0611093052739133,
+    -0.06215362044970813,
+    0.1527196753803861
+  ],
+  "maneuver_duration_s": 1.7333333333333334,
+  "minimum_tip_distance_m": null,
+  "objective_components": {
+    "smoothness": -0.0013180046764900925,
+    "strike": 2.960820371833898,
+    "target": -0.0
+  },
+  "planner_mode": "targeted_fold_strike_v1",
+  "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+  "proposal_baselines_sha256": "ac9381be5a57d64f488c5989dab9b1caeb294d2afb53fcbc6029018cbd8daf38",
+  "random_candidate_budget": 40960,
+  "recovery_reference_checked": true,
+  "rewarded_tip_speed_m_s": 6.879042886689254,
+  "root_forward_speed_m_s": -1.2946307031596327,
+  "root_velocity_m_s": [
+    1.4664617181477935,
+    -1.2946307031596327,
+    0.48969408025534283
+  ],
+  "selected_strike_position_m": [
+    1.2971736485800425,
+    1.3010455406702361,
+    1.3692436389157958
+  ],
+  "stop_reason": "fixed_budget",
+  "strike_angle_deg": 2.8942129254536115,
+  "strike_distance_m": null,
+  "strike_time_s": 1.6933333333333334,
+  "target_note": "Strike location selected from the motion; no target accuracy measured",
+  "tip_velocity_m_s": [
+    -0.08711681711726876,
+    6.879042886689254,
+    0.3366928426631162
+  ],
+  "velocity_peak_speeds_m_s": [
+    2.5076319239180624,
+    2.7113535643788578,
+    4.232864391093199
+  ],
+  "velocity_peak_times_s": [
+    1.3133333333333332,
+    1.4866666666666668,
+    1.68
+  ],
+  "whip_end_s": 1.7333333333333334,
+  "target_invariance_score_difference": 0.0
+}

@@ -1,0 +1,125 @@
+{
+  "actual_take_count": 11,
+  "authorization": "User explicitly requests M3 fitting using the retained M2 collection.",
+  "automatic_selection": false,
+  "before_update_comparison": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\evaluation\\M0-M1-M2-on-new-M2-20260915",
+  "cable_history_s": 1.0,
+  "cable_touched_or_reset": false,
+  "cable_velocity_weight_tau_s": 0.02,
+  "candidate_bounds_s_inv": [
+    0.0,
+    2.0
+  ],
+  "command_sha256": "0bdbdbb8ca309668b5a674ff82552c53253c83dde08b7d0d9a71b03cc22ddbd9",
+  "drone_history_s": 0.4,
+  "evaluation_policy": "evaluate frozen parent before learning; prior training data measures retention",
+  "evaluation_qualification": "Earlier M0/M1/M2 evaluation remains frozen. These 11 recordings now train M3 and cannot independently validate M3.",
+  "forecast_sha256": "57d54cddf0f0f160ba627604fe9df416982671253e4aa639df2ff488b923401a",
+  "frame": "raw_global_xyz",
+  "frozen_hashes": {
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M2-MPPI-2cm-brake-1p3s\\assets\\cable_residual.pt": "6ba4a1e5bac184454a9702598f94bac8eb587bca983160a5de37ae6df4060090",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M2-MPPI-2cm-brake-1p3s\\assets\\drone_model.json": "3a6232d16a547653f6f9844f229fcfbdf1943a165e9783b492b9f771f9157d16",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M2-MPPI-2cm-brake-1p3s\\assets\\drone_residual.pt": "95cf6fbb0611508e9da1db478f393c90e930b158f4d5e682a2ac726806a5fc34",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M2-MPPI-2cm-brake-1p3s\\fullstate_30hz.csv": "0bdbdbb8ca309668b5a674ff82552c53253c83dde08b7d0d9a71b03cc22ddbd9",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M2-MPPI-2cm-brake-1p3s\\model.json": "9fb30d5dbc6500298c7977bedb225a81479fe8b071a9c13d4a85e858660eb705",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M2-MPPI-2cm-brake-1p3s\\plan.npz": "c6d331ab61a5ad9b85df2458fdb8ec7bdfa377d61b180f6be91d9e81a5d78e8f",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M2-MPPI-2cm-brake-1p3s\\rehearsal.json": "312b212930c189ede4ba8cd029d1570ff932d9d5138286172bfa6eb9601df609",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M2-MPPI-2cm-brake-1p3s\\rehearsal.npz": "57d54cddf0f0f160ba627604fe9df416982671253e4aa639df2ff488b923401a",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M2-MPPI-2cm-brake-1p3s\\settings.json": "2592fa716e344f36ac7aab99a57676eac1bb86e43ffc8eda8cb648daf75f77ac",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M2-MPPI-2cm-brake-1p3s\\task.json": "53d40757b794020705e4dd13e2003d2e7d0d296b217454bd4f6b7c3fa29536bf"
+  },
+  "minimum_observation_fraction": 0.8,
+  "model_id": "M2",
+  "model_update": "Full model warm-start from M2; unchanged standard stopping and preliminary training replay",
+  "neural_training": false,
+  "normalization": false,
+  "parent_forecast_model_sha256": "9fb30d5dbc6500298c7977bedb225a81479fe8b071a9c13d4a85e858660eb705",
+  "parent_generation": 2,
+  "physical_target_present": false,
+  "planned_roles": {
+    "M2_001_whip_001": "adaptation",
+    "M2_001_whip_002": "adaptation",
+    "M2_001_whip_003": "adaptation",
+    "M2_001_whip_004": "adaptation",
+    "M2_002_whip_001": "adaptation",
+    "M2_002_whip_002": "adaptation",
+    "M2_002_whip_003": "adaptation",
+    "M2_003_whip_001": "adaptation",
+    "M2_003_whip_002": "adaptation",
+    "M2_003_whip_003": "adaptation",
+    "M2_003_whip_004": "adaptation"
+  },
+  "recording_groups": {
+    "M2_001_whip_001": "M2_v2_001",
+    "M2_001_whip_002": "M2_v2_001",
+    "M2_001_whip_003": "M2_v2_001",
+    "M2_001_whip_004": "M2_v2_001",
+    "M2_002_whip_001": "M2_v2_002",
+    "M2_002_whip_002": "M2_v2_002",
+    "M2_002_whip_003": "M2_v2_002",
+    "M2_003_whip_001": "M2_v2_003",
+    "M2_003_whip_002": "M2_v2_003",
+    "M2_003_whip_003": "M2_v2_003",
+    "M2_003_whip_004": "M2_v2_003"
+  },
+  "rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M2-MPPI-2cm-brake-1p3s",
+  "role_unit": "whole take",
+  "schema": "prospective_whip_adaptation_v1",
+  "source_segments": {
+    "M2_001_whip_001": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M2-session1-four-whips",
+      "recording": "M2_v2_001",
+      "repetition": 1
+    },
+    "M2_001_whip_002": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M2-session1-four-whips",
+      "recording": "M2_v2_001",
+      "repetition": 2
+    },
+    "M2_001_whip_003": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M2-session1-four-whips",
+      "recording": "M2_v2_001",
+      "repetition": 3
+    },
+    "M2_001_whip_004": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M2-session1-four-whips",
+      "recording": "M2_v2_001",
+      "repetition": 4
+    },
+    "M2_002_whip_001": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M2-session2-three-whips",
+      "recording": "M2_v2_002",
+      "repetition": 1
+    },
+    "M2_002_whip_002": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M2-session2-three-whips",
+      "recording": "M2_v2_002",
+      "repetition": 2
+    },
+    "M2_002_whip_003": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M2-session2-three-whips",
+      "recording": "M2_v2_002",
+      "repetition": 3
+    },
+    "M2_003_whip_001": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M2-session3-four-whips",
+      "recording": "M2_v2_003",
+      "repetition": 1
+    },
+    "M2_003_whip_002": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M2-session3-four-whips",
+      "recording": "M2_v2_003",
+      "repetition": 2
+    },
+    "M2_003_whip_003": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M2-session3-four-whips",
+      "recording": "M2_v2_003",
+      "repetition": 3
+    },
+    "M2_003_whip_004": {
+      "batch": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\data\\flight_batches\\M2-session3-four-whips",
+      "recording": "M2_v2_003",
+      "repetition": 4
+    }
+  }
+}

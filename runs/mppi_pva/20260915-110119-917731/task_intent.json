@@ -1,0 +1,24 @@
+{
+  "horizontal_shape": "Arclength RMS vertical offset from attachment at the strike",
+  "initialization_source": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260915-041602-946928",
+  "minimum_tip_speed_gain_m_s": 2.0,
+  "model_id": "M5",
+  "physical_flight_pending": false,
+  "review_criteria": {
+    "horizontal_cable_rms_m": 0.1,
+    "target_error_m": 0.02
+  },
+  "search_budget": "512 x 80, 2 s horizon; fixed budget, not a convergence claim",
+  "strike_direction": [
+    0,
+    1,
+    0
+  ],
+  "target_m": [
+    1.25,
+    0.0,
+    1.25
+  ],
+  "task": "horizontal side whip",
+  "user_clarification": "Side way whip, side hit, horizontal whip"
+}

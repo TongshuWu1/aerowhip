@@ -1,0 +1,36 @@
+{
+  "attachment_position_at_strike_m": [
+    1.3190786010072093,
+    0.5856003596394689,
+    1.6197371128862887
+  ],
+  "cable_vertical_span_at_strike_m": 0.33333864070155306,
+  "distal_three_segment_inclinations_deg": [
+    31.17378748992054,
+    39.537376633455956,
+    45.3587020437561
+  ],
+  "evidence": "M5 simulation, not measured flight performance",
+  "geometric_fold_detected": false,
+  "horizontal_cable_rms_m": 0.14786301329538085,
+  "interpretation": "Simulated horizontal-direction release. Target location and cable geometry are reported separately; horizontal tip velocity alone does not prove a horizontal cable sweep.",
+  "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260915-135642-691893\\checkpoint-review-009",
+  "model": "M5",
+  "strike_direction_angle_deg": 11.618941104969775,
+  "strike_distance_m": null,
+  "strike_time_s": 1.6600000000000001,
+  "target_m": [
+    2.020919021628375,
+    0.9551406934281208,
+    1.2863984721840251
+  ],
+  "tip_elevation_angle_deg": -5.8249438128242055,
+  "tip_forward_gain_m_s": 4.62998959697245,
+  "tip_height_range_last_200ms_m": 0.08137570452568044,
+  "tip_speed_m_s": 4.726848765303798,
+  "tip_velocity_m_s": [
+    -0.8222891311454074,
+    4.62998959697245,
+    -0.4797250950086489
+  ]
+}

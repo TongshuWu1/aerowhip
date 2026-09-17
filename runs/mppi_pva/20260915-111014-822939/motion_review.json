@@ -1,0 +1,36 @@
+{
+  "attachment_position_at_strike_m": [
+    -0.8215048743741231,
+    1.7218045307264402,
+    1.6579443487930376
+  ],
+  "cable_vertical_span_at_strike_m": 0.2718455760168026,
+  "distal_three_segment_inclinations_deg": [
+    8.076201328878003,
+    16.09778313037416,
+    22.597133225361343
+  ],
+  "evidence": "M5 simulation, not measured flight performance",
+  "geometric_fold_detected": false,
+  "horizontal_cable_rms_m": 0.21470938771815923,
+  "interpretation": "Simulated side-directed motion (+Y). Target error and cable geometry are reported separately; horizontal tip velocity alone does not prove a horizontal cable sweep.",
+  "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260915-111014-822939",
+  "model": "M5",
+  "strike_direction_angle_deg": 12.561147961612095,
+  "strike_distance_m": 0.3393540731793575,
+  "strike_time_s": 0.9666666666666668,
+  "target_m": [
+    0.15,
+    1.25,
+    1.4
+  ],
+  "tip_elevation_angle_deg": -2.8990724942601647,
+  "tip_forward_gain_m_s": 2.014123756552885,
+  "tip_height_range_last_200ms_m": 0.18341147712462513,
+  "tip_speed_m_s": 4.381172534719299,
+  "tip_velocity_m_s": [
+    -0.9266999219539647,
+    4.276306802579518,
+    -0.2215855677641998
+  ]
+}

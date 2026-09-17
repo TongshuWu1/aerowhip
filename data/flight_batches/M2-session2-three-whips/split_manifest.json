@@ -1,0 +1,266 @@
+{
+  "alignment_note": "Separate recording clocks have different origins; offsets are not physical drone delays. Small offset variation between repetitions remains explicit.",
+  "alignment_policy": "Independent constant offset per recording segment from the two measured position streams; global estimate used only to locate windows. No target or forecast alignment.",
+  "all_command_executions": [
+    {
+      "complete_moving_sequence": true,
+      "moving_packets": 164,
+      "onset_s": 21.407864865,
+      "onset_spread_ms": 0.6902366666672322,
+      "repetition": 1
+    },
+    {
+      "complete_moving_sequence": true,
+      "moving_packets": 164,
+      "onset_s": 44.974550016500004,
+      "onset_spread_ms": 0.45700500000123156,
+      "repetition": 2
+    },
+    {
+      "complete_moving_sequence": true,
+      "moving_packets": 164,
+      "onset_s": 68.54116258316668,
+      "onset_spread_ms": 0.48541366668075625,
+      "repetition": 3
+    },
+    {
+      "complete_moving_sequence": false,
+      "moving_packets": 66,
+      "onset_s": 92.10780948550001,
+      "onset_spread_ms": 0.5266130000052271,
+      "repetition": 4
+    }
+  ],
+  "command_snapshot_event_timestamps_consistent": true,
+  "excluded_repetitions": [
+    4
+  ],
+  "exclusion_reason": "User reported failed fourth whip and removed its tracking/sample data; event log retains an incomplete command sequence.",
+  "fitting_performed": false,
+  "global_alignment_diagnostic": {
+    "clock_verified": false,
+    "half_offsets_s": [
+      -0.7674620826664842,
+      -0.7699993856032686
+    ],
+    "includes_logging_latency": true,
+    "method": "measured XYZ constant-offset least squares; no spatial fit",
+    "offset_s": -0.7684336415406845,
+    "rms_m": 0.0008628157122108291
+  },
+  "native_optitrack_rate_hz": 128.99896800825624,
+  "new_logger_observed_rate_hz": 128.9736274527028,
+  "original_files_unchanged": true,
+  "original_logger_sample_count": 10823,
+  "processed_repetitions": [
+    1,
+    2,
+    3
+  ],
+  "processor_sha256": "e03cf42e2c4becd1096fcaf2375c6b7b78a44c8bfa1204a51759881560ca9b75",
+  "recording": "M2_v2_002",
+  "repetitions": [
+    {
+      "alignment_rms_m": 0.00033874483870772684,
+      "cable_touched_or_reset": false,
+      "clock_verified": false,
+      "command_events": 579,
+      "complete_moving_sequence": true,
+      "fit_role": "unassigned",
+      "full_csv_tracking_complete": true,
+      "initialization_error": null,
+      "logger_rows": 1810,
+      "moving_packets": 164,
+      "name": "M2_002_whip_001",
+      "native_timestamps_preserved": true,
+      "offset_s": -0.7668076467932716,
+      "one_second_initialization_passed": true,
+      "onset_s": 21.407864865,
+      "onset_spread_ms": 0.6902366666672322,
+      "original_data_rows_preserved": true,
+      "physical_target_present": false,
+      "prehover_available_s": 1.6397885117932702,
+      "recording_group": "M2_v2_002",
+      "repetition": 1,
+      "segment_tf_gap_times_s": [],
+      "source_commands": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M2_MPPI_2cm_brake_1p3s\\flight_take\\M2\\experiment_M2_v2_002.commands.csv",
+      "source_logger": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M2_MPPI_2cm_brake_1p3s\\flight_take\\M2\\experiment_M2_v2_002.csv",
+      "source_tracking": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M2_MPPI_2cm_brake_1p3s\\flight_take\\M2\\M2_v2_002.csv",
+      "tracking_frames": 1377,
+      "tracking_relative_span_s": [
+        -1.6397885117932702,
+        9.026877488206729
+      ],
+      "whip_invalid_marker_samples": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "whip_marker_valid_fractions": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "whip_pose_valid_fraction": 1.0,
+      "whip_tf_gaps": 0,
+      "whip_tip_valid_fraction": 1.0
+    },
+    {
+      "alignment_rms_m": 0.0003119088585458488,
+      "cable_touched_or_reset": false,
+      "clock_verified": false,
+      "command_events": 539,
+      "complete_moving_sequence": true,
+      "fit_role": "unassigned",
+      "full_csv_tracking_complete": true,
+      "initialization_error": null,
+      "logger_rows": 1810,
+      "moving_packets": 164,
+      "name": "M2_002_whip_002",
+      "native_timestamps_preserved": true,
+      "offset_s": -0.7685848218568149,
+      "one_second_initialization_passed": true,
+      "onset_s": 44.974550016500004,
+      "onset_spread_ms": 0.45700500000123156,
+      "original_data_rows_preserved": true,
+      "physical_target_present": false,
+      "prehover_available_s": 4.998948838356817,
+      "recording_group": "M2_v2_002",
+      "repetition": 2,
+      "segment_tf_gap_times_s": [],
+      "source_commands": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M2_MPPI_2cm_brake_1p3s\\flight_take\\M2\\experiment_M2_v2_002.commands.csv",
+      "source_logger": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M2_MPPI_2cm_brake_1p3s\\flight_take\\M2\\experiment_M2_v2_002.csv",
+      "source_tracking": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M2_MPPI_2cm_brake_1p3s\\flight_take\\M2\\M2_v2_002.csv",
+      "tracking_frames": 1811,
+      "tracking_relative_span_s": [
+        -4.998948838356817,
+        9.032059161643183
+      ],
+      "whip_invalid_marker_samples": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "whip_marker_valid_fractions": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "whip_pose_valid_fraction": 1.0,
+      "whip_tf_gaps": 0,
+      "whip_tip_valid_fraction": 1.0
+    },
+    {
+      "alignment_rms_m": 0.00035683176654362653,
+      "cable_touched_or_reset": false,
+      "clock_verified": false,
+      "command_events": 559,
+      "complete_moving_sequence": true,
+      "fit_role": "unassigned",
+      "full_csv_tracking_complete": true,
+      "initialization_error": null,
+      "logger_rows": 1808,
+      "moving_packets": 164,
+      "name": "M2_002_whip_003",
+      "native_timestamps_preserved": true,
+      "offset_s": -0.7702374296508605,
+      "one_second_initialization_passed": true,
+      "onset_s": 68.54116258316668,
+      "onset_spread_ms": 0.48541366668075625,
+      "original_data_rows_preserved": true,
+      "physical_target_present": false,
+      "prehover_available_s": 4.99357101281754,
+      "recording_group": "M2_v2_002",
+      "repetition": 3,
+      "segment_tf_gap_times_s": [
+        -3.301384177166682,
+        0.6823253998333172,
+        2.649170541833314,
+        2.711282771833325,
+        4.613822333833312,
+        5.841487447833316
+      ],
+      "source_commands": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M2_MPPI_2cm_brake_1p3s\\flight_take\\M2\\experiment_M2_v2_002.commands.csv",
+      "source_logger": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M2_MPPI_2cm_brake_1p3s\\flight_take\\M2\\experiment_M2_v2_002.csv",
+      "source_tracking": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M2_MPPI_2cm_brake_1p3s\\flight_take\\M2\\M2_v2_002.csv",
+      "tracking_frames": 1767,
+      "tracking_relative_span_s": [
+        -4.99357101281754,
+        8.696351987182453
+      ],
+      "whip_invalid_marker_samples": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "whip_marker_valid_fractions": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "whip_pose_valid_fraction": 1.0,
+      "whip_tf_gaps": 1,
+      "whip_tip_valid_fraction": 1.0
+    }
+  ],
+  "snapshot_event_comparison_atol": 1e-12,
+  "snapshot_event_rounding_note": "Uploaded session 2 logger was decimal-reserialized; max command-field discrepancy 4.45e-14. Raw uploaded rows retained.",
+  "source_directory": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M2_MPPI_2cm_brake_1p3s\\flight_take\\M2",
+  "source_hashes": {
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M2_MPPI_2cm_brake_1p3s\\flight_take\\M2\\M2_v2_002.csv": "1e48d3004c6b7f3193a88e2a20a4003654546a5457e9c27ee5fc4ad776edd282",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M2_MPPI_2cm_brake_1p3s\\flight_take\\M2\\experiment_M2_v2_002.commands.csv": "e91fe956007f78fcba37b630c2784550356ea02db72a4e526b345ca49777d1bf",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M2_MPPI_2cm_brake_1p3s\\flight_take\\M2\\experiment_M2_v2_002.csv": "0a6c510c2dcfd394cf5fa43ec1ce62c798906a01b3500e9f609c6f6834ff369f",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M2_MPPI_2cm_brake_1p3s\\flight_take\\M2\\experiment_M2_v2_002.metadata.json": "71897c2f8947e8df64f59ebcdb657ff175e26d94e357e1b4dce3c9f7afb7a493",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M2_MPPI_2cm_brake_1p3s\\fullstate_30hz.csv": "0bdbdbb8ca309668b5a674ff82552c53253c83dde08b7d0d9a71b03cc22ddbd9",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M2-MPPI-2cm-brake-1p3s\\model.json": "9fb30d5dbc6500298c7977bedb225a81479fe8b071a9c13d4a85e858660eb705",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M2-MPPI-2cm-brake-1p3s\\rehearsal.npz": "57d54cddf0f0f160ba627604fe9df416982671253e4aa639df2ff488b923401a"
+  },
+  "uploaded_logger_sample_count": 10484,
+  "user_context": {
+    "cable_touched_or_reset": false,
+    "physical_target_present": false
+  },
+  "user_trimmed_sample_rows": 339
+}

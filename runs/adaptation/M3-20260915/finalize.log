@@ -1,0 +1,3 @@
+[W915 00:48:54.000000000 Context.cpp:448] Warning: torch.backends.cuda.preferred_linalg_library is an experimental feature. If you see any error or unexpected behavior when this flag is set please file an issue on GitHub. (function operator ())
+M3 saved: C:\Users\wts28\Documents\PHD\particle_filter_cable_project\runs\adaptation\M3-20260915\candidate\model.json
+Cable result: {'updates': 255, 'selected_update': 255, 'best_loss': 1.120604578767287, 'baseline_loss': 1.5645188929215141, 'elapsed_s': 1548.9308858999866, 'stop_reason': 'user_requested_early_stop', 'ceiling': None, 'optimizer_best_loss': 1.120604578767287, 'numerically_verified': True}

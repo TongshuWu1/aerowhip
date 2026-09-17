@@ -23,7 +23,7 @@ below about synthetic-only adaptation are superseded by that measured trial.
 It supersedes the historical normalized/adp0 launch details below. No real M1
 fit is active; only synthetic software checks were run during preparation.
 
-**Current experiment reset:** the repaired 145 g drone / 17 g cable workspace starts empty. Previous runs and data below are archived historical evidence. Read [NEW_SYSTEM_CHECK.md](../setup/NEW_SYSTEM_CHECK.md) and [HANDOFF.md](../../HANDOFF.md) before acting on old run instructions.
+**Current experiment reset:** the repaired 145 g drone / 17 g cable workspace starts empty. Previous runs and data below are archived historical evidence. Read [NEW_SYSTEM_CHECK.md](../setup/NEW_SYSTEM_CHECK.md) before acting on old run instructions.
 
 Fitting and PPO are currently stopped. The fresh PVA M0 stopped at full-whip cable
 residual update 105 before plateau; the historical normalized M1 used for MPPI is
@@ -51,5 +51,4 @@ fold refitting, full-recovery sweep or ablation campaign without a concrete requ
 
 Assess prospective recordings against their exact saved forecast before using
 them for another model update. Preserve old data roles and source snapshots.
-See [paper handoff](../paper/PAPER_WRITING_HANDOFF.md) for research experiments beyond these
-essential checks. Historical fitting recommendations are archived.
+Historical fitting recommendations are archived.

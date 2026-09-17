@@ -1,0 +1,92 @@
+{
+  "cable_parameters": [
+    1.0003229147102255e-08,
+    9.445418499854434e-05,
+    0.1695549151478517
+  ],
+  "cable_physics": {
+    "active_bounds": [
+      0,
+      0,
+      0
+    ],
+    "baseline_loss": 1.1502740292235825,
+    "best": [
+      -18.420357881367874,
+      -9.267395655855504,
+      -1.7745784214596811
+    ],
+    "best_loss": 1.1502039787815088,
+    "elapsed_s": 23.65225480000663,
+    "nfev": 7,
+    "solver_message": "`xtol` termination condition is satisfied.",
+    "stop_reason": "solver_termination",
+    "updates": 2
+  },
+  "cable_residual": {
+    "baseline_loss": 1.155055639890306,
+    "best_loss": 0.9663924613870516,
+    "ceiling": null,
+    "convergence_reached": false,
+    "elapsed_s": 1987.4818463000047,
+    "numerically_verified": true,
+    "optimizer_best_loss": 0.9663924613870516,
+    "selected_update": 245,
+    "stop_reason": "user_requested_stop",
+    "updates": 245
+  },
+  "candidate_sha256": "ccf3520730002ae4f796ce87731c7abc9d9a8b4e2139d4f898fa7bb00011fc6e",
+  "drone_parameters": {
+    "attitude_acceleration_scale_xy": 1.1592739437652164,
+    "attitude_acceleration_scale_z": 0.17209213709596263,
+    "attitude_drive_model": "independent_scale_v3",
+    "attitude_time_constant_s": 0.06104030923505929,
+    "delay_s": 0.04,
+    "feedforward_xy": 0.7839483077352563,
+    "feedforward_z": 1.573039750536636,
+    "gravity_m_s2": 9.80665,
+    "kd_xy": 0.905872178748533,
+    "kd_z": 2.3489439844354734,
+    "kp_xy": 1.7926100176005668,
+    "kp_z": 15.974536605398862
+  },
+  "drone_residual": {
+    "additional_updates": 345,
+    "baseline_loss": 3.5934418497983804,
+    "best_loss": 3.152587513918337,
+    "ceiling": null,
+    "elapsed_s": 187.2139243999991,
+    "numerically_verified": true,
+    "optimizer_best_loss": 3.152587513918337,
+    "selected_update": 345,
+    "stop_reason": "practical_plateau",
+    "updates": 345
+  },
+  "schema": "whip_full_model_v1",
+  "stages_complete": true,
+  "training_takes": [
+    "H6_side_001_whip_001",
+    "H6_side_001_whip_002",
+    "H6_side_001_whip_003",
+    "H6_side_001_whip_004",
+    "H6_side_002_whip_001",
+    "H6_side_002_whip_002",
+    "H6_side_002_whip_003",
+    "H6_side_002_whip_004",
+    "H6_side_003_whip_001",
+    "H6_side_003_whip_002",
+    "H6_side_003_whip_003",
+    "H6_side_003_whip_004"
+  ],
+  "user_stop": {
+    "best_update": 245,
+    "convergence_reached": false,
+    "finalization_runner": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\tmp\\finalize_m7_stopped.py",
+    "reason": "user_requested_stop",
+    "request": "just stop and give me the csv",
+    "runner_sha256": "6ffd6a4c5c48f1284467c60034136c2ab2938c64397d7146eb1e3f313f08e5bb",
+    "saved_update": 245,
+    "state_sha256": "e0a75405a1773cae40e018deb270ad78860f5f55f0e8488757ef5256535fc7d7"
+  },
+  "validation_used_for_selection": false
+}

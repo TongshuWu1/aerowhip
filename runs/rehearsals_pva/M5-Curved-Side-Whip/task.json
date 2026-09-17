@@ -1,0 +1,57 @@
+{
+  "acceptance": "Free-target loading and release; configured kinematic requirements; no target-accuracy measurement",
+  "desired_strike_direction_world": [
+    6.123233995736766e-17,
+    1.0,
+    0.0
+  ],
+  "fold_constraint": {
+    "end_material_min": 0.75,
+    "half_window_fraction": 0.1,
+    "material_samples": 21,
+    "maximum_backward_step": 0.05,
+    "maximum_forward_step": 0.2,
+    "minimum_fold_angle_deg": 90.0,
+    "minimum_local_turn_deg": 15.0,
+    "minimum_observations": 4,
+    "start_material_max": 0.4
+  },
+  "objective": {
+    "curved_release": {
+      "maximum_turn_deg": 135.0,
+      "minimum_aligned_duration_s": 0.08,
+      "minimum_turn_deg": 45.0
+    },
+    "distance_scale_m": 0.1,
+    "free_target": true,
+    "horizontal_cable_scale_m": 0.25,
+    "horizontal_cable_weight": 0.0,
+    "intensity_weight": 4.0,
+    "jerk_weight": 0.01,
+    "maximum_strike_angle_deg": 30.0,
+    "minimum_release_time_s": 0.8,
+    "minimum_tip_speed_gain_m_s": 2.0,
+    "prefer_aligned_strike": true,
+    "pullback": {
+      "minimum_backward_distance_m": 0.1,
+      "minimum_backward_speed_m_s": 0.5,
+      "minimum_pull_distance_m": 0.25,
+      "minimum_pull_speed_m_s": 1.0
+    },
+    "schema": "targeted_fold_strike_v1",
+    "speed_metric": "tip_gain_over_root",
+    "speed_scale_m_s": 4.0,
+    "velocity_propagation": {
+      "maximum_distal_peak_age_s": 0.2,
+      "maximum_peak_span_s": 0.8,
+      "minimum_distal_amplification": 1.25,
+      "minimum_peak_delay_s": 0.08
+    }
+  },
+  "target_marker_radius_m": 0.02,
+  "target_position_m": [
+    -1.3611358907965303,
+    1.1486852395191898,
+    1.5082286616276737
+  ]
+}

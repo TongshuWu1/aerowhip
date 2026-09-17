@@ -1,0 +1,442 @@
+{
+  "M0_002_whip_001": {
+    "command_driven": {
+      "markers": {
+        "coverage": 1.0,
+        "rmse_m": 0.08132587250622272,
+        "total_count": 1700,
+        "valid_count": 1700
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.09092348309181447,
+        "total_count": 170,
+        "valid_count": 170
+      }
+    },
+    "conditional_cable": {
+      "markers": {
+        "coverage": 1.0,
+        "rmse_m": 0.032334937504929856,
+        "total_count": 1700,
+        "valid_count": 1700
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.05728589111274271,
+        "total_count": 170,
+        "valid_count": 170
+      }
+    },
+    "drone": {
+      "coverage": 1.0,
+      "rmse_m": 0.08330886824012329,
+      "total_count": 170,
+      "valid_count": 170
+    },
+    "end_s": 1.1320834495333574,
+    "projection_m": 0.00936300114737798,
+    "role": "adaptation",
+    "start_s": -0.007916550466642747
+  },
+  "M0_002_whip_002": {
+    "command_driven": {
+      "markers": {
+        "coverage": 0.9964705882352941,
+        "rmse_m": 0.05829815427880857,
+        "total_count": 1700,
+        "valid_count": 1694
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.08909039900790365,
+        "total_count": 170,
+        "valid_count": 170
+      }
+    },
+    "conditional_cable": {
+      "markers": {
+        "coverage": 0.9964705882352941,
+        "rmse_m": 0.03712412686572103,
+        "total_count": 1700,
+        "valid_count": 1694
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.06428520114276541,
+        "total_count": 170,
+        "valid_count": 170
+      }
+    },
+    "drone": {
+      "coverage": 1.0,
+      "rmse_m": 0.04046330907856022,
+      "total_count": 170,
+      "valid_count": 170
+    },
+    "end_s": 1.1267338827763926,
+    "projection_m": 0.005193270358954449,
+    "role": "adaptation",
+    "start_s": -0.006599450556940667
+  },
+  "M0_002_whip_003": {
+    "command_driven": {
+      "markers": {
+        "coverage": 0.9941176470588236,
+        "rmse_m": 0.05664656311462977,
+        "total_count": 1700,
+        "valid_count": 1690
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.0787807450696916,
+        "total_count": 170,
+        "valid_count": 170
+      }
+    },
+    "conditional_cable": {
+      "markers": {
+        "coverage": 0.9941176470588236,
+        "rmse_m": 0.02277882449100304,
+        "total_count": 1700,
+        "valid_count": 1690
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.03802384525477067,
+        "total_count": 170,
+        "valid_count": 170
+      }
+    },
+    "drone": {
+      "coverage": 1.0,
+      "rmse_m": 0.040119392191019045,
+      "total_count": 170,
+      "valid_count": 170
+    },
+    "end_s": 1.1282303485024632,
+    "projection_m": 0.004281946946458337,
+    "role": "adaptation",
+    "start_s": -0.0051029848308701276
+  },
+  "M0_002_whip_004": {
+    "command_driven": {
+      "markers": {
+        "coverage": 0.9970588235294118,
+        "rmse_m": 0.054059908002052556,
+        "total_count": 1700,
+        "valid_count": 1695
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.07654567029185465,
+        "total_count": 170,
+        "valid_count": 170
+      }
+    },
+    "conditional_cable": {
+      "markers": {
+        "coverage": 0.9970588235294118,
+        "rmse_m": 0.026153287922936273,
+        "total_count": 1700,
+        "valid_count": 1695
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.04419062812085176,
+        "total_count": 170,
+        "valid_count": 170
+      }
+    },
+    "drone": {
+      "coverage": 1.0,
+      "rmse_m": 0.03982069366936019,
+      "total_count": 170,
+      "valid_count": 170
+    },
+    "end_s": 1.1296077910462903,
+    "projection_m": 0.004505197900295244,
+    "role": "adaptation",
+    "start_s": -0.0037255422870430266
+  },
+  "M0_003_whip_001": {
+    "command_driven": {
+      "markers": {
+        "coverage": 1.0,
+        "rmse_m": 0.0487890811493424,
+        "total_count": 1700,
+        "valid_count": 1700
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.06835691857461713,
+        "total_count": 170,
+        "valid_count": 170
+      }
+    },
+    "conditional_cable": {
+      "markers": {
+        "coverage": 1.0,
+        "rmse_m": 0.025755673902966462,
+        "total_count": 1700,
+        "valid_count": 1700
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.04717523644760627,
+        "total_count": 170,
+        "valid_count": 170
+      }
+    },
+    "drone": {
+      "coverage": 1.0,
+      "rmse_m": 0.039438078677276216,
+      "total_count": 170,
+      "valid_count": 170
+    },
+    "end_s": 1.1327233883730545,
+    "projection_m": 0.007997386582278665,
+    "role": "adaptation",
+    "start_s": -0.007276611626945595
+  },
+  "M0_003_whip_002": {
+    "command_driven": {
+      "markers": {
+        "coverage": 1.0,
+        "rmse_m": 0.052034768822296296,
+        "total_count": 1700,
+        "valid_count": 1700
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.07156440157126148,
+        "total_count": 170,
+        "valid_count": 170
+      }
+    },
+    "conditional_cable": {
+      "markers": {
+        "coverage": 1.0,
+        "rmse_m": 0.02924623965851423,
+        "total_count": 1700,
+        "valid_count": 1700
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.05073860762863755,
+        "total_count": 170,
+        "valid_count": 170
+      }
+    },
+    "drone": {
+      "coverage": 1.0,
+      "rmse_m": 0.03630249236661489,
+      "total_count": 170,
+      "valid_count": 170
+    },
+    "end_s": 1.1274527612642307,
+    "projection_m": 0.004602623122743177,
+    "role": "adaptation",
+    "start_s": -0.005880572069102641
+  },
+  "M0_003_whip_003": {
+    "command_driven": {
+      "markers": {
+        "coverage": 0.9952941176470588,
+        "rmse_m": 0.05756908891855636,
+        "total_count": 1700,
+        "valid_count": 1692
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.08034554955545216,
+        "total_count": 170,
+        "valid_count": 170
+      }
+    },
+    "conditional_cable": {
+      "markers": {
+        "coverage": 0.9952941176470588,
+        "rmse_m": 0.022540587473654495,
+        "total_count": 1700,
+        "valid_count": 1692
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.034499470696131254,
+        "total_count": 170,
+        "valid_count": 170
+      }
+    },
+    "drone": {
+      "coverage": 1.0,
+      "rmse_m": 0.043470512481872975,
+      "total_count": 170,
+      "valid_count": 170
+    },
+    "end_s": 1.1289985466173182,
+    "projection_m": 0.004625446805478051,
+    "role": "adaptation",
+    "start_s": -0.00433478671601506
+  },
+  "M0_003_whip_004": {
+    "command_driven": {
+      "markers": {
+        "coverage": 1.0,
+        "rmse_m": 0.05103675005767657,
+        "total_count": 1700,
+        "valid_count": 1700
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.05925424636763486,
+        "total_count": 170,
+        "valid_count": 170
+      }
+    },
+    "conditional_cable": {
+      "markers": {
+        "coverage": 1.0,
+        "rmse_m": 0.024775033308507853,
+        "total_count": 1700,
+        "valid_count": 1700
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.04103351565838077,
+        "total_count": 170,
+        "valid_count": 170
+      }
+    },
+    "drone": {
+      "coverage": 1.0,
+      "rmse_m": 0.03898355831209806,
+      "total_count": 170,
+      "valid_count": 170
+    },
+    "end_s": 1.1305182585666036,
+    "projection_m": 0.004914759099372112,
+    "role": "adaptation",
+    "start_s": -0.0028150747667297082
+  },
+  "M0_Whip123_001": {
+    "command_driven": {
+      "markers": {
+        "coverage": 1.0,
+        "rmse_m": 0.05709302583712372,
+        "total_count": 1700,
+        "valid_count": 1700
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.05936841843148545,
+        "total_count": 170,
+        "valid_count": 170
+      }
+    },
+    "conditional_cable": {
+      "markers": {
+        "coverage": 1.0,
+        "rmse_m": 0.035295931699416146,
+        "total_count": 1700,
+        "valid_count": 1700
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.0612852652060661,
+        "total_count": 170,
+        "valid_count": 170
+      }
+    },
+    "drone": {
+      "coverage": 1.0,
+      "rmse_m": 0.051739272029046414,
+      "total_count": 170,
+      "valid_count": 170
+    },
+    "end_s": 1.129763484026331,
+    "projection_m": 0.009773864439320712,
+    "role": "adaptation",
+    "start_s": -0.0035698493070022153
+  },
+  "M0_Whip123_002": {
+    "command_driven": {
+      "markers": {
+        "coverage": 1.0,
+        "rmse_m": 0.05847193188480878,
+        "total_count": 1700,
+        "valid_count": 1700
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.08243975150931793,
+        "total_count": 170,
+        "valid_count": 170
+      }
+    },
+    "conditional_cable": {
+      "markers": {
+        "coverage": 1.0,
+        "rmse_m": 0.03160649075812656,
+        "total_count": 1700,
+        "valid_count": 1700
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.05285757193935072,
+        "total_count": 170,
+        "valid_count": 170
+      }
+    },
+    "drone": {
+      "coverage": 1.0,
+      "rmse_m": 0.03920149379892387,
+      "total_count": 170,
+      "valid_count": 170
+    },
+    "end_s": 1.1308751667067516,
+    "projection_m": 0.00762066568289016,
+    "role": "adaptation",
+    "start_s": -0.002458166626581715
+  },
+  "M0_Whip123_003": {
+    "command_driven": {
+      "markers": {
+        "coverage": 1.0,
+        "rmse_m": 0.053282180130399544,
+        "total_count": 1700,
+        "valid_count": 1700
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.04622481180991731,
+        "total_count": 170,
+        "valid_count": 170
+      }
+    },
+    "conditional_cable": {
+      "markers": {
+        "coverage": 1.0,
+        "rmse_m": 0.02717125622609812,
+        "total_count": 1700,
+        "valid_count": 1700
+      },
+      "tip": {
+        "coverage": 1.0,
+        "rmse_m": 0.04228925095196687,
+        "total_count": 170,
+        "valid_count": 170
+      }
+    },
+    "drone": {
+      "coverage": 1.0,
+      "rmse_m": 0.04399146337105608,
+      "total_count": 170,
+      "valid_count": 170
+    },
+    "end_s": 1.1321024743002757,
+    "projection_m": 0.007151520116217391,
+    "role": "adaptation",
+    "start_s": -0.0012308590330576408
+  }
+}

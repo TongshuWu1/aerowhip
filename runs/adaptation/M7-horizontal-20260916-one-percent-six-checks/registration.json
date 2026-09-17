@@ -1,0 +1,11 @@
+{
+  "id": "M7",
+  "promoted": false,
+  "status": "Candidate - no held-out validation; next-batch evaluation pending",
+  "validation": {
+    "available": false,
+    "equal_take_mean": {},
+    "qualification": "No held-out takes. Post-fit training scores cannot establish generalization; evaluate the frozen model on the next collection.",
+    "takes": {}
+  }
+}

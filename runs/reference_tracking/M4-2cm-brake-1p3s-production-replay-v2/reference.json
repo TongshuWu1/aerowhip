@@ -1,0 +1,64 @@
+{
+  "correction_status": "Reference frozen only; correction optimizer not yet implemented or run.",
+  "interval_s": [
+    0.0,
+    1.1333333333333333
+  ],
+  "jerk_limits_m_s3": [
+    60.0,
+    60.0,
+    60.0
+  ],
+  "launch_origin_m": [
+    0.0,
+    0.0,
+    1.4
+  ],
+  "limits": {
+    "maximum_origin_z_m": 2.8,
+    "maximum_specific_force_m_s2": 18.28571428571429,
+    "maximum_speed_m_s": 5.0,
+    "maximum_tilt_deg": 60.0,
+    "minimum_cable_z_m": 0.02,
+    "minimum_origin_z_m": 0.96,
+    "minimum_specific_vertical_m_s2": 2.0
+  },
+  "numerical_objective_settings": null,
+  "original_spline_domain_s": [
+    0.0,
+    1.5
+  ],
+  "physical_target_m": [
+    1.25,
+    0.0,
+    1.25
+  ],
+  "physical_target_present": false,
+  "planned_strike_time_s": 1.1138000791100293,
+  "priority": "Tip trajectory primary; quadrotor trajectory soft secondary; original timestamps fixed.",
+  "recovery_settings": {
+    "braking_downward_acceleration_m_s2": 3.5,
+    "braking_horizontal_acceleration_m_s2": 8.0,
+    "braking_tilt_deg": 60.0,
+    "hold_s": 3.0,
+    "maximum_brake_s": 6.0,
+    "maximum_return_s": 12.0,
+    "minimum_brake_s": 1.3,
+    "minimum_return_s": 2.0,
+    "return_speed_m_s": 1.0,
+    "schema": "brake_return_hold_v1"
+  },
+  "reference_kind": "Original M0 predicted physical motion; not command positions or a new simulation.",
+  "reference_sha256": "749032795283254b06df80a156bf8daeb55db26e435315750a2ab96d80ed8ac8",
+  "schema": "frozen_m0_physical_motion_reference_v1",
+  "source_hashes": {
+    "exports/M0_MPPI_2cm_brake_1p3s/fullstate_30hz.csv": "1e716e6ef8626d48229416a8baf2e6581f97899de38a578833c88ad0defbe634",
+    "runs/rehearsals_pva/M0-MPPI-2cm-brake-1p3s/model.json": "6c4837cbfdc2f41c21c8e3e7387c0a24945a2690bd3c5033f3f4e3bfefe7064f",
+    "runs/rehearsals_pva/M0-MPPI-2cm-brake-1p3s/plan.npz": "510165fffaf15b4b9e8cab928756adf9512acd9c94f3fbeaffdaff18c5cde4c7",
+    "runs/rehearsals_pva/M0-MPPI-2cm-brake-1p3s/rehearsal.json": "5d4705462d177d3e162ff72e70aef4c9ef1424d61513f8fbeda67e1e6f2b4771",
+    "runs/rehearsals_pva/M0-MPPI-2cm-brake-1p3s/rehearsal.npz": "66ea65f7c5f33cf9b0ce722c318d829f711700c3145336bde2614a65cfbf9f9a",
+    "runs/rehearsals_pva/M0-MPPI-2cm-brake-1p3s/settings.json": "8a44e534a20230965bddf3ea5cf1c535cebe042bc7df37a71bcada02501e5224",
+    "tmp/freeze_m0_2cm_reference.py": "179d3e438225a6459e241a2dae3a82420777fa5f6037cb36f4c95f62e448b2ff"
+  },
+  "source_rehearsal": "runs/rehearsals_pva/M0-MPPI-2cm-brake-1p3s"
+}

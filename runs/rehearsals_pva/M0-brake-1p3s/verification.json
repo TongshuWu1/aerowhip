@@ -1,0 +1,25 @@
+{
+  "command_rate_hz": 30,
+  "continuous_position_velocity_acceleration": true,
+  "full_replay_passed": true,
+  "model_identity": "fc854eae6a37bd8cd3457f1eb7eeb3ba52ae8e0b1315b8fdcc6534a5f94b2858",
+  "new_braking_position_m": [
+    -1.1681983298728076,
+    -0.27534404765034043,
+    1.8430775277798759
+  ],
+  "original_braking_position_m": [
+    -0.7058011707011818,
+    -0.23379110013854731,
+    1.966432205910197
+  ],
+  "original_files_unchanged": true,
+  "physical_flight_tested": false,
+  "prefix_prediction_max_difference_m": {
+    "cable_positions_m": 0.0,
+    "origin_positions_m": 0.0
+  },
+  "rows": 236,
+  "source": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\20260913-012740-484590-M0-slower-brake-1s",
+  "whip_commands_exactly_unchanged": true
+}

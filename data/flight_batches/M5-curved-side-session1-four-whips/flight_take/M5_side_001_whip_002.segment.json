@@ -1,0 +1,63 @@
+{
+  "alignment_rms_m": 0.00039423655203677714,
+  "cable_touched_or_reset": null,
+  "clock_verified": false,
+  "command_events": 594,
+  "complete_moving_sequence": true,
+  "fit_role": "unassigned",
+  "full_csv_tracking_complete": true,
+  "initialization_error": null,
+  "logger_rows": 1504,
+  "moving_packets": 195,
+  "name": "M5_side_001_whip_002",
+  "native_timestamps_preserved": true,
+  "offset_s": 6.513318705562195,
+  "one_second_initialization_passed": true,
+  "onset_s": 48.096776709000004,
+  "onset_spread_ms": 0.42698733332713346,
+  "original_data_rows_preserved": true,
+  "physical_target_present": null,
+  "prehover_available_s": 4.9934580034378016,
+  "recording_group": "M5_horizontal_v1_001",
+  "repetition": 2,
+  "segment_tf_gap_times_s": [
+    1.5093248439999982,
+    8.297684556999997,
+    8.766077654
+  ],
+  "source_commands": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M5_Curved_Side_Whip_1p3m\\flight_take\\M5\\experiment_M5_horizontal_v1_001.commands.csv",
+  "source_logger": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M5_Curved_Side_Whip_1p3m\\flight_take\\M5\\experiment_M5_horizontal_v1_001.csv",
+  "source_tracking": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M5_Curved_Side_Whip_1p3m\\flight_take\\M5\\M5_horizontal_v1_001.csv",
+  "tracking_frames": 1507,
+  "tracking_relative_span_s": [
+    -4.9934580034378016,
+    10.066541996562187
+  ],
+  "whip_invalid_marker_samples": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "whip_marker_valid_fractions": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+  ],
+  "whip_pose_valid_fraction": 1.0,
+  "whip_tf_gaps": 1,
+  "whip_tip_valid_fraction": 1.0
+}

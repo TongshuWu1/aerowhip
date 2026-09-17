@@ -1,0 +1,77 @@
+{
+  "aligned_release_duration_s": 0.08,
+  "backward_travel_m": 0.10004149610077706,
+  "best_score": 2.369293690456603,
+  "closest_approach_time_s": null,
+  "command_steps": 46,
+  "complete_recovery_attitude_checked": true,
+  "complete_recovery_prediction_checked": false,
+  "directed_tip_speed_m_s": 5.835901717323956,
+  "elapsed_s": null,
+  "evidence": "Existing MPPI command lowered and independently replayed; no new optimization or physical flight",
+  "fold_completed_time_s": null,
+  "fold_requirement": "diagnostic_only",
+  "fold_valid": false,
+  "free_target": true,
+  "height_translation_m": -0.20822866162767362,
+  "horizontal_cable_rms_m": 0.4378748534733527,
+  "independent_score_difference": 5.545341963397732e-12,
+  "initialization": "translated_saved_plan",
+  "iterations": 0,
+  "loading_to_release_turn_deg": 45.06906138207794,
+  "loading_velocity_m_s": [
+    -1.3251122663500785,
+    1.747197890895699,
+    0.47908425461928855
+  ],
+  "maneuver_duration_s": 1.5333333333333334,
+  "minimum_tip_distance_m": null,
+  "objective_components": {
+    "smoothness": -0.0013795763254190385,
+    "strike": 2.370673266782022,
+    "target": -0.0
+  },
+  "planner_mode": "targeted_fold_strike_v1",
+  "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+  "proposal_baselines_sha256": "8e275186cee49c892ca511c6b4842c221a1bf3a3d579ee8bdf013a23362f3e7c",
+  "random_candidate_budget": 0,
+  "recovery_reference_checked": true,
+  "rewarded_tip_speed_m_s": 5.835901717323956,
+  "root_forward_speed_m_s": -1.278853854210632,
+  "root_velocity_m_s": [
+    -0.48973959181204946,
+    -1.278853854210632,
+    -0.20074419934226206
+  ],
+  "selected_strike_position_m": [
+    -1.3611358907964708,
+    1.1486852395197362,
+    1.3000000000000267
+  ],
+  "source_job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260915-123600-984827",
+  "source_plan_sha256": "0d8cb99bb91c64c311a55a60959e1bcbd13af35618de1634e988ceb2b4d4a011",
+  "source_planner_iterations": 80,
+  "status": "completed",
+  "stop_reason": "vertical_translation_replay",
+  "strike_angle_deg": 10.663639192877994,
+  "strike_distance_m": null,
+  "strike_time_s": 1.2933333333333334,
+  "target_note": "Strike location selected from the motion; no target accuracy measured",
+  "tip_velocity_m_s": [
+    0.8089265704048022,
+    5.835901717323956,
+    0.7437422530810119
+  ],
+  "translated_position_max_difference_m": 5.520028878436278e-13,
+  "velocity_max_difference_m_s": 1.3631540340952597e-11,
+  "velocity_peak_speeds_m_s": [
+    2.224826556351037,
+    2.3209996881786576,
+    4.117535839859949
+  ],
+  "velocity_peak_times_s": [
+    0.9133333333333334,
+    1.1066666666666667,
+    1.2666666666666666
+  ]
+}

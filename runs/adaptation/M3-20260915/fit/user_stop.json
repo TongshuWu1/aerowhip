@@ -1,0 +1,21 @@
+{
+  "best_saved_update": 255,
+  "convergence_claimed": false,
+  "finalizer_sha256": "8f1f61438c055050f7808b68a543be8e8f32181f3d8e52fe3c5afa92508cc95c",
+  "history_sha256": "64daf7924efc2f4394d2a3892256396ec7a653d79020509e252baf010992e3e9",
+  "interrupted_worker_pid": 45400,
+  "last_saved_update": 255,
+  "original_status": {
+    "best_loss": 1.120604578767287,
+    "model_selected": false,
+    "stage": "cable_residual",
+    "status": "running",
+    "stopping": "practical plateau; no update ceiling",
+    "update": 258
+  },
+  "reason": "User requested stopping because remaining improvement is small; retain best saved checkpoint.",
+  "reproduced_best_loss": 1.120604578767287,
+  "state_sha256": "a2a234ba1fcc04b31e350145d6abdd532778e2fb0a44f465b92ba38ada48bdf3",
+  "termination": "user_requested_early_stop",
+  "unsaved_updates_discarded": true
+}

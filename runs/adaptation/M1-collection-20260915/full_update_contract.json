@@ -1,0 +1,125 @@
+{
+  "attitude_bounds": [
+    [
+      0.1,
+      0.05,
+      0.02
+    ],
+    [
+      3.0,
+      3.0,
+      0.3
+    ]
+  ],
+  "cable_bounds": [
+    [
+      1e-10,
+      1e-08,
+      0.0001
+    ],
+    [
+      0.0001,
+      0.001,
+      2.0
+    ]
+  ],
+  "cable_history_s": 1.0,
+  "cable_log_difference_step": 1e-06,
+  "cable_residual": {
+    "acceleration_limit": 0.5,
+    "hidden": 32,
+    "mode": "acceleration"
+  },
+  "cable_scale_m": 0.02,
+  "cable_velocity_weight_tau_s": 0.02,
+  "candidate_id": "M2",
+  "collection_recording_groups": {
+    "M1_001_whip_001": "M1_v2_001",
+    "M1_001_whip_002": "M1_v2_001",
+    "M1_001_whip_003": "M1_v2_001",
+    "M1_001_whip_004": "M1_v2_001",
+    "M1_002_whip_001": "M1_v2_002",
+    "M1_002_whip_002": "M1_v2_002",
+    "M1_002_whip_003": "M1_v2_002",
+    "M1_002_whip_004": "M1_v2_002",
+    "M1_003_whip_001": "M1_v2_003",
+    "M1_003_whip_002": "M1_v2_003",
+    "M1_003_whip_003": "M1_v2_003",
+    "M1_003_whip_004": "M1_v2_003"
+  },
+  "delay_candidates_s": [
+    0.0,
+    0.01,
+    0.02,
+    0.03,
+    0.04,
+    0.06,
+    0.08,
+    0.1,
+    0.12
+  ],
+  "drone_gain_bounds": [
+    [
+      0.05,
+      0.05,
+      0.05,
+      0.05,
+      0.01,
+      0.01
+    ],
+    [
+      80.0,
+      80.0,
+      20.0,
+      20.0,
+      3.0,
+      3.0
+    ]
+  ],
+  "interpretation": "Effective loaded PVA response and cable dynamics; no identified motor ceiling or explicit cable reaction added",
+  "nominal_prior": 0.03,
+  "nominal_stopping": {
+    "ceiling": 20,
+    "minimum": 3,
+    "patience": 2,
+    "relative": 0.01
+  },
+  "orientation_scale_rad": 0.05,
+  "parent_id": "M1",
+  "performance_evaluation": "deferred_by_user",
+  "position_scale_m": 0.02,
+  "promotion": false,
+  "replay_weight": 0.5,
+  "residual_change": 0.01,
+  "residual_magnitude": 0.01,
+  "residual_stopping": {
+    "ceiling": null,
+    "check_every": 5,
+    "minimum": 10,
+    "patience": 2,
+    "relative": 0.01
+  },
+  "runner": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\tmp\\fit_m2_quick.py",
+  "runner_sha256": "3fac6fcaca2be64345c6a06d691875df485c8178d231982220726fab07dabe44",
+  "schema": "whip_full_model_v1",
+  "seed": 20260910,
+  "stage_budgets": {
+    "cable_residual": {
+      "maximum_seconds": 120,
+      "maximum_updates": 30
+    },
+    "drone_residual": {
+      "maximum_seconds": 60,
+      "maximum_updates": 80
+    }
+  },
+  "stages": [
+    "drone_nominal",
+    "drone_residual",
+    "attitude_refinement",
+    "cable_physics",
+    "cable_residual",
+    "combined_validation"
+  ],
+  "training": "Whole adaptation takes and all eligible preliminary training windows; no validation gradients or selection"
+}

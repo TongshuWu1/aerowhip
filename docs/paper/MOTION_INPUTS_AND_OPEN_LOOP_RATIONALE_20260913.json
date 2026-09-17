@@ -1,0 +1,102 @@
+{
+  "date": "2026-09-13",
+  "scope": "Explain simulation prior/seed and fixed-reference correction; frame open-loop aerial whipping around short maneuver duration and model accuracy.",
+  "user_rationale": "Avoid a new MPPI-designed motion at every model update; refine the model and locally correct commands to realize the same selected motion and timing.",
+  "source": "C:\\Users\\wts28\\Lehigh University Dropbox\\TonyLehigh Wu\\Apps\\Overleaf\\AeroWhip-ICRA\\main.tex",
+  "before_sha256": "3a37c14ccd7dda0314dcfd86c3f595dd6924dc17708a230581a945b5e43fb01c",
+  "source_sha256": "845560f63fedeac95ca2d49bd66fc62459cd88de5234ce757344139c217e4921",
+  "pdf": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\paper\\figures\\AeroWhip_methodology_20260913.pdf",
+  "pdf_sha256": "bedeccd841ca11d96cb53c6f46c51df3afe402b4ea423d5c5ab45ecb2199fe06",
+  "backup": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\tmp\\pdfs\\motion_inputs_reference_20260913\\before",
+  "checks": {
+    "pages": 7,
+    "numbered_equations": 17,
+    "section_structure_preserved": true,
+    "all_pages_visually_checked": true,
+    "overfull_boxes": 0,
+    "undefined_references": 0,
+    "undefined_citations": 0,
+    "compile": "Tectonic on Windows",
+    "input_hashes_reverified": true,
+    "existing_class_font_author_warnings_remain": true
+  },
+  "manuscript_changes": [
+    "Abstract and Introduction: short maneuver, offline planning, model accuracy and fixed-motion comparison.",
+    "Framework overview: initial MPPI design followed by model refinement and local correction.",
+    "Offline planning: seed conversion, shape-prior provenance, and rationale for preserving M0 motion and timing.",
+    "Experiments: prior/seed source geometry and saved seed-versus-optimized objective comparison."
+  ],
+  "preserved": [
+    "All equations",
+    "Problem Statement",
+    "Prediction model details",
+    "Model-refinement details",
+    "Physical and prediction result tables",
+    "Bibliography",
+    "Figures",
+    "Models",
+    "Original data",
+    "Saved forecasts"
+  ],
+  "evidence_boundaries": [
+    "Fixed desired trajectory, not fixed executed commands.",
+    "The comparison avoids changing the selected maneuver; it does not isolate model changes from command correction.",
+    "M0 trajectory validity is stated in simulation; exact realization under an updated model is not guaranteed.",
+    "Open loop is relative to cable motion; onboard vehicle feedback remains.",
+    "No measured cable-feedback latency/rate, universal open-loop superiority, or subsecond duration claimed.",
+    "New numerical comparison uses archived simulation scores; no new optimization, fit or rollout was run."
+  ],
+  "input_audit": {
+    "source_hashes": {
+      "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\config\\pva\\m0_spline\\provenance.json": "66bbf1f86aa98142c05be058d10dcb3b7087d4b8473825b699a2a2af19ebe4b2",
+      "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\config\\pva\\m0_spline\\initial_proposal.npz": "ccbadf77f5e85e5151e7754d465e4890aaef25142aee6317a80d50232bae975e",
+      "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\config\\pva\\m0_spline\\wave_reference.npz": "fca15a2541af592e0b581baca57bd6ac20263520f9a0a00a0645ce230506c99c",
+      "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260910-015017-245988\\development_selection.json": "ddc46e692113e32f6a01886a8f1e08bba7acca068cc73869e7cf47969fa87662",
+      "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260910-015017-245988\\source_snapshot\\tools\\check_preferred_fold_objective.py": "3886f60005867f0417030d95c9fc3d5243722f1a17924224911cee3068312738",
+      "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project_archive_20260909_unseen_145g_17g\\payload\\runs\\rehearsals_pva\\20260909-173305-488091-mppi-wave\\settings.json": "962fb80a75a342b54ec03f6326dd8ea979b113c24cf7ce5333525c39843693ec",
+      "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project_archive_20260909_unseen_145g_17g\\payload\\runs\\rehearsals_pva\\20260909-173305-488091-mppi-wave\\rehearsal.npz": "187b652cbb22ea30a4f1a56502e665359b2cc9b703a182f246608c0f551a631e",
+      "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260910-022818-648386\\checkpoints\\search.pt": "84bacdcd3d3e177613972c830fe94093842d73276fa742b3f9d6cc6863e0b95a",
+      "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260910-022818-648386\\settings.json": "b1d8810d1546fed6366006b94deb3f47ba6caabbd480578a171bffccf1962e8a",
+      "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260913-004041-503837\\baseline_evaluation.json": "c3a215acce38bf0776a7a509baad272752cb0529adf4213be4a8626c958d793a",
+      "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260913-004041-503837\\initial_screen.npz": "9daf08d6d9ac218ee302add5dcdec73797116c08f0ec95b8fc0336e92a577000",
+      "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260913-004041-503837\\spline_initialization.npz": "9f0bf6e4f92afe52796d2d346cde96f13fad34d2ff4a50096f7da40745a116cd",
+      "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260913-004041-503837\\result.json": "45706afbc528d0057db6fc6ae5f44772d293a9df6cedeca1f6595ae0244768ec",
+      "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260913-004041-503837\\plan.npz": "e5de326b57b7f0571e6cc67b9b62aa283202bb87ac66d308e68529c73ebc28a6",
+      "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260913-004041-503837\\settings.json": "60e08806d01d47e4fce306f88b2356853e3bd705a1757764c5ceab1febfa001d",
+      "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260913-004041-503837\\model.json": "1eeb3a9e11c56039090395579b5dabde89c86d7fca3d3538b26ddb3b3a54e71e",
+      "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260913-004041-503837\\source_snapshot\\planning\\mppi_trajectory.py": "2fe080ed8e8e886fec587e576c19b4b04b66f4000769bbf51d629e8379e53a3b",
+      "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260913-012740-484590\\identity.json": "b91b51214ba1ce582fe17c419b2ff7dc38424ccfdbbcf6d127d1118ef4b2d127",
+      "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260913-012740-484590\\plan.npz": "e5de326b57b7f0571e6cc67b9b62aa283202bb87ac66d308e68529c73ebc28a6",
+      "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\docs\\methods\\WHIP_WAVE_REWARD_REVIEW.md": "c188b9f1a5db860b859f47f7ba8f5a2804fd14628fda047ca624b5e77ea0bd27",
+      "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\docs\\methods\\FIXED_REFERENCE_CORRECTION.md": "9bec75694ce28a91476dda68509ad65ac6b9394f322c5cc6558918c580a1d536"
+    },
+    "prior": "Archived MPPI forecast selected during development for its bending and extension sequence; frozen normalized shape array.",
+    "seed": "Exact full best_actions of the retained MPPI development checkpoint; desired positions converted to a bounded quintic B-spline.",
+    "development_relative_target_m": [
+      1.25,
+      0.0,
+      -0.2549999999999999
+    ],
+    "paper_relative_target_m": [
+      1.25,
+      0.0,
+      -0.1499999999999999
+    ],
+    "comparison": {
+      "source_job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260913-004041-503837",
+      "seed_score": 92.69137462902555,
+      "optimized_score": 650.8790189276722,
+      "updates": 38,
+      "same_model_target_objective": true,
+      "simulation_only": true
+    },
+    "planner_distances_not_added_to_paper": {
+      "seed_m": 0.10581765112932189,
+      "optimized_m": 0.04493611741919284,
+      "reason": "Planner distances use event-terminated rollouts, unlike the fixed-window physical metric."
+    },
+    "no_new_rollout_fitting_or_optimization": true,
+    "inputs_unchanged": true
+  },
+  "cloud_sync_verified": false
+}

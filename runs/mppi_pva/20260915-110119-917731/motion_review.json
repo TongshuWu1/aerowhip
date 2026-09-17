@@ -1,0 +1,35 @@
+{
+  "attachment_position_at_strike_m": [
+    0.7515271895075156,
+    -0.2539918715997403,
+    1.8898052538427825
+  ],
+  "cable_vertical_span_at_strike_m": 0.6391862616051325,
+  "distal_three_segment_inclinations_deg": [
+    50.53586008489582,
+    60.40650924227423,
+    67.89581981799346
+  ],
+  "evidence": "M5 simulation, not measured flight performance",
+  "geometric_fold_detected": false,
+  "interpretation": "Sideways tip strike (+Y) at the target. Cable-plane geometry reported separately; horizontal tip velocity alone does not prove a horizontal cable plane.",
+  "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260915-110119-917731",
+  "model": "M5",
+  "strike_direction_angle_deg": 14.296296435512389,
+  "strike_distance_m": 0.11161702011572178,
+  "strike_time_s": 1.8466666666666667,
+  "target_m": [
+    1.25,
+    0.0,
+    1.25
+  ],
+  "tip_elevation_angle_deg": 5.154227258630228,
+  "tip_forward_gain_m_s": 2.7339809472806755,
+  "tip_height_range_last_200ms_m": 0.0631138969466738,
+  "tip_speed_m_s": 2.821353481712488,
+  "tip_velocity_m_s": [
+    -0.648953590653626,
+    2.7339809472806755,
+    0.2534618035428699
+  ]
+}

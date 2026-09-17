@@ -1,0 +1,24 @@
+{
+  "current_flight": {
+    "collection_review": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M3-complete-collection\\report.json",
+    "csv": "M3_MPPI_2cm_brake_1p3s/fullstate_30hz.csv",
+    "csv_sha256": "48d7d33b0f37a6cec68ba9a8e1fb29190e5c5e0e3f552760a2460123b37cf925",
+    "flight_take": "M3_MPPI_2cm_brake_1p3s/flight_take/M3",
+    "model_id": "M3",
+    "model_job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M3-20260915",
+    "physical_flight_pending": false,
+    "recorded_takes": 12,
+    "recording_sessions": 3,
+    "rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M3-MPPI-2cm-brake-1p3s",
+    "selected_at": "2026-09-15T04:54:26.132022+00:00"
+  },
+  "replay": {
+    "camera": "Side XZ",
+    "note": "M3 command corrected toward the same fixed M0 reference; complete simulated replay checked; new flight pending.",
+    "rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M3-MPPI-2cm-brake-1p3s",
+    "schema": "saved_replay_selection_v1",
+    "selected": true,
+    "speed": "0.5×",
+    "time_s": 0.0
+  }
+}

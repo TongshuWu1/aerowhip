@@ -1,45 +1,35 @@
 {
   "manuscript": "C:\\Users\\wts28\\Lehigh University Dropbox\\TonyLehigh Wu\\Apps\\Overleaf\\AeroWhip-ICRA\\main.tex",
-  "manuscript_sha256": "e3509e33022a4f5e614832dd98cfc4a30945d9c73e245349465c6e2a8f57c48f",
-  "before": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\tmp\\experiments_20260913\\before\\main.tex",
-  "primary_source": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\data_review\\M2-paper-20260913\\simple_performance.json",
-  "primary_sha256": "396f2c142891db5fb14159e9f1a71337516438d3beceb83cc9d429d704698369",
-  "subset_source": "runs/data_review/M2-paper-20260913/exploratory_subset_002_004/metrics.json",
-  "primary_n": 5,
-  "subset_n": 2,
-  "subset_selection": "post-hoc; disclosed; hardware defect unverified",
-  "table_values_verified": true,
-  "original_numeric_reports_unchanged": true,
+  "manuscript_sha256": "4826804b5452c707675d1ee8464f46cace6ff9b3f417261188c813d6b58af3fe",
+  "before": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\tmp\\m2_recollection_manuscript_20260913\\before\\main.tex",
+  "supersedes": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\tmp\\m2_recollection_manuscript_20260913\\before_experiments_revision.json",
+  "revision": "Exclude old M2 physical batch pending recollection at user request",
+  "reported_physical_batches": [
+    "M0",
+    "M1"
+  ],
+  "flights_per_reported_batch": 5,
+  "removed": "All old M2 physical results, favorable subset, performance and collection-condition discussion, including abstract claims",
+  "retained_model_prediction_comparison": "M1 and selected M2 predictions on two M1 development recordings used for model selection; not independent testing",
+  "M0_M1_table_values_unchanged": true,
+  "original_recordings_and_numeric_reports_unchanged": true,
+  "problem_statement_and_framework_unchanged": true,
   "bibliography_unchanged": true,
-  "compilation": "Tectonic 0.17 with local OT1 QA wrapper; no change to synced preamble",
+  "compilation": "Tectonic 0.17 with local OT1 QA wrapper; synced preamble unchanged",
   "pages": 8,
   "overfull_boxes": false,
   "unresolved_references": false,
   "remaining_warnings": [
-    "Existing class/caption and missing-author warnings",
-    "Small-font substitutions in existing figure content",
+    "Existing class/caption warnings",
+    "Font substitutions",
     "Underfull paragraphs"
   ],
-  "overleaf_cloud_sync_verified": false,
-  "visually_reviewed_pages": [
-    1,
-    2,
-    3,
-    4,
-    5,
-    6,
-    7,
-    8
-  ],
-  "new_section_layout": "No clipping or overlap; table and RMSE expression fit the columns.",
-  "local_preview": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\output\\pdf\\AeroWhip_experiments_20260913.pdf",
-  "preview_sha256": "c2430f7af273001ed84688700da40b4c04912490bea78b5e8d2040f436e73fd2",
-  "concise_revision": true,
-  "experiments_latex_token_count_before": 899,
-  "experiments_latex_token_count_after": 469,
   "latest_changed_pages_visually_reviewed": [
+    1,
     7,
     8
   ],
-  "results_table_values_unchanged": true
+  "local_preview": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\paper\\figures\\AeroWhip_experiments_20260913.pdf",
+  "preview_sha256": "1825ac0256e5bd295fd012ccf51110d07186bc8d2b65a639aefda34b224147c5",
+  "overleaf_cloud_sync_verified": false
 }

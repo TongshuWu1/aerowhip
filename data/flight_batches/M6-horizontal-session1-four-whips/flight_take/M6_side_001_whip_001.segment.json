@@ -1,0 +1,63 @@
+{
+  "alignment_rms_m": 0.0003801334711565458,
+  "cable_touched_or_reset": null,
+  "clock_verified": false,
+  "command_events": 637,
+  "complete_moving_sequence": true,
+  "fit_role": "unassigned",
+  "full_csv_tracking_complete": true,
+  "initialization_error": null,
+  "logger_rows": 1566,
+  "moving_packets": 213,
+  "name": "M6_side_001_whip_001",
+  "native_timestamps_preserved": true,
+  "offset_s": 4.181447880423303,
+  "one_second_initialization_passed": true,
+  "onset_s": 22.526828084,
+  "onset_spread_ms": 0.3662723333341944,
+  "original_data_rows_preserved": true,
+  "physical_target_present": null,
+  "prehover_available_s": 4.995380203576701,
+  "recording_group": "M6_horizontal_v1_001",
+  "repetition": 1,
+  "segment_tf_gap_times_s": [
+    5.616014226000001,
+    8.18618171,
+    9.927806189000002
+  ],
+  "source_commands": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M6_Horizontal_Command_Correction\\flight_take\\M6\\experiment_M6_horizontal_v1_001.commands.csv",
+  "source_logger": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M6_Horizontal_Command_Correction\\flight_take\\M6\\experiment_M6_horizontal_v1_001.csv",
+  "source_tracking": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M6_Horizontal_Command_Correction\\flight_take\\M6\\M6_horizontal_v1_001.csv",
+  "tracking_frames": 1567,
+  "tracking_relative_span_s": [
+    -4.995380203576701,
+    10.664619796423302
+  ],
+  "whip_invalid_marker_samples": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "whip_marker_valid_fractions": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+  ],
+  "whip_pose_valid_fraction": 1.0,
+  "whip_tf_gaps": 0,
+  "whip_tip_valid_fraction": 1.0
+}

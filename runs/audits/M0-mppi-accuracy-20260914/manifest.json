@@ -1,0 +1,45 @@
+{
+  "cases": [
+    {
+      "iterations": 40,
+      "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260914-190525-941925",
+      "name": "original_reward_512x40",
+      "random_candidates": 20992,
+      "samples": 512,
+      "stronger_target_reward": false,
+      "total_candidates": 21279
+    },
+    {
+      "iterations": 40,
+      "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260914-190526-272022",
+      "name": "target_reward_512x40",
+      "random_candidates": 20992,
+      "samples": 512,
+      "stronger_target_reward": true,
+      "total_candidates": 21279
+    },
+    {
+      "iterations": 80,
+      "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260914-190526-603396",
+      "name": "target_reward_512x80",
+      "random_candidates": 41472,
+      "samples": 512,
+      "stronger_target_reward": true,
+      "total_candidates": 42039
+    },
+    {
+      "iterations": 40,
+      "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260914-190526-936828",
+      "name": "target_reward_1024x40",
+      "random_candidates": 41984,
+      "samples": 1024,
+      "stronger_target_reward": true,
+      "total_candidates": 42271
+    }
+  ],
+  "initialization": "Same existing config/pva/m0_spline seed in all searches; not a continuation of saved optimizer state.",
+  "notes": "Single seed exploratory comparison. Budgets exclude independent batch-one verification. No active-flight changes.",
+  "planning_target_radius_m": 0.05,
+  "source": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M0-brake-1p3s",
+  "source_csv_sha256": "a209b0015a97395dadb130a36c40a23aeec608a761d55cc86ad90604b5b728c7"
+}

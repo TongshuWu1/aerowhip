@@ -1,0 +1,22 @@
+{
+  "evidence": "Simulation only. Verify geometry and cable velocity history; pullback criteria alone do not quantify energy transfer.",
+  "free_target": true,
+  "initial_hover_m": [
+    0.0,
+    0.0,
+    2.0
+  ],
+  "minimum_release_time_s": 4.0,
+  "model_id": "M5",
+  "physical_flight_pending": false,
+  "search_budget": "512 x 40, matching original M0 refinement budget; fixed budget, no convergence claim",
+  "seed_review": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\tmp\\m5_free_whip_heading_screen\\review.json",
+  "seed_sha256": "313a77def2b5b69bb2f717189f85729d23e9c27e6a09685b84a66e7de54a0d05",
+  "strike_direction": [
+    0.8660254037844384,
+    -0.5000000000000004,
+    0.0
+  ],
+  "target_accuracy_evaluated": false,
+  "task": "Horizontal side whip with preparation and pullback"
+}

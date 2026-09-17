@@ -1,0 +1,81 @@
+{
+  "common_full_command_prediction": {
+    "closest_time_s": 1.1156465180548258,
+    "closest_tip_distance_m": 0.017726030023577942,
+    "interval_s": [
+      0.0,
+      1.5
+    ],
+    "note": "Complete exported command; swept tip distance under nominal free-motion simulation, without target contact dynamics.",
+    "vehicle_x_range_m": [
+      -1.1551811637484233,
+      0.8446760831863706
+    ]
+  },
+  "csv_sha256": "1e716e6ef8626d48229416a8baf2e6581f97899de38a578833c88ad0defbe634",
+  "encounter_distance_m": 0.04999999999999997,
+  "encounter_time_s": 1.1060742731163729,
+  "encounter_tip_velocity_m_s": [
+    4.1675201506298345,
+    -0.41284383384158496,
+    2.5708076252276006
+  ],
+  "failed": false,
+  "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260914-190739-634097",
+  "minimum_tip_distance_m": 0.04737857835021749,
+  "model_identity_unchanged": true,
+  "name": "target_reward_2cm_512x40",
+  "original_csv_unchanged": true,
+  "original_reward": {
+    "score": 630.0915793983976,
+    "terms": {
+      "approach": -4.476368971218998,
+      "cast": 68.13050398650935,
+      "contact": 440.909403234167,
+      "distance": -0.0,
+      "exit": -5.831143262378128,
+      "fold": 137.44367047635654,
+      "hit": 0.0,
+      "jerk": -0.0030223026803488573,
+      "joint": 0.0,
+      "lateral": -0.021065918469037846,
+      "miss": -6.0603978438886985,
+      "pull": 0.0,
+      "release": 0.0,
+      "vertical": -0.0,
+      "wave": 0.0
+    }
+  },
+  "physical_flight_tested": false,
+  "planning_target_radius_m": 0.02,
+  "recovery": {
+    "brake_s": 1.3,
+    "duration_s": 7.933333333333334,
+    "minimum_cable_height_m": 0.39239113680560134,
+    "passed": true,
+    "rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\audits\\M0-mppi-accuracy-20260914\\target_reward_2cm_512x40_rehearsal"
+  },
+  "serialized_csv_verified": true,
+  "simulated_success": true,
+  "start_end_settled": true,
+  "target_reward": {
+    "score": 588.5523146078326,
+    "terms": {
+      "approach": -4.476368971218998,
+      "cast": 54.154073966082414,
+      "contact": 700.9207047642645,
+      "distance": -0.0,
+      "exit": -5.831143262378128,
+      "fold": 109.24819664654618,
+      "hit": 0.0,
+      "jerk": -0.0030223026803488573,
+      "joint": 0.0,
+      "lateral": -0.021065918469037846,
+      "miss": -265.4390603143139,
+      "pull": 0.0,
+      "release": 0.0,
+      "vertical": -0.0,
+      "wave": 0.0
+    }
+  }
+}

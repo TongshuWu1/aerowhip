@@ -1,0 +1,107 @@
+{
+  "files": {
+    "commands": "experiment_M0_Whip123_003.commands.csv",
+    "samples": "experiment_M0_Whip123_003.csv",
+    "tracking": "M0_Whip123_003.csv"
+  },
+  "schema": "segmented_optitrack_tf_pva_v2",
+  "segment": {
+    "alignment_rms_m": 0.00024688338072018415,
+    "cable_touched_or_reset": false,
+    "clock_verified": false,
+    "command_events": 575,
+    "complete_moving_sequence": true,
+    "fit_role": "unassigned",
+    "logger_rows": 1342,
+    "moving_packets": 146,
+    "name": "M0_Whip123_003",
+    "native_timestamps_preserved": true,
+    "offset_s": 3.0788352193002755,
+    "one_second_initialization_passed": true,
+    "onset_s": 67.37006607833334,
+    "onset_spread_ms": 0.5593360000091252,
+    "original_data_rows_preserved": true,
+    "physical_target_present": false,
+    "recording_group": "M0_Whip123",
+    "repetition": 3,
+    "segment_tf_gap_times_s": [
+      -1.4364021313333382
+    ],
+    "source_commands": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M0_MPPI_2cm_brake_1p3s\\flight_take\\M0\\Whip_123\\experiment_M0_v2_001.commands.csv",
+    "source_logger": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M0_MPPI_2cm_brake_1p3s\\flight_take\\M0\\Whip_123\\experiment_M0_v2_001.csv",
+    "source_tracking": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M0_MPPI_2cm_brake_1p3s\\flight_take\\M0\\Whip_123\\M0_v2_001.csv",
+    "tracking_frames": 1343,
+    "tracking_relative_span_s": [
+      -4.991230859033067,
+      8.428769140966935
+    ],
+    "whip_invalid_marker_samples": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0,
+      0
+    ],
+    "whip_marker_valid_fractions": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.9933333333333333,
+      1.0,
+      1.0
+    ],
+    "whip_pose_valid_fraction": 1.0,
+    "whip_tf_gaps": 0,
+    "whip_tip_valid_fraction": 1.0
+  },
+  "source_metadata": {
+    "cable_markers_recorded": false,
+    "child_frame": "cf_3_mocap",
+    "clock_verified": false,
+    "closed_utc": "2026-09-15T00:41:21.723806+00:00",
+    "cmd_age": "Sample callback monotonic time minus most recent command callback monotonic time.",
+    "command_header": "Publisher timestamp retained separately; not assumed synchronized with receiver.",
+    "command_snapshot": "Latest command received when the TF callback runs, not necessarily the command at TF capture time. Use event log for reconstruction.",
+    "command_timeout_s": 0.2,
+    "command_topic": "/cf_3/cmd_full_state",
+    "counts": {
+      "bad_stamps": 0,
+      "commands": 3123,
+      "duplicate_samples": 0,
+      "invalid_poses": 0,
+      "out_of_order_samples": 0,
+      "samples": 9485,
+      "tracking_gaps": 7
+    },
+    "created_utc": "2026-09-15T00:39:46.609588+00:00",
+    "drone": "cf_3",
+    "expected_rate_hz": 100.0,
+    "files": {
+      "commands": "experiment_M0_v2_001.commands.csv",
+      "samples": "experiment_M0_v2_001.csv"
+    },
+    "first_tf_stamp_ns": 1789432786714306281,
+    "last_tf_stamp_ns": 1789432881715838187,
+    "logger_start_monotonic_ns": 361336552514382,
+    "measurement": "Selected TF translation and quaternion, unchanged. No coordinate transform.",
+    "motive_frame_ids_available": false,
+    "parent_frame": "mocap",
+    "schema": "optitrack_tf_pva_v2",
+    "status": "complete",
+    "tf_stamp_ns": "Unmodified TF source timestamp; its clock and capture-time meaning require publisher verification.",
+    "tf_time_s": "TF source time relative to first accepted TF sample.",
+    "tf_topic": "/tf",
+    "time_s": "Host monotonic callback time minus logger start; shared with command-event time_s.",
+    "velocity": "Backward difference of adjacent valid TF samples using TF timestamps; NaN across detected gaps."
+  },
+  "source_metadata_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M0_MPPI_2cm_brake_1p3s\\flight_take\\M0\\Whip_123\\experiment_M0_v2_001.metadata.json"
+}

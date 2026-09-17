@@ -1,0 +1,101 @@
+{
+  "cable_parameters": [
+    9.987407815022207e-09,
+    0.00010055447868487578,
+    0.26943010939464007
+  ],
+  "cable_physics": {
+    "active_bounds": [
+      0,
+      0,
+      0
+    ],
+    "baseline_loss": 1.5805954501367847,
+    "best": [
+      -18.42194075593194,
+      -9.204810900869091,
+      -1.3114462566087592
+    ],
+    "best_loss": 1.5616465140208022,
+    "elapsed_s": 22.815497900010087,
+    "nfev": 10,
+    "solver_message": "`xtol` termination condition is satisfied.",
+    "stop_reason": "solver_termination",
+    "updates": 5
+  },
+  "cable_residual": {
+    "baseline_loss": 1.5645188929215141,
+    "best_loss": 1.120604578767287,
+    "ceiling": null,
+    "elapsed_s": 1548.9308858999866,
+    "numerically_verified": true,
+    "optimizer_best_loss": 1.120604578767287,
+    "selected_update": 255,
+    "stop_reason": "user_requested_early_stop",
+    "updates": 255
+  },
+  "candidate_sha256": "0aa9aac5f3f3dae6c95aaef407dba614825a5a9598a8b7a181365fa4077e567c",
+  "drone_parameters": {
+    "attitude_acceleration_scale_xy": 1.0201802667495277,
+    "attitude_acceleration_scale_z": 0.6409997494901687,
+    "attitude_drive_model": "independent_scale_v3",
+    "attitude_time_constant_s": 0.04729545322992945,
+    "delay_s": 0.04,
+    "feedforward_xy": 0.7908628244897823,
+    "feedforward_z": 1.7995383156864047,
+    "gravity_m_s2": 9.80665,
+    "kd_xy": 0.8885414921721838,
+    "kd_z": 2.265694604375226,
+    "kp_xy": 1.7890608746107282,
+    "kp_z": 17.321559380274127
+  },
+  "drone_residual": {
+    "additional_updates": 65,
+    "baseline_loss": 2.4168473369300454,
+    "best_loss": 2.3733517272795104,
+    "ceiling": null,
+    "elapsed_s": 35.19631309999386,
+    "numerically_verified": true,
+    "optimizer_best_loss": 2.3733517272795104,
+    "selected_update": 65,
+    "stop_reason": "practical_plateau",
+    "updates": 65
+  },
+  "schema": "whip_full_model_v1",
+  "stages_complete": true,
+  "termination_override": {
+    "best_saved_update": 255,
+    "convergence_claimed": false,
+    "finalizer_sha256": "8f1f61438c055050f7808b68a543be8e8f32181f3d8e52fe3c5afa92508cc95c",
+    "history_sha256": "64daf7924efc2f4394d2a3892256396ec7a653d79020509e252baf010992e3e9",
+    "interrupted_worker_pid": 45400,
+    "last_saved_update": 255,
+    "original_status": {
+      "best_loss": 1.120604578767287,
+      "model_selected": false,
+      "stage": "cable_residual",
+      "status": "running",
+      "stopping": "practical plateau; no update ceiling",
+      "update": 258
+    },
+    "reason": "User requested stopping because remaining improvement is small; retain best saved checkpoint.",
+    "reproduced_best_loss": 1.120604578767287,
+    "state_sha256": "a2a234ba1fcc04b31e350145d6abdd532778e2fb0a44f465b92ba38ada48bdf3",
+    "termination": "user_requested_early_stop",
+    "unsaved_updates_discarded": true
+  },
+  "training_takes": [
+    "M2_001_whip_001",
+    "M2_001_whip_002",
+    "M2_001_whip_003",
+    "M2_001_whip_004",
+    "M2_002_whip_001",
+    "M2_002_whip_002",
+    "M2_002_whip_003",
+    "M2_003_whip_001",
+    "M2_003_whip_002",
+    "M2_003_whip_003",
+    "M2_003_whip_004"
+  ],
+  "validation_used_for_selection": false
+}

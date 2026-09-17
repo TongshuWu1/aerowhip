@@ -1,0 +1,111 @@
+{
+  "files": {
+    "commands": "experiment_M2_001_whip_003.commands.csv",
+    "samples": "experiment_M2_001_whip_003.csv",
+    "tracking": "M2_001_whip_003.csv"
+  },
+  "schema": "segmented_optitrack_tf_pva_v2",
+  "segment": {
+    "alignment_rms_m": 0.00023607071472207686,
+    "cable_touched_or_reset": false,
+    "clock_verified": false,
+    "command_events": 563,
+    "complete_moving_sequence": true,
+    "fit_role": "unassigned",
+    "full_csv_tracking_complete": true,
+    "initialization_error": null,
+    "logger_rows": 1810,
+    "moving_packets": 164,
+    "name": "M2_001_whip_003",
+    "native_timestamps_preserved": true,
+    "offset_s": 0.6209480276232816,
+    "one_second_initialization_passed": true,
+    "onset_s": 68.95809784316667,
+    "onset_spread_ms": 0.35269833334439227,
+    "original_data_rows_preserved": true,
+    "physical_target_present": false,
+    "prehover_available_s": 4.9960648155433915,
+    "recording_group": "M2_v2_001",
+    "repetition": 3,
+    "segment_tf_gap_times_s": [
+      6.587397710833329,
+      8.957272607833332
+    ],
+    "source_commands": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M2_MPPI_2cm_brake_1p3s\\flight_take\\M2\\experiment_M2_v2_001.commands.csv",
+    "source_logger": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M2_MPPI_2cm_brake_1p3s\\flight_take\\M2\\experiment_M2_v2_001.csv",
+    "source_tracking": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M2_MPPI_2cm_brake_1p3s\\flight_take\\M2\\M2_v2_001.csv",
+    "tracking_frames": 1810,
+    "tracking_relative_span_s": [
+      -4.9960648155433915,
+      9.027191184456612
+    ],
+    "whip_invalid_marker_samples": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      1,
+      0
+    ],
+    "whip_marker_valid_fractions": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      0.9948186528497409,
+      1.0
+    ],
+    "whip_pose_valid_fraction": 1.0,
+    "whip_tf_gaps": 0,
+    "whip_tip_valid_fraction": 1.0
+  },
+  "source_metadata": {
+    "cable_markers_recorded": false,
+    "child_frame": "cf_3_mocap",
+    "clock_verified": false,
+    "closed_utc": "2026-09-15T03:55:10.161507+00:00",
+    "cmd_age": "Sample callback monotonic time minus most recent command callback monotonic time.",
+    "command_header": "Publisher timestamp retained separately; not assumed synchronized with receiver.",
+    "command_snapshot": "Latest command received when the TF callback runs, not necessarily the command at TF capture time. Use event log for reconstruction.",
+    "command_timeout_s": 0.2,
+    "command_topic": "/cf_3/cmd_full_state",
+    "counts": {
+      "bad_stamps": 0,
+      "commands": 3518,
+      "duplicate_samples": 0,
+      "invalid_poses": 0,
+      "out_of_order_samples": 0,
+      "samples": 14538,
+      "tracking_gaps": 11
+    },
+    "created_utc": "2026-09-15T03:53:16.317503+00:00",
+    "drone": "cf_3",
+    "expected_rate_hz": 100.0,
+    "files": {
+      "commands": "experiment_M2_v2_001.commands.csv",
+      "samples": "experiment_M2_v2_001.csv"
+    },
+    "first_tf_stamp_ns": 1789444397414818807,
+    "last_tf_stamp_ns": 1789444510160544267,
+    "logger_start_monotonic_ns": 372946260433111,
+    "measurement": "Selected TF translation and quaternion, unchanged. No coordinate transform.",
+    "motive_frame_ids_available": false,
+    "parent_frame": "mocap",
+    "schema": "optitrack_tf_pva_v2",
+    "status": "complete",
+    "tf_stamp_ns": "Unmodified TF source timestamp; its clock and capture-time meaning require publisher verification.",
+    "tf_time_s": "TF source time relative to first accepted TF sample.",
+    "tf_topic": "/tf",
+    "time_s": "Host monotonic callback time minus logger start; shared with command-event time_s.",
+    "velocity": "Backward difference of adjacent valid TF samples using TF timestamps; NaN across detected gaps."
+  },
+  "source_metadata_path": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M2_MPPI_2cm_brake_1p3s\\flight_take\\M2\\experiment_M2_v2_001.metadata.json"
+}

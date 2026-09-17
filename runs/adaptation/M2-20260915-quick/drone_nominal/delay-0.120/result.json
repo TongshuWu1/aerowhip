@@ -1,0 +1,25 @@
+{
+  "active_bounds": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "baseline_loss": 7.672499252619363,
+  "best": [
+    0.6833124444280879,
+    3.1507998753023676,
+    -0.48712673911542337,
+    1.0870682574708228,
+    -0.09554019089549463,
+    1.0167635145130833
+  ],
+  "best_loss": 5.351350514965343,
+  "elapsed_s": 0.7863898000214249,
+  "nfev": 7,
+  "solver_message": "Stopped because `callback` function raised `StopIteration` or returned `True`",
+  "stop_reason": "practical_plateau",
+  "updates": 6
+}

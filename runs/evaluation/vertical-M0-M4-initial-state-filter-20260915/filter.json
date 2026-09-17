@@ -1,0 +1,1034 @@
+{
+  "limits": {
+    "cable_shape_rms_m": 0.03,
+    "relative_tip_speed_m_s": 0.1,
+    "vehicle_position_error_m": 0.05,
+    "vehicle_speed_m_s": 0.05
+  },
+  "selection": "Strictly pre-command measurements; thresholds agreed before filtered errors were calculated.",
+  "takes": {
+    "M0_002_whip_001": {
+      "collection": "M0",
+      "exclusion_reasons": [
+        "relative_tip_speed_m_s"
+      ],
+      "keep": false,
+      "recording_group": "M0_v2_002",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.009809874387544089,
+        "last_observation_time_s": -0.007916550466642747,
+        "relative_tip_speed_m_s": 0.1558519947509101,
+        "tip_shape_error_m": 0.012804293176474838,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.04194442992817995,
+        "vehicle_speed_m_s": 0.007450143042412811,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M0_002_whip_002": {
+      "collection": "M0",
+      "exclusion_reasons": [
+        "vehicle_position_error_m"
+      ],
+      "keep": false,
+      "recording_group": "M0_v2_002",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.011438251384531733,
+        "last_observation_time_s": -0.006599450556940667,
+        "relative_tip_speed_m_s": 0.07719532364621119,
+        "tip_shape_error_m": 0.021794120702604183,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.059925413673999776,
+        "vehicle_speed_m_s": 0.0340311056763112,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M0_002_whip_003": {
+      "collection": "M0",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M0_v2_002",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.006242638597750422,
+        "last_observation_time_s": -0.0051029848308701276,
+        "relative_tip_speed_m_s": 0.06058696892474817,
+        "tip_shape_error_m": 0.006676370284092022,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.025316579310799482,
+        "vehicle_speed_m_s": 0.048691622651986156,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M0_002_whip_004": {
+      "collection": "M0",
+      "exclusion_reasons": [
+        "relative_tip_speed_m_s"
+      ],
+      "keep": false,
+      "recording_group": "M0_v2_002",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.013562003500369943,
+        "last_observation_time_s": -0.0037255422870430266,
+        "relative_tip_speed_m_s": 0.14705655322365438,
+        "tip_shape_error_m": 0.024599698164928924,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.016174393373477713,
+        "vehicle_speed_m_s": 0.016055968166874306,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M0_003_whip_001": {
+      "collection": "M0",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M0_v2_003",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.009772235380235732,
+        "last_observation_time_s": -0.007276611626945595,
+        "relative_tip_speed_m_s": 0.05696525412818312,
+        "tip_shape_error_m": 0.01765219601155062,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.042124026991730026,
+        "vehicle_speed_m_s": 0.01488365054439919,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M0_003_whip_002": {
+      "collection": "M0",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M0_v2_003",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.00597866205592381,
+        "last_observation_time_s": -0.005880572069102641,
+        "relative_tip_speed_m_s": 0.03848838748349463,
+        "tip_shape_error_m": 0.0066137117818965705,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.020185797804397044,
+        "vehicle_speed_m_s": 0.03010461846452133,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M0_003_whip_003": {
+      "collection": "M0",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M0_v2_003",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.007064545824641948,
+        "last_observation_time_s": -0.00433478671601506,
+        "relative_tip_speed_m_s": 0.06342100198243994,
+        "tip_shape_error_m": 0.013967515110429856,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.012067576475829747,
+        "vehicle_speed_m_s": 0.00935035683785621,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M0_003_whip_004": {
+      "collection": "M0",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M0_v2_003",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.005618851320441433,
+        "last_observation_time_s": -0.0028150747667297082,
+        "relative_tip_speed_m_s": 0.07040234181620143,
+        "tip_shape_error_m": 0.00968917521115114,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.041010436062056205,
+        "vehicle_speed_m_s": 0.015525668285743683,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M0_Whip123_001": {
+      "collection": "M0",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M0_v2_001",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.027491751408218912,
+        "last_observation_time_s": -0.0035698493070022153,
+        "relative_tip_speed_m_s": 0.04957879510980149,
+        "tip_shape_error_m": 0.033286375953354895,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.02440290742923884,
+        "vehicle_speed_m_s": 0.04657588531177774,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M0_Whip123_002": {
+      "collection": "M0",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M0_v2_001",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.019988625665605907,
+        "last_observation_time_s": -0.002458166626581715,
+        "relative_tip_speed_m_s": 0.08235802241718866,
+        "tip_shape_error_m": 0.024120787339373097,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.03178196221129212,
+        "vehicle_speed_m_s": 0.043249791511634425,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M0_Whip123_003": {
+      "collection": "M0",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M0_v2_001",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.02026767377812831,
+        "last_observation_time_s": -0.0012308590330576408,
+        "relative_tip_speed_m_s": 0.03421695646784963,
+        "tip_shape_error_m": 0.02928122678968604,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.011140110457262082,
+        "vehicle_speed_m_s": 0.010186731820489736,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M1_001_whip_001": {
+      "collection": "M1",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M1_v2_001",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.016905894327714176,
+        "last_observation_time_s": -0.0034368821794394933,
+        "relative_tip_speed_m_s": 0.090080382948738,
+        "tip_shape_error_m": 0.022115314851045845,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.012157414239878466,
+        "vehicle_speed_m_s": 0.022854392187096832,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M1_001_whip_002": {
+      "collection": "M1",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M1_v2_001",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.010676488868919226,
+        "last_observation_time_s": -0.008839619974139623,
+        "relative_tip_speed_m_s": 0.0569752869968216,
+        "tip_shape_error_m": 0.013537034394308617,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.030063327427282564,
+        "vehicle_speed_m_s": 0.006772092506933958,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M1_001_whip_003": {
+      "collection": "M1",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M1_v2_001",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.0064503359052193,
+        "last_observation_time_s": -0.004165356561458111,
+        "relative_tip_speed_m_s": 0.07815441708221832,
+        "tip_shape_error_m": 0.010799535391219892,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.010618221225798637,
+        "vehicle_speed_m_s": 0.02429473803365299,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M1_001_whip_004": {
+      "collection": "M1",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M1_v2_001",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.009984146465277054,
+        "last_observation_time_s": -0.009553709006851818,
+        "relative_tip_speed_m_s": 0.057282158048352405,
+        "tip_shape_error_m": 0.016793789365271736,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.03102855075571529,
+        "vehicle_speed_m_s": 0.021072105210489703,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M1_002_whip_001": {
+      "collection": "M1",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M1_v2_002",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.008030315997774836,
+        "last_observation_time_s": -0.003185167234249775,
+        "relative_tip_speed_m_s": 0.032730323568915004,
+        "tip_shape_error_m": 0.016088914015266905,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.04916878979596711,
+        "vehicle_speed_m_s": 0.019297356284603575,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M1_002_whip_002": {
+      "collection": "M1",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M1_v2_002",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.011949617021478424,
+        "last_observation_time_s": -0.00863352349241353,
+        "relative_tip_speed_m_s": 0.014274618720592118,
+        "tip_shape_error_m": 0.021029182822459237,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.02031057205004332,
+        "vehicle_speed_m_s": 0.022968383550241642,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M1_002_whip_003": {
+      "collection": "M1",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M1_v2_002",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.007731124787969047,
+        "last_observation_time_s": -0.003982020583706003,
+        "relative_tip_speed_m_s": 0.04500715819687455,
+        "tip_shape_error_m": 0.015026778342176209,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.026507561751319193,
+        "vehicle_speed_m_s": 0.007135462219559512,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M1_002_whip_004": {
+      "collection": "M1",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M1_v2_002",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.0070528359631887175,
+        "last_observation_time_s": -0.009390595606220131,
+        "relative_tip_speed_m_s": 0.035430269706926726,
+        "tip_shape_error_m": 0.01362761211641128,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.017734656466929358,
+        "vehicle_speed_m_s": 0.02829708606801947,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M1_003_whip_001": {
+      "collection": "M1",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M1_v2_003",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.012152882974777218,
+        "last_observation_time_s": -0.00945893701663536,
+        "relative_tip_speed_m_s": 0.06933300351647989,
+        "tip_shape_error_m": 0.015311499176661867,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.04860992182672173,
+        "vehicle_speed_m_s": 0.03443087118452563,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M1_003_whip_002": {
+      "collection": "M1",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M1_v2_003",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.010254766719601034,
+        "last_observation_time_s": -0.00466674247700638,
+        "relative_tip_speed_m_s": 0.09057087553496992,
+        "tip_shape_error_m": 0.015160716236292105,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.018402663095324002,
+        "vehicle_speed_m_s": 0.02418820009441753,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M1_003_whip_003": {
+      "collection": "M1",
+      "exclusion_reasons": [
+        "relative_tip_speed_m_s"
+      ],
+      "keep": false,
+      "recording_group": "M1_v2_003",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.016199432509081593,
+        "last_observation_time_s": -0.009855475334504149,
+        "relative_tip_speed_m_s": 0.10541331911523077,
+        "tip_shape_error_m": 0.027064274530915942,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.03899773152376943,
+        "vehicle_speed_m_s": 0.01531430177767105,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M1_003_whip_004": {
+      "collection": "M1",
+      "exclusion_reasons": [
+        "vehicle_position_error_m"
+      ],
+      "keep": false,
+      "recording_group": "M1_v2_003",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.010012250162145511,
+        "last_observation_time_s": -0.005146786317354213,
+        "relative_tip_speed_m_s": 0.07593261810745103,
+        "tip_shape_error_m": 0.017337614813492604,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.05095641106867713,
+        "vehicle_speed_m_s": 0.016825542964051254,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M2_001_whip_001": {
+      "collection": "M2",
+      "exclusion_reasons": [
+        "vehicle_speed_m_s"
+      ],
+      "keep": false,
+      "recording_group": "M2_v2_001",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.017912033643187775,
+        "last_observation_time_s": -0.007338653190195998,
+        "relative_tip_speed_m_s": 0.0747744293247163,
+        "tip_shape_error_m": 0.015298897586440294,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.019803987149056627,
+        "vehicle_speed_m_s": 0.05204226266248686,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M2_001_whip_002": {
+      "collection": "M2",
+      "exclusion_reasons": [
+        "relative_tip_speed_m_s",
+        "vehicle_position_error_m"
+      ],
+      "keep": false,
+      "recording_group": "M2_v2_001",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.01749519602172979,
+        "last_observation_time_s": -0.0016190598238878806,
+        "relative_tip_speed_m_s": 0.10255477231806437,
+        "tip_shape_error_m": 0.018220552029088243,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.06939691960022434,
+        "vehicle_speed_m_s": 0.033003650591377026,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M2_001_whip_003": {
+      "collection": "M2",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M2_v2_001",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.01575543797580742,
+        "last_observation_time_s": -0.0038168155433879747,
+        "relative_tip_speed_m_s": 0.06244955848324572,
+        "tip_shape_error_m": 0.015047931513596844,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.011471659208675926,
+        "vehicle_speed_m_s": 0.02794474606215172,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M2_001_whip_004": {
+      "collection": "M2",
+      "exclusion_reasons": [
+        "vehicle_position_error_m"
+      ],
+      "keep": false,
+      "recording_group": "M2_v2_001",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.023893879005419227,
+        "last_observation_time_s": -0.0058890803240672085,
+        "relative_tip_speed_m_s": 0.09750419853799068,
+        "tip_shape_error_m": 0.03528287314949366,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.0552716831750219,
+        "vehicle_speed_m_s": 0.008990142860736398,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M2_002_whip_001": {
+      "collection": "M2",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M2_v2_002",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.023841609417090077,
+        "last_observation_time_s": -0.004129511793273366,
+        "relative_tip_speed_m_s": 0.058125269460695475,
+        "tip_shape_error_m": 0.03479825982962216,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.015354177737671263,
+        "vehicle_speed_m_s": 0.032043668567061256,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M2_002_whip_002": {
+      "collection": "M2",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M2_v2_002",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.02531851084789115,
+        "last_observation_time_s": -0.0067008383568136765,
+        "relative_tip_speed_m_s": 0.047173046986624376,
+        "tip_shape_error_m": 0.03617004849937023,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.01586317067928098,
+        "vehicle_speed_m_s": 0.006138478479514982,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M2_002_whip_003": {
+      "collection": "M2",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M2_v2_002",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.029772055974072332,
+        "last_observation_time_s": -0.0013220128175248647,
+        "relative_tip_speed_m_s": 0.05109380994220385,
+        "tip_shape_error_m": 0.04124088519578218,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.013027748577555492,
+        "vehicle_speed_m_s": 0.02901936345551693,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M2_003_whip_001": {
+      "collection": "M2",
+      "exclusion_reasons": [
+        "relative_tip_speed_m_s",
+        "vehicle_position_error_m"
+      ],
+      "keep": false,
+      "recording_group": "M2_v2_003",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.021104764773599686,
+        "last_observation_time_s": -0.00214572161678106,
+        "relative_tip_speed_m_s": 0.11255155937576503,
+        "tip_shape_error_m": 0.029183243464745566,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.055136205836092855,
+        "vehicle_speed_m_s": 0.04629565369626087,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M2_003_whip_002": {
+      "collection": "M2",
+      "exclusion_reasons": [
+        "vehicle_position_error_m"
+      ],
+      "keep": false,
+      "recording_group": "M2_v2_003",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.017645546797909386,
+        "last_observation_time_s": -0.004280854053355654,
+        "relative_tip_speed_m_s": 0.09453672512912892,
+        "tip_shape_error_m": 0.02263773149773735,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.05715534179759578,
+        "vehicle_speed_m_s": 0.034119724330356545,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M2_003_whip_003": {
+      "collection": "M2",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M2_v2_003",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.02275495421654481,
+        "last_observation_time_s": -0.006526910659957252,
+        "relative_tip_speed_m_s": 0.022517609782297675,
+        "tip_shape_error_m": 0.03466885048277215,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.02496214552076804,
+        "vehicle_speed_m_s": 0.015367994609377817,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M2_003_whip_004": {
+      "collection": "M2",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M2_v2_003",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.022347745786349602,
+        "last_observation_time_s": -0.0008910202727179239,
+        "relative_tip_speed_m_s": 0.03907835082065957,
+        "tip_shape_error_m": 0.03312378876142347,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.02598877378792621,
+        "vehicle_speed_m_s": 0.018912453856340695,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M3_001_whip_001": {
+      "collection": "M3",
+      "exclusion_reasons": [
+        "vehicle_position_error_m"
+      ],
+      "keep": false,
+      "recording_group": "M3_v2_001",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.026128810386183598,
+        "last_observation_time_s": -0.009585901761631987,
+        "relative_tip_speed_m_s": 0.0689970792642316,
+        "tip_shape_error_m": 0.02877368342431971,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.08336823090962169,
+        "vehicle_speed_m_s": 0.017237350870949443,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M3_001_whip_002": {
+      "collection": "M3",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M3_v2_001",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.02996958588396769,
+        "last_observation_time_s": -0.00470717288772704,
+        "relative_tip_speed_m_s": 0.0536406138665877,
+        "tip_shape_error_m": 0.03814280826666652,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.009469631513422306,
+        "vehicle_speed_m_s": 0.022428060077665717,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M3_001_whip_003": {
+      "collection": "M3",
+      "exclusion_reasons": [
+        "vehicle_position_error_m"
+      ],
+      "keep": false,
+      "recording_group": "M3_v2_001",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.025952490209452155,
+        "last_observation_time_s": -0.009882856684924946,
+        "relative_tip_speed_m_s": 0.041955041967450105,
+        "tip_shape_error_m": 0.029255203475648986,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.05399605604115915,
+        "vehicle_speed_m_s": 0.015155675940059263,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M3_001_whip_004": {
+      "collection": "M3",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M3_v2_001",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.02766202742114939,
+        "last_observation_time_s": -0.0050152424648217675,
+        "relative_tip_speed_m_s": 0.04913007964470037,
+        "tip_shape_error_m": 0.029126527325322598,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.020605769022290815,
+        "vehicle_speed_m_s": 0.012744976290556988,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M3_002_whip_001": {
+      "collection": "M3",
+      "exclusion_reasons": [
+        "vehicle_position_error_m"
+      ],
+      "keep": false,
+      "recording_group": "M3_v2_002",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.023292948394826003,
+        "last_observation_time_s": -0.00359390697125761,
+        "relative_tip_speed_m_s": 0.06325797270144047,
+        "tip_shape_error_m": 0.02549401200168877,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.05760525092385242,
+        "vehicle_speed_m_s": 0.04032853266341803,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M3_002_whip_002": {
+      "collection": "M3",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M3_v2_002",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.024421758306337096,
+        "last_observation_time_s": -0.00824707108129985,
+        "relative_tip_speed_m_s": 0.07138114897273276,
+        "tip_shape_error_m": 0.029212137660599692,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.0030941889082600417,
+        "vehicle_speed_m_s": 0.027748718644216557,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M3_002_whip_003": {
+      "collection": "M3",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M3_v2_002",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.021072858837935665,
+        "last_observation_time_s": -0.002900057938603595,
+        "relative_tip_speed_m_s": 0.05581246500169249,
+        "tip_shape_error_m": 0.021988495632233682,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.009633072770409316,
+        "vehicle_speed_m_s": 0.03572994747130183,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M3_002_whip_004": {
+      "collection": "M3",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M3_v2_002",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.02085286412679259,
+        "last_observation_time_s": -0.007579597322802556,
+        "relative_tip_speed_m_s": 0.04576974567256343,
+        "tip_shape_error_m": 0.02278270902168162,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.02426912503573213,
+        "vehicle_speed_m_s": 0.012249820075005845,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M3_003_whip_001": {
+      "collection": "M3",
+      "exclusion_reasons": [
+        "cable_shape_rms_m",
+        "vehicle_position_error_m"
+      ],
+      "keep": false,
+      "recording_group": "M3_v2_003",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.03502744938441819,
+        "last_observation_time_s": -0.004197149798375932,
+        "relative_tip_speed_m_s": 0.09150631461379426,
+        "tip_shape_error_m": 0.04726672015217157,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.0577219268389405,
+        "vehicle_speed_m_s": 0.014642236544329874,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M3_003_whip_002": {
+      "collection": "M3",
+      "exclusion_reasons": [
+        "cable_shape_rms_m"
+      ],
+      "keep": false,
+      "recording_group": "M3_v2_003",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.036959809276665874,
+        "last_observation_time_s": -0.009391348912309638,
+        "relative_tip_speed_m_s": 0.04565756997675707,
+        "tip_shape_error_m": 0.055509009935485215,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.013433748322787643,
+        "vehicle_speed_m_s": 0.010201249495042242,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M3_003_whip_003": {
+      "collection": "M3",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M3_v2_003",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.02523520021018816,
+        "last_observation_time_s": -0.004482054584173056,
+        "relative_tip_speed_m_s": 0.0162924809841239,
+        "tip_shape_error_m": 0.02746743362990294,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.007261437392142093,
+        "vehicle_speed_m_s": 0.014946722447713973,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M3_003_whip_004": {
+      "collection": "M3",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M3_v2_003",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.02079028610669279,
+        "last_observation_time_s": -0.00970741038121048,
+        "relative_tip_speed_m_s": 0.03397099225219326,
+        "tip_shape_error_m": 0.020820191563939452,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.01801173767297313,
+        "vehicle_speed_m_s": 0.02949973977723122,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M4_001_whip_001": {
+      "collection": "M4",
+      "exclusion_reasons": [
+        "cable_shape_rms_m"
+      ],
+      "keep": false,
+      "recording_group": "M4_v2_001",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.030467207990670545,
+        "last_observation_time_s": -0.007102262888899702,
+        "relative_tip_speed_m_s": 0.05109380965677416,
+        "tip_shape_error_m": 0.04014980073520879,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.027869484548516496,
+        "vehicle_speed_m_s": 0.02571089752818398,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M4_001_whip_002": {
+      "collection": "M4",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M4_v2_001",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.021071993791123036,
+        "last_observation_time_s": -0.002338338302713794,
+        "relative_tip_speed_m_s": 0.027945458308134056,
+        "tip_shape_error_m": 0.023642154590361605,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.03742495750164588,
+        "vehicle_speed_m_s": 0.032781300434701066,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M4_001_whip_003": {
+      "collection": "M4",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M4_v2_001",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.02137496984590765,
+        "last_observation_time_s": -0.007440008593832204,
+        "relative_tip_speed_m_s": 0.08135044969476338,
+        "tip_shape_error_m": 0.020795210506239798,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.030351263729867985,
+        "vehicle_speed_m_s": 0.03925869480580882,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M4_001_whip_004": {
+      "collection": "M4",
+      "exclusion_reasons": [
+        "cable_shape_rms_m"
+      ],
+      "keep": false,
+      "recording_group": "M4_v2_001",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.030287847937660057,
+        "last_observation_time_s": -0.0027981113552613124,
+        "relative_tip_speed_m_s": 0.05955923589537226,
+        "tip_shape_error_m": 0.03737998965500439,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.008208904981786537,
+        "vehicle_speed_m_s": 0.004430312898889947,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M4_002_whip_001": {
+      "collection": "M4",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M4_v2_002",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.02429403314654815,
+        "last_observation_time_s": -0.00710833164227509,
+        "relative_tip_speed_m_s": 0.07671940302000235,
+        "tip_shape_error_m": 0.02827979588407188,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.006636560178285082,
+        "vehicle_speed_m_s": 0.018101200655147667,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M4_002_whip_002": {
+      "collection": "M4",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M4_v2_002",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.023781661523088846,
+        "last_observation_time_s": -0.0023569567321430895,
+        "relative_tip_speed_m_s": 0.0707261915382263,
+        "tip_shape_error_m": 0.03318114164787269,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.01356488042704394,
+        "vehicle_speed_m_s": 0.021374795755990123,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M4_002_whip_003": {
+      "collection": "M4",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M4_v2_002",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.022745810247772155,
+        "last_observation_time_s": -0.007451169290206394,
+        "relative_tip_speed_m_s": 0.046933386700544893,
+        "tip_shape_error_m": 0.0315801123028781,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.021893215044848938,
+        "vehicle_speed_m_s": 0.025555552726721942,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M4_002_whip_004": {
+      "collection": "M4",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M4_v2_002",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.017644966051804455,
+        "last_observation_time_s": -0.002681242081791879,
+        "relative_tip_speed_m_s": 0.04201759745665428,
+        "tip_shape_error_m": 0.01896811820890267,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.04036621609712756,
+        "vehicle_speed_m_s": 0.013183807866059438,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M4_003_whip_001": {
+      "collection": "M4",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M4_v2_003",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.026232653139239597,
+        "last_observation_time_s": -0.0025344870372983053,
+        "relative_tip_speed_m_s": 0.04522658526170422,
+        "tip_shape_error_m": 0.03781008141941424,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.030198609520969668,
+        "vehicle_speed_m_s": 0.03683562822146325,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M4_003_whip_002": {
+      "collection": "M4",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M4_v2_003",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.02228004506617924,
+        "last_observation_time_s": -0.007810727990872124,
+        "relative_tip_speed_m_s": 0.055261768842041474,
+        "tip_shape_error_m": 0.026458236489173975,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.04225494613651755,
+        "vehicle_speed_m_s": 0.03281593495344608,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M4_003_whip_003": {
+      "collection": "M4",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M4_v2_003",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.024068415968678824,
+        "last_observation_time_s": -0.002847483828162467,
+        "relative_tip_speed_m_s": 0.05209654990044665,
+        "tip_shape_error_m": 0.029609169110119102,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.03651170795785923,
+        "vehicle_speed_m_s": 0.0250196940504235,
+        "velocity_weight_tau_s": 0.02
+      }
+    },
+    "M4_003_whip_004": {
+      "collection": "M4",
+      "exclusion_reasons": [],
+      "keep": true,
+      "recording_group": "M4_v2_003",
+      "values": {
+        "cable_history_s": 1.0,
+        "cable_shape_rms_m": 0.025101786846321483,
+        "last_observation_time_s": -0.008037988070142887,
+        "relative_tip_speed_m_s": 0.032780065898998005,
+        "tip_shape_error_m": 0.03362140930119471,
+        "vehicle_history_s": 0.4,
+        "vehicle_position_error_m": 0.023072478367093554,
+        "vehicle_speed_m_s": 0.008072706248897953,
+        "velocity_weight_tau_s": 0.02
+      }
+    }
+  }
+}

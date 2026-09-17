@@ -1,0 +1,225 @@
+JOB C:\Users\wts28\Documents\PHD\particle_filter_cable_project\runs\reference_tracking\M7-horizontal-command-correction
+[W915 20:26:26.000000000 Context.cpp:448] Warning: torch.backends.cuda.preferred_linalg_library is an experimental feature. If you see any error or unexpected behavior when this flag is set please file an issue on GitHub. (function operator ())
+Checking unchanged reference command under the frozen candidate model {}
+Local command correction {'iteration': 1, 'best_cost_m2': 0.0021126357916587376, 'rollouts': 1}
+Local command correction {'iteration': 2, 'best_cost_m2': 0.0002501826622153845, 'rollouts': 112}
+Local command correction {'iteration': 3, 'best_cost_m2': 0.00023972632385596798, 'rollouts': 223}
+Local command correction {'iteration': 4, 'best_cost_m2': 0.0002385120581483352, 'rollouts': 334}
+Local command correction {'iteration': 5, 'best_cost_m2': 0.00023833166317168772, 'rollouts': 445}
+Local command correction {'iteration': 6, 'best_cost_m2': 0.00023830122301261606, 'rollouts': 556}
+Checking independent complete replay {}
+Preserving optimized controls; verifying with standard production propagation: Independent complete replay differs: cable=9.570491420007876e-05, pose=0.0
+JOB C:\Users\wts28\Documents\PHD\particle_filter_cable_project\runs\reference_tracking\M7-horizontal-command-correction-production
+Checking unchanged reference command under the frozen candidate model {}
+Checking independent complete replay {}
+{
+  "export": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\exports\\M7_Horizontal_Command_Correction",
+  "rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M7-Horizontal-Command-Correction",
+  "schema": "pva_fullstate_30hz_v1",
+  "planner": "Local fixed-reference command correction",
+  "planner_mode": "open_loop",
+  "command_contract": "bounded_jerk_pva_30hz_v1",
+  "objective_schema": "fixed_tip_reference_v1",
+  "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M7-horizontal-command-correction-production",
+  "checkpoint": null,
+  "initial_tracking_origin_m": [
+    0.0,
+    0.0,
+    1.7917713383723264
+  ],
+  "target_position_m": [
+    -1.3611358907964708,
+    1.1486852395197362,
+    1.3000000000000267
+  ],
+  "whip_end_s": 1.5333333333333334,
+  "total_duration_s": 10.166666666666666,
+  "predicted_hit_time_s": null,
+  "predicted_valid_hit": false,
+  "strike_time_s": 1.2933333333333334,
+  "strike_distance_m": 0.005307104630702239,
+  "minimum_tip_distance_m": 0.005307104630702239,
+  "original_reference_tip_rmse_m": 0.04398517416828269,
+  "corrected_reference_tip_rmse_m": 0.012237008923173087,
+  "corrected_reference_quadrotor_rmse_m": 0.014188027811712288,
+  "maximum_reference_quadrotor_deviation_m": 0.02539164492849597,
+  "baseline_cost_m2": 0.002112635791665079,
+  "corrected_cost_m2": 0.00023828565342679588,
+  "reference_sha256": "fc633f7c81ff48786aeec934916b2309adc5c9d1ea2b8e21f1527312078de4a4",
+  "recovery": {
+    "schema": "brake_return_hold_v1",
+    "settings": {
+      "braking_downward_acceleration_m_s2": 3.5,
+      "braking_horizontal_acceleration_m_s2": 8.0,
+      "braking_tilt_deg": 60.0,
+      "hold_s": 3.0,
+      "maximum_brake_s": 6.0,
+      "maximum_return_s": 12.0,
+      "minimum_brake_s": 1.3,
+      "minimum_return_s": 2.0,
+      "return_speed_m_s": 1.0,
+      "schema": "brake_return_hold_v1"
+    },
+    "brake_end_s": 1.3,
+    "return_s": 4.333333333333333,
+    "return_end_s": 5.633333333333333,
+    "total_duration_s": 8.633333333333333,
+    "hold_s": 3.0,
+    "hover_position_m": [
+      0.0,
+      0.0,
+      1.7917713383723264
+    ],
+    "braking_position_m": [
+      -0.5092509133181027,
+      -2.160366567057136,
+      1.191990468510456
+    ],
+    "brake_coefficients_normalized": [
+      [
+        -0.9941660583853359,
+        0.13238829145757047,
+        2.0882542146534964
+      ],
+      [
+        0.40397063599548083,
+        -3.9823353699740855,
+        -0.7732479464000103
+      ],
+      [
+        1.6975789624169564,
+        -1.80952304116598,
+        -3.0578386376582123
+      ],
+      [
+        -2.6674092525514226,
+        6.395032758195392,
+        4.850366129944294
+      ],
+      [
+        1.0507747992062186,
+        -2.8959292055700327,
+        -1.9155432920291113
+      ]
+    ],
+    "return_coefficients_normalized": [
+      [
+        -0.5092509133181027,
+        -2.160366567057136,
+        1.191990468510456
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        5.092509133181018,
+        21.60366567057132,
+        5.997808698618691
+      ],
+      [
+        -7.638763699771527,
+        -32.40549850585698,
+        -8.996713047928038
+      ],
+      [
+        3.0555054799086108,
+        12.962199402342794,
+        3.5986852191712155
+      ]
+    ],
+    "brake_metrics": {
+      "peak_height_m": 2.0882542146534964,
+      "minimum_height_m": 1.1919904685104559,
+      "peak_speed_m_s": 3.403940902201454,
+      "minimum_vz_m_s": -1.1651162355385103,
+      "minimum_az_m_s2": -3.618743949891375,
+      "peak_horizontal_acceleration_m_s2": 4.2334926635680015,
+      "peak_specific_force_m_s2": 12.358465016231353,
+      "minimum_specific_vertical_m_s2": 6.187906050108625,
+      "peak_absolute_jerk_m_s3": [
+        7.2846861699174035,
+        17.46481408701518,
+        13.24633444682101
+      ]
+    },
+    "return_metrics": {
+      "peak_height_m": 1.7917713383723248,
+      "minimum_height_m": 1.191990468510456,
+      "peak_speed_m_s": 0.9948401927000091,
+      "minimum_vz_m_s": -8.881784197001252e-16,
+      "minimum_az_m_s2": -0.18441140946898532,
+      "peak_horizontal_acceleration_m_s2": 0.6824413151614961,
+      "peak_specific_force_m_s2": 10.014341427993141,
+      "minimum_specific_vertical_m_s2": 9.622238590531014,
+      "peak_absolute_jerk_m_s3": [
+        0.375505907863143,
+        1.5929876370653413,
+        0.44225990404015847
+      ]
+    },
+    "stationary_braking_waypoint": true,
+    "phase_description": "Smooth braking, rest-to-rest return, final hold",
+    "vehicle_limits_verified": false
+  },
+  "recovery_prediction_complete": true,
+  "prediction_valid_through_s": 10.166666666666668,
+  "reference_feasible": true,
+  "predicted_attitude_checked": true,
+  "maximum_predicted_tilt_limit_deg": 60.0,
+  "minimum_predicted_cable_height_m": 0.19313478786003366,
+  "standard_complete_cable_max_difference_m": 0.0,
+  "standard_complete_pose_max_difference_m": 0.0,
+  "independent_cost_difference_m2": 0.0,
+  "csv_sha256": "16b45834deb1be3f8de377117c29af08b52bb875af2f3711067e67f0ed6ee7ec",
+  "iterations": 6,
+  "optimization": {
+    "active_controls": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "active_coordinates": 27,
+    "baseline_strike": {
+      "time_s": 1.2933333333333334,
+      "reference_error_m": 0.07659897905208442,
+      "target_distance_m": 0.07659897905184565
+    },
+    "final_strike": {
+      "time_s": 1.2933333333333334,
+      "reference_error_m": 0.005307104630700766,
+      "target_distance_m": 0.005307104630702239
+    },
+    "iterations": 6,
+    "maximum_jacobian_relative_difference": 0.008680613001048863,
+    "optimization_elapsed_s": 95.1853196000011,
+    "optimizer": "Bounded finite-difference Gauss-Newton",
+    "rollout_count": 668,
+    "stop_reason": "Repeated small improvements with command-constrained stationarity",
+    "strike_guard": "reference",
+    "reused_controls_from": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M7-horizontal-command-correction",
+    "final_replay_backend": "standard production",
+    "controls_reoptimized": false,
+    "production_tracking_cost_m2": 0.00023828565342679588
+  },
+  "elapsed_s": 85.27737369999522,
+  "command_semantics": "Desired tracked-origin P/V/A, 30 Hz zero-order hold, kinematic acceleration, zero yaw",
+  "evidence": "Simulation-only command correction toward the frozen reference motion and timing; physical improvement has not been established.",
+  "reference_label": "M5 horizontal",
+  "command_parameterization": "additive_jerk_correction",
+  "recovery_empirically_validated": false,
+  "success_meaning": "No binary hit claim; fixed-time tracking objective"
+}
+VERIFIED M7 CSV C:\Users\wts28\Documents\PHD\particle_filter_cable_project\exports\M7_Horizontal_Command_Correction\fullstate_30hz.csv

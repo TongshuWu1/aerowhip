@@ -26,15 +26,12 @@ bundles or identical-hash relative assets rather than rewriting original evidenc
 .venv/Scripts/python.exe run_simulation.py
 ```
 
-This opens the six-page PVA desktop. Inspect the named completed MPPI in
-[HANDOFF.md](../../HANDOFF.md). Fitting/PPO remain stopped; no automatic diagnostic
-restart or physical flight is part of setup.
+This opens the PVA desktop. Setup does not start fitting, training, planning, or physical flight.
 
 The ROS/Crazyswarm2 flight computer remains a separate interface/environment.
 Do not infer its firmware, topics or motor configuration from the offline planner.
 See [flight data and replay](FLIGHT_ADAPTATION_QUICKSTART.md) and the historical
 [controller interface review](CONTROLLER_INTERFACE_REVIEW.md).
 
-For paper work, begin with [PAPER_WRITING_HANDOFF.md](../paper/PAPER_WRITING_HANDOFF.md).
 Older transfer packages and workstation-specific validation reports are archived;
 they are not the current setup instructions.

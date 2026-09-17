@@ -1,0 +1,54 @@
+{
+  "backward_travel_m": 0.10430513744527581,
+  "best_score": -9.437751881199555,
+  "closest_approach_time_s": null,
+  "command_steps": 99,
+  "complete_recovery_attitude_checked": true,
+  "complete_recovery_prediction_checked": false,
+  "directed_tip_speed_m_s": 2.0110539505436473,
+  "elapsed_s": 841.4053903999993,
+  "evidence": "Simulation-only candidate; physical validation pending",
+  "fold_completed_time_s": null,
+  "fold_requirement": "diagnostic_only",
+  "fold_valid": false,
+  "free_target": true,
+  "horizontal_cable_rms_m": 0.3845450557086262,
+  "independent_score_difference": 8.999023748401669e-12,
+  "initialization": "templates",
+  "iterations": 80,
+  "maneuver_duration_s": 3.3,
+  "minimum_tip_distance_m": null,
+  "objective_components": {
+    "horizontal_cable": -9.463993591676827,
+    "smoothness": -0.0003817296057932414,
+    "strike": 0.026623440083064977,
+    "target": -0.0
+  },
+  "planner_mode": "position_spline_pva_30hz_v1",
+  "proposal_baselines_sha256": "133009eb51a437b421adb5444723740c964057a746dd4c0c971a47fb757d9b62",
+  "random_candidate_budget": 40960,
+  "recovery_reference_checked": true,
+  "rewarded_tip_speed_m_s": 2.0110539505436473,
+  "root_forward_speed_m_s": -0.9381795937109026,
+  "root_velocity_m_s": [
+    1.2891442398901498,
+    -0.9381795937109026,
+    -0.919042240061707
+  ],
+  "selected_strike_position_m": [
+    0.11322550842986566,
+    0.8623094808759366,
+    0.7713135207250613
+  ],
+  "status": "completed",
+  "stop_reason": "fixed_budget",
+  "strike_angle_deg": 29.489621226899946,
+  "strike_distance_m": null,
+  "strike_time_s": 3.1200000000000006,
+  "target_note": "Strike location selected from the motion; no target accuracy measured",
+  "tip_velocity_m_s": [
+    1.113290899825957,
+    2.0110539505436473,
+    0.23254519767139192
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "analytic": 9.815796186686544,
+  "checks": [
+    {
+      "agrees": false,
+      "analytic": 9.815796186686544,
+      "central_difference": 10.092903721670154,
+      "epsilon": 1e-07,
+      "relative_error": 0.027455680012942307
+    },
+    {
+      "agrees": true,
+      "analytic": 9.815796186686544,
+      "central_difference": 9.881999680771969,
+      "epsilon": 5e-08,
+      "relative_error": 0.006699402572764815
+    },
+    {
+      "agrees": true,
+      "analytic": 9.815796186686544,
+      "central_difference": 9.83552037148172,
+      "epsilon": 2.5e-08,
+      "relative_error": 0.0020054032781394284
+    },
+    {
+      "agrees": true,
+      "analytic": 9.815796186686544,
+      "central_difference": 9.851135773786268,
+      "epsilon": 1e-08,
+      "relative_error": 0.0035873616922184846
+    },
+    {
+      "agrees": true,
+      "analytic": 9.815796186686544,
+      "central_difference": 9.796503830372671,
+      "epsilon": 5e-09,
+      "relative_error": 0.0019654397816490435
+    }
+  ],
+  "index": 28,
+  "loss": 2.598867381842429,
+  "parameter": "net.4.bias"
+}

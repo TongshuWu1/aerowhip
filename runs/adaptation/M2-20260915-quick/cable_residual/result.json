@@ -1,0 +1,14 @@
+{
+  "baseline_loss": 1.31871755081975,
+  "best_loss": 1.31871755081975,
+  "budget": {
+    "maximum_seconds": 120,
+    "maximum_updates": 30
+  },
+  "elapsed_s": 60.95796379999956,
+  "selected_update": 0,
+  "stop_reason": "practical_plateau",
+  "time_budget_scope": "Training loop; final checkpoint numerical checks are additional",
+  "updates": 10,
+  "validation_used_for_selection": false
+}

@@ -1,0 +1,44 @@
+{
+  "original_tolerance": 0.02,
+  "results": [
+    {
+      "cost": 1.1502740292235825,
+      "derivative_norm": 1384.5604833545171,
+      "production": false,
+      "relative_error": 0.0042263467464293495,
+      "step": 1e-08
+    },
+    {
+      "cost": 1.1502740292235825,
+      "derivative_norm": 1365.1152519258928,
+      "difference_to_previous_jacobian": 0.007880965900968715,
+      "production": false,
+      "relative_error": 0.02093293914332601,
+      "step": 3e-09
+    },
+    {
+      "cost": 1.1502740292235825,
+      "derivative_norm": 1269.5017453170603,
+      "difference_to_previous_jacobian": 0.05319528598828987,
+      "production": false,
+      "relative_error": 0.12738758421351035,
+      "step": 1e-09
+    },
+    {
+      "cost": 1.1502740292235825,
+      "derivative_norm": 1740.9077985474241,
+      "difference_to_previous_jacobian": 0.159631077136139,
+      "production": false,
+      "relative_error": 0.2997936525541359,
+      "step": 3e-10
+    },
+    {
+      "cost": 1.1502740292235825,
+      "derivative_norm": 1334.4732825748988,
+      "difference_to_previous_jacobian": 0.2639363649953764,
+      "production": false,
+      "relative_error": 0.08474826543177166,
+      "step": 1e-10
+    }
+  ]
+}

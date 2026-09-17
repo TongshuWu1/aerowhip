@@ -1,0 +1,64 @@
+{
+  "backward_travel_m": 0.10767385669908991,
+  "best_score": -8.240296890380606,
+  "closest_approach_time_s": null,
+  "command_steps": 34,
+  "complete_recovery_attitude_checked": true,
+  "complete_recovery_prediction_checked": false,
+  "directed_tip_speed_m_s": 6.449499406201385,
+  "elapsed_s": 118.53720529999919,
+  "evidence": "Simulation-only candidate; physical validation pending",
+  "fold_completed_time_s": null,
+  "fold_requirement": "diagnostic_only",
+  "fold_valid": false,
+  "free_target": true,
+  "horizontal_cable_rms_m": 0.3849940635413541,
+  "independent_score_difference": 7.640110766260477e-12,
+  "initialization": "templates",
+  "iterations": 40,
+  "maneuver_duration_s": 1.1333333333333333,
+  "minimum_tip_distance_m": null,
+  "objective_components": {
+    "horizontal_cable": -9.48610745357339,
+    "smoothness": -0.001410392182495415,
+    "strike": 1.247220955375279,
+    "target": -0.0
+  },
+  "planner_mode": "targeted_fold_strike_v1",
+  "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+  "proposal_baselines_sha256": "570cbb470aaf76edee854a587bb312b43ddb379d577c81f002309b57909715c5",
+  "random_candidate_budget": 20480,
+  "recovery_reference_checked": true,
+  "rewarded_tip_speed_m_s": 6.449499406201385,
+  "root_forward_speed_m_s": -1.2878568844700675,
+  "root_velocity_m_s": [
+    2.2882143885998905,
+    -1.2878568844700677,
+    -0.693481778187921
+  ],
+  "selected_strike_position_m": [
+    0.2423659961355113,
+    1.2279300175932555,
+    1.170671580803096
+  ],
+  "stop_reason": "fixed_budget",
+  "strike_angle_deg": 22.50175218179844,
+  "strike_distance_m": null,
+  "strike_time_s": 1.1066666666666667,
+  "target_note": "Strike location selected from the motion; no target accuracy measured",
+  "tip_velocity_m_s": [
+    2.669673025163887,
+    6.449499406201385,
+    -0.1040829042014817
+  ],
+  "velocity_peak_speeds_m_s": [
+    2.3203168884211363,
+    2.4871113868821775,
+    4.030927494465608
+  ],
+  "velocity_peak_times_s": [
+    0.6933333333333335,
+    0.9066666666666667,
+    1.0933333333333333
+  ]
+}

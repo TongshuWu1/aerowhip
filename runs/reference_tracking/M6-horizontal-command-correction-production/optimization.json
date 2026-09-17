@@ -1,0 +1,35 @@
+{
+  "active_controls": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "active_coordinates": 27,
+  "baseline_strike": {
+    "reference_error_m": 0.07659897905208442,
+    "target_distance_m": 0.07659897905184565,
+    "time_s": 1.2933333333333334
+  },
+  "controls_reoptimized": false,
+  "final_replay_backend": "standard production",
+  "final_strike": {
+    "reference_error_m": 0.005307104630700766,
+    "target_distance_m": 0.005307104630702239,
+    "time_s": 1.2933333333333334
+  },
+  "iterations": 6,
+  "maximum_jacobian_relative_difference": 0.008680613001048863,
+  "optimization_elapsed_s": 95.1853196000011,
+  "optimizer": "Bounded finite-difference Gauss-Newton",
+  "production_tracking_cost_m2": 0.00023828565342679588,
+  "reused_controls_from": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M6-horizontal-command-correction",
+  "rollout_count": 668,
+  "stop_reason": "Repeated small improvements with command-constrained stationarity",
+  "strike_guard": "reference"
+}

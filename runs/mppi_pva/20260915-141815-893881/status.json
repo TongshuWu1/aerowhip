@@ -1,0 +1,79 @@
+{
+  "aligned_release_duration_s": 0.08,
+  "backward_travel_m": 0.10268024754025162,
+  "best_score": 2.468684220015427,
+  "closest_approach_time_s": null,
+  "command_steps": 52,
+  "complete_recovery_attitude_checked": false,
+  "complete_recovery_prediction_checked": false,
+  "directed_tip_speed_m_s": 5.170011588652511,
+  "elapsed_s": null,
+  "evidence": "Same saved M5 whip; firmer recovery to be independently replayed. No new MPPI optimization or physical flight.",
+  "fold_completed_time_s": null,
+  "fold_requirement": "diagnostic_only",
+  "fold_valid": false,
+  "free_target": true,
+  "height_translation_m": -0.9116237298655341,
+  "horizontal_cable_rms_m": 0.030405581305260925,
+  "independent_score_difference": 7.553957459549565e-13,
+  "initialization": "saved_whip_firmer_recovery",
+  "iterations": 0,
+  "loading_to_release_turn_deg": 103.91347073140558,
+  "loading_velocity_m_s": [
+    1.4093149142197725,
+    -0.335757078475022,
+    -0.20376058745208425
+  ],
+  "maneuver_duration_s": 1.7333333333333334,
+  "minimum_tip_distance_m": null,
+  "objective_components": {
+    "horizontal_cable": -0.02958397998467024,
+    "smoothness": -0.0017088193833201413,
+    "strike": 2.4999770193834174,
+    "target": -0.0
+  },
+  "planner_mode": "targeted_fold_strike_v1",
+  "propagation_note": "Ordered proximal, middle, distal velocity peaks; kinematic proxy, not energy-flux measurement",
+  "proposal_baselines_sha256": "cff9d551b80638a5ff9a461e646d8afb7b306e2e2ba2076fe3f2c0fd9bfafc03",
+  "random_candidate_budget": 0,
+  "recovery_reference_checked": true,
+  "rewarded_tip_speed_m_s": 5.170011588652511,
+  "root_forward_speed_m_s": -1.2366676404864163,
+  "root_velocity_m_s": [
+    1.7768001621710992,
+    -1.2366676404864163,
+    -0.45123673775475653
+  ],
+  "selected_strike_position_m": [
+    3.0946757310566846,
+    0.9716866435640604,
+    1.4500000000007898
+  ],
+  "source_job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260915-140409-968608",
+  "source_plan_sha256": "4e48fc1c7026a6574d652a3361abf084732822a6045bf4fe2a8c5f6467bd60f5",
+  "source_planner_iterations": 80,
+  "source_rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M5-Forward-Left-Horizontal-Whip",
+  "status": "completed",
+  "stop_reason": "recovery_only_regeneration",
+  "strike_angle_deg": 0.8818086868552544,
+  "strike_distance_m": null,
+  "strike_time_s": 1.7066666666666668,
+  "target_note": "Strike location selected from the motion; no target accuracy measured",
+  "tip_velocity_m_s": [
+    -0.04629575077053136,
+    5.170011588652511,
+    -0.06472179211443063
+  ],
+  "translated_position_max_difference_m": 2.2063462168375736e-12,
+  "velocity_max_difference_m_s": 3.2582048170581857e-11,
+  "velocity_peak_speeds_m_s": [
+    2.084288160252769,
+    2.404488187092483,
+    3.483797372711039
+  ],
+  "velocity_peak_times_s": [
+    1.2666666666666666,
+    1.5,
+    1.6666666666666667
+  ]
+}

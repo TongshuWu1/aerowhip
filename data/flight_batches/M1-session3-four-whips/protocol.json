@@ -1,0 +1,26 @@
+{
+  "command_sha256": "96d45cc4d1ebcceaeee9c67fb65ff74288a6368567df05d43a7b8f0c3ea2e468",
+  "fitting_performed": false,
+  "forecast_sha256": "de31dfb37226bd6cbcdf4fac6f441277221a2827822d2eea29a1b389bdd8ca73",
+  "frame": "raw_global_xyz",
+  "normalization": false,
+  "planned_roles": {
+    "M1_003_whip_001": "unassigned",
+    "M1_003_whip_002": "unassigned",
+    "M1_003_whip_003": "unassigned",
+    "M1_003_whip_004": "unassigned"
+  },
+  "purpose": "Individual playback and original M1 forecast comparison; four complete whips.",
+  "recording_groups": {
+    "M1_003_whip_001": "M1_v2_003",
+    "M1_003_whip_002": "M1_v2_003",
+    "M1_003_whip_003": "M1_v2_003",
+    "M1_003_whip_004": "M1_v2_003"
+  },
+  "rehearsal": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\M1-MPPI-2cm-brake-1p3s",
+  "schema": "segmented_flight_review_v1",
+  "user_context": {
+    "cable_touched_or_reset": false,
+    "physical_target_present": false
+  }
+}

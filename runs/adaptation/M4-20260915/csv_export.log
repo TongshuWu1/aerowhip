@@ -1,0 +1,33 @@
+JOB C:\Users\wts28\Documents\PHD\particle_filter_cable_project\runs\reference_tracking\M4-2cm-brake-1p3s-correction
+[W915 02:03:39.000000000 Context.cpp:448] Warning: torch.backends.cuda.preferred_linalg_library is an experimental feature. If you see any error or unexpected behavior when this flag is set please file an issue on GitHub. (function operator ())
+Checking unchanged M0 command under the frozen candidate model {}
+Local command correction {'iteration': 1, 'best_cost_m2': 0.0007254374404633525, 'rollouts': 1}
+Local command correction {'iteration': 2, 'best_cost_m2': 0.000546057269460658, 'rollouts': 100}
+Local command correction {'iteration': 3, 'best_cost_m2': 0.0005399209372905708, 'rollouts': 199}
+Local command correction {'iteration': 4, 'best_cost_m2': 0.0005377920520633153, 'rollouts': 298}
+Local command correction {'iteration': 5, 'best_cost_m2': 0.0005360873458008168, 'rollouts': 397}
+Local command correction {'iteration': 6, 'best_cost_m2': 0.0005338064526796101, 'rollouts': 496}
+Local command correction {'iteration': 7, 'best_cost_m2': 0.0005323511112929282, 'rollouts': 597}
+Local command correction {'iteration': 8, 'best_cost_m2': 0.0005306723305650767, 'rollouts': 696}
+Local command correction {'iteration': 9, 'best_cost_m2': 0.0005303974592737918, 'rollouts': 897}
+Local command correction {'iteration': 10, 'best_cost_m2': 0.0005303019274690315, 'rollouts': 1001}
+Local command correction {'iteration': 11, 'best_cost_m2': 0.0005302737940419439, 'rollouts': 1103}
+Local command correction {'iteration': 12, 'best_cost_m2': 0.0005302161402345727, 'rollouts': 1206}
+Local command correction {'iteration': 13, 'best_cost_m2': 0.0005302040614465927, 'rollouts': 1308}
+Local command correction {'iteration': 14, 'best_cost_m2': 0.0005301181577925908, 'rollouts': 1409}
+Local command correction {'iteration': 15, 'best_cost_m2': 0.0005300821597567065, 'rollouts': 1510}
+Local command correction {'iteration': 16, 'best_cost_m2': 0.0005299851509643205, 'rollouts': 1610}
+Local command correction {'iteration': 17, 'best_cost_m2': 0.0005299394353571042, 'rollouts': 1710}
+Checking independent complete replay {}
+Traceback (most recent call last):
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\tools\correct_reference.py", line 22, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\tools\correct_reference.py", line 18, in main
+    run(a.model_job,a.reference,a.job,a.output,a.export,previous_rehearsal=a.previous_rehearsal,
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\.venv\Lib\site-packages\torch\utils\_contextlib.py", line 124, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\wts28\Documents\PHD\particle_filter_cable_project\planning\correction_job.py", line 133, in run
+    raise ValueError(f'Standard/fast complete replay differs: cable={difference}, pose={pose_difference}')
+ValueError: Standard/fast complete replay differs: cable=1.249551457531417e-05, pose=0.0

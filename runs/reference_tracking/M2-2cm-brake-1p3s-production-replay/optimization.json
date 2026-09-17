@@ -1,0 +1,34 @@
+{
+  "active_controls": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "active_coordinates": 24,
+  "baseline_strike": {
+    "reference_error_m": 0.06956259389387047,
+    "target_distance_m": 0.07452997918966293,
+    "time_s": 1.1138000791100293
+  },
+  "final_replay_backend": "standard production",
+  "final_strike": {
+    "reference_error_m": 0.01656118975197931,
+    "target_distance_m": 0.0333156353817457,
+    "time_s": 1.1138000791100293
+  },
+  "iterations": 30,
+  "maximum_jacobian_relative_difference": 0.03929103167390142,
+  "optimization_elapsed_s": 408.6480712000048,
+  "optimizer": "Bounded finite-difference Gauss-Newton",
+  "optimizer_production_cost_difference_m2": 1.5397297152552891e-15,
+  "production_cost_m2": 0.00035051155685241435,
+  "reused_controls_from": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M2-2cm-brake-1p3s-correction",
+  "rollout_count": 3477,
+  "stop_reason": "Iteration budget reached",
+  "strike_guard": "reference"
+}

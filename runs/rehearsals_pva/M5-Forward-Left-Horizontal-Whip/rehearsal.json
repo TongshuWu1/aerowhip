@@ -1,0 +1,218 @@
+{
+  "aligned_release_duration_s": 0.08,
+  "backward_travel_m": 0.10268024754025162,
+  "checkpoint": null,
+  "checkpoint_sha256": null,
+  "closest_approach_time_s": null,
+  "command_contract": "bounded_jerk_pva_30hz_v1",
+  "command_height_range_m": [
+    1.0843070525962046,
+    1.5754934718849605
+  ],
+  "command_semantics": "Desired OptiTrack tracked-origin P/V/A, kinematic acceleration, 30 Hz zero-order hold, no force or mass compensation",
+  "csv_sha256": "96dcc2a932a305934d210cd62cd4df268252154fdf627f1e44eccc0462bbdb9c",
+  "directed_tip_speed_m_s": 5.170011588650912,
+  "evidence": "Fitted model simulation only; real flight performance remains to be measured",
+  "execution": "Take off; hold 10 s at saved start; execute complete CSV at saved timestamps; land. Offline artifact, no flight sender.",
+  "fold_completed_time_s": null,
+  "fold_requirement": "diagnostic_only",
+  "free_target": true,
+  "horizontal_cable_rms_m": 0.030405581305427216,
+  "initial_tracking_origin_m": [
+    0.0,
+    0.0,
+    1.288376270134466
+  ],
+  "initialization": "templates",
+  "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\mppi_pva\\20260915-140409-968608",
+  "loading_to_release_turn_deg": 103.91347073140172,
+  "loading_velocity_m_s": [
+    1.4093149142197807,
+    -0.335757078475022,
+    -0.20376058745205095
+  ],
+  "lookahead_s": null,
+  "maximum_predicted_tilt_limit_deg": 60.0,
+  "maximum_strike_angle_deg": 30.0,
+  "minimum_predicted_cable_height_m": 0.17744851840974718,
+  "minimum_tip_distance_m": null,
+  "minimum_tip_speed_gain_m_s": 2.0,
+  "objective_schema": "targeted_fold_strike_v1",
+  "plan_sha256": "4e48fc1c7026a6574d652a3361abf084732822a6045bf4fe2a8c5f6467bd60f5",
+  "planner": "MPPI PVA",
+  "planner_mode": "open_loop",
+  "predicted_attitude_checked": true,
+  "predicted_drone_height_range_m": [
+    1.026020531471695,
+    1.6201177280328851
+  ],
+  "predicted_fold_valid": false,
+  "prediction_valid_through_s": 14.666666666666668,
+  "propagation_note": "Delayed and amplified material-band velocity peaks; kinematic proxy, not measured energy flux",
+  "proposal_baselines_sha256": "cff9d551b80638a5ff9a461e646d8afb7b306e2e2ba2076fe3f2c0fd9bfafc03",
+  "recovery": {
+    "brake_coefficients_normalized": [
+      [
+        2.7513494921503208,
+        0.49652701344784883,
+        1.5735156501121317
+      ],
+      [
+        2.3081034016165587,
+        -2.6705408018169208,
+        0.13122306876112022
+      ],
+      [
+        3.2800756349371034,
+        -1.6406557873924932,
+        -2.179921842625882
+      ],
+      [
+        -6.681537581532696,
+        4.858081851673578,
+        2.775339388073389
+      ],
+      [
+        2.794089518276831,
+        -2.155598294604707,
+        -1.024349386932381
+      ]
+    ],
+    "brake_end_s": 1.3,
+    "brake_metrics": {
+      "minimum_az_m_s2": -2.5797891628708665,
+      "minimum_height_m": 1.275806877388378,
+      "minimum_specific_vertical_m_s2": 7.2268608371291325,
+      "minimum_vz_m_s": -0.4234987331254412,
+      "peak_absolute_jerk_m_s3": [
+        18.247257846698307,
+        13.267406058280141,
+        7.5794430261448955
+      ],
+      "peak_height_m": 1.5755724178516992,
+      "peak_horizontal_acceleration_m_s2": 4.340251422168572,
+      "peak_specific_force_m_s2": 11.382240287357215,
+      "peak_speed_m_s": 3.1412126092684804
+    },
+    "braking_position_m": [
+      4.452080465448118,
+      -1.112186018692694,
+      1.275806877388378
+    ],
+    "hold_s": 3.0,
+    "hover_position_m": [
+      0.0,
+      0.0,
+      1.288376270134466
+    ],
+    "phase_description": "Smooth braking, rest-to-rest return, final hold",
+    "return_coefficients_normalized": [
+      [
+        4.452080465448118,
+        -1.112186018692694,
+        1.275806877388378
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        -44.5208046544811,
+        11.121860186926924,
+        0.12569392746088126
+      ],
+      [
+        66.78120698172165,
+        -16.682790280390382,
+        -0.1885408911913219
+      ],
+      [
+        -26.71248279268866,
+        6.673116112156152,
+        0.07541635647652875
+      ]
+    ],
+    "return_end_s": 9.933333333333334,
+    "return_metrics": {
+      "minimum_az_m_s2": -0.0009736360604274983,
+      "minimum_height_m": 1.275806877388378,
+      "minimum_specific_vertical_m_s2": 9.805676363939572,
+      "minimum_vz_m_s": 0.0,
+      "peak_absolute_jerk_m_s3": [
+        0.415124845841355,
+        0.10370343778372024,
+        0.0011720064959594326
+      ],
+      "peak_height_m": 1.288376270134466,
+      "peak_horizontal_acceleration_m_s2": 0.35545996182207434,
+      "peak_specific_force_m_s2": 9.814063030726352,
+      "peak_speed_m_s": 0.9966271818055693
+    },
+    "return_s": 8.633333333333333,
+    "schema": "brake_return_hold_v1",
+    "settings": {
+      "braking_downward_acceleration_m_s2": 3.5,
+      "braking_horizontal_acceleration_m_s2": 8.0,
+      "braking_tilt_deg": 60.0,
+      "hold_s": 3.0,
+      "maximum_brake_s": 6.0,
+      "maximum_return_s": 12.0,
+      "minimum_brake_s": 1.3,
+      "minimum_return_s": 2.0,
+      "return_speed_m_s": 1.0,
+      "schema": "brake_return_hold_v1"
+    },
+    "stationary_braking_waypoint": true,
+    "total_duration_s": 12.933333333333334,
+    "vehicle_limits_verified": false
+  },
+  "recovery_empirically_validated": false,
+  "recovery_prediction_complete": true,
+  "reference_feasible": true,
+  "rewarded_tip_speed_m_s": 5.170011588650912,
+  "root_forward_speed_m_s": -1.2366676404864163,
+  "root_velocity_m_s": [
+    1.7768001621710992,
+    -1.2366676404864163,
+    -0.4512367377547232
+  ],
+  "schema": "pva_fullstate_30hz_v1",
+  "scored_duration_s": 1.7333333333333334,
+  "selected_strike_position_m": [
+    3.0946757310566846,
+    0.9716866435640604,
+    1.4500000000007898
+  ],
+  "speed_metric": "tip_gain_over_root",
+  "strike_angle_deg": 0.8818086868259079,
+  "strike_distance_m": null,
+  "strike_time_s": 1.7066666666666668,
+  "success_criterion": "targeted_fold_strike_v1",
+  "success_meaning": "Release selected after loading and pullback; target accuracy and energy transfer are not measured. Delayed material-band velocity peaks satisfy the configured kinematic pulse check.",
+  "target_note": "Release point chosen after optimization; target accuracy is not evaluated",
+  "target_position_m": [
+    3.0946757310566846,
+    0.9716866435640604,
+    1.4500000000007898
+  ],
+  "total_duration_s": 14.666666666666666,
+  "training_export_cable_max_difference_m": 3.5438318946034997e-13,
+  "training_export_prefix_max_difference_m": 8.881784197001252e-15,
+  "velocity_peak_speeds_m_s": [
+    2.0842881602570813,
+    2.404488187092434,
+    3.4837973727118987
+  ],
+  "velocity_peak_times_s": [
+    1.2666666666666666,
+    1.5,
+    1.6666666666666667
+  ],
+  "whip_end_s": 1.7333333333333334
+}

@@ -10,6 +10,5 @@ The `deployment` branch contains the colleague-facing operator app and
 M0/preliminary baseline; its source package requires a baseline import.
 
 Use the [installation guide](../setup/INSTALL.md),
-[reproducibility guide](../setup/REPRODUCIBILITY.md), and
-[paper handoff](../paper/PAPER_WRITING_HANDOFF.md) for the current workflow.
+[reproducibility guide](../setup/REPRODUCIBILITY.md) for the workflow.
 Packaging checks do not establish Ubuntu or aircraft validation.

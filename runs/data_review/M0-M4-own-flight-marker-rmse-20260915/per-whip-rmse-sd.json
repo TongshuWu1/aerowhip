@@ -1,0 +1,31 @@
+{
+  "ddof": 1,
+  "error_bars": "Sample standard deviation across per-whip all-marker RMSE values, not standard error or confidence intervals.",
+  "models": {
+    "M0": {
+      "mean_cm": 11.808416709877916,
+      "sample_sd_cm": 1.3581428441376684,
+      "whips": 11
+    },
+    "M1": {
+      "mean_cm": 4.125422294297432,
+      "sample_sd_cm": 0.4758782178150491,
+      "whips": 12
+    },
+    "M2": {
+      "mean_cm": 5.1816129863515545,
+      "sample_sd_cm": 2.291937591749009,
+      "whips": 11
+    },
+    "M3": {
+      "mean_cm": 4.318838794478196,
+      "sample_sd_cm": 1.0651006974273054,
+      "whips": 12
+    },
+    "M4": {
+      "mean_cm": 4.164650721672937,
+      "sample_sd_cm": 0.47235294003017503,
+      "whips": 12
+    }
+  }
+}

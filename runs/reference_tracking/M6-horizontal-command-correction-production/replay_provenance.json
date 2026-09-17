@@ -1,0 +1,27 @@
+{
+  "note": "No optimization or tolerance relaxation; unchanged saved controls checked with standard production propagation.",
+  "original_failed_check": {
+    "error": "Independent complete replay differs: cable=9.570491420007876e-05, pose=0.0",
+    "status": "failed"
+  },
+  "original_source_hashes": {
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\deployment\\braking_recovery.py": "2eb68fc0cce04816e703a52a3acb4d2da67e02a678b273155a994543a96b5ca1",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\planning\\correction_job.py": "cec3b87358cfec3ab4ebbc774b7b75165ee644d8a66a839939313369f322796d",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\planning\\jerk_reference_correction.py": "6bd88140267ac13a37330587fee9c848d6abac6d1937d4169048fafea6000fba",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\planning\\local_reference_correction.py": "435c3cd132687598574caef826f7b1942fb9ca90b4c85c42165b7ff614af1acd",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\planning\\position_spline.py": "818495f2874931fd4cdd7c662552cc4352303af96d5f24c9e5c80d1aa9a1b646",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\planning\\reference_correction.py": "43ccd12bf43e9ee9c67764b36a1495dfebb3e462f1bc91156e95fe3dcfa4574a",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M6-horizontal-20260915-six-checks\\fit\\selection_frozen.json": "33108e5a9697abb30d43e8fdc1c51e00111450828a0dc065c4e90bf8c9897e9c",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M6-horizontal-command-correction\\assets\\cable_residual.pt": "6f9f6eb7398f51f71dcfa1130b8abe3ec997a3f3ecdbe5428e6e030fb629824a",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M6-horizontal-command-correction\\assets\\drone_model.json": "dfc9737acec5739e3caae43469e76e92fda22719fd1c70d9023ad9abd4b43a73",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M6-horizontal-command-correction\\assets\\drone_residual.pt": "6679be93e1bd1cb117359259e3360fce99830b27631db37ac72dfb890463d6b0",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M6-horizontal-command-correction\\model.json": "20e91b6299f8ba6fd37de58073eecc90a137e26078b1b914032b83c6c3112c3e",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M6-horizontal-command-correction\\reference.npz": "fc633f7c81ff48786aeec934916b2309adc5c9d1ea2b8e21f1527312078de4a4",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M6-horizontal-command-correction\\settings.json": "7b1d98b52b64ade6914eb698b5e112a12b7ed82ed77cbc6985856fc739acfa5c",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\archive\\horizontal-renumber-20260916\\intermediate\\runs\\rehearsals_pva\\M6-Horizontal-Command-Correction\\plan.npz": "3912bd8487b314c768a2cecf6b606867d8e8ef7829a321ad147a8cac05db5885",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\archive\\horizontal-renumber-20260916\\intermediate\\runs\\rehearsals_pva\\M6-Horizontal-Command-Correction\\settings.json": "949470f8a13297324c6088a8c0243d193c994bddd4d517fe8a493d3a998fe7c0",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\simulator\\research_physics.py": "f2059703eb232ddc1f3e6ecef6b718be4179c6e42d5b515aa1e4789b0b4820fc",
+    "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\simulator\\research_pose.py": "9b3475debfab5d320ac64390236a29d5a2f40c577e15ffabf2d7a07deb421d14"
+  },
+  "source": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\reference_tracking\\M6-horizontal-command-correction"
+}

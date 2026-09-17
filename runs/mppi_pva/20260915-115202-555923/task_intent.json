@@ -1,0 +1,12 @@
+{
+  "free_target": true,
+  "initialization_review": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\tmp\\m5_free_whip_preparation_guided\\review.json",
+  "initialization_sha256": "133009eb51a437b421adb5444723740c964057a746dd4c0c971a47fb757d9b62",
+  "minimum_release_time_s": 2.0,
+  "model_id": "M5",
+  "physical_flight_pending": false,
+  "review": "Require the release to be visibly sideways, inspect cable velocity and bend histories against M0. Kinematic conditions are not an energy-flux measurement.",
+  "search_budget": "512 x 80; fixed budget, no convergence claim",
+  "target_accuracy_evaluated": false,
+  "task": "Sideways preparation then pullback and release"
+}

@@ -1,0 +1,2869 @@
+{
+  "aggregation": "Equal-whip means; per-recording-group means also retained; no inferential independence claim.",
+  "device": "cuda",
+  "evidence": "Retrospective same-flight inference; per-model training ancestry explicitly labeled.",
+  "job": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\evaluation\\vertical-only-M0-M5-paired-20260915",
+  "models": {
+    "M0": {
+      "marker_ids": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      "model": {
+        "id": "M0",
+        "model": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\rehearsals_pva\\20260913-012740-484590-M0-slower-brake-1s\\model.json",
+        "signature": "fc854eae6a37bd8cd3457f1eb7eeb3ba52ae8e0b1315b8fdcc6534a5f94b2858"
+      },
+      "takes": {
+        "M0_002_whip_001": {
+          "collection": "M0",
+          "data_use": "No registered training overlap; retrospective evaluation",
+          "end_s": 1.1138000791100293,
+          "event_metrics": {
+            "closest_approach_distance_error_m": -0.10350443571271657,
+            "closest_approach_position_error_m": 0.15679853654226358,
+            "closest_approach_time_error_s": 0.04932413404519842,
+            "event": "Closest approach to a virtual fixed target in the reviewed command interval",
+            "interval_s": [
+              0.0,
+              1.1333333333333333
+            ],
+            "measured": {
+              "at_observed_window_boundary": false,
+              "distance_m": 0.14276959215432458,
+              "incomplete_observation": false,
+              "position_m": [
+                1.1814217414622024,
+                0.06439198473354718,
+                1.3573957690130751
+              ],
+              "time_s": 1.0727205329679022
+            },
+            "measured_planned_time_target_distance_m": 0.3745355491266952,
+            "planned_time_prediction_error_m": 0.4190534013384443,
+            "planned_time_s": 1.1138000791100293,
+            "predicted": {
+              "at_observed_window_boundary": false,
+              "distance_m": 0.03926515644160801,
+              "incomplete_observation": false,
+              "position_m": [
+                1.241416392624985,
+                -0.03799903045576307,
+                1.254914049169222
+              ],
+              "time_s": 1.1220446670131006
+            },
+            "predicted_planned_time_target_distance_m": 0.057740895710020446,
+            "timing_censored": false
+          },
+          "horizons": {
+            "0.25": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.010339513221847622,
+                "total_count": 370,
+                "valid_count": 370
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.014666566974285066,
+                "total_count": 37,
+                "valid_count": 37
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.009109989060554071,
+                "total_count": 370,
+                "valid_count": 370
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.013963748265271561,
+                "total_count": 37,
+                "valid_count": 37
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.0025102602067078716,
+                "total_count": 37,
+                "valid_count": 37
+              }
+            },
+            "0.5": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.02962665414044434,
+                "total_count": 750,
+                "valid_count": 750
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.026644044136909042,
+                "total_count": 75,
+                "valid_count": 75
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.012857857248612681,
+                "total_count": 750,
+                "valid_count": 750
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.01871361994130637,
+                "total_count": 75,
+                "valid_count": 75
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.028741505970424783,
+                "total_count": 75,
+                "valid_count": 75
+              }
+            },
+            "1.0": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.06861357916749741,
+                "total_count": 1500,
+                "valid_count": 1500
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.08248643524961526,
+                "total_count": 150,
+                "valid_count": 150
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.030784584555762717,
+                "total_count": 1500,
+                "valid_count": 1500
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.048076083347529226,
+                "total_count": 150,
+                "valid_count": 150
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.061099338025324086,
+                "total_count": 150,
+                "valid_count": 150
+              }
+            }
+          },
+          "metrics": {
+            "command_driven_markers": {
+              "coverage": 1.0,
+              "rmse_m": 0.09292116797711907,
+              "total_count": 1670,
+              "valid_count": 1670
+            },
+            "command_driven_tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.11611163891776079,
+              "total_count": 167,
+              "valid_count": 167
+            },
+            "conditional_cable_markers": {
+              "coverage": 1.0,
+              "rmse_m": 0.046291743697019494,
+              "total_count": 1670,
+              "valid_count": 1670
+            },
+            "conditional_cable_tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.08258979419709243,
+              "total_count": 167,
+              "valid_count": 167
+            },
+            "drone": {
+              "coverage": 1.0,
+              "rmse_m": 0.07745254715438844,
+              "total_count": 167,
+              "valid_count": 167
+            }
+          },
+          "per_marker_rmse_m": {
+            "command_driven": [
+              0.07968421732627051,
+              0.08259394674259216,
+              0.08465701075360464,
+              0.08566756026251258,
+              0.08743917605870093,
+              0.08951804071248423,
+              0.09257143889262329,
+              0.09884023581734645,
+              0.1057662250993193,
+              0.11611163891776079
+            ],
+            "conditional_cable": [
+              0.009453079735144653,
+              0.016919884715248076,
+              0.023795817801523074,
+              0.029654380412265004,
+              0.03450434990884405,
+              0.04049635742311885,
+              0.04679344680023259,
+              0.05633847943669088,
+              0.0677698955731443,
+              0.08258979419709243
+            ]
+          },
+          "recording_group": "M0_v2_002",
+          "role": "adaptation",
+          "training_exposure": false
+        },
+        "M0_002_whip_002": {
+          "collection": "M0",
+          "data_use": "No registered training overlap; retrospective evaluation",
+          "end_s": 1.1138000791100293,
+          "event_metrics": {
+            "closest_approach_distance_error_m": -0.07453103440567979,
+            "closest_approach_position_error_m": 0.09863565127321511,
+            "closest_approach_time_error_s": 0.04470825460775307,
+            "event": "Closest approach to a virtual fixed target in the reviewed command interval",
+            "interval_s": [
+              0.0,
+              1.1333333333333333
+            ],
+            "measured": {
+              "at_observed_window_boundary": false,
+              "distance_m": 0.1182006332806299,
+              "incomplete_observation": false,
+              "position_m": [
+                1.225881085856029,
+                -0.015683390827548258,
+                1.3646459721953113
+              ],
+              "time_s": 1.0809582960480275
+            },
+            "measured_planned_time_target_distance_m": 0.3476868094017317,
+            "planned_time_prediction_error_m": 0.4082992101086402,
+            "planned_time_s": 1.1138000791100293,
+            "predicted": {
+              "at_observed_window_boundary": false,
+              "distance_m": 0.04366959887495011,
+              "incomplete_observation": false,
+              "position_m": [
+                1.2301664479390948,
+                -0.03453167868858976,
+                1.267922813548503
+              ],
+              "time_s": 1.1256665506557806
+            },
+            "predicted_planned_time_target_distance_m": 0.07581197254170514,
+            "timing_censored": false
+          },
+          "horizons": {
+            "0.25": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.0074377516841060325,
+                "total_count": 380,
+                "valid_count": 380
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.00775401438751768,
+                "total_count": 38,
+                "valid_count": 38
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.006681635365223685,
+                "total_count": 380,
+                "valid_count": 380
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.00819565050354608,
+                "total_count": 38,
+                "valid_count": 38
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.002139862409135007,
+                "total_count": 38,
+                "valid_count": 38
+              }
+            },
+            "0.5": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.038040548296341944,
+                "total_count": 750,
+                "valid_count": 750
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.0377329540920692,
+                "total_count": 75,
+                "valid_count": 75
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.012669519156578964,
+                "total_count": 750,
+                "valid_count": 750
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.014798176894291689,
+                "total_count": 75,
+                "valid_count": 75
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.02996073542010177,
+                "total_count": 75,
+                "valid_count": 75
+              }
+            },
+            "1.0": {
+              "command_driven_markers": {
+                "coverage": 0.996,
+                "rmse_m": 0.1180440154401677,
+                "total_count": 1500,
+                "valid_count": 1494
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.1693915873284219,
+                "total_count": 150,
+                "valid_count": 150
+              },
+              "conditional_cable_markers": {
+                "coverage": 0.996,
+                "rmse_m": 0.035634697032496,
+                "total_count": 1500,
+                "valid_count": 1494
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.05317641299708927,
+                "total_count": 150,
+                "valid_count": 150
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.08575854795580731,
+                "total_count": 150,
+                "valid_count": 150
+              }
+            }
+          },
+          "metrics": {
+            "command_driven_markers": {
+              "coverage": 0.9964285714285714,
+              "rmse_m": 0.13610752442461302,
+              "total_count": 1680,
+              "valid_count": 1674
+            },
+            "command_driven_tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.18572814760138445,
+              "total_count": 168,
+              "valid_count": 168
+            },
+            "conditional_cable_markers": {
+              "coverage": 0.9964285714285714,
+              "rmse_m": 0.05296906821817082,
+              "total_count": 1680,
+              "valid_count": 1674
+            },
+            "conditional_cable_tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.09033913813967863,
+              "total_count": 168,
+              "valid_count": 168
+            },
+            "drone": {
+              "coverage": 1.0,
+              "rmse_m": 0.10066581538546218,
+              "total_count": 168,
+              "valid_count": 168
+            }
+          },
+          "per_marker_rmse_m": {
+            "command_driven": [
+              0.10909438177518212,
+              0.11303338015719935,
+              0.11537658519797986,
+              0.11785491102362325,
+              0.12174301450745363,
+              0.12733722756074595,
+              0.13459110684208164,
+              0.1491288949898102,
+              0.16623907804674617,
+              0.18572814760138445
+            ],
+            "conditional_cable": [
+              0.012895640845069096,
+              0.02107052302600008,
+              0.02826425079052338,
+              0.03493462946120723,
+              0.04044552407565972,
+              0.04775920185064088,
+              0.05526151279839198,
+              0.06607645465460076,
+              0.0773900200972568,
+              0.09033913813967863
+            ]
+          },
+          "recording_group": "M0_v2_002",
+          "role": "adaptation",
+          "training_exposure": false
+        },
+        "M0_002_whip_003": {
+          "collection": "M0",
+          "data_use": "No registered training overlap; retrospective evaluation",
+          "end_s": 1.1138000791100293,
+          "event_metrics": {
+            "closest_approach_distance_error_m": -0.07641972699948563,
+            "closest_approach_position_error_m": 0.13129308214387625,
+            "closest_approach_time_error_s": 0.027662907427373762,
+            "event": "Closest approach to a virtual fixed target in the reviewed command interval",
+            "interval_s": [
+              0.0,
+              1.1333333333333333
+            ],
+            "measured": {
+              "at_observed_window_boundary": false,
+              "distance_m": 0.117447139144825,
+              "incomplete_observation": false,
+              "position_m": [
+                1.2321217130754571,
+                -0.01411997296009165,
+                1.3652164211974747
+              ],
+              "time_s": 1.0849600630833804
+            },
+            "measured_planned_time_target_distance_m": 0.3050981411126903,
+            "planned_time_prediction_error_m": 0.3071967635667291,
+            "planned_time_s": 1.1138000791100293,
+            "predicted": {
+              "at_observed_window_boundary": false,
+              "distance_m": 0.04102741214533938,
+              "incomplete_observation": false,
+              "position_m": [
+                1.2550275194003153,
+                -0.03901815387882838,
+                1.2383571367820856
+              ],
+              "time_s": 1.1126229705107542
+            },
+            "predicted_planned_time_target_distance_m": 0.041439561308657204,
+            "timing_censored": false
+          },
+          "horizons": {
+            "0.25": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.007068127177306965,
+                "total_count": 380,
+                "valid_count": 380
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.010404375958134555,
+                "total_count": 38,
+                "valid_count": 38
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.006016243431634936,
+                "total_count": 380,
+                "valid_count": 380
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.011123089110335821,
+                "total_count": 38,
+                "valid_count": 38
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.0031574171129720497,
+                "total_count": 38,
+                "valid_count": 38
+              }
+            },
+            "0.5": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.032532119216708885,
+                "total_count": 750,
+                "valid_count": 750
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.0317251977508574,
+                "total_count": 75,
+                "valid_count": 75
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.010863573551074104,
+                "total_count": 750,
+                "valid_count": 750
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.015981559006169165,
+                "total_count": 75,
+                "valid_count": 75
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.03060908082079765,
+                "total_count": 75,
+                "valid_count": 75
+              }
+            },
+            "1.0": {
+              "command_driven_markers": {
+                "coverage": 0.9933333333333333,
+                "rmse_m": 0.10761572943890114,
+                "total_count": 1500,
+                "valid_count": 1490
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.1601120423677011,
+                "total_count": 150,
+                "valid_count": 150
+              },
+              "conditional_cable_markers": {
+                "coverage": 0.9933333333333333,
+                "rmse_m": 0.026905520850478367,
+                "total_count": 1500,
+                "valid_count": 1490
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.044298389094729475,
+                "total_count": 150,
+                "valid_count": 150
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.0781852325729842,
+                "total_count": 150,
+                "valid_count": 150
+              }
+            }
+          },
+          "metrics": {
+            "command_driven_markers": {
+              "coverage": 0.9940119760479041,
+              "rmse_m": 0.12133352966426644,
+              "total_count": 1670,
+              "valid_count": 1660
+            },
+            "command_driven_tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.17028038697989953,
+              "total_count": 167,
+              "valid_count": 167
+            },
+            "conditional_cable_markers": {
+              "coverage": 0.9940119760479041,
+              "rmse_m": 0.03819503450891506,
+              "total_count": 1670,
+              "valid_count": 1660
+            },
+            "conditional_cable_tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.06298259253111926,
+              "total_count": 167,
+              "valid_count": 167
+            },
+            "drone": {
+              "coverage": 1.0,
+              "rmse_m": 0.09163819436662797,
+              "total_count": 167,
+              "valid_count": 167
+            }
+          },
+          "per_marker_rmse_m": {
+            "command_driven": [
+              0.09541655310740468,
+              0.09861518653299864,
+              0.10071282096280959,
+              0.10270701036365172,
+              0.10610701358955649,
+              0.11185603924723861,
+              0.12011302707220367,
+              0.1322368371691635,
+              0.15226007394763486,
+              0.17028038697989953
+            ],
+            "conditional_cable": [
+              0.013033095426849427,
+              0.017236606205473286,
+              0.02261073561734943,
+              0.027447626075968692,
+              0.030645943479379288,
+              0.03515127508554938,
+              0.03932106857375236,
+              0.047509210335365,
+              0.05440553931937367,
+              0.06298259253111926
+            ]
+          },
+          "recording_group": "M0_v2_002",
+          "role": "adaptation",
+          "training_exposure": false
+        },
+        "M0_002_whip_004": {
+          "collection": "M0",
+          "data_use": "No registered training overlap; retrospective evaluation",
+          "end_s": 1.1138000791100293,
+          "event_metrics": {
+            "closest_approach_distance_error_m": -0.07935123829452717,
+            "closest_approach_position_error_m": 0.13995929068906013,
+            "closest_approach_time_error_s": 0.028889615071366226,
+            "event": "Closest approach to a virtual fixed target in the reviewed command interval",
+            "interval_s": [
+              0.0,
+              1.1333333333333333
+            ],
+            "measured": {
+              "at_observed_window_boundary": false,
+              "distance_m": 0.11223565424439301,
+              "incomplete_observation": false,
+              "position_m": [
+                1.2305033333333204,
+                0.03162733333333309,
+                1.3559076666666656
+              ],
+              "time_s": 1.0829411243796236
+            },
+            "measured_planned_time_target_distance_m": 0.3083316467407475,
+            "planned_time_prediction_error_m": 0.3088211434724538,
+            "planned_time_s": 1.1138000791100293,
+            "predicted": {
+              "at_observed_window_boundary": false,
+              "distance_m": 0.032884415949865846,
+              "incomplete_observation": false,
+              "position_m": [
+                1.2618315726545235,
+                -0.02455940698332429,
+                1.2316088545894508
+              ],
+              "time_s": 1.1118307394509899
+            },
+            "predicted_planned_time_target_distance_m": 0.03435677286056562,
+            "timing_censored": false
+          },
+          "horizons": {
+            "0.25": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.007078511810873637,
+                "total_count": 380,
+                "valid_count": 380
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.01241007815875649,
+                "total_count": 38,
+                "valid_count": 38
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.006293674850974114,
+                "total_count": 380,
+                "valid_count": 380
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.012202331099856373,
+                "total_count": 38,
+                "valid_count": 38
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.0019156958889891692,
+                "total_count": 38,
+                "valid_count": 38
+              }
+            },
+            "0.5": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.03500202357815764,
+                "total_count": 750,
+                "valid_count": 750
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.033859333007797705,
+                "total_count": 75,
+                "valid_count": 75
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.011160252044638561,
+                "total_count": 750,
+                "valid_count": 750
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.014231701323905797,
+                "total_count": 75,
+                "valid_count": 75
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.0320265667792112,
+                "total_count": 75,
+                "valid_count": 75
+              }
+            },
+            "1.0": {
+              "command_driven_markers": {
+                "coverage": 0.9973333333333333,
+                "rmse_m": 0.11127705574173052,
+                "total_count": 1500,
+                "valid_count": 1496
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.16371745482608463,
+                "total_count": 150,
+                "valid_count": 150
+              },
+              "conditional_cable_markers": {
+                "coverage": 0.9973333333333333,
+                "rmse_m": 0.02905990363256201,
+                "total_count": 1500,
+                "valid_count": 1496
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.04865939683312745,
+                "total_count": 150,
+                "valid_count": 150
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.08193131952324242,
+                "total_count": 150,
+                "valid_count": 150
+              }
+            }
+          },
+          "metrics": {
+            "command_driven_markers": {
+              "coverage": 0.9970059880239521,
+              "rmse_m": 0.12504776713720345,
+              "total_count": 1670,
+              "valid_count": 1665
+            },
+            "command_driven_tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.17372835039494688,
+              "total_count": 167,
+              "valid_count": 167
+            },
+            "conditional_cable_markers": {
+              "coverage": 0.9970059880239521,
+              "rmse_m": 0.04182176650922419,
+              "total_count": 1670,
+              "valid_count": 1665
+            },
+            "conditional_cable_tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.07051061804531915,
+              "total_count": 167,
+              "valid_count": 167
+            },
+            "drone": {
+              "coverage": 1.0,
+              "rmse_m": 0.09493088384373964,
+              "total_count": 167,
+              "valid_count": 167
+            }
+          },
+          "per_marker_rmse_m": {
+            "command_driven": [
+              0.09948674125587116,
+              0.10341756573954924,
+              0.10504742059615664,
+              0.10759314989614506,
+              0.11059864195778861,
+              0.11623898929251084,
+              0.12292524709366258,
+              0.13672570786123162,
+              0.1532460911692397,
+              0.17372835039494686
+            ],
+            "conditional_cable": [
+              0.011779690643191745,
+              0.017835174225322666,
+              0.024114643460870906,
+              0.029638546479055346,
+              0.033445009071139654,
+              0.038668934941503134,
+              0.043971472027077914,
+              0.05015835841684432,
+              0.05962228979843777,
+              0.07051061804531915
+            ]
+          },
+          "recording_group": "M0_v2_002",
+          "role": "adaptation",
+          "training_exposure": false
+        },
+        "M0_003_whip_001": {
+          "collection": "M0",
+          "data_use": "No registered training overlap; retrospective evaluation",
+          "end_s": 1.1138000791100293,
+          "event_metrics": {
+            "closest_approach_distance_error_m": -0.12282287089684871,
+            "closest_approach_position_error_m": 0.16063363359944707,
+            "closest_approach_time_error_s": 0.03762967695764963,
+            "event": "Closest approach to a virtual fixed target in the reviewed command interval",
+            "interval_s": [
+              0.0,
+              1.1333333333333333
+            ],
+            "measured": {
+              "at_observed_window_boundary": false,
+              "distance_m": 0.14398777024716294,
+              "incomplete_observation": false,
+              "position_m": [
+                1.2231314422063742,
+                0.088245922755218,
+                1.3605586527591598
+              ],
+              "time_s": 1.0752570044861152
+            },
+            "measured_planned_time_target_distance_m": 0.3752315715136888,
+            "planned_time_prediction_error_m": 0.37588129532363235,
+            "planned_time_s": 1.1138000791100293,
+            "predicted": {
+              "at_observed_window_boundary": false,
+              "distance_m": 0.021164899350314244,
+              "incomplete_observation": false,
+              "position_m": [
+                1.2631710768080173,
+                -0.001512457274209674,
+                1.2335018736451702
+              ],
+              "time_s": 1.1128866814437648
+            },
+            "predicted_planned_time_target_distance_m": 0.021652617017254773,
+            "timing_censored": false
+          },
+          "horizons": {
+            "0.25": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.007509877585728652,
+                "total_count": 370,
+                "valid_count": 370
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.010117460656809456,
+                "total_count": 37,
+                "valid_count": 37
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.007477302587093924,
+                "total_count": 370,
+                "valid_count": 370
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.011271339636017447,
+                "total_count": 37,
+                "valid_count": 37
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.002251877892527507,
+                "total_count": 37,
+                "valid_count": 37
+              }
+            },
+            "0.5": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.029584805607411932,
+                "total_count": 750,
+                "valid_count": 750
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.028644785165787348,
+                "total_count": 75,
+                "valid_count": 75
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.01240613194231327,
+                "total_count": 750,
+                "valid_count": 750
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.017654168560711662,
+                "total_count": 75,
+                "valid_count": 75
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.02556992681364612,
+                "total_count": 75,
+                "valid_count": 75
+              }
+            },
+            "1.0": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.1006282198517552,
+                "total_count": 1500,
+                "valid_count": 1500
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.13952518874881423,
+                "total_count": 150,
+                "valid_count": 150
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.02989905120845708,
+                "total_count": 1500,
+                "valid_count": 1500
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.04871977006308663,
+                "total_count": 150,
+                "valid_count": 150
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.07713968188284655,
+                "total_count": 150,
+                "valid_count": 150
+              }
+            }
+          },
+          "metrics": {
+            "command_driven_markers": {
+              "coverage": 1.0,
+              "rmse_m": 0.12044339114465827,
+              "total_count": 1670,
+              "valid_count": 1670
+            },
+            "command_driven_tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.15737895066573723,
+              "total_count": 167,
+              "valid_count": 167
+            },
+            "conditional_cable_markers": {
+              "coverage": 1.0,
+              "rmse_m": 0.04348391150151353,
+              "total_count": 1670,
+              "valid_count": 1670
+            },
+            "conditional_cable_tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.07697006004547477,
+              "total_count": 167,
+              "valid_count": 167
+            },
+            "drone": {
+              "coverage": 1.0,
+              "rmse_m": 0.09428625809904141,
+              "total_count": 167,
+              "valid_count": 167
+            }
+          },
+          "per_marker_rmse_m": {
+            "command_driven": [
+              0.10016689897429702,
+              0.10373794130474441,
+              0.10568427715807271,
+              0.10779343526193995,
+              0.1103199483527938,
+              0.11435924585907191,
+              0.12013526637759378,
+              0.1303093722402539,
+              0.1416081512909891,
+              0.15737895066573723
+            ],
+            "conditional_cable": [
+              0.009554501875943191,
+              0.0157040768760685,
+              0.021727160980488016,
+              0.027509073564599563,
+              0.03174583196651422,
+              0.03785167386377728,
+              0.04415063758588016,
+              0.05380442077676579,
+              0.06428568041275008,
+              0.07697006004547477
+            ]
+          },
+          "recording_group": "M0_v2_003",
+          "role": "adaptation",
+          "training_exposure": false
+        },
+        "M0_003_whip_002": {
+          "collection": "M0",
+          "data_use": "No registered training overlap; retrospective evaluation",
+          "end_s": 1.1138000791100293,
+          "event_metrics": {
+            "closest_approach_distance_error_m": -0.1156832775753058,
+            "closest_approach_position_error_m": 0.12992757821141437,
+            "closest_approach_time_error_s": 0.032896253583707846,
+            "event": "Closest approach to a virtual fixed target in the reviewed command interval",
+            "interval_s": [
+              0.0,
+              1.1333333333333333
+            ],
+            "measured": {
+              "at_observed_window_boundary": false,
+              "distance_m": 0.13155751778676006,
+              "incomplete_observation": false,
+              "position_m": [
+                1.2224616695559065,
+                0.06871612184299253,
+                1.3587525422297089
+              ],
+              "time_s": 1.081770394938804
+            },
+            "measured_planned_time_target_distance_m": 0.32248684563763147,
+            "planned_time_prediction_error_m": 0.3235043432249991,
+            "planned_time_s": 1.1138000791100293,
+            "predicted": {
+              "at_observed_window_boundary": false,
+              "distance_m": 0.015874240211454258,
+              "incomplete_observation": false,
+              "position_m": [
+                1.2555941233078585,
+                0.01418127101679686,
+                1.2455740719554445
+              ],
+              "time_s": 1.1146666485225118
+            },
+            "predicted_planned_time_target_distance_m": 0.016396161416625313,
+            "timing_censored": false
+          },
+          "horizons": {
+            "0.25": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.008224330061898126,
+                "total_count": 380,
+                "valid_count": 380
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.007567224479019926,
+                "total_count": 38,
+                "valid_count": 38
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.007328364816352385,
+                "total_count": 380,
+                "valid_count": 380
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.008005744524145113,
+                "total_count": 38,
+                "valid_count": 38
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.0027652841240533737,
+                "total_count": 38,
+                "valid_count": 38
+              }
+            },
+            "0.5": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.0333363817227036,
+                "total_count": 750,
+                "valid_count": 750
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.030110152457287456,
+                "total_count": 75,
+                "valid_count": 75
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.013706242648774753,
+                "total_count": 750,
+                "valid_count": 750
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.01637810025830815,
+                "total_count": 75,
+                "valid_count": 75
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.02916635562756424,
+                "total_count": 75,
+                "valid_count": 75
+              }
+            },
+            "1.0": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.1065752505473309,
+                "total_count": 1500,
+                "valid_count": 1500
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.1520625634291555,
+                "total_count": 150,
+                "valid_count": 150
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.03159503068263994,
+                "total_count": 1500,
+                "valid_count": 1500
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.0497467235755529,
+                "total_count": 150,
+                "valid_count": 150
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.07480664457271292,
+                "total_count": 150,
+                "valid_count": 150
+              }
+            }
+          },
+          "metrics": {
+            "command_driven_markers": {
+              "coverage": 1.0,
+              "rmse_m": 0.11999151471067254,
+              "total_count": 1670,
+              "valid_count": 1670
+            },
+            "command_driven_tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.16232916312134457,
+              "total_count": 167,
+              "valid_count": 167
+            },
+            "conditional_cable_markers": {
+              "coverage": 1.0,
+              "rmse_m": 0.04489186883717359,
+              "total_count": 1670,
+              "valid_count": 1670
+            },
+            "conditional_cable_tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.07603197467083044,
+              "total_count": 167,
+              "valid_count": 167
+            },
+            "drone": {
+              "coverage": 1.0,
+              "rmse_m": 0.08821919112310883,
+              "total_count": 167,
+              "valid_count": 167
+            }
+          },
+          "per_marker_rmse_m": {
+            "command_driven": [
+              0.0951251664387277,
+              0.0987971837291056,
+              0.10106112797918858,
+              0.10354166969416838,
+              0.10698166514903173,
+              0.11248955145657659,
+              0.11978793028686713,
+              0.13256737676338134,
+              0.14786052746545256,
+              0.16232916312134457
+            ],
+            "conditional_cable": [
+              0.01121117090839572,
+              0.01809789728397325,
+              0.024138504398465842,
+              0.029889265475571802,
+              0.03394993840248869,
+              0.04032739775713965,
+              0.04648440574513652,
+              0.056043323511023264,
+              0.06604639630635932,
+              0.07603197467083045
+            ]
+          },
+          "recording_group": "M0_v2_003",
+          "role": "adaptation",
+          "training_exposure": false
+        },
+        "M0_003_whip_003": {
+          "collection": "M0",
+          "data_use": "No registered training overlap; retrospective evaluation",
+          "end_s": 1.1138000791100293,
+          "event_metrics": {
+            "closest_approach_distance_error_m": -0.09566818962083835,
+            "closest_approach_position_error_m": 0.1306137364166621,
+            "closest_approach_time_error_s": 0.025821978719172467,
+            "event": "Closest approach to a virtual fixed target in the reviewed command interval",
+            "interval_s": [
+              0.0,
+              1.1333333333333333
+            ],
+            "measured": {
+              "at_observed_window_boundary": false,
+              "distance_m": 0.11439584316858752,
+              "incomplete_observation": false,
+              "position_m": [
+                1.242961695105945,
+                0.03576242466168844,
+                1.3584339438588648
+              ],
+              "time_s": 1.0884070518668165
+            },
+            "measured_planned_time_target_distance_m": 0.2721265160213628,
+            "planned_time_prediction_error_m": 0.27797690820284,
+            "planned_time_s": 1.1138000791100293,
+            "predicted": {
+              "at_observed_window_boundary": false,
+              "distance_m": 0.018727653547749162,
+              "incomplete_observation": false,
+              "position_m": [
+                1.2605527294389236,
+                -0.0020967149100622542,
+                1.2346713113613943
+              ],
+              "time_s": 1.114229030585989
+            },
+            "predicted_planned_time_target_distance_m": 0.018848432412456352,
+            "timing_censored": false
+          },
+          "horizons": {
+            "0.25": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.006509197357849818,
+                "total_count": 380,
+                "valid_count": 380
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.00651806417941014,
+                "total_count": 38,
+                "valid_count": 38
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.005365624498655849,
+                "total_count": 380,
+                "valid_count": 380
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.006582612267847743,
+                "total_count": 38,
+                "valid_count": 38
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.002189094534011359,
+                "total_count": 38,
+                "valid_count": 38
+              }
+            },
+            "0.5": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.03636373459693692,
+                "total_count": 750,
+                "valid_count": 750
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.03289721569753317,
+                "total_count": 75,
+                "valid_count": 75
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.011816384774278562,
+                "total_count": 750,
+                "valid_count": 750
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.010696084178801258,
+                "total_count": 75,
+                "valid_count": 75
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.032582081569081704,
+                "total_count": 75,
+                "valid_count": 75
+              }
+            },
+            "1.0": {
+              "command_driven_markers": {
+                "coverage": 0.9946666666666667,
+                "rmse_m": 0.11560251172067683,
+                "total_count": 1500,
+                "valid_count": 1492
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.17030887520084217,
+                "total_count": 150,
+                "valid_count": 150
+              },
+              "conditional_cable_markers": {
+                "coverage": 0.9946666666666667,
+                "rmse_m": 0.027010406095893714,
+                "total_count": 1500,
+                "valid_count": 1492
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.044379024561952876,
+                "total_count": 150,
+                "valid_count": 150
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.08634068906426876,
+                "total_count": 150,
+                "valid_count": 150
+              }
+            }
+          },
+          "metrics": {
+            "command_driven_markers": {
+              "coverage": 0.9952095808383233,
+              "rmse_m": 0.1286370438510621,
+              "total_count": 1670,
+              "valid_count": 1662
+            },
+            "command_driven_tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.17891588936946795,
+              "total_count": 167,
+              "valid_count": 167
+            },
+            "conditional_cable_markers": {
+              "coverage": 0.9952095808383233,
+              "rmse_m": 0.03748475564459479,
+              "total_count": 1670,
+              "valid_count": 1662
+            },
+            "conditional_cable_tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.06151176178493019,
+              "total_count": 167,
+              "valid_count": 167
+            },
+            "drone": {
+              "coverage": 1.0,
+              "rmse_m": 0.10007909838414614,
+              "total_count": 167,
+              "valid_count": 167
+            }
+          },
+          "per_marker_rmse_m": {
+            "command_driven": [
+              0.10277660581365451,
+              0.10588010169519917,
+              0.10710246047124475,
+              0.1088928606727662,
+              0.11200604709420504,
+              0.1175152954642927,
+              0.12614728535618774,
+              0.14248500471889053,
+              0.15970216714509208,
+              0.17891588936946795
+            ],
+            "conditional_cable": [
+              0.013774058237239267,
+              0.017004032475495003,
+              0.022059821910337164,
+              0.026370565620421494,
+              0.029430427216264057,
+              0.03411227561198864,
+              0.03867119050246563,
+              0.046353290944611915,
+              0.05361305896895684,
+              0.06151176178493018
+            ]
+          },
+          "recording_group": "M0_v2_003",
+          "role": "adaptation",
+          "training_exposure": false
+        },
+        "M0_003_whip_004": {
+          "collection": "M0",
+          "data_use": "No registered training overlap; retrospective evaluation",
+          "end_s": 1.1138000791100293,
+          "event_metrics": {
+            "closest_approach_distance_error_m": -0.08754836137035371,
+            "closest_approach_position_error_m": 0.14374340766064614,
+            "closest_approach_time_error_s": 0.02532156370419747,
+            "event": "Closest approach to a virtual fixed target in the reviewed command interval",
+            "interval_s": [
+              0.0,
+              1.1333333333333333
+            ],
+            "measured": {
+              "at_observed_window_boundary": false,
+              "distance_m": 0.12051567385836871,
+              "incomplete_observation": false,
+              "position_m": [
+                1.2338810932594797,
+                0.06407719274131989,
+                1.3507885006407916
+              ],
+              "time_s": 1.0837524692069638
+            },
+            "measured_planned_time_target_distance_m": 0.2927527969284918,
+            "planned_time_prediction_error_m": 0.2787448389686128,
+            "planned_time_s": 1.1138000791100293,
+            "predicted": {
+              "at_observed_window_boundary": false,
+              "distance_m": 0.032967312488015,
+              "incomplete_observation": false,
+              "position_m": [
+                1.2674949235726756,
+                0.0073769434521853815,
+                1.2230490807731549
+              ],
+              "time_s": 1.1090740329111612
+            },
+            "predicted_planned_time_target_distance_m": 0.03942399685182577,
+            "timing_censored": false
+          },
+          "horizons": {
+            "0.25": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.007755160905825892,
+                "total_count": 370,
+                "valid_count": 370
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.004633890184667064,
+                "total_count": 37,
+                "valid_count": 37
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.006754910047944387,
+                "total_count": 370,
+                "valid_count": 370
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.00545046209480947,
+                "total_count": 37,
+                "valid_count": 37
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.0026696877053845164,
+                "total_count": 37,
+                "valid_count": 37
+              }
+            },
+            "0.5": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.030132647954448123,
+                "total_count": 750,
+                "valid_count": 750
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.02034501745833922,
+                "total_count": 75,
+                "valid_count": 75
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.013366160942875344,
+                "total_count": 750,
+                "valid_count": 750
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.009867712319240728,
+                "total_count": 75,
+                "valid_count": 75
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.02837571003761637,
+                "total_count": 75,
+                "valid_count": 75
+              }
+            },
+            "1.0": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.09354676370828857,
+                "total_count": 1500,
+                "valid_count": 1500
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.13077583628865977,
+                "total_count": 150,
+                "valid_count": 150
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.02687070517835591,
+                "total_count": 1500,
+                "valid_count": 1500
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.03982573992059057,
+                "total_count": 150,
+                "valid_count": 150
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.06864118250154258,
+                "total_count": 150,
+                "valid_count": 150
+              }
+            }
+          },
+          "metrics": {
+            "command_driven_markers": {
+              "coverage": 1.0,
+              "rmse_m": 0.10784514715235984,
+              "total_count": 1670,
+              "valid_count": 1670
+            },
+            "command_driven_tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.14197249998282901,
+              "total_count": 167,
+              "valid_count": 167
+            },
+            "conditional_cable_markers": {
+              "coverage": 1.0,
+              "rmse_m": 0.039426364581284463,
+              "total_count": 1670,
+              "valid_count": 1670
+            },
+            "conditional_cable_tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.06483971093628176,
+              "total_count": 167,
+              "valid_count": 167
+            },
+            "drone": {
+              "coverage": 1.0,
+              "rmse_m": 0.08351034274366662,
+              "total_count": 167,
+              "valid_count": 167
+            }
+          },
+          "per_marker_rmse_m": {
+            "command_driven": [
+              0.08796452050731594,
+              0.091456876955219,
+              0.0925300797897588,
+              0.09498436552642142,
+              0.09714318482021346,
+              0.10216459080354401,
+              0.10730096903503328,
+              0.11858483537906615,
+              0.13043519928347538,
+              0.14197249998282904
+            ],
+            "conditional_cable": [
+              0.011933957079238684,
+              0.016448044469587298,
+              0.022052044511948532,
+              0.027365940485922356,
+              0.03092034237404392,
+              0.03629712201243695,
+              0.041792976698745515,
+              0.04917982124703604,
+              0.05703676800308968,
+              0.06483971093628176
+            ]
+          },
+          "recording_group": "M0_v2_003",
+          "role": "adaptation",
+          "training_exposure": false
+        },
+        "M0_Whip123_001": {
+          "collection": "M0",
+          "data_use": "No registered training overlap; retrospective evaluation",
+          "end_s": 1.1138000791100293,
+          "event_metrics": {
+            "closest_approach_distance_error_m": -0.1395134020594286,
+            "closest_approach_position_error_m": 0.14229407574234915,
+            "closest_approach_time_error_s": 0.04182809643898655,
+            "event": "Closest approach to a virtual fixed target in the reviewed command interval",
+            "interval_s": [
+              0.0,
+              1.1333333333333333
+            ],
+            "measured": {
+              "at_observed_window_boundary": false,
+              "distance_m": 0.14928846298367815,
+              "incomplete_observation": false,
+              "position_m": [
+                1.2218555066733487,
+                0.14385432476617932,
+                1.2782995745812853
+              ],
+              "time_s": 1.076560496052124
+            },
+            "measured_planned_time_target_distance_m": 0.3082633108445685,
+            "planned_time_prediction_error_m": 0.3220875172694996,
+            "planned_time_s": 1.1138000791100293,
+            "predicted": {
+              "at_observed_window_boundary": false,
+              "distance_m": 0.009775060924249547,
+              "incomplete_observation": false,
+              "position_m": [
+                1.253501478746678,
+                0.008667741589674774,
+                1.247143127865309
+              ],
+              "time_s": 1.1183885924911106
+            },
+            "predicted_planned_time_target_distance_m": 0.024747569640886254,
+            "timing_censored": false
+          },
+          "horizons": {
+            "0.25": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.017019764798097883,
+                "total_count": 380,
+                "valid_count": 380
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.018617267203229565,
+                "total_count": 38,
+                "valid_count": 38
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.015428366049138607,
+                "total_count": 380,
+                "valid_count": 380
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.01692361595804824,
+                "total_count": 38,
+                "valid_count": 38
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.0024732715253399434,
+                "total_count": 38,
+                "valid_count": 38
+              }
+            },
+            "0.5": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.04663449211631556,
+                "total_count": 750,
+                "valid_count": 750
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.0448013863968958,
+                "total_count": 75,
+                "valid_count": 75
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.02581363081097272,
+                "total_count": 750,
+                "valid_count": 750
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.02544567678838084,
+                "total_count": 75,
+                "valid_count": 75
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.029408973837423753,
+                "total_count": 75,
+                "valid_count": 75
+              }
+            },
+            "1.0": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.0888869195501157,
+                "total_count": 1500,
+                "valid_count": 1500
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.10809409763519484,
+                "total_count": 150,
+                "valid_count": 150
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.04363984855496061,
+                "total_count": 1500,
+                "valid_count": 1500
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.06535461515649983,
+                "total_count": 150,
+                "valid_count": 150
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.06163116406809143,
+                "total_count": 150,
+                "valid_count": 150
+              }
+            }
+          },
+          "metrics": {
+            "command_driven_markers": {
+              "coverage": 1.0,
+              "rmse_m": 0.10334404447934624,
+              "total_count": 1670,
+              "valid_count": 1670
+            },
+            "command_driven_tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.12258174414813561,
+              "total_count": 167,
+              "valid_count": 167
+            },
+            "conditional_cable_markers": {
+              "coverage": 1.0,
+              "rmse_m": 0.05677082872561552,
+              "total_count": 1670,
+              "valid_count": 1670
+            },
+            "conditional_cable_tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.09576593104310999,
+              "total_count": 167,
+              "valid_count": 167
+            },
+            "drone": {
+              "coverage": 1.0,
+              "rmse_m": 0.07457471008977491,
+              "total_count": 167,
+              "valid_count": 167
+            }
+          },
+          "per_marker_rmse_m": {
+            "command_driven": [
+              0.08863571571850427,
+              0.09229627767471059,
+              0.09613754540943054,
+              0.09852126198613942,
+              0.09991892560000926,
+              0.10200111526868554,
+              0.10359828910694412,
+              0.1092269826857325,
+              0.11575281058890191,
+              0.12258174414813562
+            ],
+            "conditional_cable": [
+              0.017757930910509066,
+              0.02405817309330968,
+              0.031360280316902384,
+              0.03813985235202849,
+              0.044144716809192464,
+              0.05132208637438242,
+              0.058783375131834785,
+              0.06988360986368516,
+              0.08248626782759419,
+              0.09576593104311
+            ]
+          },
+          "recording_group": "M0_v2_001",
+          "role": "adaptation",
+          "training_exposure": false
+        },
+        "M0_Whip123_002": {
+          "collection": "M0",
+          "data_use": "No registered training overlap; retrospective evaluation",
+          "end_s": 1.1138000791100293,
+          "event_metrics": {
+            "closest_approach_distance_error_m": -0.07707821377815378,
+            "closest_approach_position_error_m": 0.13193549105803376,
+            "closest_approach_time_error_s": 0.03682061300578532,
+            "event": "Closest approach to a virtual fixed target in the reviewed command interval",
+            "interval_s": [
+              0.0,
+              1.1333333333333333
+            ],
+            "measured": {
+              "at_observed_window_boundary": false,
+              "distance_m": 0.10995976048537022,
+              "incomplete_observation": false,
+              "position_m": [
+                1.237097,
+                0.019686,
+                1.357411
+              ],
+              "time_s": 1.0775418333734184
+            },
+            "measured_planned_time_target_distance_m": 0.3683658710998894,
+            "planned_time_prediction_error_m": 0.3787184605604258,
+            "planned_time_s": 1.1138000791100293,
+            "predicted": {
+              "at_observed_window_boundary": false,
+              "distance_m": 0.032881546707216436,
+              "incomplete_observation": false,
+              "position_m": [
+                1.2573554160955376,
+                -0.02906543524106587,
+                1.23649835409412
+              ],
+              "time_s": 1.1143624463792037
+            },
+            "predicted_planned_time_target_distance_m": 0.03300204370710449,
+            "timing_censored": false
+          },
+          "horizons": {
+            "0.25": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.012533153635869132,
+                "total_count": 370,
+                "valid_count": 370
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.011240729150388524,
+                "total_count": 37,
+                "valid_count": 37
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.012371370338321858,
+                "total_count": 370,
+                "valid_count": 370
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.012022385151157469,
+                "total_count": 37,
+                "valid_count": 37
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.0021443075647118795,
+                "total_count": 37,
+                "valid_count": 37
+              }
+            },
+            "0.5": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.04356148322552287,
+                "total_count": 750,
+                "valid_count": 750
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.042287706991926514,
+                "total_count": 75,
+                "valid_count": 75
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.021861676724370845,
+                "total_count": 750,
+                "valid_count": 750
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.022991626388707036,
+                "total_count": 75,
+                "valid_count": 75
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.02990528652466236,
+                "total_count": 75,
+                "valid_count": 75
+              }
+            },
+            "1.0": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.12149159080269441,
+                "total_count": 1500,
+                "valid_count": 1500
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.17036425648518105,
+                "total_count": 150,
+                "valid_count": 150
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.041424738375139034,
+                "total_count": 1500,
+                "valid_count": 1500
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.06321559035474555,
+                "total_count": 150,
+                "valid_count": 150
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.08255886727343435,
+                "total_count": 150,
+                "valid_count": 150
+              }
+            }
+          },
+          "metrics": {
+            "command_driven_markers": {
+              "coverage": 1.0,
+              "rmse_m": 0.13503816582379488,
+              "total_count": 1670,
+              "valid_count": 1670
+            },
+            "command_driven_tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.18227058024976836,
+              "total_count": 167,
+              "valid_count": 167
+            },
+            "conditional_cable_markers": {
+              "coverage": 1.0,
+              "rmse_m": 0.05364392130403843,
+              "total_count": 1670,
+              "valid_count": 1670
+            },
+            "conditional_cable_tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.09057155259327151,
+              "total_count": 167,
+              "valid_count": 167
+            },
+            "drone": {
+              "coverage": 1.0,
+              "rmse_m": 0.09590458292261064,
+              "total_count": 167,
+              "valid_count": 167
+            }
+          },
+          "per_marker_rmse_m": {
+            "command_driven": [
+              0.10750211223697745,
+              0.111232375240455,
+              0.11369661735535312,
+              0.11681761214619855,
+              0.12046493792092663,
+              0.12682876796214337,
+              0.13534382888747942,
+              0.15058553361870639,
+              0.1644280527132881,
+              0.18227058024976836
+            ],
+            "conditional_cable": [
+              0.018214567835626815,
+              0.024552770368688442,
+              0.03066598299656559,
+              0.036799035667254586,
+              0.042016494764762595,
+              0.0487066576565995,
+              0.05537639422999592,
+              0.06597121063452681,
+              0.07607789582582895,
+              0.09057155259327153
+            ]
+          },
+          "recording_group": "M0_v2_001",
+          "role": "adaptation",
+          "training_exposure": false
+        },
+        "M0_Whip123_003": {
+          "collection": "M0",
+          "data_use": "No registered training overlap; retrospective evaluation",
+          "end_s": 1.1138000791100293,
+          "event_metrics": {
+            "closest_approach_distance_error_m": -0.10710904607520116,
+            "closest_approach_position_error_m": 0.14876502459294894,
+            "closest_approach_time_error_s": 0.023792396641209024,
+            "event": "Closest approach to a virtual fixed target in the reviewed command interval",
+            "interval_s": [
+              0.0,
+              1.1333333333333333
+            ],
+            "measured": {
+              "at_observed_window_boundary": false,
+              "distance_m": 0.12795890511690655,
+              "incomplete_observation": false,
+              "position_m": [
+                1.230283492297262,
+                0.11486583790072655,
+                1.302825940655036
+              ],
+              "time_s": 1.0930838342843765
+            },
+            "measured_planned_time_target_distance_m": 0.19614174721675623,
+            "planned_time_prediction_error_m": 0.22071506110036715,
+            "planned_time_s": 1.1138000791100293,
+            "predicted": {
+              "at_observed_window_boundary": false,
+              "distance_m": 0.020849859041705388,
+              "incomplete_observation": false,
+              "position_m": [
+                1.254616693514633,
+                -0.018355326408836237,
+                1.2412544436725839
+              ],
+              "time_s": 1.1168762309255855
+            },
+            "predicted_planned_time_target_distance_m": 0.025956881266236465,
+            "timing_censored": false
+          },
+          "horizons": {
+            "0.25": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.01150186498012197,
+                "total_count": 370,
+                "valid_count": 370
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.009906473448275398,
+                "total_count": 37,
+                "valid_count": 37
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.011529702137627072,
+                "total_count": 370,
+                "valid_count": 370
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.01133421420597158,
+                "total_count": 37,
+                "valid_count": 37
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.002737029918870578,
+                "total_count": 37,
+                "valid_count": 37
+              }
+            },
+            "0.5": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.03554815230463925,
+                "total_count": 750,
+                "valid_count": 750
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.029123966215039643,
+                "total_count": 75,
+                "valid_count": 75
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.020339146468306517,
+                "total_count": 750,
+                "valid_count": 750
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.01990038985675627,
+                "total_count": 75,
+                "valid_count": 75
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.02642777593461078,
+                "total_count": 75,
+                "valid_count": 75
+              }
+            },
+            "1.0": {
+              "command_driven_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.09252052347635469,
+                "total_count": 1500,
+                "valid_count": 1500
+              },
+              "command_driven_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.11672252900710003,
+                "total_count": 150,
+                "valid_count": 150
+              },
+              "conditional_cable_markers": {
+                "coverage": 1.0,
+                "rmse_m": 0.037648783754623605,
+                "total_count": 1500,
+                "valid_count": 1500
+              },
+              "conditional_cable_tip": {
+                "coverage": 1.0,
+                "rmse_m": 0.054748791119254896,
+                "total_count": 150,
+                "valid_count": 150
+              },
+              "drone": {
+                "coverage": 1.0,
+                "rmse_m": 0.06695706874635178,
+                "total_count": 150,
+                "valid_count": 150
+              }
+            }
+          },
+          "metrics": {
+            "command_driven_markers": {
+              "coverage": 1.0,
+              "rmse_m": 0.10821654172147492,
+              "total_count": 1670,
+              "valid_count": 1670
+            },
+            "command_driven_tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.12605789879151114,
+              "total_count": 167,
+              "valid_count": 167
+            },
+            "conditional_cable_markers": {
+              "coverage": 1.0,
+              "rmse_m": 0.05044403574318017,
+              "total_count": 1670,
+              "valid_count": 1670
+            },
+            "conditional_cable_tip": {
+              "coverage": 1.0,
+              "rmse_m": 0.07995931624809952,
+              "total_count": 167,
+              "valid_count": 167
+            },
+            "drone": {
+              "coverage": 1.0,
+              "rmse_m": 0.08388180771035882,
+              "total_count": 167,
+              "valid_count": 167
+            }
+          },
+          "per_marker_rmse_m": {
+            "command_driven": [
+              0.09701302366487428,
+              0.10010189112882517,
+              0.10274891633449189,
+              0.10509596626288645,
+              0.10489579149333897,
+              0.10630963455367803,
+              0.10619839478499404,
+              0.11103599052937692,
+              0.11946226246524724,
+              0.1260578987915111
+            ],
+            "conditional_cable": [
+              0.017246628568764966,
+              0.022478967144347307,
+              0.029996758866651093,
+              0.036896413188444895,
+              0.042721529487632595,
+              0.0488610806230248,
+              0.05448885032744818,
+              0.06199694608751721,
+              0.07045157017830611,
+              0.07995931624809952
+            ]
+          },
+          "recording_group": "M0_v2_001",
+          "role": "adaptation",
+          "training_exposure": false
+        }
+      }
+    }
+  },
+  "physical_target_present": false,
+  "protocol": {
+    "diagnostics_only": true,
+    "recording_groups": {},
+    "takes": {
+      "M0_002_whip_001": {
+        "end_s": 1.1138000791100293,
+        "history_masked_node_samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "history_node_coverage": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "masked_markers": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          2
+        ],
+        "review": {
+          "accepted": true,
+          "cable_only_update_justification": "",
+          "clock_reviewed": true,
+          "free_motion_end_s": 1.5,
+          "no_intervention": true,
+          "notes": "User-designated M0 collection, identical executed CSV and cf_3 identity; no target or cable intervention per user. Measured-stream clock alignment reviewed but remains estimated, not verified synchronization. Strict initial history passed; individual invalid marker samples stay masked. No validation role or performance-based take exclusion.",
+          "physical_contact": "none",
+          "reviewed_by": "Codex: verified collection checks; user authorized all-eleven M0 fit",
+          "role": "adaptation",
+          "same_controller_and_hardware": true
+        },
+        "role": "adaptation"
+      },
+      "M0_002_whip_002": {
+        "end_s": 1.1138000791100293,
+        "history_masked_node_samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "history_node_coverage": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "masked_markers": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          3,
+          1,
+          2
+        ],
+        "review": {
+          "accepted": true,
+          "cable_only_update_justification": "",
+          "clock_reviewed": true,
+          "free_motion_end_s": 1.5,
+          "no_intervention": true,
+          "notes": "User-designated M0 collection, identical executed CSV and cf_3 identity; no target or cable intervention per user. Measured-stream clock alignment reviewed but remains estimated, not verified synchronization. Strict initial history passed; individual invalid marker samples stay masked. No validation role or performance-based take exclusion.",
+          "physical_contact": "none",
+          "reviewed_by": "Codex: verified collection checks; user authorized all-eleven M0 fit",
+          "role": "adaptation",
+          "same_controller_and_hardware": true
+        },
+        "role": "adaptation"
+      },
+      "M0_002_whip_003": {
+        "end_s": 1.1138000791100293,
+        "history_masked_node_samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "history_node_coverage": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "masked_markers": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          19,
+          0,
+          1
+        ],
+        "review": {
+          "accepted": true,
+          "cable_only_update_justification": "",
+          "clock_reviewed": true,
+          "free_motion_end_s": 1.5,
+          "no_intervention": true,
+          "notes": "User-designated M0 collection, identical executed CSV and cf_3 identity; no target or cable intervention per user. Measured-stream clock alignment reviewed but remains estimated, not verified synchronization. Strict initial history passed; individual invalid marker samples stay masked. No validation role or performance-based take exclusion.",
+          "physical_contact": "none",
+          "reviewed_by": "Codex: verified collection checks; user authorized all-eleven M0 fit",
+          "role": "adaptation",
+          "same_controller_and_hardware": true
+        },
+        "role": "adaptation"
+      },
+      "M0_002_whip_004": {
+        "end_s": 1.1138000791100293,
+        "history_masked_node_samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "history_node_coverage": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "masked_markers": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          0,
+          4
+        ],
+        "review": {
+          "accepted": true,
+          "cable_only_update_justification": "",
+          "clock_reviewed": true,
+          "free_motion_end_s": 1.5,
+          "no_intervention": true,
+          "notes": "User-designated M0 collection, identical executed CSV and cf_3 identity; no target or cable intervention per user. Measured-stream clock alignment reviewed but remains estimated, not verified synchronization. Strict initial history passed; individual invalid marker samples stay masked. No validation role or performance-based take exclusion.",
+          "physical_contact": "none",
+          "reviewed_by": "Codex: verified collection checks; user authorized all-eleven M0 fit",
+          "role": "adaptation",
+          "same_controller_and_hardware": true
+        },
+        "role": "adaptation"
+      },
+      "M0_003_whip_001": {
+        "end_s": 1.1138000791100293,
+        "history_masked_node_samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "history_node_coverage": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "masked_markers": [
+          4,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          4,
+          7
+        ],
+        "review": {
+          "accepted": true,
+          "cable_only_update_justification": "",
+          "clock_reviewed": true,
+          "free_motion_end_s": 1.5,
+          "no_intervention": true,
+          "notes": "User-designated M0 collection, identical executed CSV and cf_3 identity; no target or cable intervention per user. Measured-stream clock alignment reviewed but remains estimated, not verified synchronization. Strict initial history passed; individual invalid marker samples stay masked. No validation role or performance-based take exclusion.",
+          "physical_contact": "none",
+          "reviewed_by": "Codex: verified collection checks; user authorized all-eleven M0 fit",
+          "role": "adaptation",
+          "same_controller_and_hardware": true
+        },
+        "role": "adaptation"
+      },
+      "M0_003_whip_002": {
+        "end_s": 1.1138000791100293,
+        "history_masked_node_samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "history_node_coverage": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "masked_markers": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          6,
+          2
+        ],
+        "review": {
+          "accepted": true,
+          "cable_only_update_justification": "",
+          "clock_reviewed": true,
+          "free_motion_end_s": 1.5,
+          "no_intervention": true,
+          "notes": "User-designated M0 collection, identical executed CSV and cf_3 identity; no target or cable intervention per user. Measured-stream clock alignment reviewed but remains estimated, not verified synchronization. Strict initial history passed; individual invalid marker samples stay masked. No validation role or performance-based take exclusion.",
+          "physical_contact": "none",
+          "reviewed_by": "Codex: verified collection checks; user authorized all-eleven M0 fit",
+          "role": "adaptation",
+          "same_controller_and_hardware": true
+        },
+        "role": "adaptation"
+      },
+      "M0_003_whip_003": {
+        "end_s": 1.1138000791100293,
+        "history_masked_node_samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "history_node_coverage": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "masked_markers": [
+          6,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          3
+        ],
+        "review": {
+          "accepted": true,
+          "cable_only_update_justification": "",
+          "clock_reviewed": true,
+          "free_motion_end_s": 1.5,
+          "no_intervention": true,
+          "notes": "User-designated M0 collection, identical executed CSV and cf_3 identity; no target or cable intervention per user. Measured-stream clock alignment reviewed but remains estimated, not verified synchronization. Strict initial history passed; individual invalid marker samples stay masked. No validation role or performance-based take exclusion.",
+          "physical_contact": "none",
+          "reviewed_by": "Codex: verified collection checks; user authorized all-eleven M0 fit",
+          "role": "adaptation",
+          "same_controller_and_hardware": true
+        },
+        "role": "adaptation"
+      },
+      "M0_003_whip_004": {
+        "end_s": 1.1138000791100293,
+        "history_masked_node_samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "history_node_coverage": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "masked_markers": [
+          3,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          7,
+          4,
+          2
+        ],
+        "review": {
+          "accepted": true,
+          "cable_only_update_justification": "",
+          "clock_reviewed": true,
+          "free_motion_end_s": 1.5,
+          "no_intervention": true,
+          "notes": "User-designated M0 collection, identical executed CSV and cf_3 identity; no target or cable intervention per user. Measured-stream clock alignment reviewed but remains estimated, not verified synchronization. Strict initial history passed; individual invalid marker samples stay masked. No validation role or performance-based take exclusion.",
+          "physical_contact": "none",
+          "reviewed_by": "Codex: verified collection checks; user authorized all-eleven M0 fit",
+          "role": "adaptation",
+          "same_controller_and_hardware": true
+        },
+        "role": "adaptation"
+      },
+      "M0_Whip123_001": {
+        "end_s": 1.1138000791100293,
+        "history_masked_node_samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "history_node_coverage": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "masked_markers": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          12
+        ],
+        "review": {
+          "accepted": true,
+          "cable_only_update_justification": "",
+          "clock_reviewed": true,
+          "free_motion_end_s": 1.5,
+          "no_intervention": true,
+          "notes": "User-designated M0 collection, identical executed CSV and cf_3 identity; no target or cable intervention per user. Measured-stream clock alignment reviewed but remains estimated, not verified synchronization. Strict initial history passed; individual invalid marker samples stay masked. No validation role or performance-based take exclusion.",
+          "physical_contact": "none",
+          "reviewed_by": "Codex: verified collection checks; user authorized all-eleven M0 fit",
+          "role": "adaptation",
+          "same_controller_and_hardware": true
+        },
+        "role": "adaptation"
+      },
+      "M0_Whip123_002": {
+        "end_s": 1.1138000791100293,
+        "history_masked_node_samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "history_node_coverage": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "masked_markers": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          5
+        ],
+        "review": {
+          "accepted": true,
+          "cable_only_update_justification": "",
+          "clock_reviewed": true,
+          "free_motion_end_s": 1.5,
+          "no_intervention": true,
+          "notes": "User-designated M0 collection, identical executed CSV and cf_3 identity; no target or cable intervention per user. Measured-stream clock alignment reviewed but remains estimated, not verified synchronization. Strict initial history passed; individual invalid marker samples stay masked. No validation role or performance-based take exclusion.",
+          "physical_contact": "none",
+          "reviewed_by": "Codex: verified collection checks; user authorized all-eleven M0 fit",
+          "role": "adaptation",
+          "same_controller_and_hardware": true
+        },
+        "role": "adaptation"
+      },
+      "M0_Whip123_003": {
+        "end_s": 1.1138000791100293,
+        "history_masked_node_samples": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "history_node_coverage": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "masked_markers": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          14
+        ],
+        "review": {
+          "accepted": true,
+          "cable_only_update_justification": "",
+          "clock_reviewed": true,
+          "free_motion_end_s": 1.5,
+          "no_intervention": true,
+          "notes": "User-designated M0 collection, identical executed CSV and cf_3 identity; no target or cable intervention per user. Measured-stream clock alignment reviewed but remains estimated, not verified synchronization. Strict initial history passed; individual invalid marker samples stay masked. No validation role or performance-based take exclusion.",
+          "physical_contact": "none",
+          "reviewed_by": "Codex: verified collection checks; user authorized all-eleven M0 fit",
+          "role": "adaptation",
+          "same_controller_and_hardware": true
+        },
+        "role": "adaptation"
+      }
+    }
+  },
+  "schema": "same_flight_evaluation_v1",
+  "scored_interval_s": [
+    0.0,
+    1.1138000791100293
+  ],
+  "task_family": "original_vertical_whip"
+}

@@ -1,13 +1,5 @@
 # Flight exports
 
-The current next-flight command is
-[M2_selected_fixed_tip_reference/fullstate_30hz.csv](M2_selected_fixed_tip_reference/fullstate_30hz.csv).
-It has 217 rows at 30 Hz and lasts 7.2 seconds. Save its new raw recordings in
-`M2_selected_fixed_tip_reference/flight_take/`.
+Current command: [M0 fullstate CSV](M0_Bspline_slower_brake_1s/fullstate_30hz.csv).
 
-The original flown M0 and M1 folders remain for comparison. `CURRENT_FLIGHT.json`
-and the Rehearsal startup selection point to the selected M2. These are offline
-CSV exports for the separate laboratory flight program.
-
-Unused commands were moved to `delete/cleanup-20260913/exports/` at the repo root.
-Their original bytes and provenance remain available there.
+Save new recordings in `M0_Bspline_slower_brake_1s/flight_take/`. The newest M0 is selected in `CURRENT_FLIGHT.json` and the rehearsal startup configuration. Previous experiment exports were moved to `delete/reset-to-M0-20260914-211331`.

@@ -1,0 +1,12 @@
+{
+  "command_contract": "bounded_jerk_pva_30hz_v1",
+  "development_review": null,
+  "evidence": "simulation only",
+  "method": "mppi",
+  "model_source": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\runs\\adaptation\\M6-horizontal-20260915-six-checks\\candidate\\model.json",
+  "model_source_sha256": "ccf3520730002ae4f796ce87731c7abc9d9a8b4e2139d4f898fa7bb00011fc6e",
+  "name": "New right-to-left strike: target (0,1.25,1.3), hover 1.5 m",
+  "source_checkpoint": null,
+  "source_checkpoint_sha256": null,
+  "success_criterion": "targeted_fold_strike_v1"
+}

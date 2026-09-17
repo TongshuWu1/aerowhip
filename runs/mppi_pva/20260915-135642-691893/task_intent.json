@@ -1,0 +1,9 @@
+{
+  "acceptance": "Distinct loading and release pulse, sideways turn relative to loading, full recovery verification.",
+  "free_target": true,
+  "model_id": "M5",
+  "search_budget": "512 x 80; twice the original 40-iteration refinement budget for the additional directional and sustained-release requirements; fixed budget, no convergence claim",
+  "seed_review": "C:\\Users\\wts28\\Documents\\PHD\\particle_filter_cable_project\\tmp\\m5_horizontal_left_screen\\review.json",
+  "target_accuracy_evaluated": false,
+  "task": "Forward-left whip with horizontal cable preference"
+}

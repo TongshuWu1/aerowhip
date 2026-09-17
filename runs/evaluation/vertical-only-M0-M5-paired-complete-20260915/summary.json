@@ -1,0 +1,1415 @@
+{
+  "collections": {
+    "M0": {
+      "models": {
+        "M0": {
+          "command_driven_markers": 0.11808416709877916,
+          "command_driven_tip": 0.15612320456570775,
+          "conditional_cable_markers": 0.04594757266097546,
+          "conditional_cable_tip": 0.07746113183956432,
+          "drone": 0.08955849380208415,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.3291817221033313,
+            "planned_time_valid_count": 11,
+            "timing_censored_count": 0,
+            "uncensored_complete_timing_count": 11,
+            "uncensored_complete_timing_mean_absolute_error_s": 0.03406322638203634
+          },
+          "training_exposed_takes": 0
+        },
+        "M1": {
+          "command_driven_markers": 0.051819553022453314,
+          "command_driven_tip": 0.06658820874338107,
+          "conditional_cable_markers": 0.027902130662763813,
+          "conditional_cable_tip": 0.04508989876617383,
+          "drone": 0.04284026646809442,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.25156816050934466,
+            "planned_time_valid_count": 11,
+            "timing_censored_count": 0,
+            "uncensored_complete_timing_count": 11,
+            "uncensored_complete_timing_mean_absolute_error_s": 0.02561641399418643
+          },
+          "training_exposed_takes": 11
+        },
+        "M2": {
+          "command_driven_markers": 0.05625493567539951,
+          "command_driven_tip": 0.06512923020316534,
+          "conditional_cable_markers": 0.027662081418562853,
+          "conditional_cable_tip": 0.04324773020682155,
+          "drone": 0.045308167788118255,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.2151364740189682,
+            "planned_time_valid_count": 11,
+            "timing_censored_count": 0,
+            "uncensored_complete_timing_count": 11,
+            "uncensored_complete_timing_mean_absolute_error_s": 0.016488832883630265
+          },
+          "training_exposed_takes": 11
+        },
+        "M3": {
+          "command_driven_markers": 0.055064728867631633,
+          "command_driven_tip": 0.06725373897191035,
+          "conditional_cable_markers": 0.027348637257112382,
+          "conditional_cable_tip": 0.04386806444188108,
+          "drone": 0.04329040517712965,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.19265940973680432,
+            "planned_time_valid_count": 11,
+            "timing_censored_count": 0,
+            "uncensored_complete_timing_count": 11,
+            "uncensored_complete_timing_mean_absolute_error_s": 0.012791691243627546
+          },
+          "training_exposed_takes": 11
+        },
+        "M4": {
+          "command_driven_markers": 0.05425537037480877,
+          "command_driven_tip": 0.06394959911037436,
+          "conditional_cable_markers": 0.027027861493751273,
+          "conditional_cable_tip": 0.044038464997468434,
+          "drone": 0.046853629818527136,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.21765957113098852,
+            "planned_time_valid_count": 11,
+            "timing_censored_count": 0,
+            "uncensored_complete_timing_count": 11,
+            "uncensored_complete_timing_mean_absolute_error_s": 0.01818967878085949
+          },
+          "training_exposed_takes": 11
+        },
+        "M5": {
+          "command_driven_markers": 0.05463947207396595,
+          "command_driven_tip": 0.0645582879516279,
+          "conditional_cable_markers": 0.02760797375325911,
+          "conditional_cable_tip": 0.04615437746803505,
+          "drone": 0.045408477980980966,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.18229658110848665,
+            "planned_time_valid_count": 11,
+            "timing_censored_count": 0,
+            "uncensored_complete_timing_count": 11,
+            "uncensored_complete_timing_mean_absolute_error_s": 0.013765742648351086
+          },
+          "training_exposed_takes": 11
+        }
+      },
+      "takes": 11
+    },
+    "M1": {
+      "models": {
+        "M0": {
+          "command_driven_markers": 0.1032203150360297,
+          "command_driven_tip": 0.1361778875346896,
+          "conditional_cable_markers": 0.037236553971055686,
+          "conditional_cable_tip": 0.06652060785069926,
+          "drone": 0.083898129914398,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.3269365025358715,
+            "planned_time_valid_count": 12,
+            "timing_censored_count": 11,
+            "uncensored_complete_timing_count": 1,
+            "uncensored_complete_timing_mean_absolute_error_s": 0.04919303536149777
+          },
+          "training_exposed_takes": 0
+        },
+        "M1": {
+          "command_driven_markers": 0.04125422294297432,
+          "command_driven_tip": 0.05915394084179287,
+          "conditional_cable_markers": 0.020581058275011544,
+          "conditional_cable_tip": 0.03569451435585479,
+          "drone": 0.03266813324897932,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.2341103125518679,
+            "planned_time_valid_count": 12,
+            "timing_censored_count": 0,
+            "uncensored_complete_timing_count": 12,
+            "uncensored_complete_timing_mean_absolute_error_s": 0.03138998266252683
+          },
+          "training_exposed_takes": 0
+        },
+        "M2": {
+          "command_driven_markers": 0.03912153057776497,
+          "command_driven_tip": 0.05367600581227062,
+          "conditional_cable_markers": 0.017979567953284366,
+          "conditional_cable_tip": 0.028336625129426977,
+          "drone": 0.028505842941572195,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.18568421403189364,
+            "planned_time_valid_count": 12,
+            "timing_censored_count": 0,
+            "uncensored_complete_timing_count": 12,
+            "uncensored_complete_timing_mean_absolute_error_s": 0.02009598738035771
+          },
+          "training_exposed_takes": 12
+        },
+        "M3": {
+          "command_driven_markers": 0.04196383037982557,
+          "command_driven_tip": 0.060206110969837884,
+          "conditional_cable_markers": 0.021931325099092246,
+          "conditional_cable_tip": 0.03348865783656359,
+          "drone": 0.028887727003425647,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.17037094279266407,
+            "planned_time_valid_count": 12,
+            "timing_censored_count": 0,
+            "uncensored_complete_timing_count": 12,
+            "uncensored_complete_timing_mean_absolute_error_s": 0.01727033292943129
+          },
+          "training_exposed_takes": 12
+        },
+        "M4": {
+          "command_driven_markers": 0.04052374017685924,
+          "command_driven_tip": 0.056521127284158125,
+          "conditional_cable_markers": 0.023214665495909493,
+          "conditional_cable_tip": 0.03551053999475615,
+          "drone": 0.03064176026548047,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.19023470914779986,
+            "planned_time_valid_count": 12,
+            "timing_censored_count": 0,
+            "uncensored_complete_timing_count": 12,
+            "uncensored_complete_timing_mean_absolute_error_s": 0.020958900455377443
+          },
+          "training_exposed_takes": 12
+        },
+        "M5": {
+          "command_driven_markers": 0.04001171333293634,
+          "command_driven_tip": 0.05537830947388009,
+          "conditional_cable_markers": 0.025488801012685802,
+          "conditional_cable_tip": 0.0404698668144031,
+          "drone": 0.02830890861319868,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.16836947308562078,
+            "planned_time_valid_count": 12,
+            "timing_censored_count": 0,
+            "uncensored_complete_timing_count": 12,
+            "uncensored_complete_timing_mean_absolute_error_s": 0.017187577149476774
+          },
+          "training_exposed_takes": 12
+        }
+      },
+      "takes": 12
+    },
+    "M2": {
+      "models": {
+        "M0": {
+          "command_driven_markers": 0.10253224904448793,
+          "command_driven_tip": 0.1212429680586831,
+          "conditional_cable_markers": 0.04334306838591893,
+          "conditional_cable_tip": 0.07283192558827777,
+          "drone": 0.08476713146848686,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.28507555677148216,
+            "planned_time_valid_count": 11,
+            "timing_censored_count": 11,
+            "uncensored_complete_timing_count": 0,
+            "uncensored_complete_timing_mean_absolute_error_s": null
+          },
+          "training_exposed_takes": 0
+        },
+        "M1": {
+          "command_driven_markers": 0.04825113172084692,
+          "command_driven_tip": 0.06116094623214479,
+          "conditional_cable_markers": 0.02625732469277198,
+          "conditional_cable_tip": 0.04148725005618781,
+          "drone": 0.04184324382807427,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.17735996345370253,
+            "planned_time_valid_count": 11,
+            "timing_censored_count": 1,
+            "uncensored_complete_timing_count": 10,
+            "uncensored_complete_timing_mean_absolute_error_s": 0.028840992809214837
+          },
+          "training_exposed_takes": 0
+        },
+        "M2": {
+          "command_driven_markers": 0.05181612986351555,
+          "command_driven_tip": 0.059146336028238135,
+          "conditional_cable_markers": 0.026680762237399448,
+          "conditional_cable_tip": 0.03829351068316403,
+          "drone": 0.040643890130783455,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.1489031388848238,
+            "planned_time_valid_count": 11,
+            "timing_censored_count": 0,
+            "uncensored_complete_timing_count": 11,
+            "uncensored_complete_timing_mean_absolute_error_s": 0.018876120081912508
+          },
+          "training_exposed_takes": 0
+        },
+        "M3": {
+          "command_driven_markers": 0.04723782467105111,
+          "command_driven_tip": 0.055710432109607445,
+          "conditional_cable_markers": 0.018780493951545706,
+          "conditional_cable_tip": 0.02605829072176827,
+          "drone": 0.038994935951691165,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.11849560516639364,
+            "planned_time_valid_count": 11,
+            "timing_censored_count": 0,
+            "uncensored_complete_timing_count": 11,
+            "uncensored_complete_timing_mean_absolute_error_s": 0.012660380532872056
+          },
+          "training_exposed_takes": 11
+        },
+        "M4": {
+          "command_driven_markers": 0.04854928777982343,
+          "command_driven_tip": 0.05371004110907036,
+          "conditional_cable_markers": 0.016848420247587953,
+          "conditional_cable_tip": 0.024004773507645873,
+          "drone": 0.041916485161318094,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.1338526493963398,
+            "planned_time_valid_count": 11,
+            "timing_censored_count": 0,
+            "uncensored_complete_timing_count": 11,
+            "uncensored_complete_timing_mean_absolute_error_s": 0.014203238235728787
+          },
+          "training_exposed_takes": 11
+        },
+        "M5": {
+          "command_driven_markers": 0.04667156211352096,
+          "command_driven_tip": 0.05401088377941949,
+          "conditional_cable_markers": 0.015457497751760875,
+          "conditional_cable_tip": 0.024332863513500117,
+          "drone": 0.03976509900575681,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.10757128369011269,
+            "planned_time_valid_count": 11,
+            "timing_censored_count": 0,
+            "uncensored_complete_timing_count": 11,
+            "uncensored_complete_timing_mean_absolute_error_s": 0.009516722180240961
+          },
+          "training_exposed_takes": 11
+        }
+      },
+      "takes": 11
+    },
+    "M3": {
+      "models": {
+        "M0": {
+          "command_driven_markers": 0.10078912412666147,
+          "command_driven_tip": 0.1265154209165201,
+          "conditional_cable_markers": 0.04798873198709653,
+          "conditional_cable_tip": 0.07467584777331344,
+          "drone": 0.07779647364549558,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.2659088077166644,
+            "planned_time_valid_count": 12,
+            "timing_censored_count": 12,
+            "uncensored_complete_timing_count": 0,
+            "uncensored_complete_timing_mean_absolute_error_s": null
+          },
+          "training_exposed_takes": 0
+        },
+        "M1": {
+          "command_driven_markers": 0.04296311275948699,
+          "command_driven_tip": 0.05715388517578524,
+          "conditional_cable_markers": 0.03057139486872081,
+          "conditional_cable_tip": 0.04244814103378366,
+          "drone": 0.03866023829656096,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.17298659323373097,
+            "planned_time_valid_count": 12,
+            "timing_censored_count": 3,
+            "uncensored_complete_timing_count": 9,
+            "uncensored_complete_timing_mean_absolute_error_s": 0.02933331280395886
+          },
+          "training_exposed_takes": 0
+        },
+        "M2": {
+          "command_driven_markers": 0.04562662049549354,
+          "command_driven_tip": 0.05621355625063037,
+          "conditional_cable_markers": 0.03144455059696103,
+          "conditional_cable_tip": 0.040574161329040584,
+          "drone": 0.03418936642115856,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.14777957070754305,
+            "planned_time_valid_count": 12,
+            "timing_censored_count": 0,
+            "uncensored_complete_timing_count": 12,
+            "uncensored_complete_timing_mean_absolute_error_s": 0.019547723456474653
+          },
+          "training_exposed_takes": 0
+        },
+        "M3": {
+          "command_driven_markers": 0.04318838794478195,
+          "command_driven_tip": 0.05759639732349944,
+          "conditional_cable_markers": 0.023337335250070933,
+          "conditional_cable_tip": 0.0303665708997549,
+          "drone": 0.03440415070677268,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.12153824526534975,
+            "planned_time_valid_count": 12,
+            "timing_censored_count": 0,
+            "uncensored_complete_timing_count": 12,
+            "uncensored_complete_timing_mean_absolute_error_s": 0.01355450672936894
+          },
+          "training_exposed_takes": 0
+        },
+        "M4": {
+          "command_driven_markers": 0.04219097941932168,
+          "command_driven_tip": 0.05209988978852742,
+          "conditional_cable_markers": 0.02080816562946589,
+          "conditional_cable_tip": 0.02658580450746045,
+          "drone": 0.03202905274841739,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.13298633571272472,
+            "planned_time_valid_count": 12,
+            "timing_censored_count": 0,
+            "uncensored_complete_timing_count": 12,
+            "uncensored_complete_timing_mean_absolute_error_s": 0.014978094436063702
+          },
+          "training_exposed_takes": 12
+        },
+        "M5": {
+          "command_driven_markers": 0.04164958743581738,
+          "command_driven_tip": 0.053506497953890876,
+          "conditional_cable_markers": 0.018859315890235363,
+          "conditional_cable_tip": 0.026409418396686854,
+          "drone": 0.03188737322107831,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.11072715727209746,
+            "planned_time_valid_count": 12,
+            "timing_censored_count": 0,
+            "uncensored_complete_timing_count": 12,
+            "uncensored_complete_timing_mean_absolute_error_s": 0.010997200949693623
+          },
+          "training_exposed_takes": 12
+        }
+      },
+      "takes": 12
+    },
+    "M4": {
+      "models": {
+        "M0": {
+          "command_driven_markers": 0.10460854548081423,
+          "command_driven_tip": 0.13345424388816599,
+          "conditional_cable_markers": 0.04955737773759559,
+          "conditional_cable_tip": 0.08045186580041373,
+          "drone": 0.0815844286609016,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.28081756224328086,
+            "planned_time_valid_count": 12,
+            "timing_censored_count": 12,
+            "uncensored_complete_timing_count": 0,
+            "uncensored_complete_timing_mean_absolute_error_s": null
+          },
+          "training_exposed_takes": 0
+        },
+        "M1": {
+          "command_driven_markers": 0.04185284518149678,
+          "command_driven_tip": 0.05847471388978601,
+          "conditional_cable_markers": 0.031650031288318094,
+          "conditional_cable_tip": 0.04838862042260825,
+          "drone": 0.03386527173400596,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.18413046087612647,
+            "planned_time_valid_count": 12,
+            "timing_censored_count": 0,
+            "uncensored_complete_timing_count": 12,
+            "uncensored_complete_timing_mean_absolute_error_s": 0.028291857111602925
+          },
+          "training_exposed_takes": 0
+        },
+        "M2": {
+          "command_driven_markers": 0.045059435672892535,
+          "command_driven_tip": 0.05714052034904446,
+          "conditional_cable_markers": 0.03254429116705781,
+          "conditional_cable_tip": 0.04617661451951544,
+          "drone": 0.029729948732738407,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.1529506023754982,
+            "planned_time_valid_count": 12,
+            "timing_censored_count": 0,
+            "uncensored_complete_timing_count": 12,
+            "uncensored_complete_timing_mean_absolute_error_s": 0.020019961269719316
+          },
+          "training_exposed_takes": 0
+        },
+        "M3": {
+          "command_driven_markers": 0.04177565776143469,
+          "command_driven_tip": 0.05752050252403437,
+          "conditional_cable_markers": 0.02477364814411825,
+          "conditional_cable_tip": 0.03554495308492437,
+          "drone": 0.02991492256361879,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.12070902863391209,
+            "planned_time_valid_count": 12,
+            "timing_censored_count": 0,
+            "uncensored_complete_timing_count": 12,
+            "uncensored_complete_timing_mean_absolute_error_s": 0.013464461615136147
+          },
+          "training_exposed_takes": 0
+        },
+        "M4": {
+          "command_driven_markers": 0.04164650721672938,
+          "command_driven_tip": 0.05292611829948448,
+          "conditional_cable_markers": 0.022610305126305862,
+          "conditional_cable_tip": 0.03307369274733043,
+          "drone": 0.029533546930500604,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.1359963876231738,
+            "planned_time_valid_count": 12,
+            "timing_censored_count": 0,
+            "uncensored_complete_timing_count": 12,
+            "uncensored_complete_timing_mean_absolute_error_s": 0.015536241940646381
+          },
+          "training_exposed_takes": 0
+        },
+        "M5": {
+          "command_driven_markers": 0.0388406280286502,
+          "command_driven_tip": 0.05065705517302587,
+          "conditional_cable_markers": 0.019689332280237143,
+          "conditional_cable_tip": 0.030605411335073385,
+          "drone": 0.027664453844612538,
+          "event_diagnostics": {
+            "mean_planned_time_prediction_error_m": 0.10063120297925669,
+            "planned_time_valid_count": 12,
+            "timing_censored_count": 0,
+            "uncensored_complete_timing_count": 12,
+            "uncensored_complete_timing_mean_absolute_error_s": 0.008838173901393706
+          },
+          "training_exposed_takes": 12
+        }
+      },
+      "takes": 12
+    }
+  },
+  "forward_pairs": [
+    {
+      "after_m": 0.05915394084179287,
+      "before_m": 0.1361778875346896,
+      "collection": "M1",
+      "earlier": "M0",
+      "paired_change_m": -0.07702394669289672,
+      "per_session_change_m": {
+        "M1_v2_001": -0.07707198394102942,
+        "M1_v2_002": -0.07821484350815708,
+        "M1_v2_003": -0.07578501262950368
+      },
+      "per_take_change_m": {
+        "M1_001_whip_001": -0.07163059529570007,
+        "M1_001_whip_002": -0.07905984113715285,
+        "M1_001_whip_003": -0.08406486884754416,
+        "M1_001_whip_004": -0.0735326304837206,
+        "M1_002_whip_001": -0.08408585301560319,
+        "M1_002_whip_002": -0.07434234638779139,
+        "M1_002_whip_003": -0.074521420070277,
+        "M1_002_whip_004": -0.07990975455895669,
+        "M1_003_whip_001": -0.0787143084565881,
+        "M1_003_whip_002": -0.07608584212924312,
+        "M1_003_whip_003": -0.07583251907226819,
+        "M1_003_whip_004": -0.07250738085991533
+      },
+      "updated": "M1"
+    },
+    {
+      "after_m": 0.059146336028238135,
+      "before_m": 0.06116094623214479,
+      "collection": "M2",
+      "earlier": "M1",
+      "paired_change_m": -0.0020146102039066537,
+      "per_session_change_m": {
+        "M2_v2_001": -0.0021729453362602045,
+        "M2_v2_002": -0.0027484536529721257,
+        "M2_v2_003": -0.0013058924847539986
+      },
+      "per_take_change_m": {
+        "M2_001_whip_001": 0.0014465795575163976,
+        "M2_001_whip_002": -0.007670187898238652,
+        "M2_001_whip_003": 0.0017865918524282154,
+        "M2_001_whip_004": -0.004254764856746779,
+        "M2_002_whip_001": -0.006510041694759196,
+        "M2_002_whip_002": 0.0019195417310962498,
+        "M2_002_whip_003": -0.003654860995253431,
+        "M2_003_whip_001": 0.003658676396301401,
+        "M2_003_whip_002": -0.004996622299652573,
+        "M2_003_whip_003": -0.001021649731771053,
+        "M2_003_whip_004": -0.0028639743038937696
+      },
+      "updated": "M2"
+    },
+    {
+      "after_m": 0.05759639732349944,
+      "before_m": 0.05621355625063037,
+      "collection": "M3",
+      "earlier": "M2",
+      "paired_change_m": 0.0013828410728690826,
+      "per_session_change_m": {
+        "M3_v2_001": -0.001300066767720166,
+        "M3_v2_002": 0.00019540681599035555,
+        "M3_v2_003": 0.0052531831703370585
+      },
+      "per_take_change_m": {
+        "M3_001_whip_001": -0.017002775269080908,
+        "M3_001_whip_002": -0.00031999624597282145,
+        "M3_001_whip_003": 0.0033086770454057307,
+        "M3_001_whip_004": 0.008813827398767335,
+        "M3_002_whip_001": -0.0012194520360252342,
+        "M3_002_whip_002": -0.0016115921101390387,
+        "M3_002_whip_003": 0.0001300670645369359,
+        "M3_002_whip_004": 0.0034826043455887593,
+        "M3_003_whip_001": 0.010339068573625612,
+        "M3_003_whip_002": 0.0015931004666209572,
+        "M3_003_whip_003": 0.005808785818024929,
+        "M3_003_whip_004": 0.0032717778230767353
+      },
+      "updated": "M3"
+    },
+    {
+      "after_m": 0.05292611829948448,
+      "before_m": 0.05752050252403437,
+      "collection": "M4",
+      "earlier": "M3",
+      "paired_change_m": -0.004594384224549899,
+      "per_session_change_m": {
+        "M4_v2_001": -0.005068504001837358,
+        "M4_v2_002": -0.004784978508968326,
+        "M4_v2_003": -0.003929670162844012
+      },
+      "per_take_change_m": {
+        "M4_001_whip_001": -0.004331545404968391,
+        "M4_001_whip_002": -0.004454297966727437,
+        "M4_001_whip_003": -0.006424242649478475,
+        "M4_001_whip_004": -0.005063929986175129,
+        "M4_002_whip_001": -0.004088541771373522,
+        "M4_002_whip_002": -0.004731407491167253,
+        "M4_002_whip_003": -0.007359888794073684,
+        "M4_002_whip_004": -0.002960075979258847,
+        "M4_003_whip_001": -0.0028339750436530836,
+        "M4_003_whip_002": -0.0012250200651656787,
+        "M4_003_whip_003": -0.006363818211473075,
+        "M4_003_whip_004": -0.005295867331084211
+      },
+      "updated": "M4"
+    }
+  ],
+  "measured_task_outcomes": {
+    "M0": {
+      "endpoint_minima": 0,
+      "minimum_distance_mean_m": 0.1262106320428188,
+      "planned_time_mean_m": 0.31554734596765943,
+      "planned_time_valid_count": 11,
+      "takes": 11
+    },
+    "M1": {
+      "endpoint_minima": 0,
+      "minimum_distance_mean_m": 0.04867580642456426,
+      "planned_time_mean_m": 0.21944671175947283,
+      "planned_time_valid_count": 12,
+      "takes": 12
+    },
+    "M2": {
+      "endpoint_minima": 0,
+      "minimum_distance_mean_m": 0.04641140389061475,
+      "planned_time_mean_m": 0.1380498367754648,
+      "planned_time_valid_count": 11,
+      "takes": 11
+    },
+    "M3": {
+      "endpoint_minima": 0,
+      "minimum_distance_mean_m": 0.04724298929554727,
+      "planned_time_mean_m": 0.12648067159203458,
+      "planned_time_valid_count": 12,
+      "takes": 12
+    },
+    "M4": {
+      "endpoint_minima": 0,
+      "minimum_distance_mean_m": 0.038335681168075356,
+      "planned_time_mean_m": 0.13612923548646516,
+      "planned_time_valid_count": 12,
+      "takes": 12
+    }
+  },
+  "model_ids": [
+    "M0",
+    "M1",
+    "M2",
+    "M3",
+    "M4",
+    "M5"
+  ],
+  "recording_groups": 15,
+  "sessions": {
+    "M0_v2_001": {
+      "models": {
+        "M0": {
+          "command_driven_markers": 0.11553291734153869,
+          "command_driven_tip": 0.14363674106313837,
+          "conditional_cable_markers": 0.053619595257611376,
+          "conditional_cable_tip": 0.08876559996149368,
+          "drone": 0.08478703357424812
+        },
+        "M1": {
+          "command_driven_markers": 0.05291612319736149,
+          "command_driven_tip": 0.06212593337435274,
+          "conditional_cable_markers": 0.034661971674699525,
+          "conditional_cable_tip": 0.05411562199941742,
+          "drone": 0.04193051430973499
+        },
+        "M2": {
+          "command_driven_markers": 0.061122265329470654,
+          "command_driven_tip": 0.06289439162390438,
+          "conditional_cable_markers": 0.035370744465191124,
+          "conditional_cable_tip": 0.05323151073635716,
+          "drone": 0.048315477565782076
+        },
+        "M3": {
+          "command_driven_markers": 0.05504606438751609,
+          "command_driven_tip": 0.05841283898012104,
+          "conditional_cable_markers": 0.0298414554879375,
+          "conditional_cable_tip": 0.04664238345062568,
+          "drone": 0.04403436506328645
+        },
+        "M4": {
+          "command_driven_markers": 0.05691052812247462,
+          "command_driven_tip": 0.0574487998741653,
+          "conditional_cable_markers": 0.027664483460627803,
+          "conditional_cable_tip": 0.04423706409946331,
+          "drone": 0.04908514209173343
+        },
+        "M5": {
+          "command_driven_markers": 0.05660346924037368,
+          "command_driven_tip": 0.05826465709989611,
+          "conditional_cable_markers": 0.025177889321011743,
+          "conditional_cable_tip": 0.041651684275566876,
+          "drone": 0.04839992605476553
+        }
+      },
+      "takes": [
+        "M0_Whip123_001",
+        "M0_Whip123_002",
+        "M0_Whip123_003"
+      ]
+    },
+    "M0_v2_002": {
+      "models": {
+        "M0": {
+          "command_driven_markers": 0.1188524973008005,
+          "command_driven_tip": 0.16146213097349793,
+          "conditional_cable_markers": 0.04481940323333239,
+          "conditional_cable_tip": 0.07660553572830237,
+          "drone": 0.09117186018755456
+        },
+        "M1": {
+          "command_driven_markers": 0.056566816530107575,
+          "command_driven_tip": 0.07562146863199878,
+          "conditional_cable_markers": 0.027184458242771343,
+          "conditional_cable_tip": 0.04515625273871736,
+          "drone": 0.04881159471118545
+        },
+        "M2": {
+          "command_driven_markers": 0.05909846207437053,
+          "command_driven_tip": 0.07284630565954504,
+          "conditional_cable_markers": 0.026625906530591322,
+          "conditional_cable_tip": 0.04323815184433501,
+          "drone": 0.04970672409248403
+        },
+        "M3": {
+          "command_driven_markers": 0.06018797974780867,
+          "command_driven_tip": 0.07745033119850461,
+          "conditional_cable_markers": 0.028416920704789864,
+          "conditional_cable_tip": 0.04677349737387562,
+          "drone": 0.04891314083666495
+        },
+        "M4": {
+          "command_driven_markers": 0.05844186872333539,
+          "command_driven_tip": 0.07395632491336569,
+          "conditional_cable_markers": 0.028684302157567045,
+          "conditional_cable_tip": 0.04754686832291785,
+          "drone": 0.05138134554401105
+        },
+        "M5": {
+          "command_driven_markers": 0.059461196900133906,
+          "command_driven_tip": 0.07412610250236025,
+          "conditional_cable_markers": 0.03026060418237517,
+          "conditional_cable_tip": 0.05102992132882935,
+          "drone": 0.050345550095432234
+        }
+      },
+      "takes": [
+        "M0_002_whip_001",
+        "M0_002_whip_002",
+        "M0_002_whip_003",
+        "M0_002_whip_004"
+      ]
+    },
+    "M0_v2_003": {
+      "models": {
+        "M0": {
+          "command_driven_markers": 0.11922927421468818,
+          "command_driven_tip": 0.1601491257848447,
+          "conditional_cable_markers": 0.04132172514114159,
+          "conditional_cable_tip": 0.06983837685937928,
+          "drone": 0.09152372258749075
+        },
+        "M1": {
+          "command_driven_markers": 0.04624986188361792,
+          "command_driven_tip": 0.06090165538153464,
+          "conditional_cable_markers": 0.02354992232380449,
+          "conditional_cable_tip": 0.0382542523686976,
+          "drone": 0.037551252343772955
+        },
+        "M2": {
+          "command_driven_markers": 0.049760912035875134,
+          "command_driven_tip": 0.05908828368123136,
+          "conditional_cable_markers": 0.022916759021563166,
+          "conditional_cable_tip": 0.03576947317215638,
+          "drone": 0.038654129150504625
+        },
+        "M3": {
+          "command_driven_markers": 0.04995547634754125,
+          "command_driven_tip": 0.06368782173915812,
+          "conditional_cable_markers": 0.024410740136316052,
+          "conditional_cable_tip": 0.038881892253328096,
+          "drone": 0.03710969960297675
+        },
+        "M4": {
+          "command_driven_markers": 0.04807750371553277,
+          "command_driven_tip": 0.058818472734539815,
+          "conditional_cable_markers": 0.024893954354778095,
+          "conditional_cable_tip": 0.040381112345522864,
+          "drone": 0.0406522798881385
+        },
+        "M5": {
+          "command_driven_markers": 0.048344749372992206,
+          "command_driven_tip": 0.05971069653969435,
+          "conditional_cable_markers": 0.02677790664832857,
+          "conditional_cable_tip": 0.04465585350159188,
+          "drone": 0.03822781981119128
+        }
+      },
+      "takes": [
+        "M0_003_whip_001",
+        "M0_003_whip_002",
+        "M0_003_whip_003",
+        "M0_003_whip_004"
+      ]
+    },
+    "M1_v2_001": {
+      "models": {
+        "M0": {
+          "command_driven_markers": 0.1014459701941928,
+          "command_driven_tip": 0.13576032787491704,
+          "conditional_cable_markers": 0.03457667029227051,
+          "conditional_cable_tip": 0.06340294168676135,
+          "drone": 0.08398854280829585
+        },
+        "M1": {
+          "command_driven_markers": 0.0402722637555921,
+          "command_driven_tip": 0.058688343933887624,
+          "conditional_cable_markers": 0.01899999719848767,
+          "conditional_cable_tip": 0.0340134773419489,
+          "drone": 0.031527099408815866
+        },
+        "M2": {
+          "command_driven_markers": 0.03898231819217068,
+          "command_driven_tip": 0.05422213127000639,
+          "conditional_cable_markers": 0.01649884633040343,
+          "conditional_cable_tip": 0.02702595025737945,
+          "drone": 0.027015334119279484
+        },
+        "M3": {
+          "command_driven_markers": 0.041739366316612556,
+          "command_driven_tip": 0.06141141002198873,
+          "conditional_cable_markers": 0.02115618715784688,
+          "conditional_cable_tip": 0.03329110064285713,
+          "drone": 0.027551467521719396
+        },
+        "M4": {
+          "command_driven_markers": 0.040147469665236905,
+          "command_driven_tip": 0.05694477417430943,
+          "conditional_cable_markers": 0.02266025128725742,
+          "conditional_cable_tip": 0.035427840162273655,
+          "drone": 0.029863773048705855
+        },
+        "M5": {
+          "command_driven_markers": 0.04004268435132172,
+          "command_driven_tip": 0.056316352437916356,
+          "conditional_cable_markers": 0.025208363973835725,
+          "conditional_cable_tip": 0.0406037474136023,
+          "drone": 0.027242227335360233
+        }
+      },
+      "takes": [
+        "M1_001_whip_001",
+        "M1_001_whip_002",
+        "M1_001_whip_003",
+        "M1_001_whip_004"
+      ]
+    },
+    "M1_v2_002": {
+      "models": {
+        "M0": {
+          "command_driven_markers": 0.10180912333662051,
+          "command_driven_tip": 0.13375924384223883,
+          "conditional_cable_markers": 0.036142429025637336,
+          "conditional_cable_tip": 0.06395526910464139,
+          "drone": 0.08270033358520505
+        },
+        "M1": {
+          "command_driven_markers": 0.04032960757247348,
+          "command_driven_tip": 0.05554440033408177,
+          "conditional_cable_markers": 0.018923220162045198,
+          "conditional_cable_tip": 0.03192991673703953,
+          "drone": 0.033150881939054744
+        },
+        "M2": {
+          "command_driven_markers": 0.039142669947907195,
+          "command_driven_tip": 0.05238221516631023,
+          "conditional_cable_markers": 0.016915239985891242,
+          "conditional_cable_tip": 0.025675664583656273,
+          "drone": 0.0288782719180818
+        },
+        "M3": {
+          "command_driven_markers": 0.04164343139302325,
+          "command_driven_tip": 0.058078360961457146,
+          "conditional_cable_markers": 0.019956988040815707,
+          "conditional_cable_tip": 0.029001263639970545,
+          "drone": 0.02916396551074866
+        },
+        "M4": {
+          "command_driven_markers": 0.039790845026584254,
+          "command_driven_tip": 0.053677627670424784,
+          "conditional_cable_markers": 0.021063075038742843,
+          "conditional_cable_tip": 0.030832890219246414,
+          "drone": 0.030047123195779617
+        },
+        "M5": {
+          "command_driven_markers": 0.03964248245952359,
+          "command_driven_tip": 0.052724650812473184,
+          "conditional_cable_markers": 0.02323857819517078,
+          "conditional_cable_tip": 0.03562208791789989,
+          "drone": 0.0282063381711046
+        }
+      },
+      "takes": [
+        "M1_002_whip_001",
+        "M1_002_whip_002",
+        "M1_002_whip_003",
+        "M1_002_whip_004"
+      ]
+    },
+    "M1_v2_003": {
+      "models": {
+        "M0": {
+          "command_driven_markers": 0.10640585157727585,
+          "command_driven_tip": 0.13901409088691288,
+          "conditional_cable_markers": 0.04099056259525922,
+          "conditional_cable_tip": 0.07220361276069505,
+          "drone": 0.08500551334969311
+        },
+        "M1": {
+          "command_driven_markers": 0.04316079750085739,
+          "command_driven_tip": 0.0632290782574092,
+          "conditional_cable_markers": 0.023819957464501773,
+          "conditional_cable_tip": 0.041140148988575924,
+          "drone": 0.033326418399067345
+        },
+        "M2": {
+          "command_driven_markers": 0.039239603593217064,
+          "command_driven_tip": 0.05442367100049522,
+          "conditional_cable_markers": 0.02052461754355843,
+          "conditional_cable_tip": 0.03230826054724522,
+          "drone": 0.029623922787355293
+        },
+        "M3": {
+          "command_driven_markers": 0.042508693429840885,
+          "command_driven_tip": 0.06112856192606776,
+          "conditional_cable_markers": 0.024680800098614147,
+          "conditional_cable_tip": 0.03817360922686308,
+          "drone": 0.029947747977808872
+        },
+        "M4": {
+          "command_driven_markers": 0.041632905838756534,
+          "command_driven_tip": 0.058940980007740174,
+          "conditional_cable_markers": 0.025920670161728224,
+          "conditional_cable_tip": 0.04027088960274839,
+          "drone": 0.032014384551955946
+        },
+        "M5": {
+          "command_driven_markers": 0.040349973187963725,
+          "command_driven_tip": 0.05709392517125071,
+          "conditional_cable_markers": 0.028019460869050897,
+          "conditional_cable_tip": 0.045183765111707096,
+          "drone": 0.029478160333131203
+        }
+      },
+      "takes": [
+        "M1_003_whip_001",
+        "M1_003_whip_002",
+        "M1_003_whip_003",
+        "M1_003_whip_004"
+      ]
+    },
+    "M2_v2_001": {
+      "models": {
+        "M0": {
+          "command_driven_markers": 0.10716566386438317,
+          "command_driven_tip": 0.13003058165616016,
+          "conditional_cable_markers": 0.043917140987215386,
+          "conditional_cable_tip": 0.07209053015349404,
+          "drone": 0.08827830259471386
+        },
+        "M1": {
+          "command_driven_markers": 0.04055371173166497,
+          "command_driven_tip": 0.05516858845888958,
+          "conditional_cable_markers": 0.0273065209932885,
+          "conditional_cable_tip": 0.041246905320810455,
+          "drone": 0.03406185911432149
+        },
+        "M2": {
+          "command_driven_markers": 0.04223275646777709,
+          "command_driven_tip": 0.052995643122629374,
+          "conditional_cable_markers": 0.028119299174016964,
+          "conditional_cable_tip": 0.03862694794091469,
+          "drone": 0.02772837108701458
+        },
+        "M3": {
+          "command_driven_markers": 0.03936404850566979,
+          "command_driven_tip": 0.052452262682676304,
+          "conditional_cable_markers": 0.01949725084208246,
+          "conditional_cable_tip": 0.02552981225564172,
+          "drone": 0.02865805225332481
+        },
+        "M4": {
+          "command_driven_markers": 0.039256884872385926,
+          "command_driven_tip": 0.04871280268549879,
+          "conditional_cable_markers": 0.01726982745049584,
+          "conditional_cable_tip": 0.02348578253061658,
+          "drone": 0.03002003137554871
+        },
+        "M5": {
+          "command_driven_markers": 0.03672532044174138,
+          "command_driven_tip": 0.04832770553692973,
+          "conditional_cable_markers": 0.015407560044750246,
+          "conditional_cable_tip": 0.023429663000016122,
+          "drone": 0.02725487788355547
+        }
+      },
+      "takes": [
+        "M2_001_whip_001",
+        "M2_001_whip_002",
+        "M2_001_whip_003",
+        "M2_001_whip_004"
+      ]
+    },
+    "M2_v2_002": {
+      "models": {
+        "M0": {
+          "command_driven_markers": 0.09608822646394242,
+          "command_driven_tip": 0.10832418477575118,
+          "conditional_cable_markers": 0.04343454645466816,
+          "conditional_cable_tip": 0.07443144719482318,
+          "drone": 0.08108076464107496
+        },
+        "M1": {
+          "command_driven_markers": 0.06927994599152566,
+          "command_driven_tip": 0.08211002337728464,
+          "conditional_cable_markers": 0.026324765842669948,
+          "conditional_cable_tip": 0.04261026363598408,
+          "drone": 0.0640341017743445
+        },
+        "M2": {
+          "command_driven_markers": 0.07403308115426045,
+          "command_driven_tip": 0.07936156972431252,
+          "conditional_cable_markers": 0.026678179337844683,
+          "conditional_cable_tip": 0.039298337932008015,
+          "drone": 0.06721289849901213
+        },
+        "M3": {
+          "command_driven_markers": 0.06737161320711661,
+          "command_driven_tip": 0.07093802194241383,
+          "conditional_cable_markers": 0.018556696121140345,
+          "conditional_cable_tip": 0.026365428887475367,
+          "drone": 0.06330333846952639
+        },
+        "M4": {
+          "command_driven_markers": 0.06997704032736406,
+          "command_driven_tip": 0.07227122690812268,
+          "conditional_cable_markers": 0.016707607822940812,
+          "conditional_cable_tip": 0.024083069750645846,
+          "drone": 0.06617102222697131
+        },
+        "M5": {
+          "command_driven_markers": 0.06897264179157746,
+          "command_driven_tip": 0.07249007759726489,
+          "conditional_cable_markers": 0.015264404799227497,
+          "conditional_cable_tip": 0.024305818449479585,
+          "drone": 0.06516177967180646
+        }
+      },
+      "takes": [
+        "M2_002_whip_001",
+        "M2_002_whip_002",
+        "M2_002_whip_003"
+      ]
+    },
+    "M2_v2_003": {
+      "models": {
+        "M0": {
+          "command_driven_markers": 0.1027318511600018,
+          "command_driven_tip": 0.122144441923405,
+          "conditional_cable_markers": 0.042700387233060536,
+          "conditional_cable_tip": 0.07237367981815244,
+          "drone": 0.0840207354628188
+        },
+        "M1": {
+          "command_driven_markers": 0.040176941007019816,
+          "command_driven_tip": 0.05144149614654511,
+          "conditional_cable_markers": 0.025157547529831993,
+          "conditional_cable_tip": 0.040885334606717956,
+          "drone": 0.03298148508212438
+        },
+        "M2": {
+          "command_driven_markers": 0.04473678979119533,
+          "command_driven_tip": 0.050135603661791116,
+          "conditional_cable_markers": 0.025244162475448004,
+          "conditional_cable_tip": 0.03720645298878039,
+          "drone": 0.03363265289838082
+        },
+        "M3": {
+          "command_driven_markers": 0.04001125943438331,
+          "command_driven_tip": 0.047547909161933785,
+          "conditional_cable_markers": 0.018231585433812973,
+          "conditional_cable_tip": 0.026356415563614503,
+          "drone": 0.0311005177616811
+        },
+        "M4": {
+          "command_driven_markers": 0.04177087627660547,
+          "command_driven_tip": 0.044786390183352655,
+          "conditional_cable_markers": 0.01653262236316542,
+          "conditional_cable_tip": 0.02446504230242519,
+          "drone": 0.03562203614784758
+        },
+        "M5": {
+          "command_driven_markers": 0.03989199402675819,
+          "command_driven_tip": 0.045834666658525224,
+          "conditional_cable_markers": 0.015652255173171536,
+          "conditional_cable_tip": 0.02525634782499951,
+          "drone": 0.033227809628420896
+        }
+      },
+      "takes": [
+        "M2_003_whip_001",
+        "M2_003_whip_002",
+        "M2_003_whip_003",
+        "M2_003_whip_004"
+      ]
+    },
+    "M3_v2_001": {
+      "models": {
+        "M0": {
+          "command_driven_markers": 0.09269438517872684,
+          "command_driven_tip": 0.11450388605319414,
+          "conditional_cable_markers": 0.049036623307501415,
+          "conditional_cable_tip": 0.07616103116016387,
+          "drone": 0.07114570651122142
+        },
+        "M1": {
+          "command_driven_markers": 0.04832813239759076,
+          "command_driven_tip": 0.058365597435232355,
+          "conditional_cable_markers": 0.03190970457946746,
+          "conditional_cable_tip": 0.044101823251336755,
+          "drone": 0.04668697799884032
+        },
+        "M2": {
+          "command_driven_markers": 0.05301676448131727,
+          "command_driven_tip": 0.05880790682693506,
+          "conditional_cable_markers": 0.03264077322367314,
+          "conditional_cable_tip": 0.04192679448025306,
+          "drone": 0.04587725925020048
+        },
+        "M3": {
+          "command_driven_markers": 0.04893505482871591,
+          "command_driven_tip": 0.05750784005921489,
+          "conditional_cable_markers": 0.0239421726198136,
+          "conditional_cable_tip": 0.02983430924049554,
+          "drone": 0.04399781246547871
+        },
+        "M4": {
+          "command_driven_markers": 0.04808780163541798,
+          "command_driven_tip": 0.05302502649500988,
+          "conditional_cable_markers": 0.021352173047956446,
+          "conditional_cable_tip": 0.025692607187779257,
+          "drone": 0.04107823752148521
+        },
+        "M5": {
+          "command_driven_markers": 0.049416624127879075,
+          "command_driven_tip": 0.05646329147323985,
+          "conditional_cable_markers": 0.019092269508108453,
+          "conditional_cable_tip": 0.0249088500365644,
+          "drone": 0.04234784626282752
+        }
+      },
+      "takes": [
+        "M3_001_whip_001",
+        "M3_001_whip_002",
+        "M3_001_whip_003",
+        "M3_001_whip_004"
+      ]
+    },
+    "M3_v2_002": {
+      "models": {
+        "M0": {
+          "command_driven_markers": 0.10544838220450084,
+          "command_driven_tip": 0.13058175650764503,
+          "conditional_cable_markers": 0.04683202204266558,
+          "conditional_cable_tip": 0.07422131147238337,
+          "drone": 0.08251538027580596
+        },
+        "M1": {
+          "command_driven_markers": 0.03941798499895921,
+          "command_driven_tip": 0.05683441323108472,
+          "conditional_cable_markers": 0.029073896516094735,
+          "conditional_cable_tip": 0.04138271191482872,
+          "drone": 0.03410259134558616
+        },
+        "M2": {
+          "command_driven_markers": 0.03944308435284124,
+          "command_driven_tip": 0.051686404298554665,
+          "conditional_cable_markers": 0.0296212364451451,
+          "conditional_cable_tip": 0.03861397076492509,
+          "drone": 0.02732696189865117
+        },
+        "M3": {
+          "command_driven_markers": 0.03701626986299534,
+          "command_driven_tip": 0.05188181111454502,
+          "conditional_cable_markers": 0.022046468932404747,
+          "conditional_cable_tip": 0.029317105717073924,
+          "drone": 0.028359943306016253
+        },
+        "M4": {
+          "command_driven_markers": 0.03706016018939892,
+          "command_driven_tip": 0.047439284353795345,
+          "conditional_cable_markers": 0.019859347278908673,
+          "conditional_cable_tip": 0.0267820142620527,
+          "drone": 0.027750224711661817
+        },
+        "M5": {
+          "command_driven_markers": 0.03415406190931165,
+          "command_driven_tip": 0.04604335676717608,
+          "conditional_cable_markers": 0.01839812256591594,
+          "conditional_cable_tip": 0.027175956045964136,
+          "drone": 0.026077317324632265
+        }
+      },
+      "takes": [
+        "M3_002_whip_001",
+        "M3_002_whip_002",
+        "M3_002_whip_003",
+        "M3_002_whip_004"
+      ]
+    },
+    "M3_v2_003": {
+      "models": {
+        "M0": {
+          "command_driven_markers": 0.10422460499675673,
+          "command_driven_tip": 0.13446062018872118,
+          "conditional_cable_markers": 0.048097550611122614,
+          "conditional_cable_tip": 0.07364520068739314,
+          "drone": 0.07972833414945936
+        },
+        "M1": {
+          "command_driven_markers": 0.04114322088191101,
+          "command_driven_tip": 0.056261644861038615,
+          "conditional_cable_markers": 0.03073058351060023,
+          "conditional_cable_tip": 0.0418598879351855,
+          "drone": 0.03519114554525641
+        },
+        "M2": {
+          "command_driven_markers": 0.044420012652322136,
+          "command_driven_tip": 0.05814635762640137,
+          "conditional_cable_markers": 0.03207164212206485,
+          "conditional_cable_tip": 0.041181718741943596,
+          "drone": 0.029363878114624015
+        },
+        "M3": {
+          "command_driven_markers": 0.04361383914263462,
+          "command_driven_tip": 0.06339954079673843,
+          "conditional_cable_markers": 0.024023364197994453,
+          "conditional_cable_tip": 0.03194829774169523,
+          "drone": 0.0308546963488231
+        },
+        "M4": {
+          "command_driven_markers": 0.04142497643314812,
+          "command_driven_tip": 0.05583535851677706,
+          "conditional_cable_markers": 0.021212976561532558,
+          "conditional_cable_tip": 0.027282792072549376,
+          "drone": 0.02725869601210517
+        },
+        "M5": {
+          "command_driven_markers": 0.04137807627026142,
+          "command_driven_tip": 0.05801284562125671,
+          "conditional_cable_markers": 0.019087555596681693,
+          "conditional_cable_tip": 0.027143449107532032,
+          "drone": 0.027236956075775157
+        }
+      },
+      "takes": [
+        "M3_003_whip_001",
+        "M3_003_whip_002",
+        "M3_003_whip_003",
+        "M3_003_whip_004"
+      ]
+    },
+    "M4_v2_001": {
+      "models": {
+        "M0": {
+          "command_driven_markers": 0.10467084058758781,
+          "command_driven_tip": 0.13236151402589952,
+          "conditional_cable_markers": 0.051139727743678746,
+          "conditional_cable_tip": 0.08187262563664671,
+          "drone": 0.08361598715132702
+        },
+        "M1": {
+          "command_driven_markers": 0.041826440936131845,
+          "command_driven_tip": 0.05914893028161551,
+          "conditional_cable_markers": 0.03354496370368096,
+          "conditional_cable_tip": 0.050178752763196936,
+          "drone": 0.037959489452179876
+        },
+        "M2": {
+          "command_driven_markers": 0.04253575365638808,
+          "command_driven_tip": 0.05669088392127607,
+          "conditional_cable_markers": 0.03473536609337464,
+          "conditional_cable_tip": 0.04864079865707295,
+          "drone": 0.03000719706414804
+        },
+        "M3": {
+          "command_driven_markers": 0.04051409617318219,
+          "command_driven_tip": 0.05650497703968735,
+          "conditional_cable_markers": 0.02627421636345649,
+          "conditional_cable_tip": 0.03633901663506888,
+          "drone": 0.032155304992440674
+        },
+        "M4": {
+          "command_driven_markers": 0.038866133636680525,
+          "command_driven_tip": 0.051436473037849983,
+          "conditional_cable_markers": 0.02389096998311832,
+          "conditional_cable_tip": 0.03357091685858092,
+          "drone": 0.028092705145703226
+        },
+        "M5": {
+          "command_driven_markers": 0.03664134598335751,
+          "command_driven_tip": 0.04997853474827484,
+          "conditional_cable_markers": 0.020862704300046976,
+          "conditional_cable_tip": 0.030899452986623114,
+          "drone": 0.027095390274999447
+        }
+      },
+      "takes": [
+        "M4_001_whip_001",
+        "M4_001_whip_002",
+        "M4_001_whip_003",
+        "M4_001_whip_004"
+      ]
+    },
+    "M4_v2_002": {
+      "models": {
+        "M0": {
+          "command_driven_markers": 0.10916382688218418,
+          "command_driven_tip": 0.1408174053159626,
+          "conditional_cable_markers": 0.04847174320028928,
+          "conditional_cable_tip": 0.0792466642106776,
+          "drone": 0.08547497751921881
+        },
+        "M1": {
+          "command_driven_markers": 0.04258078831470856,
+          "command_driven_tip": 0.0613967100420956,
+          "conditional_cable_markers": 0.030465080619471417,
+          "conditional_cable_tip": 0.04704612162741061,
+          "drone": 0.030908453319320833
+        },
+        "M2": {
+          "command_driven_markers": 0.046500540390469886,
+          "command_driven_tip": 0.06060101232232566,
+          "conditional_cable_markers": 0.03147180241102199,
+          "conditional_cable_tip": 0.04511793529077492,
+          "drone": 0.027039891881065786
+        },
+        "M3": {
+          "command_driven_markers": 0.043306637262832,
+          "command_driven_tip": 0.06243740257981179,
+          "conditional_cable_markers": 0.02406378117037154,
+          "conditional_cable_tip": 0.03563031936704723,
+          "drone": 0.02746776553860861
+        },
+        "M4": {
+          "command_driven_markers": 0.04379635791066376,
+          "command_driven_tip": 0.057652424070843464,
+          "conditional_cable_markers": 0.022021796664777955,
+          "conditional_cable_tip": 0.03320845307688991,
+          "drone": 0.03001873116058036
+        },
+        "M5": {
+          "command_driven_markers": 0.040081750041774444,
+          "command_driven_tip": 0.05403673245984285,
+          "conditional_cable_markers": 0.018885743032209343,
+          "conditional_cable_tip": 0.030188900642441993,
+          "drone": 0.02693034037533391
+        }
+      },
+      "takes": [
+        "M4_002_whip_001",
+        "M4_002_whip_002",
+        "M4_002_whip_003",
+        "M4_002_whip_004"
+      ]
+    },
+    "M4_v2_003": {
+      "models": {
+        "M0": {
+          "command_driven_markers": 0.09999096897267076,
+          "command_driven_tip": 0.12718381232263593,
+          "conditional_cable_markers": 0.049060662268818764,
+          "conditional_cable_tip": 0.0802363075539169,
+          "drone": 0.07566232131215894
+        },
+        "M1": {
+          "command_driven_markers": 0.041151306293649936,
+          "command_driven_tip": 0.05487850134564695,
+          "conditional_cable_markers": 0.0309400495418019,
+          "conditional_cable_tip": 0.04794098687721718,
+          "drone": 0.03272787243051718
+        },
+        "M2": {
+          "command_driven_markers": 0.04614201297181964,
+          "command_driven_tip": 0.054129664803531666,
+          "conditional_cable_markers": 0.03142570499677681,
+          "conditional_cable_tip": 0.04477110961069849,
+          "drone": 0.03214275725300138
+        },
+        "M3": {
+          "command_driven_markers": 0.041506239848289876,
+          "command_driven_tip": 0.05361912795260396,
+          "conditional_cable_markers": 0.023982946898526723,
+          "conditional_cable_tip": 0.03466552325265701,
+          "drone": 0.030121697159807087
+        },
+        "M4": {
+          "command_driven_markers": 0.04227703010284384,
+          "command_driven_tip": 0.049689457789759944,
+          "conditional_cable_markers": 0.02191814873102131,
+          "conditional_cable_tip": 0.03244170830652047,
+          "drone": 0.030489204485218226
+        },
+        "M5": {
+          "command_driven_markers": 0.03979878806081863,
+          "command_driven_tip": 0.04795589831095992,
+          "conditional_cable_markers": 0.01931954950845512,
+          "conditional_cable_tip": 0.030727880376155058,
+          "drone": 0.028967630883504247
+        }
+      },
+      "takes": [
+        "M4_003_whip_001",
+        "M4_003_whip_002",
+        "M4_003_whip_003",
+        "M4_003_whip_004"
+      ]
+    }
+  },
+  "takes": 58
+}

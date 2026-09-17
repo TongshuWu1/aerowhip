@@ -1,0 +1,254 @@
+[
+  {
+    "active_bounds": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "baseline_loss": 4.881216899915004,
+    "best": [
+      0.5413086667807523,
+      2.377823047469026,
+      0.03404118394608993,
+      0.6751716882005303,
+      -0.337867358764775,
+      0.12897140970950552
+    ],
+    "best_loss": 3.7326199967313856,
+    "delay_prior": 0.03,
+    "delay_s": 0.0,
+    "elapsed_s": 1.194239500000549,
+    "nfev": 10,
+    "score": 3.7626199967313854,
+    "solver_message": "Stopped because `callback` function raised `StopIteration` or returned `True`",
+    "stop_reason": "practical_plateau",
+    "updates": 9
+  },
+  {
+    "active_bounds": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "baseline_loss": 4.203939051661892,
+    "best": [
+      0.5528496521825489,
+      2.4083201988288945,
+      -0.005520577664897208,
+      0.6445564254082837,
+      -0.3099170592214178,
+      0.17200179928527984
+    ],
+    "best_loss": 3.4878202429916634,
+    "delay_prior": 0.016875,
+    "delay_s": 0.01,
+    "elapsed_s": 1.35445030000119,
+    "nfev": 11,
+    "score": 3.5046952429916636,
+    "solver_message": "Stopped because `callback` function raised `StopIteration` or returned `True`",
+    "stop_reason": "practical_plateau",
+    "updates": 10
+  },
+  {
+    "active_bounds": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "baseline_loss": 3.6962891996954252,
+    "best": [
+      0.5643033194914154,
+      2.4427870174979884,
+      -0.04499094447584186,
+      0.6418614891244084,
+      -0.28379046040549266,
+      0.21889139906227048
+    ],
+    "best_loss": 3.3158209122016493,
+    "delay_prior": 0.0075,
+    "delay_s": 0.02,
+    "elapsed_s": 1.0440119999984745,
+    "nfev": 9,
+    "score": 3.323320912201649,
+    "solver_message": "Stopped because `callback` function raised `StopIteration` or returned `True`",
+    "stop_reason": "practical_plateau",
+    "updates": 8
+  },
+  {
+    "active_bounds": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "baseline_loss": 3.387516894113487,
+    "best": [
+      0.5754882440874318,
+      2.471161116767168,
+      -0.08329325503710261,
+      0.6512091482588993,
+      -0.25911338569659587,
+      0.26114344468948186
+    ],
+    "best_loss": 3.238141476359641,
+    "delay_prior": 0.0018750000000000008,
+    "delay_s": 0.03,
+    "elapsed_s": 1.1854898000019602,
+    "nfev": 10,
+    "score": 3.240016476359641,
+    "solver_message": "Stopped because `callback` function raised `StopIteration` or returned `True`",
+    "stop_reason": "practical_plateau",
+    "updates": 9
+  },
+  {
+    "active_bounds": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "baseline_loss": 3.3565452370587923,
+    "best": [
+      0.5861784279398247,
+      2.5083503649171854,
+      -0.12344200202867045,
+      0.6827775805254439,
+      -0.23504583656339348,
+      0.30568835028226476
+    ],
+    "best_loss": 3.2697605475698817,
+    "delay_prior": 0.0,
+    "delay_s": 0.04,
+    "elapsed_s": 0.9412383000017144,
+    "nfev": 8,
+    "score": 3.2697605475698817,
+    "solver_message": "Stopped because `callback` function raised `StopIteration` or returned `True`",
+    "stop_reason": "practical_plateau",
+    "updates": 7
+  },
+  {
+    "active_bounds": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "baseline_loss": 4.170256387901877,
+    "best": [
+      0.6074111530679442,
+      2.5781427679138784,
+      -0.21659591395640926,
+      0.7586511049581908,
+      -0.19089840403215624,
+      0.38314492249417637
+    ],
+    "best_loss": 3.689439757999819,
+    "delay_prior": 0.007499999999999996,
+    "delay_s": 0.06,
+    "elapsed_s": 0.9752618999991682,
+    "nfev": 8,
+    "score": 3.696939757999819,
+    "solver_message": "Stopped because `callback` function raised `StopIteration` or returned `True`",
+    "stop_reason": "practical_plateau",
+    "updates": 7
+  },
+  {
+    "active_bounds": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "baseline_loss": 5.6339485930178705,
+    "best": [
+      0.6323174169634767,
+      2.636173391079688,
+      -0.3160619656846634,
+      0.828278183833681,
+      -0.1545924283355308,
+      0.44614791526743547
+    ],
+    "best_loss": 4.558184088759376,
+    "delay_prior": 0.03,
+    "delay_s": 0.08,
+    "elapsed_s": 0.9565905000054045,
+    "nfev": 8,
+    "score": 4.588184088759376,
+    "solver_message": "Stopped because `callback` function raised `StopIteration` or returned `True`",
+    "stop_reason": "practical_plateau",
+    "updates": 7
+  },
+  {
+    "active_bounds": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "baseline_loss": 7.3604322016966135,
+    "best": [
+      0.6625139253777761,
+      2.670659432298528,
+      -0.4243798654078943,
+      0.8839869251481667,
+      -0.12510385401732305,
+      0.4978572898910835
+    ],
+    "best_loss": 5.762526047814567,
+    "delay_prior": 0.0675,
+    "delay_s": 0.1,
+    "elapsed_s": 1.0611633000007714,
+    "nfev": 9,
+    "score": 5.830026047814567,
+    "solver_message": "Stopped because `callback` function raised `StopIteration` or returned `True`",
+    "stop_reason": "practical_plateau",
+    "updates": 8
+  },
+  {
+    "active_bounds": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "baseline_loss": 9.202185444251748,
+    "best": [
+      0.6980495995826539,
+      2.6858735054607794,
+      -0.5309209644258448,
+      0.9121652786773325,
+      -0.10098328957115588,
+      0.5383832224188085
+    ],
+    "best_loss": 7.197819203227152,
+    "delay_prior": 0.11999999999999994,
+    "delay_s": 0.12,
+    "elapsed_s": 1.042824500000279,
+    "nfev": 9,
+    "score": 7.3178192032271525,
+    "solver_message": "Stopped because `callback` function raised `StopIteration` or returned `True`",
+    "stop_reason": "practical_plateau",
+    "updates": 8
+  }
+]

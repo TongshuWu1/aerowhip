@@ -1,0 +1,34 @@
+{
+  "interval_s": [
+    0.0,
+    1.5333333333333334
+  ],
+  "launch_origin_m": [
+    0.0,
+    0.0,
+    1.7917713383723264
+  ],
+  "physical_target_m": [
+    -1.3611358907964708,
+    1.1486852395197362,
+    1.3000000000000267
+  ],
+  "physical_target_present": false,
+  "planned_strike_time_s": 1.2933333333333334,
+  "reference_kind": "Exact saved M5 horizontal forecast; no new simulation, time warping, or reference optimization.",
+  "reference_label": "M5 horizontal",
+  "reference_sha256": "fc633f7c81ff48786aeec934916b2309adc5c9d1ea2b8e21f1527312078de4a4",
+  "release_height_m": 1.3000000000000267,
+  "schema": "frozen_physical_motion_reference_v1",
+  "source_hashes": {
+    "runs/rehearsals_pva/M5-Curved-Side-Whip-1p3m/fullstate_30hz.csv": "6adda89b275bbe0523ff6272842e34326d11fb533a7dd744befe6ec4fb2f4d00",
+    "runs/rehearsals_pva/M5-Curved-Side-Whip-1p3m/model.json": "a96d0a58ca37cf6471174d6954768a6ffcc5040ce883a77049136d618be0e99e",
+    "runs/rehearsals_pva/M5-Curved-Side-Whip-1p3m/plan.npz": "5183e3ee36e146bb2c6d14b15ecb97a50fbee4aad9880c907d0eed3a3a0d4682",
+    "runs/rehearsals_pva/M5-Curved-Side-Whip-1p3m/rehearsal.json": "30acf736ecea9d2ff5b0df74c6a60d3cf08d914f648cb443af39c7be5770db09",
+    "runs/rehearsals_pva/M5-Curved-Side-Whip-1p3m/rehearsal.npz": "8da8f3dd3a062ca46d12b1515b600134337e16d698f656097e7bf1e96ebc1b43",
+    "runs/rehearsals_pva/M5-Curved-Side-Whip-1p3m/settings.json": "bc52f32055a8830caf6772c7b755a16ef5ce57563d72304fbfbd7b3c35d0a48f",
+    "tools/correct_m6_horizontal.py": "9bd14ec8d80f4b72ae48972b673d49968816cd07e60d52d1225bb8c7f6f7ccfb"
+  },
+  "source_rehearsal": "runs/rehearsals_pva/M5-Curved-Side-Whip-1p3m",
+  "task_family": "horizontal_curved_side"
+}
