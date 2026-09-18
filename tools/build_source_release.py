@@ -145,7 +145,7 @@ def build(root,output):
     if (root/'experimental_data/default_processing.json').is_file():
         add('experimental_data/default_processing.json')
     for name in ('run_simulation.py','run_tests.py',
-                 'requirements.txt','pytest.ini','.editorconfig','.github/workflows/smoke.yml','tests/README.md'):
+                 'requirements.txt','pytest.ini','.editorconfig','tests/README.md'):
         add(name)
     for name in ('exports/README.md','paper/README.md','third_party/README.md'):
         if (root/name).is_file():add(name)

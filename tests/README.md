@@ -1,5 +1,7 @@
 # Maintained checks
 
+These tests run locally when requested; no automatic GitHub test workflow is configured.
+
 Tests are grouped by the behavior they protect. Tests exclusively exercising retired SAC/PPO trainers and policy launchers were removed with those features. Shared physics, fitting, MPPI, command correction, recovery, export and UI checks remain. Mixed test files retain their non-policy checks.
 
 | Group | Coverage |
